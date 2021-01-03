@@ -14,7 +14,7 @@ internal class DataLogger {
     //just single thread
     private var executorService: ExecutorService = ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS, LinkedBlockingQueue<Runnable>(1),
-        ThreadPoolExecutor.AbortPolicy()
+        ThreadPoolExecutor.DiscardPolicy()
     )
 
 

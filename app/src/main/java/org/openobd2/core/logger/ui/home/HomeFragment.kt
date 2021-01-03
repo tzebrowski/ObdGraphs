@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
         Model.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+            textView.append(it + "\n")
         })
 
         val btnStop: Button = root.findViewById(R.id.btn_stop);
