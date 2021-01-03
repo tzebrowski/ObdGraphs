@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
 
 class DashboardFragment : Fragment() {
@@ -23,7 +24,7 @@ class DashboardFragment : Fragment() {
                 ViewModelProvider(this).get(DashboardViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         val textView: TextView = root.findViewById(R.id.text_dashboard)
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
+        Model.dashboardText.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root

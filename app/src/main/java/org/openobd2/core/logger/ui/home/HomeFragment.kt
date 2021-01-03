@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.bl.DataLoggerService
 import org.openobd2.core.logger.R
 
@@ -26,7 +27,7 @@ class HomeFragment : Fragment() {
             ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+        Model.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
 

@@ -20,12 +20,9 @@ internal class BluetoothChannelmpl : Channel() {
         for (currentDevice in pairedDevices) {
             if (currentDevice.name.equals(btDeviceName)) {
                 Log.i("DATA_LOGGER_BT", "Found device: $btDeviceName")
-                val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
                 val socket =
-                    currentDevice.createRfcommSocketToServiceRecord(MY_UUID)
-
+                    currentDevice.createRfcommSocketToServiceRecord( UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
                 socket.connect()
-
                 if (socket.isConnected) {
                     input = socket.inputStream
                     output = socket.outputStream
@@ -33,7 +30,6 @@ internal class BluetoothChannelmpl : Channel() {
                 }
             }
         }
-
     }
 
     override fun getOutputStream(): OutputStream? {

@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
 
 class NotificationsFragment : Fragment() {
@@ -23,9 +24,10 @@ class NotificationsFragment : Fragment() {
                 ViewModelProvider(this).get(NotificationsViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_notifications, container, false)
         val textView: TextView = root.findViewById(R.id.text_notifications)
-        notificationsViewModel.text.observe(viewLifecycleOwner, Observer {
+        Model.notificationText.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
+
         return root
     }
 }

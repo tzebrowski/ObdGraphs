@@ -14,7 +14,7 @@ internal class DataLogger {
     //just single thread
     private var executorService: ExecutorService = ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS, LinkedBlockingQueue<Runnable>(1),
-        ThreadPoolExecutor.DiscardPolicy()
+        ThreadPoolExecutor.AbortPolicy()
     )
 
 
@@ -23,7 +23,7 @@ internal class DataLogger {
         buffer.addFirst(QuitCommand()) // quit the CommandExecutor
     }
 
-    fun start(btDeviceName: String) {
+    fun start(btDeviceName: String,replySubscriber: CommandReplySubscriber) {
 
         val func = Runnable {
 
@@ -58,6 +58,7 @@ internal class DataLogger {
                 .buffer(buffer)
                 .subscribe(collector)
                 .subscribe(producer)
+                .subscribe(replySubscriber)
                 .policy(ExecutorPolicy.builder().frequency(100).build())
                 .codecRegistry(codecRegistry)
                 .build()
