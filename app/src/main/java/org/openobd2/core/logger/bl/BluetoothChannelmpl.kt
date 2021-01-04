@@ -15,16 +15,20 @@ internal class BluetoothChannelmpl : Channel() {
     var output: OutputStream? = null
     lateinit var socket: BluetoothSocket
 
+    var device: String? = null
+
     fun initBluetooth(btDeviceName: String) {
+        this.device = btDeviceName
+
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         val pairedDevices =
             mBluetoothAdapter.bondedDevices
 
         for (currentDevice in pairedDevices) {
             if (currentDevice.name.equals(btDeviceName)) {
-                Log.i("DATA_LOGGER_BT", "Found device: $btDeviceName")
+                Log.i("DATA_LOGGER_BT", "Opening connection to device: $btDeviceName")
                 socket =
-                    currentDevice.createRfcommSocketToServiceRecord( UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
+                    currentDevice.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
                 socket.connect()
                 if (socket.isConnected) {
                     input = socket.inputStream
@@ -33,6 +37,37 @@ internal class BluetoothChannelmpl : Channel() {
                 }
             }
         }
+        mBluetoothAdapter.cancelDiscovery();
+    }
+
+    override fun closeConnection() {
+       socket.close();
+       Log.i("DATA_LOGGER_BT", "Socket for device: $device is closed.")
+    }
+
+    override fun reconnect() {
+        socket.close();
+        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        val pairedDevices =
+            mBluetoothAdapter.bondedDevices
+
+        for (currentDevice in pairedDevices) {
+            if (currentDevice.name.equals(device)) {
+                Log.i("DATA_LOGGER_BT", "Reconnecting to the device: $device")
+                socket =
+                    currentDevice.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"))
+                Log.i("DATA_LOGGER_BT", "Get socket for: $device")
+                socket.connect()
+                Log.i("DATA_LOGGER_BT", "Socket is connected: $device")
+
+                if (socket.isConnected) {
+                    input = socket.inputStream
+                    output = socket.outputStream
+                    Log.i("DATA_LOGGER_BT", "Reconnected to the device: $device")
+                }
+            }
+        }
+        connect();
     }
 
     override fun getOutputStream(): OutputStream? {
