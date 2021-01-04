@@ -11,12 +11,11 @@ import java.util.concurrent.*
 internal class DataLogger {
     private var buffer: CommandsBuffer = CommandsBuffer.instance()
 
-    //just single thread
+    //just a single thread in a pool
     private var executorService: ExecutorService = ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS, LinkedBlockingQueue<Runnable>(1),
         ThreadPoolExecutor.DiscardPolicy()
     )
-
 
     fun stop() {
         Log.i("DATA_LOGGER_DL", "Stop collecting process")
@@ -35,8 +34,8 @@ internal class DataLogger {
             var pidRegistry: PidRegistry = PidRegistry.builder().source(source).build()
             source.close()
 
-            val channel = BluetoothChannelmpl()
-            channel.initBluetooth(btDeviceName)
+            val connection = BluetoothConnection()
+            connection.initBluetooth(btDeviceName)
 
             val collector = DataCollector()
 
@@ -54,7 +53,7 @@ internal class DataLogger {
 
             val executor: CommandExecutor = CommandExecutor
                 .builder()
-                .streams(channel)
+                .connection(connection)
                 .buffer(buffer)
                 .subscribe(collector)
                 .subscribe(producer)
