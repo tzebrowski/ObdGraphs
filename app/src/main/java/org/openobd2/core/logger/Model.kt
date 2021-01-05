@@ -2,6 +2,8 @@ package org.openobd2.core.logger
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import org.openobd2.core.command.Command
+import org.openobd2.core.command.CommandReply
 
 
 class Model {
@@ -15,15 +17,6 @@ class Model {
         @JvmStatic
         val text: LiveData<String> = _text
 
-
-        @JvmStatic
-        private val _dashboardText = MutableLiveData<String>().apply {
-            value = ""
-        }
-
-        @JvmStatic
-        val dashboardText: LiveData<String> = _dashboardText
-
         @JvmStatic
         private val _notificationText = MutableLiveData<String>().apply {
             value = "This is notifications Fragment"
@@ -33,8 +26,20 @@ class Model {
         val notificationText: LiveData<String> = _notificationText
 
         @JvmStatic
-        fun updateHomeStatus(text: String) {
+        fun updateDebugScreen(text: String) {
             _text.postValue(text)
+        }
+
+        @JvmStatic
+        private val _commandReplyLiveData = MutableLiveData<CommandReply<*>>().apply {
+        }
+
+        @JvmStatic
+        val commandReplyLiveData: LiveData<CommandReply<*>> = _commandReplyLiveData
+
+        @JvmStatic
+        fun udpateMetricsScreen(text: CommandReply<*>) {
+            _commandReplyLiveData.postValue(text)
         }
     }
 }

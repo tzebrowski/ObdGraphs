@@ -9,7 +9,12 @@ import java.io.InputStream
 import java.util.concurrent.*
 
 internal class DataLogger {
+
     private var buffer: CommandsBuffer = CommandsBuffer.instance()
+    private var pidRegistry: PidRegistry
+    private var codecRegistry: CodecRegistry
+    private var policy: ProducerPolicy = ProducerPolicy.builder().frequency(50).build()
+    private var commandExecutorPolicy: ExecutorPolicy = ExecutorPolicy.builder().frequency(100).build()
 
     //just a single thread in a pool
     private var executorService: ExecutorService = ThreadPoolExecutor(
@@ -17,33 +22,27 @@ internal class DataLogger {
         ThreadPoolExecutor.DiscardPolicy()
     )
 
+    init {
+        val source: InputStream = Thread.currentThread().contextClassLoader
+            .getResourceAsStream("generic.json")
+        pidRegistry = PidRegistry.builder().source(source).build()
+        source.close()
+        codecRegistry =
+            CodecRegistry.builder().evaluateEngine("rhino").pids(pidRegistry).build()
+
+    }
+
     fun stop() {
         Log.i("DATA_LOGGER_DL", "Stop collecting process")
         buffer.addFirst(QuitCommand()) // quit the CommandExecutor
     }
 
-    fun start(btDeviceName: String,replySubscriber: CommandReplySubscriber) {
-
-        val func = Runnable {
+    fun start(btDeviceName: String, subscriber: CommandReplySubscriber) {
+        val task = Runnable {
 
             Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $btDeviceName")
 
-            val source: InputStream = Thread.currentThread().contextClassLoader
-                .getResourceAsStream("generic.json")
-
-            var pidRegistry: PidRegistry = PidRegistry.builder().source(source).build()
-            source.close()
-
-            val connection = BluetoothConnection()
-            connection.initBluetooth(btDeviceName)
-
-            val collector = DataCollector()
-
-            val codecRegistry: CodecRegistry =
-                CodecRegistry.builder().evaluateEngine("rhino").pids(pidRegistry).build()
-
-
-            val policy: ProducerPolicy = ProducerPolicy.builder().frequency(50).build()
+            val connection = BluetoothConnection(btDeviceName)
             val producer: Mode1CommandsProducer = Mode1CommandsProducer
                 .builder()
                 .buffer(buffer)
@@ -55,10 +54,9 @@ internal class DataLogger {
                 .builder()
                 .connection(connection)
                 .buffer(buffer)
-                .subscribe(collector)
                 .subscribe(producer)
-                .subscribe(replySubscriber)
-                .policy(ExecutorPolicy.builder().frequency(100).build())
+                .subscribe(subscriber)
+                .policy(commandExecutorPolicy)
                 .codecRegistry(codecRegistry)
                 .build()
 
@@ -68,10 +66,10 @@ internal class DataLogger {
             try {
                 es.invokeAll(listOf(executor, producer))
             } finally {
-                Log.i("DATA_LOGGER_DL", "Collecting process completed")
                 es.shutdown();
+                Log.i("DATA_LOGGER_DL", "Collecting process completed")
             }
         }
-        executorService.submit(func)
+        executorService.submit(task)
     }
 }

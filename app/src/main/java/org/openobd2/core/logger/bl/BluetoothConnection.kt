@@ -13,22 +13,40 @@ internal class BluetoothConnection : Connection {
     var input: InputStream? = null
     var output: OutputStream? = null
     lateinit var socket: BluetoothSocket
-
     var device: String? = null
 
-    fun initBluetooth(btDeviceName: String) {
+    constructor(btDeviceName: String) {
         this.device = btDeviceName
-        connect(btDeviceName)
+        init(btDeviceName)
     }
 
     override fun reconnect() {
-        Log.i("DATA_LOGGER_BT", "Reconnecting the connection to the device: $device")
+        Log.i("DATA_LOGGER_BT", "Reconnecting to the device: $device")
         socket.close();
-        connect(device)
-        Log.i("DATA_LOGGER_BT", "Successfully reconnect the connection to the device: $device")
+        init(device)
+        Log.i("DATA_LOGGER_BT", "Successfully reconnect to the device: $device")
     }
 
-    private fun connect(btDeviceName: String?) {
+
+    override fun close() {
+        socket.close();
+        Log.i("DATA_LOGGER_BT", "Socket for device: $device has been closed.")
+    }
+
+    override fun openOutputStream(): OutputStream? {
+        return output
+    }
+
+    override fun openInputStream(): InputStream? {
+        return input
+    }
+
+    override fun isClosed(): Boolean {
+        return !socket.isConnected
+    }
+
+
+    private fun init(btDeviceName: String?) {
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         val pairedDevices =
             mBluetoothAdapter.bondedDevices
@@ -50,22 +68,5 @@ internal class BluetoothConnection : Connection {
             }
         }
         mBluetoothAdapter.cancelDiscovery();
-    }
-
-    override fun close() {
-        socket.close();
-        Log.i("DATA_LOGGER_BT", "Socket for device: $device is closed.")
-    }
-
-    override fun openOutputStream(): OutputStream? {
-        return output
-    }
-
-    override fun openInputStream(): InputStream? {
-        return input
-    }
-
-    override fun isClosed(): Boolean {
-        return !socket.isConnected
     }
 }

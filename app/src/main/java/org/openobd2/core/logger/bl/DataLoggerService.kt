@@ -10,13 +10,12 @@ private const val ACTION_STOP = "org.openobd2.core.logger.ui.action.STOP"
 private const val PARAM_BT_DEVICE_NAME = "org.openobd2.core.logger.ui.extra.BT_DEVICE_NAME"
 
 class DataLoggerService : IntentService("DataLoggerService") {
-
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_START -> {
                 val btDeviceName: String = intent.getStringExtra(PARAM_BT_DEVICE_NAME).toString()
                 Log.i("DATA_LOGGER_SVC", "Start collecting process for device $dataLogger")
-                dataLogger.start(btDeviceName, ModelUpdater());
+                dataLogger.start(btDeviceName, ModelChangePublisher());
             }
             ACTION_STOP -> {
                 Log.i("DATA_LOGGER_SVC", "Stop collecting process")

@@ -24,15 +24,14 @@
                 android:id="@+id/btn_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/holo_green_light"
-                android:backgroundTint="@android:color/holo_green_light"
+                android:backgroundTint="#1C3D72"
                 android:text="start" />
 
             <Button
                 android:id="@+id/btn_stop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/holo_red_light"
+                android:backgroundTint="#01804F"
                 android:insetLeft="5sp"
                 android:text="Stop" />
 
@@ -59,7 +58,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
         android:layout_marginTop="60dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginBottom="66dp"
         android:background="@drawable/line"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
