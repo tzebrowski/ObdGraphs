@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="org.openobd2.core.logger.ui.dashboard.DashboardFragment"
+        android:name="org.openobd2.core.logger.ui.livedata.LiveDataFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_livedata" />
 
     <fragment
         android:id="@+id/navigation_home"

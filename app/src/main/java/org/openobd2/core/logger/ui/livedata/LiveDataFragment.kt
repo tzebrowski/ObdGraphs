@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.dashboard
+package org.openobd2.core.logger.ui.livedata
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -9,6 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +26,9 @@ import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
 
 
-class DashboardFragment : Fragment() {
+class LiveDataFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
+    private lateinit var dashboardViewModel: LiveDataViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,8 +36,8 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+            ViewModelProvider(this).get(LiveDataViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_livedata, container, false)
         val tableLayout: TableLayout = root.findViewById(R.id.table_layout);
         val scrollView: ScrollView = root.findViewById(R.id.scroll_view);
 
@@ -44,8 +45,8 @@ class DashboardFragment : Fragment() {
             try {
                 val tableRow: TableRow = tableLayout.findViewById(it.command.hashCode())
                 tableRow.background = getResources().getDrawable(R.drawable.border);
-                val value: TextView = tableRow.get(0) as TextView
-                value.text = spannedText(it.value,Color.parseColor("#01804F"),1.3f)
+                val value: TextView = tableRow.get(1) as TextView
+                value.text = spannedText(it.value,Color.parseColor("#01804F"),1.4f)
             } catch (e: IllegalStateException) {
                 addRow(root, it, tableLayout, scrollView);
             }
@@ -74,10 +75,10 @@ class DashboardFragment : Fragment() {
 
         valueParams.width = 50
         valueParams.weight = 1.0f
+        valueParams.gravity = Gravity.RIGHT
         value.layoutParams = valueParams
 
-        value.text = spannedText(it.value,Color.parseColor("#01804F"),1.3f)
-        tableRow.addView(value)
+        value.text = spannedText(it.value,Color.parseColor("#01804F"),1.4f)
 
         val raw = TextView(context)
         val rawParams = TableRow.LayoutParams()
@@ -86,18 +87,19 @@ class DashboardFragment : Fragment() {
         rawParams.weight = 1.0f
         raw.layoutParams = rawParams
         raw.text = it.raw?.toString()
-        tableRow.addView(raw)
 
-        val label = TextView(context)
+        val metric = TextView(context)
         val labelarams = TableRow.LayoutParams()
 
-        labelarams.width = 200
+        labelarams.width = 300
         labelarams.weight = 1.0f
+        metric.layoutParams = labelarams
+        metric.text = spannedText(it.command.label,Color.GRAY,1.1f)
+        metric.setSingleLine(false)
 
-        label.layoutParams = labelarams
-        label.text = spannedText(it.command.label,Color.GRAY,1.1f)
-        label.setSingleLine(false)
-        tableRow.addView(label)
+        tableRow.addView(metric)
+       // tableRow.addView(raw)
+        tableRow.addView(value)
 
         tableLayout.addView(tableRow)
         scrollView.fullScroll(View.FOCUS_DOWN)
