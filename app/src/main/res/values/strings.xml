@@ -3,4 +3,6 @@
     <string name="title_home">Debug</string>
     <string name="title_dashboard">Live data</string>
     <string name="title_notifications">Gauges</string>
+    <string name="search">Search</string>
+    <string name="switch_l">Switch</string>
 </resources>

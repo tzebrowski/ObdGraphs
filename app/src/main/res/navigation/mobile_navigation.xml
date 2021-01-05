@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="org.openobd2.core.logger.ui.home.HomeFragment"
+        android:name="org.openobd2.core.logger.ui.debug.DebugFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_debug" />
 
     <fragment
         android:id="@+id/navigation_notifications"

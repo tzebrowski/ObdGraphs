@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.openobd2.core.command.CommandReply
+import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
 
@@ -45,8 +46,12 @@ class LiveDataFragment : Fragment() {
             try {
                 val tableRow: TableRow = tableLayout.findViewById(it.command.hashCode())
                 tableRow.background = getResources().getDrawable(R.drawable.border);
-                val value: TextView = tableRow.get(1) as TextView
-                value.text = spannedText(it.value,Color.parseColor("#01804F"),1.4f)
+                val rowValue: TextView = tableRow.get(1) as TextView
+                var value: String? = it.value?.toString()
+                if (value != null){
+                    value  +=  " " + (it.command as ObdCommand).pid.units
+                }
+                rowValue.text = spannedText(value, Color.parseColor("#01804F"), 1.4f)
             } catch (e: IllegalStateException) {
                 addRow(root, it, tableLayout, scrollView);
             }
@@ -78,7 +83,12 @@ class LiveDataFragment : Fragment() {
         valueParams.gravity = Gravity.RIGHT
         value.layoutParams = valueParams
 
-        value.text = spannedText(it.value,Color.parseColor("#01804F"),1.4f)
+        var valueTxt: String? = it.value?.toString()
+        if (valueTxt != null){
+            valueTxt  +=  " " + (it.command as ObdCommand).pid.units
+        }
+
+        value.text = spannedText(valueTxt, Color.parseColor("#01804F"), 1.4f)
 
         val raw = TextView(context)
         val rawParams = TableRow.LayoutParams()
@@ -94,28 +104,27 @@ class LiveDataFragment : Fragment() {
         labelarams.width = 300
         labelarams.weight = 1.0f
         metric.layoutParams = labelarams
-        metric.text = spannedText(it.command.label,Color.GRAY,1.1f)
+        metric.text = spannedText(it.command.label, Color.GRAY, 1.1f)
         metric.setSingleLine(false)
 
         tableRow.addView(metric)
-       // tableRow.addView(raw)
+        // tableRow.addView(raw)
         tableRow.addView(value)
 
         tableLayout.addView(tableRow)
         scrollView.fullScroll(View.FOCUS_DOWN)
     }
 
-    private fun spannedText(it:Any?,color: Int,size: Float): SpannableString {
-        var valText: String
-        if (it == null) {
+    private fun spannedText(it: String?, color: Int, size: Float): SpannableString {
+
+        var valText: String? = it
+        if (valText == null) {
             valText = ""
-        } else {
-            valText = it.toString()
         }
 
         val valSpanString = SpannableString(valText)
-        valSpanString.setSpan( RelativeSizeSpan(size), 0, valSpanString.length, 0); // set size
-        valSpanString.setSpan(UnderlineSpan(), 0, valSpanString.length, 0)
+        valSpanString.setSpan(RelativeSizeSpan(size), 0, valSpanString.length, 0); // set size
+        //valSpanString.setSpan(UnderlineSpan(), 0, valSpanString.length, 0)
         valSpanString.setSpan(StyleSpan(Typeface.BOLD), 0, valSpanString.length, 0)
         //valSpanString.setSpan(StyleSpan(Typeface.ITALIC), 0, valSpanString.length, 0)
         valSpanString.setSpan(
