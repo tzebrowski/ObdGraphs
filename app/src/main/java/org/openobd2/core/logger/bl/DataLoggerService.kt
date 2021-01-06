@@ -15,7 +15,7 @@ class DataLoggerService : IntentService("DataLoggerService") {
             ACTION_START -> {
                 val btDeviceName: String = intent.getStringExtra(PARAM_BT_DEVICE_NAME).toString()
                 Log.i("DATA_LOGGER_SVC", "Start collecting process for device $dataLogger")
-                dataLogger.start(btDeviceName, ModelChangePublisher());
+                dataLogger.start(btDeviceName);
             }
             ACTION_STOP -> {
                 Log.i("DATA_LOGGER_SVC", "Stop collecting process")

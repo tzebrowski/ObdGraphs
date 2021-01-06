@@ -5,6 +5,7 @@ import org.openobd2.core.CommandReplySubscriber
 import org.openobd2.core.command.Command
 import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
+import org.openobd2.core.command.obd.SupportedPidsCommand
 import org.openobd2.core.logger.Model
 
 class ModelChangePublisher () : CommandReplySubscriber() {
@@ -17,7 +18,8 @@ class ModelChangePublisher () : CommandReplySubscriber() {
         data[reply.command] = reply
 
         Model.updateDebugScreen(reply.toString())
-        if (reply.command is ObdCommand) {
+
+        if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
             Model.udpateMetricsScreen(reply)
         }
     }

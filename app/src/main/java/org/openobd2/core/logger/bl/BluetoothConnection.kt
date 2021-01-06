@@ -17,7 +17,6 @@ internal class BluetoothConnection : Connection {
 
     constructor(btDeviceName: String) {
         this.device = btDeviceName
-        init(btDeviceName)
     }
 
     override fun reconnect() {
@@ -25,6 +24,10 @@ internal class BluetoothConnection : Connection {
         socket.close();
         init(device)
         Log.i("DATA_LOGGER_BT", "Successfully reconnect to the device: $device")
+    }
+
+    override fun init() {
+        init(device)
     }
 
 
