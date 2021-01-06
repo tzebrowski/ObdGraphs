@@ -2,7 +2,6 @@ package org.openobd2.core.logger
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.openobd2.core.command.Command
 import org.openobd2.core.command.CommandReply
 
 
@@ -14,6 +13,7 @@ class Model {
         private val _text = MutableLiveData<String>().apply {
             value = ""
         }
+
         @JvmStatic
         val text: LiveData<String> = _text
 
@@ -31,15 +31,15 @@ class Model {
         }
 
         @JvmStatic
-        private val _commandReplyLiveData = MutableLiveData<CommandReply<*>>().apply {
+        private val _lveData = MutableLiveData<MutableCollection<CommandReply<*>>>().apply {
         }
 
         @JvmStatic
-        val commandReplyLiveData: LiveData<CommandReply<*>> = _commandReplyLiveData
+        val lveData: LiveData<MutableCollection<CommandReply<*>>> = _lveData
 
         @JvmStatic
-        fun udpateMetricsScreen(text: CommandReply<*>) {
-            _commandReplyLiveData.postValue(text)
+        fun updateLiveData(text: MutableCollection<CommandReply<*>>) {
+            _lveData.postValue(text)
         }
     }
 }

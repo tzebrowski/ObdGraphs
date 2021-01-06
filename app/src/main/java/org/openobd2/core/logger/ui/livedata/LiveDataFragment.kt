@@ -1,26 +1,14 @@
 package org.openobd2.core.logger.ui.livedata
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.Model
@@ -30,6 +18,7 @@ import org.openobd2.core.logger.R
 class LiveDataFragment : Fragment() {
 
     private lateinit var dashboardViewModel: LiveDataViewModel
+    private var data: MutableSet<CommandReply<*>> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,100 +28,19 @@ class LiveDataFragment : Fragment() {
         dashboardViewModel =
             ViewModelProvider(this).get(LiveDataViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_livedata, container, false)
-        val tableLayout: TableLayout = root.findViewById(R.id.table_layout);
-        val scrollView: ScrollView = root.findViewById(R.id.scroll_view);
 
-        Model.commandReplyLiveData.observe(viewLifecycleOwner, Observer {
-            try {
-                val tableRow: TableRow = tableLayout.findViewById(it.command.hashCode())
-                tableRow.background = getResources().getDrawable(R.drawable.border);
-                val rowValue: TextView = tableRow.get(1) as TextView
-                var value: String? = it.value?.toString()
-                if (value != null){
-                    value  +=  " " + (it.command as ObdCommand).pid.units
-                }
-                rowValue.text = spannedText(value, Color.parseColor("#01804F"), 1.4f)
-            } catch (e: IllegalStateException) {
-                addRow(root, it, tableLayout, scrollView);
-            }
+        val adapter = LiveDataViewAdapter(root.context, data)
+
+        Model.lveData.observe(viewLifecycleOwner, Observer {
+            data.addAll(it.sortedBy {
+                (it.command as ObdCommand).pid.order
+            })
+            adapter.notifyDataSetChanged()
         })
+        val recyclerView: RecyclerView = root.findViewById(R.id.rrView)
+        val numberOfColumns = 1
+        recyclerView.layoutManager = GridLayoutManager(root.context, numberOfColumns)
+        recyclerView.adapter = adapter
         return root
-    }
-
-    private fun addRow(
-        root: View,
-        it: CommandReply<*>,
-        tableLayout: TableLayout,
-        scrollView: ScrollView
-    ) {
-        val tableParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.WRAP_CONTENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        val tableRow = TableRow(root.context)
-        tableRow.background = getResources().getDrawable(R.drawable.border);
-        tableRow.id = it.command.hashCode()
-        tableRow.setLayoutParams(tableParams)
-
-        val value = TextView(context)
-        val valueParams = TableRow.LayoutParams()
-
-        valueParams.width = 50
-        valueParams.weight = 1.0f
-        valueParams.gravity = Gravity.RIGHT
-        value.layoutParams = valueParams
-
-        var valueTxt: String? = it.value?.toString()
-        if (valueTxt != null){
-            valueTxt  +=  " " + (it.command as ObdCommand).pid.units
-        }
-
-        value.text = spannedText(valueTxt, Color.parseColor("#01804F"), 1.4f)
-
-        val raw = TextView(context)
-        val rawParams = TableRow.LayoutParams()
-
-        rawParams.width = 50
-        rawParams.weight = 1.0f
-        raw.layoutParams = rawParams
-        raw.text = it.raw?.toString()
-
-        val metric = TextView(context)
-        val labelarams = TableRow.LayoutParams()
-
-        labelarams.width = 300
-        labelarams.weight = 1.0f
-        metric.layoutParams = labelarams
-        metric.text = spannedText(it.command.label, Color.GRAY, 1.1f)
-        metric.setSingleLine(false)
-
-        tableRow.addView(metric)
-        // tableRow.addView(raw)
-        tableRow.addView(value)
-
-        tableLayout.addView(tableRow)
-        scrollView.fullScroll(View.FOCUS_DOWN)
-    }
-
-    private fun spannedText(it: String?, color: Int, size: Float): SpannableString {
-
-        var valText: String? = it
-        if (valText == null) {
-            valText = ""
-        }
-
-        val valSpanString = SpannableString(valText)
-        valSpanString.setSpan(RelativeSizeSpan(size), 0, valSpanString.length, 0); // set size
-        //valSpanString.setSpan(UnderlineSpan(), 0, valSpanString.length, 0)
-        valSpanString.setSpan(StyleSpan(Typeface.BOLD), 0, valSpanString.length, 0)
-        //valSpanString.setSpan(StyleSpan(Typeface.ITALIC), 0, valSpanString.length, 0)
-        valSpanString.setSpan(
-            ForegroundColorSpan(color),
-            0,
-            valSpanString.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        );
-        return valSpanString
     }
 }

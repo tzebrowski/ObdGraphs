@@ -8,19 +8,19 @@ import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.command.obd.SupportedPidsCommand
 import org.openobd2.core.logger.Model
 
-class ModelChangePublisher () : CommandReplySubscriber() {
+internal class ModelChangePublisher : CommandReplySubscriber() {
 
-    var data: MutableMap<Command,CommandReply<*>> = hashMapOf<Command,CommandReply<*>>()
+    var data: MutableMap<Command, CommandReply<*>> = hashMapOf<Command, CommandReply<*>>()
 
     override fun onNext(reply: CommandReply<*>) {
-        Log.i("DATA_LOGGER_ML", "$reply")
 
-        data[reply.command] = reply
+        Log.v("DATA_LOGGER_ML", "$reply")
 
         Model.updateDebugScreen(reply.toString())
 
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
-            Model.udpateMetricsScreen(reply)
+            data[reply.command] = reply
+            Model.updateLiveData(data.values)
         }
     }
 }

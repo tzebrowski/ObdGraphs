@@ -7,7 +7,7 @@ import org.openobd2.core.workflow.Workflow
 internal class DataLogger {
 
     private lateinit var workflow: Workflow
-    private lateinit var device: String;
+    private lateinit var device: String
 
     init {
         Thread.currentThread().contextClassLoader
@@ -16,12 +16,16 @@ internal class DataLogger {
                     .source(it)
                     .evaluationEngine("rhino")
                     .subscriber(ModelChangePublisher())
-                    .state( object : State {
+                    .state(object : State {
                         override fun starting() {
                             Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $device")
                         }
+
                         override fun completed() {
-                            Log.i("DATA_LOGGER_DL", "Collecting process completed for Device: $device")
+                            Log.i(
+                                "DATA_LOGGER_DL",
+                                "Collecting process completed for Device: $device"
+                            )
                         }
 
                         override fun stopping() {

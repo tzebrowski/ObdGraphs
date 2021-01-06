@@ -56,25 +56,13 @@
                 android:textStyle="bold" />
 
         </TableRow>
-
-        <ScrollView
-            android:id="@+id/scroll_view"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TableLayout
-                android:id="@+id/table_layout"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:isScrollContainer="true"
-                android:scrollbars="vertical">
-
-            </TableLayout>
-
-
-        </ScrollView>
-
     </TableLayout>
+
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rrView"
+        android:layout_marginTop="86dp"
+        android:layout_marginBottom="66dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,8 @@
 package org.openobd2.core.logger.bl
 
 import android.app.IntentService
-import android.content.Intent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 
 private const val ACTION_START = "org.openobd2.core.logger.ui.action.START"
@@ -15,11 +15,11 @@ class DataLoggerService : IntentService("DataLoggerService") {
             ACTION_START -> {
                 val btDeviceName: String = intent.getStringExtra(PARAM_BT_DEVICE_NAME).toString()
                 Log.i("DATA_LOGGER_SVC", "Start collecting process for device $dataLogger")
-                dataLogger.start(btDeviceName);
+                dataLogger.start(btDeviceName)
             }
             ACTION_STOP -> {
                 Log.i("DATA_LOGGER_SVC", "Stop collecting process")
-                dataLogger.stop();
+                dataLogger.stop()
             }
         }
     }
