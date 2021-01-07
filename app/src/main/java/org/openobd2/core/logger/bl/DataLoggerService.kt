@@ -15,12 +15,14 @@ class DataLoggerService : IntentService("DataLoggerService") {
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_START -> {
-                val btDeviceName: String = intent.getStringExtra(PARAM_BT_DEVICE_NAME).toString()
                 val pref = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
-                val adapterName = pref.getString("adapter.id","OBDII")
-                Log.i("DATA_LOGGER_SVC", "Start collecting process for device $adapterName")
+                val adapterName = pref.getString("pref.adapter.id","OBDII")
+                var selectedPids  = pref.getStringSet("pref.pids.generic.supported", emptySet())
 
-                adapterName?.let { dataLogger.start(it) }
+                Log.i("DATA_LOGGER_SVC", "Selected pids: $selectedPids")
+
+                Log.i("DATA_LOGGER_SVC", "Start collecting process for device $adapterName")
+                adapterName?.let { selectedPids?.let { it1 -> dataLogger.start(it, it1) } }
             }
             ACTION_STOP -> {
                 Log.i("DATA_LOGGER_SVC", "Stop collecting process")
@@ -28,18 +30,15 @@ class DataLoggerService : IntentService("DataLoggerService") {
             }
         }
     }
-
     companion object {
         @JvmStatic
         private var dataLogger: DataLogger =
             DataLogger()
-
         @JvmStatic
         fun startAction(context: Context, btDeviceName: String) {
             val intent = Intent(context, DataLoggerService::class.java).apply {
                 action = ACTION_START
                 putExtra(PARAM_BT_DEVICE_NAME, btDeviceName)
-
             }
             context.startService(intent)
         }

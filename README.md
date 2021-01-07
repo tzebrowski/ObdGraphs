@@ -12,6 +12,10 @@ This is a simple Android application that demonstrates the usage of OpenElm327 j
 
 ![Alt text](./screen2.png?raw=true "Debug view")
 
+### Settings
+
+![Alt text](./screen3.png?raw=true "Settings")
+
 
 ### Integration with OpenElm327
 

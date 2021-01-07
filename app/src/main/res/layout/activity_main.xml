@@ -58,6 +58,7 @@
 
     </TableLayout>
 
+
     <fragment
 
         android:id="@+id/nav_host_fragment"
@@ -79,5 +80,6 @@
 
 
     </fragment>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,11 +4,24 @@
         android:key="adapter"
         android:title="Adapter settings">
         <EditTextPreference
+            android:background="@drawable/border"
             android:defaultValue="OBDII"
             android:dialogTitle="Bluetooth OBD adapter name"
-            android:key="adapter.id"
+            android:key="pref.adapter.id"
             android:title="Adapter name"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Supported PID's">
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
+            android:defaultValue="@array/perf_empty_array"
+            android:key="pref.pids.generic.supported"
+            android:summary="Generic PID's for Mode 1"
+            android:title="Generic" />
 
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
+            android:defaultValue="@array/perf_empty_array"
+            android:key="pref.pids.mode22.supported"
+            android:summary="Alfa Romeo specific PID's"
+            android:title="Mode 22" />
+    </PreferenceCategory>
 </PreferenceScreen>
