@@ -18,7 +18,6 @@ import org.openobd2.core.logger.R
 class LiveDataFragment : Fragment() {
 
     private lateinit var dashboardViewModel: LiveDataViewModel
-    private var data: MutableSet<CommandReply<*>> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,17 +28,20 @@ class LiveDataFragment : Fragment() {
             ViewModelProvider(this).get(LiveDataViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_livedata, container, false)
 
+        var data: MutableList<CommandReply<*>> = arrayListOf()
         val adapter = LiveDataViewAdapter(root.context, data)
 
         Model.lveData.observe(viewLifecycleOwner, Observer {
-            data.addAll(it.sortedBy {
+            val sortedList = it.sortedBy {
                 (it.command as ObdCommand).pid.order
-            })
+            }
+            data.clear()
+            data.addAll(sortedList)
             adapter.notifyDataSetChanged()
         })
-        val recyclerView: RecyclerView = root.findViewById(R.id.rrView)
-        val numberOfColumns = 1
-        recyclerView.layoutManager = GridLayoutManager(root.context, numberOfColumns)
+
+        val recyclerView: RecyclerView = root.findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
         return root
     }

@@ -15,10 +15,10 @@ import org.openobd2.core.logger.R
 
 class LiveDataViewAdapter internal constructor(
     context: Context?,
-    data: MutableSet<CommandReply<*>>
+    data: MutableCollection<CommandReply<*>>
 ) :
     RecyclerView.Adapter<LiveDataViewAdapter.ViewHolder>() {
-    private val mData: MutableSet<CommandReply<*>> = data
+    var mData: MutableCollection<CommandReply<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(

@@ -10,10 +10,6 @@
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="66dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,47 +18,31 @@
         <TableRow android:background="@drawable/border">
 
             <TextView
-                android:layout_width="300dp"
+                android:layout_marginLeft="3dp"
+                android:layout_width="200dp"
                 android:layout_column="2"
                 android:layout_weight="1"
-                android:gravity="center"
                 android:text="Metric name"
                 android:textAllCaps="false"
                 android:textColor="#1C3D72"
                 android:textSize="20sp"
                 android:textStyle="bold"></TextView>
 
-
-            <!--
             <TextView
-                android:layout_width="130dp"
-                android:layout_column="1"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Raw"
-                android:textColor="#1C3D72"
-                android:textSize="20sp"
-                android:textStyle="bold"></TextView>
-            -->
-            <TextView
-                android:layout_width="130dp"
+                android:layout_marginRight="3dp"
+                android:gravity="right"
                 android:layout_column="0"
                 android:layout_weight="1"
                 android:backgroundTintMode="src_in"
-                android:gravity="left"
                 android:text="Value"
                 android:textColor="#1C3D72"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
         </TableRow>
     </TableLayout>
 
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rrView"
-        android:layout_marginTop="86dp"
-        android:layout_marginBottom="66dp"
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerView"
+        android:layout_marginTop="26dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

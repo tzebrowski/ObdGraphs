@@ -8,13 +8,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:background="@drawable/border"
         android:gravity="center_vertical">
 
-
         <TextView
+            android:layout_marginLeft="3dp"
             android:id="@+id/metric_name"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
@@ -22,11 +20,12 @@
             android:text="Metric name"></TextView>
 
         <TextView
+            android:layout_marginRight="3dp"
+            android:layout_width="match_parent"
             android:id="@+id/metric_value"
-            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:backgroundTintMode="src_in"
+            android:gravity="right"
             android:text="Value" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

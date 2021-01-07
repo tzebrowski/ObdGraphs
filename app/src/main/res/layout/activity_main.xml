@@ -7,9 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
@@ -50,10 +47,6 @@
                 android:text="Stop" />
 
             <!--
-            <Space
-                android:layout_width="80dp"
-                android:layout_height="wrap_content" />
-
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -71,6 +64,10 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="66dp"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@id/nav_view"
         app:layout_constraintHorizontal_bias="0.0"
@@ -78,10 +75,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:navGraph="@navigation/mobile_navigation" >
-
-
-
+        app:navGraph="@navigation/mobile_navigation">
 
 
     </fragment>

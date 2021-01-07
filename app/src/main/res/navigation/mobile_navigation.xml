@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_debug" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="org.openobd2.core.logger.ui.notifications.NotificationsFragment"
+        android:id="@+id/navigation_configuration"
+        android:name="org.openobd2.core.logger.ui.configuration.ConfigurationFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_configuration" />
 </navigation>

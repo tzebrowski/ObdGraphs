@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:key="adapter"
+        android:title="Adapter settings">
+        <EditTextPreference
+            android:defaultValue="OBDII"
+            android:dialogTitle="Bluetooth OBD adapter name"
+            android:key="adapter.id"
+            android:title="Adapter name"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

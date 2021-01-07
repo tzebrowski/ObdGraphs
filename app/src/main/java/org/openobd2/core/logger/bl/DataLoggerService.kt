@@ -4,6 +4,8 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.preference.PreferenceManager
+
 
 private const val ACTION_START = "org.openobd2.core.logger.ui.action.START"
 private const val ACTION_STOP = "org.openobd2.core.logger.ui.action.STOP"
@@ -14,8 +16,11 @@ class DataLoggerService : IntentService("DataLoggerService") {
         when (intent?.action) {
             ACTION_START -> {
                 val btDeviceName: String = intent.getStringExtra(PARAM_BT_DEVICE_NAME).toString()
-                Log.i("DATA_LOGGER_SVC", "Start collecting process for device $dataLogger")
-                dataLogger.start(btDeviceName)
+                val pref = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
+                val adapterName = pref.getString("adapter.id","OBDII")
+                Log.i("DATA_LOGGER_SVC", "Start collecting process for device $adapterName")
+
+                adapterName?.let { dataLogger.start(it) }
             }
             ACTION_STOP -> {
                 Log.i("DATA_LOGGER_SVC", "Stop collecting process")
