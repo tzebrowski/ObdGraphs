@@ -11,22 +11,6 @@ internal class DataLogger {
     private lateinit var workflow: Workflow
     private lateinit var device: String
 
-    private val value = object : State {
-        override fun starting() {
-            Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $device")
-        }
-
-        override fun completed() {
-            Log.i(
-                "DATA_LOGGER_DL",
-                "Collecting process completed for Device: $device"
-            )
-        }
-
-        override fun stopping() {
-            Log.i("DATA_LOGGER_DL", "Stop collecting process for Device: $device")
-        }
-    }
 
     init {
 
@@ -38,7 +22,22 @@ internal class DataLogger {
                     .init(Mode1CommandGroup.SUPPORTED_PIDS)
                     .evaluationEngine("rhino")
                     .subscriber(ModelChangePublisher())
-                    .state(value)
+                    .state(object : State {
+                        override fun starting() {
+                            Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $device")
+                        }
+
+                        override fun completed() {
+                            Log.i(
+                                "DATA_LOGGER_DL",
+                                "Collecting process completed for Device: $device"
+                            )
+                        }
+
+                        override fun stopping() {
+                            Log.i("DATA_LOGGER_DL", "Stop collecting process for Device: $device")
+                        }
+                    })
                     .build()
             }
     }

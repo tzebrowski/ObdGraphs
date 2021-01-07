@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.DataLoggerService
 
 
@@ -32,13 +33,13 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val btnStop: Button = findViewById(R.id.btn_stop);
+        val btnStop: FloatingActionButton = findViewById(R.id.btn_stop);
         btnStop.setOnClickListener(View.OnClickListener {
             Log.i("DATA_LOGGER_UI", "Stop data logging ")
             DataLoggerService.stopAction(this)
         });
 
-        val btnStart: Button = findViewById(R.id.btn_start);
+        val btnStart: FloatingActionButton = findViewById(R.id.btn_start);
         btnStart.setOnClickListener(View.OnClickListener {
             Log.i("DATA_LOGGER_UI", "Start data logging")
             DataLoggerService.startAction(this, "OBDII")
