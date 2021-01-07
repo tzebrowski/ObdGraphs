@@ -6,9 +6,10 @@ import androidx.preference.MultiSelectListPreference
 import org.openobd2.core.pid.PidRegistry
 import java.util.*
 
-class PidListPreferences(
+open class PidListPreferences(
     context: Context?,
-    attrs: AttributeSet?
+    attrs: AttributeSet?,
+    fileName: String
 ) :
     MultiSelectListPreference(context, attrs) {
     init {
@@ -18,7 +19,7 @@ class PidListPreferences(
             LinkedList()
 
         Thread.currentThread().contextClassLoader
-            .getResourceAsStream("generic.json").use { source ->
+            .getResourceAsStream(fileName).use { source ->
                 val registry = PidRegistry.builder().source(source).build()
                 registry.definitions. sortedBy { pidDefinition ->  pidDefinition.description}
                     .forEach {p ->
