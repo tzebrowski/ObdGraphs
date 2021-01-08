@@ -12,17 +12,11 @@ private const val ACTION_STOP = "org.openobd2.core.logger.ui.action.STOP"
 private const val PARAM_BT_DEVICE_NAME = "org.openobd2.core.logger.ui.extra.BT_DEVICE_NAME"
 
 class DataLoggerService : IntentService("DataLoggerService") {
+
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_START -> {
-                val pref = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
-                val adapterName = pref.getString("pref.adapter.id","OBDII")
-                var selectedPids  = pref.getStringSet("pref.pids.generic.supported", emptySet())
-
-                Log.i("DATA_LOGGER_SVC", "Selected pids: $selectedPids")
-
-                Log.i("DATA_LOGGER_SVC", "Start collecting process for device $adapterName")
-                adapterName?.let { selectedPids?.let { it1 -> dataLogger.start(it, it1) } }
+                dataLogger.start(this.applicationContext)
             }
             ACTION_STOP -> {
                 Log.i("DATA_LOGGER_SVC", "Stop collecting process")
@@ -30,10 +24,12 @@ class DataLoggerService : IntentService("DataLoggerService") {
             }
         }
     }
+
     companion object {
         @JvmStatic
         private var dataLogger: DataLogger =
             DataLogger()
+
         @JvmStatic
         fun startAction(context: Context, btDeviceName: String) {
             val intent = Intent(context, DataLoggerService::class.java).apply {

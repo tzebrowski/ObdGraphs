@@ -1,53 +1,71 @@
 package org.openobd2.core.logger.bl
 
+import android.content.Context
 import android.util.Log
-import org.openobd2.core.command.group.AlfaMed17CommandGroup
-import org.openobd2.core.command.group.Mode1CommandGroup
+import androidx.preference.PreferenceManager
 import org.openobd2.core.workflow.State
 import org.openobd2.core.workflow.Workflow
 
 internal class DataLogger {
+    private var state = object : State {
+        override fun starting() {
+            Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $device")
+        }
 
-    private lateinit var workflow: Workflow
+        override fun completed() {
+            Log.i(
+                "DATA_LOGGER_DL",
+                "Collecting process completed for Device: $device"
+            )
+        }
+
+        override fun stopping() {
+            Log.i("DATA_LOGGER_DL", "Stop collecting process for Device: $device")
+        }
+    }
+
+    private var mode1: Workflow = Workflow
+        .mode1()
+        .equationEngine("rhino")
+        .subscriber(ModelChangePublisher())
+        .state(state)
+        .buildMode1()
+    private var mode22: Workflow = Workflow
+        .mode22()
+        .equationEngine("rhino")
+        .subscriber(ModelChangePublisher())
+        .state(state)
+        .buildMode2()
+
     private lateinit var device: String
 
-
-    init {
-
-        Thread.currentThread().contextClassLoader
-            .getResourceAsStream("generic.json").use {
-                workflow = Workflow.mode1()
-                    .source(it)
-                    .init(Mode1CommandGroup.INIT_PROTO_DEFAULT)
-                    .init(Mode1CommandGroup.SUPPORTED_PIDS)
-                    .evaluationEngine("rhino")
-                    .subscriber(ModelChangePublisher())
-                    .state(object : State {
-                        override fun starting() {
-                            Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $device")
-                        }
-
-                        override fun completed() {
-                            Log.i(
-                                "DATA_LOGGER_DL",
-                                "Collecting process completed for Device: $device"
-                            )
-                        }
-
-                        override fun stopping() {
-                            Log.i("DATA_LOGGER_DL", "Stop collecting process for Device: $device")
-                        }
-                    })
-                    .build()
-            }
-    }
-
     fun stop() {
-        workflow.stop()
+        mode1.stop()
     }
 
-    fun start(btDeviceName: String, selecetdPids: MutableSet<String> ) {
-        this.device = btDeviceName
-        workflow.start(BluetoothConnection(btDeviceName),selecetdPids)
+    fun start(context: Context) {
+
+        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+        var selectedMode = pref.getString("pref.mode", "")
+        var adapterName = pref.getString("pref.adapter.id", "OBDII")
+
+        Log.i("DATA_LOGGER_SVC", "Selected OBD mode: $selectedMode")
+
+        this.device = adapterName.toString()
+
+        if (selectedMode.toString().contains("Generic")) {
+            var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
+            Log.i("DATA_LOGGER_SVC", "Selected pids: $selectedPids")
+
+            mode1.start(BluetoothConnection(this.device.toString()), selectedPids)
+        } else {
+            var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())
+
+            Log.i("DATA_LOGGER_SVC", "Selected pids: $selectedPids")
+            mode22.start(BluetoothConnection(this.device.toString()), selectedPids)
+        }
+
+        Log.i("DATA_LOGGER_SVC", "Start collecting process for device $adapterName")
+
     }
 }

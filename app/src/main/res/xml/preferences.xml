@@ -4,29 +4,27 @@
     <PreferenceCategory
         android:key="adapter"
         android:title="Adapter settings">
-        <EditTextPreference
-            android:background="@drawable/border"
-            android:defaultValue="OBDII"
+        <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
             android:dialogTitle="Bluetooth OBD adapter name"
+            android:defaultValue="@array/perf_empty_array"
             android:key="pref.adapter.id"
-            android:title="Adapter name"
-            app:useSimpleSummaryProvider="true" />
+            android:summary="Bluetooth OBD adapter name"
+            android:title="Adapters" />
     </PreferenceCategory>
 
 
     <PreferenceCategory
         android:key="mode"
         android:title="Mode settings">
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="pref.mode.mode1.enabled"
-            android:title="Generic mode enabled" />
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="pref.mode.mode22.enabled"
-            android:title="Mode 22 enabled" />
-
+        <ListPreference
+            android:dialogTitle="Select mode"
+            android:entries="@array/perf_modes_arrays"
+            android:entryValues="@array/perf_modes_arrays"
+            android:defaultValue="Generic mode"
+            android:key="pref.mode"
+            android:summary="Allows to specify OBD mode"
+            android:title="Mode" />
     </PreferenceCategory>
 
 
@@ -34,13 +32,13 @@
     <PreferenceCategory android:title="Supported PID's">
         <org.openobd2.core.logger.ui.preferences.Mode1PidListPreferences
             android:defaultValue="@array/perf_empty_array"
-            android:key="pref.pids.generic.supported"
+            android:key="pref.pids.generic"
             android:summary="Generic PID's for Mode 1"
             android:title="Generic" />
 
         <org.openobd2.core.logger.ui.preferences.Mode22PidListPreferences
             android:defaultValue="@array/perf_empty_array"
-            android:key="pref.pids.mode22.supported"
+            android:key="pref.pids.mode22"
             android:summary="Alfa Romeo specific PID's"
             android:title="Mode 22" />
     </PreferenceCategory>
