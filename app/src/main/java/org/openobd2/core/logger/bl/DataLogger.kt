@@ -7,33 +7,37 @@ import org.openobd2.core.workflow.State
 import org.openobd2.core.workflow.Workflow
 
 internal class DataLogger {
+
+    private var modelUpdate = ModelChangePublisher()
+
     private var state = object : State {
         override fun starting() {
-            Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $device")
+            Log.i("DATA_LOGGER_DL", "Start collecting process for the Device: $device")
+            modelUpdate.data.clear();
         }
 
         override fun completed() {
             Log.i(
                 "DATA_LOGGER_DL",
-                "Collecting process completed for Device: $device"
+                "Collecting process completed for the Device: $device"
             )
         }
 
         override fun stopping() {
-            Log.i("DATA_LOGGER_DL", "Stop collecting process for Device: $device")
+            Log.i("DATA_LOGGER_DL", "Stop collecting process for the Device: $device")
         }
     }
 
     private var mode1: Workflow = Workflow
         .mode1()
         .equationEngine("rhino")
-        .subscriber(ModelChangePublisher())
+        .subscriber(modelUpdate)
         .state(state)
         .buildMode1()
     private var mode22: Workflow = Workflow
         .mode22()
         .equationEngine("rhino")
-        .subscriber(ModelChangePublisher())
+        .subscriber(modelUpdate)
         .state(state)
         .buildMode2()
 
@@ -64,8 +68,6 @@ internal class DataLogger {
             Log.i("DATA_LOGGER_SVC", "Selected pids: $selectedPids")
             mode22.start(BluetoothConnection(this.device.toString()), selectedPids)
         }
-
         Log.i("DATA_LOGGER_SVC", "Start collecting process for device $adapterName")
-
     }
 }

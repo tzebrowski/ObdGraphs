@@ -6,8 +6,37 @@
     android:layout_height="match_parent"
     tools:context=".ui.livedata.LiveDataFragment">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:backgroundTint="#01804F"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@android:drawable/ic_lock_idle_charging"
+        app:layout_constraintBottom_toBottomOf="@id/btn_stop"
+        app:layout_constraintEnd_toEndOf="@id/btn_stop"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@android:drawable/ic_lock_power_off"
+        app:layout_constraintBottom_toBottomOf="@id/livedata_table_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/btn_start" />
 
     <TableLayout
+        android:id="@+id/livedata_table_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         app:layout_constraintBottom_toBottomOf="parent"

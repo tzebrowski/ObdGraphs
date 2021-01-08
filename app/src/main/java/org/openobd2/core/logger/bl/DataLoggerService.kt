@@ -9,7 +9,6 @@ import androidx.preference.PreferenceManager
 
 private const val ACTION_START = "org.openobd2.core.logger.ui.action.START"
 private const val ACTION_STOP = "org.openobd2.core.logger.ui.action.STOP"
-private const val PARAM_BT_DEVICE_NAME = "org.openobd2.core.logger.ui.extra.BT_DEVICE_NAME"
 
 class DataLoggerService : IntentService("DataLoggerService") {
 
@@ -31,10 +30,9 @@ class DataLoggerService : IntentService("DataLoggerService") {
             DataLogger()
 
         @JvmStatic
-        fun startAction(context: Context, btDeviceName: String) {
+        fun startAction(context: Context) {
             val intent = Intent(context, DataLoggerService::class.java).apply {
                 action = ACTION_START
-                putExtra(PARAM_BT_DEVICE_NAME, btDeviceName)
             }
             context.startService(intent)
         }

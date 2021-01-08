@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.configuration
+package org.openobd2.core.logger.ui.preferences
 
 import androidx.lifecycle.ViewModel
 

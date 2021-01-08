@@ -33,16 +33,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val btnStop: FloatingActionButton = findViewById(R.id.btn_stop);
-        btnStop.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Stop data logging ")
-            DataLoggerService.stopAction(this)
-        });
 
-        val btnStart: FloatingActionButton = findViewById(R.id.btn_start);
-        btnStart.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Start data logging")
-            DataLoggerService.startAction(this, "OBDII")
-        });
     }
 }
