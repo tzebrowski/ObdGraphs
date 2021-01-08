@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.preference.PreferenceManager
 
 
 private const val ACTION_START = "org.openobd2.core.logger.ui.action.START"

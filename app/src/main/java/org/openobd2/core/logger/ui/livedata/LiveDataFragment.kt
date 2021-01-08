@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -20,15 +19,11 @@ import org.openobd2.core.logger.bl.DataLoggerService
 
 class LiveDataFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: LiveDataViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dashboardViewModel =
-            ViewModelProvider(this).get(LiveDataViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_livedata, container, false)
 
         var data: MutableList<CommandReply<*>> = arrayListOf()

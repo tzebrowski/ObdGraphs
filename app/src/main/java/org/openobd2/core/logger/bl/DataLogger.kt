@@ -11,19 +11,19 @@ internal class DataLogger {
     private var modelUpdate = ModelChangePublisher()
 
     private var state = object : State {
-        override fun starting() {
+        override fun onStarting() {
             Log.i("DATA_LOGGER_DL", "Start collecting process for the Device: $device")
             modelUpdate.data.clear();
         }
 
-        override fun completed() {
+        override fun onComplete () {
             Log.i(
                 "DATA_LOGGER_DL",
                 "Collecting process completed for the Device: $device"
             )
         }
 
-        override fun stopping() {
+        override fun onStopping() {
             Log.i("DATA_LOGGER_DL", "Stop collecting process for the Device: $device")
         }
     }

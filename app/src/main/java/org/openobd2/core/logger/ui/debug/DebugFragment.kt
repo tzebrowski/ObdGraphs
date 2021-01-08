@@ -8,9 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
@@ -18,21 +15,17 @@ import org.openobd2.core.logger.bl.DataLoggerService
 
 class DebugFragment : Fragment() {
 
-    private lateinit var homeViewModel: DebugViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(DebugViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_debug, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
+
         Model.text.observe(viewLifecycleOwner, Observer {
             textView.append(it + "\n")
         })
-
 
         val btnStop: FloatingActionButton = root.findViewById(R.id.btn_stop);
         btnStop.setOnClickListener(View.OnClickListener {
@@ -45,8 +38,6 @@ class DebugFragment : Fragment() {
             Log.i("DATA_LOGGER_UI", "Start data logging")
             DataLoggerService.startAction(this.requireContext())
         });
-
-
         return root
     }
 }

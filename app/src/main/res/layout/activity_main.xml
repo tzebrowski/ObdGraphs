@@ -7,10 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
+
         android:id="@+id/nav_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -19,25 +17,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/bottom_nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
-
-
-    <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:showDividers="middle"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp">
-
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-
-        </TableRow>
-
-    </TableLayout>
 
     <fragment
         android:id="@+id/nav_host_fragment"
