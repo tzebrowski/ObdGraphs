@@ -31,15 +31,15 @@ class Model {
         }
 
         @JvmStatic
-        private val _lveData = MutableLiveData<MutableCollection<CommandReply<*>>>().apply {
+        private val _liveData = MutableLiveData<MutableCollection<CommandReply<*>>>().apply {
         }
 
         @JvmStatic
-        val lveData: LiveData<MutableCollection<CommandReply<*>>> = _lveData
+        val liveData: LiveData<MutableCollection<CommandReply<*>>> = _liveData
 
         @JvmStatic
         fun updateLiveData(text: MutableCollection<CommandReply<*>>) {
-            _lveData.postValue(text)
+            _liveData.postValue(text)
         }
     }
 }

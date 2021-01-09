@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.livedata
+package org.openobd2.core.logger.ui.gauge
 
 import android.os.Bundle
 import android.util.Log
@@ -16,18 +16,17 @@ import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLoggerService
 
-
-class LiveDataFragment : Fragment() {
+class GaugeViewFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_livedata, container, false)
+        val root = inflater.inflate(R.layout.fragment_gauge, container, false)
 
         var data: MutableList<CommandReply<*>> = arrayListOf()
-        val adapter = LiveDataViewAdapter(root.context, data)
+        val adapter = GaugeViewAdapter(root.context, data)
 
         Model.liveData.observe(viewLifecycleOwner, Observer {
             val sortedList = it.sortedBy {
@@ -39,20 +38,8 @@ class LiveDataFragment : Fragment() {
         })
 
         val recyclerView: RecyclerView = root.findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = GridLayoutManager(root.context, 1)
+        recyclerView.layoutManager = GridLayoutManager(root.context, 2)
         recyclerView.adapter = adapter
-
-        val btnStop: FloatingActionButton = root.findViewById(R.id.btn_stop);
-        btnStop.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Stop data logging ")
-            DataLoggerService.stopAction(this.requireContext())
-        });
-
-        val btnStart: FloatingActionButton = root.findViewById(R.id.btn_start);
-        btnStart.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Start data logging")
-            DataLoggerService.startAction(this.requireContext())
-        });
         return root
     }
 }

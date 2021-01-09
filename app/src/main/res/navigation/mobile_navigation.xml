@@ -6,6 +6,12 @@
     app:startDestination="@+id/navigation_home">
 
     <fragment
+        android:id="@+id/navigation_gauge"
+        android:name="org.openobd2.core.logger.ui.gauge.GaugeViewFragment"
+        android:label="@string/title_gauge"
+        tools:layout="@layout/fragment_gauge" />
+
+    <fragment
         android:id="@+id/navigation_dashboard"
         android:name="org.openobd2.core.logger.ui.livedata.LiveDataFragment"
         android:label="@string/title_dashboard"

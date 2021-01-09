@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">AlfaDataLogger</string>
     <string name="title_home">Debug</string>
+    <string name="title_gauge">Gauge</string>
     <string name="title_dashboard">Live data</string>
     <string name="title_notifications">Preferences</string>
     <string name="search">Search</string>
