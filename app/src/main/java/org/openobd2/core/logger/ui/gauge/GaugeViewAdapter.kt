@@ -33,14 +33,10 @@ class GaugeViewAdapter internal constructor(
         position: Int
     ) {
         val commandReply = mData.elementAt(position)
-        var valueTxt: String? = commandReply.value?.toString()
-        if (valueTxt != null) {
-            valueTxt += " " + (commandReply.command as ObdCommand).pid.units
-        }
 
         holder.labelTextView.text = commandReply.command.label
-
-        holder.valueTextView.text =valueTxt
+        holder.unitsTextView.text = (commandReply.command as ObdCommand).pid.units
+        holder.valueTextView.text = commandReply.value?.toString()
 
     }
     override fun getItemCount(): Int {
@@ -50,6 +46,7 @@ class GaugeViewAdapter internal constructor(
         View.OnClickListener {
         var labelTextView: TextView
         var valueTextView: TextView
+        var unitsTextView: TextView
 
         override fun onClick(view: View?) {
 
@@ -58,6 +55,8 @@ class GaugeViewAdapter internal constructor(
         init {
             valueTextView = itemView.findViewById(R.id.value)
             labelTextView  = itemView.findViewById(R.id.label)
+            unitsTextView  = itemView.findViewById(R.id.unit)
+
 
             itemView.setOnClickListener(this)
         }

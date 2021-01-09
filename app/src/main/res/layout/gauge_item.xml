@@ -1,48 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="3dp"
-    android:layout_marginTop="3dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginTop="2dp"
     android:background="@drawable/gauge_item_background"
     tools:context=".ui.gauge.GaugeViewFragment">
 
-    <GridLayout
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#BBBBBB"
-        android:gravity="center_vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+    <GridLayout
+        android:id="@+id/grid_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
 
         <TextView
             android:id="@+id/value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="3sp"
-            android:layout_marginRight="3sp"
-            android:layout_weight="1"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_marginLeft="1sp"
+            android:layout_marginRight="1sp"
             android:text="Value"
-            android:textColor="#01804F"
-            android:textSize="42sp"
+            android:textColor="#FFFF00"
+            android:textSize="38sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/label"
+            android:id="@+id/unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="1"
+
+            android:layout_marginLeft="1sp"
+            android:layout_marginRight="1sp"
+            android:text="Units"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/maxValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:textColor="#C22636" />
+
+        <TextView
+            android:id="@+id/minValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_column="0"
-            android:layout_marginLeft="3sp"
-            android:layout_marginRight="3sp"
-            android:layout_weight="1"
-            android:text="Label"
-            android:textColor="#1B2441"
-            android:textSize="16sp" />
+            android:textColor="#C22636" />
+
 
     </GridLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:text="Label"
+        android:textColor="#01804F"
+        android:textSize="16sp"
+        tools:layout_editor_absoluteY="71dp" />
+
+
+</GridLayout>
