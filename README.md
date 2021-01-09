@@ -10,7 +10,7 @@ This is a simple Android application that demonstrates the usage of OpenElm327 j
 
 ### Gauge view
 
-![Alt text](./screen5.png?raw=true Gauge view")
+![Alt text](./screen4.png?raw=true Gauge view")
 
 
 ### Debug view
