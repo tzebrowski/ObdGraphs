@@ -23,6 +23,6 @@ class AdaptersListPreferences(
             entriesValues.add(currentDevice.name)
         }
         setEntries(entries.toTypedArray())
-        setEntryValues(entriesValues.toTypedArray())
+        entryValues = entriesValues.toTypedArray()
     }
 }

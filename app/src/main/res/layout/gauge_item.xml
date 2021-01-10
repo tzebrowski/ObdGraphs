@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -27,7 +26,7 @@
             android:layout_marginRight="1sp"
             android:text="Value"
             android:textColor="#FFFF00"
-            android:textSize="38sp"
+            android:textSize="40sp"
             android:textStyle="bold" />
 
         <TextView
@@ -40,11 +39,11 @@
             android:layout_marginLeft="1sp"
             android:layout_marginRight="1sp"
             android:text="Units"
-            android:textColor="@color/white"
+            android:textColor="#01804F"
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/maxValue"
+            android:id="@+id/max_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
@@ -52,7 +51,7 @@
             android:textColor="#C22636" />
 
         <TextView
-            android:id="@+id/minValue"
+            android:id="@+id/min_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
@@ -69,8 +68,8 @@
         android:layout_row="1"
         android:layout_column="0"
         android:text="Label"
-        android:textColor="#01804F"
-        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         tools:layout_editor_absoluteY="71dp" />
 
 

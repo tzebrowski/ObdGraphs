@@ -7,6 +7,6 @@ import org.openobd2.core.logger.R
 class ConfigurationFragment : PreferenceFragmentCompat () {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey);
+        setPreferencesFromResource(R.xml.preferences, rootKey)
     }
 }

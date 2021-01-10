@@ -32,7 +32,7 @@
     <PreferenceCategory android:title="Supported PID's">
         <org.openobd2.core.logger.ui.preferences.Mode1PidListPreferences
             android:defaultValue="@array/perf_empty_array"
-            android:key="pref.pids.generic"
+            android:key="@string/pref.pids.generic"
             android:summary="Generic PID's for Mode 1"
             android:title="Generic" />
 

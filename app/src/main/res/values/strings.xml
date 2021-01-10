@@ -6,6 +6,10 @@
     <string name="title_notifications">Preferences</string>
     <string name="search">Search</string>
     <string name="switch_l">Switch</string>
+    <string name="pref.pids.generic">pref.pids.generic</string>
+
+
+
     <string-array name="perf_empty_array">
     </string-array>
 

@@ -28,6 +28,6 @@ open class PidListPreferences(
                     }
             }
         setEntries(entries.toTypedArray())
-        setEntryValues(entriesValues.toTypedArray())
+        entryValues = entriesValues.toTypedArray()
     }
 }

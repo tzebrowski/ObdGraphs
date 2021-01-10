@@ -1,7 +1,13 @@
 package org.openobd2.core.logger
 
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -11,6 +17,26 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
+    private var broadcastReciever = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                "data.logger.connecting" -> {
+                    val progressBar: ProgressBar = findViewById(R.id.p_bar)
+                    progressBar.visibility = View.VISIBLE
+                }
+
+                "data.logger.complete" -> {
+                    val progressBar: ProgressBar = findViewById(R.id.p_bar)
+                    progressBar.visibility = View.GONE
+                }
+
+                "data.logger.error" -> {
+                    val progressBar: ProgressBar = findViewById(R.id.p_bar)
+                    progressBar.visibility = View.GONE
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,16 +44,30 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_configuration
+                R.id.navigation_gauge,
+                R.id.navigation_home,
+                R.id.navigation_dashboard,
+                R.id.navigation_configuration
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        val filter = IntentFilter()
+        filter.addAction("data.logger.connecting")
+        filter.addAction("data.logger.complete")
+        filter.addAction("data.logger.stopping")
+        registerReceiver(broadcastReciever, filter)
 
+        val progressBar: ProgressBar = findViewById(R.id.p_bar)
+        progressBar.visibility = View.GONE
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(broadcastReciever)
     }
 }

@@ -34,7 +34,7 @@ class GaugeViewFragment : Fragment() {
             adapter.notifyDataSetChanged()
         })
 
-        val recyclerView: RecyclerView = root.findViewById(R.id.recyclerView)
+        val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 2)
         recyclerView.adapter = adapter
         return root

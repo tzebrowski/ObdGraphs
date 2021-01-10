@@ -27,17 +27,17 @@ class DebugFragment : Fragment() {
             textView.append(it + "\n")
         })
 
-        val btnStop: FloatingActionButton = root.findViewById(R.id.btn_stop);
+        val btnStop: FloatingActionButton = root.findViewById(R.id.btn_stop)
         btnStop.setOnClickListener(View.OnClickListener {
             Log.i("DATA_LOGGER_UI", "Stop data logging ")
             DataLoggerService.stopAction(this.requireContext())
-        });
+        })
 
-        val btnStart: FloatingActionButton =  root.findViewById(R.id.btn_start);
+        val btnStart: FloatingActionButton =  root.findViewById(R.id.btn_start)
         btnStart.setOnClickListener(View.OnClickListener {
             Log.i("DATA_LOGGER_UI", "Start data logging")
             DataLoggerService.startAction(this.requireContext())
-        });
+        })
         return root
     }
 }

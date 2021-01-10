@@ -4,13 +4,15 @@
 
 This is a simple Android application that demonstrates the usage of OpenElm327 java framework.
 
-### Metrics view
 
-![Alt text](./screen1.png?raw=true "Metrics view")
 
 ### Gauge view
 
 ![Alt text](./screen4.png?raw=true Gauge view")
+
+### Metrics view
+
+![Alt text](./screen1.png?raw=true "Metrics view")
 
 
 ### Debug view
