@@ -2,21 +2,25 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@android:drawable/zoom_plate"
+        android:title="@string/title_dash"/>
+    <item
         android:id="@+id/navigation_gauge"
         android:icon="@android:drawable/ic_menu_gallery"
-        android:title="Gauges" />
+        android:title="@string/title_gauge" />
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_livedata"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/title_dashboard" />
+        android:title="@string/title_livedata" />
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_debug"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home" />
+        android:title="@string/title_debug" />
 
     <item
         android:id="@+id/navigation_configuration"
         android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/title_notifications" />
+        android:title="@string/title_preferences" />
 
 </menu>

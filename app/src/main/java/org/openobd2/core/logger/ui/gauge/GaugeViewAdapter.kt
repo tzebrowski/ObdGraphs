@@ -11,7 +11,6 @@ import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 
-
 class GaugeViewAdapter internal constructor(
     context: Context?,
     data: MutableCollection<CommandReply<*>>
@@ -33,32 +32,25 @@ class GaugeViewAdapter internal constructor(
         position: Int
     ) {
         val commandReply = mData.elementAt(position)
-
         holder.labelTextView.text = commandReply.command.label
         holder.unitsTextView.text = (commandReply.command as ObdCommand).pid.units
         holder.valueTextView.text = commandReply.value?.toString()
-
     }
+
     override fun getItemCount(): Int {
         return mData.size
     }
-    inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener {
+
+    inner class ViewHolder internal constructor(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
         var labelTextView: TextView
         var valueTextView: TextView
         var unitsTextView: TextView
 
-        override fun onClick(view: View?) {
-
-        }
-
         init {
             valueTextView = itemView.findViewById(R.id.value)
-            labelTextView  = itemView.findViewById(R.id.label)
-            unitsTextView  = itemView.findViewById(R.id.unit)
-
-
-            itemView.setOnClickListener(this)
+            labelTextView = itemView.findViewById(R.id.label)
+            unitsTextView = itemView.findViewById(R.id.unit)
         }
     }
 }

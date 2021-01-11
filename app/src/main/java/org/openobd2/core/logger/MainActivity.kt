@@ -14,23 +14,27 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.openobd2.core.logger.bl.NOTIFICATION_COMPLETE
+import org.openobd2.core.logger.bl.NOTIFICATION_CONNECTING
+import org.openobd2.core.logger.bl.NOTIFICATION_ERROR
 
 
 class MainActivity : AppCompatActivity() {
+
     private var broadcastReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                "data.logger.connecting" -> {
+                NOTIFICATION_CONNECTING -> {
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.VISIBLE
                 }
 
-                "data.logger.complete" -> {
+                NOTIFICATION_COMPLETE -> {
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.GONE
                 }
 
-                "data.logger.error" -> {
+                NOTIFICATION_ERROR -> {
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.GONE
                 }
@@ -47,8 +51,8 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_gauge,
-                R.id.navigation_home,
-                R.id.navigation_dashboard,
+                R.id.navigation_debug,
+                R.id.navigation_livedata,
                 R.id.navigation_configuration
             )
         )
@@ -71,18 +75,18 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         unregisterReceiver(broadcastReciever)
     }
+
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(broadcastReciever)
+//        unregisterReceiver(broadcastReciever)
     }
 
     private fun registerReciever() {
         registerReceiver(broadcastReciever, IntentFilter().apply {
-            addAction("data.logger.connecting")
-            addAction("data.logger.complete")
+            addAction(NOTIFICATION_CONNECTING)
+            addAction(NOTIFICATION_COMPLETE)
             addAction("data.logger.stopping")
+            addAction(NOTIFICATION_ERROR)
         })
     }
-
-
 }

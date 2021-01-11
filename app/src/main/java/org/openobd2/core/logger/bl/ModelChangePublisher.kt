@@ -10,18 +10,16 @@ import org.openobd2.core.logger.Model
 
 internal class ModelChangePublisher : CommandReplySubscriber() {
 
-    var data: MutableMap<Command, CommandReply<*>> = hashMapOf<Command, CommandReply<*>>()
+    var data: MutableMap<Command, CommandReply<*>> = hashMapOf()
 
     override fun onNext(reply: CommandReply<*>) {
 
         Log.v("DATA_LOGGER_ML", "${reply.command}")
 
         Model.updateDebugScreen(reply.toString())
-
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
             data[reply.command] = reply
-            Model.updateLiveData(data.filterKeys { command -> command.label.length > 0 }.values as MutableCollection<CommandReply<*>>)
-
+            Model.updateLiveData(data.filterKeys { command -> command.label.isNotEmpty() }.values as MutableCollection<CommandReply<*>>)
         }
     }
 }

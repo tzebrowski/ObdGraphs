@@ -8,6 +8,11 @@ import org.openobd2.core.StatusListener
 import org.openobd2.core.workflow.Workflow
 
 
+val NOTIFICATION_CONNECTING = "data.logger.connecting"
+val NOTIFICATION_COMPLETE = "data.logger.complete"
+val NOTIFICATION_ERROR = "data.logger.error"
+val NOTIFICATION_STOPPING = "data.logger.stopping"
+
 internal class DataLogger {
 
     private var modelUpdate = ModelChangePublisher()
@@ -21,7 +26,7 @@ internal class DataLogger {
             modelUpdate.data.clear()
 
             context.sendBroadcast(Intent().apply {
-                action = "data.logger.connecting"
+                action = NOTIFICATION_CONNECTING
             })
 
         }
@@ -33,7 +38,7 @@ internal class DataLogger {
             )
 
             context.sendBroadcast(Intent().apply {
-                action = "data.logger.error"
+                action = NOTIFICATION_ERROR
             })
         }
 
@@ -44,7 +49,7 @@ internal class DataLogger {
             )
 
             context.sendBroadcast(Intent().apply {
-                action = "data.logger.complete";
+                action = NOTIFICATION_COMPLETE;
             })
         }
 
@@ -52,7 +57,7 @@ internal class DataLogger {
             Log.i(LOG_KEY, "Stop collecting process for the Device: $device")
 
             context.sendBroadcast(Intent().apply {
-                action = "data.logger.stopping";
+                action = NOTIFICATION_STOPPING;
             })
         }
     }
