@@ -14,13 +14,14 @@ internal class ModelChangePublisher : CommandReplySubscriber() {
 
     override fun onNext(reply: CommandReply<*>) {
 
-        Log.v("DATA_LOGGER_ML", "$reply")
+        Log.v("DATA_LOGGER_ML", "${reply.command}")
 
         Model.updateDebugScreen(reply.toString())
 
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
             data[reply.command] = reply
-            Model.updateLiveData(data.values)
+            Model.updateLiveData(data.filterKeys { command -> command.label.length > 0 }.values as MutableCollection<CommandReply<*>>)
+
         }
     }
 }

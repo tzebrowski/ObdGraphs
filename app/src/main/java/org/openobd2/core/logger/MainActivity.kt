@@ -55,19 +55,34 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val filter = IntentFilter()
-        filter.addAction("data.logger.connecting")
-        filter.addAction("data.logger.complete")
-        filter.addAction("data.logger.stopping")
-        registerReceiver(broadcastReciever, filter)
+        registerReciever()
 
         val progressBar: ProgressBar = findViewById(R.id.p_bar)
         progressBar.visibility = View.GONE
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        registerReciever()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(broadcastReciever)
+    }
     override fun onStop() {
         super.onStop()
         unregisterReceiver(broadcastReciever)
     }
+
+    private fun registerReciever() {
+        registerReceiver(broadcastReciever, IntentFilter().apply {
+            addAction("data.logger.connecting")
+            addAction("data.logger.complete")
+            addAction("data.logger.stopping")
+        })
+    }
+
+
 }
