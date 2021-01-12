@@ -8,7 +8,7 @@ This is a simple Android application that demonstrates the usage of OpenElm327 j
 
 ### Dash view
 
-![Alt text](./screen5.png?raw=true Dash view")
+![Alt text](./screen5.png?raw=true "Dash view")
 
 ### Gauge view
 
