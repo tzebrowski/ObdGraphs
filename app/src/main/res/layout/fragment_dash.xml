@@ -5,11 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.dash.DashFragment">
 
-
     <androidx.recyclerview.widget.RecyclerView android:id="@+id/recycler_view"
-        android:layout_marginTop="26dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

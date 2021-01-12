@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.Legend
@@ -43,16 +44,36 @@ class DashViewAdapter internal constructor(
         val commandReply = mData.elementAt(position)
         holder.buildChart((commandReply.command as ObdCommand).pid)
 
-       commandReply.value?.apply {
+        holder.units.text = ((commandReply.command as ObdCommand).pid).units
+        holder.value.text = commandReply.value?.toString()
+
+        commandReply.value?.apply {
             val segmentNum: Int = holder.segments.indexOf(commandReply.value as Int)
             (segmentNum > 0).apply {
-                (0..segmentNum - 1).reversed().forEach { e ->
-                    val dataSet = holder.chart!!.data.getDataSetByIndex(e) as BarDataSet
-                    dataSet.setColor(Color.rgb(104, 241, 175));
-                    dataSet.notifyDataSetChanged()
+
+                val percent75: Int = (holder.segments.numOfSegments * 75)/100
+
+                if (segmentNum > percent75){
+                    (0..percent75).reversed().forEach { e ->
+                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                        dataSet.setColor(Color.rgb(124, 252, 79));
+                        dataSet.notifyDataSetChanged()
+                    }
+                    (percent75..segmentNum).reversed().forEach { e ->
+                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                        dataSet.setColor(Color.rgb(194,38,54));
+                        dataSet.notifyDataSetChanged()
+                    }
+
+                }else{
+                    (0..segmentNum).reversed().forEach { e ->
+                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                        dataSet.setColor(Color.rgb(124, 252, 79));
+                        dataSet.notifyDataSetChanged()
+                    }
                 }
             }
-       }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -62,16 +83,27 @@ class DashViewAdapter internal constructor(
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var chart: BarChart
+        var label: TextView
+        var value: TextView
+        var units: TextView
+
         lateinit var segments: Segments
         var initialized: Boolean = false
 
         init {
             chart = itemView.findViewById(R.id.chart)
+            label = itemView.findViewById(R.id.dash_label)
+            units = itemView.findViewById(R.id.dash_units)
+            value = itemView.findViewById(R.id.dash_value)
         }
 
-        fun buildChart(pid: PidDefinition?) {
-            if (initialized){
-            }else{
+        fun buildChart(pid: PidDefinition) {
+            if (initialized) {
+            } else {
+                this.segments = Segments(30, pid!!.max.toInt())
+
+                this.label.text = pid.description
+
                 chart!!.setDrawBarShadow(false)
                 chart!!.setDrawValueAboveBar(false)
                 chart!!.setTouchEnabled(false)
@@ -104,7 +136,7 @@ class DashViewAdapter internal constructor(
                 l.form = Legend.LegendForm.SQUARE
 
                 val dataSets: ArrayList<IBarDataSet> = ArrayList()
-                this.segments = Segments(20, pid!!.max.toInt())
+
 
                 this.segments.to().forEach { v: Float ->
                     val values: ArrayList<BarEntry> = ArrayList()

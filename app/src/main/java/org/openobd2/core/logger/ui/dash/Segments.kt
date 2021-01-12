@@ -14,31 +14,26 @@ class Segments {
         }
     }
 
-    val numOfSegments: Int
-    var segments: MutableList<Segment>;
-    val targetValue: Int
+    private var segments: MutableList<Segment>;
+    private val maxValue: Int
 
-    constructor(numOfSegments: Int, targetValue: Int) {
+    val numOfSegments: Int
+
+    constructor(numOfSegments: Int, maxValue: Int) {
         this.numOfSegments = numOfSegments
-        this.targetValue = targetValue
-        this.segments = calculateSegments(targetValue)
+        this.maxValue = maxValue
+        this.segments = calculateSegments(maxValue)
     }
 
     fun indexOf(value: Int): Int {
-        if (value >= targetValue) {
-            //last segment
-            return segments.size;
-        } else if (value == 0) {
-            return 0;
-        } else {
-            for (i in segments.indices) {
-                val r = this.segments[i]
-                if (value >= r.from && value <= r.to) {
-                    return i
-                }
-            }
-            return -1
+        if (value == 0){
+            return 0
         }
+        val indexOf: Int = value / (maxValue / numOfSegments);
+        if (indexOf > numOfSegments){
+            return numOfSegments;
+        }
+        return  indexOf
     }
 
     fun to(): MutableList<Float> {
@@ -51,14 +46,13 @@ class Segments {
     }
 
     private fun calculateSegments(maxValue: Int): MutableList<Segment> {
-        val setSize = maxValue / numOfSegments
+        val segmentSize = maxValue / numOfSegments
         val list: MutableList<Segment> = LinkedList<Segment>()
-        var cnt = setSize
+        var cnt = segmentSize
         while (cnt <= maxValue) {
-            list.add(Segment(cnt - setSize, cnt - 1))
-            cnt += setSize
+            list.add(Segment(cnt - segmentSize, cnt - 1))
+            cnt += segmentSize
         }
-        this.segments = list
         return list
     }
 }
