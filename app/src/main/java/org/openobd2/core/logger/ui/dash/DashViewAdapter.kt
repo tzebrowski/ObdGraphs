@@ -3,7 +3,6 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,6 @@ import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.pid.PidDefinition
-import java.util.*
-import kotlin.collections.ArrayList
 
 class DashViewAdapter internal constructor(
     context: Context?,
@@ -30,18 +27,6 @@ class DashViewAdapter internal constructor(
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
     var mData: MutableCollection<CommandReply<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
-
-
-
-    class Segment {
-        var from = 0
-        var to = 0
-        constructor(from:Int, to:Int){
-            this.from = from
-            this.to = to
-        }
-    }
-
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -58,14 +43,16 @@ class DashViewAdapter internal constructor(
         val commandReply = mData.elementAt(position)
         holder.buildChart((commandReply.command as ObdCommand).pid)
 
-        holder.pos(holder.segments, commandReply.value as Int).apply {
-            val to = holder.segments.indexOf(this)
-            (0..to - 1).reversed().forEach { e ->
-                val dataSet = holder.chart!!.data.getDataSetByIndex(e) as BarDataSet
-                dataSet.setColor(Color.rgb(104, 241, 175));
-                dataSet.notifyDataSetChanged()
+       commandReply.value?.apply {
+            val segmentNum: Int = holder.segments.indexOf(commandReply.value as Int)
+            (segmentNum > 0).apply {
+                (0..segmentNum - 1).reversed().forEach { e ->
+                    val dataSet = holder.chart!!.data.getDataSetByIndex(e) as BarDataSet
+                    dataSet.setColor(Color.rgb(104, 241, 175));
+                    dataSet.notifyDataSetChanged()
+                }
             }
-        }
+       }
     }
 
     override fun getItemCount(): Int {
@@ -75,96 +62,67 @@ class DashViewAdapter internal constructor(
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var chart: BarChart
-        val numOfElemnts = 20
-        lateinit var segments: List<Segment>;
+        lateinit var segments: Segments
+        var initialized: Boolean = false
 
         init {
             chart = itemView.findViewById(R.id.chart)
-
         }
-
-
-        fun pos(segments: List<Segment>, value: Int): Segment {
-            return segments.stream()
-                .filter { r: Segment -> value >= r.from && value <= r.to }
-                .findAny().get()
-        }
-
-        fun calculateRange(maxValue: Int): List<Segment> {
-            val setSize = maxValue / numOfElemnts
-            val list: MutableList<Segment> = LinkedList<Segment>()
-            var cnt = setSize
-            while (cnt <= maxValue) {
-                list.add(Segment(cnt - setSize, cnt - 1))
-                cnt += setSize
-            }
-            return list
-        }
-
 
         fun buildChart(pid: PidDefinition?) {
-            chart!!.setDrawBarShadow(false)
-            chart!!.setDrawValueAboveBar(false)
-            chart!!.setTouchEnabled(false)
-            chart!!.description.isEnabled = false
-            chart!!.setPinchZoom(false)
+            if (initialized){
+            }else{
+                chart!!.setDrawBarShadow(false)
+                chart!!.setDrawValueAboveBar(false)
+                chart!!.setTouchEnabled(false)
+                chart!!.description.isEnabled = false
+                chart!!.setPinchZoom(false)
+                chart!!.setDrawGridBackground(false)
+                val xAxis = chart!!.xAxis
+                xAxis.position = XAxis.XAxisPosition.BOTTOM
+                xAxis.setDrawGridLines(false)
+                val leftAxis = chart!!.axisLeft
+                leftAxis.setDrawGridLines(false)
+                leftAxis.setDrawTopYLabelEntry(false)
+                leftAxis.setDrawAxisLine(false)
+                leftAxis.setDrawGridLinesBehindData(false)
+                leftAxis.setDrawLabels(false)
+                leftAxis.setDrawZeroLine(false)
+                leftAxis.setDrawLimitLinesBehindData(false)
+                leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
+                leftAxis.spaceTop = 15f
+                leftAxis.axisMinimum = 0f
 
-            chart!!.setDrawGridBackground(false)
+                val rightAxis = chart!!.axisRight
+                rightAxis.setDrawGridLines(false)
 
-            val xAxis = chart!!.xAxis
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
+                val l = chart!!.legend
+                l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+                l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+                l.orientation = Legend.LegendOrientation.HORIZONTAL
+                l.setDrawInside(false)
+                l.form = Legend.LegendForm.SQUARE
 
-            xAxis.setDrawGridLines(false)
+                val dataSets: ArrayList<IBarDataSet> = ArrayList()
+                this.segments = Segments(20, pid!!.max.toInt())
 
-            val leftAxis = chart!!.axisLeft
-            leftAxis.setDrawGridLines(false)
-            leftAxis.setDrawTopYLabelEntry(false)
-            leftAxis.setDrawAxisLine(false)
-            leftAxis.setDrawGridLinesBehindData(false)
-            leftAxis.setDrawLabels(false)
-            leftAxis.setDrawZeroLine(false)
-            leftAxis.setDrawLimitLinesBehindData(false)
-            leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
-            leftAxis.spaceTop = 15f
-            leftAxis.axisMinimum = 0f
+                this.segments.to().forEach { v: Float ->
+                    val values: ArrayList<BarEntry> = ArrayList()
+                    values.add(BarEntry(v, v))
+                    val set1 = BarDataSet(values, "")
+                    set1.setDrawIcons(false)
+                    set1.setDrawValues(false)
+                    set1.setColor(Color.rgb(187, 187, 187))
+                    dataSets.add(set1)
+                }
 
-            val rightAxis = chart!!.axisRight
-            rightAxis.setDrawGridLines(false)
+                val data = BarData(dataSets)
+                data.setDrawValues(false)
 
-            val l = chart!!.legend
-            l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
-            l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
-            l.orientation = Legend.LegendOrientation.HORIZONTAL
-            l.setDrawInside(false)
-            l.form = Legend.LegendForm.SQUARE
-
-            val dataSets: ArrayList<IBarDataSet> = ArrayList()
-            this.segments = calculateRange(pid!!.max.toInt())
-
-
-            this.segments.forEach { i: Segment ->
-                val v = i.to.toFloat()
-                val values: ArrayList<BarEntry> = ArrayList()
-                values.add(BarEntry(v,v))
-                val set1 = BarDataSet(values, "")
-                set1.setDrawIcons(false)
-                set1.setDrawValues(false)
-                set1.setColor(Color.rgb(187,187,187))
-                dataSets.add(set1)
+                data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.2f
+                chart!!.data = data
+                initialized = true
             }
-
-            val data = BarData(dataSets)
-            data.setDrawValues(false)
-
-            data.barWidth = pid.max.toFloat()/numOfElemnts/1.2f
-            chart!!.data = data
         }
-
-
     }
-
-
-
-
-
 }
