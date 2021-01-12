@@ -5,9 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/dash_item_background"
-    android:layout_marginTop="2dp"
-
-    >
+    android:layout_marginTop="2dp">
 
     <GridLayout
         android:id="@+id/grid_layout"

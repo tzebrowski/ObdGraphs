@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.Legend
@@ -48,11 +49,18 @@ class DashViewAdapter internal constructor(
         holder.value.text = commandReply.value?.toString()
 
         commandReply.value?.apply {
-            val segmentNum: Int = holder.segments.indexOf(commandReply.value as Int)
+            val segmentNum: Int = holder.segments.indexOf((commandReply.value as Number).toInt())
             (segmentNum > 0).apply {
 
-                val percent75: Int = (holder.segments.numOfSegments * 75)/100
+                //reset
+                (0..holder.segments.numOfSegments).reversed().forEach { e ->
+                    val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                    dataSet.setColor(Color.rgb(187, 187, 187))
+                    dataSet.notifyDataSetChanged()
+                }
 
+
+                val percent75: Int = (holder.segments.numOfSegments * 75)/100
                 if (segmentNum > percent75){
                     (0..percent75).reversed().forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
@@ -113,6 +121,7 @@ class DashViewAdapter internal constructor(
                 val xAxis = chart!!.xAxis
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.setDrawGridLines(false)
+
                 val leftAxis = chart!!.axisLeft
                 leftAxis.setDrawGridLines(false)
                 leftAxis.setDrawTopYLabelEntry(false)
@@ -121,12 +130,14 @@ class DashViewAdapter internal constructor(
                 leftAxis.setDrawLabels(false)
                 leftAxis.setDrawZeroLine(false)
                 leftAxis.setDrawLimitLinesBehindData(false)
+
                 leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
                 leftAxis.spaceTop = 15f
                 leftAxis.axisMinimum = 0f
 
                 val rightAxis = chart!!.axisRight
                 rightAxis.setDrawGridLines(false)
+
 
                 val l = chart!!.legend
                 l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
