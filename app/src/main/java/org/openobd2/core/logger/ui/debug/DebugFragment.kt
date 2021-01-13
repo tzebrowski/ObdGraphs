@@ -33,7 +33,7 @@ class DebugFragment : Fragment() {
             DataLoggerService.stopAction(this.requireContext())
         })
 
-        val btnStart: FloatingActionButton =  root.findViewById(R.id.btn_start)
+        val btnStart: FloatingActionButton = root.findViewById(R.id.btn_start)
         btnStart.setOnClickListener(View.OnClickListener {
             Log.i("DATA_LOGGER_UI", "Start data logging")
             DataLoggerService.startAction(this.requireContext())

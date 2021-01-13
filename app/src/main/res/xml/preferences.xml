@@ -12,6 +12,42 @@
             android:title="Adapters" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Dash View">
+        <CheckBoxPreference  android:defaultValue="true"
+            android:key="pref.dash.view.enabled"
+            android:summary="Enable the Dash view"
+            android:title="Enable the Dash view"/>
+
+        <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
+            android:defaultValue="@array/perf_empty_array"
+            android:key="pref.dash.pids.selected"
+            android:summary="Displayed PIDs"
+            android:title="Displayed PIDs" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Gauge View">
+        <CheckBoxPreference  android:defaultValue="true"
+            android:key="pref.gauge.view.enabled"
+            android:summary="Enable the Gauge view"
+            android:title="Enable the Gauge view"/>
+
+        <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
+            android:defaultValue="@array/perf_empty_array"
+            android:key="pref.gauge.pids.selected"
+            android:summary="Displayed PIDs"
+            android:title="Displayed PIDs" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="Debug View">
+        <CheckBoxPreference  android:defaultValue="true"
+            android:key="pref.dash.view.enabled"
+            android:summary="Enable the Debug view"
+            android:title="Enable the Debug view"/>
+    </PreferenceCategory>
+
 
     <PreferenceCategory
         android:key="mode"

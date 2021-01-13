@@ -5,9 +5,14 @@ import java.util.*
 import kotlin.math.round
 
 fun CommandReply<*>.valueAsString(): String {
-    return when (value) {
-        null -> ""
-        else -> this.value.toString().toDouble().round(2).toString()
+    return if (this.value == null) {
+        ""
+    } else {
+        if (value.toString().contains(".")) {
+            value.toString().toDouble().round(2).toString()
+        } else {
+            value.toString().toInt().toString()
+        }
     }
 }
 
@@ -23,6 +28,7 @@ fun Double.round(decimals: Int): Double {
     repeat(decimals) { multiplier *= 10 }
     return round(this * multiplier) / multiplier
 }
+
 
 class Segments {
 
@@ -40,7 +46,7 @@ class Segments {
         }
     }
 
-    private var segments: MutableList<Segment>;
+    private var segments: MutableList<Segment>
     private val maxValue: Double
 
     val numOfSegments: Int
@@ -69,13 +75,13 @@ class Segments {
         val l: MutableList<Double> = arrayListOf()
         l.add(0.0)
         for (i in segments) {
-            l.add(i.to.toDouble())
+            l.add(i.to)
         }
         return l
     }
 
 
-    fun calculateSegments(from: Double, to: Double): MutableList<Segment> {
+    private fun calculateSegments(from: Double, to: Double): MutableList<Segment> {
         var pFrom = from
         if (from < 0) pFrom *= -1
 

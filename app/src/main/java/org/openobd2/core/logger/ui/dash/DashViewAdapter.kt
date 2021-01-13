@@ -3,7 +3,6 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,14 +59,14 @@ class DashViewAdapter internal constructor(
 
                 (0..segmentNum).forEach { e ->
                     val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                    dataSet.color = Color.rgb(124, 252, 79);
+                    dataSet.color = Color.rgb(124, 252, 79)
                 }
 
-                val percent75: Int = (holder.segments.numOfSegments * 75)/100
-                if (segmentNum > percent75){
+                val percent75: Int = (holder.segments.numOfSegments * 75) / 100
+                if (segmentNum > percent75) {
                     (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.color = Color.rgb(194,38,54);
+                        dataSet.color = Color.rgb(194, 38, 54)
                     }
                 }
                 holder.chart.notifyDataSetChanged()
@@ -101,20 +100,20 @@ class DashViewAdapter internal constructor(
             if (initialized) {
             } else {
 
-                this.segments = Segments(30,pid!!.min.toDouble(), pid!!.max.toDouble())
+                this.segments = Segments(30, pid.min.toDouble(), pid.max.toDouble())
                 this.label.text = pid.description
 
-                chart!!.setDrawBarShadow(false)
-                chart!!.setDrawValueAboveBar(false)
-                chart!!.setTouchEnabled(false)
-                chart!!.description.isEnabled = false
-                chart!!.setPinchZoom(false)
-                chart!!.setDrawGridBackground(false)
-                val xAxis = chart!!.xAxis
+                chart.setDrawBarShadow(false)
+                chart.setDrawValueAboveBar(false)
+                chart.setTouchEnabled(false)
+                chart.description.isEnabled = false
+                chart.setPinchZoom(false)
+                chart.setDrawGridBackground(false)
+                val xAxis = chart.xAxis
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.setDrawGridLines(false)
 
-                val leftAxis = chart!!.axisLeft
+                val leftAxis = chart.axisLeft
                 leftAxis.setDrawGridLines(false)
                 leftAxis.setDrawTopYLabelEntry(false)
                 leftAxis.setDrawAxisLine(false)
@@ -127,11 +126,11 @@ class DashViewAdapter internal constructor(
                 leftAxis.spaceTop = 15f
                 leftAxis.axisMinimum = 0f
 
-                val rightAxis = chart!!.axisRight
+                val rightAxis = chart.axisRight
                 rightAxis.setDrawGridLines(false)
 
 
-                val l = chart!!.legend
+                val l = chart.legend
                 l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
                 l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
                 l.orientation = Legend.LegendOrientation.HORIZONTAL
@@ -147,7 +146,7 @@ class DashViewAdapter internal constructor(
                     val set1 = BarDataSet(values, "")
                     set1.setDrawIcons(false)
                     set1.setDrawValues(false)
-                    set1.setColor(Color.rgb(187, 187, 187))
+                    set1.color = Color.rgb(187, 187, 187)
                     dataSets.add(set1)
                 }
 
@@ -155,7 +154,7 @@ class DashViewAdapter internal constructor(
                 data.setDrawValues(false)
 
                 data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.2f
-                chart!!.data = data
+                chart.data = data
                 initialized = true
             }
         }

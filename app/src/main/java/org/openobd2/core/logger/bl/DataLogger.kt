@@ -49,7 +49,7 @@ internal class DataLogger {
             )
 
             context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_COMPLETE;
+                action = NOTIFICATION_COMPLETE
             })
         }
 
@@ -57,7 +57,7 @@ internal class DataLogger {
             Log.i(LOG_KEY, "Stop collecting process for the Device: $device")
 
             context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_STOPPING;
+                action = NOTIFICATION_STOPPING
             })
         }
     }

@@ -76,11 +76,6 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(broadcastReciever)
     }
 
-    override fun onStop() {
-        super.onStop()
-//        unregisterReceiver(broadcastReciever)
-    }
-
     private fun registerReciever() {
         registerReceiver(broadcastReciever, IntentFilter().apply {
             addAction(NOTIFICATION_CONNECTING)
