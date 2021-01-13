@@ -3,6 +3,7 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,40 +47,33 @@ class DashViewAdapter internal constructor(
         holder.buildChart((commandReply.command as ObdCommand).pid)
 
         holder.units.text = ((commandReply.command as ObdCommand).pid).units
-        holder.value.text = commandReply.value?.toString()
+        holder.value.text = commandReply.valueToDouble()
 
         commandReply.value?.apply {
-            val segmentNum: Int = holder.segments.indexOf((commandReply.value as Number).toInt())
-            (segmentNum > 0).apply {
+            var segmentNum: Int = holder.segments.indexOf((commandReply.value as Number).toDouble())
 
+            (segmentNum > 0).apply {
                 //reset
-                (0..holder.segments.numOfSegments).reversed().forEach { e ->
+                (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
                     val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                     dataSet.setColor(Color.rgb(187, 187, 187))
-                    dataSet.notifyDataSetChanged()
                 }
 
+
+                (0..segmentNum).reversed().forEach { e ->
+                    val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                    dataSet.setColor(Color.rgb(124, 252, 79));
+                }
 
                 val percent75: Int = (holder.segments.numOfSegments * 75)/100
                 if (segmentNum > percent75){
-                    (0..percent75).reversed().forEach { e ->
-                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.setColor(Color.rgb(124, 252, 79));
-                        dataSet.notifyDataSetChanged()
-                    }
                     (percent75..segmentNum).reversed().forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                         dataSet.setColor(Color.rgb(194,38,54));
-                        dataSet.notifyDataSetChanged()
-                    }
-
-                }else{
-                    (0..segmentNum).reversed().forEach { e ->
-                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.setColor(Color.rgb(124, 252, 79));
-                        dataSet.notifyDataSetChanged()
                     }
                 }
+                holder.chart.notifyDataSetChanged()
+
             }
         }
     }
@@ -108,8 +102,8 @@ class DashViewAdapter internal constructor(
         fun buildChart(pid: PidDefinition) {
             if (initialized) {
             } else {
-                this.segments = Segments(30,pid!!.min.toInt(), pid!!.max.toInt())
 
+                this.segments = Segments(30,pid!!.min.toDouble(), pid!!.max.toDouble())
                 this.label.text = pid.description
 
                 chart!!.setDrawBarShadow(false)
@@ -149,9 +143,9 @@ class DashViewAdapter internal constructor(
                 val dataSets: ArrayList<IBarDataSet> = ArrayList()
 
 
-                this.segments.to().forEach { v: Float ->
+                this.segments.to().forEach { v: Double ->
                     val values: ArrayList<BarEntry> = ArrayList()
-                    values.add(BarEntry(v, v))
+                    values.add(BarEntry(v.toFloat(), v.toFloat()))
                     val set1 = BarDataSet(values, "")
                     set1.setDrawIcons(false)
                     set1.setDrawValues(false)

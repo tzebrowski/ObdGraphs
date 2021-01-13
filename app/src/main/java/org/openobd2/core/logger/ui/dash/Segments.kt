@@ -1,32 +1,52 @@
 package org.openobd2.core.logger.ui.dash
 
+import android.util.Log
+import org.openobd2.core.command.CommandReply
 import java.util.*
+import kotlin.math.round
+
+fun CommandReply<*>.valueToDouble(): String {
+    return when (value){
+        null -> ""
+        else-> this.value.toString().toDouble().round(2).toString()
+    }
+}
+
+fun Double.round(decimals: Int): Double {
+    var multiplier = 1.0
+    repeat(decimals) { multiplier *= 10 }
+    return round(this * multiplier) / multiplier
+}
 
 class Segments {
 
     class Segment {
-        var from = 0
-        var to = 0
+        var from:Double
+        var to:Double
 
-        constructor(from: Int, to: Int) {
-            this.from = from
-            this.to = to
+        constructor(from: Double, to: Double) {
+            this.from = from.round(2)
+            this.to = to.round(2)
+        }
+
+        override fun toString(): String {
+            return "$from - $to \n"
         }
     }
 
     private var segments: MutableList<Segment>;
-    private val maxValue: Int
+    private val maxValue: Double
 
     val numOfSegments: Int
 
-    constructor(numOfSegments: Int,minValue: Int, maxValue: Int) {
+    constructor(numOfSegments: Int,minValue: Double, maxValue: Double) {
         this.numOfSegments = numOfSegments
         this.maxValue = maxValue
         this.segments = calculateSegments(minValue,maxValue)
     }
 
-    fun indexOf(value: Int): Int {
-        if (value == 0){
+    fun indexOf(value: Double): Int {
+        if (value.equals(0)){
             return 0
         }else {
             for (i in segments.indices) {
@@ -39,16 +59,17 @@ class Segments {
         return segments.size
     }
 
-    fun to(): MutableList<Float> {
-        val l: MutableList<Float> = arrayListOf()
-        l.add(0f)
+    fun to(): MutableList<Double> {
+        val l: MutableList<Double> = arrayListOf()
+        l.add(0.0)
         for (i in segments) {
-            l.add(i.to.toFloat())
+            l.add(i.to.toDouble())
         }
         return l
     }
-  
-    fun calculateSegments(from: Int, to: Int): MutableList<Segment> {
+
+
+    fun calculateSegments(from: Double, to: Double): MutableList<Segment> {
         var pFrom = from
         if (from < 0) pFrom *= -1
 
@@ -56,7 +77,7 @@ class Segments {
         val list: MutableList<Segment> = LinkedList()
         var cnt = from + segmentSize
         while (cnt <= to) {
-            list.add(Segment(cnt - segmentSize, cnt - 1))
+            list.add(Segment(cnt - segmentSize,(cnt - 0.01)))
             cnt += segmentSize
         }
         return list

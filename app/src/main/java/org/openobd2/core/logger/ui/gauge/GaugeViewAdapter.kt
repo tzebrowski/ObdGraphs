@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.ui.dash.round
+import org.openobd2.core.logger.ui.dash.valueToDouble
 
 class GaugeViewAdapter internal constructor(
     context: Context?,
@@ -34,7 +36,7 @@ class GaugeViewAdapter internal constructor(
         val commandReply = mData.elementAt(position)
         holder.labelTextView.text = commandReply.command.label
         holder.unitsTextView.text = (commandReply.command as ObdCommand).pid.units
-        holder.valueTextView.text = commandReply.value?.toString()
+        holder.valueTextView.text = commandReply.valueToDouble()
     }
 
     override fun getItemCount(): Int {
