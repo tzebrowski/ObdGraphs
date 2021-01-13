@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.dash.round
-import org.openobd2.core.logger.ui.dash.valueToDouble
+import org.openobd2.core.logger.ui.dash.valueAsString
 
 
 class LiveDataViewAdapter internal constructor(
@@ -37,7 +36,7 @@ class LiveDataViewAdapter internal constructor(
     ) {
 
         val commandReply = mData.elementAt(position)
-        var valueTxt: String? = commandReply.valueToDouble()
+        var valueTxt: String? = commandReply.valueAsString()
         if (valueTxt != null) {
             valueTxt += " " + (commandReply.command as ObdCommand).pid.units
         }

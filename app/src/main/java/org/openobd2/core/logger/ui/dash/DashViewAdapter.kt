@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.Legend
@@ -47,29 +46,28 @@ class DashViewAdapter internal constructor(
         holder.buildChart((commandReply.command as ObdCommand).pid)
 
         holder.units.text = ((commandReply.command as ObdCommand).pid).units
-        holder.value.text = commandReply.valueToDouble()
+        holder.value.text = commandReply.valueAsString()
 
         commandReply.value?.apply {
-            var segmentNum: Int = holder.segments.indexOf((commandReply.value as Number).toDouble())
+            var segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
 
             (segmentNum > 0).apply {
                 //reset
                 (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
                     val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                    dataSet.setColor(Color.rgb(187, 187, 187))
+                    dataSet.color = Color.rgb(187, 187, 187)
                 }
 
-
-                (0..segmentNum).reversed().forEach { e ->
+                (0..segmentNum).forEach { e ->
                     val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                    dataSet.setColor(Color.rgb(124, 252, 79));
+                    dataSet.color = Color.rgb(124, 252, 79);
                 }
 
                 val percent75: Int = (holder.segments.numOfSegments * 75)/100
                 if (segmentNum > percent75){
-                    (percent75..segmentNum).reversed().forEach { e ->
+                    (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.setColor(Color.rgb(194,38,54));
+                        dataSet.color = Color.rgb(194,38,54);
                     }
                 }
                 holder.chart.notifyDataSetChanged()

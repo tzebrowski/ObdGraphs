@@ -1,14 +1,20 @@
 package org.openobd2.core.logger.ui.dash
 
-import android.util.Log
 import org.openobd2.core.command.CommandReply
 import java.util.*
 import kotlin.math.round
 
-fun CommandReply<*>.valueToDouble(): String {
-    return when (value){
+fun CommandReply<*>.valueAsString(): String {
+    return when (value) {
         null -> ""
-        else-> this.value.toString().toDouble().round(2).toString()
+        else -> this.value.toString().toDouble().round(2).toString()
+    }
+}
+
+fun CommandReply<*>.valueToDouble(): Double {
+    return when (value) {
+        null -> 0.0
+        else -> this.value.toString().toDouble().round(2)
     }
 }
 
@@ -21,8 +27,8 @@ fun Double.round(decimals: Int): Double {
 class Segments {
 
     class Segment {
-        var from:Double
-        var to:Double
+        var from: Double
+        var to: Double
 
         constructor(from: Double, to: Double) {
             this.from = from.round(2)
@@ -39,16 +45,16 @@ class Segments {
 
     val numOfSegments: Int
 
-    constructor(numOfSegments: Int,minValue: Double, maxValue: Double) {
+    constructor(numOfSegments: Int, minValue: Double, maxValue: Double) {
         this.numOfSegments = numOfSegments
         this.maxValue = maxValue
-        this.segments = calculateSegments(minValue,maxValue)
+        this.segments = calculateSegments(minValue, maxValue)
     }
 
     fun indexOf(value: Double): Int {
-        if (value.equals(0)){
+        if (value.equals(0)) {
             return 0
-        }else {
+        } else {
             for (i in segments.indices) {
                 val r = segments[i]
                 if (value >= r.from && value <= r.to) {
@@ -77,7 +83,7 @@ class Segments {
         val list: MutableList<Segment> = LinkedList()
         var cnt = from + segmentSize
         while (cnt <= to) {
-            list.add(Segment(cnt - segmentSize,(cnt - 0.01)))
+            list.add(Segment(cnt - segmentSize, (cnt - 0.01)))
             cnt += segmentSize
         }
         return list
