@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@android:drawable/zoom_plate"
-        android:title="@string/title_dash"/>
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/title_dash" />
     <item
         android:id="@+id/navigation_gauge"
         android:icon="@android:drawable/ic_menu_gallery"
