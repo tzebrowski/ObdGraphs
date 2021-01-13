@@ -108,7 +108,7 @@ class DashViewAdapter internal constructor(
         fun buildChart(pid: PidDefinition) {
             if (initialized) {
             } else {
-                this.segments = Segments(30, pid!!.max.toInt())
+                this.segments = Segments(30,pid!!.min.toInt(), pid!!.max.toInt())
 
                 this.label.text = pid.description
 
