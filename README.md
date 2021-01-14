@@ -18,12 +18,6 @@ This is a simple Android application that demonstrates the usage of OpenElm327 j
 
 ![Alt text](./screen1.png?raw=true "Metrics view")
 
-
-### Settings
-
-![Alt text](./screen3.png?raw=true "Settings")
-
-
 ### Integration with OpenElm327
 
 ```kotlin
