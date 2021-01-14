@@ -42,36 +42,35 @@ class DashViewAdapter internal constructor(
         position: Int
     ) {
         val commandReply = mData.elementAt(position)
-        holder.buildChart((commandReply.command as ObdCommand).pid)
+        val obdCommand = commandReply.command as ObdCommand
+        holder.buildChart(obdCommand.pid)
 
-        holder.units.text = ((commandReply.command as ObdCommand).pid).units
+        holder.units.text = (obdCommand.pid).units
         holder.value.text = commandReply.valueAsString()
+        holder.label.text = obdCommand.pid.description
 
-        commandReply.value?.apply {
-            var segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
+        var segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
 
-            (segmentNum > 0).apply {
-                //reset
-                (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
-                    val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                    dataSet.color = Color.rgb(187, 187, 187)
-                }
-
-                (0..segmentNum).forEach { e ->
-                    val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                    dataSet.color = Color.rgb(124, 252, 79)
-                }
-
-                val percent75: Int = (holder.segments.numOfSegments * 75) / 100
-                if (segmentNum > percent75) {
-                    (percent75..segmentNum).forEach { e ->
-                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.color = Color.rgb(194, 38, 54)
-                    }
-                }
-                holder.chart.notifyDataSetChanged()
-
+        (segmentNum > 0).apply {
+            //reset
+            (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
+                val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                dataSet.color = Color.rgb(187, 187, 187)
             }
+
+            (0..segmentNum).forEach { e ->
+                val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                dataSet.color = Color.rgb(124, 252, 79)
+            }
+
+            val percent75: Int = (holder.segments.numOfSegments * 75) / 100
+            if (segmentNum > percent75) {
+                (percent75..segmentNum).forEach { e ->
+                    val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                    dataSet.color = Color.rgb(194, 38, 54)
+                }
+            }
+            holder.chart.notifyDataSetChanged()
         }
     }
 

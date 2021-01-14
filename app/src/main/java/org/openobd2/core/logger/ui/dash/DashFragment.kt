@@ -38,10 +38,13 @@ class DashFragment : Fragment() {
         selectedPids!!.forEach { s: String? ->
             data.add(CommandReply<Int>(ObdCommand(pidRegistry.findBy("01", s)), 0, ""))
         }
+        data.sortBy { commandReply -> commandReply.command.label }
+
+
 
         Model.liveData.observe(viewLifecycleOwner, Observer {
             val filter =
-                it.filter { commandReply -> selectedPids.contains((commandReply.command as ObdCommand).pid.pid) }
+                it.filter { commandReply -> selectedPids.contains((commandReply.command as ObdCommand).pid.pid) }.sortedBy { commandReply -> commandReply.command.label }
             data.clear()
             data.addAll(filter)
             adapter.notifyDataSetChanged()
