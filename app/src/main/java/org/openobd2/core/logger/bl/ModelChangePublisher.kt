@@ -14,7 +14,7 @@ internal class ModelChangePublisher : CommandReplySubscriber() {
 
     override fun onNext(reply: CommandReply<*>) {
 
-        Log.v("DATA_LOGGER_ML", "${reply.command}")
+        Log.v(LOG_KEY, "${reply.command}")
 
         Model.updateDebugScreen(reply.toString())
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {

@@ -23,14 +23,14 @@ internal class BluetoothConnection : Connection {
     }
 
     override fun reconnect() {
-        Log.i("DATA_LOGGER_BT", "Reconnecting to the device: $device")
+        Log.i(LOG_KEY, "Reconnecting to the device: $device")
         input?.close()
         output?.close()
 
         socket.close()
         TimeUnit.MILLISECONDS.sleep(200)
         init(device)
-        Log.i("DATA_LOGGER_BT", "Successfully reconnect to the device: $device")
+        Log.i(LOG_KEY, "Successfully reconnect to the device: $device")
     }
 
     override fun init() {
@@ -39,7 +39,7 @@ internal class BluetoothConnection : Connection {
 
     override fun close() {
         socket.close()
-        Log.i("DATA_LOGGER_BT", "Socket for device: $device has been closed.")
+        Log.i(LOG_KEY, "Socket for device: $device has been closed.")
     }
 
     override fun openOutputStream(): OutputStream? {
@@ -60,7 +60,7 @@ internal class BluetoothConnection : Connection {
 
         for (currentDevice in mBluetoothAdapter.bondedDevices) {
             if (currentDevice.name.equals(btDeviceName)) {
-                Log.i("DATA_LOGGER_BT", "Opening connection to device: $btDeviceName")
+                Log.i(LOG_KEY, "Opening connection to device: $btDeviceName")
                 socket =
                     currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
                 socket.connect()
@@ -68,7 +68,7 @@ internal class BluetoothConnection : Connection {
                     input = socket.inputStream
                     output = socket.outputStream
                     Log.i(
-                        "DATA_LOGGER_BT",
+                        LOG_KEY,
                         "Successfully opened  the connection to device: $btDeviceName"
                     )
                 }

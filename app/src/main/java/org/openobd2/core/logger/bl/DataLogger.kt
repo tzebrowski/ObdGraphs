@@ -5,19 +5,21 @@ import android.content.Intent
 import android.util.Log
 import androidx.preference.PreferenceManager
 import org.openobd2.core.StatusListener
+import org.openobd2.core.command.group.AlfaMed17CommandGroup
+import org.openobd2.core.workflow.EcuSpecific
 import org.openobd2.core.workflow.Workflow
 
 
-val NOTIFICATION_CONNECTING = "data.logger.connecting"
-val NOTIFICATION_COMPLETE = "data.logger.complete"
-val NOTIFICATION_ERROR = "data.logger.error"
-val NOTIFICATION_STOPPING = "data.logger.stopping"
+const val NOTIFICATION_CONNECTING = "data.logger.connecting"
+const val NOTIFICATION_COMPLETE = "data.logger.complete"
+const val NOTIFICATION_ERROR = "data.logger.error"
+const val NOTIFICATION_STOPPING = "data.logger.stopping"
+const val LOG_KEY = "DATA_LOGGER_DL"
 
 internal class DataLogger {
 
     private var modelUpdate = ModelChangePublisher()
     private lateinit var context: Context
-    private val LOG_KEY = "DATA_LOGGER_DL"
 
     private var statusListener = object : StatusListener {
 
@@ -63,7 +65,16 @@ internal class DataLogger {
     }
 
     private var mode1: Workflow = Workflow.mode1("rhino", modelUpdate, statusListener)
-    private var mode22: Workflow = Workflow.mode22("rhino", modelUpdate, statusListener)
+
+
+    private var alfaMode22: Workflow = Workflow.generic("rhino",
+        modelUpdate,
+        statusListener,
+        EcuSpecific
+            .builder()
+            .initSequence(AlfaMed17CommandGroup.CAN_INIT)
+            .pidFile("alfa.json")
+            .mode("22").build())
 
     private lateinit var device: String
 
@@ -87,14 +98,14 @@ internal class DataLogger {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
 
-                mode1.start(BluetoothConnection(this.device.toString()), selectedPids)
+                mode1.start(BluetoothConnection(device.toString()), selectedPids)
             }
 
             else -> {
                 var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())
 
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
-                mode22.start(BluetoothConnection(this.device.toString()), selectedPids)
+                alfaMode22.start(BluetoothConnection(device.toString()), selectedPids)
             }
         }
 

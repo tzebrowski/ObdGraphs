@@ -2,7 +2,7 @@
     <string name="app_name">AlfaDataLogger</string>
     <string name="title_debug">Debug</string>
     <string name="title_gauge">Gauge</string>
-    <string name="title_livedata">Live data</string>
+    <string name="title_livedata">Metrics</string>
     <string name="title_preferences">Preferences</string>
     <string name="title_dash">Dash</string>
     <string name="search">Search</string>

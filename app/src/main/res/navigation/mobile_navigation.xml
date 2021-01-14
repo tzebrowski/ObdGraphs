@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_debug">
-
+    app:startDestination="@+id/navigation_dashboard">
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -18,11 +17,7 @@
         android:label="@string/title_gauge"
         tools:layout="@layout/fragment_gauge" />
 
-    <fragment
-        android:id="@+id/navigation_livedata"
-        android:name="org.openobd2.core.logger.ui.livedata.LiveDataFragment"
-        android:label="@string/title_livedata"
-        tools:layout="@layout/fragment_livedata" />
+
 
     <fragment
         android:id="@+id/navigation_debug"
@@ -30,6 +25,11 @@
         android:label="@string/title_debug"
         tools:layout="@layout/fragment_debug" />
 
+    <fragment
+        android:id="@+id/navigation_livedata"
+        android:name="org.openobd2.core.logger.ui.livedata.LiveDataFragment"
+        android:label="@string/title_livedata"
+        tools:layout="@layout/fragment_livedata" />
     <fragment
         android:id="@+id/navigation_configuration"
         android:name="org.openobd2.core.logger.ui.preferences.ConfigurationFragment"

@@ -13,7 +13,7 @@ import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.PidsRegistry
+import org.openobd2.core.logger.bl.Pids
 
 class DashFragment : Fragment() {
 
@@ -33,7 +33,7 @@ class DashFragment : Fragment() {
 
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
         var selectedPids = pref.getStringSet("pref.dash.pids.selected", emptySet())
-        val pidRegistry = PidsRegistry.instance.genericRegistry
+        val pidRegistry = Pids.instance.generic
 
         selectedPids!!.forEach { s: String? ->
             data.add(CommandReply<Int>(ObdCommand(pidRegistry.findBy("01", s)), 0, ""))

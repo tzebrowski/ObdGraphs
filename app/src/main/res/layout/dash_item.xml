@@ -38,7 +38,7 @@
             android:layout_marginRight="2dp"
             android:text="Value"
             android:textColor="#FFFF00"
-            android:textSize="26sp"
+            android:textSize="28sp"
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"

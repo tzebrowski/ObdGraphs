@@ -2,29 +2,28 @@ package org.openobd2.core.logger.bl
 
 import org.openobd2.core.pid.PidRegistry
 
-class PidsRegistry {
+class Pids {
 
-    lateinit var genericRegistry: PidRegistry
-    lateinit var mode22Registry: PidRegistry
+    lateinit var generic: PidRegistry
+    lateinit var custom: PidRegistry
 
     init {
 
         Thread.currentThread().contextClassLoader
             .getResourceAsStream("generic.json").use { source ->
-                genericRegistry = PidRegistry.builder().source(source).build()
+                generic = PidRegistry.builder().source(source).build()
             }
 
         Thread.currentThread().contextClassLoader
             .getResourceAsStream("alfa.json").use { source ->
-                mode22Registry = PidRegistry.builder().source(source).build()
+                custom = PidRegistry.builder().source(source).build()
             }
 
     }
 
     companion object {
         @JvmStatic
-        var instance: PidsRegistry =
-            PidsRegistry()
+        var instance: Pids =
+            Pids()
     }
-
 }

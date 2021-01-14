@@ -2,11 +2,9 @@ package org.openobd2.core.logger.ui.preferences
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.PreferenceManager
-import org.openobd2.core.logger.bl.BluetoothConnection
-import org.openobd2.core.logger.bl.PidsRegistry
+import org.openobd2.core.logger.bl.Pids
 import java.util.*
 
 class DashViewSelectedPidListPreferences(
@@ -23,7 +21,7 @@ class DashViewSelectedPidListPreferences(
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
         when ( pref.getString("pref.mode", "")) {
             "Generic mode" -> {
-                PidsRegistry.instance.genericRegistry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
+                Pids.instance.generic.definitions.sortedBy { pidDefinition -> pidDefinition.description }
                     .forEach { p ->
                         entries.add(p.description)
                         entriesValues.add(p.pid)
@@ -31,7 +29,7 @@ class DashViewSelectedPidListPreferences(
             }
 
             else -> {
-                PidsRegistry.instance.mode22Registry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
+                Pids.instance.custom.definitions.sortedBy { pidDefinition -> pidDefinition.description }
                     .forEach { p ->
                         entries.add(p.description)
                         entriesValues.add(p.pid)
