@@ -41,18 +41,6 @@ class LiveDataFragment : Fragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
-
-        val btnStop: FloatingActionButton = root.findViewById(R.id.btn_stop)
-        btnStop.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Stop data logging ")
-            DataLoggerService.stopAction(this.requireContext())
-        })
-
-        val btnStart: FloatingActionButton = root.findViewById(R.id.btn_start)
-        btnStart.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Start data logging")
-            DataLoggerService.startAction(this.requireContext())
-        })
         return root
     }
 }

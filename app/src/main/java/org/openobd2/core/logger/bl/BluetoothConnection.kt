@@ -29,12 +29,12 @@ internal class BluetoothConnection : Connection {
 
         socket.close()
         TimeUnit.MILLISECONDS.sleep(200)
-        init(device)
+        connectToDevice(device)
         Log.i(LOG_KEY, "Successfully reconnect to the device: $device")
     }
 
     override fun init() {
-        init(device)
+        connectToDevice(device)
     }
 
     override fun close() {
@@ -54,7 +54,7 @@ internal class BluetoothConnection : Connection {
         return !socket.isConnected
     }
 
-    private fun init(btDeviceName: String?) {
+    private fun connectToDevice(btDeviceName: String?) {
 
         mBluetoothAdapter.cancelDiscovery()
 
