@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
+import org.openobd2.core.logger.SelectedPids
 import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.Pids
 
 class DashFragment : Fragment() {
 
@@ -23,23 +22,14 @@ class DashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val root = inflater.inflate(R.layout.fragment_dash, container, false)
-        var data: MutableList<CommandReply<*>> = arrayListOf()
 
+        var (selectedPids, data: MutableList<CommandReply<*>>) = SelectedPids.get(requireContext(),"pref.dash.pids.selected")
+
+        val root = inflater.inflate(R.layout.fragment_dash, container, false)
         val adapter = DashViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
-
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        var selectedPids = pref.getStringSet("pref.dash.pids.selected", emptySet())
-        val pidRegistry = Pids.instance.generic
-
-        selectedPids!!.forEach { s: String? ->
-            data.add(CommandReply<Int>(ObdCommand(pidRegistry.findBy("01", s)), 0, ""))
-        }
-        data.sortBy { commandReply -> commandReply.command.label }
-
 
 
         Model.liveData.observe(viewLifecycleOwner, Observer {
@@ -52,6 +42,4 @@ class DashFragment : Fragment() {
 
         return root
     }
-
-
 }

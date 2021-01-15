@@ -3,7 +3,6 @@ package org.openobd2.core.logger.ui.preferences
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
-import androidx.preference.PreferenceManager
 import org.openobd2.core.logger.bl.Pids
 import java.util.*
 
@@ -18,9 +17,8 @@ class DashViewSelectedPidListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        when ( pref.getString("pref.mode", "")) {
-            "Generic mode" -> {
+        when ( Prefs.getMode(context!!)) {
+            GENERIC_MODE -> {
                 Pids.instance.generic.definitions.sortedBy { pidDefinition -> pidDefinition.description }
                     .forEach { p ->
                         entries.add(p.description)

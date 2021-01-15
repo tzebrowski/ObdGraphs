@@ -43,7 +43,7 @@
 
     <PreferenceCategory android:title="Debug View">
         <CheckBoxPreference  android:defaultValue="true"
-            android:key="pref.dash.view.enabled"
+            android:key="pref.debug.view.enabled"
             android:summary="Enable the Debug view"
             android:title="Enable the Debug view"/>
     </PreferenceCategory>
