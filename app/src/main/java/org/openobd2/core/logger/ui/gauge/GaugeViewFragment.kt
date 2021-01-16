@@ -10,18 +10,18 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
-import org.openobd2.core.logger.SelectedPids
 import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.SelectedPids
 
 class GaugeViewFragment : Fragment() {
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        var (selectedPids, data: MutableList<CommandReply<*>>) = SelectedPids.get(requireContext(),"pref.gauge.pids.selected")
+        var (selectedPids, data: MutableList<CommandReply<*>>) = SelectedPids.get(requireContext(), "pref.gauge.pids.selected")
 
         val root = inflater.inflate(R.layout.fragment_gauge, container, false)
         val adapter = GaugeViewAdapter(root.context, data)
@@ -31,7 +31,7 @@ class GaugeViewFragment : Fragment() {
 
         Model.liveData.observe(viewLifecycleOwner, Observer {
             val filter =
-                it.filter { commandReply -> selectedPids.contains((commandReply.command as ObdCommand).pid.pid) }
+                    it.filter { commandReply -> selectedPids.contains((commandReply.command as ObdCommand).pid.pid) }
             data.clear()
             data.addAll(filter)
             adapter.notifyDataSetChanged()

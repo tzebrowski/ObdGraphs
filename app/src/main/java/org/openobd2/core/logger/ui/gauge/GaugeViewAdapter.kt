@@ -13,24 +13,24 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.dash.valueAsString
 
 class GaugeViewAdapter internal constructor(
-    context: Context?,
-    data: MutableCollection<CommandReply<*>>
+        context: Context?,
+        data: MutableCollection<CommandReply<*>>
 ) :
-    RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
+        RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
     var mData: MutableCollection<CommandReply<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+            parent: ViewGroup,
+            viewType: Int
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.gauge_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(
-        holder: ViewHolder,
-        position: Int
+            holder: ViewHolder,
+            position: Int
     ) {
         val commandReply = mData.elementAt(position)
         holder.labelTextView.text = commandReply.command.label
@@ -43,7 +43,7 @@ class GaugeViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+            RecyclerView.ViewHolder(itemView) {
         var labelTextView: TextView
         var valueTextView: TextView
         var unitsTextView: TextView

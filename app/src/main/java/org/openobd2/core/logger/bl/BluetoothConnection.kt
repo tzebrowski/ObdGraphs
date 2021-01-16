@@ -62,14 +62,14 @@ internal class BluetoothConnection : Connection {
             if (currentDevice.name.equals(btDeviceName)) {
                 Log.i(LOG_KEY, "Opening connection to device: $btDeviceName")
                 socket =
-                    currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
+                        currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
                 socket.connect()
                 if (socket.isConnected) {
                     input = socket.inputStream
                     output = socket.outputStream
                     Log.i(
-                        LOG_KEY,
-                        "Successfully opened  the connection to device: $btDeviceName"
+                            LOG_KEY,
+                            "Successfully opened  the connection to device: $btDeviceName"
                     )
                 }
             }

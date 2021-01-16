@@ -7,15 +7,15 @@ import androidx.preference.ListPreference
 import java.util.*
 
 class AdaptersListPreferences(
-    context: Context?,
-    attrs: AttributeSet?
+        context: Context?,
+        attrs: AttributeSet?
 ) :
-    ListPreference(context, attrs) {
+        ListPreference(context, attrs) {
     init {
         val entries: MutableList<CharSequence> =
-            LinkedList()
+                LinkedList()
         val entriesValues: MutableList<CharSequence> =
-            LinkedList()
+                LinkedList()
 
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         for (currentDevice in mBluetoothAdapter.bondedDevices) {

@@ -1,5 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         android:key="adapter"
@@ -13,10 +12,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Dash View">
-        <CheckBoxPreference  android:defaultValue="true"
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="pref.dash.view.enabled"
             android:summary="Enable the Dash view"
-            android:title="Enable the Dash view"/>
+            android:title="Enable the Dash view" />
 
         <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
             android:defaultValue="@array/perf_empty_array"
@@ -27,10 +27,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Gauge View">
-        <CheckBoxPreference  android:defaultValue="true"
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="pref.gauge.view.enabled"
             android:summary="Enable the Gauge view"
-            android:title="Enable the Gauge view"/>
+            android:title="Enable the Gauge view" />
 
         <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
             android:defaultValue="@array/perf_empty_array"
@@ -42,10 +43,11 @@
 
 
     <PreferenceCategory android:title="Debug View">
-        <CheckBoxPreference  android:defaultValue="true"
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="pref.debug.view.enabled"
             android:summary="Enable the Debug view"
-            android:title="Enable the Debug view"/>
+            android:title="Enable the Debug view" />
     </PreferenceCategory>
 
 
@@ -62,7 +64,6 @@
             android:summary="Allows to specify OBD mode"
             android:title="Mode" />
     </PreferenceCategory>
-
 
 
     <PreferenceCategory android:title="Supported PID's">

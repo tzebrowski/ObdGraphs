@@ -25,8 +25,8 @@ class DataLoggerService : IntentService("DataLoggerService") {
 
     companion object {
         @JvmStatic
-        private var dataLogger: DataLogger =
-            DataLogger()
+        var dataLogger: DataLogger =
+                DataLogger()
 
         @JvmStatic
         fun startAction(context: Context) {

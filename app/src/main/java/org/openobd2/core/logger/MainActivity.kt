@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity() {
                 NOTIFICATION_CONNECTING -> {
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.VISIBLE
+                    progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#C22636"),
+                            android.graphics.PorterDuff.Mode.SRC_IN);
 
                     val btn: FloatingActionButton = findViewById(R.id.action_btn)
                     btn.backgroundTintList = resources.getColorStateList(R.color.purple_200)
@@ -37,7 +40,13 @@ class MainActivity : AppCompatActivity() {
                     btn.refreshDrawableState()
                 }
 
-                NOTIFICATION_COMPLETE -> {
+                NOTIFICATION_CONNECTED -> {
+                    val progressBar: ProgressBar = findViewById(R.id.p_bar)
+                    progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#01804F"),
+                            android.graphics.PorterDuff.Mode.SRC_IN);
+                }
+
+                NOTIFICATION_STOPPED -> {
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.GONE
 
@@ -71,13 +80,13 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_dashboard,
-                R.id.navigation_gauge,
-                R.id.navigation_debug,
-                R.id.navigation_livedata,
-                R.id.navigation_configuration
-            )
+                setOf(
+                        R.id.navigation_dashboard,
+                        R.id.navigation_gauge,
+                        R.id.navigation_debug,
+                        R.id.navigation_livedata,
+                        R.id.navigation_configuration
+                )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -104,6 +113,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         unregisterReceiver(broadcastReciever)
     }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -117,13 +127,13 @@ class MainActivity : AppCompatActivity() {
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         val decorView = window.decorView
         decorView.systemUiVisibility =
-            (View.SYSTEM_UI_FLAG_IMMERSIVE // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
-                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Hide the nav bar and status bar
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
+                (View.SYSTEM_UI_FLAG_IMMERSIVE // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Hide the nav bar and status bar
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
     // Shows the system bars by removing all the flags
@@ -139,9 +149,10 @@ class MainActivity : AppCompatActivity() {
     private fun registerReciever() {
         registerReceiver(broadcastReciever, IntentFilter().apply {
             addAction(NOTIFICATION_CONNECTING)
-            addAction(NOTIFICATION_COMPLETE)
+            addAction(NOTIFICATION_STOPPED)
             addAction(NOTIFICATION_STOPPING)
             addAction(NOTIFICATION_ERROR)
+            addAction(NOTIFICATION_CONNECTED)
         })
     }
 }

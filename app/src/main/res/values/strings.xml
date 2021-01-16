@@ -10,9 +10,7 @@
     <string name="pref.pids.generic">pref.pids.generic</string>
 
 
-
-    <string-array name="perf_empty_array">
-    </string-array>
+    <string-array name="perf_empty_array"></string-array>
 
     <string-array name="perf_modes_arrays">
         <item name="generic.mode">Generic mode</item>
