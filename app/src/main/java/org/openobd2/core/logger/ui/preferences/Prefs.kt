@@ -14,7 +14,7 @@ class Prefs {
         @JvmStatic
         fun getMode(context: Context): String? {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val selectedMode =  pref.getString("pref.mode", "Generic mode")
+            val selectedMode = pref.getString("pref.mode", "Generic mode")
             Log.i(LOG_KEY, "Selected OBD mode: $selectedMode")
             return selectedMode
         }

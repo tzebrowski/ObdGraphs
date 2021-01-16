@@ -37,6 +37,7 @@ class DashViewAdapter internal constructor(
         return ViewHolder(view)
     }
 
+
     override fun onBindViewHolder(
             holder: ViewHolder,
             position: Int
@@ -45,17 +46,15 @@ class DashViewAdapter internal constructor(
         val obdCommand = commandReply.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        holder.units.text = (obdCommand.pid).units
-        holder.value.text = commandReply.valueAsString()
-        holder.label.text = obdCommand.pid.description
-
         var segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
+
 
         (segmentNum > 0).apply {
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                 dataSet.color = Color.rgb(187, 187, 187)
+
             }
 
             (0..segmentNum).forEach { e ->
@@ -70,8 +69,13 @@ class DashViewAdapter internal constructor(
                     dataSet.color = Color.rgb(194, 38, 54)
                 }
             }
-            holder.chart.notifyDataSetChanged()
+            holder.chart.invalidate();
         }
+
+        holder.units.text = (obdCommand.pid).units
+        holder.value.text = commandReply.valueAsString()
+        holder.label.text = obdCommand.pid.description
+
     }
 
     override fun getItemCount(): Int {
@@ -98,7 +102,6 @@ class DashViewAdapter internal constructor(
         fun buildChart(pid: PidDefinition) {
             if (initialized) {
             } else {
-
                 this.segments = Segments(30, pid.min.toDouble(), pid.max.toDouble())
                 this.label.text = pid.description
 

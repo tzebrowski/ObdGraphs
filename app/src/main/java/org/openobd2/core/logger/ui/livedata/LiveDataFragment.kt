@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
-import org.openobd2.core.command.obd.ObdCommand
 import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
 
@@ -27,12 +26,14 @@ class LiveDataFragment : Fragment() {
         val adapter = LiveDataViewAdapter(root.context, data)
 
         Model.liveData.observe(viewLifecycleOwner, Observer {
-            val sortedList = it.sortedBy {
-                (it.command as ObdCommand).pid.order
+            val indexOf = data.indexOf(it);
+            if (indexOf == -1) {
+                data.add(it);
+                adapter.notifyDataSetChanged()
+            } else {
+                data.set(indexOf, it)
+                adapter.notifyItemChanged(indexOf, it)
             }
-            data.clear()
-            data.addAll(sortedList)
-            adapter.notifyDataSetChanged()
         })
 
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)

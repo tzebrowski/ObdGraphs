@@ -28,17 +28,17 @@ class GaugeViewFragment : Fragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 2)
         recyclerView.adapter = adapter
+        adapter.notifyDataSetChanged()
 
         Model.liveData.observe(viewLifecycleOwner, Observer {
-            val filter =
-                    it.filter { commandReply -> selectedPids.contains((commandReply.command as ObdCommand).pid.pid) }
-            data.clear()
-            data.addAll(filter)
-            adapter.notifyDataSetChanged()
+            selectedPids.contains((it.command as ObdCommand).pid.pid).apply {
+                if (selectedPids.contains((it.command as ObdCommand).pid.pid)) {
+                    val indexOf = data.indexOf(it);
+                    data.set(indexOf, it)
+                    adapter.notifyItemChanged(indexOf, it)
+                }
+            }
         })
-
         return root
     }
-
-
 }

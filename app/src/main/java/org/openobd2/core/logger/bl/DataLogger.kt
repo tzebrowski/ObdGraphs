@@ -21,17 +21,14 @@ class DataLogger {
 
     private var modelUpdate = ModelChangePublisher()
     private lateinit var context: Context
-
     private var statusObserver = object : StatusObserver {
 
         override fun onConnecting() {
             Log.i(LOG_KEY, "Start collecting process for the Device: $device")
             modelUpdate.data.clear()
-
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTING
             })
-
         }
 
         override fun onConnected() {
@@ -39,23 +36,19 @@ class DataLogger {
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTED
             })
-
         }
 
         override fun onError(msg: String, tr: Throwable) {
-            Log.e(
-                    LOG_KEY,
+            Log.e(LOG_KEY,
                     "An error occurred for the Device: $device. Msg: $msg"
             )
-
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_ERROR
             })
         }
 
         override fun onStopped() {
-            Log.i(
-                    LOG_KEY,
+            Log.i(LOG_KEY,
                     "Collecting process completed for the Device: $device"
             )
 
@@ -99,12 +92,10 @@ class DataLogger {
 
     fun start(context: Context) {
         this.context = context
-
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
-
         var adapterName = pref.getString("pref.adapter.id", "OBDII")
-
         this.device = adapterName.toString()
+
         when (Prefs.getMode(context)) {
             "Generic mode" -> {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())

@@ -19,7 +19,7 @@ internal class ModelChangePublisher : CommandReplySubscriber() {
         Model.updateDebugScreen(reply.toString())
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
             data[reply.command] = reply
-            Model.updateLiveData(data.filterKeys { command -> command.label.isNotEmpty() }.values as MutableCollection<CommandReply<*>>)
+            Model.updateLiveData(reply)
         }
     }
 }

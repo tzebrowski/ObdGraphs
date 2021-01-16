@@ -21,8 +21,6 @@ class DashFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-
-
         var (selectedPids, data: MutableList<CommandReply<*>>) = SelectedPids.get(requireContext(), "pref.dash.pids.selected")
 
         val root = inflater.inflate(R.layout.fragment_dash, container, false)
@@ -30,14 +28,14 @@ class DashFragment : Fragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
-
+        adapter.notifyDataSetChanged()
 
         Model.liveData.observe(viewLifecycleOwner, Observer {
-            val filter =
-                    it.filter { commandReply -> selectedPids.contains((commandReply.command as ObdCommand).pid.pid) }.sortedBy { commandReply -> commandReply.command.label }
-            data.clear()
-            data.addAll(filter)
-            adapter.notifyDataSetChanged()
+            if (selectedPids.contains((it.command as ObdCommand).pid.pid)) {
+                val indexOf = data.indexOf(it);
+                data.set(indexOf, it)
+                adapter.notifyItemChanged(indexOf, it)
+            }
         })
 
         return root

@@ -35,7 +35,6 @@ class SelectedPids {
                 }
             }
 
-            data.sortBy { commandReply -> commandReply.command.label }
             return Pair(selectedPids, data)
         }
     }
