@@ -19,7 +19,6 @@
             android:title="Enable the Dash view" />
 
         <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
-            android:defaultValue="@array/perf_empty_array"
             android:key="pref.dash.pids.selected"
             android:summary="Displayed PIDs"
             android:title="Displayed PIDs" />
@@ -33,7 +32,7 @@
             android:summary="Enable the Gauge view"
             android:title="Enable the Gauge view" />
 
-        <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
+        <org.openobd2.core.logger.ui.preferences.GaugeViewSelectedPidListPreferences
             android:defaultValue="@array/perf_empty_array"
             android:key="pref.gauge.pids.selected"
             android:summary="Displayed PIDs"

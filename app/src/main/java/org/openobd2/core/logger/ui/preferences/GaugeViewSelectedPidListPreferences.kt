@@ -35,6 +35,16 @@ class GaugeViewSelectedPidListPreferences(
             }
         }
 
+        val default = hashSetOf<String>().apply {
+            add("05")//Engine coolant temperature
+            add("0B") //Intake manifold absolute pressure
+            add("0C") //Engine RPM
+            add("0F") //Intake air temperature
+            add("11") //Throttle position
+        }
+
+        setDefaultValue(default)
+
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
     }

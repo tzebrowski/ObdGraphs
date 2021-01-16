@@ -37,7 +37,6 @@ class DashViewAdapter internal constructor(
         return ViewHolder(view)
     }
 
-
     override fun onBindViewHolder(
             holder: ViewHolder,
             position: Int
@@ -47,8 +46,6 @@ class DashViewAdapter internal constructor(
         holder.buildChart(obdCommand.pid)
 
         var segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
-
-
         (segmentNum > 0).apply {
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->

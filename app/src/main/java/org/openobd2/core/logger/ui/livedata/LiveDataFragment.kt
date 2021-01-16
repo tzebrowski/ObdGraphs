@@ -9,8 +9,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
-import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.bl.ModelChangePublisher
 
 
 class LiveDataFragment : Fragment() {
@@ -21,17 +21,16 @@ class LiveDataFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_livedata, container, false)
-
         var data: MutableList<CommandReply<*>> = arrayListOf()
         val adapter = LiveDataViewAdapter(root.context, data)
 
-        Model.liveData.observe(viewLifecycleOwner, Observer {
+        ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
             val indexOf = data.indexOf(it);
             if (indexOf == -1) {
                 data.add(it);
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemInserted(data.indexOf(it))
             } else {
-                data.set(indexOf, it)
+                data[indexOf] = it
                 adapter.notifyItemChanged(indexOf, it)
             }
         })

@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.command.CommandReply
 import org.openobd2.core.command.obd.ObdCommand
-import org.openobd2.core.logger.Model
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.SelectedPids
+import org.openobd2.core.logger.bl.ModelChangePublisher
 
 class GaugeViewFragment : Fragment() {
 
@@ -30,12 +30,17 @@ class GaugeViewFragment : Fragment() {
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
 
-        Model.liveData.observe(viewLifecycleOwner, Observer {
+        ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
             selectedPids.contains((it.command as ObdCommand).pid.pid).apply {
                 if (selectedPids.contains((it.command as ObdCommand).pid.pid)) {
                     val indexOf = data.indexOf(it);
-                    data.set(indexOf, it)
-                    adapter.notifyItemChanged(indexOf, it)
+                    if (indexOf == -1) {
+                        data.add(it);
+                        adapter.notifyItemInserted(data.indexOf(it))
+                    } else {
+                        data[indexOf] = it
+                        adapter.notifyItemChanged(indexOf, it)
+                    }
                 }
             }
         })
