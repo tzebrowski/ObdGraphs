@@ -17,6 +17,8 @@ internal class ModelChangePublisher : CommandReplySubscriber() {
 
         Log.v(LOG_KEY, "${reply.command}")
 
+        debugData.postValue(reply)
+
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
             data[reply.command] = reply
             liveData.postValue(reply)
@@ -24,6 +26,10 @@ internal class ModelChangePublisher : CommandReplySubscriber() {
     }
 
     companion object {
+        @JvmStatic
+        val debugData: MutableLiveData<CommandReply<*>> =  MutableLiveData<CommandReply<*>>().apply {
+        }
+
         @JvmStatic
         val liveData: MutableLiveData<CommandReply<*>> =  MutableLiveData<CommandReply<*>>().apply {
         }

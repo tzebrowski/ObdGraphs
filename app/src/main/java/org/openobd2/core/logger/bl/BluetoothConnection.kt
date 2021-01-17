@@ -38,7 +38,8 @@ internal class BluetoothConnection : Connection {
     }
 
     override fun close() {
-        socket.close()
+        if (::socket.isInitialized)
+            socket.close()
         Log.i(LOG_KEY, "Socket for device: $device has been closed.")
     }
 

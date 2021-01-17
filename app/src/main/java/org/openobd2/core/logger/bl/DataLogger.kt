@@ -38,10 +38,9 @@ class DataLogger {
             })
         }
 
-        override fun onError(msg: String, tr: Throwable) {
+        override fun onError(msg: String, tr: Throwable?) {
             Log.e(LOG_KEY,
-                    "An error occurred for the Device: $device. Msg: $msg"
-            )
+                    "An error occurred during interaction with the device. Msg: $msg")
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_ERROR
             })

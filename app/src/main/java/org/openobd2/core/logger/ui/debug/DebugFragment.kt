@@ -1,6 +1,7 @@
 package org.openobd2.core.logger.ui.debug
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,7 @@ class DebugFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_debug, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
 
-        ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
+        ModelChangePublisher.debugData.observe(viewLifecycleOwner, Observer {
             textView.append(it.toString() + "\n")
         })
 
