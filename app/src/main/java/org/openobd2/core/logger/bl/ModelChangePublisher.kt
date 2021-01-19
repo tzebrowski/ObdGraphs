@@ -21,7 +21,9 @@ internal class ModelChangePublisher : CommandReplySubscriber() {
 
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
             data[reply.command] = reply
-            liveData.postValue(reply)
+            (reply.command as ObdCommand).pid?.let {
+                liveData.postValue(reply)
+            }
         }
     }
 
