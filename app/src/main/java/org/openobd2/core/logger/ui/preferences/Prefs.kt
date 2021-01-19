@@ -12,6 +12,14 @@ class Prefs {
     companion object {
 
         @JvmStatic
+        fun isBatchEnabled(context: Context): Boolean {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            val bratchEnabled = pref.getBoolean("pref.batch.enabled", true)
+            Log.i(LOG_KEY, "Batch enabled: $bratchEnabled")
+            return bratchEnabled
+        }
+
+        @JvmStatic
         fun getMode(context: Context): String? {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val selectedMode = pref.getString("pref.mode", "Generic mode")

@@ -9,6 +9,23 @@
             android:key="pref.adapter.id"
             android:summary="Bluetooth OBD adapter name"
             android:title="Adapters" />
+
+        <CheckBoxPreference
+            android:dialogTitle="Batch enabled"
+            android:defaultValue="false"
+            android:key="pref.batch.enabled"
+            android:summary="Enables batch mode"
+            android:title="Enables batch mode" />
+
+        <ListPreference
+            android:dialogTitle="Select mode"
+            android:entries="@array/perf_modes_arrays"
+            android:entryValues="@array/perf_modes_arrays"
+            android:defaultValue="Generic mode"
+            android:key="pref.mode"
+            android:summary="Allows to specify OBD mode"
+            android:title="Mode" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Dash View">
@@ -47,21 +64,6 @@
             android:key="pref.debug.view.enabled"
             android:summary="Enable the Debug view"
             android:title="Enable the Debug view" />
-    </PreferenceCategory>
-
-
-    <PreferenceCategory
-        android:key="mode"
-        android:title="Mode settings">
-
-        <ListPreference
-            android:dialogTitle="Select mode"
-            android:entries="@array/perf_modes_arrays"
-            android:entryValues="@array/perf_modes_arrays"
-            android:defaultValue="Generic mode"
-            android:key="pref.mode"
-            android:summary="Allows to specify OBD mode"
-            android:title="Mode" />
     </PreferenceCategory>
 
 

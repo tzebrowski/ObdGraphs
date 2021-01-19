@@ -41,6 +41,10 @@ class DataLogger {
         override fun onError(msg: String, tr: Throwable?) {
             Log.e(LOG_KEY,
                     "An error occurred during interaction with the device. Msg: $msg")
+
+            mode1.stop()
+            mode22.stop()
+
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_ERROR
             })
@@ -65,15 +69,17 @@ class DataLogger {
         }
     }
 
-    var mode1: Workflow = Workflow.mode1("rhino", modelUpdate, statusObserver)
-    var mode22: Workflow = Workflow.generic(
-            EcuSpecific
+    var mode1: Workflow = Workflow.mode1().equationEngine("rhino").subscriber(modelUpdate).statusObserver(statusObserver).build()
+
+    var mode22: Workflow = Workflow
+            .generic()
+            .ecuSpecific(EcuSpecific
                     .builder()
                     .initSequence(AlfaMed17CommandGroup.CAN_INIT)
-                    .pidFile("alfa.json").build(),
-            "rhino",
-            modelUpdate,
-            statusObserver)
+                    .pidFile("alfa.json").build())
+            .equationEngine("rhino")
+            .subscriber(modelUpdate)
+            .statusObserver(statusObserver).build();
 
     private lateinit var device: String
 
@@ -100,14 +106,14 @@ class DataLogger {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
 
-                mode1.start(BluetoothConnection(device.toString()), selectedPids)
+                mode1.start(BluetoothConnection(device.toString()), selectedPids,Prefs.isBatchEnabled(context))
             }
 
             else -> {
                 var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())
 
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
-                mode22.start(BluetoothConnection(device.toString()), selectedPids)
+                mode22.start(BluetoothConnection(device.toString()), selectedPids,Prefs.isBatchEnabled(context))
             }
         }
 

@@ -8,8 +8,10 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -27,6 +29,12 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 NOTIFICATION_CONNECTING -> {
+                    val toast = Toast.makeText(applicationContext, "Connecting to the device.",
+                            Toast.LENGTH_LONG)
+                    toast.setGravity(Gravity.CENTER, 0, 0)
+                    toast.show()
+
+
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.VISIBLE
                     progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#C22636"),
@@ -42,12 +50,23 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_CONNECTED -> {
+                    val toast = Toast.makeText(applicationContext, "Connection to the device has been established." +
+                            "\n Start collecting data from ECU.",
+                            Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0)
+                    toast.show()
+
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#01804F"),
                             android.graphics.PorterDuff.Mode.SRC_IN);
                 }
 
                 NOTIFICATION_STOPPED -> {
+                    val toast = Toast.makeText(applicationContext, "Connection with the device has been stopped.",
+                            Toast.LENGTH_LONG)
+                    toast.setGravity(Gravity.CENTER, 0, 0)
+                    toast.show()
+
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.GONE
 
@@ -60,6 +79,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_ERROR -> {
+                    val toast = Toast.makeText(applicationContext, "Error occurred during. Please check your connection.",
+                            Toast.LENGTH_LONG)
+                    toast.setGravity(Gravity.CENTER, 0, 0)
+                    toast.show()
+
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.GONE
 
