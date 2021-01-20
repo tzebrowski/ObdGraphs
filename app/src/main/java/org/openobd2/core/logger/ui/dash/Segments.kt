@@ -48,17 +48,19 @@ class Segments {
 
     private var segments: MutableList<Segment>
     private val maxValue: Double
+    private val minValue: Double
 
     val numOfSegments: Int
 
     constructor(numOfSegments: Int, minValue: Double, maxValue: Double) {
         this.numOfSegments = numOfSegments
         this.maxValue = maxValue
+        this.minValue = minValue
         this.segments = calculateSegments(minValue, maxValue)
     }
 
     fun indexOf(value: Double): Int {
-        if (value.equals(0)) {
+        if (value <= minValue) {
             return 0
         } else {
             for (i in segments.indices) {
