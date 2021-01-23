@@ -50,7 +50,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation fileTree(dir: 'libs', includes: ['open-elm-327-0.0.1.jar'])
+    implementation fileTree(dir: 'libs', includes: ['obd-metrics-0.0.1.jar'])
     implementation 'org.apache.commons:commons-collections4:4.1'
     implementation 'org.slf4j:slf4j-simple:1.7.5'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'

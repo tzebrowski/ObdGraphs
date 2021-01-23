@@ -3,7 +3,7 @@ package org.openobd2.core.logger.bl
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import org.openobd2.core.connection.Connection
+import org.obd.metrics.connection.Connection
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*

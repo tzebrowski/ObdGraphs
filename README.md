@@ -24,7 +24,7 @@ import org.openobd2.core.workflow.Workflow
 internal class DataLogger {
 
     private lateinit var workflow: Workflow
-    private lateinit var device: String;
+    private lateinit var device: String
 
     init {
         Thread.currentThread().contextClassLoader

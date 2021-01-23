@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"  android:background="@color/black">
 
     <ProgressBar
         android:id="@+id/p_bar"
@@ -40,6 +40,7 @@
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+
         android:id="@+id/coordinator_Layout"
         android:layout_width="fill_parent"
         android:layout_height="80dp"
@@ -55,18 +56,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="#BBBBBB"
             app:contentInsetStart="0dp"
             app:fabAlignmentMode="center"
             app:fabCradleRoundedCornerRadius="30dp">
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
+
                 android:id="@+id/nav_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
-                android:background="@drawable/background_transparent"
                 app:labelVisibilityMode="labeled"
                 app:menu="@menu/bottom_nav_menu" />
         </com.google.android.material.bottomappbar.BottomAppBar>

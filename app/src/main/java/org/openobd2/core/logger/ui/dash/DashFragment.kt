@@ -1,7 +1,6 @@
 package org.openobd2.core.logger.ui.dash
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.openobd2.core.command.CommandReply
-import org.openobd2.core.command.obd.ObdCommand
+import org.obd.metrics.command.CommandReply
+import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.SelectedPids
 import org.openobd2.core.logger.bl.ModelChangePublisher
@@ -33,9 +32,9 @@ class DashFragment : Fragment() {
 
         ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
             if (selectedPids.contains((it.command as ObdCommand).pid.pid)) {
-                val indexOf = data.indexOf(it);
+                val indexOf = data.indexOf(it)
                 if (indexOf == -1) {
-                    data.add(it);
+                    data.add(it)
                     adapter.notifyItemInserted(data.indexOf(it))
                 } else {
                     data[indexOf] = it

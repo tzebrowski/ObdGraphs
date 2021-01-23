@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.preference.PreferenceManager
-import org.openobd2.core.StatusObserver
-import org.openobd2.core.command.group.AlfaMed17CommandGroup
+import org.obd.metrics.StatusObserver
+import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.openobd2.core.logger.ui.preferences.Prefs
-import org.openobd2.core.workflow.EcuSpecific
-import org.openobd2.core.workflow.Workflow
+import org.obd.metrics.workflow.EcuSpecific
+import org.obd.metrics.workflow.Workflow
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
@@ -79,7 +79,7 @@ class DataLogger {
                     .pidFile("alfa.json").build())
             .equationEngine("rhino")
             .subscriber(modelUpdate)
-            .statusObserver(statusObserver).build();
+            .statusObserver(statusObserver).build()
 
     private lateinit var device: String
 

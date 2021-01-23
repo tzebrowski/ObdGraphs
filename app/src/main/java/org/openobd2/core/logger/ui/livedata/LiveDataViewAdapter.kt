@@ -8,11 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.openobd2.core.command.CommandReply
-import org.openobd2.core.command.obd.ObdCommand
+import org.obd.metrics.command.CommandReply
+import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.dash.valueAsString
-
+import org.openobd2.core.logger.ui.dash.round
 
 class LiveDataViewAdapter internal constructor(
         context: Context?,

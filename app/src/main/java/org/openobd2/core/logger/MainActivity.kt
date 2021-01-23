@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.VISIBLE
                     progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#C22636"),
-                            android.graphics.PorterDuff.Mode.SRC_IN);
+                            android.graphics.PorterDuff.Mode.SRC_IN)
 
                     val btn: FloatingActionButton = findViewById(R.id.action_btn)
                     btn.backgroundTintList = resources.getColorStateList(R.color.purple_200)
@@ -52,13 +52,13 @@ class MainActivity : AppCompatActivity() {
                 NOTIFICATION_CONNECTED -> {
                     val toast = Toast.makeText(applicationContext, "Connection to the device has been established." +
                             "\n Start collecting data from ECU.",
-                            Toast.LENGTH_LONG);
+                            Toast.LENGTH_LONG)
                     toast.setGravity(Gravity.CENTER, 0, 0)
                     toast.show()
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#01804F"),
-                            android.graphics.PorterDuff.Mode.SRC_IN);
+                            android.graphics.PorterDuff.Mode.SRC_IN)
                 }
 
                 NOTIFICATION_STOPPED -> {
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
         registerReciever()
 

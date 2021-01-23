@@ -16,10 +16,10 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
-import org.openobd2.core.command.CommandReply
-import org.openobd2.core.command.obd.ObdCommand
+import org.obd.metrics.command.CommandReply
+import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.pid.PidDefinition
+import org.obd.metrics.pid.PidDefinition
 
 class DashViewAdapter internal constructor(
         context: Context?,
@@ -50,23 +50,23 @@ class DashViewAdapter internal constructor(
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                dataSet.color = Color.rgb(187, 187, 187)
-
+                dataSet.color = Color.parseColor("#0D000000")//transparent
             }
 
             (0..segmentNum).forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                 dataSet.color = Color.rgb(124, 252, 79)
             }
-
-            val percent75: Int = (holder.segments.numOfSegments * 75) / 100
-            if (segmentNum > percent75) {
-                (percent75..segmentNum).forEach { e ->
-                    val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                    dataSet.color = Color.rgb(194, 38, 54)
+            if (false) {
+                val percent75: Int = (holder.segments.numOfSegments * 75) / 100
+                if (segmentNum > percent75) {
+                    (percent75..segmentNum).forEach { e ->
+                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
+                        dataSet.color = Color.rgb(124, 252, 79)
+                    }
                 }
             }
-            holder.chart.invalidate();
+            holder.chart.invalidate()
         }
 
         holder.units.text = (obdCommand.pid).units

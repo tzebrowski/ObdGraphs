@@ -2,12 +2,12 @@ package org.openobd2.core.logger
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import org.openobd2.core.command.CommandReply
-import org.openobd2.core.command.obd.ObdCommand
+import org.obd.metrics.command.CommandReply
+import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.bl.DataLoggerService
 import org.openobd2.core.logger.ui.preferences.GENERIC_MODE
 import org.openobd2.core.logger.ui.preferences.Prefs
-import org.openobd2.core.pid.PidRegistry
+import org.obd.metrics.pid.PidRegistry
 
 
 class SelectedPids {

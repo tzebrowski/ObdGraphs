@@ -1,27 +1,8 @@
 package org.openobd2.core.logger.ui.dash
 
-import org.openobd2.core.command.CommandReply
+import org.obd.metrics.command.CommandReply
 import java.util.*
 import kotlin.math.round
-
-fun CommandReply<*>.valueAsString(): String {
-    return if (this.value == null) {
-        ""
-    } else {
-        if (value.toString().contains(".")) {
-            value.toString().toDouble().round(2).toString()
-        } else {
-            value.toString().toInt().toString()
-        }
-    }
-}
-
-fun CommandReply<*>.valueToDouble(): Double {
-    return when (value) {
-        null -> 0.0
-        else -> this.value.toString().toDouble().round(2)
-    }
-}
 
 fun Double.round(decimals: Int): Double {
     var multiplier = 1.0
