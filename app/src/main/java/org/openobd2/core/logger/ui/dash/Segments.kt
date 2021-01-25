@@ -1,6 +1,5 @@
 package org.openobd2.core.logger.ui.dash
 
-import org.obd.metrics.command.CommandReply
 import java.util.*
 import kotlin.math.round
 

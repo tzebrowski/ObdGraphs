@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.command.CommandReply
+import org.obd.metrics.Metric
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.ModelChangePublisher
 
@@ -21,7 +21,7 @@ class LiveDataFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_livedata, container, false)
-        var data: MutableList<CommandReply<*>> = arrayListOf()
+        var data: MutableList<Metric<*>> = arrayListOf()
         val adapter = LiveDataViewAdapter(root.context, data)
 
         ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {

@@ -69,7 +69,7 @@ class DataLogger {
         }
     }
 
-    var mode1: Workflow = Workflow.mode1().equationEngine("rhino").subscriber(modelUpdate).statusObserver(statusObserver).build()
+    var mode1: Workflow = Workflow.mode1().equationEngine("rhino").metricsObserver(modelUpdate).statusObserver(statusObserver).build()
 
     var mode22: Workflow = Workflow
             .generic()
@@ -78,7 +78,7 @@ class DataLogger {
                     .initSequence(AlfaMed17CommandGroup.CAN_INIT)
                     .pidFile("alfa.json").build())
             .equationEngine("rhino")
-            .subscriber(modelUpdate)
+            .metricsObserver(modelUpdate)
             .statusObserver(statusObserver).build()
 
     private lateinit var device: String

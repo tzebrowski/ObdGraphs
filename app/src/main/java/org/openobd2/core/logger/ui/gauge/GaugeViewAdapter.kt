@@ -7,16 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.command.CommandReply
+import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 
 class GaugeViewAdapter internal constructor(
         context: Context?,
-        data: MutableCollection<CommandReply<*>>
+        data: MutableCollection<Metric<*>>
 ) :
         RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<CommandReply<*>> = data
+    var mData: MutableCollection<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(

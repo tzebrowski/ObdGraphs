@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.command.CommandReply
+import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.SelectedPids
@@ -21,7 +21,7 @@ class DashFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        var (selectedPids, data: MutableList<CommandReply<*>>) = SelectedPids.get(requireContext(), "pref.dash.pids.selected")
+        var (selectedPids, data: MutableList<Metric<*>>) = SelectedPids.get(requireContext(), "pref.dash.pids.selected")
 
         val root = inflater.inflate(R.layout.fragment_dash, container, false)
         val adapter = DashViewAdapter(root.context, data)

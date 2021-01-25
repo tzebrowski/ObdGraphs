@@ -7,18 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.solver.Metrics
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.command.CommandReply
+import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.dash.round
 
 class LiveDataViewAdapter internal constructor(
         context: Context?,
-        data: MutableCollection<CommandReply<*>>
+        data: MutableCollection<Metric<*>>
 ) :
         RecyclerView.Adapter<LiveDataViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<CommandReply<*>> = data
+    var mData: MutableCollection<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(

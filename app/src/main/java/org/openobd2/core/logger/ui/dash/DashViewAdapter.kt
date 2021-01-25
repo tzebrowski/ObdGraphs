@@ -3,6 +3,9 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Shader
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +19,18 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
-import org.obd.metrics.command.CommandReply
+import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
-import org.openobd2.core.logger.R
 import org.obd.metrics.pid.PidDefinition
+import org.openobd2.core.logger.R
+
 
 class DashViewAdapter internal constructor(
         context: Context?,
-        data: MutableCollection<CommandReply<*>>
+        data: MutableCollection<Metric<*>>
 ) :
         RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<CommandReply<*>> = data
+    var mData: MutableCollection<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
@@ -101,16 +105,26 @@ class DashViewAdapter internal constructor(
             } else {
                 this.segments = Segments(30, pid.min.toDouble(), pid.max.toDouble())
                 this.label.text = pid.description
-
                 chart.setDrawBarShadow(false)
                 chart.setDrawValueAboveBar(false)
                 chart.setTouchEnabled(false)
+
+                chart.setDrawBorders(false)
+                chart.setAddStatesFromChildren(false)
+
+
+
                 chart.description.isEnabled = false
                 chart.setPinchZoom(false)
                 chart.setDrawGridBackground(false)
                 val xAxis = chart.xAxis
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.setDrawGridLines(false)
+                xAxis.setDrawLabels(true)
+                xAxis.setDrawGridLinesBehindData(false)
+                xAxis.setDrawLimitLinesBehindData(false)
+                xAxis.setDrawAxisLine(false)
+                xAxis.setCenterAxisLabels(false)
 
                 val leftAxis = chart.axisLeft
                 leftAxis.setDrawGridLines(false)
