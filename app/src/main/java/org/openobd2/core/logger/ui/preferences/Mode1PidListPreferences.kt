@@ -18,7 +18,7 @@ class Mode1PidListPreferences(
         val entriesValues: MutableList<CharSequence> =
                 LinkedList()
 
-        DataLoggerService.dataLogger.mode1.registry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
+        DataLoggerService.dataLogger.mode1.pidRegistry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
                 .forEach { p ->
                     entries.add(p.description)
                     entriesValues.add(p.pid)

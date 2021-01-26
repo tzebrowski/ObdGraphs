@@ -19,7 +19,7 @@ class DashViewSelectedPidListPreferences(
 
         when (Prefs.getMode(context!!)) {
             GENERIC_MODE -> {
-                DataLoggerService.dataLogger.mode1.registry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
+                DataLoggerService.dataLogger.mode1.pidRegistry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
                         .forEach { p ->
                             entries.add(p.description)
                             entriesValues.add(p.pid)
@@ -27,7 +27,7 @@ class DashViewSelectedPidListPreferences(
             }
 
             else -> {
-                DataLoggerService.dataLogger.mode22.registry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
+                DataLoggerService.dataLogger.mode22.pidRegistry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
                         .forEach { p ->
                             entries.add(p.description)
                             entriesValues.add(p.pid)

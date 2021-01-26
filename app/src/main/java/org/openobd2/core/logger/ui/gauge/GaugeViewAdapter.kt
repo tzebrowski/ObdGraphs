@@ -31,10 +31,18 @@ class GaugeViewAdapter internal constructor(
             holder: ViewHolder,
             position: Int
     ) {
-        val commandReply = mData.elementAt(position)
-        holder.labelTextView.text = commandReply.command.label
-        holder.unitsTextView.text = (commandReply.command as ObdCommand).pid.units
-        holder.valueTextView.text = commandReply.valueAsString()
+        val metric = mData.elementAt(position)
+        holder.labelTextView.text = metric.command.label
+        holder.unitsTextView.text = (metric.command as ObdCommand).pid.units
+        holder.valueTextView.text = metric.valueAsString()
+        if (metric.statistic == null){
+            holder.minTextView.text = ""
+            holder.maxTextView.text = ""
+
+        }else{
+            holder.minTextView.text = metric.statistic.min.toString()
+            holder.maxTextView.text = metric.statistic.max.toString()
+        }
     }
 
     override fun getItemCount(): Int {
@@ -46,11 +54,16 @@ class GaugeViewAdapter internal constructor(
         var labelTextView: TextView
         var valueTextView: TextView
         var unitsTextView: TextView
+        var minTextView: TextView
+        var maxTextView: TextView
 
         init {
             valueTextView = itemView.findViewById(R.id.value)
             labelTextView = itemView.findViewById(R.id.label)
             unitsTextView = itemView.findViewById(R.id.unit)
+            minTextView = itemView.findViewById(R.id.min_value)
+            maxTextView = itemView.findViewById(R.id.max_value)
+
         }
     }
 }

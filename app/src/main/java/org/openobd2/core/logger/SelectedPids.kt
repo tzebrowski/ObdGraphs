@@ -20,10 +20,10 @@ class SelectedPids {
 
             when (Prefs.getMode(context)) {
                 GENERIC_MODE -> {
-                    pidRegistry = DataLoggerService.dataLogger.mode1.registry
+                    pidRegistry = DataLoggerService.dataLogger.mode1.pidRegistry
                 }
                 else -> {
-                    pidRegistry = DataLoggerService.dataLogger.mode22.registry
+                    pidRegistry = DataLoggerService.dataLogger.mode22.pidRegistry
                 }
             }
 
@@ -31,7 +31,7 @@ class SelectedPids {
 
             selectedPids!!.forEach { s: String? ->
                 pidRegistry.findBy(s)?.apply {
-                    data.add(Metric<Int>(ObdCommand(this), 0, ""))
+                    data.add( Metric.builder<Int>().command(ObdCommand(this)).build())
                 }
             }
 
