@@ -2,6 +2,7 @@ package org.openobd2.core.logger.ui.gauge
 
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,6 @@ class GaugeViewAdapter internal constructor(
     RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
     var mData: MutableCollection<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
-    private var ctx: Context? = context
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -41,12 +41,11 @@ class GaugeViewAdapter internal constructor(
         holder.minTextView.text = ""
         holder.maxTextView.text = ""
 
-        ctx?.let {
-            val statistic =
-                DataLoggerService.dataLogger.statistics(it).findBy(metric.command)
-            holder.minTextView.text = statistic.min.toString()
-            holder.maxTextView.text = statistic.max.toString()
-        }
+        val statistic =
+            DataLoggerService.dataLogger.statistics().findBy(metric.command)
+        holder.minTextView.text = statistic.min.toString()
+        holder.maxTextView.text = statistic.max.toString()
+
     }
 
     override fun getItemCount(): Int {

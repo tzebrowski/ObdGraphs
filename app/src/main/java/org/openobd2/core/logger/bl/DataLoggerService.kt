@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 
-
 private const val ACTION_START = "org.openobd2.core.logger.ui.action.START"
 private const val ACTION_STOP = "org.openobd2.core.logger.ui.action.STOP"
 
@@ -14,7 +13,7 @@ class DataLoggerService : IntentService("DataLoggerService") {
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_START -> {
-                dataLogger.start(this.applicationContext)
+                dataLogger.start()
             }
             ACTION_STOP -> {
                 Log.i(LOG_KEY, "Stop collecting process")

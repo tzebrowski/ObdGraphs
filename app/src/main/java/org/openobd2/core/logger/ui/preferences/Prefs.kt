@@ -13,16 +13,14 @@ class Prefs {
         fun isBatchEnabled(context: Context): Boolean {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val batchEnabled = pref.getBoolean("pref.batch.enabled", true)
-            Log.i(LOG_KEY, "Batch enabled: $batchEnabled")
+            Log.v(LOG_KEY, "Batch enabled: $batchEnabled")
             return batchEnabled
         }
 
         @JvmStatic
         fun getMode(context: Context): String? {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val selectedMode = pref.getString("pref.mode", "Generic mode")
-            Log.i(LOG_KEY, "Selected OBD mode: $selectedMode")
-            return selectedMode
+            return pref.getString("pref.mode", "Generic mode")
         }
     }
 }

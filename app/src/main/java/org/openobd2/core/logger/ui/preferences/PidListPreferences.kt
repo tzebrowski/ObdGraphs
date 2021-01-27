@@ -18,13 +18,11 @@ class PidListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        context?.let {
-            DataLoggerService.dataLogger.pidRegistry(it).definitions.sortedBy { pidDefinition -> pidDefinition.description }
-                .forEach { p ->
-                    entries.add(p.description)
-                    entriesValues.add(p.pid)
-                }
-        }
+        DataLoggerService.dataLogger.pids().definitions.sortedBy { pidDefinition -> pidDefinition.description }
+            .forEach { p ->
+                entries.add(p.description)
+                entriesValues.add(p.pid)
+            }
 
         val default = hashSetOf<String>().apply {
             add("05")//Engine coolant temperature

@@ -31,13 +31,12 @@ class ConfigurationFragment : PreferenceFragmentCompat() {
 
         when (Prefs.getMode(this.requireContext())) {
             GENERIC_MODE -> {
-                p1?.setVisible(true)
-                p2?.setVisible(false)
-
+                p1?.isVisible = true
+                p2?.isVisible = false
             }
             else -> {
-                p1?.setVisible(false)
-                p2?.setVisible(true)
+                p1?.isVisible = false
+                p2?.isVisible = true
             }
         }
 
@@ -46,12 +45,12 @@ class ConfigurationFragment : PreferenceFragmentCompat() {
                 override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
                     when (newValue) {
                         GENERIC_MODE -> {
-                            p1?.setVisible(true)
-                            p2?.setVisible(false)
+                            p1?.isVisible = true
+                            p2?.isVisible = false
                         }
                         else -> {
-                            p1?.setVisible(false)
-                            p2?.setVisible(true)
+                            p1?.isVisible = false
+                            p2?.isVisible = true
                         }
                     }
                     return true

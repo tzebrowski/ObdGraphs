@@ -7,7 +7,7 @@ import androidx.preference.PreferenceManager
 import org.obd.metrics.StatusObserver
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.pid.PidRegistry
-import org.obd.metrics.statistics.StatisticsCollector
+import org.obd.metrics.statistics.StatisticsAccumulator
 import org.obd.metrics.workflow.EcuSpecific
 import org.obd.metrics.workflow.Workflow
 import org.openobd2.core.logger.ui.preferences.Prefs
@@ -93,32 +93,24 @@ class DataLogger {
 
     private lateinit var device: String
 
-
-    fun statistics(context: Context): StatisticsCollector {
-        return workflow(context).statistics
+    fun statistics(): StatisticsAccumulator {
+        return workflow().statistics
     }
 
-    fun pidRegistry(context: Context): PidRegistry {
-        return workflow(context).pidRegistry
-    }
-
-    fun workflow(context: Context): Workflow {
-        return when (Prefs.getMode(context)) {
-            GENERIC_MODE -> {
-                mode1
-            }
-            else -> {
-                mode22
-            }
-        }
+    fun pids(): PidRegistry {
+        return workflow().pids
     }
 
     fun stop() {
-        workflow(context).stop()
+        workflow().stop()
     }
 
-    fun start(context: Context) {
-        this.context = context
+    fun init(ctx: Context){
+        this.context = ctx
+    }
+
+    fun start() {
+
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
         var adapterName = pref.getString("pref.adapter.id", "OBDII")
         this.device = adapterName.toString()
@@ -148,5 +140,20 @@ class DataLogger {
         }
 
         Log.i(LOG_KEY, "Start collecting process for device $adapterName")
+    }
+
+    private fun workflow(): Workflow {
+        context?.let {
+
+        return when (Prefs.getMode(context)) {
+            GENERIC_MODE -> {
+                mode1
+            }
+            else -> {
+                mode22
+            }
+        }
+        }
+
     }
 }

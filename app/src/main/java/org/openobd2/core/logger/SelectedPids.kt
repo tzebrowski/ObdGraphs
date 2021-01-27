@@ -17,10 +17,10 @@ class SelectedPids {
         ): Pair<MutableSet<String>, MutableList<Metric<*>>> {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             var selectedPids = pref.getStringSet(prefKey, emptySet())
-            Log.d("S_PID","$prefKey   ->  $selectedPids")
+            Log.d("S_PID", "$prefKey   ->  $selectedPids")
 
             var pidRegistry: PidRegistry =
-                DataLoggerService.dataLogger.workflow(context).pidRegistry
+                DataLoggerService.dataLogger.pids()
             var data: MutableList<Metric<*>> = arrayListOf()
             selectedPids!!.forEach { s: String? ->
                 pidRegistry.findBy(s)?.apply {
