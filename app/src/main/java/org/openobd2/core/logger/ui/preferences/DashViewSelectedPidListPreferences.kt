@@ -7,32 +7,22 @@ import org.openobd2.core.logger.bl.DataLoggerService
 import java.util.*
 
 class DashViewSelectedPidListPreferences(
-        context: Context?,
-        attrs: AttributeSet?
+    context: Context?,
+    attrs: AttributeSet?
 ) :
-        MultiSelectListPreference(context, attrs) {
+    MultiSelectListPreference(context, attrs) {
     init {
         val entries: MutableList<CharSequence> =
-                LinkedList()
+            LinkedList()
         val entriesValues: MutableList<CharSequence> =
-                LinkedList()
+            LinkedList()
 
-        when (Prefs.getMode(context!!)) {
-            GENERIC_MODE -> {
-                DataLoggerService.dataLogger.mode1.pidRegistry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
-                        .forEach { p ->
-                            entries.add(p.description)
-                            entriesValues.add(p.pid)
-                        }
-            }
-
-            else -> {
-                DataLoggerService.dataLogger.mode22.pidRegistry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
-                        .forEach { p ->
-                            entries.add(p.description)
-                            entriesValues.add(p.pid)
-                        }
-            }
+        context?.let {
+            DataLoggerService.dataLogger.pidRegistry(it).definitions.sortedBy { pidDefinition -> pidDefinition.description }
+                .forEach { p ->
+                    entries.add(p.description)
+                    entriesValues.add(p.pid)
+                }
         }
 
         val default = hashSetOf<String>().apply {

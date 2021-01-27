@@ -24,10 +24,10 @@ class UIUtils {
             valSpanString.setSpan(StyleSpan(Typeface.BOLD), 0, valSpanString.length, 0)
             //valSpanString.setSpan(StyleSpan(Typeface.ITALIC), 0, valSpanString.length, 0)
             valSpanString.setSpan(
-                    ForegroundColorSpan(color),
-                    0,
-                    valSpanString.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                ForegroundColorSpan(color),
+                0,
+                valSpanString.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             return valSpanString
         }

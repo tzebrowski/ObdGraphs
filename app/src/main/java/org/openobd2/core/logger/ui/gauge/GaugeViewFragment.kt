@@ -17,11 +17,14 @@ import org.openobd2.core.logger.bl.ModelChangePublisher
 class GaugeViewFragment : Fragment() {
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
-        var (selectedPids, data: MutableList<Metric<*>>) = SelectedPids.get(requireContext(), "pref.gauge.pids.selected")
+        var (selectedPids, data: MutableList<Metric<*>>) = SelectedPids.get(
+            requireContext(),
+            "pref.gauge.pids.selected"
+        )
 
         val root = inflater.inflate(R.layout.fragment_gauge, container, false)
         val adapter = GaugeViewAdapter(root.context, data)

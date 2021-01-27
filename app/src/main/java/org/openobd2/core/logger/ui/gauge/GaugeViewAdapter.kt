@@ -10,38 +10,42 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.bl.DataLoggerService
 
 class GaugeViewAdapter internal constructor(
-        context: Context?,
-        data: MutableCollection<Metric<*>>
+    context: Context?,
+    data: MutableCollection<Metric<*>>
 ) :
-        RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
+    RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
     var mData: MutableCollection<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
+    private var ctx: Context? = context
 
     override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
+        parent: ViewGroup,
+        viewType: Int
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.gauge_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(
-            holder: ViewHolder,
-            position: Int
+        holder: ViewHolder,
+        position: Int
     ) {
         val metric = mData.elementAt(position)
         holder.labelTextView.text = metric.command.label
         holder.unitsTextView.text = (metric.command as ObdCommand).pid.units
         holder.valueTextView.text = metric.valueAsString()
-        if (metric.statistic == null){
-            holder.minTextView.text = ""
-            holder.maxTextView.text = ""
 
-        }else{
-            holder.minTextView.text = metric.statistic.min.toString()
-            holder.maxTextView.text = metric.statistic.max.toString()
+        holder.minTextView.text = ""
+        holder.maxTextView.text = ""
+
+        ctx?.let {
+            val statistic =
+                DataLoggerService.dataLogger.statistics(it).findBy(metric.command)
+            holder.minTextView.text = statistic.min.toString()
+            holder.maxTextView.text = statistic.max.toString()
         }
     }
 
@@ -50,7 +54,7 @@ class GaugeViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) :
-            RecyclerView.ViewHolder(itemView) {
+        RecyclerView.ViewHolder(itemView) {
         var labelTextView: TextView
         var valueTextView: TextView
         var unitsTextView: TextView

@@ -6,23 +6,25 @@ import androidx.preference.MultiSelectListPreference
 import org.openobd2.core.logger.bl.DataLoggerService
 import java.util.*
 
-class Mode1PidListPreferences(
-        context: Context?,
-        attrs: AttributeSet?
+class PidListPreferences(
+    context: Context?,
+    attrs: AttributeSet?
 ) :
-        MultiSelectListPreference(context, attrs) {
+    MultiSelectListPreference(context, attrs) {
     init {
 
         val entries: MutableList<CharSequence> =
-                LinkedList()
+            LinkedList()
         val entriesValues: MutableList<CharSequence> =
-                LinkedList()
+            LinkedList()
 
-        DataLoggerService.dataLogger.mode1.pidRegistry.definitions.sortedBy { pidDefinition -> pidDefinition.description }
+        context?.let {
+            DataLoggerService.dataLogger.pidRegistry(it).definitions.sortedBy { pidDefinition -> pidDefinition.description }
                 .forEach { p ->
                     entries.add(p.description)
                     entriesValues.add(p.pid)
                 }
+        }
 
         val default = hashSetOf<String>().apply {
             add("05")//Engine coolant temperature

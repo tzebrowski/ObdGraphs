@@ -17,11 +17,14 @@ import org.openobd2.core.logger.bl.ModelChangePublisher
 class DashFragment : Fragment() {
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
-        var (selectedPids, data: MutableList<Metric<*>>) = SelectedPids.get(requireContext(), "pref.dash.pids.selected")
+        var (selectedPids, data: MutableList<Metric<*>>) = SelectedPids.get(
+            requireContext(),
+            "pref.dash.pids.selected"
+        )
 
         val root = inflater.inflate(R.layout.fragment_dash, container, false)
         val adapter = DashViewAdapter(root.context, data)

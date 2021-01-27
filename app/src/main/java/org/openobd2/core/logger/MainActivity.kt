@@ -29,16 +29,20 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 NOTIFICATION_CONNECTING -> {
-                    val toast = Toast.makeText(applicationContext, "Connecting to the device.",
-                            Toast.LENGTH_LONG)
+                    val toast = Toast.makeText(
+                        applicationContext, "Connecting to the device.",
+                        Toast.LENGTH_LONG
+                    )
                     toast.setGravity(Gravity.CENTER, 0, 0)
                     toast.show()
 
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.VISIBLE
-                    progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#C22636"),
-                            android.graphics.PorterDuff.Mode.SRC_IN)
+                    progressBar.indeterminateDrawable.setColorFilter(
+                        Color.parseColor("#C22636"),
+                        android.graphics.PorterDuff.Mode.SRC_IN
+                    )
 
                     val btn: FloatingActionButton = findViewById(R.id.action_btn)
                     btn.backgroundTintList = resources.getColorStateList(R.color.purple_200)
@@ -50,20 +54,26 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_CONNECTED -> {
-                    val toast = Toast.makeText(applicationContext, "Connection to the device has been established." +
-                            "\n Start collecting data from ECU.",
-                            Toast.LENGTH_LONG)
+                    val toast = Toast.makeText(
+                        applicationContext, "Connection to the device has been established." +
+                                "\n Start collecting data from ECU.",
+                        Toast.LENGTH_LONG
+                    )
                     toast.setGravity(Gravity.CENTER, 0, 0)
                     toast.show()
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
-                    progressBar.indeterminateDrawable.setColorFilter(Color.parseColor("#01804F"),
-                            android.graphics.PorterDuff.Mode.SRC_IN)
+                    progressBar.indeterminateDrawable.setColorFilter(
+                        Color.parseColor("#01804F"),
+                        android.graphics.PorterDuff.Mode.SRC_IN
+                    )
                 }
 
                 NOTIFICATION_STOPPED -> {
-                    val toast = Toast.makeText(applicationContext, "Connection with the device has been stopped.",
-                            Toast.LENGTH_LONG)
+                    val toast = Toast.makeText(
+                        applicationContext, "Connection with the device has been stopped.",
+                        Toast.LENGTH_LONG
+                    )
                     toast.setGravity(Gravity.CENTER, 0, 0)
                     toast.show()
 
@@ -79,8 +89,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_ERROR -> {
-                    val toast = Toast.makeText(applicationContext, "Error occurred during. Please check your connection.",
-                            Toast.LENGTH_LONG)
+                    val toast = Toast.makeText(
+                        applicationContext, "Error occurred during. Please check your connection.",
+                        Toast.LENGTH_LONG
+                    )
                     toast.setGravity(Gravity.CENTER, 0, 0)
                     toast.show()
 
@@ -105,13 +117,13 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
-                setOf(
-                        R.id.navigation_dashboard,
-                        R.id.navigation_gauge,
-                        R.id.navigation_debug,
-                        R.id.navigation_livedata,
-                        R.id.navigation_configuration
-                )
+            setOf(
+                R.id.navigation_dashboard,
+                R.id.navigation_gauge,
+                R.id.navigation_debug,
+                R.id.navigation_livedata,
+                R.id.navigation_configuration
+            )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -154,13 +166,13 @@ class MainActivity : AppCompatActivity() {
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         val decorView = window.decorView
         decorView.systemUiVisibility =
-                (View.SYSTEM_UI_FLAG_IMMERSIVE // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Hide the nav bar and status bar
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN)
+            (View.SYSTEM_UI_FLAG_IMMERSIVE // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Hide the nav bar and status bar
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
     // Shows the system bars by removing all the flags

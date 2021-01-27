@@ -1,4 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         android:key="adapter"
@@ -68,17 +68,18 @@
 
 
     <PreferenceCategory android:title="Supported PID's">
-        <org.openobd2.core.logger.ui.preferences.Mode1PidListPreferences
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:defaultValue="@array/perf_empty_array"
             android:key="@string/pref.pids.generic"
             android:summary="Generic PID's for Mode 1"
             android:title="Generic" />
 
-        <org.openobd2.core.logger.ui.preferences.Mode22PidListPreferences
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:defaultValue="@array/perf_empty_array"
             android:key="pref.pids.mode22"
             android:summary="Alfa Romeo specific PID's"
-            android:title="Mode 22" />
+            android:title="Mode 22"
+            />
     </PreferenceCategory>
 
 

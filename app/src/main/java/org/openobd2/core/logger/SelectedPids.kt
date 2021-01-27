@@ -1,40 +1,32 @@
 package org.openobd2.core.logger
 
 import android.content.Context
+import android.util.Log
 import androidx.preference.PreferenceManager
 import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
-import org.openobd2.core.logger.bl.DataLoggerService
-import org.openobd2.core.logger.ui.preferences.GENERIC_MODE
-import org.openobd2.core.logger.ui.preferences.Prefs
 import org.obd.metrics.pid.PidRegistry
-
+import org.openobd2.core.logger.bl.DataLoggerService
 
 class SelectedPids {
     companion object {
         @JvmStatic
-        fun get(context: Context, prefKey: String): Pair<MutableSet<String>, MutableList<Metric<*>>> {
+        fun get(
+            context: Context,
+            prefKey: String
+        ): Pair<MutableSet<String>, MutableList<Metric<*>>> {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             var selectedPids = pref.getStringSet(prefKey, emptySet())
-            var pidRegistry: PidRegistry
+            Log.d("S_PID","$prefKey   ->  $selectedPids")
 
-            when (Prefs.getMode(context)) {
-                GENERIC_MODE -> {
-                    pidRegistry = DataLoggerService.dataLogger.mode1.pidRegistry
-                }
-                else -> {
-                    pidRegistry = DataLoggerService.dataLogger.mode22.pidRegistry
-                }
-            }
-
+            var pidRegistry: PidRegistry =
+                DataLoggerService.dataLogger.workflow(context).pidRegistry
             var data: MutableList<Metric<*>> = arrayListOf()
-
             selectedPids!!.forEach { s: String? ->
                 pidRegistry.findBy(s)?.apply {
-                    data.add( Metric.builder<Int>().command(ObdCommand(this)).build())
+                    data.add(Metric.builder<Int>().command(ObdCommand(this)).build())
                 }
             }
-
             return Pair(selectedPids, data)
         }
     }

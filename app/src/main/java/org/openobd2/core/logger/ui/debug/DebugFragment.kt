@@ -13,9 +13,9 @@ import org.openobd2.core.logger.bl.ModelChangePublisher
 class DebugFragment : Fragment() {
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_debug, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)

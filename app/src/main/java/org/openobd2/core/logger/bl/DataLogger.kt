@@ -6,9 +6,11 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import org.obd.metrics.StatusObserver
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
-import org.openobd2.core.logger.ui.preferences.Prefs
+import org.obd.metrics.pid.PidRegistry
+import org.obd.metrics.statistics.StatisticsCollector
 import org.obd.metrics.workflow.EcuSpecific
 import org.obd.metrics.workflow.Workflow
+import org.openobd2.core.logger.ui.preferences.Prefs
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
@@ -16,13 +18,14 @@ const val NOTIFICATION_STOPPED = "data.logger.stopped"
 const val NOTIFICATION_STOPPING = "data.logger.stopping"
 const val NOTIFICATION_ERROR = "data.logger.error"
 const val LOG_KEY = "DATA_LOGGER_DL"
+const val GENERIC_MODE = "Generic mode"
+
 
 class DataLogger {
 
     private var modelUpdate = ModelChangePublisher()
     private lateinit var context: Context
     private var statusObserver = object : StatusObserver {
-
         override fun onConnecting() {
             Log.i(LOG_KEY, "Start collecting process for the Device: $device")
             modelUpdate.data.clear()
@@ -39,8 +42,10 @@ class DataLogger {
         }
 
         override fun onError(msg: String, tr: Throwable?) {
-            Log.e(LOG_KEY,
-                    "An error occurred during interaction with the device. Msg: $msg")
+            Log.e(
+                LOG_KEY,
+                "An error occurred during interaction with the device. Msg: $msg"
+            )
 
             mode1.stop()
             mode22.stop()
@@ -51,8 +56,9 @@ class DataLogger {
         }
 
         override fun onStopped() {
-            Log.i(LOG_KEY,
-                    "Collecting process completed for the Device: $device"
+            Log.i(
+                LOG_KEY,
+                "Collecting process completed for the Device: $device"
             )
 
             context.sendBroadcast(Intent().apply {
@@ -69,30 +75,46 @@ class DataLogger {
         }
     }
 
-    var mode1: Workflow = Workflow.mode1().equationEngine("rhino").metricsObserver(modelUpdate).statusObserver(statusObserver).build()
-
-    var mode22: Workflow = Workflow
-            .generic()
-            .ecuSpecific(EcuSpecific
-                    .builder()
-                    .initSequence(AlfaMed17CommandGroup.CAN_INIT)
-                    .pidFile("alfa.json").build())
-            .equationEngine("rhino")
-            .metricsObserver(modelUpdate)
+    private var mode1: Workflow =
+        Workflow.mode1().equationEngine("rhino").metricsObserver(modelUpdate)
             .statusObserver(statusObserver).build()
+
+    private var mode22: Workflow = Workflow
+        .generic()
+        .ecuSpecific(
+            EcuSpecific
+                .builder()
+                .initSequence(AlfaMed17CommandGroup.CAN_INIT)
+                .pidFile("alfa.json").build()
+        )
+        .equationEngine("rhino")
+        .metricsObserver(modelUpdate)
+        .statusObserver(statusObserver).build()
 
     private lateinit var device: String
 
-    fun stop() {
-        when (Prefs.getMode(context)) {
-            "Generic mode" -> {
-                mode1.stop()
-            }
 
+    fun statistics(context: Context): StatisticsCollector {
+        return workflow(context).statistics
+    }
+
+    fun pidRegistry(context: Context): PidRegistry {
+        return workflow(context).pidRegistry
+    }
+
+    fun workflow(context: Context): Workflow {
+        return when (Prefs.getMode(context)) {
+            GENERIC_MODE -> {
+                mode1
+            }
             else -> {
-                mode22.stop()
+                mode22
             }
         }
+    }
+
+    fun stop() {
+        workflow(context).stop()
     }
 
     fun start(context: Context) {
@@ -102,18 +124,26 @@ class DataLogger {
         this.device = adapterName.toString()
 
         when (Prefs.getMode(context)) {
-            "Generic mode" -> {
+            GENERIC_MODE -> {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
 
-                mode1.start(BluetoothConnection(device.toString()), selectedPids,Prefs.isBatchEnabled(context))
+                mode1.start(
+                    BluetoothConnection(device.toString()),
+                    selectedPids,
+                    Prefs.isBatchEnabled(context)
+                )
             }
 
             else -> {
                 var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())
 
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
-                mode22.start(BluetoothConnection(device.toString()), selectedPids,Prefs.isBatchEnabled(context))
+                mode22.start(
+                    BluetoothConnection(device.toString()),
+                    selectedPids,
+                    Prefs.isBatchEnabled(context)
+                )
             }
         }
 

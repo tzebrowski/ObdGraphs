@@ -7,6 +7,7 @@ import org.obd.metrics.command.Command
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.command.obd.SupportedPidsCommand
 
+
 internal class ModelChangePublisher : MetricsObserver() {
 
     var data: MutableMap<Command, Metric<*>> = hashMapOf()
@@ -23,11 +24,11 @@ internal class ModelChangePublisher : MetricsObserver() {
 
     companion object {
         @JvmStatic
-        val debugData: MutableLiveData<Metric<*>> =  MutableLiveData<Metric<*>>().apply {
+        val debugData: MutableLiveData<Metric<*>> = MutableLiveData<Metric<*>>().apply {
         }
 
         @JvmStatic
-        val liveData: MutableLiveData<Metric<*>> =  MutableLiveData<Metric<*>>().apply {
+        val liveData: MutableLiveData<Metric<*>> = MutableLiveData<Metric<*>>().apply {
         }
     }
 }

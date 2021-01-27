@@ -3,9 +3,6 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.LinearGradient
-import android.graphics.Paint
-import android.graphics.Shader
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,24 +23,24 @@ import org.openobd2.core.logger.R
 
 
 class DashViewAdapter internal constructor(
-        context: Context?,
-        data: MutableCollection<Metric<*>>
+    context: Context?,
+    data: MutableCollection<Metric<*>>
 ) :
-        RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
+    RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
     var mData: MutableCollection<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
+        parent: ViewGroup,
+        viewType: Int
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.dash_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(
-            holder: ViewHolder,
-            position: Int
+        holder: ViewHolder,
+        position: Int
     ) {
         val commandReply = mData.elementAt(position)
         val obdCommand = commandReply.command as ObdCommand
@@ -84,7 +81,7 @@ class DashViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) :
-            RecyclerView.ViewHolder(itemView) {
+        RecyclerView.ViewHolder(itemView) {
         var chart: BarChart
         var label: TextView
         var value: TextView
