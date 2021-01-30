@@ -7,11 +7,11 @@ This is a simple Android application that demonstrates the usage of OpenElm327 j
 
 | View    |           |
 | ------------ | ---- |
-| Dash view    |     ![Alt text](./screen5.png?raw=true "Dash view") |
-| Gauge view   |   ![Alt text](./screen4.png?raw=true "Gauge view")   |
-| Metrics view |    ![Alt text](./screen1.png?raw=true "Metrics view")  |
-| Debug view |    ![Alt text](./screen3.png?raw=true "Debug view")  |
-| Preferences view |    ![Alt text](./screen2.png?raw=true "Preferences view")  |
+| Dash view    |     ![Alt text](./res/screen5.png?raw=true "Dash view") |
+| Gauge view   |   ![Alt text](./res/screen4.png?raw=true "Gauge view")   |
+| Metrics view |    ![Alt text](./res/screen1.png?raw=true "Metrics view")  |
+| Debug view |    ![Alt text](./res/screen3.png?raw=true "Debug view")  |
+| Preferences view |    ![Alt text](./res/screen2.png?raw=true "Preferences view")  |
 
 
 
