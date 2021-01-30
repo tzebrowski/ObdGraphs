@@ -114,6 +114,7 @@ class DashViewAdapter internal constructor(
                 chart.description.isEnabled = false
                 chart.setPinchZoom(false)
                 chart.setDrawGridBackground(false)
+
                 val xAxis = chart.xAxis
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.setDrawGridLines(false)
@@ -124,6 +125,7 @@ class DashViewAdapter internal constructor(
                 xAxis.setCenterAxisLabels(false)
 
                 val leftAxis = chart.axisLeft
+                leftAxis.axisMinimum = pid.min.toFloat()
                 leftAxis.setDrawGridLines(false)
                 leftAxis.setDrawTopYLabelEntry(false)
                 leftAxis.setDrawAxisLine(false)
@@ -134,7 +136,6 @@ class DashViewAdapter internal constructor(
 
                 leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
                 leftAxis.spaceTop = 15f
-                leftAxis.axisMinimum = 0f
 
                 val rightAxis = chart.axisRight
                 rightAxis.setDrawGridLines(false)

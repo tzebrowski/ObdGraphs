@@ -105,7 +105,7 @@ class DataLogger {
         workflow().stop()
     }
 
-    fun init(ctx: Context){
+    fun init(ctx: Context) {
         this.context = ctx
     }
 
@@ -119,23 +119,17 @@ class DataLogger {
             GENERIC_MODE -> {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
-
-                mode1.start(
-                    BluetoothConnection(device.toString()),
-                    selectedPids,
-                    Prefs.isBatchEnabled(context)
-                )
+                mode1.connection(BluetoothConnection(device.toString())).filter(selectedPids)
+                    .batchEnabled(Prefs.isBatchEnabled(context)).start()
             }
 
             else -> {
                 var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())
 
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
-                mode22.start(
-                    BluetoothConnection(device.toString()),
-                    selectedPids,
-                    Prefs.isBatchEnabled(context)
-                )
+                mode22.connection(
+                    BluetoothConnection(device.toString())
+                ).filter(selectedPids).batchEnabled(Prefs.isBatchEnabled(context)).start()
             }
         }
 
@@ -145,14 +139,14 @@ class DataLogger {
     private fun workflow(): Workflow {
         context?.let {
 
-        return when (Prefs.getMode(context)) {
-            GENERIC_MODE -> {
-                mode1
+            return when (Prefs.getMode(context)) {
+                GENERIC_MODE -> {
+                    mode1
+                }
+                else -> {
+                    mode22
+                }
             }
-            else -> {
-                mode22
-            }
-        }
         }
 
     }
