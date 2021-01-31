@@ -55,8 +55,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun registerCheckboxListener(key: String, actionTrue: String, actionFalse: String) {
-        val boxPreference = findPreference<CheckBoxPreference>(key)
-        boxPreference?.onPreferenceChangeListener =
+        val preference = findPreference<CheckBoxPreference>(key)
+        preference?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 requireContext().sendBroadcast(Intent().apply {
                     action = if (newValue == true) {
@@ -73,7 +73,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val prefMode = findPreference<ListPreference>("pref.mode")
         val p1 = findPreference<Preference>("pref.pids.generic")
         val p2 = findPreference<Preference>("pref.pids.mode22")
-
 
         when (Preferences.getMode(this.requireContext())) {
             GENERIC_MODE -> {
@@ -101,5 +100,4 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 true
             }
     }
-
 }
