@@ -14,7 +14,7 @@
             android:dialogTitle="Batch enabled"
             android:defaultValue="false"
             android:key="pref.batch.enabled"
-            android:summary="Enables batch mode"
+            android:summary="Enable batch mode"
             android:title="Enables batch mode" />
 
         <ListPreference

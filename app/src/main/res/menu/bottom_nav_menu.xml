@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@android:drawable/ic_dialog_dialer"
@@ -10,6 +11,7 @@
         android:title="@string/title_gauge" />
     <item
         android:id="@+id/navigation_livedata"
+        android:icon="@android:drawable/ic_menu_compass"
         android:title="@string/title_livedata" />
     <item
         android:id="@+id/navigation_debug"

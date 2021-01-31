@@ -21,6 +21,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.*
+import org.openobd2.core.logger.ui.preferences.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,14 +29,35 @@ class MainActivity : AppCompatActivity() {
     private var broadcastReciever = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                NOTIFICATION_CONNECTING -> {
-                    val toast = Toast.makeText(
-                        applicationContext, "Connecting to the device.",
-                        Toast.LENGTH_LONG
-                    )
-                    toast.setGravity(Gravity.CENTER, 0, 0)
-                    toast.show()
+                NOTIFICATION_DEBUG_VIEW_HIDE -> {
+                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
+                        false
+                }
+                NOTIFICATION_DEBUG_VIEW_SHOW -> {
+                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
+                        true
+                }
 
+                NOTIFICATION_DASH_VIEW_HIDE -> {
+                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
+                        false
+                }
+                NOTIFICATION_DASH_VIEW_SHOW -> {
+                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
+                        true
+                }
+
+                NOTIFICATION_GAUGE_VIEW_HIDE -> {
+                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
+                        false
+                }
+                NOTIFICATION_GAUGE_VIEW_SHOW -> {
+                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
+                        true
+                }
+
+                NOTIFICATION_CONNECTING -> {
+                    toast("Connecting to the device.")
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.VISIBLE
@@ -54,13 +76,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_CONNECTED -> {
-                    val toast = Toast.makeText(
-                        applicationContext, "Connection to the device has been established." +
-                                "\n Start collecting data from ECU.",
-                        Toast.LENGTH_LONG
+                    toast(
+                        "Connection to the device has been established." +
+                                "\n Start collecting data from ECU."
                     )
-                    toast.setGravity(Gravity.CENTER, 0, 0)
-                    toast.show()
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.indeterminateDrawable.setColorFilter(
@@ -70,12 +89,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_STOPPED -> {
-                    val toast = Toast.makeText(
-                        applicationContext, "Connection with the device has been stopped.",
-                        Toast.LENGTH_LONG
-                    )
-                    toast.setGravity(Gravity.CENTER, 0, 0)
-                    toast.show()
+                    toast("Connection with the device has been stopped.")
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.GONE
@@ -89,12 +103,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_ERROR -> {
-                    val toast = Toast.makeText(
-                        applicationContext, "Error occurred during. Please check your connection.",
-                        Toast.LENGTH_LONG
-                    )
-                    toast.setGravity(Gravity.CENTER, 0, 0)
-                    toast.show()
+                    toast("Error occurred during. Please check your connection.")
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.GONE
@@ -107,6 +116,15 @@ class MainActivity : AppCompatActivity() {
                     })
                 }
             }
+        }
+
+        private fun toast(text: String) {
+            val toast = Toast.makeText(
+                applicationContext, text,
+                Toast.LENGTH_LONG
+            )
+            toast.setGravity(Gravity.CENTER, 0, 0)
+            toast.show()
         }
     }
 
@@ -127,8 +145,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_configuration
             )
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
+            Prefs.isEnabled(this,"pref.debug.view.enabled")
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
+            Prefs.isEnabled(this,"pref.dash.view.enabled")
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
+            Prefs.isEnabled(this,"pref.gauge.view.enabled")
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
@@ -177,16 +203,6 @@ class MainActivity : AppCompatActivity() {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    // Shows the system bars by removing all the flags
-    // except for the ones that make the content appear under the system bars.
-    private fun showSystemUI() {
-        val decorView = window.decorView
-        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-    }
-
-
     private fun registerReciever() {
         registerReceiver(broadcastReciever, IntentFilter().apply {
             addAction(NOTIFICATION_CONNECTING)
@@ -194,6 +210,14 @@ class MainActivity : AppCompatActivity() {
             addAction(NOTIFICATION_STOPPING)
             addAction(NOTIFICATION_ERROR)
             addAction(NOTIFICATION_CONNECTED)
+
+            addAction(NOTIFICATION_DEBUG_VIEW_SHOW)
+            addAction(NOTIFICATION_DEBUG_VIEW_HIDE)
+            addAction(NOTIFICATION_GAUGE_VIEW_SHOW)
+            addAction(NOTIFICATION_GAUGE_VIEW_HIDE)
+            addAction(NOTIFICATION_DASH_VIEW_SHOW)
+            addAction(NOTIFICATION_DASH_VIEW_HIDE)
+
         })
     }
 }

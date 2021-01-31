@@ -10,6 +10,12 @@ class Prefs {
     companion object {
 
         @JvmStatic
+        fun isEnabled(context: Context, key: String): Boolean {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getBoolean(key, true)
+        }
+
+        @JvmStatic
         fun isBatchEnabled(context: Context): Boolean {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val batchEnabled = pref.getBoolean("pref.batch.enabled", true)
