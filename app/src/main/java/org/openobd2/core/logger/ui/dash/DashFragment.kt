@@ -1,5 +1,6 @@
 package org.openobd2.core.logger.ui.dash
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,19 @@ import org.openobd2.core.logger.ui.preferences.Preferences
 
 class DashFragment : Fragment() {
 
+    lateinit var root: View
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        root?.let {
+            val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+            val spanCount =
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+            recyclerView.layoutManager = GridLayoutManager(root.context, spanCount)
+            recyclerView.refreshDrawableState()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,10 +39,13 @@ class DashFragment : Fragment() {
         val selectedPids = Preferences.getStringSet(requireContext(), "pref.dash.pids.selected")
         val data = DataLoggerService.dataLogger.buildMetricsBy(selectedPids)
 
-        val root = inflater.inflate(R.layout.fragment_dash, container, false)
+        root = inflater.inflate(R.layout.fragment_dash, container, false)
         val adapter = DashViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = GridLayoutManager(root.context, 1)
+        val spanCount =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+
+        recyclerView.layoutManager = GridLayoutManager(root.context, spanCount)
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
 
