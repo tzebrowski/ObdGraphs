@@ -31,7 +31,7 @@
         tools:layout="@layout/fragment_livedata" />
     <fragment
         android:id="@+id/navigation_configuration"
-        android:name="org.openobd2.core.logger.ui.preferences.ConfigurationFragment"
+        android:name="org.openobd2.core.logger.ui.preferences.PreferencesFragment"
         android:label="@string/title_preferences"
         tools:layout="@layout/fragment_configuration" />
 

@@ -8,11 +8,11 @@
 
 
     <gradient
-        android:startColor="#bdc3c7"
-        android:endColor="#2c3e50" />
+        android:endColor="#2c3e50"
+        android:startColor="#bdc3c7" />
     <padding
+        android:bottom="5dp"
         android:left="5dp"
         android:right="5dp"
-        android:top="5dp"
-        android:bottom="5dp" />
+        android:top="5dp" />
 </shape>

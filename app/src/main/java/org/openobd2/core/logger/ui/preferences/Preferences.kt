@@ -6,8 +6,14 @@ import androidx.preference.PreferenceManager
 import org.openobd2.core.logger.bl.LOG_KEY
 
 
-class Prefs {
+class Preferences {
     companion object {
+
+        @JvmStatic
+        fun getStringSet(context: Context, key: String): MutableSet<String> {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getStringSet(key, emptySet())!!
+        }
 
         @JvmStatic
         fun isEnabled(context: Context, key: String): Boolean {

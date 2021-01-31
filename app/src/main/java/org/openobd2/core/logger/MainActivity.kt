@@ -26,7 +26,7 @@ import org.openobd2.core.logger.ui.preferences.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var broadcastReciever = object : BroadcastReceiver() {
+    private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 NOTIFICATION_DEBUG_VIEW_HIDE -> {
@@ -133,8 +133,53 @@ class MainActivity : AppCompatActivity() {
         DataLoggerService.dataLogger.init(this.application)
 
         setContentView(R.layout.activity_main)
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        setupNavigation()
 
+        loadPreferences()
+        registerReceiver()
+
+        val progressBar: ProgressBar = findViewById(R.id.p_bar)
+        progressBar.visibility = View.GONE
+
+
+        val btnStart: FloatingActionButton = findViewById(R.id.action_btn)
+        btnStart.setOnClickListener(View.OnClickListener {
+            Log.i("DATA_LOGGER_UI", "Start data logging")
+            DataLoggerService.startAction(this)
+        })
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        registerReceiver()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        val decorView = window.decorView
+        decorView.systemUiVisibility =
+            (View.SYSTEM_UI_FLAG_IMMERSIVE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
+    }
+
+    private fun setupNavigation() {
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -148,63 +193,23 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
-            Prefs.isEnabled(this,"pref.debug.view.enabled")
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
-            Prefs.isEnabled(this,"pref.dash.view.enabled")
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
-            Prefs.isEnabled(this,"pref.gauge.view.enabled")
-
+    private fun loadPreferences() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
-        registerReciever()
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
+            Preferences.isEnabled(this, "pref.debug.view.enabled")
 
-        val progressBar: ProgressBar = findViewById(R.id.p_bar)
-        progressBar.visibility = View.GONE
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
+            Preferences.isEnabled(this, "pref.dash.view.enabled")
 
-
-        val btnStart: FloatingActionButton = findViewById(R.id.action_btn)
-        btnStart.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Start data logging")
-            DataLoggerService.startAction(this)
-        })
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
+            Preferences.isEnabled(this, "pref.gauge.view.enabled")
     }
 
-    override fun onResume() {
-        super.onResume()
-        registerReciever()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        unregisterReceiver(broadcastReciever)
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemUI()
-        }
-    }
-
-    private fun hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        val decorView = window.decorView
-        decorView.systemUiVisibility =
-            (View.SYSTEM_UI_FLAG_IMMERSIVE // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
-                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Hide the nav bar and status bar
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN)
-    }
-
-    private fun registerReciever() {
-        registerReceiver(broadcastReciever, IntentFilter().apply {
+    private fun registerReceiver() {
+        registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(NOTIFICATION_CONNECTING)
             addAction(NOTIFICATION_STOPPED)
             addAction(NOTIFICATION_STOPPING)

@@ -12,18 +12,18 @@
         android:gravity="center_vertical">
 
         <TextView
-            android:layout_marginLeft="3dp"
             android:id="@+id/metric_name"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
             android:backgroundTintMode="src_in"
             android:text="Metric name"></TextView>
 
         <TextView
-            android:layout_marginRight="3dp"
-            android:layout_width="match_parent"
             android:id="@+id/metric_value"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
             android:backgroundTintMode="src_in"
             android:gravity="right"
             android:text="Value" />

@@ -4,13 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.preference.PreferenceManager
+import org.obd.metrics.Metric
 import org.obd.metrics.StatusObserver
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
+import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidRegistry
 import org.obd.metrics.statistics.StatisticsAccumulator
 import org.obd.metrics.workflow.EcuSpecific
 import org.obd.metrics.workflow.Workflow
-import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.Preferences
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
@@ -97,6 +99,18 @@ class DataLogger {
         return workflow().statistics
     }
 
+    fun buildMetricsBy(pids: Set<String>): MutableList<Metric<*>> {
+        var pidRegistry: PidRegistry =
+            DataLoggerService.dataLogger.pids()
+        var data: MutableList<Metric<*>> = arrayListOf()
+        pids.forEach { s: String? ->
+            pidRegistry.findBy(s)?.apply {
+                data.add(Metric.builder<Int>().command(ObdCommand(this)).build())
+            }
+        }
+        return data
+    }
+
     fun pids(): PidRegistry {
         return workflow().pids
     }
@@ -115,12 +129,12 @@ class DataLogger {
         var adapterName = pref.getString("pref.adapter.id", "OBDII")
         this.device = adapterName.toString()
 
-        when (Prefs.getMode(context)) {
+        when (Preferences.getMode(context)) {
             GENERIC_MODE -> {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
                 mode1.connection(BluetoothConnection(device.toString())).filter(selectedPids)
-                    .batchEnabled(Prefs.isBatchEnabled(context)).start()
+                    .batchEnabled(Preferences.isBatchEnabled(context)).start()
             }
 
             else -> {
@@ -129,7 +143,7 @@ class DataLogger {
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
                 mode22.connection(
                     BluetoothConnection(device.toString())
-                ).filter(selectedPids).batchEnabled(Prefs.isBatchEnabled(context)).start()
+                ).filter(selectedPids).batchEnabled(Preferences.isBatchEnabled(context)).start()
             }
         }
 
@@ -137,9 +151,9 @@ class DataLogger {
     }
 
     private fun workflow(): Workflow {
-        context?.let {
+        context.let {
 
-            return when (Prefs.getMode(context)) {
+            return when (Preferences.getMode(context)) {
                 GENERIC_MODE -> {
                     mode1
                 }

@@ -26,8 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="14dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="80dp"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@id/coordinator_Layout"
@@ -76,8 +76,8 @@
             android:id="@+id/action_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:backgroundTint="#01804F"
             android:src="@android:drawable/ic_lock_idle_charging"
+            app:backgroundTint="#01804F"
             app:fabSize="mini"
             app:layout_anchor="@id/bottomAppBar" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
