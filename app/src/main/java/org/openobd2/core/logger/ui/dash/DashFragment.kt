@@ -8,13 +8,32 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLoggerService
 import org.openobd2.core.logger.bl.ModelChangePublisher
 import org.openobd2.core.logger.ui.preferences.Preferences
-import java.util.function.Consumer
+
+
+internal class DragManageAdapter(adapter: DashViewAdapter,dragDirs: Int, swipeDirs: Int) :
+    ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
+    private var dashViewAdapter = adapter
+
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        dashViewAdapter.swapItems(viewHolder.adapterPosition, target.adapterPosition)
+        return true
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    }
+
+}
 
 class DashFragment : Fragment() {
 
@@ -33,7 +52,6 @@ class DashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-
         root = inflater.inflate(R.layout.fragment_dash, container, false)
         setupRecyclerView()
         return root
@@ -48,6 +66,15 @@ class DashFragment : Fragment() {
 
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
         recyclerView.adapter = adapter
+
+        val callback = DragManageAdapter(
+            adapter,
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.START or ItemTouchHelper.END
+        )
+        val helper = ItemTouchHelper(callback)
+        helper.attachToRecyclerView(recyclerView)
+
         adapter.notifyDataSetChanged()
 
         ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
@@ -62,10 +89,8 @@ class DashFragment : Fragment() {
                 }
             }
         })
-
         recyclerView.refreshDrawableState()
     }
-
 
     private fun spanCount(): Int {
         return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1

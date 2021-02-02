@@ -20,15 +20,23 @@ import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class DashViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<Metric<*>>
+    data: MutableList<Metric<*>>
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<Metric<*>> = data
+    var mData: MutableList<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
+
+
+    fun swapItems(fromPosition: Int, toPosition: Int) {
+        Collections.swap(mData,fromPosition,toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
