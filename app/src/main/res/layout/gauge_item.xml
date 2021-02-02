@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="2dp"
-    android:layout_marginTop="2dp"
+    android:layout_marginStart="1.5dp"
+    android:layout_marginTop="1.5dp"
     android:background="@drawable/gauge_item_background"
     tools:context=".ui.gauge.GaugeViewFragment">
 
@@ -26,7 +26,7 @@
             android:layout_marginRight="1sp"
             android:text="Value"
             android:textColor="#FFFF00"
-            android:textSize="48sp" />
+            android:textSize="46sp" />
 
         <TextView
             android:id="@+id/unit"
@@ -72,8 +72,7 @@
         android:layout_column="0"
         android:text="Label"
         android:textColor="@color/white"
-        android:textSize="18sp"
-        tools:layout_editor_absoluteY="71dp" />
+        android:textSize="18sp" />
 
 
 </GridLayout>

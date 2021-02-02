@@ -1,5 +1,6 @@
 package org.openobd2.core.logger.ui.gauge
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,17 @@ import org.openobd2.core.logger.ui.preferences.Preferences
 
 class GaugeViewFragment : Fragment() {
 
+    lateinit var root: View
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        root?.let {
+            val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+            recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
+            recyclerView.refreshDrawableState()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,10 +36,11 @@ class GaugeViewFragment : Fragment() {
         val selectedPids = Preferences.getStringSet(requireContext(), "pref.gauge.pids.selected")
         val data = DataLoggerService.dataLogger.buildMetricsBy(selectedPids)
 
-        val root = inflater.inflate(R.layout.fragment_gauge, container, false)
+        root = inflater.inflate(R.layout.fragment_gauge, container, false)
         val adapter = GaugeViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = GridLayoutManager(root.context, 2)
+
+        recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
 
@@ -46,5 +59,9 @@ class GaugeViewFragment : Fragment() {
             }
         })
         return root
+    }
+
+    private fun spanCount(): Int {
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
     }
 }

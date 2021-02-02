@@ -14,6 +14,7 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLoggerService
 import org.openobd2.core.logger.bl.ModelChangePublisher
 import org.openobd2.core.logger.ui.preferences.Preferences
+import java.util.function.Consumer
 
 class DashFragment : Fragment() {
 
@@ -22,11 +23,7 @@ class DashFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         root?.let {
-            val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-            val spanCount =
-                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-            recyclerView.layoutManager = GridLayoutManager(root.context, spanCount)
-            recyclerView.refreshDrawableState()
+            setupRecyclerView()
         }
     }
 
@@ -36,16 +33,20 @@ class DashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+
+        root = inflater.inflate(R.layout.fragment_dash, container, false)
+        setupRecyclerView()
+        return root
+    }
+
+    private fun setupRecyclerView() {
         val selectedPids = Preferences.getStringSet(requireContext(), "pref.dash.pids.selected")
         val data = DataLoggerService.dataLogger.buildMetricsBy(selectedPids)
 
-        root = inflater.inflate(R.layout.fragment_dash, container, false)
         val adapter = DashViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-        val spanCount =
-            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
 
-        recyclerView.layoutManager = GridLayoutManager(root.context, spanCount)
+        recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
 
@@ -62,6 +63,11 @@ class DashFragment : Fragment() {
             }
         })
 
-        return root
+        recyclerView.refreshDrawableState()
+    }
+
+
+    private fun spanCount(): Int {
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
     }
 }
