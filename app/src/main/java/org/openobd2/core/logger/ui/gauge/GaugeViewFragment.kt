@@ -21,7 +21,7 @@ class GaugeViewFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        root?.let {
+        root.let {
             val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
             recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
             recyclerView.refreshDrawableState()
