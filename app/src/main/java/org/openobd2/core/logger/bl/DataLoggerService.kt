@@ -17,7 +17,7 @@ class DataLoggerService : IntentService("DataLoggerService") {
             }
             ACTION_STOP -> {
                 Log.i(LOG_KEY, "Stop collecting process")
-                DataLogger.INSTANCE.start()
+                DataLogger.INSTANCE.stop()
             }
         }
     }

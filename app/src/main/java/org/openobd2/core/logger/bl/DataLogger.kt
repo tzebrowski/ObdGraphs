@@ -23,7 +23,7 @@ const val LOG_KEY = "DATA_LOGGER_DL"
 const val GENERIC_MODE = "Generic mode"
 
 
-class DataLogger internal  constructor(){
+class DataLogger internal constructor(){
 
     companion object {
         @JvmStatic
@@ -56,8 +56,7 @@ class DataLogger internal  constructor(){
                 "An error occurred during interaction with the device. Msg: $msg"
             )
 
-            mode1.stop()
-            mode22.stop()
+            workflow().stop()
 
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_ERROR
