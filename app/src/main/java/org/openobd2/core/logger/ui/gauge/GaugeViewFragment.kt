@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.DataLoggerService
+import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.ModelChangePublisher
 import org.openobd2.core.logger.ui.preferences.Preferences
 
@@ -34,7 +34,7 @@ class GaugeViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val selectedPids = Preferences.getStringSet(requireContext(), "pref.gauge.pids.selected")
-        val data = DataLoggerService.dataLogger.buildMetricsBy(selectedPids)
+        val data = DataLogger.INSTANCE.buildMetricsBy(selectedPids)
 
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
         val adapter = GaugeViewAdapter(root.context, data)

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.DataLoggerService
+import org.openobd2.core.logger.bl.DataLogger
 
 class GaugeViewAdapter internal constructor(
     context: Context?,
@@ -41,7 +41,7 @@ class GaugeViewAdapter internal constructor(
         holder.maxTextView.text = ""
 
         val statistic =
-            DataLoggerService.dataLogger.statistics().findBy(metric.command)
+            DataLogger.INSTANCE.statistics().findBy(metric.command)
         holder.minTextView.text = statistic.min.toString()
         holder.maxTextView.text = statistic.max.toString()
 

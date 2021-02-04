@@ -135,12 +135,12 @@ class MainActivity : AppCompatActivity() {
         super.onConfigurationChanged(newConfig)
 
         val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
-        layout.isVisible =  newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+        layout.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DataLoggerService.dataLogger.init(this.application)
+        DataLogger.INSTANCE.init(this.application)
 
         setContentView(R.layout.activity_main)
         setupNavigation()

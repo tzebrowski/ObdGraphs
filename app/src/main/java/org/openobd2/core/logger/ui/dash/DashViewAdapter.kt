@@ -34,7 +34,7 @@ class DashViewAdapter internal constructor(
 
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(mData,fromPosition,toPosition)
+        Collections.swap(mData, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 

@@ -7,22 +7,22 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.obd.metrics.Metric
 
-class DashItemPreferences (query: String, position: Int){
+class DashItemPreferences(query: String, position: Int) {
     var query: String = query
     var position: Int = position
 
     companion object {
 
         private const val PREF_NAME = "prefs.dash.pids.settings"
-        private var mapper =  ObjectMapper()
+        private var mapper = ObjectMapper()
 
-        init{
+        init {
             mapper.registerModule(KotlinModule())
         }
 
 
         @JvmStatic
-        fun store(context: Context,data: MutableList<Metric<*>>) {
+        fun store(context: Context, data: MutableList<Metric<*>>) {
 
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             val mapIndexed = data.mapIndexed { index, metric ->
@@ -31,7 +31,7 @@ class DashItemPreferences (query: String, position: Int){
 
             val writeValueAsString = mapper.writeValueAsString(mapIndexed)
             val edit = pref.edit()
-            edit.putString(PREF_NAME,writeValueAsString)
+            edit.putString(PREF_NAME, writeValueAsString)
             edit.commit()
         }
 
@@ -40,8 +40,10 @@ class DashItemPreferences (query: String, position: Int){
         fun load(context: Context): List<DashItemPreferences>? {
 
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val it = pref.getString(PREF_NAME,"")
-            return  if (it!!.isEmpty())  listOf() else mapper.readValue(it, object : TypeReference<List<DashItemPreferences>>() {})
+            val it = pref.getString(PREF_NAME, "")
+            return if (it!!.isEmpty()) listOf() else mapper.readValue(
+                it,
+                object : TypeReference<List<DashItemPreferences>>() {})
         }
     }
 }

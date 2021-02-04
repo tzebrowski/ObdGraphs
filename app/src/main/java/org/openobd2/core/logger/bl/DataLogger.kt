@@ -23,7 +23,14 @@ const val LOG_KEY = "DATA_LOGGER_DL"
 const val GENERIC_MODE = "Generic mode"
 
 
-class DataLogger {
+class DataLogger internal  constructor(){
+
+    companion object {
+        @JvmStatic
+        var INSTANCE: DataLogger =
+            DataLogger()
+    }
+
 
     private var modelUpdate = ModelChangePublisher()
     private lateinit var context: Context
@@ -100,8 +107,7 @@ class DataLogger {
     }
 
     fun buildMetricsBy(pids: Set<String>): MutableList<Metric<*>> {
-        var pidRegistry: PidRegistry =
-            DataLoggerService.dataLogger.pids()
+        var pidRegistry: PidRegistry = pids()
         var data: MutableList<Metric<*>> = arrayListOf()
         pids.forEach { s: String? ->
             pidRegistry.findBy(s)?.apply {

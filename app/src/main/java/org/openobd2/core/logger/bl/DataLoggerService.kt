@@ -13,19 +13,16 @@ class DataLoggerService : IntentService("DataLoggerService") {
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_START -> {
-                dataLogger.start()
+                DataLogger.INSTANCE.start()
             }
             ACTION_STOP -> {
                 Log.i(LOG_KEY, "Stop collecting process")
-                dataLogger.stop()
+                DataLogger.INSTANCE.start()
             }
         }
     }
 
     companion object {
-        @JvmStatic
-        var dataLogger: DataLogger =
-            DataLogger()
 
         @JvmStatic
         fun startAction(context: Context) {

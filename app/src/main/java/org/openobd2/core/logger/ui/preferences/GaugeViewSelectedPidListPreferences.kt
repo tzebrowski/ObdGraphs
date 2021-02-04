@@ -3,7 +3,7 @@ package org.openobd2.core.logger.ui.preferences
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
-import org.openobd2.core.logger.bl.DataLoggerService
+import org.openobd2.core.logger.bl.DataLogger
 import java.util.*
 
 class GaugeViewSelectedPidListPreferences(
@@ -17,7 +17,7 @@ class GaugeViewSelectedPidListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        DataLoggerService.dataLogger.pids().definitions.sortedBy { pidDefinition -> pidDefinition.description }
+        DataLogger.INSTANCE.pids().definitions.sortedBy { pidDefinition -> pidDefinition.description }
             .forEach { p ->
                 entries.add(p.description)
                 entriesValues.add(p.pid)
