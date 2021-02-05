@@ -11,7 +11,7 @@
             android:title="Adapters" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:dialogTitle="Batch enabled"
             android:key="pref.batch.enabled"
             android:summary="Enable batch mode"
@@ -27,45 +27,66 @@
             android:title="Mode" />
 
     </PreferenceCategory>
-
-    <PreferenceCategory android:title="Dash View">
+    <PreferenceCategory android:title="Views">
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref.dash.view.enabled"
-            android:summary="Enable the Dash view"
-            android:title="Enable the Dash view" />
+            android:defaultValue="false"
+            android:key="pref.toolbar.hide.landscape"
+            android:summary="Hide toolbar when landscape"
+            android:title="Hide toolbar when landscape" />
 
-        <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
-            android:key="pref.dash.pids.selected"
-            android:summary="Displayed PIDs"
-            android:title="Displayed PIDs" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Gauge View">
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref.gauge.view.enabled"
-            android:summary="Enable the Gauge view"
-            android:title="Enable the Gauge view" />
+            android:defaultValue="false"
+            android:key="pref.toolbar.hide.doubleclick"
+            android:summary="Hide toolbar when double click"
+            android:title="Hide toolbar when double click" />
 
-        <org.openobd2.core.logger.ui.preferences.GaugeViewSelectedPidListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:key="pref.gauge.pids.selected"
-            android:summary="Displayed PIDs"
-            android:title="Displayed PIDs" />
+        <PreferenceCategory android:title="Dash">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.dash.view.enabled"
+                android:summary="Enable the Dash view"
+                android:title="Enable the Dash view" />
 
+
+            <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
+                android:key="pref.dash.pids.selected"
+                android:summary="Displayed PIDs"
+                android:title="Displayed PIDs" />
+
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="Gauge View">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.gauge.view.enabled"
+                android:summary="Enable the Gauge view"
+                android:title="Enable the Gauge view" />
+
+            <org.openobd2.core.logger.ui.preferences.GaugeViewSelectedPidListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:key="pref.gauge.pids.selected"
+                android:summary="Displayed PIDs"
+                android:title="Displayed PIDs" />
+
+        </PreferenceCategory>
+
+
+        <PreferenceCategory android:title="Debug View">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.debug.view.enabled"
+                android:summary="Enable the Debug view"
+                android:title="Enable the Debug view" />
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="Metrics View">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.metrics.view.enabled"
+                android:summary="Enable the Metrics view"
+                android:title="Enable the Metrics view" />
+        </PreferenceCategory>
     </PreferenceCategory>
-
-
-    <PreferenceCategory android:title="Debug View">
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref.debug.view.enabled"
-            android:summary="Enable the Debug view"
-            android:title="Enable the Debug view" />
-    </PreferenceCategory>
-
 
     <PreferenceCategory android:title="Supported PID's">
         <org.openobd2.core.logger.ui.preferences.PidListPreferences

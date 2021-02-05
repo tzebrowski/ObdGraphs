@@ -1,21 +1,28 @@
 package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
+import android.view.GestureDetector.SimpleOnGestureListener
+import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.ModelChangePublisher
+import org.openobd2.core.logger.bl.NOTIFICATION_ERROR
+import org.openobd2.core.logger.ui.dash.RecyclerItemDoubleClickListener.OnItemDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.DashItemPreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
 
@@ -44,6 +51,42 @@ internal class DragManageAdapter(
     }
 
 }
+
+class RecyclerItemDoubleClickListener(
+    context: Context?,
+    private val doubleClickListener: OnItemDoubleClickListener?
+) :
+    OnItemTouchListener {
+
+    interface OnItemDoubleClickListener {
+        fun onItemDoubleClick(view: View?, position: Int)
+    }
+
+    var mGestureDetector: GestureDetector
+    override fun onInterceptTouchEvent(view: RecyclerView, e: MotionEvent): Boolean {
+        val childView = view.findChildViewUnder(e.x, e.y)
+        if (childView != null && doubleClickListener != null && mGestureDetector.onTouchEvent(e)) {
+            doubleClickListener.onItemDoubleClick(childView, view.getChildPosition(childView))
+        }
+        return false
+    }
+
+    override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onTouchEvent(view: RecyclerView, motionEvent: MotionEvent) {}
+
+    init {
+        mGestureDetector = GestureDetector(context, object : SimpleOnGestureListener() {
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                return true
+            }
+        })
+    }
+}
+
+val  TOGGLE_TOOLBAR_ACTION: String = "TOGGLE_TOOLBAR"
 
 class DashFragment : Fragment() {
 
@@ -76,7 +119,7 @@ class DashFragment : Fragment() {
         }!!.toMap()
 
         data.sortWith(Comparator { m1: Metric<*>, m2: Metric<*> ->
-            if (metricsPreferences.containsKey(m1.command.query)) {
+            if (metricsPreferences.containsKey(m1.command.query) && metricsPreferences.containsKey(m2.command.query)) {
                 metricsPreferences[m1.command.query]!!
                     .compareTo(metricsPreferences[m2.command.query]!!)
             } else {
@@ -114,6 +157,17 @@ class DashFragment : Fragment() {
             }
         })
         recyclerView.refreshDrawableState()
+
+        recyclerView.addOnItemTouchListener(
+            RecyclerItemDoubleClickListener(
+                requireContext(), object : OnItemDoubleClickListener {
+                    override fun onItemDoubleClick(view: View?, position: Int) {
+                        requireContext().sendBroadcast(Intent().apply {
+                            action = TOGGLE_TOOLBAR_ACTION
+                        })
+                    }
+                })
+        )
     }
 
     private fun spanCount(): Int {

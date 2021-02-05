@@ -24,6 +24,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.*
+import org.openobd2.core.logger.ui.dash.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
 
 
@@ -32,6 +33,13 @@ class MainActivity : AppCompatActivity() {
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                TOGGLE_TOOLBAR_ACTION ->{
+                    if (Preferences.isEnabled(context!!, "pref.toolbar.hide.doubleclick")) {
+                        val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
+                        layout.isVisible = !layout.isVisible
+                    }
+                }
+
                 NOTIFICATION_DEBUG_VIEW_HIDE -> {
                     findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
                         false
@@ -134,8 +142,10 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
-        layout.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+        if (Preferences.isEnabled(this.applicationContext, "pref.toolbar.hide.landscape")) {
+            val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
+            layout.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -233,7 +243,7 @@ class MainActivity : AppCompatActivity() {
             addAction(NOTIFICATION_GAUGE_VIEW_HIDE)
             addAction(NOTIFICATION_DASH_VIEW_SHOW)
             addAction(NOTIFICATION_DASH_VIEW_HIDE)
-
+            addAction(TOGGLE_TOOLBAR_ACTION)
         })
     }
 }
