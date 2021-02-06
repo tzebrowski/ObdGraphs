@@ -13,6 +13,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.ModelChangePublisher
+import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.Preferences
 
 class GaugeViewFragment : Fragment() {
@@ -43,6 +44,12 @@ class GaugeViewFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
+
+        recyclerView.addOnItemTouchListener(
+            ToggleToolbarDoubleClickListener(
+                requireContext()
+            )
+        )
 
         ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
             selectedPids.contains((it.command as ObdCommand).pid.pid).apply {

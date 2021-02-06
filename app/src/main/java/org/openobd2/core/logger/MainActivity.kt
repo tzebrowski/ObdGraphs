@@ -24,7 +24,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.*
-import org.openobd2.core.logger.ui.dash.TOGGLE_TOOLBAR_ACTION
+import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
 
 
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                TOGGLE_TOOLBAR_ACTION ->{
+                TOGGLE_TOOLBAR_ACTION -> {
                     if (Preferences.isEnabled(context!!, "pref.toolbar.hide.doubleclick")) {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
                         layout.isVisible = !layout.isVisible
@@ -160,7 +160,6 @@ class MainActivity : AppCompatActivity() {
 
         val progressBar: ProgressBar = findViewById(R.id.p_bar)
         progressBar.visibility = View.GONE
-
 
         val btnStart: FloatingActionButton = findViewById(R.id.action_btn)
         btnStart.setOnClickListener(View.OnClickListener {

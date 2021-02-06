@@ -1,6 +1,5 @@
 package org.openobd2.core.logger.ui.dash
 
-
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -81,7 +80,6 @@ class DashViewAdapter internal constructor(
         holder.units.text = (obdCommand.pid).units
         holder.value.text = commandReply.valueAsString()
         holder.label.text = obdCommand.pid.description
-
     }
 
     override fun getItemCount(): Int {
@@ -108,7 +106,8 @@ class DashViewAdapter internal constructor(
         fun buildChart(pid: PidDefinition) {
             if (initialized) {
             } else {
-                this.segments = Segments(30, pid.min.toDouble(), pid.max.toDouble())
+                val numOfSegments = 30
+                this.segments = Segments(numOfSegments, pid.min.toDouble(), pid.max.toDouble())
                 this.label.text = pid.description
                 chart.setDrawBarShadow(false)
                 chart.setDrawValueAboveBar(false)
@@ -116,8 +115,6 @@ class DashViewAdapter internal constructor(
 
                 chart.setDrawBorders(false)
                 chart.setAddStatesFromChildren(false)
-
-
 
                 chart.description.isEnabled = false
                 chart.setPinchZoom(false)
@@ -149,15 +146,14 @@ class DashViewAdapter internal constructor(
                 rightAxis.setDrawGridLines(false)
 
 
-                val l = chart.legend
-                l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
-                l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
-                l.orientation = Legend.LegendOrientation.HORIZONTAL
-                l.setDrawInside(false)
-                l.form = Legend.LegendForm.SQUARE
+                val legend = chart.legend
+                legend.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+                legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+                legend.orientation = Legend.LegendOrientation.HORIZONTAL
+                legend.setDrawInside(false)
+                legend.form = Legend.LegendForm.SQUARE
 
                 val dataSets: ArrayList<IBarDataSet> = ArrayList()
-
 
                 this.segments.to().forEach { v: Double ->
                     val values: ArrayList<BarEntry> = ArrayList()

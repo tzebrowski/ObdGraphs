@@ -23,7 +23,7 @@ const val LOG_KEY = "DATA_LOGGER_DL"
 const val GENERIC_MODE = "Generic mode"
 
 
-class DataLogger internal constructor(){
+class DataLogger internal constructor() {
 
     companion object {
         @JvmStatic
