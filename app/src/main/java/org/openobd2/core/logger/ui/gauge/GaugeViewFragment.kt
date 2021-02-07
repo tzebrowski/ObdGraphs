@@ -20,7 +20,7 @@ import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.GaugePreferences
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.PreferencesHelper
 
 class GaugeViewFragment : Fragment() {
 
@@ -40,7 +40,7 @@ class GaugeViewFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val selectedPids = Preferences.getStringSet(requireContext(), "pref.gauge.pids.selected")
+        val selectedPids = PreferencesHelper.getStringSet(requireContext(), "pref.gauge.pids.selected")
         val data = DataLogger.INSTANCE.buildMetricsBy(selectedPids)
 
         val metricsPreferences = GaugePreferences.SERIALIZER.load(requireContext())?.map {

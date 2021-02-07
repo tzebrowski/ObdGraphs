@@ -20,7 +20,7 @@ import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.PreferencesHelper
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -61,7 +61,6 @@ class DashViewAdapter internal constructor(
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                 dataSet.color = Color.parseColor("#0D000000")//transparent
-
             }
 
             (0..segmentNum).forEach { e ->
@@ -70,9 +69,9 @@ class DashViewAdapter internal constructor(
                 val gradientColors: MutableList<GradientColor> = ArrayList()
                 gradientColors.add(GradientColor(Color.rgb(124, 252, 79), Color.rgb(243, 249, 167)))
                 dataSet.gradientColors = gradientColors
-
             }
-            if (Preferences.isEnabled(ctx, "pref.dash.hl.highervalues")) {
+
+            if (PreferencesHelper.isEnabled(ctx, "pref.dash.hl.highervalues")) {
                 val percent75: Int = (holder.segments.numOfSegments * 75) / 100
                 if (segmentNum > percent75) {
                     (percent75..segmentNum).forEach { e ->
@@ -144,7 +143,6 @@ class DashViewAdapter internal constructor(
 
                 val rightAxis = chart.axisRight
                 rightAxis.setDrawGridLines(false)
-
 
                 val legend = chart.legend
                 legend.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM

@@ -12,7 +12,7 @@ import org.obd.metrics.pid.PidRegistry
 import org.obd.metrics.statistics.StatisticsAccumulator
 import org.obd.metrics.workflow.EcuSpecific
 import org.obd.metrics.workflow.Workflow
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.PreferencesHelper
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
@@ -134,12 +134,12 @@ class DataLogger internal constructor() {
         var adapterName = pref.getString("pref.adapter.id", "OBDII")
         this.device = adapterName.toString()
 
-        when (Preferences.getMode(context)) {
+        when (PreferencesHelper.getMode(context)) {
             GENERIC_MODE -> {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
                 mode1.connection(BluetoothConnection(device.toString())).filter(selectedPids)
-                    .batchEnabled(Preferences.isBatchEnabled(context)).start()
+                    .batchEnabled(PreferencesHelper.isBatchEnabled(context)).start()
             }
 
             else -> {
@@ -148,7 +148,7 @@ class DataLogger internal constructor() {
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
                 mode22.connection(
                     BluetoothConnection(device.toString())
-                ).filter(selectedPids).batchEnabled(Preferences.isBatchEnabled(context)).start()
+                ).filter(selectedPids).batchEnabled(PreferencesHelper.isBatchEnabled(context)).start()
             }
         }
 
@@ -158,7 +158,7 @@ class DataLogger internal constructor() {
     private fun workflow(): Workflow {
         context.let {
 
-            return when (Preferences.getMode(context)) {
+            return when (PreferencesHelper.getMode(context)) {
                 GENERIC_MODE -> {
                     mode1
                 }

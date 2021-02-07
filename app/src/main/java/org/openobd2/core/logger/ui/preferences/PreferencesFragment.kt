@@ -21,6 +21,9 @@ const val NOTIFICATION_DASH_VIEW_HIDE = "preferences.view.dash.hide"
 const val NOTIFICATION_GAUGE_VIEW_SHOW = "preferences.view.gauge.show"
 const val NOTIFICATION_GAUGE_VIEW_HIDE = "preferences.view.gauge.hide"
 
+const val NOTIFICATION_METRICS_VIEW_SHOW = "preferences.view.metrics.show"
+const val NOTIFICATION_METRICS_VIEW_HIDE = "preferences.view.metrics.hide"
+
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
@@ -51,6 +54,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             NOTIFICATION_DASH_VIEW_SHOW,
             NOTIFICATION_DASH_VIEW_HIDE
         )
+
+        registerCheckboxListener(
+            "pref.metrics.view.enabled",
+            NOTIFICATION_METRICS_VIEW_SHOW,
+            NOTIFICATION_METRICS_VIEW_HIDE
+        )
+
         return onCreateView
     }
 
@@ -74,7 +84,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val p1 = findPreference<Preference>("pref.pids.generic")
         val p2 = findPreference<Preference>("pref.pids.mode22")
 
-        when (Preferences.getMode(this.requireContext())) {
+        when (PreferencesHelper.getMode(this.requireContext())) {
             GENERIC_MODE -> {
                 p1?.isVisible = true
                 p2?.isVisible = false

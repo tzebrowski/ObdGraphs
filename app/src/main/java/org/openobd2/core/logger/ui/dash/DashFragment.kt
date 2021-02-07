@@ -3,7 +3,6 @@ package org.openobd2.core.logger.ui.dash
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,7 @@ import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.DashPreferences
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.PreferencesHelper
 
 
 class DashFragment : Fragment() {
@@ -46,7 +45,7 @@ class DashFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val selectedPids = Preferences.getStringSet(requireContext(), "pref.dash.pids.selected")
+        val selectedPids = PreferencesHelper.getStringSet(requireContext(), "pref.dash.pids.selected")
         val data = DataLogger.INSTANCE.buildMetricsBy(selectedPids)
 
         val metricsPreferences = DashPreferences.SERIALIZER.load(requireContext())?.map {
@@ -75,7 +74,7 @@ class DashFragment : Fragment() {
             requireContext(),
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.START or ItemTouchHelper.END,
-            object : SwappableAdapter {
+             object : SwappableAdapter {
                 override fun swapItems(fromPosition: Int, toPosition: Int) {
                     adapter.swapItems(fromPosition, toPosition)
                 }

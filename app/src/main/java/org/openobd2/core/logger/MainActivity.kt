@@ -34,37 +34,26 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 TOGGLE_TOOLBAR_ACTION -> {
-                    if (Preferences.isEnabled(context!!, "pref.toolbar.hide.doubleclick")) {
+                    if (PreferencesHelper.isEnabled(context!!, "pref.toolbar.hide.doubleclick")) {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
                         layout.isVisible = !layout.isVisible
                     }
                 }
 
-                NOTIFICATION_DEBUG_VIEW_HIDE -> {
-                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
-                        false
-                }
-                NOTIFICATION_DEBUG_VIEW_SHOW -> {
-                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
-                        true
+                NOTIFICATION_METRICS_VIEW_SHOW, NOTIFICATION_METRICS_VIEW_HIDE -> {
+                    toggleNavigation(R.id.navigation_livedata)
                 }
 
-                NOTIFICATION_DASH_VIEW_HIDE -> {
-                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
-                        false
-                }
-                NOTIFICATION_DASH_VIEW_SHOW -> {
-                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
-                        true
+                NOTIFICATION_DEBUG_VIEW_HIDE, NOTIFICATION_DEBUG_VIEW_SHOW -> {
+                    toggleNavigation(R.id.navigation_debug)
                 }
 
-                NOTIFICATION_GAUGE_VIEW_HIDE -> {
-                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
-                        false
+                NOTIFICATION_DASH_VIEW_HIDE, NOTIFICATION_DASH_VIEW_SHOW -> {
+                    toggleNavigation(R.id.navigation_dashboard)
                 }
-                NOTIFICATION_GAUGE_VIEW_SHOW -> {
-                    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
-                        true
+
+                NOTIFICATION_GAUGE_VIEW_HIDE, NOTIFICATION_GAUGE_VIEW_SHOW -> {
+                    toggleNavigation(R.id.navigation_gauge)
                 }
 
                 NOTIFICATION_CONNECTING -> {
@@ -129,6 +118,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        private fun toggleNavigation(id: Int) {
+            val menuItem =
+                findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)
+            menuItem.isVisible = !menuItem.isVisible
+        }
+
         private fun toast(text: String) {
             val toast = Toast.makeText(
                 applicationContext, text,
@@ -142,7 +137,7 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        if (Preferences.isEnabled(this.applicationContext, "pref.toolbar.hide.landscape")) {
+        if (PreferencesHelper.isEnabled(this.applicationContext, "pref.toolbar.hide.landscape")) {
             val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
             layout.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
         }
@@ -219,14 +214,18 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
-            Preferences.isEnabled(this, "pref.debug.view.enabled")
+            PreferencesHelper.isEnabled(this, "pref.debug.view.enabled")
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
-            Preferences.isEnabled(this, "pref.dash.view.enabled")
+            PreferencesHelper.isEnabled(this, "pref.dash.view.enabled")
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
-            Preferences.isEnabled(this, "pref.gauge.view.enabled")
+            PreferencesHelper.isEnabled(this, "pref.gauge.view.enabled")
+
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_livedata).isVisible =
+            PreferencesHelper.isEnabled(this, "pref.metrics.view.enabled")
     }
+
 
     private fun registerReceiver() {
         registerReceiver(broadcastReceiver, IntentFilter().apply {
@@ -243,6 +242,8 @@ class MainActivity : AppCompatActivity() {
             addAction(NOTIFICATION_DASH_VIEW_SHOW)
             addAction(NOTIFICATION_DASH_VIEW_HIDE)
             addAction(TOGGLE_TOOLBAR_ACTION)
+            addAction(NOTIFICATION_METRICS_VIEW_SHOW)
+            addAction(NOTIFICATION_METRICS_VIEW_HIDE)
         })
     }
 }

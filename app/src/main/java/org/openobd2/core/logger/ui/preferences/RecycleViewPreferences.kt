@@ -2,7 +2,6 @@ package org.openobd2.core.logger.ui.preferences
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule

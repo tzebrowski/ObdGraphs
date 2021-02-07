@@ -6,7 +6,7 @@ import androidx.preference.PreferenceManager
 import org.openobd2.core.logger.bl.LOG_KEY
 
 
-class Preferences {
+class PreferencesHelper {
     companion object {
 
         @JvmStatic
