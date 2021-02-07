@@ -34,6 +34,8 @@
             android:summary="Hide toolbar when landscape"
             android:title="Hide toolbar when landscape" />
 
+
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.toolbar.hide.doubleclick"
@@ -41,11 +43,18 @@
             android:title="Hide toolbar when double click" />
 
         <PreferenceCategory android:title="Dash">
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.hl.highervalues"
+                android:summary="Highlight higher values with different color"
+                android:title="Highlight higher values" />
+
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="pref.dash.view.enabled"
                 android:summary="Enable the Dash view"
-                android:title="Enable the Dash view" />
+                android:title="Show the Dash view" />
 
 
             <org.openobd2.core.logger.ui.preferences.DashViewSelectedPidListPreferences
@@ -55,12 +64,14 @@
 
         </PreferenceCategory>
 
-        <PreferenceCategory android:title="Gauge View">
+        <PreferenceCategory android:title="Gauge">
+
+
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="pref.gauge.view.enabled"
                 android:summary="Enable the Gauge view"
-                android:title="Enable the Gauge view" />
+                android:title="Show the Gauge view" />
 
             <org.openobd2.core.logger.ui.preferences.GaugeViewSelectedPidListPreferences
                 android:defaultValue="@array/perf_empty_array"

@@ -11,14 +11,21 @@ import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
+import java.util.*
 
 class GaugeViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<Metric<*>>
+    data: MutableList<Metric<*>>
 ) :
     RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<Metric<*>> = data
+    var mData: MutableList<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
+
+
+    fun swapItems(fromPosition: Int, toPosition: Int) {
+        Collections.swap(mData, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

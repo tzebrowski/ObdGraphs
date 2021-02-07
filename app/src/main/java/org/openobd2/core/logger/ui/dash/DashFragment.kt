@@ -3,6 +3,7 @@ package org.openobd2.core.logger.ui.dash
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,7 @@ import org.openobd2.core.logger.bl.ModelChangePublisher
 import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
-import org.openobd2.core.logger.ui.preferences.DashItemPreferences
+import org.openobd2.core.logger.ui.preferences.DashPreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
 
 
@@ -48,7 +49,7 @@ class DashFragment : Fragment() {
         val selectedPids = Preferences.getStringSet(requireContext(), "pref.dash.pids.selected")
         val data = DataLogger.INSTANCE.buildMetricsBy(selectedPids)
 
-        val metricsPreferences = DashItemPreferences.load(requireContext())?.map {
+        val metricsPreferences = DashPreferences.SERIALIZER.load(requireContext())?.map {
             it.query to it.position
         }!!.toMap()
 
@@ -80,7 +81,7 @@ class DashFragment : Fragment() {
                 }
 
                 override fun storePreferences(context: Context) {
-                    DashItemPreferences.store(context, adapter.mData)
+                    DashPreferences.SERIALIZER.store(context, adapter.mData)
                 }
             }
         )

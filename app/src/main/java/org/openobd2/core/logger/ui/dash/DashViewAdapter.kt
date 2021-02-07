@@ -15,10 +15,12 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.github.mikephil.charting.model.GradientColor
 import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.ui.preferences.Preferences
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -30,7 +32,7 @@ class DashViewAdapter internal constructor(
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
     var mData: MutableList<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
-
+    private val ctx: Context = context!!
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData, fromPosition, toPosition)
@@ -59,13 +61,18 @@ class DashViewAdapter internal constructor(
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                 dataSet.color = Color.parseColor("#0D000000")//transparent
+
             }
 
             (0..segmentNum).forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                 dataSet.color = Color.rgb(124, 252, 79)
+                val gradientColors: MutableList<GradientColor> = ArrayList()
+                gradientColors.add(GradientColor(Color.rgb(124, 252, 79), Color.rgb(243, 249, 167)))
+                dataSet.gradientColors = gradientColors
+
             }
-            if (false) {
+            if (Preferences.isEnabled(ctx, "pref.dash.hl.highervalues")) {
                 val percent75: Int = (holder.segments.numOfSegments * 75) / 100
                 if (segmentNum > percent75) {
                     (percent75..segmentNum).forEach { e ->
@@ -88,20 +95,13 @@ class DashViewAdapter internal constructor(
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        var chart: BarChart
-        var label: TextView
-        var value: TextView
-        var units: TextView
+        var chart: BarChart = itemView.findViewById(R.id.chart)
+        var label: TextView = itemView.findViewById(R.id.dash_label)
+        var value: TextView = itemView.findViewById(R.id.dash_value)
+        var units: TextView = itemView.findViewById(R.id.dash_units)
 
         lateinit var segments: Segments
         var initialized: Boolean = false
-
-        init {
-            chart = itemView.findViewById(R.id.chart)
-            label = itemView.findViewById(R.id.dash_label)
-            units = itemView.findViewById(R.id.dash_units)
-            value = itemView.findViewById(R.id.dash_value)
-        }
 
         fun buildChart(pid: PidDefinition) {
             if (initialized) {
