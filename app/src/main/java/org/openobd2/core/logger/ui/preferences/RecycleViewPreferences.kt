@@ -5,7 +5,7 @@ import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 
 
 abstract class RecycleViewPreferences<T> constructor(prefName: String) {
@@ -13,7 +13,7 @@ abstract class RecycleViewPreferences<T> constructor(prefName: String) {
     private var mapper = ObjectMapper()
 
     interface MetricsMapper<T> {
-        fun map(m: Metric<*>, index: Int): T
+        fun map(m: ObdMetric, index: Int): T
     }
 
     abstract fun metricsMapper():  MetricsMapper<T>
@@ -25,7 +25,7 @@ abstract class RecycleViewPreferences<T> constructor(prefName: String) {
 
     fun store(
         context: Context,
-        data: MutableList<Metric<*>>
+        data: MutableList<ObdMetric>
     ) {
 
         val pref = PreferenceManager.getDefaultSharedPreferences(context)

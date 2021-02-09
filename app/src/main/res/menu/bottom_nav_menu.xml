@@ -10,7 +10,7 @@
         android:icon="@android:drawable/ic_menu_gallery"
         android:title="@string/title_gauge" />
     <item
-        android:id="@+id/navigation_livedata"
+        android:id="@+id/navigation_metrics"
         android:icon="@android:drawable/ic_menu_compass"
         android:title="@string/title_livedata" />
     <item

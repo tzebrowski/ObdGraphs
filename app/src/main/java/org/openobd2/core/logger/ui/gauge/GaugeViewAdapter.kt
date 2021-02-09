@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
@@ -15,10 +15,10 @@ import java.util.*
 
 class GaugeViewAdapter internal constructor(
     context: Context?,
-    data: MutableList<Metric<*>>
+    data: MutableList<ObdMetric>
 ) :
     RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
-    var mData: MutableList<Metric<*>> = data
+    var mData: MutableList<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
 
@@ -42,7 +42,7 @@ class GaugeViewAdapter internal constructor(
         val metric = mData.elementAt(position)
         holder.labelTextView.text = metric.command.label
         holder.unitsTextView.text = (metric.command as ObdCommand).pid.units
-        holder.valueTextView.text = metric.valueAsString()
+        holder.valueTextView.text = metric.valueToString()
 
         holder.minTextView.text = ""
         holder.maxTextView.text = ""

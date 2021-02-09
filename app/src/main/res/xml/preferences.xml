@@ -34,8 +34,6 @@
             android:summary="Hide toolbar when landscape"
             android:title="Landscape - hide toolbar" />
 
-
-
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.toolbar.hide.doubleclick"
@@ -43,7 +41,6 @@
             android:summary="Hide toolbar when double click" />
 
         <PreferenceCategory android:title="Dash">
-
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.dash.hl.highervalues"

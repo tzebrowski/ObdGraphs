@@ -1,21 +1,20 @@
 package org.openobd2.core.logger.bl
 
 import androidx.lifecycle.MutableLiveData
-import org.obd.metrics.Metric
-import org.obd.metrics.MetricsObserver
+import org.obd.metrics.*
 import org.obd.metrics.command.Command
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.command.obd.SupportedPidsCommand
 
 
-internal class ModelChangePublisher : MetricsObserver() {
+internal class ModelChangePublisher : ReplyObserver() {
 
-    var data: MutableMap<Command, Metric<*>> = hashMapOf()
+    var data: MutableMap<Command, ObdMetric> = hashMapOf()
 
-    override fun onNext(reply: Metric<*>) {
+    override fun onNext(reply: Reply) {
         debugData.postValue(reply)
         if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
-            data[reply.command] = reply
+            data[reply.command] = reply as ObdMetric
             (reply.command as ObdCommand).pid?.let {
                 liveData.postValue(reply)
             }
@@ -24,11 +23,11 @@ internal class ModelChangePublisher : MetricsObserver() {
 
     companion object {
         @JvmStatic
-        val debugData: MutableLiveData<Metric<*>> = MutableLiveData<Metric<*>>().apply {
+        val debugData: MutableLiveData<Reply> = MutableLiveData<Reply>().apply {
         }
 
         @JvmStatic
-        val liveData: MutableLiveData<Metric<*>> = MutableLiveData<Metric<*>>().apply {
+        val liveData: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>().apply {
         }
     }
 }

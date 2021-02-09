@@ -16,7 +16,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
@@ -27,10 +27,10 @@ import kotlin.collections.ArrayList
 
 class DashViewAdapter internal constructor(
     context: Context?,
-    data: MutableList<Metric<*>>
+    data: MutableList<ObdMetric>
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
-    var mData: MutableList<Metric<*>> = data
+    var mData: MutableList<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val ctx: Context = context!!
 
@@ -84,7 +84,7 @@ class DashViewAdapter internal constructor(
         }
 
         holder.units.text = (obdCommand.pid).units
-        holder.value.text = commandReply.valueAsString()
+        holder.value.text = commandReply.valueToString()
         holder.label.text = obdCommand.pid.description
     }
 

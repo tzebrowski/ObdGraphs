@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.preference.PreferenceManager
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 import org.obd.metrics.StatusObserver
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
@@ -84,7 +84,7 @@ class DataLogger internal constructor() {
     }
 
     private var mode1: Workflow =
-        Workflow.mode1().equationEngine("rhino").metricsObserver(modelUpdate)
+        Workflow.mode1().equationEngine("rhino").observer(modelUpdate)
             .statusObserver(statusObserver).build()
 
     private var mode22: Workflow = Workflow
@@ -105,12 +105,12 @@ class DataLogger internal constructor() {
         return workflow().statistics
     }
 
-    fun buildMetricsBy(pids: Set<String>): MutableList<Metric<*>> {
+    fun buildMetricsBy(pids: Set<String>): MutableList<ObdMetric> {
         var pidRegistry: PidRegistry = pids()
-        var data: MutableList<Metric<*>> = arrayListOf()
+        var data: MutableList<ObdMetric> = arrayListOf()
         pids.forEach { s: String? ->
             pidRegistry.findBy(s)?.apply {
-                data.add(Metric.builder<Int>().command(ObdCommand(this)).build())
+                data.add(ObdMetric.builder().command(ObdCommand(this)).build())
             }
         }
         return data

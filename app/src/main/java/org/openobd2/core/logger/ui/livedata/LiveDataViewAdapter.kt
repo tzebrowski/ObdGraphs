@@ -8,16 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 
 class LiveDataViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<Metric<*>>
+    data: MutableCollection<ObdMetric>
 ) :
     RecyclerView.Adapter<LiveDataViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<Metric<*>> = data
+    var mData: MutableCollection<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
@@ -34,7 +34,7 @@ class LiveDataViewAdapter internal constructor(
     ) {
 
         val commandReply = mData.elementAt(position)
-        var valueTxt: String? = commandReply.valueAsString()
+        var valueTxt: String? = commandReply.valueToString()
         if (valueTxt != null) {
             valueTxt += " " + (commandReply.command as ObdCommand).pid.units
         }

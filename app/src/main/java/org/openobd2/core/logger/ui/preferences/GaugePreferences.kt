@@ -1,6 +1,6 @@
 package org.openobd2.core.logger.ui.preferences
 
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 
 class GaugePreferences(query: String, position: Int) {
     var query: String = query
@@ -10,7 +10,7 @@ class GaugePreferences(query: String, position: Int) {
         class Serializer : RecycleViewPreferences<GaugePreferences>("prefs.gauge.pids.settings") {
             override fun metricsMapper(): MetricsMapper<GaugePreferences> {
                 return object : MetricsMapper<GaugePreferences> {
-                    override fun map(m: Metric<*>, index: Int): GaugePreferences {
+                    override fun map(m: ObdMetric, index: Int): GaugePreferences {
                         return GaugePreferences(m.command.query, index)
                     }
                 }

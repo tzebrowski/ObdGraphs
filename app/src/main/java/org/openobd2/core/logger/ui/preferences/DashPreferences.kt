@@ -1,6 +1,6 @@
 package org.openobd2.core.logger.ui.preferences
 
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 
 class DashPreferences(query: String, position: Int) {
     var query: String = query
@@ -10,7 +10,7 @@ class DashPreferences(query: String, position: Int) {
         class Serializer : RecycleViewPreferences<DashPreferences>("prefs.dash.pids.settings") {
             override fun metricsMapper(): MetricsMapper<DashPreferences> {
                 return object : MetricsMapper<DashPreferences> {
-                    override fun map(m: Metric<*>, index: Int): DashPreferences {
+                    override fun map(m: ObdMetric, index: Int): DashPreferences {
                         return DashPreferences(m.command.query, index)
                     }
                 }

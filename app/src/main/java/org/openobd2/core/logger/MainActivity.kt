@@ -41,19 +41,19 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 NOTIFICATION_METRICS_VIEW_SHOW, NOTIFICATION_METRICS_VIEW_HIDE -> {
-                    toggleNavigation(R.id.navigation_livedata)
+                    toggleNavigationItem(R.id.navigation_metrics)
                 }
 
                 NOTIFICATION_DEBUG_VIEW_HIDE, NOTIFICATION_DEBUG_VIEW_SHOW -> {
-                    toggleNavigation(R.id.navigation_debug)
+                    toggleNavigationItem(R.id.navigation_debug)
                 }
 
                 NOTIFICATION_DASH_VIEW_HIDE, NOTIFICATION_DASH_VIEW_SHOW -> {
-                    toggleNavigation(R.id.navigation_dashboard)
+                    toggleNavigationItem(R.id.navigation_dashboard)
                 }
 
                 NOTIFICATION_GAUGE_VIEW_HIDE, NOTIFICATION_GAUGE_VIEW_SHOW -> {
-                    toggleNavigation(R.id.navigation_gauge)
+                    toggleNavigationItem(R.id.navigation_gauge)
                 }
 
                 NOTIFICATION_CONNECTING -> {
@@ -90,35 +90,29 @@ class MainActivity : AppCompatActivity() {
 
                 NOTIFICATION_STOPPED -> {
                     toast("Connection with the device has been stopped.")
-
-                    val progressBar: ProgressBar = findViewById(R.id.p_bar)
-                    progressBar.visibility = View.GONE
-
-                    val btn: FloatingActionButton = findViewById(R.id.action_btn)
-                    btn.backgroundTintList = resources.getColorStateList(R.color.purple_500)
-                    btn.setOnClickListener(View.OnClickListener {
-                        Log.i("DATA_LOGGER_UI", "Stop data logging ")
-                        DataLoggerService.startAction(context!!)
-                    })
+                    handleStop(context!!)
                 }
 
                 NOTIFICATION_ERROR -> {
                     toast("Error occurred during. Please check your connection.")
-
-                    val progressBar: ProgressBar = findViewById(R.id.p_bar)
-                    progressBar.visibility = View.GONE
-
-                    val btn: FloatingActionButton = findViewById(R.id.action_btn)
-                    btn.backgroundTintList = resources.getColorStateList(R.color.purple_500)
-                    btn.setOnClickListener(View.OnClickListener {
-                        Log.i("DATA_LOGGER_UI", "Stop data logging ")
-                        DataLoggerService.startAction(context!!)
-                    })
+                    handleStop(context!!)
                 }
             }
         }
 
-        private fun toggleNavigation(id: Int) {
+        private fun handleStop(context: Context){
+            val progressBar: ProgressBar = findViewById(R.id.p_bar)
+            progressBar.visibility = View.GONE
+
+            val btn: FloatingActionButton = findViewById(R.id.action_btn)
+            btn.backgroundTintList = resources.getColorStateList(R.color.purple_500)
+            btn.setOnClickListener(View.OnClickListener {
+                Log.i("DATA_LOGGER_UI", "Stop data logging ")
+                DataLoggerService.startAction(context)
+            })
+        }
+
+        private fun toggleNavigationItem(id: Int) {
             val menuItem =
                 findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)
             menuItem.isVisible = !menuItem.isVisible
@@ -201,7 +195,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_dashboard,
                 R.id.navigation_gauge,
                 R.id.navigation_debug,
-                R.id.navigation_livedata,
+                R.id.navigation_metrics,
                 R.id.navigation_configuration
             )
         )
@@ -222,7 +216,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
             PreferencesHelper.isEnabled(this, "pref.gauge.view.enabled")
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_livedata).isVisible =
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_metrics).isVisible =
             PreferencesHelper.isEnabled(this, "pref.metrics.view.enabled")
     }
 

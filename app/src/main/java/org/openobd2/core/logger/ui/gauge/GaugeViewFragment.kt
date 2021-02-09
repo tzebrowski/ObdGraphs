@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.Metric
+import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
@@ -47,7 +47,7 @@ class GaugeViewFragment : Fragment() {
             it.query to it.position
         }!!.toMap()
 
-        data.sortWith(Comparator { m1: Metric<*>, m2: Metric<*> ->
+        data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
             if (metricsPreferences.containsKey(m1.command.query) && metricsPreferences.containsKey(
                     m2.command.query
                 )
