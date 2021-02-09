@@ -26,9 +26,8 @@ internal class BluetoothConnection : Connection {
         Log.i(LOG_KEY, "Reconnecting to the device: $device")
         input?.close()
         output?.close()
-
         socket.close()
-        TimeUnit.MILLISECONDS.sleep(200)
+        TimeUnit.MILLISECONDS.sleep(1000)
         connectToDevice(device)
         Log.i(LOG_KEY, "Successfully reconnect to the device: $device")
     }
@@ -57,10 +56,10 @@ internal class BluetoothConnection : Connection {
 
     private fun connectToDevice(btDeviceName: String?) {
 
-        mBluetoothAdapter.cancelDiscovery()
+       // mBluetoothAdapter.cancelDiscovery()
 
         for (currentDevice in mBluetoothAdapter.bondedDevices) {
-            if (currentDevice.name.equals(btDeviceName)) {
+            if (currentDevice.name == btDeviceName) {
                 Log.i(LOG_KEY, "Opening connection to device: $btDeviceName")
                 socket =
                     currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
@@ -72,6 +71,7 @@ internal class BluetoothConnection : Connection {
                         LOG_KEY,
                         "Successfully opened  the connection to device: $btDeviceName"
                     )
+                    break
                 }
             }
         }
