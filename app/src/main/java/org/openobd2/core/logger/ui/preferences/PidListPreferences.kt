@@ -18,20 +18,20 @@ class PidListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        DataLogger.INSTANCE.pids().definitions.sortedBy { pidDefinition -> pidDefinition.description }
+        DataLogger.INSTANCE.pids().findAll().sortedBy { pidDefinition -> pidDefinition.description }
             .forEach { p ->
                 entries.add(p.description)
-                entriesValues.add(p.pid)
+                entriesValues.add(p.id.toString())
             }
 
         val default = hashSetOf<String>().apply {
-            add("05")//Engine coolant temperature
-            add("0B") //Intake manifold absolute pressure
-            add("0C") //Engine RPM
-            add("0F") //Intake air temperature
-            add("11") //Throttle position
-            add("OD") //Vehicle speed
-            add("OE") //Timing Advance
+            add("6");  //Engine coolant temperature
+            add("12"); //Calculated Boost
+            add("13"); //Engine RPM
+            add("16"); //Intake air temperature
+            add("18"); //Throttle position
+            add("14"); //Vehicle speed
+            add("5") //Calculated engine load value
         }
         setDefaultValue(default)
         setEntries(entries.toTypedArray())

@@ -26,13 +26,13 @@ import kotlin.collections.ArrayList
 
 
 class DashViewAdapter internal constructor(
-    context: Context?,
+    context: Context,
     data: MutableList<ObdMetric>
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
     var mData: MutableList<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
-    private val ctx: Context = context!!
+    private val ctx: Context = context
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData, fromPosition, toPosition)

@@ -2,8 +2,8 @@ package org.openobd2.core.logger.ui.preferences
 
 import org.obd.metrics.ObdMetric
 
-class DashPreferences(query: String, position: Int) {
-    var query: String = query
+class DashPreferences(id: String, position: Int) {
+    var id: String = id
     var position: Int = position
 
     companion object {
@@ -11,7 +11,7 @@ class DashPreferences(query: String, position: Int) {
             override fun metricsMapper(): MetricsMapper<DashPreferences> {
                 return object : MetricsMapper<DashPreferences> {
                     override fun map(m: ObdMetric, index: Int): DashPreferences {
-                        return DashPreferences(m.command.query, index)
+                        return DashPreferences(m.command.pid.id.toString(), index)
                     }
                 }
             }

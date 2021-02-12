@@ -10,6 +10,12 @@ class PreferencesHelper {
     companion object {
 
         @JvmStatic
+        fun getLongSet(context: Context, key: String): Set<Long> {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getStringSet(key, emptySet())?.map { s -> s.toLong() }?.toSet()!!
+        }
+
+        @JvmStatic
         fun getStringSet(context: Context, key: String): MutableSet<String> {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             return pref.getStringSet(key, emptySet())!!

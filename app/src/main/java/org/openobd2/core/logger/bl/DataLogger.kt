@@ -105,10 +105,10 @@ class DataLogger internal constructor() {
         return workflow().statistics
     }
 
-    fun buildMetricsBy(pids: Set<String>): MutableList<ObdMetric> {
+    fun buildMetricsBy(pids: Set<Long>): MutableList<ObdMetric> {
         var pidRegistry: PidRegistry = pids()
         var data: MutableList<ObdMetric> = arrayListOf()
-        pids.forEach { s: String? ->
+        pids.forEach { s: Long? ->
             pidRegistry.findBy(s)?.apply {
                 data.add(ObdMetric.builder().command(ObdCommand(this)).build())
             }
@@ -136,19 +136,20 @@ class DataLogger internal constructor() {
 
         when (PreferencesHelper.getMode(context)) {
             GENERIC_MODE -> {
-                var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())
+                var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())!!
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
-                mode1.connection(BluetoothConnection(device.toString())).filter(selectedPids)
+
+                mode1.connection(BluetoothConnection(device.toString())).filter(selectedPids.map { s -> s.toLong() }.toSet())
                     .batchEnabled(PreferencesHelper.isBatchEnabled(context)).start()
             }
 
             else -> {
-                var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())
+                var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())!!
 
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
                 mode22.connection(
                     BluetoothConnection(device.toString())
-                ).filter(selectedPids).batchEnabled(PreferencesHelper.isBatchEnabled(context)).start()
+                ).filter(selectedPids.map { s -> s.toLong() }.toSet()).batchEnabled(PreferencesHelper.isBatchEnabled(context)).start()
             }
         }
 

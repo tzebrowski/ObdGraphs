@@ -2,8 +2,8 @@ package org.openobd2.core.logger.ui.preferences
 
 import org.obd.metrics.ObdMetric
 
-class GaugePreferences(query: String, position: Int) {
-    var query: String = query
+class GaugePreferences(id: String, position: Int) {
+    var id: String = id
     var position: Int = position
 
     companion object {
@@ -11,7 +11,7 @@ class GaugePreferences(query: String, position: Int) {
             override fun metricsMapper(): MetricsMapper<GaugePreferences> {
                 return object : MetricsMapper<GaugePreferences> {
                     override fun map(m: ObdMetric, index: Int): GaugePreferences {
-                        return GaugePreferences(m.command.query, index)
+                        return GaugePreferences(m.command.pid.id.toString(), index)
                     }
                 }
             }

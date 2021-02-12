@@ -45,24 +45,8 @@ class DashFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val selectedPids = PreferencesHelper.getStringSet(requireContext(), "pref.dash.pids.selected")
-        val data = DataLogger.INSTANCE.buildMetricsBy(selectedPids)
-
-        val metricsPreferences = DashPreferences.SERIALIZER.load(requireContext())?.map {
-            it.query to it.position
-        }!!.toMap()
-
-        data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
-            if (metricsPreferences.containsKey(m1.command.query) && metricsPreferences.containsKey(
-                    m2.command.query
-                )
-            ) {
-                metricsPreferences[m1.command.query]!!
-                    .compareTo(metricsPreferences[m2.command.query]!!)
-            } else {
-                -1
-            }
-        })
+        var pids = PreferencesHelper.getLongSet(requireContext(), "pref.dash.pids.selected")
+        val data = loadMetrics(pids)
 
         val adapter = DashViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
@@ -89,7 +73,7 @@ class DashFragment : Fragment() {
         adapter.notifyDataSetChanged()
 
         ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
-            if (selectedPids.contains((it.command as ObdCommand).pid.pid)) {
+            if (pids.contains((it.command as ObdCommand).pid.id)) {
                 val indexOf = data.indexOf(it)
                 if (indexOf == -1) {
                     data.add(it)
@@ -106,6 +90,27 @@ class DashFragment : Fragment() {
                 requireContext()
             )
         )
+    }
+
+    private fun loadMetrics(pids: Set<Long>): MutableList<ObdMetric>  {
+
+        val metricsPreferences = DashPreferences.SERIALIZER.load(requireContext())?.map {
+            it.id to it.position
+        }!!.toMap()
+
+        var data  = DataLogger.INSTANCE.buildMetricsBy(pids)
+        data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
+            if (metricsPreferences.containsKey(m1.command.pid.id.toString()) && metricsPreferences.containsKey(
+                    m2.command.pid.id.toString()
+                )
+            ) {
+                metricsPreferences[m1.command.pid.id.toString()]!!
+                    .compareTo(metricsPreferences[m2.command.pid.id.toString()]!!)
+            } else {
+                -1
+            }
+        })
+        return data
     }
 
     private fun spanCount(): Int {

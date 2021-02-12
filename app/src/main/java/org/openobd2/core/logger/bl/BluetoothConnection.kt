@@ -32,7 +32,7 @@ internal class BluetoothConnection : Connection {
         Log.i(LOG_KEY, "Successfully reconnect to the device: $device")
     }
 
-    override fun init() {
+    override fun connect() {
         connectToDevice(device)
     }
 

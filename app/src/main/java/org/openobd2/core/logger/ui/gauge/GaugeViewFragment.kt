@@ -40,24 +40,9 @@ class GaugeViewFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val selectedPids = PreferencesHelper.getStringSet(requireContext(), "pref.gauge.pids.selected")
-        val data = DataLogger.INSTANCE.buildMetricsBy(selectedPids)
 
-        val metricsPreferences = GaugePreferences.SERIALIZER.load(requireContext())?.map {
-            it.query to it.position
-        }!!.toMap()
-
-        data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
-            if (metricsPreferences.containsKey(m1.command.query) && metricsPreferences.containsKey(
-                    m2.command.query
-                )
-            ) {
-                metricsPreferences[m1.command.query]!!
-                    .compareTo(metricsPreferences[m2.command.query]!!)
-            } else {
-                -1
-            }
-        })
+        val pids = PreferencesHelper.getLongSet(requireContext(), "pref.gauge.pids.selected")
+        val data = loadMetrics(pids)
 
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
         val adapter = GaugeViewAdapter(root.context, data)
@@ -92,20 +77,38 @@ class GaugeViewFragment : Fragment() {
         )
 
         ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
-            selectedPids.contains((it.command as ObdCommand).pid.pid).apply {
-                if (selectedPids.contains((it.command as ObdCommand).pid.pid)) {
-                    val indexOf = data.indexOf(it)
-                    if (indexOf == -1) {
-                        data.add(it)
-                        adapter.notifyItemInserted(data.indexOf(it))
-                    } else {
-                        data[indexOf] = it
-                        adapter.notifyItemChanged(indexOf, it)
-                    }
+            if (pids.contains((it.command as ObdCommand).pid.id)) {
+                val indexOf = data.indexOf(it)
+                if (indexOf == -1) {
+                    data.add(it)
+                    adapter.notifyItemInserted(data.indexOf(it))
+                } else {
+                    data[indexOf] = it
+                    adapter.notifyItemChanged(indexOf, it)
                 }
             }
         })
         return root
+    }
+
+    private fun loadMetrics(pids: Set<Long>) : MutableList<ObdMetric> {
+        val metricsPreferences = GaugePreferences.SERIALIZER.load(requireContext())?.map {
+            it.id to it.position
+        }!!.toMap()
+
+        var data  = DataLogger.INSTANCE.buildMetricsBy(pids)
+        data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
+            if (metricsPreferences.containsKey(m1.command.pid.id.toString()) && metricsPreferences.containsKey(
+                    m2.command.pid.id.toString()
+                )
+            ) {
+                metricsPreferences[m1.command.pid.id.toString()]!!
+                    .compareTo(metricsPreferences[m2.command.pid.id.toString()]!!)
+            } else {
+                -1
+            }
+        })
+        return data
     }
 
     private fun spanCount(): Int {

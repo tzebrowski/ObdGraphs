@@ -14,13 +14,12 @@ import org.openobd2.core.logger.bl.DataLogger
 import java.util.*
 
 class GaugeViewAdapter internal constructor(
-    context: Context?,
+    context: Context,
     data: MutableList<ObdMetric>
 ) :
     RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
     var mData: MutableList<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
-
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData, fromPosition, toPosition)
@@ -48,7 +47,7 @@ class GaugeViewAdapter internal constructor(
         holder.maxTextView.text = ""
 
         val statistic =
-            DataLogger.INSTANCE.statistics().findBy(metric.command)
+            DataLogger.INSTANCE.statistics().findBy(metric.command.pid)
         holder.minTextView.text = statistic.min.toString()
         holder.maxTextView.text = statistic.max.toString()
 
