@@ -59,19 +59,10 @@ class GaugeViewAdapter internal constructor(
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        var labelTextView: TextView
-        var valueTextView: TextView
-        var unitsTextView: TextView
-        var minTextView: TextView
-        var maxTextView: TextView
-
-        init {
-            valueTextView = itemView.findViewById(R.id.value)
-            labelTextView = itemView.findViewById(R.id.label)
-            unitsTextView = itemView.findViewById(R.id.unit)
-            minTextView = itemView.findViewById(R.id.min_value)
-            maxTextView = itemView.findViewById(R.id.max_value)
-
-        }
+        var labelTextView: TextView = itemView.findViewById(R.id.label)
+        var valueTextView: TextView = itemView.findViewById(R.id.value)
+        var unitsTextView: TextView = itemView.findViewById(R.id.unit)
+        var minTextView: TextView = itemView.findViewById(R.id.min_value)
+        var maxTextView: TextView = itemView.findViewById(R.id.max_value)
     }
 }

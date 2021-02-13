@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
-import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.ModelChangePublisher
@@ -65,8 +64,7 @@ class GaugeViewFragment : Fragment() {
                 }
             }
         )
-        val helper = ItemTouchHelper(callback)
-        helper.attachToRecyclerView(recyclerView)
+        ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
 
         adapter.notifyDataSetChanged()
 
@@ -76,8 +74,8 @@ class GaugeViewFragment : Fragment() {
             )
         )
 
-        ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
-            if (pids.contains((it.command as ObdCommand).pid.id)) {
+        ModelChangePublisher.metrics.observe(viewLifecycleOwner, Observer {
+            if (pids.contains(it.command.pid.id)) {
                 val indexOf = data.indexOf(it)
                 if (indexOf == -1) {
                     data.add(it)
@@ -98,12 +96,12 @@ class GaugeViewFragment : Fragment() {
 
         var data  = DataLogger.INSTANCE.buildMetricsBy(pids)
         data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
-            if (metricsPreferences.containsKey(m1.command.pid.id.toString()) && metricsPreferences.containsKey(
-                    m2.command.pid.id.toString()
+            if (metricsPreferences.containsKey(m1.command.pid.id) && metricsPreferences.containsKey(
+                    m2.command.pid.id
                 )
             ) {
-                metricsPreferences[m1.command.pid.id.toString()]!!
-                    .compareTo(metricsPreferences[m2.command.pid.id.toString()]!!)
+                metricsPreferences[m1.command.pid.id]!!
+                    .compareTo(metricsPreferences[m2.command.pid.id]!!)
             } else {
                 -1
             }

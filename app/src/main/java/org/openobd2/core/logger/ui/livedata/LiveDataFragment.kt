@@ -24,7 +24,7 @@ class LiveDataFragment : Fragment() {
         var data: MutableList<ObdMetric> = arrayListOf()
         val adapter = LiveDataViewAdapter(root.context, data)
 
-        ModelChangePublisher.liveData.observe(viewLifecycleOwner, Observer {
+        ModelChangePublisher.metrics.observe(viewLifecycleOwner, Observer {
             val indexOf = data.indexOf(it)
             if (indexOf == -1) {
                 data.add(it)
