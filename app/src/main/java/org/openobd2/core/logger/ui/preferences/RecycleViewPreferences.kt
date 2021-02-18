@@ -16,8 +16,8 @@ abstract class RecycleViewPreferences<T> constructor(prefName: String) {
         fun map(m: ObdMetric, index: Int): T
     }
 
-    abstract fun metricsMapper():  MetricsMapper<T>
-    abstract fun genericType (): Class<T>
+    abstract fun metricsMapper(): MetricsMapper<T>
+    abstract fun genericType(): Class<T>
 
     init {
         mapper.registerModule(KotlinModule())
@@ -39,16 +39,17 @@ abstract class RecycleViewPreferences<T> constructor(prefName: String) {
         edit.commit()
     }
 
-    fun load(context: Context ) : List<T>? {
+    fun load(context: Context): List<T>? {
         val pref = PreferenceManager.getDefaultSharedPreferences(context)
         val it = pref.getString(prefName, "")
         val listType: CollectionType =
-            mapper.getTypeFactory().constructCollectionType(
+            mapper.typeFactory.constructCollectionType(
                 ArrayList::class.java,
                 genericType()
             )
 
         return if (it!!.isEmpty()) listOf() else mapper.readValue(
-            it,listType)
+            it, listType
+        )
     }
 }

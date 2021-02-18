@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 interface SwappableAdapter {
-    fun swapItems(fromPosition: Int, toPosition: Int);
+    fun swapItems(fromPosition: Int, toPosition: Int)
     fun storePreferences(context: Context)
 }
 

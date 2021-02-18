@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        private fun handleStop(context: Context){
+        private fun handleStop(context: Context) {
             val progressBar: ProgressBar = findViewById(R.id.p_bar)
             progressBar.visibility = View.GONE
 

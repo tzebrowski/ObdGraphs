@@ -17,8 +17,7 @@ class ToggleToolbarDoubleClickListener(context: Context?) :
                 action = TOGGLE_TOOLBAR_ACTION
             })
         }
-    }) {
-}
+    })
 
 open class RecyclerItemDoubleClickListener(
     context: Context?,

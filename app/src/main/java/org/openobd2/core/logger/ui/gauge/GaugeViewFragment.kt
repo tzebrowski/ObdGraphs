@@ -89,12 +89,12 @@ class GaugeViewFragment : Fragment() {
         return root
     }
 
-    private fun loadMetrics(pids: Set<Long>) : MutableList<ObdMetric> {
+    private fun loadMetrics(pids: Set<Long>): MutableList<ObdMetric> {
         val metricsPreferences = GaugePreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
         }!!.toMap()
 
-        var data  = DataLogger.INSTANCE.buildMetricsBy(pids)
+        var data = DataLogger.INSTANCE.buildMetricsBy(pids)
         data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
             if (metricsPreferences.containsKey(m1.command.pid.id) && metricsPreferences.containsKey(
                     m2.command.pid.id

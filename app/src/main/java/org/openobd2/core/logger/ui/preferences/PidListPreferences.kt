@@ -25,12 +25,12 @@ class PidListPreferences(
             }
 
         val default = hashSetOf<String>().apply {
-            add("6");  //Engine coolant temperature
-            add("12"); //Calculated Boost
-            add("13"); //Engine RPM
-            add("16"); //Intake air temperature
-            add("18"); //Throttle position
-            add("14"); //Vehicle speed
+            add("6")  //Engine coolant temperature
+            add("12") //Calculated Boost
+            add("13") //Engine RPM
+            add("16") //Intake air temperature
+            add("18") //Throttle position
+            add("14") //Vehicle speed
             add("5") //Calculated engine load value
         }
         setDefaultValue(default)

@@ -17,7 +17,7 @@ class GaugePreferences(id: Long, position: Int) {
             }
 
             override fun genericType(): Class<GaugePreferences> {
-               return GaugePreferences::class.java
+                return GaugePreferences::class.java
             }
         }
 

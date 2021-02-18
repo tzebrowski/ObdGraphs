@@ -57,7 +57,7 @@ class DashFragment : Fragment() {
             requireContext(),
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.START or ItemTouchHelper.END,
-             object : SwappableAdapter {
+            object : SwappableAdapter {
                 override fun swapItems(fromPosition: Int, toPosition: Int) {
                     adapter.swapItems(fromPosition, toPosition)
                 }
@@ -91,13 +91,13 @@ class DashFragment : Fragment() {
         )
     }
 
-    private fun loadMetrics(pids: Set<Long>): MutableList<ObdMetric>  {
+    private fun loadMetrics(pids: Set<Long>): MutableList<ObdMetric> {
 
         val metricsPreferences = DashPreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
         }!!.toMap()
 
-        var data  = DataLogger.INSTANCE.buildMetricsBy(pids)
+        var data = DataLogger.INSTANCE.buildMetricsBy(pids)
         data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
             if (metricsPreferences.containsKey(m1.command.pid.id) && metricsPreferences.containsKey(
                     m2.command.pid.id

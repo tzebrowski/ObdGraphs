@@ -15,6 +15,7 @@ class DashPreferences(id: Long, position: Int) {
                     }
                 }
             }
+
             override fun genericType(): Class<DashPreferences> {
                 return DashPreferences::class.java
             }

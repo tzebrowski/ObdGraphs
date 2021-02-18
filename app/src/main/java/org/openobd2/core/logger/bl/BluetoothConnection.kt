@@ -56,7 +56,7 @@ internal class BluetoothConnection : Connection {
 
     private fun connectToDevice(btDeviceName: String?) {
 
-       // mBluetoothAdapter.cancelDiscovery()
+        // mBluetoothAdapter.cancelDiscovery()
 
         for (currentDevice in mBluetoothAdapter.bondedDevices) {
             if (currentDevice.name == btDeviceName) {

@@ -10,8 +10,10 @@ import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidRegistry
 import org.obd.metrics.statistics.StatisticsAccumulator
-import org.obd.metrics.workflow.EcuSpecific
-import org.obd.metrics.workflow.Workflow
+import org.obd.metrics.api.EcuSpecific
+import org.obd.metrics.api.Workflow
+import org.obd.metrics.api.WorkflowFactory
+import org.obd.metrics.command.group.Mode1CommandGroup
 import org.openobd2.core.logger.ui.preferences.PreferencesHelper
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
@@ -84,10 +86,17 @@ class DataLogger internal constructor() {
     }
 
     private var mode1: Workflow =
-        Workflow.mode1().equationEngine("rhino").observer(modelUpdate)
-            .statusObserver(statusObserver).build()
+        WorkflowFactory.mode1().equationEngine("rhino")
+            .ecuSpecific(
+                EcuSpecific
+                    .builder()
+                    .initSequence(Mode1CommandGroup.INIT)
+                    .pidFile("mode01.json").build()
+            )
+            .observer(modelUpdate)
+            .statusObserver(statusObserver).initialize()
 
-    private var mode22: Workflow = Workflow
+    private var mode22: Workflow = WorkflowFactory
         .generic()
         .ecuSpecific(
             EcuSpecific
@@ -96,8 +105,8 @@ class DataLogger internal constructor() {
                 .pidFile("alfa.json").build()
         )
         .equationEngine("rhino")
-        .metricsObserver(modelUpdate)
-        .statusObserver(statusObserver).build()
+        .observer(modelUpdate)
+        .statusObserver(statusObserver).initialize()
 
     private lateinit var device: String
 
@@ -139,17 +148,16 @@ class DataLogger internal constructor() {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())!!
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
 
-                mode1.connection(BluetoothConnection(device.toString())).filter(selectedPids.map { s -> s.toLong() }.toSet())
-                    .batchEnabled(PreferencesHelper.isBatchEnabled(context)).start()
+                mode1.filter(selectedPids.map { s -> s.toLong() }.toSet())
+                    .batch(PreferencesHelper.isBatchEnabled(context)).start(BluetoothConnection(device.toString()))
             }
 
             else -> {
                 var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())!!
 
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
-                mode22.connection(
-                    BluetoothConnection(device.toString())
-                ).filter(selectedPids.map { s -> s.toLong() }.toSet()).batchEnabled(PreferencesHelper.isBatchEnabled(context)).start()
+                mode22.filter(selectedPids.map { s -> s.toLong() }.toSet())
+                    .batch(PreferencesHelper.isBatchEnabled(context)).start(BluetoothConnection(device.toString()))
             }
         }
 
