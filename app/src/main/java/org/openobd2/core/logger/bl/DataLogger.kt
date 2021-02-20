@@ -57,9 +57,7 @@ class DataLogger internal constructor() {
                 LOG_KEY,
                 "An error occurred during interaction with the device. Msg: $msg"
             )
-
             workflow().stop()
-
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_ERROR
             })
@@ -94,7 +92,9 @@ class DataLogger internal constructor() {
                     .pidFile("mode01.json").build()
             )
             .observer(modelUpdate)
-            .statusObserver(statusObserver).initialize()
+            .statusObserver(statusObserver)
+            .commandFrequency(100)
+            .initialize()
 
     private var mode22: Workflow = WorkflowFactory
         .generic()
@@ -106,6 +106,7 @@ class DataLogger internal constructor() {
         )
         .equationEngine("rhino")
         .observer(modelUpdate)
+        .commandFrequency(100)
         .statusObserver(statusObserver).initialize()
 
     private lateinit var device: String
