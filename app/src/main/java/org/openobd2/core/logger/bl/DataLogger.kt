@@ -4,16 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.preference.PreferenceManager
+import org.obd.metrics.DeviceProperties
+import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
-import org.obd.metrics.StatusObserver
+import org.obd.metrics.api.EcuSpecific
+import org.obd.metrics.api.Workflow
+import org.obd.metrics.api.WorkflowContext
+import org.obd.metrics.api.WorkflowFactory
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
+import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidRegistry
 import org.obd.metrics.statistics.StatisticsAccumulator
-import org.obd.metrics.api.EcuSpecific
-import org.obd.metrics.api.Workflow
-import org.obd.metrics.api.WorkflowFactory
-import org.obd.metrics.command.group.Mode1CommandGroup
 import org.openobd2.core.logger.ui.preferences.PreferencesHelper
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
@@ -34,19 +36,21 @@ class DataLogger internal constructor() {
     }
 
 
-    private var modelUpdate = ModelChangePublisher()
     private lateinit var context: Context
-    private var statusObserver = object : StatusObserver {
+
+    private var metricsAggregator = MetricsAggregator()
+
+    private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
             Log.i(LOG_KEY, "Start collecting process for the Device: $device")
-            modelUpdate.data.clear()
+            metricsAggregator.data.clear()
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTING
             })
         }
 
-        override fun onConnected() {
-            Log.i(LOG_KEY, "We are connected to the device: $device")
+        override fun onConnected(deviceProperties: DeviceProperties) {
+            Log.i(LOG_KEY, "We are connected to the device: $deviceProperties")
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTED
             })
@@ -91,9 +95,9 @@ class DataLogger internal constructor() {
                     .initSequence(Mode1CommandGroup.INIT)
                     .pidFile("mode01.json").build()
             )
-            .observer(modelUpdate)
-            .statusObserver(statusObserver)
-            .commandFrequency(100)
+            .observer(metricsAggregator)
+            .lifecycle(lifecycle)
+            .commandFrequency(80)
             .initialize()
 
     private var mode22: Workflow = WorkflowFactory
@@ -105,9 +109,9 @@ class DataLogger internal constructor() {
                 .pidFile("alfa.json").build()
         )
         .equationEngine("rhino")
-        .observer(modelUpdate)
-        .commandFrequency(100)
-        .statusObserver(statusObserver).initialize()
+        .observer(metricsAggregator)
+        .commandFrequency(80)
+        .lifecycle(lifecycle).initialize()
 
     private lateinit var device: String
 
@@ -149,16 +153,23 @@ class DataLogger internal constructor() {
                 var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())!!
                 Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
 
-                mode1.filter(selectedPids.map { s -> s.toLong() }.toSet())
-                    .batch(PreferencesHelper.isBatchEnabled(context)).start(BluetoothConnection(device.toString()))
+                var ctx = WorkflowContext.builder()
+                    .filter(selectedPids.map { s -> s.toLong() }.toSet())
+                    .batchEnabled(PreferencesHelper.isBatchEnabled(context))
+                    .connection(BluetoothConnection(device.toString())).build()
+                mode1.start(ctx)
             }
 
             else -> {
                 var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())!!
 
                 Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
-                mode22.filter(selectedPids.map { s -> s.toLong() }.toSet())
-                    .batch(PreferencesHelper.isBatchEnabled(context)).start(BluetoothConnection(device.toString()))
+                var ctx = WorkflowContext.builder()
+                    .filter(selectedPids.map { s -> s.toLong() }.toSet())
+                    .batchEnabled(PreferencesHelper.isBatchEnabled(context))
+                    .connection(BluetoothConnection(device.toString())).build()
+                mode22.start(ctx)
+
             }
         }
 

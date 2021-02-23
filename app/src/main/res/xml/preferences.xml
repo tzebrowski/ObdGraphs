@@ -37,15 +37,15 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.toolbar.hide.doubleclick"
-            android:title="Double click - hide toolbar"
-            android:summary="Hide toolbar when double click" />
+            android:summary="Hide toolbar when double click"
+            android:title="Double click - hide toolbar" />
 
         <PreferenceCategory android:title="Dash">
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.dash.hl.highervalues"
-                android:title="Highlight higher values"
-                android:summary="Highlight higher values with different color" />
+                android:summary="Highlight higher values with different color"
+                android:title="Highlight higher values" />
 
             <CheckBoxPreference
                 android:defaultValue="true"
