@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.ModelChangePublisher
+import org.openobd2.core.logger.bl.MetricsAggregator
 
 class DebugFragment : Fragment() {
 
@@ -20,7 +20,7 @@ class DebugFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_debug, container, false)
         val textView: TextView = root.findViewById(R.id.text_home)
 
-        ModelChangePublisher.debugData.observe(viewLifecycleOwner, Observer {
+        MetricsAggregator.debugData.observe(viewLifecycleOwner, Observer {
             textView.append(it.toString() + "\n")
         })
 

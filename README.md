@@ -2,7 +2,7 @@
 
 ## About
 
-This is a simple Android application that demonstrates the usage of OpenElm327 java framework.
+This is a simple Android application that demonstrates the usage of ObdMetrics java framework.
 
 
 | View    |           |
@@ -16,7 +16,11 @@ This is a simple Android application that demonstrates the usage of OpenElm327 j
 
 
 
-### Integration with OpenElm327
+### Integration with ObdMetrics
+
+<details>
+<summary>Code example</summary>
+<p>
 
 ```kotlin
 import android.util.Log
@@ -25,41 +29,38 @@ import org.openobd2.core.workflow.Workflow
 
 internal class DataLogger {
 
-    private lateinit var workflow: Workflow
-    private lateinit var device: String
+    private var mode1: Workflow =
+        WorkflowFactory.mode1().equationEngine("rhino")
+            .ecuSpecific(
+                EcuSpecific
+                    .builder()
+                    .initSequence(Mode1CommandGroup.INIT)
+                    .pidFile("mode01.json").build()
+            )
+            .observer(metricsAggregator)
+            .lifecycle(lifecycle)
+            .commandFrequency(80)
+            .initialize()
 
-    init {
-        Thread.currentThread().contextClassLoader
-            .getResourceAsStream("generic.json").use {
-                workflow = Workflow.mode1()
-                    .source(it)
-                    .evaluationEngine("rhino")
-                    .subscriber(ModelChangePublisher())
-                    .state( object : State {
-                        override fun starting() {
-                            Log.i("DATA_LOGGER_DL", "Start collecting process for Device: $device")
-                        }
-                        override fun completed() {
-                            Log.i("DATA_LOGGER_DL", "Collecting process completed for Device: $device")
-                        }
+   fun start() {
 
-                        override fun stopping() {
-                            Log.i("DATA_LOGGER_DL", "Stop collecting process for Device: $device")
-                        }
-                    })
-                    .build()
-            }
-    }
-
-    fun stop() {
-        workflow.stop()
-    }
-
-    fun start(btDeviceName: String) {
-        this.device = btDeviceName
-        workflow.start(BluetoothConnection(btDeviceName))
-    }
+    var adapterName = "OBDII"
+    var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())!!
+    var batchEnabled: Boolean = PreferencesHelper.isBatchEnabled(context)
+   
+    var ctx = WorkflowContext.builder()
+        .filter(selectedPids.map { s -> s.toLong() }.toSet())
+        .batchEnabled(PreferencesHelper.isBatchEnabled(context))
+        .connection(BluetoothConnection(device.toString())).build()
+    mode1.start(ctx)
+   
+   }
+   
+   fun stop() {
+    mode1.stop()
+   }  
 }
 ```
 
-
+</p>
+</details>

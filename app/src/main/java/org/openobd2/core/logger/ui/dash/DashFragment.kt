@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
-import org.openobd2.core.logger.bl.ModelChangePublisher
+import org.openobd2.core.logger.bl.MetricsAggregator
 import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
@@ -71,7 +71,7 @@ class DashFragment : Fragment() {
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
         adapter.notifyDataSetChanged()
 
-        ModelChangePublisher.metrics.observe(viewLifecycleOwner, Observer {
+        MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             if (pids.contains(it.command.pid.id)) {
                 val indexOf = data.indexOf(it)
                 if (indexOf == -1) {

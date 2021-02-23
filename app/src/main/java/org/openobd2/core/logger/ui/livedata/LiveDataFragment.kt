@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.ModelChangePublisher
+import org.openobd2.core.logger.bl.MetricsAggregator
 
 
 class LiveDataFragment : Fragment() {
@@ -24,7 +24,7 @@ class LiveDataFragment : Fragment() {
         var data: MutableList<ObdMetric> = arrayListOf()
         val adapter = LiveDataViewAdapter(root.context, data)
 
-        ModelChangePublisher.metrics.observe(viewLifecycleOwner, Observer {
+        MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             val indexOf = data.indexOf(it)
             if (indexOf == -1) {
                 data.add(it)

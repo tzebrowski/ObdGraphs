@@ -9,7 +9,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.command.obd.SupportedPidsCommand
 
 
-internal class ModelChangePublisher : ReplyObserver() {
+internal class MetricsAggregator : ReplyObserver() {
 
     var data: MutableMap<Command, ObdMetric> = hashMapOf()
 
