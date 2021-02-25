@@ -11,13 +11,13 @@ import org.obd.metrics.command.obd.SupportedPidsCommand
 
 internal class MetricsAggregator : ReplyObserver() {
 
-    var data: MutableMap<Command, ObdMetric> = hashMapOf()
+    val data: MutableMap<Command, ObdMetric> = hashMapOf()
 
     override fun onNext(reply: Reply<*>) {
         debugData.postValue(reply)
-        if (reply.command is ObdCommand && reply.command !is SupportedPidsCommand) {
-            data[reply.command] = reply as ObdMetric
-            (reply.command as ObdCommand).pid?.let {
+        if (reply is ObdMetric && reply.command !is SupportedPidsCommand) {
+            data[reply.command] = reply
+            reply.command.pid?.let {
                 metrics.postValue(reply)
             }
         }

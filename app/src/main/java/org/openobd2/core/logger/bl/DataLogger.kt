@@ -15,6 +15,7 @@ import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidRegistry
+import org.obd.metrics.pid.Urls
 import org.obd.metrics.statistics.StatisticsAccumulator
 import org.openobd2.core.logger.ui.preferences.PreferencesHelper
 
@@ -93,7 +94,7 @@ class DataLogger internal constructor() {
                 EcuSpecific
                     .builder()
                     .initSequence(Mode1CommandGroup.INIT)
-                    .pidFile("mode01.json").build()
+                    .pidFile(Urls.resourceToUrl("mode01.json")).build()
             )
             .observer(metricsAggregator)
             .lifecycle(lifecycle)
@@ -106,7 +107,7 @@ class DataLogger internal constructor() {
             EcuSpecific
                 .builder()
                 .initSequence(AlfaMed17CommandGroup.CAN_INIT)
-                .pidFile("alfa.json").build()
+                .pidFile(Urls.resourceToUrl("alfa.json")).build()
         )
         .equationEngine("rhino")
         .observer(metricsAggregator)
