@@ -19,7 +19,7 @@ import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.DashPreferences
-import org.openobd2.core.logger.ui.preferences.PreferencesHelper
+import org.openobd2.core.logger.ui.preferences.Preferences
 
 
 class DashFragment : Fragment() {
@@ -44,7 +44,7 @@ class DashFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        var pids = PreferencesHelper.getLongSet(requireContext(), "pref.dash.pids.selected")
+        var pids = Preferences.getLongSet(requireContext(), "pref.dash.pids.selected")
         val data = loadMetrics(pids)
 
         val adapter = DashViewAdapter(root.context, data)

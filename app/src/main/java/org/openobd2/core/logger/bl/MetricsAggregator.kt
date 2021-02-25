@@ -5,7 +5,6 @@ import org.obd.metrics.ObdMetric
 import org.obd.metrics.Reply
 import org.obd.metrics.ReplyObserver
 import org.obd.metrics.command.Command
-import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.command.obd.SupportedPidsCommand
 
 

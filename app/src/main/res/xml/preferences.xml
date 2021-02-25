@@ -13,9 +13,16 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:dialogTitle="Batch enabled"
-            android:key="pref.batch.enabled"
+            android:key="pref.adapter.batch.enabled"
             android:summary="Enable batch mode"
             android:title="Enables batch mode" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dialogTitle="Reconnect automatically"
+            android:key="pref.adapter.reconnect"
+            android:summary="Reconnect automatically when error occurs"
+            android:title="Reconnect automatically" />
 
         <ListPreference
             android:defaultValue="Generic mode"

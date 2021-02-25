@@ -20,7 +20,7 @@ import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.preferences.PreferencesHelper
+import org.openobd2.core.logger.ui.preferences.Preferences
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -71,7 +71,7 @@ class DashViewAdapter internal constructor(
                 dataSet.gradientColors = gradientColors
             }
 
-            if (PreferencesHelper.isEnabled(ctx, "pref.dash.hl.highervalues")) {
+            if (Preferences.isEnabled(ctx, "pref.dash.hl.highervalues")) {
                 val percent75: Int = (holder.segments.numOfSegments * 75) / 100
                 if (segmentNum > percent75) {
                     (percent75..segmentNum).forEach { e ->

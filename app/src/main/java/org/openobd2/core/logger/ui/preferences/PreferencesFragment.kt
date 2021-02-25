@@ -84,7 +84,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val p1 = findPreference<Preference>("pref.pids.generic")
         val p2 = findPreference<Preference>("pref.pids.mode22")
 
-        when (PreferencesHelper.getMode(this.requireContext())) {
+        when (Preferences.getMode(this.requireContext())) {
             GENERIC_MODE -> {
                 p1?.isVisible = true
                 p2?.isVisible = false

@@ -3,7 +3,6 @@ package org.openobd2.core.logger.bl
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.preference.PreferenceManager
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
@@ -17,7 +16,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.statistics.StatisticsAccumulator
-import org.openobd2.core.logger.ui.preferences.PreferencesHelper
+import org.openobd2.core.logger.ui.preferences.Preferences
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
@@ -62,10 +61,19 @@ class DataLogger internal constructor() {
                 LOG_KEY,
                 "An error occurred during interaction with the device. Msg: $msg"
             )
-            workflow().stop()
-            context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_ERROR
-            })
+            stop()
+
+            if (Preferences.isReconnectWhenError(context) && "stopped" == msg){
+                Log.e(
+                    LOG_KEY,
+                    "Flag to reconnect automatically when error is turn on. Re-establishing new connection"
+                )
+                start()
+            }else{
+                context.sendBroadcast(Intent().apply {
+                    action = NOTIFICATION_ERROR
+                })
+            }
         }
 
         override fun onStopped() {
@@ -73,7 +81,6 @@ class DataLogger internal constructor() {
                 LOG_KEY,
                 "Collecting process completed for the Device: $device"
             )
-
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_STOPPED
             })
@@ -145,42 +152,37 @@ class DataLogger internal constructor() {
 
     fun start() {
 
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
-        var adapterName = pref.getString("pref.adapter.id", "OBDII")
-        this.device = adapterName.toString()
+        this.device = Preferences.getAdapterName(context)
 
-        when (PreferencesHelper.getMode(context)) {
-            GENERIC_MODE -> {
-                var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())!!
-                Log.i(LOG_KEY, "Generic mode, selected pids: $selectedPids")
+        var selectedPids = selectedPids()
+        Log.i(LOG_KEY, "Selected pids: $selectedPids")
 
-                var ctx = WorkflowContext.builder()
-                    .filter(selectedPids.map { s -> s.toLong() }.toSet())
-                    .batchEnabled(PreferencesHelper.isBatchEnabled(context))
-                    .connection(BluetoothConnection(device.toString())).build()
-                mode1.start(ctx)
-            }
+        var ctx = WorkflowContext.builder()
+            .filter(selectedPids)
+            .batchEnabled(Preferences.isBatchEnabled(context))
+            .connection(BluetoothConnection(device.toString())).build()
 
-            else -> {
-                var selectedPids = pref.getStringSet("pref.pids.mode22", emptySet())!!
+        workflow().start(ctx)
 
-                Log.i(LOG_KEY, "Mode 22, selected pids: $selectedPids")
-                var ctx = WorkflowContext.builder()
-                    .filter(selectedPids.map { s -> s.toLong() }.toSet())
-                    .batchEnabled(PreferencesHelper.isBatchEnabled(context))
-                    .connection(BluetoothConnection(device.toString())).build()
-                mode22.start(ctx)
+        Log.i(LOG_KEY, "Start collecting process for device $device")
+    }
 
+    private fun selectedPids(): MutableSet<Long> {
+        context.let {
+            return when (Preferences.getMode(context)) {
+                GENERIC_MODE -> {
+                    Preferences.getMode01Pids(context).map { s -> s.toLong() }.toSet() as MutableSet<Long>
+                }
+                else -> {
+                    Preferences.getMode22Pids(context).map { s -> s.toLong() }.toSet() as MutableSet<Long>
+                }
             }
         }
-
-        Log.i(LOG_KEY, "Start collecting process for device $adapterName")
     }
 
     private fun workflow(): Workflow {
         context.let {
-
-            return when (PreferencesHelper.getMode(context)) {
+            return when (Preferences.getMode(context)) {
                 GENERIC_MODE -> {
                     mode1
                 }
@@ -189,6 +191,5 @@ class DataLogger internal constructor() {
                 }
             }
         }
-
     }
 }

@@ -6,13 +6,22 @@ import androidx.preference.PreferenceManager
 import org.openobd2.core.logger.bl.LOG_KEY
 
 
-class PreferencesHelper {
+class Preferences {
     companion object {
-
         @JvmStatic
         fun getLongSet(context: Context, key: String): Set<Long> {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             return pref.getStringSet(key, emptySet())?.map { s -> s.toLong() }?.toSet()!!
+        }
+
+        @JvmStatic
+        fun getMode01Pids(context: Context): MutableSet<String> {
+            return getStringSet(context, "pref.pids.generic")
+        }
+
+        @JvmStatic
+        fun getMode22Pids(context: Context): MutableSet<String> {
+            return getStringSet(context, "pref.pids.mode22")
         }
 
         @JvmStatic
@@ -30,9 +39,22 @@ class PreferencesHelper {
         @JvmStatic
         fun isBatchEnabled(context: Context): Boolean {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val batchEnabled = pref.getBoolean("pref.batch.enabled", true)
+            val batchEnabled = pref.getBoolean("pref.adapter.batch.enabled", true)
             Log.v(LOG_KEY, "Batch enabled: $batchEnabled")
             return batchEnabled
+        }
+
+
+        @JvmStatic
+        fun isReconnectWhenError(context: Context): Boolean {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getBoolean("pref.adapter.reconnect", true)
+        }
+
+        @JvmStatic
+        fun getAdapterName(context: Context): String {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getString("pref.adapter.id", "OBDII")!!
         }
 
         @JvmStatic
