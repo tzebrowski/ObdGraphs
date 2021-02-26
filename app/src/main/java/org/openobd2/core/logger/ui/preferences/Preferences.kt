@@ -33,7 +33,7 @@ class Preferences {
         @JvmStatic
         fun isEnabled(context: Context, key: String): Boolean {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getBoolean(key, true)
+            return pref.getBoolean(key, false)
         }
 
         @JvmStatic

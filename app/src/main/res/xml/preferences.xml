@@ -50,9 +50,9 @@
         <PreferenceCategory android:title="Dash">
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:key="pref.dash.hl.highervalues"
-                android:summary="Highlight higher values with different color"
-                android:title="Highlight higher values" />
+                android:key="pref.dash.top.values.hl"
+                android:summary="Highlight top values with different color"
+                android:title="Highlight top values" />
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -91,6 +91,14 @@
                 android:key="pref.debug.view.enabled"
                 android:summary="Enable the view"
                 android:title="Show tht view" />
+
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.debug.generator.enabled"
+                android:summary="Enable data generator"
+                android:title="Enable data generator" />
+
         </PreferenceCategory>
 
         <PreferenceCategory android:title="Metrics">

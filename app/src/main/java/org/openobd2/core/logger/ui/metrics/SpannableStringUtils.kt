@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.livedata
+package org.openobd2.core.logger.ui.metrics
 
 import android.graphics.Typeface
 import android.text.Spannable
@@ -7,11 +7,11 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 
-class UIUtils {
+class SpannableStringUtils {
     companion object {
 
         @JvmStatic
-        fun spannedText(it: String?, color: Int, size: Float): SpannableString {
+        fun generate(it: String?, color: Int, size: Float): SpannableString {
 
             var valText: String? = it
             if (valText == null) {

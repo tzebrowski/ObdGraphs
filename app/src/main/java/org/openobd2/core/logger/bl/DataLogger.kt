@@ -6,10 +6,7 @@ import android.util.Log
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
-import org.obd.metrics.api.EcuSpecific
-import org.obd.metrics.api.Workflow
-import org.obd.metrics.api.WorkflowContext
-import org.obd.metrics.api.WorkflowFactory
+import org.obd.metrics.api.*
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
@@ -61,15 +58,17 @@ class DataLogger internal constructor() {
                 LOG_KEY,
                 "An error occurred during interaction with the device. Msg: $msg"
             )
+
             stop()
 
-            if (Preferences.isReconnectWhenError(context) && "stopped" == msg){
+            if (Preferences.isReconnectWhenError(context) && "stopped" == msg) {
                 Log.e(
                     LOG_KEY,
-                    "Flag to reconnect automatically when error is turn on. Re-establishing new connection"
+                    "Flag to reconnect automatically when errors occurs is turn on." +
+                            " Re-establishing new connection"
                 )
                 start()
-            }else{
+            } else {
                 context.sendBroadcast(Intent().apply {
                     action = NOTIFICATION_ERROR
                 })
@@ -95,18 +94,7 @@ class DataLogger internal constructor() {
         }
     }
 
-    private var mode1: Workflow =
-        WorkflowFactory.mode1().equationEngine("rhino")
-            .ecuSpecific(
-                EcuSpecific
-                    .builder()
-                    .initSequence(Mode1CommandGroup.INIT)
-                    .pidFile(Urls.resourceToUrl("mode01.json")).build()
-            )
-            .observer(metricsAggregator)
-            .lifecycle(lifecycle)
-            .commandFrequency(80)
-            .initialize()
+    private lateinit var mode1: Workflow
 
     private var mode22: Workflow = WorkflowFactory
         .generic()
@@ -148,6 +136,20 @@ class DataLogger internal constructor() {
 
     fun init(ctx: Context) {
         this.context = ctx
+        mode1 = WorkflowFactory.mode1().equationEngine("rhino")
+            .ecuSpecific(
+                EcuSpecific
+                    .builder()
+                    .initSequence(Mode1CommandGroup.INIT)
+                    .pidFile(Urls.resourceToUrl("mode01.json")).build()
+            ).generator(GeneratorSpec
+                .builder()
+                .enabled(Preferences.isEnabled(ctx, "pref.debug.generator.enabled"))
+                .increment(0.5).build())
+            .observer(metricsAggregator)
+            .lifecycle(lifecycle)
+            .commandFrequency(80)
+            .initialize()
     }
 
     fun start() {
@@ -171,10 +173,12 @@ class DataLogger internal constructor() {
         context.let {
             return when (Preferences.getMode(context)) {
                 GENERIC_MODE -> {
-                    Preferences.getMode01Pids(context).map { s -> s.toLong() }.toSet() as MutableSet<Long>
+                    Preferences.getMode01Pids(context).map { s -> s.toLong() }
+                        .toSet() as MutableSet<Long>
                 }
                 else -> {
-                    Preferences.getMode22Pids(context).map { s -> s.toLong() }.toSet() as MutableSet<Long>
+                    Preferences.getMode22Pids(context).map { s -> s.toLong() }
+                        .toSet() as MutableSet<Long>
                 }
             }
         }

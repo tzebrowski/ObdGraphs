@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.livedata
+package org.openobd2.core.logger.ui.metrics
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,16 +13,16 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.MetricsAggregator
 
 
-class LiveDataFragment : Fragment() {
+class MetricsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_livedata, container, false)
+        val root = inflater.inflate(R.layout.fragment_metrics, container, false)
         var data: MutableList<ObdMetric> = arrayListOf()
-        val adapter = LiveDataViewAdapter(root.context, data)
+        val adapter = MetricsViewAdapter(root.context, data)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             val indexOf = data.indexOf(it)

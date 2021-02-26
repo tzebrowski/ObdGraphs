@@ -26,9 +26,9 @@
 
     <fragment
         android:id="@+id/navigation_metrics"
-        android:name="org.openobd2.core.logger.ui.livedata.LiveDataFragment"
+        android:name="org.openobd2.core.logger.ui.metrics.MetricsFragment"
         android:label="@string/title_livedata"
-        tools:layout="@layout/fragment_livedata" />
+        tools:layout="@layout/fragment_metrics" />
     <fragment
         android:id="@+id/navigation_configuration"
         android:name="org.openobd2.core.logger.ui.preferences.PreferencesFragment"

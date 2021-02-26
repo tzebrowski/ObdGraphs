@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.livedata
+package org.openobd2.core.logger.ui.metrics
 
 
 import android.content.Context
@@ -12,11 +12,11 @@ import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 
-class LiveDataViewAdapter internal constructor(
+class MetricsViewAdapter internal constructor(
     context: Context?,
     data: MutableCollection<ObdMetric>
 ) :
-    RecyclerView.Adapter<LiveDataViewAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MetricsViewAdapter.ViewHolder>() {
     var mData: MutableCollection<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -40,9 +40,9 @@ class LiveDataViewAdapter internal constructor(
         }
 
         holder.metricNameTextView.text =
-            UIUtils.spannedText(commandReply.command.label, Color.GRAY, 1.1f)
+            SpannableStringUtils.generate(commandReply.command.label, Color.GRAY, 1.1f)
         holder.metricValueTextView.text =
-            UIUtils.spannedText(valueTxt, Color.parseColor("#01804F"), 1.4f)
+            SpannableStringUtils.generate(valueTxt, Color.parseColor("#01804F"), 1.4f)
     }
 
     override fun getItemCount(): Int {
