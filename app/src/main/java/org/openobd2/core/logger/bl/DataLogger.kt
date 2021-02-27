@@ -94,12 +94,21 @@ class DataLogger internal constructor() {
         }
     }
 
-    private lateinit var mode1: Workflow
+    private var mode1: Workflow = WorkflowFactory.mode1().equationEngine("rhino")
+        .pidSpec(
+            PidSpec
+                .builder()
+                .initSequence(Mode1CommandGroup.INIT)
+                .pidFile(Urls.resourceToUrl("mode01.json")).build()
+        ).observer(metricsAggregator)
+        .lifecycle(lifecycle)
+        .commandFrequency(80)
+        .initialize()
 
     private var mode22: Workflow = WorkflowFactory
         .generic()
-        .ecuSpecific(
-            EcuSpecific
+        .pidSpec(
+            PidSpec
                 .builder()
                 .initSequence(AlfaMed17CommandGroup.CAN_INIT)
                 .pidFile(Urls.resourceToUrl("alfa.json")).build()
@@ -136,20 +145,6 @@ class DataLogger internal constructor() {
 
     fun init(ctx: Context) {
         this.context = ctx
-        mode1 = WorkflowFactory.mode1().equationEngine("rhino")
-            .ecuSpecific(
-                EcuSpecific
-                    .builder()
-                    .initSequence(Mode1CommandGroup.INIT)
-                    .pidFile(Urls.resourceToUrl("mode01.json")).build()
-            ).generator(GeneratorSpec
-                .builder()
-                .enabled(Preferences.isEnabled(ctx, "pref.debug.generator.enabled"))
-                .increment(0.5).build())
-            .observer(metricsAggregator)
-            .lifecycle(lifecycle)
-            .commandFrequency(80)
-            .initialize()
     }
 
     fun start() {
@@ -162,6 +157,10 @@ class DataLogger internal constructor() {
         var ctx = WorkflowContext.builder()
             .filter(selectedPids)
             .batchEnabled(Preferences.isBatchEnabled(context))
+            .generator(GeneratorSpec
+                .builder()
+                .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
+                .increment(0.5).build())
             .connection(BluetoothConnection(device.toString())).build()
 
         workflow().start(ctx)
