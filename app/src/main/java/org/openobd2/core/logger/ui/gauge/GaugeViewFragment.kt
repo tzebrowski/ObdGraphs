@@ -41,7 +41,7 @@ class GaugeViewFragment : Fragment() {
     ): View? {
 
         val pids = Preferences.getLongSet(requireContext(), "pref.gauge.pids.selected")
-        val data = loadMetrics(pids)
+        val data = sortData( DataLogger.INSTANCE.buildMetricsBy(pids))
 
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
         val adapter = GaugeViewAdapter(root.context, data)
@@ -75,26 +75,27 @@ class GaugeViewFragment : Fragment() {
         )
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
-            if (pids.contains(it.command.pid.id)) {
-                val indexOf = data.indexOf(it)
-                if (indexOf == -1) {
-                    data.add(it)
-                    adapter.notifyItemInserted(data.indexOf(it))
-                } else {
-                    data[indexOf] = it
-                    adapter.notifyItemChanged(indexOf, it)
+            it?.let {
+                if (pids.contains(it.command.pid.id)) {
+                    val indexOf = data.indexOf(it)
+                    if (indexOf == -1) {
+                        data.add(it)
+                        adapter.notifyItemInserted(data.indexOf(it))
+                    } else {
+                        data[indexOf] = it
+                        adapter.notifyItemChanged(indexOf, it)
+                    }
                 }
             }
         })
         return root
     }
 
-    private fun loadMetrics(pids: Set<Long>): MutableList<ObdMetric> {
+    private fun sortData(data: MutableList<ObdMetric>): MutableList<ObdMetric> {
         val metricsPreferences = GaugePreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
         }!!.toMap()
 
-        var data = DataLogger.INSTANCE.buildMetricsBy(pids)
         data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
             if (metricsPreferences.containsKey(m1.command.pid.id) && metricsPreferences.containsKey(
                     m2.command.pid.id

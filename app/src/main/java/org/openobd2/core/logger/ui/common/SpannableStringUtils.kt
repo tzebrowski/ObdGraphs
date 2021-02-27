@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.metrics
+package org.openobd2.core.logger.ui.common
 
 import android.graphics.Typeface
 import android.text.Spannable

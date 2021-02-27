@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.ui.common.SpannableStringUtils
 
 class MetricsViewAdapter internal constructor(
     context: Context?,

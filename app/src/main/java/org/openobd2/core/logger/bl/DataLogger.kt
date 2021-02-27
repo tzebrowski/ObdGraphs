@@ -40,7 +40,6 @@ class DataLogger internal constructor() {
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
             Log.i(LOG_KEY, "Start collecting process for the Device: $device")
-            metricsAggregator.data.clear()
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTING
             })
@@ -76,10 +75,14 @@ class DataLogger internal constructor() {
         }
 
         override fun onStopped() {
+
             Log.i(
                 LOG_KEY,
                 "Collecting process completed for the Device: $device"
             )
+
+            metricsAggregator.reset()
+
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_STOPPED
             })
@@ -129,7 +132,7 @@ class DataLogger internal constructor() {
         var data: MutableList<ObdMetric> = arrayListOf()
         pids.forEach { s: Long? ->
             pidRegistry.findBy(s)?.apply {
-                data.add(ObdMetric.builder().command(ObdCommand(this)).build())
+                data.add(ObdMetric.builder().command(ObdCommand(this)).value(null).build())
             }
         }
         return data

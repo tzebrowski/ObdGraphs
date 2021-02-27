@@ -25,13 +25,15 @@ class MetricsFragment : Fragment() {
         val adapter = MetricsViewAdapter(root.context, data)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
-            val indexOf = data.indexOf(it)
-            if (indexOf == -1) {
-                data.add(it)
-                adapter.notifyItemInserted(data.indexOf(it))
-            } else {
-                data[indexOf] = it
-                adapter.notifyItemChanged(indexOf, it)
+            it?.let {
+                val indexOf = data.indexOf(it)
+                if (indexOf == -1) {
+                    data.add(it)
+                    adapter.notifyItemInserted(data.indexOf(it))
+                } else {
+                    data[indexOf] = it
+                    adapter.notifyItemChanged(indexOf, it)
+                }
             }
         })
 

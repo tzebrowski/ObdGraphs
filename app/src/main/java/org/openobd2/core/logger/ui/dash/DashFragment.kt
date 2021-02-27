@@ -45,7 +45,7 @@ class DashFragment : Fragment() {
 
     private fun setupRecyclerView() {
         var pids = Preferences.getLongSet(requireContext(), "pref.dash.pids.selected")
-        val data = loadMetrics(pids)
+        val data = sortData(DataLogger.INSTANCE.buildMetricsBy(pids))
 
         val adapter = DashViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
@@ -69,17 +69,17 @@ class DashFragment : Fragment() {
         )
 
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
-        adapter.notifyDataSetChanged()
-
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
-            if (pids.contains(it.command.pid.id)) {
-                val indexOf = data.indexOf(it)
-                if (indexOf == -1) {
-                    data.add(it)
-                    adapter.notifyItemInserted(data.indexOf(it))
-                } else {
-                    data[indexOf] = it
-                    adapter.notifyItemChanged(indexOf, it)
+            it?.let {
+                if (pids.contains(it.command.pid.id)) {
+                    val indexOf = data.indexOf(it)
+                    if (indexOf == -1) {
+                        data.add(it)
+                        adapter.notifyItemInserted(data.indexOf(it))
+                    } else {
+                        data[indexOf] = it
+                        adapter.notifyItemChanged(indexOf, it)
+                    }
                 }
             }
         })
@@ -89,22 +89,22 @@ class DashFragment : Fragment() {
                 requireContext()
             )
         )
+
+        adapter.notifyDataSetChanged()
     }
 
-    private fun loadMetrics(pids: Set<Long>): MutableList<ObdMetric> {
-
-        val metricsPreferences = DashPreferences.SERIALIZER.load(requireContext())?.map {
+    private fun sortData(data: MutableList<ObdMetric>): MutableList<ObdMetric> {
+        val sortOrderMap = DashPreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
         }!!.toMap()
 
-        var data = DataLogger.INSTANCE.buildMetricsBy(pids)
         data.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
-            if (metricsPreferences.containsKey(m1.command.pid.id) && metricsPreferences.containsKey(
+            if (sortOrderMap.containsKey(m1.command.pid.id) && sortOrderMap.containsKey(
                     m2.command.pid.id
                 )
             ) {
-                metricsPreferences[m1.command.pid.id]!!
-                    .compareTo(metricsPreferences[m2.command.pid.id]!!)
+                sortOrderMap[m1.command.pid.id]!!
+                    .compareTo(sortOrderMap[m2.command.pid.id]!!)
             } else {
                 -1
             }
