@@ -23,7 +23,6 @@ const val NOTIFICATION_ERROR = "data.logger.error"
 const val LOG_KEY = "DATA_LOGGER_DL"
 const val GENERIC_MODE = "Generic mode"
 
-
 class DataLogger internal constructor() {
 
     companion object {
@@ -127,10 +126,10 @@ class DataLogger internal constructor() {
         return workflow().statistics
     }
 
-    fun buildMetricsBy(pids: Set<Long>): MutableList<ObdMetric> {
+    fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
         var pidRegistry: PidRegistry = pids()
         var data: MutableList<ObdMetric> = arrayListOf()
-        pids.forEach { s: Long? ->
+        pidIds.forEach { s: Long? ->
             pidRegistry.findBy(s)?.apply {
                 data.add(ObdMetric.builder().command(ObdCommand(this)).value(null).build())
             }
@@ -160,10 +159,12 @@ class DataLogger internal constructor() {
         var ctx = WorkflowContext.builder()
             .filter(selectedPids)
             .batchEnabled(Preferences.isBatchEnabled(context))
-            .generator(GeneratorSpec
-                .builder()
-                .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
-                .increment(0.5).build())
+            .generator(
+                GeneratorSpec
+                    .builder()
+                    .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
+                    .increment(0.5).build()
+            )
             .connection(BluetoothConnection(device.toString())).build()
 
         workflow().start(ctx)

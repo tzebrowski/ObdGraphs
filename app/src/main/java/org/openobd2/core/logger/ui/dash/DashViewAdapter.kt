@@ -2,7 +2,6 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -79,7 +78,12 @@ class DashViewAdapter internal constructor(
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                         dataSet.color = Color.rgb(124, 252, 79)
                         val gradientColors: MutableList<GradientColor> = ArrayList()
-                        gradientColors.add(GradientColor(Color.rgb(237, 33, 58),Color.rgb(147, 41, 30)))
+                        gradientColors.add(
+                            GradientColor(
+                                Color.rgb(237, 33, 58),
+                                Color.rgb(147, 41, 30)
+                            )
+                        )
                         dataSet.gradientColors = gradientColors
                     }
                 }
@@ -165,7 +169,7 @@ class DashViewAdapter internal constructor(
                     set1.setDrawValues(false)
                     set1.color = Color.rgb(187, 187, 187)
                     dataSets.add(set1)
-               }
+                }
 
                 val data = BarData(dataSets)
                 data.setDrawValues(false)
