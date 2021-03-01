@@ -50,14 +50,7 @@ internal class BluetoothConnection : Connection {
         return input
     }
 
-    override fun isClosed(): Boolean {
-        return !socket.isConnected
-    }
-
     private fun connectToDevice(btDeviceName: String?) {
-
-        // mBluetoothAdapter.cancelDiscovery()
-
         for (currentDevice in mBluetoothAdapter.bondedDevices) {
             if (currentDevice.name == btDeviceName) {
                 Log.i(LOG_KEY, "Opening connection to device: $btDeviceName")
@@ -75,6 +68,5 @@ internal class BluetoothConnection : Connection {
                 }
             }
         }
-
     }
 }

@@ -58,5 +58,5 @@ dependencies {
     implementation 'io.apisense:rhino-android:1.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
-    implementation ('io.github.tzebrowski:obd-metrics:0.0.8-SNAPSHOT'){ changing = true }
+    implementation ('io.github.tzebrowski:obd-metrics:0.0.9-SNAPSHOT'){ changing = true }
 }

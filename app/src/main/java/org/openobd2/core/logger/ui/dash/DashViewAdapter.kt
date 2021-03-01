@@ -33,6 +33,7 @@ class DashViewAdapter internal constructor(
     var mData: MutableList<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val ctx: Context = context
+    private lateinit var colors: ColorTheme
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData, fromPosition, toPosition)
@@ -44,6 +45,7 @@ class DashViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.dash_item, parent, false)
+        colors = Theme.getSelectedTheme(this.ctx)
         return ViewHolder(view)
     }
 
@@ -65,10 +67,8 @@ class DashViewAdapter internal constructor(
 
             (0..segmentNum).forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                dataSet.color = Color.rgb(124, 252, 79)
-                val gradientColors: MutableList<GradientColor> = ArrayList()
-                gradientColors.add(GradientColor(Color.rgb(124, 252, 79), Color.rgb(243, 249, 167)))
-                dataSet.gradientColors = gradientColors
+                dataSet.color =   colors.col1[0].startColor
+                dataSet.gradientColors = colors.col1
             }
 
             if (Preferences.isEnabled(ctx, "pref.dash.top.values.hl")) {
@@ -76,15 +76,7 @@ class DashViewAdapter internal constructor(
                 if (segmentNum > percent75) {
                     (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.color = Color.rgb(124, 252, 79)
-                        val gradientColors: MutableList<GradientColor> = ArrayList()
-                        gradientColors.add(
-                            GradientColor(
-                                Color.rgb(237, 33, 58),
-                                Color.rgb(147, 41, 30)
-                            )
-                        )
-                        dataSet.gradientColors = gradientColors
+                        dataSet.gradientColors = colors.col2
                     }
                 }
             }
@@ -167,7 +159,6 @@ class DashViewAdapter internal constructor(
                     val set1 = BarDataSet(values, "")
                     set1.setDrawIcons(false)
                     set1.setDrawValues(false)
-                    set1.color = Color.rgb(187, 187, 187)
                     dataSets.add(set1)
                 }
 

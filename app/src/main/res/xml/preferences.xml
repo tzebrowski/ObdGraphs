@@ -66,6 +66,16 @@
                 android:summary="Displayed PIDs"
                 android:title="Displayed PIDs" />
 
+
+            <ListPreference
+                android:key="pref.dash.theme"
+                android:title="Color theme"
+                android:defaultValue="1"
+                android:entries="@array/dash_color_themes"
+                android:entryValues="@array/dash_color_themes"
+                />
+
+
         </PreferenceCategory>
 
         <PreferenceCategory android:title="Gauge">
