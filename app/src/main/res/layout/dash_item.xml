@@ -44,12 +44,14 @@
                 android:layout_height="match_parent"
                 android:text="Value"
                 android:textColor="#FFFF00"
-                android:textSize="42sp" />
+                android:textSize="44sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/dash_units"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="2dp"
                 android:gravity="center|left"
                 android:text="units"
                 android:textColor="#1B2441"

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -108,6 +109,9 @@ class DashViewAdapter internal constructor(
                 val numOfSegments = 30
                 this.segments = Segments(numOfSegments, pid.min.toDouble(), pid.max.toDouble())
                 this.label.text = pid.description
+                chart.description = Description()
+                chart.legend.isEnabled = false
+
                 chart.setDrawBarShadow(false)
                 chart.setDrawValueAboveBar(false)
                 chart.setTouchEnabled(false)
@@ -165,7 +169,7 @@ class DashViewAdapter internal constructor(
                 val data = BarData(dataSets)
                 data.setDrawValues(false)
 
-                data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.2f
+                data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.1f
                 chart.data = data
                 initialized = true
             }
