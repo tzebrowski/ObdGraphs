@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -38,6 +40,8 @@ class DashFragment : AbstractMetricsFragment() {
     ): View? {
         root = inflater.inflate(R.layout.fragment_dash, container, false)
         setupRecyclerView()
+
+
         return root
     }
 
@@ -81,6 +85,8 @@ class DashFragment : AbstractMetricsFragment() {
 
         observerMetrics(metrics)
         adapter.notifyDataSetChanged()
+
+
     }
 
     private fun spanCount(): Int {

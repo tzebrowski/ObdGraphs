@@ -50,8 +50,14 @@
         <PreferenceCategory android:title="Dash">
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:key="pref.dash.top.values.hl"
-                android:summary="Highlight top values with different color"
+                android:key="pref.dash.top.values.blink"
+                android:summary="Alarm when highest values reached"
+                android:title="Alarm for highest values" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.top.values.red.color"
+                android:summary="Highlight top values with red color"
                 android:title="Highlight top values" />
 
             <CheckBoxPreference

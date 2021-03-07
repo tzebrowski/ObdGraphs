@@ -12,7 +12,7 @@ import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidRegistry
 import org.obd.metrics.pid.Urls
-import org.obd.metrics.statistics.StatisticsAccumulator
+import org.obd.metrics.statistics.StatisticsRegistry
 import org.openobd2.core.logger.ui.preferences.Preferences
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
@@ -44,7 +44,7 @@ class DataLogger internal constructor() {
             })
         }
 
-        override fun onConnected(deviceProperties: DeviceProperties) {
+        override fun onRunning(deviceProperties: DeviceProperties) {
             Log.i(LOG_KEY, "We are connected to the device: $deviceProperties")
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTED
@@ -104,7 +104,7 @@ class DataLogger internal constructor() {
                 .pidFile(Urls.resourceToUrl("mode01.json")).build()
         ).observer(metricsAggregator)
         .lifecycle(lifecycle)
-        .commandFrequency(80)
+        .commandFrequency(200)
         .initialize()
 
     private var mode22: Workflow = WorkflowFactory
@@ -117,13 +117,13 @@ class DataLogger internal constructor() {
         )
         .equationEngine("rhino")
         .observer(metricsAggregator)
-        .commandFrequency(80)
+        .commandFrequency(200)
         .lifecycle(lifecycle).initialize()
 
     private lateinit var device: String
 
-    fun statistics(): StatisticsAccumulator {
-        return workflow().statistics
+    fun statistics(): StatisticsRegistry {
+        return workflow().statisticsRegistry
     }
 
     fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
@@ -138,7 +138,7 @@ class DataLogger internal constructor() {
     }
 
     fun pids(): PidRegistry {
-        return workflow().pids
+        return workflow().pidRegistry
     }
 
     fun stop() {

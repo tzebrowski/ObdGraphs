@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.BarChart
@@ -16,7 +18,6 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
-import com.github.mikephil.charting.model.GradientColor
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
@@ -50,6 +51,7 @@ class DashViewAdapter internal constructor(
         return ViewHolder(view)
     }
 
+
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int
@@ -68,22 +70,33 @@ class DashViewAdapter internal constructor(
 
             (0..segmentNum).forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                dataSet.color =   colors.col1[0].startColor
+                dataSet.color = colors.col1[0].startColor
                 dataSet.gradientColors = colors.col1
             }
 
-            if (Preferences.isEnabled(ctx, "pref.dash.top.values.hl")) {
-                val percent75: Int = (holder.segments.numOfSegments * 75) / 100
-                if (segmentNum > percent75) {
+
+            val percent75: Int = (holder.segments.numOfSegments * 75) / 100
+            if (segmentNum > percent75) {
+
+                if (Preferences.isEnabled(ctx, "pref.dash.top.values.red.color")) {
                     (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                         dataSet.gradientColors = colors.col2
                     }
                 }
-            }
-            holder.chart.invalidate()
-        }
+                if (Preferences.isEnabled(ctx, "pref.dash.top.values.blink")) {
+                    if (!holder.anim.hasStarted() || holder.anim.hasEnded()){
+                        holder.itemView.startAnimation(holder.anim)
+                    }
+                }
+            } else {
 
+                if (Preferences.isEnabled(ctx, "pref.dash.top.values.blink")) {
+                    holder.itemView.clearAnimation()
+                }
+            }
+        }
+        holder.chart.invalidate()
         holder.units.text = (obdCommand.pid).units
         holder.value.text = commandReply.valueToString()
         holder.label.text = obdCommand.pid.description
@@ -93,6 +106,7 @@ class DashViewAdapter internal constructor(
         return mData.size
     }
 
+
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var chart: BarChart = itemView.findViewById(R.id.chart)
@@ -100,15 +114,24 @@ class DashViewAdapter internal constructor(
         var value: TextView = itemView.findViewById(R.id.dash_value)
         var units: TextView = itemView.findViewById(R.id.dash_units)
 
+        var anim: Animation = AlphaAnimation(0.0f, 1.0f)
+
         lateinit var segments: Segments
         var initialized: Boolean = false
 
         fun buildChart(pid: PidDefinition) {
             if (initialized) {
             } else {
+
+                anim.duration = 300
+                anim.startOffset = 20
+                anim.repeatMode = Animation.REVERSE
+                anim.repeatCount = Animation.INFINITE
+
                 val numOfSegments = 30
                 this.segments = Segments(numOfSegments, pid.min.toDouble(), pid.max.toDouble())
                 this.label.text = pid.description
+
                 chart.description = Description()
                 chart.legend.isEnabled = false
 
@@ -124,6 +147,9 @@ class DashViewAdapter internal constructor(
                 chart.setDrawGridBackground(false)
 
                 val xAxis = chart.xAxis
+                xAxis.spaceMax = 0.1f
+                xAxis.spaceMin = 0.1f
+
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
                 xAxis.setDrawGridLines(false)
                 xAxis.setDrawLabels(true)
@@ -163,6 +189,7 @@ class DashViewAdapter internal constructor(
                     val set1 = BarDataSet(values, "")
                     set1.setDrawIcons(false)
                     set1.setDrawValues(false)
+
                     dataSets.add(set1)
                 }
 
