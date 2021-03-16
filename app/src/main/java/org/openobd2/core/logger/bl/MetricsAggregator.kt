@@ -8,7 +8,7 @@ import org.obd.metrics.command.Command
 import org.obd.metrics.command.obd.SupportedPidsCommand
 
 
-internal class MetricsAggregator : ReplyObserver() {
+internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
 
     private val data: MutableMap<Command, ObdMetric> = hashMapOf()
 

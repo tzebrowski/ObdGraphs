@@ -40,8 +40,6 @@ class DashFragment : AbstractMetricsFragment() {
     ): View? {
         root = inflater.inflate(R.layout.fragment_dash, container, false)
         setupRecyclerView()
-
-
         return root
     }
 

@@ -15,7 +15,7 @@
             android:dialogTitle="Batch enabled"
             android:key="pref.adapter.batch.enabled"
             android:summary="Enable batch mode"
-            android:title="Enables batch mode" />
+            android:title="Enable batch mode" />
 
         <CheckBoxPreference
             android:defaultValue="true"

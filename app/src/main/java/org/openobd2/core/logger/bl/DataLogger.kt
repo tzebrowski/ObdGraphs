@@ -3,6 +3,7 @@ package org.openobd2.core.logger.bl
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import org.obd.metrics.AdaptiveTimeoutPolicy
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
@@ -104,7 +105,12 @@ class DataLogger internal constructor() {
                 .pidFile(Urls.resourceToUrl("mode01.json")).build()
         ).observer(metricsAggregator)
         .lifecycle(lifecycle)
-        .commandFrequency(200)
+        .adaptiveTiming(AdaptiveTimeoutPolicy
+            .builder()
+            .enabled(true)
+            .checkInterval(10000) // 10s
+            .commandFrequency(7) // 7req/sec
+            .build())
         .initialize()
 
     private var mode22: Workflow = WorkflowFactory
@@ -117,7 +123,12 @@ class DataLogger internal constructor() {
         )
         .equationEngine("rhino")
         .observer(metricsAggregator)
-        .commandFrequency(200)
+        .adaptiveTiming(AdaptiveTimeoutPolicy
+            .builder()
+            .enabled(true)
+            .checkInterval(10000) //10s
+            .commandFrequency(7) // 7req/sec
+            .build())
         .lifecycle(lifecycle).initialize()
 
     private lateinit var device: String
