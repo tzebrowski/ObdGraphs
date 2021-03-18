@@ -29,13 +29,15 @@ import kotlin.collections.ArrayList
 
 class DashViewAdapter internal constructor(
     context: Context,
-    data: MutableList<ObdMetric>
+    data: MutableList<ObdMetric>,
+    height: Int
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
     var mData: MutableList<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val ctx: Context = context
     private lateinit var colors: ColorTheme
+    private val height: Int = height
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData, fromPosition, toPosition)
@@ -47,6 +49,7 @@ class DashViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.dash_item, parent, false)
+        view.layoutParams.height = height
         colors = Theme.getSelectedTheme(this.ctx)
         return ViewHolder(view)
     }
@@ -85,7 +88,7 @@ class DashViewAdapter internal constructor(
                     }
                 }
                 if (Preferences.isEnabled(ctx, "pref.dash.top.values.blink")) {
-                    if (!holder.anim.hasStarted() || holder.anim.hasEnded()){
+                    if (!holder.anim.hasStarted() || holder.anim.hasEnded()) {
                         holder.itemView.startAnimation(holder.anim)
                     }
                 }

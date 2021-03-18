@@ -6,8 +6,7 @@ import androidx.preference.PreferenceManager
 import com.github.mikephil.charting.model.GradientColor
 
 
-data class ColorTheme(val col1: MutableList<GradientColor>, val col2: MutableList<GradientColor>) {
-}
+data class ColorTheme(val col1: MutableList<GradientColor>, val col2: MutableList<GradientColor>)
 
 class Theme {
 
@@ -20,7 +19,7 @@ class Theme {
         }
 
         fun list(): Array<ColorTheme> {
-            return arrayOf(std1(), std2(), std3(), std4());
+            return arrayOf(std1(), std2(), std3(), std4())
         }
 
 

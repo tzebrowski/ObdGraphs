@@ -7,7 +7,10 @@ import org.obd.metrics.AdaptiveTimeoutPolicy
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
-import org.obd.metrics.api.*
+import org.obd.metrics.api.PidSpec
+import org.obd.metrics.api.Workflow
+import org.obd.metrics.api.WorkflowContext
+import org.obd.metrics.api.WorkflowFactory
 import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
@@ -166,12 +169,14 @@ class DataLogger internal constructor() {
                     .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
                     .increment(0.5).build()
             )
-            .adaptiveTiming(AdaptiveTimeoutPolicy
-                .builder()
-                .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
-                .checkInterval(5000) //10s
-                .commandFrequency(Preferences.getCommandFreq(context))
-                .build())
+            .adaptiveTiming(
+                AdaptiveTimeoutPolicy
+                    .builder()
+                    .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
+                    .checkInterval(5000) //10s
+                    .commandFrequency(Preferences.getCommandFreq(context))
+                    .build()
+            )
             .connection(BluetoothConnection(device.toString())).build()
 
         workflow().start(ctx)

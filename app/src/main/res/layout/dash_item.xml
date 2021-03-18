@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dash_item"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="200sp"
     android:layout_marginLeft="1dp"
     android:layout_marginTop="1dp"
     android:layout_marginRight="1dp"
@@ -67,7 +67,7 @@
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
         android:layout_width="fill_parent"
-        android:layout_height="123sp"
+        android:layout_height="fill_parent"
         android:layout_row="0"
         android:layout_column="0">
 

@@ -34,9 +34,9 @@
 
         <ListPreference
             android:defaultValue="6"
-            android:key="pref.adapter.command.freq"
             android:entries="@array/command_frequency"
             android:entryValues="@array/command_frequency"
+            android:key="pref.adapter.command.freq"
             android:summary="Command frequency"
             android:title="Command frequency" />
 
@@ -90,12 +90,11 @@
 
 
             <ListPreference
-                android:key="pref.dash.theme"
-                android:title="Color theme"
                 android:defaultValue="1"
                 android:entries="@array/dash_color_themes"
                 android:entryValues="@array/dash_color_themes"
-                />
+                android:key="pref.dash.theme"
+                android:title="Color theme" />
 
 
         </PreferenceCategory>

@@ -1,16 +1,17 @@
 package org.openobd2.core.logger.ui.dash
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.AbstractMetricsFragment
 import org.openobd2.core.logger.ui.common.DragManageAdapter
@@ -50,11 +51,12 @@ class DashFragment : AbstractMetricsFragment() {
         }!!.toMap()
 
         val metrics = findMetrics(sortOrderMap)
+        var itemHeight = calculateItemHeight(metrics)
 
-        adapter = DashViewAdapter(root.context, metrics)
+        adapter = DashViewAdapter(root.context, metrics, itemHeight)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
 
-        recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
+        recyclerView.layoutManager = GridLayoutManager(root.context, spanCount(metrics.size))
         recyclerView.adapter = adapter
 
         val callback = DragManageAdapter(
@@ -83,11 +85,36 @@ class DashFragment : AbstractMetricsFragment() {
 
         observerMetrics(metrics)
         adapter.notifyDataSetChanged()
-
-
     }
 
-    private fun spanCount(): Int {
-        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+    private fun calculateItemHeight(metrics: MutableList<ObdMetric>): Int {
+        val displayMetrics = DisplayMetrics()
+        (context as Activity?)!!.windowManager
+            .defaultDisplay
+            .getMetrics(displayMetrics)
+        var itemHeight = 180
+        if (metrics.size == 4) {
+            itemHeight = ((displayMetrics.heightPixels / 2) / 4) - 10
+        } else if (metrics.size == 3 || metrics.size == 4) {
+            itemHeight = ((displayMetrics.heightPixels / 2) / 3) - 40
+        } else if (metrics.size == 2) {
+            itemHeight = ((displayMetrics.heightPixels / 2) / 2) - 40
+        } else if (metrics.size == 1) {
+            itemHeight = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                (displayMetrics.heightPixels / 2) - 40
+            } else {
+                ((displayMetrics.heightPixels / 2) / 2) - 40
+            }
+        }
+        itemHeight *= 2
+        return itemHeight
+    }
+
+    private fun spanCount(numberOfItems: Int): Int {
+        return if (numberOfItems <= 4) {
+            1
+        } else {
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+        }
     }
 }
