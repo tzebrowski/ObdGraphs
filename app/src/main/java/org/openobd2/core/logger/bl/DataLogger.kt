@@ -8,6 +8,7 @@ import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.api.*
+import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
@@ -105,12 +106,6 @@ class DataLogger internal constructor() {
                 .pidFile(Urls.resourceToUrl("mode01.json")).build()
         ).observer(metricsAggregator)
         .lifecycle(lifecycle)
-        .adaptiveTiming(AdaptiveTimeoutPolicy
-            .builder()
-            .enabled(true)
-            .checkInterval(10000) // 10s
-            .commandFrequency(7) // 7req/sec
-            .build())
         .initialize()
 
     private var mode22: Workflow = WorkflowFactory
@@ -123,12 +118,6 @@ class DataLogger internal constructor() {
         )
         .equationEngine("rhino")
         .observer(metricsAggregator)
-        .adaptiveTiming(AdaptiveTimeoutPolicy
-            .builder()
-            .enabled(true)
-            .checkInterval(10000) //10s
-            .commandFrequency(7) // 7req/sec
-            .build())
         .lifecycle(lifecycle).initialize()
 
     private lateinit var device: String
@@ -173,9 +162,16 @@ class DataLogger internal constructor() {
             .generator(
                 GeneratorSpec
                     .builder()
+                    .smart(true)
                     .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
                     .increment(0.5).build()
             )
+            .adaptiveTiming(AdaptiveTimeoutPolicy
+                .builder()
+                .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
+                .checkInterval(5000) //10s
+                .commandFrequency(Preferences.getCommandFreq(context))
+                .build())
             .connection(BluetoothConnection(device.toString())).build()
 
         workflow().start(ctx)

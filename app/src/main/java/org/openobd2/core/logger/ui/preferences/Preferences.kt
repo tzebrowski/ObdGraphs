@@ -58,6 +58,12 @@ class Preferences {
         }
 
         @JvmStatic
+        fun getCommandFreq(context: Context): Long {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getString("pref.adapter.command.freq", "6").toString().toLong()
+        }
+
+        @JvmStatic
         fun getMode(context: Context): String? {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             return pref.getString("pref.mode", "Generic mode")

@@ -17,12 +17,28 @@
             android:summary="Enable batch mode"
             android:title="Enable batch mode" />
 
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dialogTitle="Adaptive timeout enabled"
+            android:key="pref.adapter.adaptive.enabled"
+            android:summary="Adaptive timeout enabled"
+            android:title="Adaptive timeout enabled" />
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:dialogTitle="Reconnect automatically"
             android:key="pref.adapter.reconnect"
             android:summary="Reconnect automatically when error occurs"
             android:title="Reconnect automatically" />
+
+        <ListPreference
+            android:defaultValue="6"
+            android:key="pref.adapter.command.freq"
+            android:entries="@array/command_frequency"
+            android:entryValues="@array/command_frequency"
+            android:summary="Command frequency"
+            android:title="Command frequency" />
 
         <ListPreference
             android:defaultValue="Generic mode"
