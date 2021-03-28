@@ -3,14 +3,10 @@ package org.openobd2.core.logger.bl
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import org.obd.metrics.AdaptiveTimeoutPolicy
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
-import org.obd.metrics.api.PidSpec
-import org.obd.metrics.api.Workflow
-import org.obd.metrics.api.WorkflowContext
-import org.obd.metrics.api.WorkflowFactory
+import org.obd.metrics.api.*
 import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
@@ -156,11 +152,10 @@ class DataLogger internal constructor() {
 
         this.device = Preferences.getAdapterName(context)
 
-        var selectedPids = selectedPids()
-        Log.i(LOG_KEY, "Selected pids: $selectedPids")
+        val query = query()
+        Log.i(LOG_KEY, "Selected pids: ${query.pids}")
 
-        var ctx = WorkflowContext.builder()
-            .filter(selectedPids)
+        val adjustments = Adjustments.builder()
             .batchEnabled(Preferences.isBatchEnabled(context))
             .generator(
                 GeneratorSpec
@@ -176,24 +171,24 @@ class DataLogger internal constructor() {
                     .checkInterval(5000) //10s
                     .commandFrequency(Preferences.getCommandFreq(context))
                     .build()
-            )
-            .connection(BluetoothConnection(device.toString())).build()
+            ).build()
 
-        workflow().start(ctx)
+        workflow().start(BluetoothConnection(device.toString()),query,adjustments)
 
         Log.i(LOG_KEY, "Start collecting process for device $device")
     }
 
-    private fun selectedPids(): MutableSet<Long> {
+    private fun query(): Query {
         context.let {
             return when (Preferences.getMode(context)) {
                 GENERIC_MODE -> {
-                    Preferences.getMode01Pids(context).map { s -> s.toLong() }
-                        .toSet() as MutableSet<Long>
+                    Query.builder().pids(Preferences.getMode01Pids(context).map { s -> s.toLong() }
+                        .toSet() as MutableSet<Long>).build()
                 }
                 else -> {
-                    Preferences.getMode22Pids(context).map { s -> s.toLong() }
-                        .toSet() as MutableSet<Long>
+                    Query.builder().pids(Preferences.getMode22Pids(context).map { s -> s.toLong() }
+                        .toSet() as MutableSet<Long>).build()
+
                 }
             }
         }

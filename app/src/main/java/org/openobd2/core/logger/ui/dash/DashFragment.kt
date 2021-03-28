@@ -1,10 +1,9 @@
 package org.openobd2.core.logger.ui.dash
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -88,23 +87,22 @@ class DashFragment : AbstractMetricsFragment() {
     }
 
     private fun calculateItemHeight(metrics: MutableList<ObdMetric>): Int {
-        val displayMetrics = DisplayMetrics()
-        (context as Activity?)!!.windowManager
-            .defaultDisplay
-            .getMetrics(displayMetrics)
+        val heightPixels = Resources.getSystem().displayMetrics.heightPixels / 2
+
         var itemHeight = 180
         if (metrics.size == 4) {
-            itemHeight = ((displayMetrics.heightPixels / 2) / 4) - 10
+            itemHeight = (heightPixels / 4) - 10
         } else if (metrics.size == 3 || metrics.size == 4) {
-            itemHeight = ((displayMetrics.heightPixels / 2) / 3) - 40
+            itemHeight = (heightPixels / 3) - 40
         } else if (metrics.size == 2) {
-            itemHeight = ((displayMetrics.heightPixels / 2) / 2) - 40
+            itemHeight = (heightPixels / 2) - 40
         } else if (metrics.size == 1) {
-            itemHeight = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                (displayMetrics.heightPixels / 2) - 40
-            } else {
-                ((displayMetrics.heightPixels / 2) / 2) - 40
-            }
+            itemHeight =
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    heightPixels - 40
+                } else {
+                    (heightPixels / 2) - 40
+                }
         }
         itemHeight *= 2
         return itemHeight

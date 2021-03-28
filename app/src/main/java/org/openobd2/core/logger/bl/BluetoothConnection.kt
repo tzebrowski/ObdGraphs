@@ -3,13 +3,13 @@ package org.openobd2.core.logger.bl
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import org.obd.metrics.connection.Connection
+import org.obd.metrics.connection.AdapterConnection
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-internal class BluetoothConnection : Connection {
+internal class BluetoothConnection : AdapterConnection {
 
     private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     private var input: InputStream? = null
