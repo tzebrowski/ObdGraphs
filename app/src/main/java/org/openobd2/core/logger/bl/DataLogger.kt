@@ -157,6 +157,7 @@ class DataLogger internal constructor() {
 
         val adjustments = Adjustments.builder()
             .batchEnabled(Preferences.isBatchEnabled(context))
+            .initDelay(Preferences.getInitDelay(context))
             .generator(
                 GeneratorSpec
                     .builder()

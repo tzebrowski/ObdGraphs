@@ -64,6 +64,12 @@ class Preferences {
         }
 
         @JvmStatic
+        fun getInitDelay(context: Context): Long {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getString("pref.adapter.init_delay", "500").toString().toLong()
+        }
+
+        @JvmStatic
         fun getMode(context: Context): String? {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             return pref.getString("pref.mode", "Generic mode")

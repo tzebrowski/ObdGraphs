@@ -42,4 +42,13 @@
         <item name="15">15</item>
     </string-array>
 
+    <string-array name="init_delay">
+        <item name="500">500</item>
+        <item name="1000">1000</item>
+        <item name="2000">2000</item>
+        <item name="3000">3000</item>
+        <item name="4000">4000</item>
+        <item name="5000">5000</item>
+        <item name="6000">6000</item>
+    </string-array>
 </resources>

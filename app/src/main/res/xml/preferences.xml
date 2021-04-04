@@ -32,6 +32,15 @@
             android:summary="Reconnect automatically when error occurs"
             android:title="Reconnect automatically" />
 
+
+        <ListPreference
+            android:defaultValue="500"
+            android:entries="@array/init_delay"
+            android:entryValues="@array/init_delay"
+            android:key="pref.adapter.init_delay"
+            android:summary="Init delay"
+            android:title="Init delay" />
+
         <ListPreference
             android:defaultValue="6"
             android:entries="@array/command_frequency"
