@@ -13,6 +13,7 @@ import android.os.StrictMode.ThreadPolicy
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -145,6 +146,9 @@ class MainActivity : AppCompatActivity() {
         val policy = ThreadPolicy.Builder()
             .permitAll().build()
         StrictMode.setThreadPolicy(policy)
+
+        //keeps screen on
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         DataLogger.INSTANCE.init(this.application)
 
