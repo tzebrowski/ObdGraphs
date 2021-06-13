@@ -20,10 +20,12 @@ import org.openobd2.core.logger.ui.preferences.DashPreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
 
 
+private const val VISIBLE_PIDS = "pref.dash.pids.selected"
+
 class DashFragment : AbstractMetricsFragment() {
 
     override fun getVisibleMetrics(): Set<Long> {
-        return Preferences.getLongSet(requireContext(), "pref.dash.pids.selected")
+        return Preferences.getLongSet(requireContext(), VISIBLE_PIDS)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -69,6 +71,31 @@ class DashFragment : AbstractMetricsFragment() {
 
                 override fun storePreferences(context: Context) {
                     DashPreferences.SERIALIZER.store(context, (adapter as DashViewAdapter).mData)
+                }
+
+                override fun deleteItems(fromPosition: Int) {
+                    val metrics = (adapter as DashViewAdapter).mData
+                    val itemId: ObdMetric = metrics[fromPosition]
+                    metrics.remove(itemId)
+
+                    Preferences.updateLongSet(
+                        requireContext(),
+                        VISIBLE_PIDS,
+                        metrics.map { obdMetric -> obdMetric.command.pid.id }.toList()
+                    )
+
+
+                    DashPreferences.SERIALIZER.store(requireContext(), metrics)
+                    var itemHeight = calculateItemHeight(metrics)
+                    adapter = DashViewAdapter(root.context, metrics, itemHeight)
+                    val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+                    recyclerView.layoutManager =
+                        GridLayoutManager(root.context, spanCount(metrics.size))
+                    recyclerView.adapter = adapter
+                    recyclerView.refreshDrawableState()
+
+                    observerMetrics(metrics)
+                    adapter.notifyDataSetChanged()
                 }
             }
         )

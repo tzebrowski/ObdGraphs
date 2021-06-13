@@ -174,7 +174,7 @@ class DataLogger internal constructor() {
                     .build()
             ).build()
 
-        workflow().start(BluetoothConnection(device.toString()),query,adjustments)
+        workflow().start(BluetoothConnection(device.toString()), query, adjustments)
 
         Log.i(LOG_KEY, "Start collecting process for device $device")
     }

@@ -44,6 +44,10 @@ class DashViewAdapter internal constructor(
         notifyItemMoved(fromPosition, toPosition)
     }
 
+    fun deleteAt(position: Int) {
+        mData.removeAt(position)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int

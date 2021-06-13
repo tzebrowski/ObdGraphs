@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 interface SwappableAdapter {
     fun swapItems(fromPosition: Int, toPosition: Int)
+    fun deleteItems(fromPosition: Int)
     fun storePreferences(context: Context)
 }
 
@@ -19,6 +20,7 @@ internal class DragManageAdapter(
     private var adapter = adapter
     private var context = ctx
 
+
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
@@ -30,5 +32,6 @@ internal class DragManageAdapter(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        adapter.deleteItems(viewHolder.adapterPosition)
     }
 }

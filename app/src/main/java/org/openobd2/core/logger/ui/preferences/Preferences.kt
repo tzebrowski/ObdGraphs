@@ -8,6 +8,14 @@ import org.openobd2.core.logger.bl.LOG_KEY
 
 class Preferences {
     companion object {
+
+        @JvmStatic
+        fun updateLongSet(context: Context, key: String, list: List<Long>) {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            pref.edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).commit()
+        }
+
+
         @JvmStatic
         fun getLongSet(context: Context, key: String): Set<Long> {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
