@@ -60,6 +60,10 @@ class GaugeViewFragment : AbstractMetricsFragment() {
                     (adapter as GaugeViewAdapter).swapItems(fromPosition, toPosition)
                 }
 
+                override fun deleteItems(fromPosition: Int) {
+                    TODO("Not yet implemented")
+                }
+
                 override fun storePreferences(context: Context) {
                     GaugePreferences.SERIALIZER.store(context, (adapter as GaugeViewAdapter).mData)
                 }

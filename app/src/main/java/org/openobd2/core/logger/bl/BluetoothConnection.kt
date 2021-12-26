@@ -19,6 +19,7 @@ internal class BluetoothConnection : AdapterConnection {
     private val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
     constructor(btDeviceName: String) {
+        Log.i(LOG_KEY, "Created instance of BluetoothConnection with devices: $btDeviceName")
         this.device = btDeviceName
     }
 
@@ -51,13 +52,20 @@ internal class BluetoothConnection : AdapterConnection {
     }
 
     private fun connectToDevice(btDeviceName: String?) {
+        Log.i(LOG_KEY, "Bounded connections: ${mBluetoothAdapter.bondedDevices.size}")
         for (currentDevice in mBluetoothAdapter.bondedDevices) {
+            Log.i(LOG_KEY, "Bounded connection: $currentDevice.name")
+
             if (currentDevice.name == btDeviceName) {
                 Log.i(LOG_KEY, "Opening connection to device: $btDeviceName")
                 socket =
                     currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
                 socket.connect()
+                Log.i(LOG_KEY, "Doing socket connect for : $currentDevice")
+                Thread.sleep(1000)
                 if (socket.isConnected) {
+                    Log.i(LOG_KEY, "Connection is established for : $currentDevice")
+
                     input = socket.inputStream
                     output = socket.outputStream
                     Log.i(
