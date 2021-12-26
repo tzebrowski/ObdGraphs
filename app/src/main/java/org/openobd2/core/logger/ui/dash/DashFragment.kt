@@ -120,21 +120,32 @@ class DashFragment : AbstractMetricsFragment() {
 
     private fun calculateItemHeight(metrics: MutableList<ObdMetric>): Int {
         val heightPixels = Resources.getSystem().displayMetrics.heightPixels / 2
-
         var itemHeight = 180
-        if (metrics.size == 4) {
-            itemHeight = (heightPixels / 4) - 10
-        } else if (metrics.size == 3 || metrics.size == 4) {
-            itemHeight = (heightPixels / 3) - 40
-        } else if (metrics.size == 2) {
-            itemHeight = (heightPixels / 2) - 40
-        } else if (metrics.size == 1) {
-            itemHeight =
-                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    heightPixels - 40
-                } else {
-                    (heightPixels / 2) - 40
-                }
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if (metrics.size == 6) {
+                itemHeight = (heightPixels / 2)
+            } else if (metrics.size == 5) {
+                itemHeight = (heightPixels / 2)
+            }
+        }else {
+            if (metrics.size == 6) {
+                itemHeight = (heightPixels / 3) - 44
+            } else if (metrics.size == 5) {
+                itemHeight = (heightPixels / 3) - 20
+            } else if (metrics.size == 4) {
+                itemHeight = (heightPixels / 4) - 10
+            } else if (metrics.size == 3 || metrics.size == 4) {
+                itemHeight = (heightPixels / 3) - 40
+            } else if (metrics.size == 2) {
+                itemHeight = (heightPixels / 2) - 40
+            } else if (metrics.size == 1) {
+                itemHeight =
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        heightPixels - 40
+                    } else {
+                        (heightPixels / 2) - 40
+                    }
+            }
         }
         itemHeight = (itemHeight * 1.3).toInt()
         return itemHeight

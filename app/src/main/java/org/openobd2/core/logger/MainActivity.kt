@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
                     if (Preferences.isEnabled(context!!, "pref.toolbar.hide.doubleclick")) {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
                         layout.isVisible = !layout.isVisible
+
                     }
                 }
 

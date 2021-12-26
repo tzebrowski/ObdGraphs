@@ -27,8 +27,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="8dp"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@id/coordinator_Layout"
         app:layout_constraintHorizontal_bias="1.0"
@@ -55,19 +54,21 @@
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="130dp"
             android:layout_gravity="bottom"
+            app:backgroundTint="@color/gray"
             app:contentInsetStart="0dp"
-            app:fabAlignmentMode="center"
-            app:fabCradleRoundedCornerRadius="30dp">
+            app:fabAlignmentMode="center">
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
 
                 android:id="@+id/nav_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_marginStart="0dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="0dp"
+                android:background="@color/gray"
                 app:labelVisibilityMode="labeled"
                 app:menu="@menu/bottom_nav_menu" />
         </com.google.android.material.bottomappbar.BottomAppBar>
@@ -78,7 +79,7 @@
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_lock_idle_charging"
             app:backgroundTint="#01804F"
-            app:fabSize="mini"
+            app:fabSize="normal"
             app:layout_anchor="@id/bottomAppBar" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

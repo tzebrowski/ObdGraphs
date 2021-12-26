@@ -52,25 +52,23 @@ internal class BluetoothConnection : AdapterConnection {
     }
 
     private fun connectToDevice(btDeviceName: String?) {
-        Log.i(LOG_KEY, "Bounded connections: ${mBluetoothAdapter.bondedDevices.size}")
+        Log.i(LOG_KEY, "Found bounded connections, size: ${mBluetoothAdapter.bondedDevices.size}")
         for (currentDevice in mBluetoothAdapter.bondedDevices) {
-            Log.i(LOG_KEY, "Bounded connection: $currentDevice.name")
+            Log.i(LOG_KEY, "Checking bounded connection: ${currentDevice.name} ")
 
             if (currentDevice.name == btDeviceName) {
-                Log.i(LOG_KEY, "Opening connection to device: $btDeviceName")
+                Log.i(LOG_KEY, "Bounded connection matches. Opening the device: ${currentDevice.name}")
                 socket =
                     currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
                 socket.connect()
-                Log.i(LOG_KEY, "Doing socket connect for : $currentDevice")
-                Thread.sleep(1000)
+                Log.i(LOG_KEY, "Doing socket connect for: ${currentDevice.name}")
                 if (socket.isConnected) {
-                    Log.i(LOG_KEY, "Connection is established for : $currentDevice")
-
+                    Log.i(LOG_KEY, "Successfully established connection for: ${currentDevice.name}")
                     input = socket.inputStream
                     output = socket.outputStream
                     Log.i(
                         LOG_KEY,
-                        "Successfully opened  the connection to device: $btDeviceName"
+                        "Successfully opened  the sockets to device: ${currentDevice.name}"
                     )
                     break
                 }
