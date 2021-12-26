@@ -81,6 +81,12 @@
 
             <CheckBoxPreference
                 android:defaultValue="false"
+                android:key="pref.dash.swipe.to.delete"
+                android:summary="Swipe to delete metric"
+                android:title="Swipe to delete metric" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
                 android:key="pref.dash.top.values.red.color"
                 android:summary="Highlight top values with red color"
                 android:title="Highlight top values" />

@@ -60,48 +60,53 @@ class DashFragment : AbstractMetricsFragment() {
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount(metrics.size))
         recyclerView.adapter = adapter
 
-        val callback = DragManageAdapter(
+        val swappableAdapter = object : SwappableAdapter {
+            override fun swapItems(fromPosition: Int, toPosition: Int) {
+                (adapter as DashViewAdapter).swapItems(fromPosition, toPosition)
+            }
+
+            override fun storePreferences(context: Context) {
+                DashPreferences.SERIALIZER.store(context, (adapter as DashViewAdapter).mData)
+            }
+
+            override fun deleteItems(fromPosition: Int) {
+                val metrics = (adapter as DashViewAdapter).mData
+                val itemId: ObdMetric = metrics[fromPosition]
+                metrics.remove(itemId)
+
+                Preferences.updateLongSet(
+                    requireContext(),
+                    VISIBLE_PIDS,
+                    metrics.map { obdMetric -> obdMetric.command.pid.id }.toList()
+                )
+
+                DashPreferences.SERIALIZER.store(requireContext(), metrics)
+                var itemHeight = calculateItemHeight(metrics)
+                adapter = DashViewAdapter(root.context, metrics, itemHeight)
+                val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+                recyclerView.layoutManager =
+                    GridLayoutManager(root.context, spanCount(metrics.size))
+                recyclerView.adapter = adapter
+                recyclerView.refreshDrawableState()
+
+                observerMetrics(metrics)
+                adapter.notifyDataSetChanged()
+
+            }
+        }
+        val callback = if (Preferences.isEnabled(context!!,"pref.dash.swipe.to.delete"))
+            DragManageAdapter(
             requireContext(),
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.START or ItemTouchHelper.END,
-            object : SwappableAdapter {
-                override fun swapItems(fromPosition: Int, toPosition: Int) {
-                    (adapter as DashViewAdapter).swapItems(fromPosition, toPosition)
-                }
+            ItemTouchHelper.START or ItemTouchHelper.END, swappableAdapter)
+         else
+            DragManageAdapter(
+            requireContext(),
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.ACTION_STATE_DRAG, swappableAdapter)
 
-                override fun storePreferences(context: Context) {
-                    DashPreferences.SERIALIZER.store(context, (adapter as DashViewAdapter).mData)
-                }
-
-                override fun deleteItems(fromPosition: Int) {
-                    val metrics = (adapter as DashViewAdapter).mData
-                    val itemId: ObdMetric = metrics[fromPosition]
-                    metrics.remove(itemId)
-
-                    Preferences.updateLongSet(
-                        requireContext(),
-                        VISIBLE_PIDS,
-                        metrics.map { obdMetric -> obdMetric.command.pid.id }.toList()
-                    )
-
-
-                    DashPreferences.SERIALIZER.store(requireContext(), metrics)
-                    var itemHeight = calculateItemHeight(metrics)
-                    adapter = DashViewAdapter(root.context, metrics, itemHeight)
-                    val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-                    recyclerView.layoutManager =
-                        GridLayoutManager(root.context, spanCount(metrics.size))
-                    recyclerView.adapter = adapter
-                    recyclerView.refreshDrawableState()
-
-                    observerMetrics(metrics)
-                    adapter.notifyDataSetChanged()
-                }
-            }
-        )
 
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
-
         recyclerView.refreshDrawableState()
         recyclerView.addOnItemTouchListener(
             ToggleToolbarDoubleClickListener(
@@ -131,7 +136,7 @@ class DashFragment : AbstractMetricsFragment() {
                     (heightPixels / 2) - 40
                 }
         }
-        itemHeight *= 2
+        itemHeight = (itemHeight * 1.3).toInt()
         return itemHeight
     }
 
