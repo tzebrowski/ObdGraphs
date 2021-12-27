@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
                     if (Preferences.isEnabled(context!!, "pref.toolbar.hide.doubleclick")) {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
                         layout.isVisible = !layout.isVisible
-
                     }
                 }
 
@@ -234,12 +233,14 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun registerReceiver() {
+
         registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(NOTIFICATION_CONNECTING)
             addAction(NOTIFICATION_STOPPED)
             addAction(NOTIFICATION_STOPPING)
             addAction(NOTIFICATION_ERROR)
             addAction(NOTIFICATION_CONNECTED)
+            addAction(Intent.ACTION_BATTERY_CHANGED)
 
             addAction(NOTIFICATION_DEBUG_VIEW_SHOW)
             addAction(NOTIFICATION_DEBUG_VIEW_HIDE)

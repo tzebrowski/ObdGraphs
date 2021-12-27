@@ -12,6 +12,13 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
+            android:dialogTitle="Connect on power"
+            android:key="pref.adapter.connect.on.power"
+            android:summary="Connect on power"
+            android:title="Connect on power" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:dialogTitle="Batch enabled"
             android:key="pref.adapter.batch.enabled"
             android:summary="Enable batch mode"

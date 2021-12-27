@@ -141,7 +141,9 @@ class DataLogger internal constructor() {
     }
 
     fun stop() {
-        workflow().stop()
+        if (::context.isInitialized){
+            workflow().stop()
+        }
     }
 
     fun init(ctx: Context) {
@@ -149,34 +151,35 @@ class DataLogger internal constructor() {
     }
 
     fun start() {
+        if (::context.isInitialized) {
+            this.device = Preferences.getAdapterName(context)
 
-        this.device = Preferences.getAdapterName(context)
+            val query = query()
+            Log.i(LOG_KEY, "Selected pids: ${query.pids}")
 
-        val query = query()
-        Log.i(LOG_KEY, "Selected pids: ${query.pids}")
+            val adjustments = Adjustments.builder()
+                .batchEnabled(Preferences.isBatchEnabled(context))
+                .initDelay(Preferences.getInitDelay(context))
+                .generator(
+                    GeneratorSpec
+                        .builder()
+                        .smart(true)
+                        .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
+                        .increment(0.5).build()
+                )
+                .adaptiveTiming(
+                    AdaptiveTimeoutPolicy
+                        .builder()
+                        .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
+                        .checkInterval(5000) //10s
+                        .commandFrequency(Preferences.getCommandFreq(context))
+                        .build()
+                ).build()
 
-        val adjustments = Adjustments.builder()
-            .batchEnabled(Preferences.isBatchEnabled(context))
-            .initDelay(Preferences.getInitDelay(context))
-            .generator(
-                GeneratorSpec
-                    .builder()
-                    .smart(true)
-                    .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
-                    .increment(0.5).build()
-            )
-            .adaptiveTiming(
-                AdaptiveTimeoutPolicy
-                    .builder()
-                    .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
-                    .checkInterval(5000) //10s
-                    .commandFrequency(Preferences.getCommandFreq(context))
-                    .build()
-            ).build()
+            workflow().start(BluetoothConnection(device.toString()), query, adjustments)
 
-        workflow().start(BluetoothConnection(device.toString()), query, adjustments)
-
-        Log.i(LOG_KEY, "Start collecting process for device $device")
+            Log.i(LOG_KEY, "Start collecting process for device $device")
+        }
     }
 
     private fun query(): Query {
