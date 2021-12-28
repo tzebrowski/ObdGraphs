@@ -1,6 +1,7 @@
 package org.openobd2.core.logger
 
 import android.app.ActivityManager
+import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
@@ -14,6 +15,7 @@ import org.openobd2.core.logger.ui.preferences.Preferences
 private const val LOGGER_TAG = "POW_RECEIVER"
 private const val ADAPTER_CONNECT_PREFERENCE_KEY = "pref.adapter.power.connect_adapter"
 private const val SCREEN_ON_OFF_PREFERENCE_KEY = "pref.adapter.power.screen_off"
+private const val BT_ON_OFF_PREFERENCE_KEY = " pref.adapter.power.bt_off"
 
 const val SCREEN_OFF = "power.screen.off"
 const val SCREEN_ON = "power.screen.on"
@@ -21,11 +23,19 @@ const val SCREEN_ON = "power.screen.on"
 class PowerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {
         Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}")
+        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
+
+            if (Preferences.isEnabled(context!!, BT_ON_OFF_PREFERENCE_KEY)) {
+                mBluetoothAdapter.enable()
+                mBluetoothAdapter.startDiscovery()
+            }
 
             if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
                 DataLoggerService.startAction(context)
             }
+
             if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
                 DataLogger.INSTANCE.init(context)
                 Log.i(LOGGER_TAG, "Start data logging")
@@ -39,6 +49,10 @@ class PowerReceiver : BroadcastReceiver() {
                 })
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
+
+            if (Preferences.isEnabled(context!!, BT_ON_OFF_PREFERENCE_KEY)) {
+                mBluetoothAdapter.disable()
+            }
 
             if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
                 Log.i(

@@ -77,6 +77,14 @@
             android:key="pref.adapter.power.screen_off"
             android:summary="Screen off when disconnected"
             android:title="Screen off when disconnected" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dialogTitle="Disable bluetooth"
+            android:key="pref.adapter.power.bt_off"
+            android:summary="Disable bluetooth"
+            android:title="Disable bluetooth" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Views">
