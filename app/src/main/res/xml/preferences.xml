@@ -10,12 +10,6 @@
             android:summary="Bluetooth OBD adapter name"
             android:title="Adapters" />
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dialogTitle="Connect on power"
-            android:key="pref.adapter.connect.on.power"
-            android:summary="Connect on power"
-            android:title="Connect on power" />
 
         <CheckBoxPreference
             android:defaultValue="true"
@@ -66,6 +60,25 @@
             android:title="Mode" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="power"
+        android:title="Power settings">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dialogTitle="Connect adapter on power"
+            android:key="pref.adapter.power.connect_adapter"
+            android:summary="Connect adapter on power"
+            android:title="Connect adapter on power" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dialogTitle="Screen off"
+            android:key="pref.adapter.power.screen_off"
+            android:summary="Screen off when disconnected"
+            android:title="Screen off when disconnected" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="Views">
         <CheckBoxPreference
             android:defaultValue="false"

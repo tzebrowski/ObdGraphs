@@ -1,14 +1,13 @@
 package org.openobd2.core.logger
 
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
+import android.app.admin.DevicePolicyManager
+import android.content.*
 import android.content.Intent.ACTION_BATTERY_CHANGED
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
+import android.os.PowerManager
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.Log
@@ -44,6 +43,13 @@ class MainActivity : AppCompatActivity() {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
                         layout.isVisible = !layout.isVisible
                     }
+                }
+                SCREEN_OFF -> {
+                   changeScreenBrightness(0f)
+//                    lock()
+                }
+                SCREEN_ON -> {
+                    changeScreenBrightness(1f)
                 }
                 NOTIFICATION_ERROR_CONNECT_BT -> {
                     toast("Error occurred during. Please check your Bluetooth Connection settings.")
@@ -177,6 +183,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         registerReceiver()
+        changeScreenBrightness(1f)
     }
 
     override fun onPause() {
@@ -256,6 +263,51 @@ class MainActivity : AppCompatActivity() {
             addAction(TOGGLE_TOOLBAR_ACTION)
             addAction(NOTIFICATION_METRICS_VIEW_SHOW)
             addAction(NOTIFICATION_METRICS_VIEW_HIDE)
+            addAction(SCREEN_OFF)
+            addAction(SCREEN_ON)
         })
+    }
+
+    private fun changeScreenBrightness(value: Float) {
+        try {
+
+            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            val wl = pm.newWakeLock(
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                "data_logger:wakeLock"
+            )
+            wl.acquire()
+            val params: WindowManager.LayoutParams =
+                window.attributes
+            params.flags = params.flags or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            params.screenBrightness = value
+            window.attributes = params
+            wl.release()
+        } catch (e: Throwable){
+            Log.e(LOGGER_TAG, "Failed to change screen brightness", e)
+        }
+    }
+
+    private fun lockScreen() {
+        val pm = getSystemService(POWER_SERVICE) as PowerManager
+        if (pm.isScreenOn) {
+            val policy = getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
+            try {
+                policy.lockNow()
+            } catch (ex: SecurityException) {
+                Toast.makeText(
+                    this,
+                    "must enable device administrator",
+                    Toast.LENGTH_LONG
+                ).show()
+                val admin = ComponentName(this, AdminReceiver::class.java)
+                val intent: Intent = Intent(
+                    DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN
+                ).putExtra(
+                    DevicePolicyManager.EXTRA_DEVICE_ADMIN, admin
+                )
+                this.startActivity(intent)
+            }
+        }
     }
 }
