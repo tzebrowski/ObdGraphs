@@ -20,12 +20,13 @@ const val SCREEN_ON = "power.screen.on"
 
 class PowerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {
+        Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}")
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
-            Log.i(LOGGER_TAG, "Received ACTION_POWER_CONNECTED action.")
 
             if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
                 DataLoggerService.startAction(context)
-            } else if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
+            }
+            if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
                 DataLogger.INSTANCE.init(context)
                 Log.i(LOGGER_TAG, "Start data logging")
                 if (!isActivityVisibleOnTheScreen(context, MainActivity::class.java)) {
@@ -33,26 +34,21 @@ class PowerReceiver : BroadcastReceiver() {
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(i)
                 }
-
                 context.sendBroadcast(Intent().apply {
                     action = SCREEN_ON
                 })
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
-            Log.i(
-                LOGGER_TAG,
-                "Received ACTION_POWER_DISCONNECTED action."
-            )
 
             if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
                 Log.i(
                     LOGGER_TAG,
                     "Stop data logging"
                 )
-
                 DataLoggerService.stopAction(context)
+            }
 
-            } else if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
+            if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
                 context.sendBroadcast(Intent().apply {
                     action = SCREEN_OFF
                 })

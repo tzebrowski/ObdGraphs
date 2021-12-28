@@ -45,10 +45,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 SCREEN_OFF -> {
-                   changeScreenBrightness(0f)
-//                    lock()
+                    lockScreen()
                 }
                 SCREEN_ON -> {
+                    Log.i(LOGGER_TAG,"Activating application.")
                     changeScreenBrightness(1f)
                 }
                 NOTIFICATION_ERROR_CONNECT_BT -> {
@@ -177,12 +177,14 @@ class MainActivity : AppCompatActivity() {
             Log.i(LOGGER_TAG, "Start data logging")
             DataLoggerService.startAction(this)
         })
+        setupWindowManager()
     }
 
 
     override fun onResume() {
         super.onResume()
         registerReceiver()
+        setupWindowManager()
         changeScreenBrightness(1f)
     }
 
@@ -309,5 +311,11 @@ class MainActivity : AppCompatActivity() {
                 this.startActivity(intent)
             }
         }
+    }
+
+    private fun setupWindowManager() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
     }
 }
