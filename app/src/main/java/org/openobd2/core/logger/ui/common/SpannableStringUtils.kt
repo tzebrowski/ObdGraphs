@@ -9,7 +9,6 @@ import android.text.style.StyleSpan
 
 class SpannableStringUtils {
     companion object {
-
         @JvmStatic
         fun generate(it: String?, color: Int, size: Float): SpannableString {
 

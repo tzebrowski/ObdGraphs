@@ -27,25 +27,20 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class DashViewAdapter internal constructor(
+internal class DashViewAdapter internal constructor(
     context: Context,
     data: MutableList<ObdMetric>,
-    height: Int
+    private val height: Int
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
     var mData: MutableList<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val ctx: Context = context
     private lateinit var colors: ColorTheme
-    private val height: Int = height
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
-    }
-
-    fun deleteAt(position: Int) {
-        mData.removeAt(position)
     }
 
     override fun onCreateViewHolder(
@@ -67,7 +62,7 @@ class DashViewAdapter internal constructor(
         val obdCommand = commandReply.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        var segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
+        val segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
         (segmentNum > 0).apply {
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->

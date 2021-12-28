@@ -19,8 +19,8 @@ import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.DashPreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
 
-
 private const val VISIBLE_PIDS = "pref.dash.pids.selected"
+private const val SWIPE_TO_DELETE_PREF_KEY = "pref.dash.swipe.to.delete"
 
 class DashFragment : AbstractMetricsFragment() {
 
@@ -39,7 +39,7 @@ class DashFragment : AbstractMetricsFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         root = inflater.inflate(R.layout.fragment_dash, container, false)
         setupRecyclerView()
         return root
@@ -52,7 +52,7 @@ class DashFragment : AbstractMetricsFragment() {
         }!!.toMap()
 
         val metrics = findMetrics(sortOrderMap)
-        var itemHeight = calculateItemHeight(metrics)
+        val itemHeight = calculateItemHeight(metrics)
 
         adapter = DashViewAdapter(root.context, metrics, itemHeight)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
@@ -60,7 +60,7 @@ class DashFragment : AbstractMetricsFragment() {
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount(metrics.size))
         recyclerView.adapter = adapter
 
-        val swappableAdapter = object : SwappableAdapter {
+        val swappableAdapter = object: SwappableAdapter {
             override fun swapItems(fromPosition: Int, toPosition: Int) {
                 (adapter as DashViewAdapter).swapItems(fromPosition, toPosition)
             }
@@ -81,7 +81,7 @@ class DashFragment : AbstractMetricsFragment() {
                 )
 
                 DashPreferences.SERIALIZER.store(requireContext(), metrics)
-                var itemHeight = calculateItemHeight(metrics)
+                val itemHeight = calculateItemHeight(metrics)
                 adapter = DashViewAdapter(root.context, metrics, itemHeight)
                 val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
                 recyclerView.layoutManager =
@@ -94,7 +94,7 @@ class DashFragment : AbstractMetricsFragment() {
 
             }
         }
-        val callback = if (Preferences.isEnabled(context!!,"pref.dash.swipe.to.delete"))
+        val callback = if (Preferences.isEnabled(requireContext(), SWIPE_TO_DELETE_PREF_KEY))
             DragManageAdapter(
             requireContext(),
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,

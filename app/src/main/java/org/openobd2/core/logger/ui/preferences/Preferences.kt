@@ -3,23 +3,26 @@ package org.openobd2.core.logger.ui.preferences
 import android.content.Context
 import android.util.Log
 import androidx.preference.PreferenceManager
-import org.openobd2.core.logger.bl.LOG_KEY
 
+private const val LOGGER_TAG = "PREFS"
+
+private val s1 = "pref.adapter.id"
 
 class Preferences {
     companion object {
-
         @JvmStatic
         fun updateLongSet(context: Context, key: String, list: List<Long>) {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            pref.edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).commit()
+            return PreferenceManager.getDefaultSharedPreferences(context).run {
+                edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).apply()
+            }
         }
 
 
         @JvmStatic
         fun getLongSet(context: Context, key: String): Set<Long> {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getStringSet(key, emptySet())?.map { s -> s.toLong() }?.toSet()!!
+            return PreferenceManager.getDefaultSharedPreferences(context).run {
+                 getStringSet(key, emptySet())?.map { s -> s.toLong() }?.toSet()!!
+            }
         }
 
         @JvmStatic
@@ -34,53 +37,61 @@ class Preferences {
 
         @JvmStatic
         fun getStringSet(context: Context, key: String): MutableSet<String> {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getStringSet(key, emptySet())!!
+            return PreferenceManager.getDefaultSharedPreferences(context).run {
+                getStringSet(key, emptySet())!!
+            }
         }
 
         @JvmStatic
         fun isEnabled(context: Context, key: String): Boolean {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getBoolean(key, false)
+            return PreferenceManager.getDefaultSharedPreferences(context).run {
+                getBoolean(key, false)
+            }
         }
 
         @JvmStatic
         fun isBatchEnabled(context: Context): Boolean {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val batchEnabled = pref.getBoolean("pref.adapter.batch.enabled", true)
-            Log.v(LOG_KEY, "Batch enabled: $batchEnabled")
-            return batchEnabled
+            return PreferenceManager.getDefaultSharedPreferences(context).run {
+                val batchEnabled = getBoolean("pref.adapter.batch.enabled", true)
+                Log.v(LOGGER_TAG, "Batch enabled: $batchEnabled")
+                batchEnabled
+            }
         }
 
 
         @JvmStatic
         fun isReconnectWhenError(context: Context): Boolean {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getBoolean("pref.adapter.reconnect", true)
+            return PreferenceManager.getDefaultSharedPreferences(context).run{
+                getBoolean("pref.adapter.reconnect", true)
+            }
         }
 
         @JvmStatic
         fun getAdapterName(context: Context): String {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getString("pref.adapter.id", "OBDII")!!
+            return PreferenceManager.getDefaultSharedPreferences(context).run{
+                getString("pref.adapter.id", "OBDII")!!
+            }
         }
 
         @JvmStatic
         fun getCommandFreq(context: Context): Long {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getString("pref.adapter.command.freq", "6").toString().toLong()
+            return PreferenceManager.getDefaultSharedPreferences(context).run{
+                getString("pref.adapter.command.freq", "6").toString().toLong()
+            }
         }
 
         @JvmStatic
         fun getInitDelay(context: Context): Long {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getString("pref.adapter.init_delay", "500").toString().toLong()
+            return PreferenceManager.getDefaultSharedPreferences(context).run{
+                getString("pref.adapter.init_delay", "500").toString().toLong()
+            }
         }
 
         @JvmStatic
         fun getMode(context: Context): String? {
-            val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return pref.getString("pref.mode", "Generic mode")
+            return PreferenceManager.getDefaultSharedPreferences(context).run{
+                getString("pref.mode", "Generic mode")
+            }
         }
     }
 }

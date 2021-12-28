@@ -4,6 +4,7 @@ package org.openobd2.core.logger
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.ACTION_BATTERY_CHANGED
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.graphics.Color
@@ -31,6 +32,8 @@ import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
 
 
+private const val LOGGER_TAG = "DATA_LOGGER_UI"
+
 class MainActivity : AppCompatActivity() {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -42,7 +45,9 @@ class MainActivity : AppCompatActivity() {
                         layout.isVisible = !layout.isVisible
                     }
                 }
-
+                NOTIFICATION_ERROR_CONNECT_BT -> {
+                    toast("Error occurred during. Please check your Bluetooth Connection settings.")
+                }
                 NOTIFICATION_METRICS_VIEW_SHOW, NOTIFICATION_METRICS_VIEW_HIDE -> {
                     toggleNavigationItem(R.id.navigation_metrics)
                 }
@@ -72,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                     val btn: FloatingActionButton = findViewById(R.id.action_btn)
                     btn.backgroundTintList = resources.getColorStateList(R.color.purple_200)
                     btn.setOnClickListener(View.OnClickListener {
-                        Log.i("DATA_LOGGER_UI", "Stop data logging ")
+                        Log.i(LOGGER_TAG, "Stop data logging ")
                         DataLoggerService.stopAction(context!!)
                     })
                     btn.refreshDrawableState()
@@ -110,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             val btn: FloatingActionButton = findViewById(R.id.action_btn)
             btn.backgroundTintList = resources.getColorStateList(R.color.purple_500)
             btn.setOnClickListener(View.OnClickListener {
-                Log.i("DATA_LOGGER_UI", "Stop data logging ")
+                Log.i(LOGGER_TAG, "Stop data logging ")
                 DataLoggerService.startAction(context)
             })
         }
@@ -163,7 +168,7 @@ class MainActivity : AppCompatActivity() {
 
         val btnStart: FloatingActionButton = findViewById(R.id.action_btn)
         btnStart.setOnClickListener(View.OnClickListener {
-            Log.i("DATA_LOGGER_UI", "Start data logging")
+            Log.i(LOGGER_TAG, "Start data logging")
             DataLoggerService.startAction(this)
         })
     }
@@ -240,8 +245,8 @@ class MainActivity : AppCompatActivity() {
             addAction(NOTIFICATION_STOPPING)
             addAction(NOTIFICATION_ERROR)
             addAction(NOTIFICATION_CONNECTED)
-            addAction(Intent.ACTION_BATTERY_CHANGED)
-
+            addAction(ACTION_BATTERY_CHANGED)
+            addAction(NOTIFICATION_ERROR_CONNECT_BT)
             addAction(NOTIFICATION_DEBUG_VIEW_SHOW)
             addAction(NOTIFICATION_DEBUG_VIEW_HIDE)
             addAction(NOTIFICATION_GAUGE_VIEW_SHOW)

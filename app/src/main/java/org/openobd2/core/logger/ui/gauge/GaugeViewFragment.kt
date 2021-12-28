@@ -36,7 +36,7 @@ class GaugeViewFragment : AbstractMetricsFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val sortOrderMap = GaugePreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position

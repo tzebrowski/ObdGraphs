@@ -11,20 +11,22 @@ import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.connection.AdapterConnection
 import org.obd.metrics.pid.PidRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.statistics.StatisticsRegistry
 import org.openobd2.core.logger.ui.preferences.Preferences
 
+const val NOTIFICATION_ERROR_CONNECT_BT = "data.logger.error.bt.connect"
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
 const val NOTIFICATION_STOPPED = "data.logger.stopped"
 const val NOTIFICATION_STOPPING = "data.logger.stopping"
 const val NOTIFICATION_ERROR = "data.logger.error"
-const val LOG_KEY = "DATA_LOGGER_DL"
+private const val LOGGER_TAG = "DATA_LOGGER_SVC"
 const val GENERIC_MODE = "Generic mode"
 
-class DataLogger internal constructor() {
+internal class DataLogger internal constructor() {
 
     companion object {
         @JvmStatic
@@ -32,21 +34,20 @@ class DataLogger internal constructor() {
             DataLogger()
     }
 
-
     private lateinit var context: Context
 
     private var metricsAggregator = MetricsAggregator()
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
-            Log.i(LOG_KEY, "Start collecting process for the Device: $device")
+            Log.i(LOGGER_TAG, "Start collecting process for the Device: $deviceName")
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTING
             })
         }
 
         override fun onRunning(deviceProperties: DeviceProperties) {
-            Log.i(LOG_KEY, "We are connected to the device: $deviceProperties")
+            Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTED
             })
@@ -54,7 +55,7 @@ class DataLogger internal constructor() {
 
         override fun onError(msg: String, tr: Throwable?) {
             Log.e(
-                LOG_KEY,
+                LOGGER_TAG,
                 "An error occurred during interaction with the device. Msg: $msg"
             )
 
@@ -62,7 +63,7 @@ class DataLogger internal constructor() {
 
             if (Preferences.isReconnectWhenError(context) && "stopped" == msg) {
                 Log.e(
-                    LOG_KEY,
+                    LOGGER_TAG,
                     "Flag to reconnect automatically when errors occurs is turn on." +
                             " Re-establishing new connection"
                 )
@@ -77,8 +78,8 @@ class DataLogger internal constructor() {
         override fun onStopped() {
 
             Log.i(
-                LOG_KEY,
-                "Collecting process completed for the Device: $device"
+                LOGGER_TAG,
+                "Collecting process completed for the Device: $deviceName"
             )
 
             metricsAggregator.reset()
@@ -89,7 +90,7 @@ class DataLogger internal constructor() {
         }
 
         override fun onStopping() {
-            Log.i(LOG_KEY, "Stop collecting process for the Device: $device")
+            Log.i(LOGGER_TAG, "Stop collecting process for the Device: $deviceName")
 
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_STOPPING
@@ -119,15 +120,15 @@ class DataLogger internal constructor() {
         .observer(metricsAggregator)
         .lifecycle(lifecycle).initialize()
 
-    private lateinit var device: String
+    private lateinit var deviceName: String
 
     fun statistics(): StatisticsRegistry {
         return workflow().statisticsRegistry
     }
 
     fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
-        var pidRegistry: PidRegistry = pids()
-        var data: MutableList<ObdMetric> = arrayListOf()
+        val pidRegistry: PidRegistry = pids()
+        val data: MutableList<ObdMetric> = arrayListOf()
         pidIds.forEach { s: Long? ->
             pidRegistry.findBy(s)?.apply {
                 data.add(ObdMetric.builder().command(ObdCommand(this)).value(null).build())
@@ -151,35 +152,50 @@ class DataLogger internal constructor() {
     }
 
     fun start() {
+
         if (::context.isInitialized) {
-            this.device = Preferences.getAdapterName(context)
+            this.deviceName = Preferences.getAdapterName(context)
 
             val query = query()
-            Log.i(LOG_KEY, "Selected pids: ${query.pids}")
+            Log.i(LOGGER_TAG, "Selected pids: ${query.pids}")
 
-            val adjustments = Adjustments.builder()
-                .batchEnabled(Preferences.isBatchEnabled(context))
-                .initDelay(Preferences.getInitDelay(context))
-                .generator(
-                    GeneratorSpec
-                        .builder()
-                        .smart(true)
-                        .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
-                        .increment(0.5).build()
-                )
-                .adaptiveTiming(
-                    AdaptiveTimeoutPolicy
-                        .builder()
-                        .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
-                        .checkInterval(5000) //10s
-                        .commandFrequency(Preferences.getCommandFreq(context))
-                        .build()
-                ).build()
-
-            workflow().start(BluetoothConnection(device.toString()), query, adjustments)
-
-            Log.i(LOG_KEY, "Start collecting process for device $device")
+            connection()?.run {
+                workflow().start(this, query, adjustments())
+                Log.i(LOGGER_TAG, "Start collecting process for the device: $deviceName")
+            }
         }
+    }
+
+    private fun connection() : AdapterConnection? {
+        try {
+            return BluetoothConnection(deviceName)
+        }catch (e: IllegalStateException){
+            context.sendBroadcast(Intent().apply {
+                action = NOTIFICATION_ERROR_CONNECT_BT
+            })
+        }
+        return null
+    }
+
+    private fun adjustments(): Adjustments {
+        return Adjustments.builder()
+            .batchEnabled(Preferences.isBatchEnabled(context))
+            .initDelay(Preferences.getInitDelay(context))
+            .generator(
+                GeneratorSpec
+                    .builder()
+                    .smart(true)
+                    .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
+                    .increment(0.5).build()
+            )
+            .adaptiveTiming(
+                AdaptiveTimeoutPolicy
+                    .builder()
+                    .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
+                    .checkInterval(5000) //10s
+                    .commandFrequency(Preferences.getCommandFreq(context))
+                    .build()
+            ).build()
     }
 
     private fun query(): Query {

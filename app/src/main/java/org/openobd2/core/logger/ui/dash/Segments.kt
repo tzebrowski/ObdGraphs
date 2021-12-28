@@ -10,13 +10,17 @@ fun Double.round(decimals: Int): Double {
 }
 
 
-class Segments {
+internal class Segments(
+    val numOfSegments: Int,
+    private val minValue: Double,
+    maxValue: Double
+) {
 
-    class Segment {
+    class Segment(from: Double, to: Double) {
         var from: Double
         var to: Double
 
-        constructor(from: Double, to: Double) {
+        init {
             this.from = from.round(2)
             this.to = to.round(2)
         }
@@ -27,15 +31,8 @@ class Segments {
     }
 
     private var segments: MutableList<Segment>
-    private val maxValue: Double
-    private val minValue: Double
 
-    val numOfSegments: Int
-
-    constructor(numOfSegments: Int, minValue: Double, maxValue: Double) {
-        this.numOfSegments = numOfSegments
-        this.maxValue = maxValue
-        this.minValue = minValue
+    init {
         this.segments = calculateSegments(minValue, maxValue)
     }
 
@@ -61,7 +58,6 @@ class Segments {
         }
         return l
     }
-
 
     private fun calculateSegments(from: Double, to: Double): MutableList<Segment> {
         var pFrom = from

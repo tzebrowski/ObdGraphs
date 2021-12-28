@@ -9,28 +9,29 @@ import java.io.OutputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-internal class BluetoothConnection : AdapterConnection {
+private const val LOGGER_TAG = "BL_CONN"
+internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
 
     private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     private var input: InputStream? = null
     private var output: OutputStream? = null
     private lateinit var socket: BluetoothSocket
-    private var device: String? = null
+    private var device: String? = btDeviceName
     private val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
-    constructor(btDeviceName: String) {
-        Log.i(LOG_KEY, "Created instance of BluetoothConnection with devices: $btDeviceName")
-        this.device = btDeviceName
+    init {
+        Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $btDeviceName")
+        if (!mBluetoothAdapter.isEnabled) throw IllegalStateException("Bluetooth stack is disabled")
     }
 
     override fun reconnect() {
-        Log.i(LOG_KEY, "Reconnecting to the device: $device")
+        Log.i(LOGGER_TAG, "Reconnecting to the device: $device")
         input?.close()
         output?.close()
         socket.close()
         TimeUnit.MILLISECONDS.sleep(1000)
         connectToDevice(device)
-        Log.i(LOG_KEY, "Successfully reconnect to the device: $device")
+        Log.i(LOGGER_TAG, "Successfully reconnect to the device: $device")
     }
 
     override fun connect() {
@@ -40,7 +41,7 @@ internal class BluetoothConnection : AdapterConnection {
     override fun close() {
         if (::socket.isInitialized)
             socket.close()
-        Log.i(LOG_KEY, "Socket for device: $device has been closed.")
+        Log.i(LOGGER_TAG, "Socket for device: $device has been closed.")
     }
 
     override fun openOutputStream(): OutputStream? {
@@ -52,22 +53,22 @@ internal class BluetoothConnection : AdapterConnection {
     }
 
     private fun connectToDevice(btDeviceName: String?) {
-        Log.i(LOG_KEY, "Found bounded connections, size: ${mBluetoothAdapter.bondedDevices.size}")
+        Log.i(LOGGER_TAG, "Found bounded connections, size: ${mBluetoothAdapter.bondedDevices.size}")
         for (currentDevice in mBluetoothAdapter.bondedDevices) {
-            Log.i(LOG_KEY, "Checking bounded connection: ${currentDevice.name} ")
+            Log.i(LOGGER_TAG, "Checking bounded connection: ${currentDevice.name} ")
 
             if (currentDevice.name == btDeviceName) {
-                Log.i(LOG_KEY, "Bounded connection matches. Opening the device: ${currentDevice.name}")
+                Log.i(LOGGER_TAG, "Bounded connection matches. Opening the device: ${currentDevice.name}")
                 socket =
                     currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
                 socket.connect()
-                Log.i(LOG_KEY, "Doing socket connect for: ${currentDevice.name}")
+                Log.i(LOGGER_TAG, "Doing socket connect for: ${currentDevice.name}")
                 if (socket.isConnected) {
-                    Log.i(LOG_KEY, "Successfully established connection for: ${currentDevice.name}")
+                    Log.i(LOGGER_TAG, "Successfully established connection for: ${currentDevice.name}")
                     input = socket.inputStream
                     output = socket.outputStream
                     Log.i(
-                        LOG_KEY,
+                        LOGGER_TAG,
                         "Successfully opened  the sockets to device: ${currentDevice.name}"
                     )
                     break
