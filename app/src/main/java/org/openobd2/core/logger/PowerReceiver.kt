@@ -23,13 +23,14 @@ const val SCREEN_ON = "power.screen.on"
 class PowerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {
         Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}")
-        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
 
             if (Preferences.isEnabled(context!!, BT_ON_OFF_PREFERENCE_KEY)) {
-                mBluetoothAdapter.enable()
-                mBluetoothAdapter.startDiscovery()
+                BluetoothAdapter.getDefaultAdapter().run {
+                    enable()
+                    startDiscovery()
+                }
             }
 
             if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
@@ -39,11 +40,7 @@ class PowerReceiver : BroadcastReceiver() {
             if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
                 DataLogger.INSTANCE.init(context)
                 Log.i(LOGGER_TAG, "Start data logging")
-                if (!isActivityVisibleOnTheScreen(context, MainActivity::class.java)) {
-                    val i = Intent(context, MainActivity::class.java)
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(i)
-                }
+                startMainActivity(context)
                 context.sendBroadcast(Intent().apply {
                     action = SCREEN_ON
                 })
@@ -51,7 +48,9 @@ class PowerReceiver : BroadcastReceiver() {
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
 
             if (Preferences.isEnabled(context!!, BT_ON_OFF_PREFERENCE_KEY)) {
-                mBluetoothAdapter.disable()
+                BluetoothAdapter.getDefaultAdapter().run {
+                    disable()
+                }
             }
 
             if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
@@ -67,6 +66,14 @@ class PowerReceiver : BroadcastReceiver() {
                     action = SCREEN_OFF
                 })
             }
+        }
+    }
+
+    private fun startMainActivity(context: Context) {
+        if (!isActivityVisibleOnTheScreen(context, MainActivity::class.java)) {
+            val i = Intent(context, MainActivity::class.java)
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(i)
         }
     }
 

@@ -14,7 +14,9 @@
 
     <string-array name="perf_modes_arrays">
         <item name="generic.mode">Generic mode</item>
+        <!--
         <item name="mode22.mode">Mode 22</item>
+        -->
     </string-array>
 
     <string-array name="dash_color_themes">

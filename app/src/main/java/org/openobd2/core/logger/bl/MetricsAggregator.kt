@@ -1,5 +1,6 @@
 package org.openobd2.core.logger.bl
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.Reply

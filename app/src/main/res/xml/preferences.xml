@@ -100,103 +100,106 @@
             android:summary="Hide toolbar when double click"
             android:title="Double click - hide toolbar" />
 
-        <PreferenceCategory android:title="Dash">
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.dash.top.values.blink"
-                android:summary="Alarm when highest values reached"
-                android:title="Alarm for highest values" />
 
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.dash.swipe.to.delete"
-                android:summary="Swipe to delete metric"
-                android:title="Swipe to delete metric" />
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.dash.top.values.red.color"
-                android:summary="Highlight top values with red color"
-                android:title="Highlight top values" />
-
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref.dash.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show the view" />
-
-
-            <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                android:key="pref.dash.pids.selected"
-                android:summary="Displayed PIDs"
-                android:title="Displayed PIDs" />
-
-
-            <ListPreference
-                android:defaultValue="1"
-                android:entries="@array/dash_color_themes"
-                android:entryValues="@array/dash_color_themes"
-                android:key="pref.dash.theme"
-                android:title="Color theme" />
-
-
-        </PreferenceCategory>
-
-        <PreferenceCategory android:title="Gauge">
-
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref.gauge.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show the view" />
-
-            <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                android:defaultValue="@array/perf_empty_array"
-                android:key="pref.gauge.pids.selected"
-                android:summary="Displayed PIDs"
-                android:title="Displayed PIDs" />
-
-        </PreferenceCategory>
-
-
-        <PreferenceCategory android:title="Debug">
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.debug.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show tht view" />
-
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.debug.generator.enabled"
-                android:summary="Enable data generator"
-                android:title="Enable data generator" />
-
-        </PreferenceCategory>
-
-        <PreferenceCategory android:title="Metrics">
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.metrics.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show the view" />
-        </PreferenceCategory>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Supported PID's">
+
+    <PreferenceCategory android:title="Dash">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.dash.top.values.blink"
+            android:summary="Alarm when highest values reached"
+            android:title="Alarm for highest values" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.dash.swipe.to.delete"
+            android:summary="Swipe to delete metric"
+            android:title="Swipe to delete metric" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.dash.top.values.red.color"
+            android:summary="Highlight top values with red color"
+            android:title="Highlight top values" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref.dash.view.enabled"
+            android:summary="Enable the view"
+            android:title="Show the view" />
+
+
         <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:key="@string/pref.pids.generic"
-            android:summary="Generic PID's for Mode 1"
-            android:title="Generic" />
+            android:key="pref.dash.pids.selected"
+            android:summary="Displayed PIDs"
+            android:title="Displayed PIDs" />
+
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/dash_color_themes"
+            android:entryValues="@array/dash_color_themes"
+            android:key="pref.dash.theme"
+            android:title="Color theme" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Gauge">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref.gauge.view.enabled"
+            android:summary="Enable the view"
+            android:title="Show the view" />
 
         <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:defaultValue="@array/perf_empty_array"
+            android:key="pref.gauge.pids.selected"
+            android:summary="Displayed PIDs"
+            android:title="Displayed PIDs" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="Debug">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.debug.view.enabled"
+            android:summary="Enable the view"
+            android:title="Show tht view" />
+
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.debug.generator.enabled"
+            android:summary="Enable data generator"
+            android:title="Enable data generator" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Metrics">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.metrics.view.enabled"
+            android:summary="Enable the view"
+            android:title="Show the view" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Pid's to fetch">
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
+            android:key="pref.pids.generic"
+            android:summary="Generic PID's for Mode 1"
+            android:title="Generic" />
+        <!--
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:key="pref.pids.mode22"
             android:summary="Alfa Romeo specific PID's"
             android:title="Mode 22" />
+        -->
     </PreferenceCategory>
+
 
 
 </PreferenceScreen>
