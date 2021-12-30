@@ -122,9 +122,7 @@ internal class DashViewAdapter internal constructor(
         var initialized: Boolean = false
 
         fun buildChart(pid: PidDefinition) {
-            if (initialized) {
-            } else {
-
+            if (!initialized) {
                 anim.duration = 300
                 anim.startOffset = 20
                 anim.repeatMode = Animation.REVERSE

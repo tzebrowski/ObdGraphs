@@ -103,7 +103,9 @@ internal class DataLogger internal constructor() {
             PidSpec
                 .builder()
                 .initSequence(Mode1CommandGroup.INIT)
-                .pidFile(Urls.resourceToUrl("mode01.json")).build()
+                .pidFile(Urls.resourceToUrl("mode01.json"))
+                .pidFile(Urls.resourceToUrl("extra.json"))
+                .build()
         ).observer(metricsAggregator)
         .lifecycle(lifecycle)
         .initialize()

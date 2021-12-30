@@ -179,6 +179,18 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Available PIDs">
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
+            android:key="pref.pids.generic"
+            android:summary="Generic PID's for Mode 1"
+            android:title="Generic PID's for Mode 1" />
+
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
+            android:key="pref.pids.mode22"
+            android:summary="Alfa Romeo specific PID's"
+            android:title="Alfa Romeo specific PID's" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="Metrics">
         <CheckBoxPreference
             android:defaultValue="false"
@@ -186,20 +198,11 @@
             android:summary="Enable the view"
             android:title="Show the view" />
     </PreferenceCategory>
-
-    <PreferenceCategory android:title="Pid's to fetch">
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:key="pref.pids.generic"
-            android:summary="Generic PID's for Mode 1"
-            android:title="Generic" />
-        <!--
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:key="pref.pids.mode22"
-            android:summary="Alfa Romeo specific PID's"
-            android:title="Mode 22" />
-        -->
+    <PreferenceCategory android:title="Dummy">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.metrics.view.enabled"
+            android:summary="Enable the view"
+            android:title="Show the view" />
     </PreferenceCategory>
-
-
-
 </PreferenceScreen>

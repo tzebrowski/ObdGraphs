@@ -122,9 +122,9 @@ class DashFragment : AbstractMetricsFragment() {
         val heightPixels = Resources.getSystem().displayMetrics.heightPixels / 2
         var itemHeight = 180
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            if (metrics.size == 6) {
-                itemHeight = (heightPixels / 2)
-            } else if (metrics.size == 5) {
+            if (metrics.size == 7 || metrics.size == 8) {
+                itemHeight = (heightPixels / 2.5).toInt()
+            } else if (metrics.size == 5 || metrics.size == 6) {
                 itemHeight = (heightPixels / 2)
             }
         }else {

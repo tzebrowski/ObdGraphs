@@ -33,7 +33,7 @@ class PowerReceiver : BroadcastReceiver() {
                 }
             }
 
-            if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
+            if (Preferences.isEnabled(context, ADAPTER_CONNECT_PREFERENCE_KEY)) {
                 DataLoggerService.startAction(context)
             }
 
@@ -53,7 +53,7 @@ class PowerReceiver : BroadcastReceiver() {
                 }
             }
 
-            if (Preferences.isEnabled(context!!, ADAPTER_CONNECT_PREFERENCE_KEY)) {
+            if (Preferences.isEnabled(context, ADAPTER_CONNECT_PREFERENCE_KEY)) {
                 Log.i(
                     LOGGER_TAG,
                     "Stop data logging"
