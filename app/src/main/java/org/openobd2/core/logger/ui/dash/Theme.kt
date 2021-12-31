@@ -15,13 +15,33 @@ class Theme {
         @JvmStatic
         fun getSelectedTheme(context: Context): ColorTheme {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            return list()[pref.getString("pref.dash.theme", "1")!!.toInt()]
+            return list()[pref.getString("pref.dash.theme", "0")!!.toInt()]
         }
 
-        fun list(): Array<ColorTheme> {
-            return arrayOf(std1(), std2(), std3(), std4())
+        private fun list(): Array<ColorTheme> {
+            return arrayOf(std1(), std2(), std3(), std4(), std5())
         }
 
+
+        @JvmStatic
+        fun std5(): ColorTheme {
+            val col1: MutableList<GradientColor> = ArrayList()
+            col1.add(
+                GradientColor(
+                    Color.rgb(236, 233, 230),
+                    Color.rgb(255, 255, 255)
+                )
+            )
+
+            val col2: MutableList<GradientColor> = ArrayList()
+            col2.add(
+                GradientColor(
+                    Color.rgb(255, 251, 213),
+                    Color.rgb(178, 10, 44)
+                )
+            )
+            return ColorTheme(col1, col2)
+        }
 
         @JvmStatic
         fun std3(): ColorTheme {
@@ -36,8 +56,8 @@ class Theme {
             val col2: MutableList<GradientColor> = ArrayList()
             col2.add(
                 GradientColor(
-                    Color.rgb(237, 33, 58),
-                    Color.rgb(147, 41, 30)
+                    Color.rgb(255, 251, 213),
+                    Color.rgb(178, 10, 44)
                 )
             )
             return ColorTheme(col1, col2)
@@ -69,16 +89,17 @@ class Theme {
             val col1: MutableList<GradientColor> = ArrayList()
             col1.add(
                 GradientColor(
-                    Color.rgb(124, 252, 79),
-                    Color.rgb(243, 249, 167)
+                    Color.rgb(243, 249, 167),
+                    Color.rgb(113, 178, 128)
+
                 )
             )
 
             val col2: MutableList<GradientColor> = ArrayList()
             col2.add(
                 GradientColor(
-                    Color.rgb(237, 33, 58),
-                    Color.rgb(147, 41, 30)
+                    Color.rgb(255, 251, 213),
+                    Color.rgb(178, 10, 44)
                 )
             )
             return ColorTheme(col1, col2)

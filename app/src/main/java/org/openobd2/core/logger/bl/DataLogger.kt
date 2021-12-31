@@ -12,7 +12,7 @@ import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.connection.AdapterConnection
-import org.obd.metrics.pid.PidRegistry
+import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.statistics.StatisticsRegistry
 import org.openobd2.core.logger.ui.preferences.Preferences
@@ -129,7 +129,7 @@ internal class DataLogger internal constructor() {
     }
 
     fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
-        val pidRegistry: PidRegistry = pids()
+        val pidRegistry: PidDefinitionRegistry = pids()
         val data: MutableList<ObdMetric> = arrayListOf()
         pidIds.forEach { s: Long? ->
             pidRegistry.findBy(s)?.apply {
@@ -139,7 +139,7 @@ internal class DataLogger internal constructor() {
         return data
     }
 
-    fun pids(): PidRegistry {
+    fun pids(): PidDefinitionRegistry {
         return workflow().pidRegistry
     }
 
