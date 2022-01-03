@@ -25,14 +25,19 @@ class PidListPreferences(
             }
 
         val default = if (Preferences.getMode(context!!) =="Generic mode")  hashSetOf<String>().apply {
-            add("6")  //Engine coolant temperature
-            add("12") //Calculated Boost
-            add("13") //Engine RPM
-            add("16") //Intake air temperature
-            add("18") //Throttle position
-            add("14") //Vehicle speed
-            add("5") //Calculated engine load value
-            add("9000") //Battery voltage
+            add("4") // Fuel system status
+            add("7") // Short trims
+            add("8")  // Long trim
+//            add("17") // MAF
+            add("22") // Oxygen sensor
+            add("6")  // Engine coolant temperature
+            add("12") // Intake manifold absolute pressure
+            add("13") // Engine RPM
+            add("16") // Intake air temperature
+            add("18") // Throttle position
+            add("14") // Vehicle speed
+            add("15") // Timing advance
+            add("9000") // Battery voltage
         } else hashSetOf<String>()
 
         setDefaultValue(default)

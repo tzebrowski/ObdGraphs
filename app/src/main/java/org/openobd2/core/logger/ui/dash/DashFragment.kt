@@ -7,32 +7,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.common.AbstractMetricsFragment
+import org.openobd2.core.logger.ui.common.MetricsViewContext
 import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
+import org.openobd2.core.logger.ui.gauge.GaugeViewAdapter
 import org.openobd2.core.logger.ui.preferences.DashPreferences
+import org.openobd2.core.logger.ui.preferences.GaugePreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
 
 private const val VISIBLE_PIDS = "pref.dash.pids.selected"
 private const val SWIPE_TO_DELETE_PREF_KEY = "pref.dash.swipe.to.delete"
 
-class DashFragment : AbstractMetricsFragment() {
-
-    override fun getVisibleMetrics(): Set<Long> {
-        return Preferences.getLongSet(requireContext(), VISIBLE_PIDS)
-    }
+class DashFragment : Fragment() {
+    lateinit var root: View
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        root.let {
-            setupRecyclerView()
-        }
+        setupDashRecyclerView()
+        setupGaugeRecyclerView()
     }
 
     override fun onCreateView(
@@ -41,36 +40,84 @@ class DashFragment : AbstractMetricsFragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_dash, container, false)
-        setupRecyclerView()
+        setupDashRecyclerView()
+        setupGaugeRecyclerView()
         return root
     }
 
-    private fun setupRecyclerView() {
+    private fun setupGaugeRecyclerView() {
+        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Preferences.getLongSet(requireContext(), "pref.gauge.pids.selected"))
+
+        val sortOrderMap = GaugePreferences.SERIALIZER.load(requireContext())?.map {
+            it.id to it.position
+        }!!.toMap()
+
+        val metrics = metricsViewContext.findMetrics(sortOrderMap)
+        metricsViewContext.adapter = GaugeViewAdapter(root.context, metrics)
+
+        val recyclerView: RecyclerView = root.findViewById(R.id.gauge_recycler_view)
+
+        recyclerView.layoutManager = GridLayoutManager(root.context, 2)
+        recyclerView.adapter = metricsViewContext.adapter
+
+        val dragCallback = DragManageAdapter(
+            requireContext(),
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.START or ItemTouchHelper.END,
+            object : SwappableAdapter {
+                override fun swapItems(fromPosition: Int, toPosition: Int) {
+                    (metricsViewContext.adapter as GaugeViewAdapter).swapItems(fromPosition, toPosition)
+                }
+
+                override fun deleteItems(fromPosition: Int) {
+
+                }
+
+                override fun storePreferences(context: Context) {
+                    GaugePreferences.SERIALIZER.store(context, (metricsViewContext.adapter as GaugeViewAdapter).mData)
+                }
+            }
+        )
+
+        ItemTouchHelper(dragCallback).attachToRecyclerView(recyclerView)
+        recyclerView.addOnItemTouchListener(
+            ToggleToolbarDoubleClickListener(
+                requireContext()
+            )
+        )
+
+        metricsViewContext.adapter.notifyDataSetChanged()
+        metricsViewContext.observerMetrics(metrics)
+    }
+
+    private fun setupDashRecyclerView() {
+        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Preferences.getLongSet(requireContext(), "pref.dash.pids.selected"))
 
         val sortOrderMap = DashPreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
         }!!.toMap()
 
-        val metrics = findMetrics(sortOrderMap)
+        val metrics = metricsViewContext.findMetrics(sortOrderMap)
         val itemHeight = calculateItemHeight(metrics)
 
-        adapter = DashViewAdapter(root.context, metrics, itemHeight)
-        val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+        metricsViewContext.adapter = DashViewAdapter(root.context, metrics, itemHeight)
+        val recyclerView: RecyclerView = root.findViewById(R.id.dash_recycler_view)
 
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount(metrics.size))
-        recyclerView.adapter = adapter
+        recyclerView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+        recyclerView.adapter = metricsViewContext.adapter
 
         val swappableAdapter = object: SwappableAdapter {
             override fun swapItems(fromPosition: Int, toPosition: Int) {
-                (adapter as DashViewAdapter).swapItems(fromPosition, toPosition)
+                (metricsViewContext.adapter as DashViewAdapter).swapItems(fromPosition, toPosition)
             }
 
             override fun storePreferences(context: Context) {
-                DashPreferences.SERIALIZER.store(context, (adapter as DashViewAdapter).mData)
+                DashPreferences.SERIALIZER.store(context, (metricsViewContext.adapter as DashViewAdapter).mData)
             }
 
             override fun deleteItems(fromPosition: Int) {
-                val metrics = (adapter as DashViewAdapter).mData
+                val metrics = (metricsViewContext.adapter as DashViewAdapter).mData
                 val itemId: ObdMetric = metrics[fromPosition]
                 metrics.remove(itemId)
 
@@ -82,15 +129,15 @@ class DashFragment : AbstractMetricsFragment() {
 
                 DashPreferences.SERIALIZER.store(requireContext(), metrics)
                 val itemHeight = calculateItemHeight(metrics)
-                adapter = DashViewAdapter(root.context, metrics, itemHeight)
+                metricsViewContext.adapter = DashViewAdapter(root.context, metrics, itemHeight)
                 val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
                 recyclerView.layoutManager =
                     GridLayoutManager(root.context, spanCount(metrics.size))
-                recyclerView.adapter = adapter
+                recyclerView.adapter = metricsViewContext.adapter
                 recyclerView.refreshDrawableState()
 
-                observerMetrics(metrics)
-                adapter.notifyDataSetChanged()
+                metricsViewContext.observerMetrics(metrics)
+                metricsViewContext.adapter.notifyDataSetChanged()
 
             }
         }
@@ -114,8 +161,8 @@ class DashFragment : AbstractMetricsFragment() {
             )
         )
 
-        observerMetrics(metrics)
-        adapter.notifyDataSetChanged()
+        metricsViewContext.observerMetrics(metrics)
+        metricsViewContext.adapter.notifyDataSetChanged()
     }
 
     private fun calculateItemHeight(metrics: MutableList<ObdMetric>): Int {
@@ -124,9 +171,18 @@ class DashFragment : AbstractMetricsFragment() {
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
             if (metrics.size == 7 || metrics.size == 8) {
                 itemHeight = (heightPixels / 2.5).toInt()
-            } else if (metrics.size == 5 || metrics.size == 6) {
+            } else if (metrics.size == 5 || metrics.size == 6 ) {
                 itemHeight = (heightPixels / 2)
+            } else if (metrics.size == 2 ) {
+                itemHeight = (heightPixels / 1.3).toInt()
+            }else if (metrics.size == 4 ) {
+                itemHeight = (heightPixels / 2.6).toInt()
+            }else if (metrics.size == 1 ) {
+                itemHeight = (Resources.getSystem().displayMetrics.heightPixels / 1.3).toInt()
+            } else if (metrics.size == 3 ) {
+                itemHeight = (heightPixels / 1.9).toInt()
             }
+
         }else {
             if (metrics.size == 6) {
                 itemHeight = (heightPixels / 3) - 44

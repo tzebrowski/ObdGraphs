@@ -31,6 +31,7 @@ class GaugeViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.gauge_item, parent, false)
+        view.layoutParams.height = 200
         return ViewHolder(view)
     }
 

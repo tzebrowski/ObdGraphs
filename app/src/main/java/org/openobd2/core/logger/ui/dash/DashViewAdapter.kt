@@ -2,6 +2,7 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ internal class DashViewAdapter internal constructor(
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val ctx: Context = context
     private lateinit var colors: ColorTheme
+    private lateinit var view: View
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData, fromPosition, toPosition)
@@ -47,12 +49,11 @@ internal class DashViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        val view: View = mInflater.inflate(R.layout.dash_item, parent, false)
+        view = mInflater.inflate(R.layout.dash_item, parent, false)
         view.layoutParams.height = height
         colors = Theme.getSelectedTheme(this.ctx)
         return ViewHolder(view)
     }
-
 
     override fun onBindViewHolder(
         holder: ViewHolder,
@@ -196,7 +197,7 @@ internal class DashViewAdapter internal constructor(
                 val data = BarData(dataSets)
                 data.setDrawValues(false)
 
-                data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.1f
+                data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.05f
                 chart.data = data
                 initialized = true
             }

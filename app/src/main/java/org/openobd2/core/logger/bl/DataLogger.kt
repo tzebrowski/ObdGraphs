@@ -48,6 +48,7 @@ internal class DataLogger internal constructor() {
 
         override fun onRunning(deviceProperties: DeviceProperties) {
             Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
+
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTED
             })

@@ -1,23 +1,18 @@
 package org.openobd2.core.logger.ui.common
 
-import android.view.View
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
 
-abstract class AbstractMetricsFragment : Fragment() {
-
-    lateinit var root: View
+class MetricsViewContext (val owner: LifecycleOwner, val visiblePids:  Set<Long>)  {
     lateinit var adapter: RecyclerView.Adapter<*>
 
-    abstract fun getVisibleMetrics(): Set<Long>
+    fun findMetrics(sortOrder: Map<Long, Int>): MutableList<ObdMetric> {
 
-    protected fun findMetrics(sortOrder: Map<Long, Int>): MutableList<ObdMetric> {
-
-        val metrics = DataLogger.INSTANCE.getEmptyMetrics(getVisibleMetrics())
+        val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
 
         metrics.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
             if (sortOrder.containsKey(m1.command.pid.id) && sortOrder.containsKey(
@@ -33,11 +28,11 @@ abstract class AbstractMetricsFragment : Fragment() {
         return metrics
     }
 
-    protected fun observerMetrics(
+    fun observerMetrics(
         data: MutableList<ObdMetric>
     ) {
-        val visibleMetrics = getVisibleMetrics()
-        MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
+        val visibleMetrics = visiblePids
+        MetricsAggregator.metrics.observe(owner, Observer {
             it?.let {
                 if (visibleMetrics.contains(it.command.pid.id)) {
                     val indexOf = data.indexOf(it)

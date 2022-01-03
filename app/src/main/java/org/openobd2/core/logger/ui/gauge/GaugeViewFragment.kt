@@ -6,22 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.common.AbstractMetricsFragment
+import org.openobd2.core.logger.ui.common.MetricsViewContext
 import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.GaugePreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
 
-class GaugeViewFragment : AbstractMetricsFragment() {
-
-    override fun getVisibleMetrics(): Set<Long> {
-        return Preferences.getLongSet(requireContext(), "pref.gauge.pids.selected")
-    }
+class GaugeViewFragment : Fragment() {
+    lateinit var root: View
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -37,19 +35,21 @@ class GaugeViewFragment : AbstractMetricsFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        root = inflater.inflate(R.layout.fragment_gauge, container, false)
+
+        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Preferences.getLongSet(requireContext(), "pref.gauge.pids.selected"))
 
         val sortOrderMap = GaugePreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
         }!!.toMap()
 
-        val metrics = findMetrics(sortOrderMap)
+        val metrics = metricsViewContext.findMetrics(sortOrderMap)
 
-        root = inflater.inflate(R.layout.fragment_gauge, container, false)
-        adapter = GaugeViewAdapter(root.context, metrics)
+        metricsViewContext.adapter = GaugeViewAdapter(root.context, metrics)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
 
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
-        recyclerView.adapter = adapter
+        recyclerView.adapter = metricsViewContext.adapter
 
         val dragCallback = DragManageAdapter(
             requireContext(),
@@ -57,7 +57,7 @@ class GaugeViewFragment : AbstractMetricsFragment() {
             ItemTouchHelper.START or ItemTouchHelper.END,
             object : SwappableAdapter {
                 override fun swapItems(fromPosition: Int, toPosition: Int) {
-                    (adapter as GaugeViewAdapter).swapItems(fromPosition, toPosition)
+                    (metricsViewContext.adapter as GaugeViewAdapter).swapItems(fromPosition, toPosition)
                 }
 
                 override fun deleteItems(fromPosition: Int) {
@@ -65,7 +65,7 @@ class GaugeViewFragment : AbstractMetricsFragment() {
                 }
 
                 override fun storePreferences(context: Context) {
-                    GaugePreferences.SERIALIZER.store(context, (adapter as GaugeViewAdapter).mData)
+                    GaugePreferences.SERIALIZER.store(context, (metricsViewContext.adapter as GaugeViewAdapter).mData)
                 }
             }
         )
@@ -77,8 +77,8 @@ class GaugeViewFragment : AbstractMetricsFragment() {
             )
         )
 
-        adapter.notifyDataSetChanged()
-        observerMetrics(metrics)
+        metricsViewContext.adapter.notifyDataSetChanged()
+        metricsViewContext.observerMetrics(metrics)
         return root
     }
 

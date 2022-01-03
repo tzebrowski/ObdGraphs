@@ -5,10 +5,25 @@
     android:layout_height="match_parent"
     tools:context=".ui.dash.DashFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true" />
+        android:orientation="horizontal" android:weightSum="1.0">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dash_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gauge_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

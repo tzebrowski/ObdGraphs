@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="140sp"
     android:layout_height="wrap_content"
-    android:layout_marginStart="1dp"
-    android:layout_marginTop="1dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginLeft="2dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginEnd="2dp"
+    android:layout_marginRight="2dp"
+    android:layout_marginBottom="2dp"
     android:background="@drawable/gauge_item_background"
     tools:context=".ui.gauge.GaugeViewFragment">
 
@@ -47,7 +51,7 @@
 
     <TextView
         android:id="@+id/value"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_row="1"
         android:layout_column="0"
@@ -56,7 +60,7 @@
         android:gravity="center"
         android:text="Value"
         android:textColor="#FFFF00"
-        android:textSize="54sp" />
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/unit"
