@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="140sp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
     android:layout_marginLeft="2dp"
@@ -9,7 +9,8 @@
     android:layout_marginEnd="2dp"
     android:layout_marginRight="2dp"
     android:layout_marginBottom="2dp"
-    android:background="@drawable/gauge_item_background"
+    android:background="@drawable/dash_item_background"
+    android:columnCount="3"
     tools:context=".ui.gauge.GaugeViewFragment">
 
 
@@ -22,7 +23,7 @@
         android:gravity="center"
         android:text="Label"
         android:textColor="@color/white"
-        android:textSize="18sp" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/max_value"
@@ -30,8 +31,10 @@
         android:layout_height="wrap_content"
         android:layout_row="2"
         android:layout_column="0"
+        android:layout_marginLeft="4sp"
+        android:layout_marginRight="4sp"
         android:gravity="right|left"
-        android:textColor="#1B2441"
+        android:textColor="#5CFFFF00"
         android:textSize="21sp"
         android:textStyle="bold"
         tools:text="max" />
@@ -42,9 +45,11 @@
         android:layout_height="wrap_content"
         android:layout_row="2"
         android:layout_column="0"
+        android:layout_marginLeft="4sp"
+        android:layout_marginRight="4sp"
         android:gravity="right"
         android:text="min"
-        android:textColor="#1B2441"
+        android:textColor="#5CFFFF00"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -60,7 +65,7 @@
         android:gravity="center"
         android:text="Value"
         android:textColor="#FFFF00"
-        android:textSize="30sp" />
+        android:textSize="36sp" />
 
     <TextView
         android:id="@+id/unit"
@@ -69,12 +74,10 @@
         android:layout_row="2"
         android:layout_column="0"
 
-        android:layout_marginLeft="1sp"
-        android:layout_marginRight="1sp"
         android:gravity="center"
         android:text="Units"
         android:textColor="#01804F"
-        android:textSize="22sp" />
+        android:textSize="20sp" />
 
 
 </GridLayout>

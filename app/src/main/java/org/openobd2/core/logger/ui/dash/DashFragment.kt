@@ -17,12 +17,10 @@ import org.openobd2.core.logger.ui.common.MetricsViewContext
 import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
-import org.openobd2.core.logger.ui.gauge.GaugeViewAdapter
+import org.openobd2.core.logger.ui.gauge.GaugeViewSetup
 import org.openobd2.core.logger.ui.preferences.DashPreferences
-import org.openobd2.core.logger.ui.preferences.GaugePreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
 
-private const val VISIBLE_PIDS = "pref.dash.pids.selected"
 private const val SWIPE_TO_DELETE_PREF_KEY = "pref.dash.swipe.to.delete"
 
 class DashFragment : Fragment() {
@@ -46,48 +44,7 @@ class DashFragment : Fragment() {
     }
 
     private fun setupGaugeRecyclerView() {
-        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Preferences.getLongSet(requireContext(), "pref.gauge.pids.selected"))
-
-        val sortOrderMap = GaugePreferences.SERIALIZER.load(requireContext())?.map {
-            it.id to it.position
-        }!!.toMap()
-
-        val metrics = metricsViewContext.findMetrics(sortOrderMap)
-        metricsViewContext.adapter = GaugeViewAdapter(root.context, metrics)
-
-        val recyclerView: RecyclerView = root.findViewById(R.id.gauge_recycler_view)
-
-        recyclerView.layoutManager = GridLayoutManager(root.context, 2)
-        recyclerView.adapter = metricsViewContext.adapter
-
-        val dragCallback = DragManageAdapter(
-            requireContext(),
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.START or ItemTouchHelper.END,
-            object : SwappableAdapter {
-                override fun swapItems(fromPosition: Int, toPosition: Int) {
-                    (metricsViewContext.adapter as GaugeViewAdapter).swapItems(fromPosition, toPosition)
-                }
-
-                override fun deleteItems(fromPosition: Int) {
-
-                }
-
-                override fun storePreferences(context: Context) {
-                    GaugePreferences.SERIALIZER.store(context, (metricsViewContext.adapter as GaugeViewAdapter).mData)
-                }
-            }
-        )
-
-        ItemTouchHelper(dragCallback).attachToRecyclerView(recyclerView)
-        recyclerView.addOnItemTouchListener(
-            ToggleToolbarDoubleClickListener(
-                requireContext()
-            )
-        )
-
-        metricsViewContext.adapter.notifyDataSetChanged()
-        metricsViewContext.observerMetrics(metrics)
+        GaugeViewSetup().onCreateView(viewLifecycleOwner,requireContext(),root,2, R.id.gauge_recycler_view, "pref.dash.gauge_pids.selected")
     }
 
     private fun setupDashRecyclerView() {
@@ -104,7 +61,6 @@ class DashFragment : Fragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.dash_recycler_view)
 
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount(metrics.size))
-        recyclerView.layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
         recyclerView.adapter = metricsViewContext.adapter
 
         val swappableAdapter = object: SwappableAdapter {
@@ -123,7 +79,7 @@ class DashFragment : Fragment() {
 
                 Preferences.updateLongSet(
                     requireContext(),
-                    VISIBLE_PIDS,
+                    "pref.dash.pids.selected",
                     metrics.map { obdMetric -> obdMetric.command.pid.id }.toList()
                 )
 

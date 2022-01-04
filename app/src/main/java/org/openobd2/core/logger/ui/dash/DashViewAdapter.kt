@@ -2,7 +2,7 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
-import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +59,7 @@ internal class DashViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
+
         val commandReply = mData.elementAt(position)
         val obdCommand = commandReply.command as ObdCommand
         holder.buildChart(obdCommand.pid)
