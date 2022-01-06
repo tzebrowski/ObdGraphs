@@ -3,18 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="2dp"
-    android:layout_marginLeft="2dp"
-    android:layout_marginTop="2dp"
-    android:layout_marginEnd="2dp"
-    android:layout_marginRight="2dp"
-    android:layout_marginBottom="2dp"
-    android:background="@drawable/dash_item_background"
+    android:layout_marginStart="3dp"
+    android:layout_marginLeft="3dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginEnd="3dp"
+    android:layout_marginRight="3dp"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/gauge_item_background"
     android:columnCount="3"
     tools:context=".ui.gauge.GaugeViewFragment">
 
 
     <TextView
+
+        android:layout_marginTop="20sp"
         android:id="@+id/label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -24,34 +26,6 @@
         android:text="Label"
         android:textColor="@color/white"
         android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/max_value"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_row="2"
-        android:layout_column="0"
-        android:layout_marginLeft="4sp"
-        android:layout_marginRight="4sp"
-        android:gravity="right|left"
-        android:textColor="#5CFFFF00"
-        android:textSize="21sp"
-        android:textStyle="bold"
-        tools:text="max" />
-
-    <TextView
-        android:id="@+id/min_value"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_row="2"
-        android:layout_column="0"
-        android:layout_marginLeft="4sp"
-        android:layout_marginRight="4sp"
-        android:gravity="right"
-        android:text="min"
-        android:textColor="#5CFFFF00"
-        android:textSize="20sp"
-        android:textStyle="bold" />
 
 
     <TextView
@@ -67,17 +41,48 @@
         android:textColor="#FFFF00"
         android:textSize="36sp" />
 
-    <TextView
-        android:id="@+id/unit"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_row="2"
         android:layout_column="0"
+        android:orientation="horizontal"
+        android:layout_marginBottom="100sp">
 
-        android:gravity="center"
-        android:text="Units"
-        android:textColor="#01804F"
-        android:textSize="20sp" />
+        <TextView
+
+            android:id="@+id/min_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4sp"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="min"
+            android:textColor="#5CFFFF00"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/unit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Units"
+            android:textColor="#01804F"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/max_value"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="max"
+            android:textColor="#5CFFFF00"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 
 </GridLayout>
