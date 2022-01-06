@@ -93,5 +93,13 @@ class Preferences {
                 getString("pref.mode", "Generic mode")
             }
         }
+
+
+        @JvmStatic
+        fun getString(context: Context, name: String): String? {
+            return PreferenceManager.getDefaultSharedPreferences(context).run{
+                getString(name, null)
+            }
+        }
     }
 }

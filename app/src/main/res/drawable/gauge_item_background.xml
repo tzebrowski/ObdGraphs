@@ -11,8 +11,7 @@
         android:innerRadiusRatio="2.5"
         android:shape="ring"
         android:thickness="4dp"
-        android:useLevel="false"
-        >
+        android:useLevel="false">
         <corners android:radius="1dp" />
         <stroke
 

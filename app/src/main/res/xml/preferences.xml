@@ -3,62 +3,110 @@
     <PreferenceCategory
         android:key="adapter"
         android:title="Adapter settings">
-        <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:dialogTitle="Bluetooth OBD adapter name"
-            android:key="pref.adapter.id"
-            android:summary="Bluetooth OBD adapter name"
-            android:title="Adapters" />
+
+        <PreferenceCategory
+            android:key="bluetooth"
+            android:title="Bluetooth settings">
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:dialogTitle="Enabled"
+                android:key="pref.adapter.connection.bluetooth.enabled"
+                android:summary="Enable bluetooth mode"
+                android:title="Enabled" />
+
+            <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:dialogTitle="Bluetooth OBD adapter name"
+                android:key="pref.adapter.id"
+                android:summary="Bluetooth OBD adapter name"
+                android:title="Adapters" />
+        </PreferenceCategory>
 
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dialogTitle="Batch enabled"
-            android:key="pref.adapter.batch.enabled"
-            android:summary="Enable batch mode"
-            android:title="Enable batch mode" />
+        <PreferenceCategory
+            android:key="wifi"
+            android:title="Wifi settings">
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="Enabled"
+                android:key="pref.adapter.connection.tcp.enabled"
+                android:summary="Enabled"
+                android:title="Enabled" />
+
+            <EditTextPreference
+                android:defaultValue="V-LINK"
+                android:dialogTitle="SSID"
+                android:key="pref.adapter.connection.tcp.wifi.ssid"
+                android:title="SSID" />
+
+            <EditTextPreference
+                android:defaultValue="192.168.0.10"
+                android:dialogTitle="Host"
+                android:key="pref.adapter.connection.tcp.host"
+                android:title="Host" />
+
+            <EditTextPreference
+                android:defaultValue="35000"
+                android:dialogTitle="Port"
+                android:key="pref.adapter.connection.tcp.port"
+                android:title="Port" />
+
+        </PreferenceCategory>
 
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:dialogTitle="Adaptive timeout enabled"
-            android:key="pref.adapter.adaptive.enabled"
-            android:summary="Adaptive timeout enabled"
-            android:title="Adaptive timeout enabled" />
+        <PreferenceCategory android:title="General settings">
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dialogTitle="Reconnect automatically"
-            android:key="pref.adapter.reconnect"
-            android:summary="Reconnect automatically when error occurs"
-            android:title="Reconnect automatically" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:dialogTitle="Batch enabled"
+                android:key="pref.adapter.batch.enabled"
+                android:summary="Enable batch mode"
+                android:title="Enable batch mode" />
 
 
-        <ListPreference
-            android:defaultValue="500"
-            android:entries="@array/init_delay"
-            android:entryValues="@array/init_delay"
-            android:key="pref.adapter.init_delay"
-            android:summary="Init delay"
-            android:title="Init delay" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="Adaptive timeout enabled"
+                android:key="pref.adapter.adaptive.enabled"
+                android:summary="Adaptive timeout enabled"
+                android:title="Adaptive timeout enabled" />
 
-        <ListPreference
-            android:defaultValue="6"
-            android:entries="@array/command_frequency"
-            android:entryValues="@array/command_frequency"
-            android:key="pref.adapter.command.freq"
-            android:summary="Command frequency"
-            android:title="Command frequency" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:dialogTitle="Reconnect automatically"
+                android:key="pref.adapter.reconnect"
+                android:summary="Reconnect automatically when error occurs"
+                android:title="Reconnect automatically" />
 
-        <ListPreference
-            android:defaultValue="Generic mode"
-            android:dialogTitle="Select mode"
-            android:entries="@array/perf_modes_arrays"
-            android:entryValues="@array/perf_modes_arrays"
-            android:key="pref.mode"
-            android:summary="Allows to specify OBD mode"
-            android:title="Mode" />
 
+            <ListPreference
+                android:defaultValue="500"
+                android:entries="@array/init_delay"
+                android:entryValues="@array/init_delay"
+                android:key="pref.adapter.init_delay"
+                android:summary="Init delay"
+                android:title="Init delay" />
+
+            <ListPreference
+                android:defaultValue="6"
+                android:entries="@array/command_frequency"
+                android:entryValues="@array/command_frequency"
+                android:key="pref.adapter.command.freq"
+                android:summary="Command frequency"
+                android:title="Command frequency" />
+
+            <ListPreference
+                android:defaultValue="Generic mode"
+                android:dialogTitle="Select mode"
+                android:entries="@array/perf_modes_arrays"
+                android:entryValues="@array/perf_modes_arrays"
+                android:key="pref.mode"
+                android:summary="Allows to specify OBD mode"
+                android:title="Mode" />
+
+        </PreferenceCategory>
     </PreferenceCategory>
 
     <PreferenceCategory

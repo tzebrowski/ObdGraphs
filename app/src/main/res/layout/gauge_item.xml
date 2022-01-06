@@ -13,9 +13,7 @@
     android:columnCount="3"
     tools:context=".ui.gauge.GaugeViewFragment">
 
-
     <TextView
-
         android:layout_marginTop="20sp"
         android:id="@+id/label"
         android:layout_width="fill_parent"
@@ -26,7 +24,6 @@
         android:text="Label"
         android:textColor="@color/white"
         android:textSize="14sp" />
-
 
     <TextView
         android:id="@+id/value"
@@ -39,7 +36,7 @@
         android:gravity="center"
         android:text="Value"
         android:textColor="#FFFF00"
-        android:textSize="36sp" />
+        android:textSize="42sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,7 +47,6 @@
         android:layout_marginBottom="100sp">
 
         <TextView
-
             android:id="@+id/min_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,6 +79,4 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-
-
 </GridLayout>

@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i(LOGGER_TAG,"Activating application.")
                     changeScreenBrightness(1f)
                 }
-                NOTIFICATION_ERROR_CONNECT_BT -> {
+                NOTIFICATION_ERROR_CONNECT -> {
                     toast("Error occurred during. Please check your Bluetooth Connection settings.")
                 }
                 NOTIFICATION_METRICS_VIEW_SHOW, NOTIFICATION_METRICS_VIEW_HIDE -> {
@@ -255,7 +255,7 @@ class MainActivity : AppCompatActivity() {
             addAction(NOTIFICATION_ERROR)
             addAction(NOTIFICATION_CONNECTED)
             addAction(ACTION_BATTERY_CHANGED)
-            addAction(NOTIFICATION_ERROR_CONNECT_BT)
+            addAction(NOTIFICATION_ERROR_CONNECT)
             addAction(NOTIFICATION_DEBUG_VIEW_SHOW)
             addAction(NOTIFICATION_DEBUG_VIEW_HIDE)
             addAction(NOTIFICATION_GAUGE_VIEW_SHOW)

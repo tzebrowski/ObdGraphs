@@ -12,12 +12,14 @@ import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.connection.AdapterConnection
+import org.obd.metrics.connection.TcpConnection
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.statistics.StatisticsRegistry
 import org.openobd2.core.logger.ui.preferences.Preferences
 
-const val NOTIFICATION_ERROR_CONNECT_BT = "data.logger.error.bt.connect"
+
+const val NOTIFICATION_ERROR_CONNECT = "data.logger.error.connect"
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
 const val NOTIFICATION_STOPPED = "data.logger.stopped"
@@ -40,7 +42,7 @@ internal class DataLogger internal constructor() {
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
-            Log.i(LOGGER_TAG, "Start collecting process for the Device: $deviceName")
+            Log.i(LOGGER_TAG, "Start collecting process")
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_CONNECTING
             })
@@ -77,10 +79,9 @@ internal class DataLogger internal constructor() {
         }
 
         override fun onStopped() {
-
             Log.i(
                 LOGGER_TAG,
-                "Collecting process completed for the Device: $deviceName"
+                "Collecting process is completed."
             )
 
             metricsAggregator.reset()
@@ -91,7 +92,7 @@ internal class DataLogger internal constructor() {
         }
 
         override fun onStopping() {
-            Log.i(LOGGER_TAG, "Stop collecting process for the Device: $deviceName")
+            Log.i(LOGGER_TAG, "Stopping collecting process...")
 
             context.sendBroadcast(Intent().apply {
                 action = NOTIFICATION_STOPPING
@@ -123,8 +124,6 @@ internal class DataLogger internal constructor() {
         .observer(metricsAggregator)
         .lifecycle(lifecycle).initialize()
 
-    private lateinit var deviceName: String
-
     fun statistics(): StatisticsRegistry {
         return workflow().statisticsRegistry
     }
@@ -155,29 +154,35 @@ internal class DataLogger internal constructor() {
     }
 
     fun start() {
-
         if (::context.isInitialized) {
-            this.deviceName = Preferences.getAdapterName(context)
-
             val query = query()
             Log.i(LOGGER_TAG, "Selected pids: ${query.pids}")
 
             connection()?.run {
                 workflow().start(this, query, adjustments())
-                Log.i(LOGGER_TAG, "Start collecting process for the device: $deviceName")
+                Log.i(LOGGER_TAG, "Start collecting process")
             }
         }
     }
 
     private fun connection() : AdapterConnection? {
-        try {
-            return BluetoothConnection(deviceName)
-        }catch (e: IllegalStateException){
-            context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_ERROR_CONNECT_BT
-            })
+        return if (Preferences.isEnabled(context, "pref.adapter.connection.tcp.enabled")){
+            val host = Preferences.getString(context, "pref.adapter.connection.tcp.host");
+            val port = Preferences.getString(context, "pref.adapter.connection.tcp.port");
+            Log.i(LOGGER_TAG, "Creating TCP connection: ${host}:${port} ...")
+            TcpConnection.createConnection(host, port!!.toInt())
+        }else {
+            try {
+                val deviceName = Preferences.getAdapterName(context)
+                Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
+                BluetoothConnection(deviceName)
+            }catch (e: IllegalStateException){
+                context.sendBroadcast(Intent().apply {
+                    action = NOTIFICATION_ERROR_CONNECT
+                })
+                null
+            }
         }
-        return null
     }
 
     private fun adjustments(): Adjustments {
