@@ -35,7 +35,7 @@ internal class DashViewAdapter internal constructor(
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
     var mData: MutableList<ObdMetric> = data
-    private val mInflater: LayoutInflater = LayoutInflater.from(context)
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val ctx: Context = context
     private lateinit var colors: ColorTheme
     private lateinit var view: View
@@ -49,7 +49,7 @@ internal class DashViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        view = mInflater.inflate(R.layout.dash_item, parent, false)
+        view = inflater.inflate(R.layout.dash_item, parent, false)
         view.layoutParams.height = height
         colors = Theme.getSelectedTheme(this.ctx)
         return ViewHolder(view)
@@ -131,7 +131,8 @@ internal class DashViewAdapter internal constructor(
                 anim.repeatCount = Animation.INFINITE
 
                 val numOfSegments = 30
-                this.segments = Segments(numOfSegments, pid.min.toDouble(), pid.max.toDouble())
+                this.segments = Segments(numOfSegments, pid.min?.toDouble(), pid.max?.toDouble())
+
                 this.label.text = pid.description
 
                 chart.description = Description()

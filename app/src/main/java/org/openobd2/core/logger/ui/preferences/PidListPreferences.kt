@@ -25,7 +25,7 @@ class PidListPreferences(
             }
 
         val default = if (Preferences.getMode(context!!) =="Generic mode")  hashSetOf<String>().apply {
-            add("4") // Fuel system status
+//            add("4") // Fuel system status
             add("7") // Short trims
             add("8")  // Long trim
 //            add("17") // MAF

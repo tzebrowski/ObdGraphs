@@ -170,7 +170,7 @@ internal class DataLogger internal constructor() {
             val host = Preferences.getString(context, "pref.adapter.connection.tcp.host");
             val port = Preferences.getString(context, "pref.adapter.connection.tcp.port");
             Log.i(LOGGER_TAG, "Creating TCP connection: ${host}:${port} ...")
-            TcpConnection.createConnection(host, port!!.toInt())
+            TcpConnection.of(host, port!!.toInt())
         }else {
             try {
                 val deviceName = Preferences.getAdapterName(context)

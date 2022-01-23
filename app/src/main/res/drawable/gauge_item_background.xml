@@ -14,7 +14,6 @@
         android:useLevel="false">
         <corners android:radius="1dp" />
         <stroke
-
             android:width="2dp"
             android:color="#ff207d94" />
         <gradient

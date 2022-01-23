@@ -33,6 +33,6 @@ class GaugeViewFragment : Fragment() {
     }
 
     private fun spanCount(): Int {
-        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
     }
 }
