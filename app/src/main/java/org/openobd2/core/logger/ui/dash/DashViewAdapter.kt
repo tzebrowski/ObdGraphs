@@ -2,7 +2,6 @@ package org.openobd2.core.logger.ui.dash
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,14 +33,14 @@ internal class DashViewAdapter internal constructor(
     private val height: Int
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
-    var mData: MutableList<ObdMetric> = data
+    var metrics: MutableList<ObdMetric> = data
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val ctx: Context = context
     private lateinit var colors: ColorTheme
     private lateinit var view: View
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(mData, fromPosition, toPosition)
+        Collections.swap(metrics, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
@@ -59,8 +58,7 @@ internal class DashViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
-
-        val commandReply = mData.elementAt(position)
+        val commandReply = metrics.elementAt(position)
         val obdCommand = commandReply.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
@@ -78,7 +76,6 @@ internal class DashViewAdapter internal constructor(
                 dataSet.gradientColors = colors.col1
             }
 
-
             val percent75: Int = (holder.segments.numOfSegments * 75) / 100
             if (segmentNum > percent75) {
 
@@ -94,7 +91,6 @@ internal class DashViewAdapter internal constructor(
                     }
                 }
             } else {
-
                 if (Preferences.isEnabled(ctx, "pref.dash.top.values.blink")) {
                     holder.itemView.clearAnimation()
                 }
@@ -107,9 +103,8 @@ internal class DashViewAdapter internal constructor(
     }
 
     override fun getItemCount(): Int {
-        return mData.size
+        return metrics.size
     }
-
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
@@ -192,7 +187,6 @@ internal class DashViewAdapter internal constructor(
                     val set1 = BarDataSet(values, "")
                     set1.setDrawIcons(false)
                     set1.setDrawValues(false)
-
                     dataSets.add(set1)
                 }
 

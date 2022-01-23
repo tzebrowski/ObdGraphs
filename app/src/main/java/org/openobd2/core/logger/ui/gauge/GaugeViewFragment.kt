@@ -28,11 +28,12 @@ class GaugeViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
-        GaugeViewSetup().onCreateView(viewLifecycleOwner,requireContext(),root,spanCount(), R.id.recycler_view,"pref.gauge.pids.selected",R.layout.gauge_item)
+        GaugeViewSetup().onCreateView(viewLifecycleOwner,requireContext(),root,spanCount(), R.id.recycler_view,"pref.gauge.pids.selected",
+            R.layout.gauge_item, 320)
         return root
     }
 
     private fun spanCount(): Int {
-        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
     }
 }

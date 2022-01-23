@@ -45,7 +45,8 @@ class DashFragment : Fragment() {
 
     private fun setupGaugeRecyclerView() {
         GaugeViewSetup().onCreateView(viewLifecycleOwner,requireContext(),root,2,
-            R.id.gauge_recycler_view, "pref.dash.gauge_pids.selected",R.layout.dash_gauge_item)
+            R.id.gauge_recycler_view, "pref.dash.gauge_pids.selected",
+            R.layout.dash_gauge_item, 200)
     }
 
     private fun setupDashRecyclerView() {
@@ -70,11 +71,11 @@ class DashFragment : Fragment() {
             }
 
             override fun storePreferences(context: Context) {
-                DashPreferences.SERIALIZER.store(context, (metricsViewContext.adapter as DashViewAdapter).mData)
+                DashPreferences.SERIALIZER.store(context, (metricsViewContext.adapter as DashViewAdapter).metrics)
             }
 
             override fun deleteItems(fromPosition: Int) {
-                val metrics = (metricsViewContext.adapter as DashViewAdapter).mData
+                val metrics = (metricsViewContext.adapter as DashViewAdapter).metrics
                 val itemId: ObdMetric = metrics[fromPosition]
                 metrics.remove(itemId)
 

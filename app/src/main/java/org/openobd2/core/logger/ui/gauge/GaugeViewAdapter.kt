@@ -18,14 +18,15 @@ import java.util.*
 class GaugeViewAdapter internal constructor(
     val context: Context,
     val data: MutableList<ObdMetric>,
-    private val resourceId: Int
+    private val resourceId: Int,
+    private val height: Int
 ) :
     RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
-    var mData: MutableList<ObdMetric> = data
+    var metrics: MutableList<ObdMetric> = data
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(mData, fromPosition, toPosition)
+        Collections.swap(metrics, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
@@ -34,8 +35,7 @@ class GaugeViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
-        view.layoutParams.height = 200
-
+        view.layoutParams.height = height
         return ViewHolder(view)
     }
 
@@ -43,7 +43,7 @@ class GaugeViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
-        val metric = mData.elementAt(position)
+        val metric = metrics.elementAt(position)
         holder.labelTextView.text = metric.command.label
         holder.unitsTextView.text = (metric.command as ObdCommand).pid.units
         holder.valueTextView.text = metric.valueToString()
@@ -60,7 +60,7 @@ class GaugeViewAdapter internal constructor(
     }
 
     override fun getItemCount(): Int {
-        return mData.size
+        return metrics.size
     }
 
     inner class ViewHolder internal constructor(itemView: View) :
