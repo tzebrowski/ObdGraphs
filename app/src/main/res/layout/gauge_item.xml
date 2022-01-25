@@ -8,11 +8,9 @@
     android:layout_marginLeft="3dp"
     android:layout_marginEnd="3dp"
     android:layout_marginRight="3dp"
+    android:layout_marginBottom="3dp"
     android:columnCount="3"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
     android:rowCount="3"
-
     tools:context=".ui.gauge.GaugeViewFragment">
 
     <pl.pawelkleczkowski.customgauge.CustomGauge
@@ -36,12 +34,12 @@
         app:gaugeDividerSize="1"
         app:gaugeDividerStep="10"
         app:gaugePointEndColor="@color/md_red_900"
-        app:gaugePointStartColor="@color/md_yellow_200"
+        app:gaugePointStartColor="@color/md_green_200"
         app:gaugeStartAngle="180"
         app:gaugeStrokeCap="BUTT"
-        app:gaugeStrokeColor="@color/md_grey_200"
-        app:gaugeStrokeWidth="4dp"
-        app:gaugeSweepAngle="270" />
+        app:gaugeStrokeColor="@color/md_grey_500"
+        app:gaugeStrokeWidth="6dp"
+        app:gaugeSweepAngle="210" />
 
     <TextView
         android:id="@+id/label"
@@ -49,11 +47,11 @@
         android:layout_height="wrap_content"
         android:layout_row="0"
         android:layout_column="0"
-        android:layout_marginTop="24sp"
+        android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="Label"
         android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/value"
@@ -62,18 +60,18 @@
         android:layout_row="1"
         android:layout_column="0"
         android:layout_marginLeft="1sp"
+        android:layout_marginTop="20sp"
         android:layout_marginRight="1sp"
         android:gravity="center"
         android:text="Value"
         android:textColor="#FFFF00"
-        android:textSize="42sp" />
+        android:textSize="46sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_row="2"
+        android:layout_row="1"
         android:layout_column="0"
-        android:layout_marginBottom="100sp"
         android:orientation="horizontal">
 
         <TextView

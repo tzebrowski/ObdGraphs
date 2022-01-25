@@ -28,8 +28,14 @@ class GaugeViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
-        GaugeViewSetup().onCreateView(viewLifecycleOwner,requireContext(),root,spanCount(), R.id.recycler_view,"pref.gauge.pids.selected",
-            R.layout.gauge_item, 320)
+        GaugeViewSetup.onCreateView(viewLifecycleOwner,
+            requireContext(),
+            root,
+            spanCount(),
+            R.id.recycler_view,
+            "pref.gauge.pids.selected",
+            R.layout.gauge_item,
+            280)
         return root
     }
 

@@ -15,47 +15,64 @@ import org.openobd2.core.logger.ui.preferences.Preferences
 
 class GaugeViewSetup {
 
-    open fun onCreateView(owner: LifecycleOwner, context: Context, root: View, spanCount: Int, recyclerViewId: Int, pids:
-    String, resourceId: Int, itemHeight: Int){
-        val metricsViewContext = MetricsViewContext(owner, Preferences.getLongSet(context, pids))
+    companion object {
+        open fun onCreateView(
+            owner: LifecycleOwner,
+            context: Context,
+            root: View,
+            spanCount: Int,
+            recyclerViewId: Int,
+            pids: String,
+            resourceId: Int,
+            itemHeight: Int
+        ) {
+            val metricsViewContext =
+                MetricsViewContext(owner, Preferences.getLongSet(context, pids))
 
-        val sortOrderMap = GaugePreferences.SERIALIZER.load(context)?.map {
-            it.id to it.position
-        }!!.toMap()
+            val sortOrderMap = GaugePreferences.SERIALIZER.load(context)?.map {
+                it.id to it.position
+            }!!.toMap()
 
-        val metrics = metricsViewContext.findMetrics(sortOrderMap)
+            val metrics = metricsViewContext.findMetrics(sortOrderMap)
 
-        metricsViewContext.adapter = GaugeViewAdapter(context, metrics,resourceId, itemHeight)
-        val recyclerView: RecyclerView = root.findViewById(recyclerViewId)
-        recyclerView.layoutManager = GridLayoutManager(context,spanCount)
-        recyclerView.adapter = metricsViewContext.adapter
+            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId, itemHeight)
+            val recyclerView: RecyclerView = root.findViewById(recyclerViewId)
+            recyclerView.layoutManager = GridLayoutManager(context, spanCount)
+            recyclerView.adapter = metricsViewContext.adapter
 
-        val dragCallback = DragManageAdapter(
-            context,
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.START or ItemTouchHelper.END,
-            object : SwappableAdapter {
-                override fun swapItems(fromPosition: Int, toPosition: Int) {
-                    (metricsViewContext.adapter as GaugeViewAdapter).swapItems(fromPosition, toPosition)
+            val dragCallback = DragManageAdapter(
+                context,
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.START or ItemTouchHelper.END,
+                object : SwappableAdapter {
+                    override fun swapItems(fromPosition: Int, toPosition: Int) {
+                        (metricsViewContext.adapter as GaugeViewAdapter).swapItems(
+                            fromPosition,
+                            toPosition
+                        )
+                    }
+
+                    override fun deleteItems(fromPosition: Int) {
+                    }
+
+                    override fun storePreferences(context: Context) {
+                        GaugePreferences.SERIALIZER.store(
+                            context,
+                            (metricsViewContext.adapter as GaugeViewAdapter).metrics
+                        )
+                    }
                 }
-
-                override fun deleteItems(fromPosition: Int) {
-                }
-
-                override fun storePreferences(context: Context) {
-                    GaugePreferences.SERIALIZER.store(context, (metricsViewContext.adapter as GaugeViewAdapter).metrics)
-                }
-            }
-        )
-
-        ItemTouchHelper(dragCallback).attachToRecyclerView(recyclerView)
-        recyclerView.addOnItemTouchListener(
-            ToggleToolbarDoubleClickListener(
-                context
             )
-        )
 
-        metricsViewContext.adapter.notifyDataSetChanged()
-        metricsViewContext.observerMetrics(metrics)
+            ItemTouchHelper(dragCallback).attachToRecyclerView(recyclerView)
+            recyclerView.addOnItemTouchListener(
+                ToggleToolbarDoubleClickListener(
+                    context
+                )
+            )
+
+            metricsViewContext.adapter.notifyDataSetChanged()
+            metricsViewContext.observerMetrics(metrics)
+        }
     }
 }

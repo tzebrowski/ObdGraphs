@@ -25,6 +25,7 @@ class GaugeViewAdapter internal constructor(
     var metrics: MutableList<ObdMetric> = data
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
+
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(metrics, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
