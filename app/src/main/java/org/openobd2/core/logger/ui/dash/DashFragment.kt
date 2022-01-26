@@ -76,11 +76,11 @@ class DashFragment : Fragment() {
             }
 
             override fun storePreferences(context: Context) {
-                DashPreferences.SERIALIZER.store(context, (metricsViewContext.adapter as DashViewAdapter).metrics)
+                DashPreferences.SERIALIZER.store(context, (metricsViewContext.adapter as DashViewAdapter).data)
             }
 
             override fun deleteItems(fromPosition: Int) {
-                val metrics = (metricsViewContext.adapter as DashViewAdapter).metrics
+                val metrics = (metricsViewContext.adapter as DashViewAdapter).data
                 val itemId: ObdMetric = metrics[fromPosition]
                 metrics.remove(itemId)
 

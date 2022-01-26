@@ -58,7 +58,7 @@ class GaugeViewSetup {
                     override fun storePreferences(context: Context) {
                         GaugePreferences.SERIALIZER.store(
                             context,
-                            (metricsViewContext.adapter as GaugeViewAdapter).metrics
+                            (metricsViewContext.adapter as GaugeViewAdapter).data
                         )
                     }
                 }

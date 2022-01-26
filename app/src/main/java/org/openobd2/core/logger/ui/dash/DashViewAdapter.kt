@@ -28,19 +28,17 @@ import kotlin.collections.ArrayList
 
 
 internal class DashViewAdapter internal constructor(
-    context: Context,
-    data: MutableList<ObdMetric>,
+    private val context: Context,
+    val data: MutableList<ObdMetric>,
     private val height: Int
 ) :
     RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
-    var metrics: MutableList<ObdMetric> = data
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private val ctx: Context = context
     private lateinit var colors: ColorTheme
     private lateinit var view: View
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(metrics, fromPosition, toPosition)
+        Collections.swap(data, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
@@ -50,7 +48,7 @@ internal class DashViewAdapter internal constructor(
     ): ViewHolder {
         view = inflater.inflate(R.layout.dash_item, parent, false)
         view.layoutParams.height = height
-        colors = Theme.getSelectedTheme(this.ctx)
+        colors = Theme.getSelectedTheme(context)
         return ViewHolder(view)
     }
 
@@ -58,7 +56,7 @@ internal class DashViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
-        val commandReply = metrics.elementAt(position)
+        val commandReply = data.elementAt(position)
         val obdCommand = commandReply.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
@@ -79,19 +77,19 @@ internal class DashViewAdapter internal constructor(
             val percent75: Int = (holder.segments.numOfSegments * 75) / 100
             if (segmentNum > percent75) {
 
-                if (Preferences.isEnabled(ctx, "pref.dash.top.values.red.color")) {
+                if (Preferences.isEnabled(context, "pref.dash.top.values.red.color")) {
                     (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                         dataSet.gradientColors = colors.col2
                     }
                 }
-                if (Preferences.isEnabled(ctx, "pref.dash.top.values.blink")) {
+                if (Preferences.isEnabled(context, "pref.dash.top.values.blink")) {
                     if (!holder.anim.hasStarted() || holder.anim.hasEnded()) {
                         holder.itemView.startAnimation(holder.anim)
                     }
                 }
             } else {
-                if (Preferences.isEnabled(ctx, "pref.dash.top.values.blink")) {
+                if (Preferences.isEnabled(context, "pref.dash.top.values.blink")) {
                     holder.itemView.clearAnimation()
                 }
             }
@@ -103,7 +101,7 @@ internal class DashViewAdapter internal constructor(
     }
 
     override fun getItemCount(): Int {
-        return metrics.size
+        return data.size
     }
 
     inner class ViewHolder internal constructor(itemView: View) :

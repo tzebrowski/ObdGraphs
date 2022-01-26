@@ -6,6 +6,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.widget.TextView
 
 class SpannableStringUtils {
     companion object {
@@ -30,7 +31,31 @@ class SpannableStringUtils {
             )
             return valSpanString
         }
-
+        fun setHighLightedText(tv: TextView, textToHighlight: String, size: Float, color: Int) {
+            val tvt = tv.text.toString()
+            var ofe = tvt.indexOf(textToHighlight, 0)
+            val wordToSpan: Spannable = SpannableString(tv.text)
+            var ofs = 0
+            while (ofs < tvt.length && ofe != -1) {
+                ofe = tvt.indexOf(textToHighlight, ofs)
+                if (ofe == -1) break else {
+                    // you can change or add more span as per your need
+                    wordToSpan.setSpan(
+                        RelativeSizeSpan(size),
+                        ofe,
+                        ofe + textToHighlight.length,
+                        0
+                    ) // set size
+                    wordToSpan.setSpan(
+                        ForegroundColorSpan(color),
+                        ofe,
+                        ofe + textToHighlight.length,
+                        0
+                    ) // set color
+                    tv.setText(wordToSpan, TextView.BufferType.SPANNABLE)
+                }
+                ofs = ofe + 1
+            }
+        }
     }
-
 }

@@ -38,6 +38,7 @@
         android:textColor="#FFFF00"
         android:textSize="34sp" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -59,12 +60,12 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/unit"
+            android:id="@+id/avg_value"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Units"
+            android:text="avg"
             android:textColor="#01804F"
             android:textSize="18sp" />
 
@@ -75,7 +76,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="max"
-            android:textColor="#5CFFFF00"
+            android:textColor="@color/teal_700"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>

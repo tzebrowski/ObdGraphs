@@ -2,6 +2,7 @@ package org.openobd2.core.logger.ui.gauge
 
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,23 +12,24 @@ import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
+import org.openobd2.core.logger.ui.common.SpannableStringUtils
+import org.openobd2.core.logger.ui.dash.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
 
 
 class GaugeViewAdapter internal constructor(
-    val context: Context,
+    context: Context,
     val data: MutableList<ObdMetric>,
     private val resourceId: Int,
     private val height: Int
 ) :
     RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
-    var metrics: MutableList<ObdMetric> = data
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(metrics, fromPosition, toPosition)
+        Collections.swap(data, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
 
@@ -44,10 +46,11 @@ class GaugeViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
-        val metric = metrics.elementAt(position)
+        val metric = data.elementAt(position)
         holder.labelTextView.text = metric.command.label
-        holder.unitsTextView.text = (metric.command as ObdCommand).pid.units
-        holder.valueTextView.text = metric.valueToString()
+        holder.valueTextView.text = metric.valueToString() + " " + (metric.command as ObdCommand).pid.units.toString()
+        SpannableStringUtils.setHighLightedText(holder.valueTextView,(metric.command as ObdCommand).pid.units.toString(),0.5f,
+            Color.parseColor("#01804F"))
 
         var gauge: CustomGauge? =  holder.itemView.findViewById(R.id.gauge_view_id)
         gauge?.startValue = (metric.command as ObdCommand).pid.min?.toInt()
@@ -58,17 +61,18 @@ class GaugeViewAdapter internal constructor(
             DataLogger.INSTANCE.statistics().findBy(metric.command.pid)
         holder.minTextView.text = statistic.min.toString()
         holder.maxTextView.text = statistic.max.toString()
+        holder.avgValueTextView.text = statistic.mean.round(2).toString()
     }
 
     override fun getItemCount(): Int {
-        return metrics.size
+        return data.size
     }
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var labelTextView: TextView = itemView.findViewById(R.id.label)
         var valueTextView: TextView = itemView.findViewById(R.id.value)
-        var unitsTextView: TextView = itemView.findViewById(R.id.unit)
+        var avgValueTextView: TextView = itemView.findViewById(R.id.avg_value)
         var minTextView: TextView = itemView.findViewById(R.id.min_value)
         var maxTextView: TextView = itemView.findViewById(R.id.max_value)
     }
