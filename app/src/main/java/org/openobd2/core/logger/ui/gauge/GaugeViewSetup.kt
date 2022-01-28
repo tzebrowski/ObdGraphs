@@ -16,26 +16,25 @@ import org.openobd2.core.logger.ui.preferences.Preferences
 class GaugeViewSetup {
 
     companion object {
-        open fun onCreateView(
+
+        fun onCreateView(
             owner: LifecycleOwner,
             context: Context,
             root: View,
             spanCount: Int,
             recyclerViewId: Int,
-            pids: String,
-            resourceId: Int,
-            itemHeight: Int
+            pidPreferencesId: String,
+            resourceId: Int
         ) {
             val metricsViewContext =
-                MetricsViewContext(owner, Preferences.getLongSet(context, pids))
+                MetricsViewContext(owner, Preferences.getLongSet(context, pidPreferencesId))
 
             val sortOrderMap = GaugePreferences.SERIALIZER.load(context)?.map {
                 it.id to it.position
             }!!.toMap()
 
-            val metrics = metricsViewContext.findMetrics(sortOrderMap)
-
-            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId, itemHeight)
+            val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap)
+            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId)
             val recyclerView: RecyclerView = root.findViewById(recyclerViewId)
             recyclerView.layoutManager = GridLayoutManager(context, spanCount)
             recyclerView.adapter = metricsViewContext.adapter

@@ -22,8 +22,9 @@ import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.preferences.Preferences
-import java.util.*
+import java.util.Collections
 import kotlin.collections.ArrayList
 
 
@@ -56,11 +57,11 @@ internal class DashViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
-        val commandReply = data.elementAt(position)
-        val obdCommand = commandReply.command as ObdCommand
+        val metric = data.elementAt(position)
+        val obdCommand = metric.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        val segmentNum: Int = holder.segments.indexOf(commandReply.valueToDouble())
+        val segmentNum: Int = holder.segments.indexOf(metric.valueToDouble())
         (segmentNum > 0).apply {
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
@@ -95,9 +96,11 @@ internal class DashViewAdapter internal constructor(
             }
         }
         holder.chart.invalidate()
-        holder.units.text = (obdCommand.pid).units
-        holder.value.text = commandReply.valueToString()
         holder.label.text = obdCommand.pid.description
+        val units = (metric.command as ObdCommand).pid.units
+        holder.value.text = metric.valueToString() + " " + units
+        SpannableStringUtils.setHighLightedText(holder.value, units,0.3f,
+            Color.parseColor("#01804F"))
     }
 
     override fun getItemCount(): Int {
@@ -109,8 +112,6 @@ internal class DashViewAdapter internal constructor(
         var chart: BarChart = itemView.findViewById(R.id.chart)
         var label: TextView = itemView.findViewById(R.id.dash_label)
         var value: TextView = itemView.findViewById(R.id.dash_value)
-        var units: TextView = itemView.findViewById(R.id.dash_units)
-
         var anim: Animation = AlphaAnimation(0.0f, 1.0f)
 
         lateinit var segments: Segments

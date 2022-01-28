@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.logger.R
 
+
 class GaugeViewFragment : Fragment() {
     lateinit var root: View
 
@@ -17,7 +18,7 @@ class GaugeViewFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
         root.let {
             val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-            recyclerView.layoutManager = GridLayoutManager(root.context, spanCount())
+            recyclerView.layoutManager = GridLayoutManager(context, spanCount())
             recyclerView.refreshDrawableState()
         }
     }
@@ -28,18 +29,19 @@ class GaugeViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
-        GaugeViewSetup.onCreateView(viewLifecycleOwner,
+        GaugeViewSetup.onCreateView(
+            viewLifecycleOwner,
             requireContext(),
             root,
             spanCount(),
             R.id.recycler_view,
             "pref.gauge.pids.selected",
-            R.layout.gauge_item,
-            280)
+            R.layout.gauge_item
+        )
         return root
     }
 
     private fun spanCount(): Int {
-        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 2
+        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
     }
 }

@@ -50,8 +50,7 @@ class DashFragment : Fragment() {
             root,2,
             R.id.gauge_recycler_view,
             "pref.dash.gauge_pids.selected",
-            R.layout.dash_gauge_item,
-            200)
+            R.layout.dash_gauge_item)
     }
 
     private fun setupDashRecyclerView() {
@@ -61,7 +60,7 @@ class DashFragment : Fragment() {
             it.id to it.position
         }!!.toMap()
 
-        val metrics = metricsViewContext.findMetrics(sortOrderMap)
+        val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap)
         val itemHeight = calculateItemHeight(metrics)
 
         metricsViewContext.adapter = DashViewAdapter(root.context, metrics, itemHeight)

@@ -15,16 +15,26 @@ import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.dash.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
-import java.util.*
+import java.util.Collections
 
+
+private val DEFAULT_HEIGHT = 230
 
 class GaugeViewAdapter internal constructor(
     context: Context,
     val data: MutableList<ObdMetric>,
-    private val resourceId: Int,
-    private val height: Int
-) :
-    RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
+    private val resourceId: Int
+) : RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
+
+    inner class ViewHolder internal constructor(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
+        var label: TextView = itemView.findViewById(R.id.label)
+        var value: TextView = itemView.findViewById(R.id.value)
+        var avgValue: TextView = itemView.findViewById(R.id.avg_value)
+        var minValue: TextView = itemView.findViewById(R.id.min_value)
+        var maxValue: TextView = itemView.findViewById(R.id.max_value)
+    }
+
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
 
@@ -38,7 +48,13 @@ class GaugeViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
-        view.layoutParams.height = height
+        val measuredHeight = (parent.measuredHeight /2)
+        if (measuredHeight > 0) {
+            view.layoutParams.height = measuredHeight
+        }else {
+            view.layoutParams.height = DEFAULT_HEIGHT
+        }
+
         return ViewHolder(view)
     }
 
@@ -47,33 +63,29 @@ class GaugeViewAdapter internal constructor(
         position: Int
     ) {
         val metric = data.elementAt(position)
-        holder.labelTextView.text = metric.command.label
-        holder.valueTextView.text = metric.valueToString() + " " + (metric.command as ObdCommand).pid.units.toString()
-        SpannableStringUtils.setHighLightedText(holder.valueTextView,(metric.command as ObdCommand).pid.units.toString(),0.5f,
-            Color.parseColor("#01804F"))
+        holder.label.text = metric.command.label
 
-        var gauge: CustomGauge? =  holder.itemView.findViewById(R.id.gauge_view_id)
-        gauge?.startValue = (metric.command as ObdCommand).pid.min?.toInt()
-        gauge?.endValue = (metric.command as ObdCommand).pid.max?.toInt()
-        gauge?.value = metric.valueToLong()?.toInt()
+        val units = (metric.command as ObdCommand).pid.units
+        holder.value.text = metric.valueToString() + " " + units
 
-        val statistic =
-            DataLogger.INSTANCE.statistics().findBy(metric.command.pid)
-        holder.minTextView.text = statistic.min.toString()
-        holder.maxTextView.text = statistic.max.toString()
-        holder.avgValueTextView.text = statistic.mean.round(2).toString()
+        val statistic = DataLogger.INSTANCE.statistics().findBy(metric.command.pid)
+        holder.minValue.text = statistic.min.toString()
+        holder.maxValue.text = statistic.max.toString()
+        holder.avgValue.text = statistic.mean.round(2).toString()
+
+        (holder.itemView.findViewById(R.id.gauge_view) as CustomGauge?)?.apply {
+            startValue = (metric.command as ObdCommand).pid.min.toInt()
+            endValue = (metric.command as ObdCommand).pid.max.toInt()
+            value = metric.valueToLong().toInt()
+        }
+
+        SpannableStringUtils.setHighLightedText(
+            holder.value, units, 0.3f,
+            Color.parseColor("#01804F")
+        )
     }
 
     override fun getItemCount(): Int {
         return data.size
-    }
-
-    inner class ViewHolder internal constructor(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-        var labelTextView: TextView = itemView.findViewById(R.id.label)
-        var valueTextView: TextView = itemView.findViewById(R.id.value)
-        var avgValueTextView: TextView = itemView.findViewById(R.id.avg_value)
-        var minTextView: TextView = itemView.findViewById(R.id.min_value)
-        var maxTextView: TextView = itemView.findViewById(R.id.max_value)
     }
 }

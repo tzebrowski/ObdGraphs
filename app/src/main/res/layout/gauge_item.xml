@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginStart="3dp"
-    android:layout_marginLeft="3dp"
+    android:layout_marginLeft="30dp"
     android:layout_marginEnd="3dp"
-    android:layout_marginRight="10dp"
+    android:layout_marginRight="30dp"
     android:layout_marginBottom="3dp"
     android:columnCount="3"
     android:rowCount="3"
     tools:context=".ui.gauge.GaugeViewFragment">
 
     <pl.pawelkleczkowski.customgauge.CustomGauge
-        android:id="@+id/gauge_view_id"
+        android:id="@+id/gauge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_row="0"
@@ -41,31 +41,35 @@
         app:gaugeStrokeWidth="6dp"
         app:gaugeSweepAngle="210" />
 
-    <TextView
-        android:id="@+id/label"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_row="0"
-        android:layout_column="0"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:text="Label"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/value"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_row="1"
         android:layout_column="0"
         android:layout_marginLeft="1sp"
-        android:layout_marginTop="20sp"
+        android:layout_marginTop="30sp"
         android:layout_marginRight="1sp"
+        android:layout_marginBottom="100dp"
         android:gravity="center"
-        android:text="Value"
-        android:textColor="#FFFF00"
-        android:textSize="46sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Label"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:text="Value"
+            android:textColor="#FFFF00"
+            android:textSize="46sp" />
+    </LinearLayout>
 
 
     <LinearLayout
@@ -73,6 +77,7 @@
         android:layout_height="match_parent"
         android:layout_row="1"
         android:layout_column="0"
+        android:layout_marginTop="70sp"
         android:orientation="horizontal">
 
         <TextView
@@ -104,7 +109,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="max"
-            android:textColor="@color/teal_700"
+            android:textColor="#5CFFFF00"
             android:textSize="20sp"
             android:textStyle="bold" />
 

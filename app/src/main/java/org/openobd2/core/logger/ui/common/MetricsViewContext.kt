@@ -10,7 +10,7 @@ import org.openobd2.core.logger.bl.MetricsAggregator
 class MetricsViewContext (private val owner: LifecycleOwner, private val visiblePids:  Set<Long>)  {
     lateinit var adapter: RecyclerView.Adapter<*>
 
-    fun findMetrics(sortOrder: Map<Long, Int>): MutableList<ObdMetric> {
+    fun findMetricsToDisplay(sortOrder: Map<Long, Int>): MutableList<ObdMetric> {
 
         val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
 
