@@ -50,34 +50,24 @@
         <TextView
             android:id="@+id/min_value"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginLeft="4sp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left"
             android:text="min"
             android:textColor="#5CFFFF00"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/avg_value"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="avg"
-            android:textColor="#01804F"
-            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/max_value"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left"
             android:text="max"
             android:textColor="#5CFFFF00"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
 

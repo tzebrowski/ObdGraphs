@@ -15,7 +15,7 @@ import org.obd.metrics.connection.AdapterConnection
 import org.obd.metrics.connection.TcpConnection
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
-import org.obd.metrics.statistics.StatisticsRegistry
+import org.obd.metrics.diagnostic.Diagnostics
 import org.openobd2.core.logger.ui.preferences.Preferences
 
 
@@ -124,8 +124,8 @@ internal class DataLogger internal constructor() {
         .observer(metricsAggregator)
         .lifecycle(lifecycle).initialize()
 
-    fun statistics(): StatisticsRegistry {
-        return workflow().statisticsRegistry
+    fun diagnostics(): Diagnostics {
+        return workflow().diagnostics
     }
 
     fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {

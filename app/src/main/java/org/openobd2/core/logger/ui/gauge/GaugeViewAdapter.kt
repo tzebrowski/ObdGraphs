@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.diagnostic.RateType
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
@@ -17,8 +18,8 @@ import org.openobd2.core.logger.ui.dash.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.Collections
 
-
 private val DEFAULT_HEIGHT = 230
+private val LABEL_COLOR = "#01804F"
 
 class GaugeViewAdapter internal constructor(
     context: Context,
@@ -30,9 +31,10 @@ class GaugeViewAdapter internal constructor(
         RecyclerView.ViewHolder(itemView) {
         var label: TextView = itemView.findViewById(R.id.label)
         var value: TextView = itemView.findViewById(R.id.value)
-        var avgValue: TextView = itemView.findViewById(R.id.avg_value)
+        var avgValue: TextView? = itemView.findViewById(R.id.avg_value)
         var minValue: TextView = itemView.findViewById(R.id.min_value)
         var maxValue: TextView = itemView.findViewById(R.id.max_value)
+        var commandRate: TextView? = itemView.findViewById(R.id.command_rate)
     }
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -65,24 +67,55 @@ class GaugeViewAdapter internal constructor(
         val metric = data.elementAt(position)
         holder.label.text = metric.command.label
 
-        val units = (metric.command as ObdCommand).pid.units
-        holder.value.text = metric.valueToString() + " " + units
+        val histogram = DataLogger.INSTANCE.diagnostics().findHistogramBy(metric.command.pid)
 
-        val statistic = DataLogger.INSTANCE.statistics().findBy(metric.command.pid)
-        holder.minValue.text = statistic.min.toString()
-        holder.maxValue.text = statistic.max.toString()
-        holder.avgValue.text = statistic.mean.round(2).toString()
+        holder.value.run {
+            val units = (metric.command as ObdCommand).pid.units
+            text = metric.valueToString() + " " + units
+            SpannableStringUtils.setHighLightedText(
+                this, units, 0.3f,
+                Color.parseColor(LABEL_COLOR)
+            )
+        }
+
+        holder.minValue.run {
+            text = "min " + histogram.min
+            SpannableStringUtils.setHighLightedText(
+                this, "min", 0.5f,
+                Color.parseColor(LABEL_COLOR)
+            )
+        }
+
+        holder.maxValue.run {
+            text = "max " + histogram.max
+            SpannableStringUtils.setHighLightedText(
+                this, "max", 0.5f,
+                Color.parseColor(LABEL_COLOR)
+            )
+        }
+
+        holder.avgValue?.run {
+            text = "avg " +  histogram.mean.round(2).toString()
+            SpannableStringUtils.setHighLightedText(
+                this, "avg", 0.5f,
+                Color.parseColor(LABEL_COLOR)
+            )
+        }
+
+        holder.commandRate?.run {
+            val rate = DataLogger.INSTANCE.diagnostics().getRateBy(RateType.MEAN, metric.command.pid)
+            text = "rate " + rate.round(2)
+            SpannableStringUtils.setHighLightedText(
+                this, "rate", 0.4f,
+                Color.parseColor(LABEL_COLOR)
+            )
+        }
 
         (holder.itemView.findViewById(R.id.gauge_view) as CustomGauge?)?.apply {
             startValue = (metric.command as ObdCommand).pid.min.toInt()
             endValue = (metric.command as ObdCommand).pid.max.toInt()
             value = metric.valueToLong().toInt()
         }
-
-        SpannableStringUtils.setHighLightedText(
-            holder.value, units, 0.3f,
-            Color.parseColor("#01804F")
-        )
     }
 
     override fun getItemCount(): Int {
