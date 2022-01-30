@@ -47,10 +47,11 @@ class DashFragment : Fragment() {
         GaugeViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
-            root,2,
+            root,
             R.id.gauge_recycler_view,
             "pref.dash.gauge_pids.selected",
-            R.layout.dash_gauge_item)
+            R.layout.dash_gauge_item,
+            spanCount = 2)
     }
 
     private fun setupDashRecyclerView() {

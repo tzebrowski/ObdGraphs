@@ -55,6 +55,17 @@
 
         </PreferenceCategory>
 
+        <PreferenceCategory
+            android:key="diagnosis"
+            android:title="Diagnosis">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="Show commands freq"
+                android:key="pref.adapter.diagnosis.command.frequency.enabled"
+                android:summary="Show commands freq"
+                android:title="Show commands freq" />
+        </PreferenceCategory>
+
 
         <PreferenceCategory android:title="General settings">
 

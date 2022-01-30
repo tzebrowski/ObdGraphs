@@ -15,11 +15,13 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.dash.round
+import org.openobd2.core.logger.ui.preferences.Preferences
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.Collections
 
 private val DEFAULT_HEIGHT = 230
 private val LABEL_COLOR = "#01804F"
+private val COMMANDS_RATE_PREF_KEY = "pref.adapter.diagnosis.command.frequency.enabled"
 
 class GaugeViewAdapter internal constructor(
     context: Context,
@@ -50,11 +52,14 @@ class GaugeViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
-        val measuredHeight = (parent.measuredHeight /2)
-        if (measuredHeight > 0) {
-            view.layoutParams.height = measuredHeight
-        }else {
-            view.layoutParams.height = DEFAULT_HEIGHT
+
+        (parent.measuredHeight / 1.8).run {
+            if (this > 0) {
+                if (data.size > 2)
+                    view.layoutParams.height = this.toInt()
+            } else {
+                view.layoutParams.height = DEFAULT_HEIGHT
+            }
         }
 
         return ViewHolder(view)
@@ -67,8 +72,6 @@ class GaugeViewAdapter internal constructor(
         val metric = data.elementAt(position)
         holder.label.text = metric.command.label
 
-        val histogram = DataLogger.INSTANCE.diagnostics().findHistogramBy(metric.command.pid)
-
         holder.value.run {
             val units = (metric.command as ObdCommand).pid.units
             text = metric.valueToString() + " " + units
@@ -77,6 +80,8 @@ class GaugeViewAdapter internal constructor(
                 Color.parseColor(LABEL_COLOR)
             )
         }
+
+        val histogram = DataLogger.INSTANCE.diagnostics().findHistogramBy(metric.command.pid)
 
         holder.minValue.run {
             text = "min " + histogram.min
@@ -103,12 +108,17 @@ class GaugeViewAdapter internal constructor(
         }
 
         holder.commandRate?.run {
-            val rate = DataLogger.INSTANCE.diagnostics().getRateBy(RateType.MEAN, metric.command.pid)
-            text = "rate " + rate.round(2)
-            SpannableStringUtils.setHighLightedText(
-                this, "rate", 0.4f,
-                Color.parseColor(LABEL_COLOR)
-            )
+            if (Preferences.isEnabled(context, COMMANDS_RATE_PREF_KEY)){
+                this.visibility = View.VISIBLE
+                val rate = DataLogger.INSTANCE.diagnostics().getRateBy(RateType.MEAN, metric.command.pid)
+                text = "rate " + rate.get().value.round(2)
+                SpannableStringUtils.setHighLightedText(
+                    this, "rate", 0.4f,
+                    Color.parseColor(LABEL_COLOR)
+                )
+            } else {
+              this.visibility = View.INVISIBLE
+            }
         }
 
         (holder.itemView.findViewById(R.id.gauge_view) as CustomGauge?)?.apply {

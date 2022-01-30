@@ -84,6 +84,7 @@ internal class DashViewAdapter internal constructor(
                         dataSet.gradientColors = colors.col2
                     }
                 }
+
                 if (Preferences.isEnabled(context, "pref.dash.top.values.blink")) {
                     if (!holder.anim.hasStarted() || holder.anim.hasEnded()) {
                         holder.itemView.startAnimation(holder.anim)
@@ -119,64 +120,64 @@ internal class DashViewAdapter internal constructor(
 
         fun buildChart(pid: PidDefinition) {
             if (!initialized) {
-                anim.duration = 300
-                anim.startOffset = 20
-                anim.repeatMode = Animation.REVERSE
-                anim.repeatCount = Animation.INFINITE
-
+                anim.run{
+                    duration = 300
+                    startOffset = 20
+                    repeatMode = Animation.REVERSE
+                    repeatCount = Animation.INFINITE
+                }
                 val numOfSegments = 30
                 this.segments = Segments(numOfSegments, pid.min?.toDouble(), pid.max?.toDouble())
 
                 this.label.text = pid.description
+                chart.run {
+                    description = Description()
+                    legend.isEnabled = false
+                    setDrawBarShadow(false)
+                    setDrawValueAboveBar(false)
+                    setTouchEnabled(false)
+                    setDrawBorders(false)
+                    setAddStatesFromChildren(false)
+                    description.isEnabled = false
+                    setPinchZoom(false)
+                    setDrawGridBackground(false)
 
-                chart.description = Description()
-                chart.legend.isEnabled = false
+                    xAxis.run {
+                        spaceMax = 0.1f
+                        spaceMin = 0.1f
 
-                chart.setDrawBarShadow(false)
-                chart.setDrawValueAboveBar(false)
-                chart.setTouchEnabled(false)
+                        position = XAxis.XAxisPosition.BOTTOM
+                        setDrawGridLines(false)
+                        setDrawLabels(true)
+                        setDrawGridLinesBehindData(false)
+                        setDrawLimitLinesBehindData(false)
+                        setDrawAxisLine(false)
+                        setCenterAxisLabels(false)
+                    }
+                    axisLeft.run {
+                        axisMinimum = pid.min.toFloat()
+                        setDrawGridLines(false)
+                        setDrawTopYLabelEntry(false)
+                        setDrawAxisLine(false)
+                        setDrawGridLinesBehindData(false)
+                        setDrawLabels(false)
+                        setDrawZeroLine(false)
+                        setDrawLimitLinesBehindData(false)
 
-                chart.setDrawBorders(false)
-                chart.setAddStatesFromChildren(false)
-
-                chart.description.isEnabled = false
-                chart.setPinchZoom(false)
-                chart.setDrawGridBackground(false)
-
-                val xAxis = chart.xAxis
-                xAxis.spaceMax = 0.1f
-                xAxis.spaceMin = 0.1f
-
-                xAxis.position = XAxis.XAxisPosition.BOTTOM
-                xAxis.setDrawGridLines(false)
-                xAxis.setDrawLabels(true)
-                xAxis.setDrawGridLinesBehindData(false)
-                xAxis.setDrawLimitLinesBehindData(false)
-                xAxis.setDrawAxisLine(false)
-                xAxis.setCenterAxisLabels(false)
-
-                val leftAxis = chart.axisLeft
-                leftAxis.axisMinimum = pid.min.toFloat()
-                leftAxis.setDrawGridLines(false)
-                leftAxis.setDrawTopYLabelEntry(false)
-                leftAxis.setDrawAxisLine(false)
-                leftAxis.setDrawGridLinesBehindData(false)
-                leftAxis.setDrawLabels(false)
-                leftAxis.setDrawZeroLine(false)
-                leftAxis.setDrawLimitLinesBehindData(false)
-
-                leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
-                leftAxis.spaceTop = 15f
-
-                val rightAxis = chart.axisRight
-                rightAxis.setDrawGridLines(false)
-
-                val legend = chart.legend
-                legend.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
-                legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
-                legend.orientation = Legend.LegendOrientation.HORIZONTAL
-                legend.setDrawInside(false)
-                legend.form = Legend.LegendForm.SQUARE
+                        setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
+                        spaceTop = 15f
+                    }
+                    legend.run {
+                        verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+                        horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+                        orientation = Legend.LegendOrientation.HORIZONTAL
+                        setDrawInside(false)
+                        form = Legend.LegendForm.SQUARE
+                    }
+                    axisRight.run{
+                        setDrawGridLines(false)
+                    }
+                }
 
                 val dataSets: ArrayList<IBarDataSet> = ArrayList()
 

@@ -33,10 +33,10 @@ class GaugeViewFragment : Fragment() {
             viewLifecycleOwner,
             requireContext(),
             root,
-            spanCount(),
             R.id.recycler_view,
             "pref.gauge.pids.selected",
-            R.layout.gauge_item
+            R.layout.gauge_item,
+            spanCount = null
         )
         return root
     }

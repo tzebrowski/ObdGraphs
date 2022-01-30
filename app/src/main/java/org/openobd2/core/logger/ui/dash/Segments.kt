@@ -17,13 +17,8 @@ internal class Segments(
 ) {
 
     class Segment(from: Double, to: Double) {
-        var from: Double
-        var to: Double
-
-        init {
-            this.from = from.round(2)
-            this.to = to.round(2)
-        }
+        var from: Double = from.round(2)
+        var to: Double = to.round(2)
 
         override fun toString(): String {
             return "$from - $to \n"
