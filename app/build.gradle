@@ -58,6 +58,7 @@ dependencies {
     implementation 'io.apisense:rhino-android:1.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
-    implementation ('io.github.tzebrowski:obd-metrics:3.0.0-SNAPSHOT'){ changing = true }
+    implementation 'com.dynatrace.dynahist:dynahist:1.1'
+    implementation ('io.github.tzebrowski:obd-metrics:3.0.2-SNAPSHOT'){ changing = true }
     implementation 'pl.pawelkleczkowski.customgauge:CustomGauge:1.0.4'
 }

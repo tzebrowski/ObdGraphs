@@ -86,11 +86,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4sp"
             android:layout_weight="1"
-            android:gravity="right"
+            android:gravity="center"
             android:text="min"
             android:textColor="#5CFFFF00"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/avg_value"
@@ -107,7 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
+            android:gravity="center|left"
             android:text="max"
             android:textColor="#5CFFFF00"
             android:textSize="22sp"

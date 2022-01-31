@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
+import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
@@ -84,7 +85,8 @@ class GaugeViewAdapter internal constructor(
         val histogram = DataLogger.INSTANCE.diagnostics().findHistogramBy(metric.command.pid)
 
         holder.minValue.run {
-            text = "min " + histogram.min
+            text = "min\n ${convert(metric, histogram.min)}"
+
             SpannableStringUtils.setHighLightedText(
                 this, "min", 0.5f,
                 Color.parseColor(LABEL_COLOR)
@@ -92,7 +94,7 @@ class GaugeViewAdapter internal constructor(
         }
 
         holder.maxValue.run {
-            text = "max " + histogram.max
+            text = "max\n  ${convert(metric, histogram.max)} "
             SpannableStringUtils.setHighLightedText(
                 this, "max", 0.5f,
                 Color.parseColor(LABEL_COLOR)
@@ -100,7 +102,7 @@ class GaugeViewAdapter internal constructor(
         }
 
         holder.avgValue?.run {
-            text = "avg " +  histogram.mean.round(2).toString()
+            text = "avg\n ${convert(metric,histogram.mean)}"
             SpannableStringUtils.setHighLightedText(
                 this, "avg", 0.5f,
                 Color.parseColor(LABEL_COLOR)
@@ -125,6 +127,21 @@ class GaugeViewAdapter internal constructor(
             startValue = (metric.command as ObdCommand).pid.min.toInt()
             endValue = (metric.command as ObdCommand).pid.max.toInt()
             value = metric.valueToLong().toInt()
+        }
+    }
+
+    private fun convert(
+        metric: ObdMetric,
+        value: Double
+    ): Number {
+         if (metric.command.pid.type == null){
+             return value.round(2)
+         }
+        return when (metric.command.pid.type) {
+            PidDefinition.ValueType.DOUBLE -> value.round(2)
+            PidDefinition.ValueType.INT -> value.toInt()
+            PidDefinition.ValueType.SHORT -> value.toInt()
+            else -> value.round(1)
         }
     }
 
