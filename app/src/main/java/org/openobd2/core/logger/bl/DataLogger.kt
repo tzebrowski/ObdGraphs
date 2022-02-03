@@ -16,7 +16,7 @@ import org.obd.metrics.connection.TcpConnection
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.diagnostic.Diagnostics
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.*
 
 
 const val NOTIFICATION_ERROR_CONNECT = "data.logger.error.connect"
@@ -64,7 +64,7 @@ internal class DataLogger internal constructor() {
 
             stop()
 
-            if (Preferences.isReconnectWhenError(context) && "stopped" == msg) {
+            if (Prefs.isReconnectWhenError() && "stopped" == msg) {
                 Log.e(
                     LOGGER_TAG,
                     "Flag to reconnect automatically when errors occurs is turn on." +
@@ -166,14 +166,14 @@ internal class DataLogger internal constructor() {
     }
 
     private fun connection() : AdapterConnection? {
-        return if (Preferences.isEnabled(context, "pref.adapter.connection.tcp.enabled")){
-            val host = Preferences.getString(context, "pref.adapter.connection.tcp.host");
-            val port = Preferences.getString(context, "pref.adapter.connection.tcp.port");
+        return if (Prefs.getString("selected.connection.type") == "wifi"){
+            val host = Prefs.getString("pref.adapter.connection.tcp.host");
+            val port = Prefs.getString("pref.adapter.connection.tcp.port");
             Log.i(LOGGER_TAG, "Creating TCP connection: ${host}:${port} ...")
             TcpConnection.of(host, port!!.toInt())
         }else {
             try {
-                val deviceName = Preferences.getAdapterName(context)
+                val deviceName = Prefs.getAdapterName()
                 Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
                 BluetoothConnection(deviceName)
             }catch (e: IllegalStateException){
@@ -187,34 +187,34 @@ internal class DataLogger internal constructor() {
 
     private fun adjustments(): Adjustments {
         return Adjustments.builder()
-            .batchEnabled(Preferences.isBatchEnabled(context))
-            .initDelay(Preferences.getInitDelay(context))
+            .batchEnabled(Prefs.isBatchEnabled())
+            .initDelay(Prefs.getInitDelay())
             .generator(
                 GeneratorSpec
                     .builder()
                     .smart(true)
-                    .enabled(Preferences.isEnabled(context, "pref.debug.generator.enabled"))
+                    .enabled(Prefs.isEnabled("pref.debug.generator.enabled"))
                     .increment(0.5).build()
             )
             .adaptiveTiming(
                 AdaptiveTimeoutPolicy
                     .builder()
-                    .enabled(Preferences.isEnabled(context, "pref.adapter.adaptive.enabled"))
+                    .enabled(Prefs.isEnabled("pref.adapter.adaptive.enabled"))
                     .checkInterval(5000) //10s
-                    .commandFrequency(Preferences.getCommandFreq(context))
+                    .commandFrequency(Prefs.getCommandFreq())
                     .build()
             ).build()
     }
 
     private fun query(): Query {
         context.let {
-            return when (Preferences.getMode(context)) {
+            return when (Prefs.getMode()) {
                 GENERIC_MODE -> {
-                    Query.builder().pids(Preferences.getMode01Pids(context).map { s -> s.toLong() }
+                    Query.builder().pids(Prefs.getMode01Pids().map { s -> s.toLong() }
                         .toSet() as MutableSet<Long>).build()
                 }
                 else -> {
-                    Query.builder().pids(Preferences.getMode22Pids(context).map { s -> s.toLong() }
+                    Query.builder().pids(Prefs.getMode22Pids().map { s -> s.toLong() }
                         .toSet() as MutableSet<Long>).build()
 
                 }
@@ -224,7 +224,7 @@ internal class DataLogger internal constructor() {
 
     private fun workflow(): Workflow {
         context.let {
-            return when (Preferences.getMode(context)) {
+            return when (Prefs.getMode()) {
                 GENERIC_MODE -> {
                     mode1
                 }

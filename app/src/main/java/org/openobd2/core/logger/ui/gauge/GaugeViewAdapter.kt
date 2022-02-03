@@ -16,7 +16,8 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.dash.round
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.isEnabled
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.Collections
 
@@ -82,51 +83,51 @@ class GaugeViewAdapter internal constructor(
             )
         }
 
-        val histogram = DataLogger.INSTANCE.diagnostics().findHistogramBy(metric.command.pid)
+        DataLogger.INSTANCE.diagnostics().findHistogramBy(metric.command.pid).run{
+            holder.minValue.run {
+                text = "min\n ${convert(metric, min)}"
 
-        holder.minValue.run {
-            text = "min\n ${convert(metric, histogram.min)}"
-
-            SpannableStringUtils.setHighLightedText(
-                this, "min", 0.5f,
-                Color.parseColor(LABEL_COLOR)
-            )
-        }
-
-        holder.maxValue.run {
-            text = "max\n  ${convert(metric, histogram.max)} "
-            SpannableStringUtils.setHighLightedText(
-                this, "max", 0.5f,
-                Color.parseColor(LABEL_COLOR)
-            )
-        }
-
-        holder.avgValue?.run {
-            text = "avg\n ${convert(metric,histogram.mean)}"
-            SpannableStringUtils.setHighLightedText(
-                this, "avg", 0.5f,
-                Color.parseColor(LABEL_COLOR)
-            )
-        }
-
-        holder.commandRate?.run {
-            if (Preferences.isEnabled(context, COMMANDS_RATE_PREF_KEY)){
-                this.visibility = View.VISIBLE
-                val rate = DataLogger.INSTANCE.diagnostics().getRateBy(RateType.MEAN, metric.command.pid)
-                text = "rate " + rate.get().value.round(2)
                 SpannableStringUtils.setHighLightedText(
-                    this, "rate", 0.4f,
+                    this, "min", 0.5f,
                     Color.parseColor(LABEL_COLOR)
                 )
-            } else {
-              this.visibility = View.INVISIBLE
             }
-        }
 
-        (holder.itemView.findViewById(R.id.gauge_view) as CustomGauge?)?.apply {
-            startValue = (metric.command as ObdCommand).pid.min.toInt()
-            endValue = (metric.command as ObdCommand).pid.max.toInt()
-            value = metric.valueToLong().toInt()
+            holder.maxValue.run {
+                text = "max\n  ${convert(metric, max)} "
+                SpannableStringUtils.setHighLightedText(
+                    this, "max", 0.5f,
+                    Color.parseColor(LABEL_COLOR)
+                )
+            }
+
+            holder.avgValue?.run {
+                text = "avg\n ${convert(metric, mean)}"
+                SpannableStringUtils.setHighLightedText(
+                    this, "avg", 0.5f,
+                    Color.parseColor(LABEL_COLOR)
+                )
+            }
+
+            holder.commandRate?.run {
+                if (Prefs.isEnabled(COMMANDS_RATE_PREF_KEY)){
+                    this.visibility = View.VISIBLE
+                    val rate = DataLogger.INSTANCE.diagnostics().getRateBy(RateType.MEAN, metric.command.pid)
+                    text = "rate " + rate.get().value.round(2)
+                    SpannableStringUtils.setHighLightedText(
+                        this, "rate", 0.4f,
+                        Color.parseColor(LABEL_COLOR)
+                    )
+                } else {
+                    this.visibility = View.INVISIBLE
+                }
+            }
+
+            (holder.itemView.findViewById(R.id.gauge_view) as CustomGauge?)?.apply {
+                startValue = (metric.command as ObdCommand).pid.min.toInt()
+                endValue = (metric.command as ObdCommand).pid.max.toInt()
+                value = metric.valueToLong().toInt()
+            }
         }
     }
 

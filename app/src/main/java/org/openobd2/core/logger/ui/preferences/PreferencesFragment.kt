@@ -39,6 +39,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
         val onCreateView = super.onCreateView(inflater, container, savedInstanceState)
         registerPrefModeChange()
+        registerConnectionModeChange()
+
         registerCheckboxListener(
             "pref.debug.view.enabled",
             NOTIFICATION_DEBUG_VIEW_SHOW,
@@ -80,11 +82,44 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun registerPrefModeChange() {
+        val prefMode = findPreference<ListPreference>("selected.connection.type")
+        val p1 = findPreference<Preference>("connection.type.bluetooth")
+        val p2 = findPreference<Preference>("connection.type.wifi")
+
+        when (Prefs.getString("selected.connection.type")) {
+            "bluetooth" -> {
+                p1?.isVisible = true
+                p2?.isVisible = false
+            }
+            else -> {
+                p1?.isVisible = false
+                p2?.isVisible = true
+            }
+        }
+
+        prefMode?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                when (newValue) {
+                    "bluetooth" -> {
+                        p1?.isVisible = true
+                        p2?.isVisible = false
+                    }
+                    else -> {
+                        p1?.isVisible = false
+                        p2?.isVisible = true
+                    }
+                }
+                true
+            }
+    }
+
+
+    private fun registerConnectionModeChange() {
         val prefMode = findPreference<ListPreference>("pref.mode")
         val p1 = findPreference<Preference>("pref.pids.generic")
         val p2 = findPreference<Preference>("pref.pids.mode22")
 
-        when (Preferences.getMode(this.requireContext())) {
+        when (Prefs.getMode()) {
             GENERIC_MODE -> {
                 p1?.isVisible = true
                 p2?.isVisible = false
@@ -110,4 +145,5 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 true
             }
     }
+
 }

@@ -18,8 +18,7 @@ import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.gauge.GaugeViewSetup
-import org.openobd2.core.logger.ui.preferences.DashPreferences
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.*
 
 private const val SWIPE_TO_DELETE_PREF_KEY = "pref.dash.swipe.to.delete"
 
@@ -55,7 +54,7 @@ class DashFragment : Fragment() {
     }
 
     private fun setupDashRecyclerView() {
-        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Preferences.getLongSet(requireContext(), "pref.dash.pids.selected"))
+        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Prefs.getLongSet("pref.dash.pids.selected"))
 
         val sortOrderMap = DashPreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
@@ -84,8 +83,7 @@ class DashFragment : Fragment() {
                 val itemId: ObdMetric = metrics[fromPosition]
                 metrics.remove(itemId)
 
-                Preferences.updateLongSet(
-                    requireContext(),
+                Prefs.updateLongSet(
                     "pref.dash.pids.selected",
                     metrics.map { obdMetric -> obdMetric.command.pid.id }.toList()
                 )
@@ -104,7 +102,7 @@ class DashFragment : Fragment() {
 
             }
         }
-        val callback = if (Preferences.isEnabled(requireContext(), SWIPE_TO_DELETE_PREF_KEY))
+        val callback = if (Prefs.isEnabled( SWIPE_TO_DELETE_PREF_KEY))
             DragManageAdapter(
             requireContext(),
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,

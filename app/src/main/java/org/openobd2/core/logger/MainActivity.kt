@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 TOGGLE_TOOLBAR_ACTION -> {
-                    if (Preferences.isEnabled(context!!, "pref.toolbar.hide.doubleclick")) {
+                    if (Prefs.isEnabled("pref.toolbar.hide.doubleclick")) {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
                         layout.isVisible = !layout.isVisible
                     }
@@ -145,7 +145,7 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        if (Preferences.isEnabled(this.applicationContext, "pref.toolbar.hide.landscape")) {
+        if (Prefs.isEnabled("pref.toolbar.hide.landscape")) {
             val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
             layout.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
         }
@@ -230,19 +230,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadPreferences() {
+        Prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
-            Preferences.isEnabled(this, "pref.debug.view.enabled")
+            Prefs.isEnabled("pref.debug.view.enabled")
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
-            Preferences.isEnabled(this, "pref.dash.view.enabled")
+            Prefs.isEnabled( "pref.dash.view.enabled")
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
-            Preferences.isEnabled(this, "pref.gauge.view.enabled")
+            Prefs.isEnabled("pref.gauge.view.enabled")
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_metrics).isVisible =
-            Preferences.isEnabled(this, "pref.metrics.view.enabled")
+            Prefs.isEnabled("pref.metrics.view.enabled")
     }
 
 

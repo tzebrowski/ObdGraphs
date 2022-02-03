@@ -12,6 +12,11 @@
 
     <string-array name="perf_empty_array"></string-array>
 
+    <string-array name="connection_type_array">
+        <item name="connection.wifi">wifi</item>
+        <item name="connection.bluetooth">bluetooth</item>
+    </string-array>
+
     <string-array name="perf_modes_arrays">
         <item name="generic.mode">Generic mode</item>
         <!--

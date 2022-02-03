@@ -12,7 +12,8 @@ import org.openobd2.core.logger.ui.common.MetricsViewContext
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.GaugePreferences
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.getLongSet
 import kotlin.math.roundToInt
 
 class GaugeViewSetup {
@@ -27,7 +28,7 @@ class GaugeViewSetup {
             spanCount: Int?
         ) {
             val metricsViewContext =
-                MetricsViewContext(owner, Preferences.getLongSet(context, pidPreferencesId))
+                MetricsViewContext(owner, Prefs.getLongSet(pidPreferencesId))
 
             val sortOrderMap = GaugePreferences.SERIALIZER.load(context)?.map {
                 it.id to it.position

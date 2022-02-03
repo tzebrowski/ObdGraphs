@@ -9,7 +9,8 @@ import android.content.Intent
 import android.util.Log
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.DataLoggerService
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.isEnabled
 
 
 private const val LOGGER_TAG = "POW_RECEIVER"
@@ -26,19 +27,19 @@ class PowerReceiver : BroadcastReceiver() {
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
 
-            if (Preferences.isEnabled(context!!, BT_ON_OFF_PREFERENCE_KEY)) {
+            if (Prefs.isEnabled(BT_ON_OFF_PREFERENCE_KEY)) {
                 BluetoothAdapter.getDefaultAdapter().run {
                     enable()
                     startDiscovery()
                 }
             }
 
-            if (Preferences.isEnabled(context, ADAPTER_CONNECT_PREFERENCE_KEY)) {
-                DataLoggerService.startAction(context)
+            if (Prefs.isEnabled(ADAPTER_CONNECT_PREFERENCE_KEY)) {
+                DataLoggerService.startAction(context!!)
             }
 
-            if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
-                DataLogger.INSTANCE.init(context)
+            if (Prefs.isEnabled(SCREEN_ON_OFF_PREFERENCE_KEY)) {
+                DataLogger.INSTANCE.init(context!!)
                 Log.i(LOGGER_TAG, "Start data logging")
                 startMainActivity(context)
                 context.sendBroadcast(Intent().apply {
@@ -47,22 +48,22 @@ class PowerReceiver : BroadcastReceiver() {
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
 
-            if (Preferences.isEnabled(context!!, BT_ON_OFF_PREFERENCE_KEY)) {
+            if (Prefs.isEnabled(BT_ON_OFF_PREFERENCE_KEY)) {
                 BluetoothAdapter.getDefaultAdapter().run {
                     disable()
                 }
             }
 
-            if (Preferences.isEnabled(context, ADAPTER_CONNECT_PREFERENCE_KEY)) {
+            if (Prefs.isEnabled(ADAPTER_CONNECT_PREFERENCE_KEY)) {
                 Log.i(
                     LOGGER_TAG,
                     "Stop data logging"
                 )
-                DataLoggerService.stopAction(context)
+                DataLoggerService.stopAction(context!!)
             }
 
-            if (Preferences.isEnabled(context, SCREEN_ON_OFF_PREFERENCE_KEY)) {
-                context.sendBroadcast(Intent().apply {
+            if (Prefs.isEnabled(SCREEN_ON_OFF_PREFERENCE_KEY)) {
+                context!!.sendBroadcast(Intent().apply {
                     action = SCREEN_OFF
                 })
             }

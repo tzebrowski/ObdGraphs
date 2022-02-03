@@ -1,39 +1,34 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         android:key="adapter"
         android:title="Adapter settings">
 
+        <ListPreference
+            android:defaultValue="wifi"
+            android:dialogTitle="Adapter connection type"
+            android:entries="@array/connection_type_array"
+            android:entryValues="@array/connection_type_array"
+            android:key="selected.connection.type"
+            android:title="Connection type" />
+
+
         <PreferenceCategory
-            android:key="bluetooth"
+            android:key="connection.type.bluetooth"
             android:title="Bluetooth settings">
 
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:dialogTitle="Enabled"
-                android:key="pref.adapter.connection.bluetooth.enabled"
-                android:summary="Enable bluetooth mode"
-                android:title="Enabled" />
-
-            <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
+           <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
                 android:defaultValue="@array/perf_empty_array"
-                android:dialogTitle="Bluetooth OBD adapter name"
+                android:dialogTitle="Bluetooth adapter name"
                 android:key="pref.adapter.id"
-                android:summary="Bluetooth OBD adapter name"
-                android:title="Adapters" />
+                android:title="Available bluetooth devices" />
         </PreferenceCategory>
 
 
         <PreferenceCategory
-            android:key="wifi"
+            android:key="connection.type.wifi"
             android:title="Wifi settings">
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:dialogTitle="Enabled"
-                android:key="pref.adapter.connection.tcp.enabled"
-                android:summary="Enabled"
-                android:title="Enabled" />
 
             <EditTextPreference
                 android:defaultValue="V-LINK"

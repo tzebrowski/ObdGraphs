@@ -23,7 +23,8 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
-import org.openobd2.core.logger.ui.preferences.Preferences
+import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.isEnabled
 import java.util.Collections
 import kotlin.collections.ArrayList
 
@@ -78,20 +79,20 @@ internal class DashViewAdapter internal constructor(
             val percent75: Int = (holder.segments.numOfSegments * 75) / 100
             if (segmentNum > percent75) {
 
-                if (Preferences.isEnabled(context, "pref.dash.top.values.red.color")) {
+                if (Prefs.isEnabled("pref.dash.top.values.red.color")) {
                     (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                         dataSet.gradientColors = colors.col2
                     }
                 }
 
-                if (Preferences.isEnabled(context, "pref.dash.top.values.blink")) {
+                if (Prefs.isEnabled("pref.dash.top.values.blink")) {
                     if (!holder.anim.hasStarted() || holder.anim.hasEnded()) {
                         holder.itemView.startAnimation(holder.anim)
                     }
                 }
             } else {
-                if (Preferences.isEnabled(context, "pref.dash.top.values.blink")) {
+                if (Prefs.isEnabled("pref.dash.top.values.blink")) {
                     holder.itemView.clearAnimation()
                 }
             }
