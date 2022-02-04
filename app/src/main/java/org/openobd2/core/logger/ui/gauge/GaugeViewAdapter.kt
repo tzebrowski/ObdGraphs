@@ -83,7 +83,7 @@ class GaugeViewAdapter internal constructor(
             )
         }
 
-        DataLogger.INSTANCE.diagnostics().findHistogramBy(metric.command.pid).run{
+        DataLogger.INSTANCE.diagnostics().histogram().findBy(metric.command.pid).run{
             holder.minValue.run {
                 text = "min\n ${convert(metric, min)}"
 
@@ -112,7 +112,7 @@ class GaugeViewAdapter internal constructor(
             holder.commandRate?.run {
                 if (Prefs.isEnabled(COMMANDS_RATE_PREF_KEY)){
                     this.visibility = View.VISIBLE
-                    val rate = DataLogger.INSTANCE.diagnostics().getRateBy(RateType.MEAN, metric.command.pid)
+                    val rate = DataLogger.INSTANCE.diagnostics().rate().findBy(RateType.MEAN, metric.command.pid)
                     text = "rate " + rate.get().value.round(2)
                     SpannableStringUtils.setHighLightedText(
                         this, "rate", 0.4f,
