@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.dash
+package org.openobd2.core.logger.ui.dashboard
 
 import android.content.Context
 import android.graphics.Color

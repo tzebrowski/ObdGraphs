@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.dash
+package org.openobd2.core.logger.ui.dashboard
 
 import android.content.Context
 import android.content.res.Configuration
@@ -36,7 +36,7 @@ class DashFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        root = inflater.inflate(R.layout.fragment_dash, container, false)
+        root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         setupDashRecyclerView()
         setupGaugeRecyclerView()
         return root
@@ -63,7 +63,7 @@ class DashFragment : Fragment() {
         val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap)
         val itemHeight = calculateItemHeight(metrics)
 
-        metricsViewContext.adapter = DashViewAdapter(root.context, metrics, itemHeight)
+        metricsViewContext.adapter = DashboardViewAdapter(root.context, metrics, itemHeight)
         val recyclerView: RecyclerView = root.findViewById(R.id.dash_recycler_view)
 
         recyclerView.layoutManager = GridLayoutManager(root.context, spanCount(metrics.size))
@@ -71,15 +71,15 @@ class DashFragment : Fragment() {
 
         val swappableAdapter = object: SwappableAdapter {
             override fun swapItems(fromPosition: Int, toPosition: Int) {
-                (metricsViewContext.adapter as DashViewAdapter).swapItems(fromPosition, toPosition)
+                (metricsViewContext.adapter as DashboardViewAdapter).swapItems(fromPosition, toPosition)
             }
 
             override fun storePreferences(context: Context) {
-                DashPreferences.SERIALIZER.store(context, (metricsViewContext.adapter as DashViewAdapter).data)
+                DashPreferences.SERIALIZER.store(context, (metricsViewContext.adapter as DashboardViewAdapter).data)
             }
 
             override fun deleteItems(fromPosition: Int) {
-                val metrics = (metricsViewContext.adapter as DashViewAdapter).data
+                val metrics = (metricsViewContext.adapter as DashboardViewAdapter).data
                 val itemId: ObdMetric = metrics[fromPosition]
                 metrics.remove(itemId)
 
@@ -90,7 +90,7 @@ class DashFragment : Fragment() {
 
                 DashPreferences.SERIALIZER.store(requireContext(), metrics)
                 val itemHeight = calculateItemHeight(metrics)
-                metricsViewContext.adapter = DashViewAdapter(root.context, metrics, itemHeight)
+                metricsViewContext.adapter = DashboardViewAdapter(root.context, metrics, itemHeight)
                 val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
                 recyclerView.layoutManager =
                     GridLayoutManager(root.context, spanCount(metrics.size))

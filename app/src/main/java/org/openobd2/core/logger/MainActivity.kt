@@ -54,19 +54,23 @@ class MainActivity : AppCompatActivity() {
                 NOTIFICATION_ERROR_CONNECT -> {
                     toast("Error occurred during. Please check your Bluetooth Connection settings.")
                 }
-                NOTIFICATION_METRICS_VIEW_SHOW, NOTIFICATION_METRICS_VIEW_HIDE -> {
+                NOTIFICATION_METRICS_VIEW_TOGGLE -> {
                     toggleNavigationItem(R.id.navigation_metrics)
                 }
 
-                NOTIFICATION_DEBUG_VIEW_HIDE, NOTIFICATION_DEBUG_VIEW_SHOW -> {
+                NOTIFICATION_GRAPH_VIEW_TOGGLE -> {
+                    toggleNavigationItem(R.id.navigation_graph)
+                }
+
+                NOTIFICATION_DEBUG_VIEW_TOGGLE -> {
                     toggleNavigationItem(R.id.navigation_debug)
                 }
 
-                NOTIFICATION_DASH_VIEW_HIDE, NOTIFICATION_DASH_VIEW_SHOW -> {
+                NOTIFICATION_DASH_VIEW_TOGGLE -> {
                     toggleNavigationItem(R.id.navigation_dashboard)
                 }
 
-                NOTIFICATION_GAUGE_VIEW_HIDE, NOTIFICATION_GAUGE_VIEW_SHOW -> {
+                NOTIFICATION_GAUGE_VIEW_TOGGLE -> {
                     toggleNavigationItem(R.id.navigation_gauge)
                 }
 
@@ -127,9 +131,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         private fun toggleNavigationItem(id: Int) {
-            val menuItem =
-                findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)
-            menuItem.isVisible = !menuItem.isVisible
+            findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)?.run {
+                this.isVisible = !this.isVisible
+            }
         }
 
         private fun toast(text: String) {
@@ -166,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupNavigation()
 
-        loadPreferences()
+        setupPreferences()
         registerReceiver()
 
         val progressBar: ProgressBar = findViewById(R.id.p_bar)
@@ -221,6 +225,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_gauge,
                 R.id.navigation_debug,
                 R.id.navigation_metrics,
+                R.id.navigation_graph,
                 R.id.navigation_configuration
             )
         )
@@ -229,12 +234,12 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
-    private fun loadPreferences() {
+    private fun setupPreferences() {
         Prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug).isVisible =
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug)?.isVisible =
             Prefs.isEnabled("pref.debug.view.enabled")
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
@@ -245,6 +250,10 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_metrics).isVisible =
             Prefs.isEnabled("pref.metrics.view.enabled")
+
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_graph).isVisible =
+            Prefs.isEnabled("pref.graph.view.enabled")
+
     }
 
 
@@ -258,15 +267,12 @@ class MainActivity : AppCompatActivity() {
             addAction(NOTIFICATION_CONNECTED)
             addAction(ACTION_BATTERY_CHANGED)
             addAction(NOTIFICATION_ERROR_CONNECT)
-            addAction(NOTIFICATION_DEBUG_VIEW_SHOW)
-            addAction(NOTIFICATION_DEBUG_VIEW_HIDE)
-            addAction(NOTIFICATION_GAUGE_VIEW_SHOW)
-            addAction(NOTIFICATION_GAUGE_VIEW_HIDE)
-            addAction(NOTIFICATION_DASH_VIEW_SHOW)
-            addAction(NOTIFICATION_DASH_VIEW_HIDE)
+            addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)
+            addAction(NOTIFICATION_DEBUG_VIEW_TOGGLE)
+            addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)
+            addAction(NOTIFICATION_DASH_VIEW_TOGGLE)
+            addAction(NOTIFICATION_METRICS_VIEW_TOGGLE)
             addAction(TOGGLE_TOOLBAR_ACTION)
-            addAction(NOTIFICATION_METRICS_VIEW_SHOW)
-            addAction(NOTIFICATION_METRICS_VIEW_HIDE)
             addAction(SCREEN_OFF)
             addAction(SCREEN_ON)
         })

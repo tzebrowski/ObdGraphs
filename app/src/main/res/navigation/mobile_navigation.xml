@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="org.openobd2.core.logger.ui.dash.DashFragment"
+        android:name="org.openobd2.core.logger.ui.dashboard.DashFragment"
         android:label="@string/title_dash"
-        tools:layout="@layout/fragment_dash" />
+        tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_gauge"
@@ -27,8 +27,15 @@
     <fragment
         android:id="@+id/navigation_metrics"
         android:name="org.openobd2.core.logger.ui.metrics.MetricsFragment"
-        android:label="@string/title_livedata"
+        android:label="@string/title_metrics"
         tools:layout="@layout/fragment_metrics" />
+
+    <fragment
+        android:id="@+id/navigation_graph"
+        android:name="org.openobd2.core.logger.ui.graph.GraphFragment"
+        android:label="@string/title_graph"
+        tools:layout="@layout/fragment_graph" />
+
     <fragment
         android:id="@+id/navigation_configuration"
         android:name="org.openobd2.core.logger.ui.preferences.PreferencesFragment"

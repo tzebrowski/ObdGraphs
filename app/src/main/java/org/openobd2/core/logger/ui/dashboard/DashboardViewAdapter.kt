@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.dash
+package org.openobd2.core.logger.ui.dashboard
 
 import android.content.Context
 import android.graphics.Color
@@ -29,12 +29,12 @@ import java.util.Collections
 import kotlin.collections.ArrayList
 
 
-internal class DashViewAdapter internal constructor(
+internal class DashboardViewAdapter internal constructor(
     private val context: Context,
     val data: MutableList<ObdMetric>,
     private val height: Int
 ) :
-    RecyclerView.Adapter<DashViewAdapter.ViewHolder>() {
+    RecyclerView.Adapter<DashboardViewAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var colors: ColorTheme
     private lateinit var view: View

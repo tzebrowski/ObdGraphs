@@ -12,17 +12,11 @@ import androidx.preference.PreferenceFragmentCompat
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.GENERIC_MODE
 
-const val NOTIFICATION_DEBUG_VIEW_SHOW = "preferences.view.debug.show"
-const val NOTIFICATION_DEBUG_VIEW_HIDE = "preferences.view.debug.hide"
-
-const val NOTIFICATION_DASH_VIEW_SHOW = "preferences.view.dash.show"
-const val NOTIFICATION_DASH_VIEW_HIDE = "preferences.view.dash.hide"
-
-const val NOTIFICATION_GAUGE_VIEW_SHOW = "preferences.view.gauge.show"
-const val NOTIFICATION_GAUGE_VIEW_HIDE = "preferences.view.gauge.hide"
-
-const val NOTIFICATION_METRICS_VIEW_SHOW = "preferences.view.metrics.show"
-const val NOTIFICATION_METRICS_VIEW_HIDE = "preferences.view.metrics.hide"
+const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "preferences.view.graph.toggle"
+const val NOTIFICATION_DEBUG_VIEW_TOGGLE = "preferences.view.debug.toggle"
+const val NOTIFICATION_DASH_VIEW_TOGGLE = "preferences.view.dash.toggle"
+const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "preferences.view.gauge.toggle"
+const val NOTIFICATION_METRICS_VIEW_TOGGLE = "preferences.view.metrics.toggle"
 
 
 class PreferencesFragment : PreferenceFragmentCompat() {
@@ -42,40 +36,37 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         registerConnectionModeChange()
 
         registerCheckboxListener(
+            "pref.graph.view.enabled",
+            NOTIFICATION_GRAPH_VIEW_TOGGLE
+        )
+
+        registerCheckboxListener(
             "pref.debug.view.enabled",
-            NOTIFICATION_DEBUG_VIEW_SHOW,
-            NOTIFICATION_DEBUG_VIEW_HIDE
+            NOTIFICATION_DEBUG_VIEW_TOGGLE
         )
         registerCheckboxListener(
             "pref.gauge.view.enabled",
-            NOTIFICATION_GAUGE_VIEW_SHOW,
-            NOTIFICATION_GAUGE_VIEW_HIDE
+            NOTIFICATION_GAUGE_VIEW_TOGGLE
         )
         registerCheckboxListener(
             "pref.dash.view.enabled",
-            NOTIFICATION_DASH_VIEW_SHOW,
-            NOTIFICATION_DASH_VIEW_HIDE
+            NOTIFICATION_DASH_VIEW_TOGGLE
         )
 
         registerCheckboxListener(
             "pref.metrics.view.enabled",
-            NOTIFICATION_METRICS_VIEW_SHOW,
-            NOTIFICATION_METRICS_VIEW_HIDE
+            NOTIFICATION_METRICS_VIEW_TOGGLE
         )
 
         return onCreateView
     }
 
-    private fun registerCheckboxListener(key: String, actionTrue: String, actionFalse: String) {
+    private fun registerCheckboxListener(key: String, actionName: String) {
         val preference = findPreference<CheckBoxPreference>(key)
         preference?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 requireContext().sendBroadcast(Intent().apply {
-                    action = if (newValue == true) {
-                        actionTrue
-                    } else {
-                        actionFalse
-                    }
+                    action = actionName
                 })
                 true
             }

@@ -15,7 +15,7 @@ import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
-import org.openobd2.core.logger.ui.dash.round
+import org.openobd2.core.logger.ui.dashboard.round
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.isEnabled
 import pl.pawelkleczkowski.customgauge.CustomGauge

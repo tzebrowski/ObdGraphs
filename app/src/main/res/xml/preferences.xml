@@ -1,5 +1,4 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         android:key="adapter"
@@ -158,11 +157,11 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory android:title="Dash">
+    <PreferenceCategory android:title="Dashboard">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.dash.top.values.blink"
-            android:summary="Alarm when highest values reached"
+            android:summary="Alarm for highest values"
             android:title="Alarm for highest values" />
 
         <CheckBoxPreference
@@ -174,7 +173,7 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.dash.top.values.red.color"
-            android:summary="Highlight top values with red color"
+            android:summary="Highlight top values"
             android:title="Highlight top values" />
 
         <CheckBoxPreference
@@ -186,8 +185,8 @@
 
         <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:key="pref.dash.pids.selected"
-            android:summary="Dash: Displayed PIDs"
-            android:title="Dash: Displayed PIDs" />
+            android:summary="Dashboard: Displayed PIDs"
+            android:title="Dashboard: Displayed PIDs" />
 
         <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:key="pref.dash.gauge_pids.selected"
@@ -221,21 +220,26 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Graph">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.graph.view.enabled"
+            android:summary="Show the view"
+            android:title="Show the view" />
+    </PreferenceCategory>
+
 
     <PreferenceCategory android:title="Debug">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.debug.view.enabled"
             android:summary="Enable the view"
-            android:title="Show tht view" />
-
-
+            android:title="Show the view" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.debug.generator.enabled"
             android:summary="Enable data generator"
             android:title="Enable data generator" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Available PIDs">

@@ -1,17 +1,14 @@
 package org.openobd2.core.logger.bl
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.Reply
 import org.obd.metrics.ReplyObserver
-import org.obd.metrics.command.Command
 import org.obd.metrics.command.obd.SupportedPidsCommand
 
 
 internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
 
-    private val data: MutableMap<Command, ObdMetric> = hashMapOf()
 
     fun reset() {
         data.clear()
@@ -22,7 +19,7 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
     override fun onNext(reply: Reply<*>) {
         debugData.postValue(reply)
         if (reply is ObdMetric && reply.command !is SupportedPidsCommand) {
-            data[reply.command] = reply
+            data.add(reply)
             reply.command.pid?.let {
                 metrics.postValue(reply)
             }
@@ -30,6 +27,9 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
     }
 
     companion object {
+        @JvmStatic
+        val data: MutableList<ObdMetric> = mutableListOf<ObdMetric>()
+
         @JvmStatic
         val debugData: MutableLiveData<Reply<*>> = MutableLiveData<Reply<*>>().apply {
         }

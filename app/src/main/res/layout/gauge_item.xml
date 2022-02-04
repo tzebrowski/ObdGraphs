@@ -110,7 +110,7 @@
             android:text="max"
             android:textColor="#5CFFFF00"
             android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textStyle="normal" />
 
     </LinearLayout>
 
