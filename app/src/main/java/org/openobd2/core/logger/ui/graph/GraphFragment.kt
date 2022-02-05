@@ -1,15 +1,15 @@
 package org.openobd2.core.logger.ui.graph
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.GestureDetector.SimpleOnGestureListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.YAxis.AxisDependency
@@ -22,88 +22,87 @@ import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
+import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getLongSet
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class GraphFragment : Fragment() {
 
+    private class GestureListener(val context: Context) : SimpleOnGestureListener() {
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            context.sendBroadcast(Intent().apply {
+                action = TOGGLE_TOOLBAR_ACTION
+            })
+            return true
+        }
+    }
 
-    val xyz = object: ValueFormatter() {
-        val mFormat: SimpleDateFormat =
-            SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH)
-
-        override fun getFormattedValue(value: Float, axis: AxisBase): String {
-            val millis: Long = TimeUnit.HOURS.toMillis(value.toLong())
-            val ret  = mFormat.format(Date(millis))
-
-            Log.e("EEEEEE", "EEEEEEEE ${ret}")
-            return ret
+    private val xAxisFormatter = object: ValueFormatter() {
+        val simpleDateFormat = SimpleDateFormat("HH:mm:ss")
+        override fun getFormattedValue(value: Float): String {
+            return simpleDateFormat.format(Date(firstTimeStamp + value.toLong()))
         }
     }
 
     private var chart: LineChart? = null
-    var xx: Int = 0
+    private var firstTimeStamp: Long = System.currentTimeMillis()
+    private val generatedColors: IntIterator  = ColorTemplate.MATERIAL_COLORS.iterator()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_graph, container, false)
-        chart = initializeChart(root)
 
         val visiblePids = Prefs.getLongSet("pref.graph.pids.selected")
-        Log.i(
-            "GraphFragment",
-            "${visiblePids}"
-        )
+        firstTimeStamp = System.currentTimeMillis()
+
         val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
-        val data = LineData(metrics.map { createDataSet(it) }.toList())
-        data.setValueTextColor(Color.RED)
-        data.setValueTextSize(9f)
-        chart!!.data = data
-        chart!!.invalidate()
+
+        chart = initializeChart(root).apply {
+            data =  LineData(metrics.map {createDataSet(it) }.toList()).apply {
+                setValueTextColor(Color.RED)
+                setValueTextSize(9f)
+            }
+
+            val gestureDetector = GestureDetector(root.context, GestureListener(requireContext()))
+            val onTouchListener: View.OnTouchListener = View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
+            setOnTouchListener(onTouchListener)
+            invalidate()
+        }
+
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if (visiblePids.contains(it.command.pid.id)) {
-                    data.getDataSetByLabel(it.command.pid.description, true)?.run {
-                        Log.e(
-                            "GraphFragment",
-                            "${it.command.pid.description} = [ ${it.timestamp.toFloat()} : ${it.valueToDouble().toFloat()}]"
-                        )
-                        addEntryOrdered(Entry(it.timestamp.toFloat(), it.valueToDouble().toFloat()))
-
-                        if (xx == 20) {
-                            Log.e(
-                                "GraphFragment",
-                                "Update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${entryCount}"
-                            )
-                            chart!!.notifyDataSetChanged()
-                            chart!!.refreshDrawableState()
-
-                            chart!!.invalidate()
-                            xx = 0;
-                        }
-                        xx++;
-
-                    }
+                    addEntry(it)
                 }
-
             }
         })
 
         return root
     }
 
+    private fun addEntry(it: ObdMetric) {
+        val data = chart!!.data
+        data.getDataSetByLabel(it.command.pid.description, true)?.run {
+            val timestamp = (System.currentTimeMillis() - firstTimeStamp).toFloat()
+            addEntry(Entry(timestamp, it.valueToDouble().toFloat()))
+            data.notifyDataChanged()
+            chart!!.notifyDataSetChanged()
+            chart!!.moveViewToX(entryCount.toFloat())
+        }
+    }
+
     private fun initializeChart(root: View) : LineChart {
-        val chart: LineChart = root.findViewById(R.id.graph_view_chart)
-        chart!!.run {
+        return (root.findViewById(R.id.graph_view_chart) as LineChart).apply {
             description.isEnabled = false
             setTouchEnabled(true)
             dragDecelerationFrictionCoef = 0.9f
+            isDoubleTapToZoomEnabled = false
 
             isDragEnabled = true
             setScaleEnabled(true)
@@ -111,7 +110,13 @@ class GraphFragment : Fragment() {
             isHighlightPerDragEnabled = true
             setBackgroundColor(Color.BLACK)
             setViewPortOffsets(0f, 0f, 0f, 0f)
-            legend.isEnabled = true
+
+            legend.run{
+                isEnabled = true
+                legend.form = Legend.LegendForm.LINE
+                legend.textColor = Color.WHITE
+                legend.textSize = 20f
+            }
             xAxis.run{
                 position = XAxis.XAxisPosition.TOP_INSIDE
                 textSize = 10f
@@ -120,8 +125,7 @@ class GraphFragment : Fragment() {
                 setDrawGridLines(true)
                 textColor = Color.rgb(255, 192, 56)
                 setCenterAxisLabels(true)
-                granularity = 1f // one hour
-                valueFormatter = xyz
+                valueFormatter = xAxisFormatter
             }
 
             axisLeft.run {
@@ -129,53 +133,36 @@ class GraphFragment : Fragment() {
                 textColor = ColorTemplate.getHoloBlue()
                 setDrawGridLines(true)
                 isGranularityEnabled = true
-                axisMinimum = 0f
-                axisMaximum = 1000f
-//                yOffset = -9f
+//                axisMinimum = 0f
+//                axisMaximum = 8000f
                 textColor = Color.rgb(255, 192, 56)
             }
             axisRight.isEnabled = false
-
         }
-        return chart
     }
 
-    protected fun getRandom(range: Float, start: Float): Float {
-        return (Math.random() * range).toFloat() + start
-    }
+
     private fun createDataSet(obdMetric: ObdMetric) : LineDataSet {
-
         val values = mutableListOf<Entry>()
-
-        if (false) {
-            val now = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
-            val to: Float = now + 1000f
-
-
-            var x = now.toFloat()
-            while (x < to) {
-                val y: Float = getRandom(50f, 50f)
-
-                values.add(Entry(x, y)) // add one entry per hour
-                x++
-            }
-        }
-
-
         val lineDataSet = LineDataSet(values, obdMetric.command.pid.description)
+        val col = generatedColors.nextInt()
         lineDataSet.run {
+            label = obdMetric.command.pid.description
+            lineDataSet.form = Legend.LegendForm.SQUARE
             axisDependency = AxisDependency.LEFT
-            color = ColorTemplate.getHoloBlue()
-            valueTextColor = ColorTemplate.getHoloBlue()
-            lineWidth = 2f
+            color = col
+            valueTextColor = col
+            lineWidth = 4f
             setDrawCircles(false)
             setDrawValues(true)
+            setDrawFilled(true)
+            fillColor = col
+
             fillAlpha = 65
             fillColor = ColorTemplate.getHoloBlue()
             highLightColor = Color.rgb(244, 117, 117)
             setDrawCircleHole(false)
         }
-
         return lineDataSet
     }
 }
