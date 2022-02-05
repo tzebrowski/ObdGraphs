@@ -226,6 +226,11 @@
             android:key="pref.graph.view.enabled"
             android:summary="Show the view"
             android:title="Show the view" />
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
+            android:defaultValue="@array/perf_empty_array"
+            android:key="pref.graph.pids.selected"
+            android:summary="Displayed PIDs"
+            android:title="Displayed PIDs" />
     </PreferenceCategory>
 
 

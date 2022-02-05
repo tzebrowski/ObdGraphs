@@ -1,7 +1,6 @@
 package org.openobd2.core.logger.ui.graph
 
 import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,28 +9,44 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.metrics.ObdMetric
-import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
-import org.openobd2.core.logger.ui.common.MetricsViewContext
-import org.openobd2.core.logger.ui.preferences.DashPreferences
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getLongSet
-
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class GraphFragment : Fragment() {
 
-    private var chart: LineChart? = null
 
+    val xyz = object: ValueFormatter() {
+        val mFormat: SimpleDateFormat =
+            SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH)
+
+        override fun getFormattedValue(value: Float, axis: AxisBase): String {
+            val millis: Long = TimeUnit.HOURS.toMillis(value.toLong())
+            val ret  = mFormat.format(Date(millis))
+
+            Log.e("EEEEEE", "EEEEEEEE ${ret}")
+            return ret
+        }
+    }
+
+    private var chart: LineChart? = null
+    var xx: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,25 +55,43 @@ class GraphFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_graph, container, false)
         chart = initializeChart(root)
 
-        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Prefs.getLongSet("pref.dash.pids.selected"))
-        val sortOrderMap = DashPreferences.SERIALIZER.load(requireContext())?.map {
-            it.id to it.position
-        }!!.toMap()
-
-        val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap).groupBy { obdMetric: ObdMetric ->  obdMetric.command.pid}
-
+        val visiblePids = Prefs.getLongSet("pref.graph.pids.selected")
+        Log.i(
+            "GraphFragment",
+            "${visiblePids}"
+        )
+        val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
         val data = LineData(metrics.map { createDataSet(it) }.toList())
         data.setValueTextColor(Color.RED)
         data.setValueTextSize(9f)
         chart!!.data = data
-
+        chart!!.invalidate()
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             it?.let {
-               data.getDataSetByLabel(it.command.pid.description,true)?.run {
-                   
-                   addEntry(Entry(it.timestamp.toFloat(),it.valueToDouble().toFloat()))
-                   chart!!.invalidate()
-               }
+                if (visiblePids.contains(it.command.pid.id)) {
+                    data.getDataSetByLabel(it.command.pid.description, true)?.run {
+                        Log.e(
+                            "GraphFragment",
+                            "${it.command.pid.description} = [ ${it.timestamp.toFloat()} : ${it.valueToDouble().toFloat()}]"
+                        )
+                        addEntryOrdered(Entry(it.timestamp.toFloat(), it.valueToDouble().toFloat()))
+
+                        if (xx == 20) {
+                            Log.e(
+                                "GraphFragment",
+                                "Update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ${entryCount}"
+                            )
+                            chart!!.notifyDataSetChanged()
+                            chart!!.refreshDrawableState()
+
+                            chart!!.invalidate()
+                            xx = 0;
+                        }
+                        xx++;
+
+                    }
+                }
+
             }
         })
 
@@ -78,16 +111,17 @@ class GraphFragment : Fragment() {
             isHighlightPerDragEnabled = true
             setBackgroundColor(Color.BLACK)
             setViewPortOffsets(0f, 0f, 0f, 0f)
-            legend.isEnabled = false
+            legend.isEnabled = true
             xAxis.run{
                 position = XAxis.XAxisPosition.TOP_INSIDE
                 textSize = 10f
                 textColor = Color.GREEN
-                setDrawAxisLine(false)
+                setDrawAxisLine(true)
                 setDrawGridLines(true)
                 textColor = Color.rgb(255, 192, 56)
                 setCenterAxisLabels(true)
-                granularity = 0.1f // one hour
+                granularity = 1f // one hour
+                valueFormatter = xyz
             }
 
             axisLeft.run {
@@ -96,8 +130,8 @@ class GraphFragment : Fragment() {
                 setDrawGridLines(true)
                 isGranularityEnabled = true
                 axisMinimum = 0f
-                axisMaximum = 170f
-                yOffset = -9f
+                axisMaximum = 1000f
+//                yOffset = -9f
                 textColor = Color.rgb(255, 192, 56)
             }
             axisRight.isEnabled = false
@@ -106,16 +140,34 @@ class GraphFragment : Fragment() {
         return chart
     }
 
+    protected fun getRandom(range: Float, start: Float): Float {
+        return (Math.random() * range).toFloat() + start
+    }
+    private fun createDataSet(obdMetric: ObdMetric) : LineDataSet {
 
-    private fun createDataSet(entry: Map.Entry<PidDefinition,List<ObdMetric>>) : LineDataSet {
+        val values = mutableListOf<Entry>()
 
-        val values = entry.value.map { Entry(it.timestamp.toFloat(),it.valueToDouble().toFloat()) }.toMutableList()
-        val lineDataSet = LineDataSet(values, entry.key.description)
+        if (false) {
+            val now = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
+            val to: Float = now + 1000f
+
+
+            var x = now.toFloat()
+            while (x < to) {
+                val y: Float = getRandom(50f, 50f)
+
+                values.add(Entry(x, y)) // add one entry per hour
+                x++
+            }
+        }
+
+
+        val lineDataSet = LineDataSet(values, obdMetric.command.pid.description)
         lineDataSet.run {
             axisDependency = AxisDependency.LEFT
             color = ColorTemplate.getHoloBlue()
             valueTextColor = ColorTemplate.getHoloBlue()
-            lineWidth = 1.5f
+            lineWidth = 2f
             setDrawCircles(false)
             setDrawValues(true)
             fillAlpha = 65
@@ -123,6 +175,7 @@ class GraphFragment : Fragment() {
             highLightColor = Color.rgb(244, 117, 117)
             setDrawCircleHole(false)
         }
+
         return lineDataSet
     }
 }

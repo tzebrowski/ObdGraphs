@@ -31,10 +31,9 @@ class MetricsViewContext (private val owner: LifecycleOwner, private val visible
     fun observerMetrics(
         data: MutableList<ObdMetric>
     ) {
-        val visibleMetrics = visiblePids
         MetricsAggregator.metrics.observe(owner, Observer {
             it?.let {
-                if (visibleMetrics.contains(it.command.pid.id)) {
+                if (visiblePids.contains(it.command.pid.id)) {
                     val indexOf = data.indexOf(it)
                     if (indexOf == -1) {
                         data.add(it)

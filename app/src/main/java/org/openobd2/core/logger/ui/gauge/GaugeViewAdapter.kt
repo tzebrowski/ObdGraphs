@@ -3,6 +3,7 @@ package org.openobd2.core.logger.ui.gauge
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,7 @@ import org.openobd2.core.logger.ui.dashboard.round
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.isEnabled
 import pl.pawelkleczkowski.customgauge.CustomGauge
-import java.util.Collections
+import java.util.*
 
 private val DEFAULT_HEIGHT = 230
 private val LABEL_COLOR = "#01804F"
@@ -29,16 +30,18 @@ class GaugeViewAdapter internal constructor(
     context: Context,
     val data: MutableList<ObdMetric>,
     private val resourceId: Int
-) : RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
+): RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        var label: TextView = itemView.findViewById(R.id.label)
-        var value: TextView = itemView.findViewById(R.id.value)
-        var avgValue: TextView? = itemView.findViewById(R.id.avg_value)
-        var minValue: TextView = itemView.findViewById(R.id.min_value)
-        var maxValue: TextView = itemView.findViewById(R.id.max_value)
+        val label: TextView = itemView.findViewById(R.id.label)
+        val value: TextView = itemView.findViewById(R.id.value)
+        val avgValue: TextView? = itemView.findViewById(R.id.avg_value)
+        val minValue: TextView = itemView.findViewById(R.id.min_value)
+        val maxValue: TextView = itemView.findViewById(R.id.max_value)
         var commandRate: TextView? = itemView.findViewById(R.id.command_rate)
+        var gauge: CustomGauge? = itemView.findViewById(R.id.gauge_view)
+        var init: Boolean = false
     }
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -67,26 +70,44 @@ class GaugeViewAdapter internal constructor(
         return ViewHolder(view)
     }
 
+    var currentTs:Long = 0
+
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int
     ) {
         val metric = data.elementAt(position)
-        holder.label.text = metric.command.label
+
+        logTsDiff(metric)
+
+        if (!holder.init){
+            holder.label.text = metric.command.label
+            holder.init = true
+
+            if (data.size == 1){
+                rescaleView(holder,1.4f,1.2f)
+            }
+
+            if (data.size == 2){
+                rescaleView(holder,1.2f,1.1f)
+            }
+            if (data.size == 3 || data.size == 4){
+                rescaleView(holder,1.1f,1.1f)
+            }
+        }
 
         holder.value.run {
             val units = (metric.command as ObdCommand).pid.units
             text = metric.valueToString() + " " + units
+
             SpannableStringUtils.setHighLightedText(
                 this, units, 0.3f,
-                Color.parseColor(LABEL_COLOR)
-            )
+                Color.parseColor(LABEL_COLOR))
         }
 
-        DataLogger.INSTANCE.diagnostics().histogram().findBy(metric.command.pid).run{
+        DataLogger.INSTANCE.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
                 text = "min\n ${convert(metric, min)}"
-
                 SpannableStringUtils.setHighLightedText(
                     this, "min", 0.5f,
                     Color.parseColor(LABEL_COLOR)
@@ -108,26 +129,61 @@ class GaugeViewAdapter internal constructor(
                     Color.parseColor(LABEL_COLOR)
                 )
             }
-
-            holder.commandRate?.run {
-                if (Prefs.isEnabled(COMMANDS_RATE_PREF_KEY)){
-                    this.visibility = View.VISIBLE
-                    val rate = DataLogger.INSTANCE.diagnostics().rate().findBy(RateType.MEAN, metric.command.pid)
-                    text = "rate " + rate.get().value.round(2)
-                    SpannableStringUtils.setHighLightedText(
-                        this, "rate", 0.4f,
-                        Color.parseColor(LABEL_COLOR)
-                    )
-                } else {
-                    this.visibility = View.INVISIBLE
-                }
+        }
+        holder.commandRate?.run {
+            if (Prefs.isEnabled(COMMANDS_RATE_PREF_KEY)) {
+                this.visibility = View.VISIBLE
+                val rate = DataLogger.INSTANCE.diagnostics().rate()
+                    .findBy(RateType.MEAN, metric.command.pid)
+                text = "rate " + rate.get().value.round(2)
+                SpannableStringUtils.setHighLightedText(
+                    this, "rate", 0.4f,
+                    Color.parseColor(LABEL_COLOR)
+                )
+            } else {
+                this.visibility = View.INVISIBLE
             }
 
-            (holder.itemView.findViewById(R.id.gauge_view) as CustomGauge?)?.apply {
-                startValue = (metric.command as ObdCommand).pid.min.toInt()
-                endValue = (metric.command as ObdCommand).pid.max.toInt()
-                value = metric.valueToLong().toInt()
-            }
+        }
+        if (holder.gauge == null) {
+            holder.gauge = holder.itemView.findViewById(R.id.gauge_view)
+        }
+
+        holder.gauge?.apply {
+            startValue = (metric.command as ObdCommand).pid.min.toInt()
+            endValue = (metric.command as ObdCommand).pid.max.toInt()
+            value = metric.valueToLong().toInt()
+        }
+
+    }
+
+    private fun rescaleView(holder: ViewHolder, scale1: Float, scale2: Float) {
+        holder.label.textSize = (holder.label.textSize * scale1)
+
+        holder.value?.let {
+            it.textSize = (it.textSize * scale1)
+        }
+
+        holder.maxValue?.let {
+            it.textSize = (it.textSize * scale2)
+        }
+
+        holder.minValue?.let {
+            it.textSize = (it.textSize * scale2)
+        }
+
+        holder.avgValue?.let {
+            it.textSize = (it.textSize * scale2)
+        }
+    }
+
+    private fun logTsDiff(metric: ObdMetric) {
+        currentTs = if (currentTs.equals(0)) {
+            metric.timestamp
+        } else {
+            val diff = metric.timestamp - currentTs
+            Log.d("LogTS", "${metric.command.pid.description} = ${diff}")
+            metric.timestamp
         }
     }
 

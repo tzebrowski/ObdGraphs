@@ -25,7 +25,8 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.isEnabled
-import java.util.Collections
+import java.sql.Timestamp
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -44,6 +45,7 @@ internal class DashboardViewAdapter internal constructor(
         notifyItemMoved(fromPosition, toPosition)
     }
 
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -59,6 +61,7 @@ internal class DashboardViewAdapter internal constructor(
         position: Int
     ) {
         val metric = data.elementAt(position)
+
         val obdCommand = metric.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
