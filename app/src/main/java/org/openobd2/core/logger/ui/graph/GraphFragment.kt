@@ -19,6 +19,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.metrics.ObdMetric
+import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
@@ -31,12 +32,56 @@ import java.util.*
 
 class GraphFragment : Fragment() {
 
+    class MetricScaler {
+
+        private val NEW_RANGE_MIN_VAL = 0f
+        private val NEW_RANGE_MAX_VAL = 2000f
+
+        fun scaleToPidRange(
+            pid: PidDefinition,
+            value: Float
+        ): Float {
+            return if (pid.id == 13L){
+                value
+            }else{
+                scaleToNewRange(value,NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL,pid.min.toFloat(),pid.max.toFloat())
+            }
+        }
+
+        fun scaleToNewRange(
+            obdMetric: ObdMetric
+        ): Float {
+            return if (obdMetric.command.pid.id == 13L){
+                obdMetric.valueToDouble().toFloat()
+            }else{
+                scaleToNewRange(obdMetric.valueToDouble().toFloat(),obdMetric.command.pid.min.toFloat(),
+                    obdMetric.command.pid.max.toFloat(), NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL)
+            }
+        }
+
+        private fun scaleToNewRange(
+            currentValue: Float,
+            currentMin: Float,
+            currentMax: Float,
+            targetMin: Float,
+            targetMax: Float
+        ): Float {
+            return (currentValue - currentMin) * (targetMax - targetMin) / (currentMax - currentMin) + targetMin
+        }
+    }
+
     private class GestureListener(val context: Context) : SimpleOnGestureListener() {
         override fun onDoubleTap(e: MotionEvent): Boolean {
             context.sendBroadcast(Intent().apply {
                 action = TOGGLE_TOOLBAR_ACTION
             })
             return true
+        }
+    }
+
+    private class ReverseValueFormatter(val pid: PidDefinition,val scaler: MetricScaler): ValueFormatter(){
+        override fun getFormattedValue(value: Float): String {
+            return scaler.scaleToPidRange(pid, value).toString()
         }
     }
 
@@ -50,6 +95,7 @@ class GraphFragment : Fragment() {
     private var chart: LineChart? = null
     private var firstTimeStamp: Long = System.currentTimeMillis()
     private val generatedColors: IntIterator  = ColorTemplate.MATERIAL_COLORS.iterator()
+    private val scaler: MetricScaler = MetricScaler()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,13 +110,11 @@ class GraphFragment : Fragment() {
         val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
 
         chart = initializeChart(root).apply {
-            data =  LineData(metrics.map {createDataSet(it) }.toList()).apply {
-                setValueTextColor(Color.RED)
-                setValueTextSize(9f)
-            }
-
+            data = LineData(metrics.map { createDataSet(it) }.toList())
             val gestureDetector = GestureDetector(root.context, GestureListener(requireContext()))
-            val onTouchListener: View.OnTouchListener = View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
+            val onTouchListener: View.OnTouchListener = View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(
+                event
+            ) }
             setOnTouchListener(onTouchListener)
             invalidate()
         }
@@ -86,14 +130,16 @@ class GraphFragment : Fragment() {
         return root
     }
 
-    private fun addEntry(it: ObdMetric) {
-        val data = chart!!.data
-        data.getDataSetByLabel(it.command.pid.description, true)?.run {
-            val timestamp = (System.currentTimeMillis() - firstTimeStamp).toFloat()
-            addEntry(Entry(timestamp, it.valueToDouble().toFloat()))
-            data.notifyDataChanged()
-            chart!!.notifyDataSetChanged()
-            chart!!.moveViewToX(entryCount.toFloat())
+    private fun addEntry(obdMetric: ObdMetric) {
+        chart?.run{
+            data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
+                val timestamp = (System.currentTimeMillis() - firstTimeStamp).toFloat()
+                val newVal = scaler.scaleToNewRange(obdMetric)
+                it.addEntry(Entry(timestamp, newVal, obdMetric))
+                data.notifyDataChanged()
+                notifyDataSetChanged()
+                moveViewToX(it.entryCount.toFloat())
+            }
         }
     }
 
@@ -111,11 +157,17 @@ class GraphFragment : Fragment() {
             setBackgroundColor(Color.BLACK)
             setViewPortOffsets(0f, 0f, 0f, 0f)
 
-            legend.run{
+            legend.run {
                 isEnabled = true
-                legend.form = Legend.LegendForm.LINE
-                legend.textColor = Color.WHITE
-                legend.textSize = 20f
+                form = Legend.LegendForm.LINE
+                textColor = Color.WHITE
+                textSize = 20f
+                verticalAlignment = Legend.LegendVerticalAlignment.TOP
+                horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
+                orientation = Legend.LegendOrientation.HORIZONTAL
+                isWordWrapEnabled = true
+                maxSizePercent = 0.20f
+                xOffset = 40f
             }
             xAxis.run{
                 position = XAxis.XAxisPosition.TOP_INSIDE
@@ -132,13 +184,24 @@ class GraphFragment : Fragment() {
                 setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
                 textColor = ColorTemplate.getHoloBlue()
                 setDrawGridLines(true)
+                setDrawMarkers(true)
                 isGranularityEnabled = true
-//                axisMinimum = 0f
-//                axisMaximum = 8000f
+                axisMinimum = 0f
+                axisMaximum = 7200f
                 textColor = Color.rgb(255, 192, 56)
             }
-            axisRight.isEnabled = false
-        }
+
+            axisRight.run {
+                isEnabled = false
+                setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
+                textColor = ColorTemplate.getHoloBlue()
+                setDrawGridLines(true)
+                isGranularityEnabled = true
+                axisMinimum = -10f
+                axisMaximum = 1000f
+                textColor = Color.rgb(255, 192, 56)
+            }
+         }
     }
 
 
@@ -157,11 +220,12 @@ class GraphFragment : Fragment() {
             setDrawValues(true)
             setDrawFilled(true)
             fillColor = col
-
-            fillAlpha = 65
-            fillColor = ColorTemplate.getHoloBlue()
+            valueFormatter = ReverseValueFormatter(obdMetric.command.pid,scaler)
+            fillAlpha = 35
+            fillColor = col
             highLightColor = Color.rgb(244, 117, 117)
             setDrawCircleHole(false)
+            valueTextSize = 14f
         }
         return lineDataSet
     }
