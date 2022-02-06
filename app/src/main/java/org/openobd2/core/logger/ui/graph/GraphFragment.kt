@@ -23,6 +23,7 @@ import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
+import org.openobd2.core.logger.ui.common.Cache
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getLongSet
@@ -31,44 +32,6 @@ import java.util.*
 
 
 class GraphFragment : Fragment() {
-
-    class MetricScaler {
-
-        private val NEW_RANGE_MIN_VAL = 0f
-        private val NEW_RANGE_MAX_VAL = 2000f
-
-        fun scaleToPidRange(
-            pid: PidDefinition,
-            value: Float
-        ): Float {
-            return if (pid.id == 13L){
-                value
-            }else{
-                scaleToNewRange(value,NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL,pid.min.toFloat(),pid.max.toFloat())
-            }
-        }
-
-        fun scaleToNewRange(
-            obdMetric: ObdMetric
-        ): Float {
-            return if (obdMetric.command.pid.id == 13L){
-                obdMetric.valueToDouble().toFloat()
-            }else{
-                scaleToNewRange(obdMetric.valueToDouble().toFloat(),obdMetric.command.pid.min.toFloat(),
-                    obdMetric.command.pid.max.toFloat(), NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL)
-            }
-        }
-
-        private fun scaleToNewRange(
-            currentValue: Float,
-            currentMin: Float,
-            currentMax: Float,
-            targetMin: Float,
-            targetMax: Float
-        ): Float {
-            return (currentValue - currentMin) * (targetMax - targetMin) / (currentMax - currentMin) + targetMin
-        }
-    }
 
     private class GestureListener(val context: Context) : SimpleOnGestureListener() {
         override fun onDoubleTap(e: MotionEvent): Boolean {
@@ -79,7 +42,7 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private class ReverseValueFormatter(val pid: PidDefinition,val scaler: MetricScaler): ValueFormatter(){
+    private class ReverseValueFormatter(val pid: PidDefinition,val scaler: Scaler): ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
             return scaler.scaleToPidRange(pid, value).toString()
         }
@@ -94,8 +57,19 @@ class GraphFragment : Fragment() {
 
     private var chart: LineChart? = null
     private var firstTimeStamp: Long = System.currentTimeMillis()
-    private val generatedColors: IntIterator  = ColorTemplate.MATERIAL_COLORS.iterator()
-    private val scaler: MetricScaler = MetricScaler()
+    private val colorTemplate: IntIterator  = colorTemplate()
+    private val scaler  = Scaler()
+    private var entriesCache = mutableMapOf<String,MutableList<Entry>>()
+
+    private val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
+    private val CACHE_TS_PROPERTY_NAME = "cache.graph.ts"
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Cache[CACHE_ENTRIES_PROPERTY_NAME] = entriesCache
+        Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -127,18 +101,42 @@ class GraphFragment : Fragment() {
             }
         })
 
+        Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
+            initFromCache(it as MutableMap<String, MutableList<Entry>>)
+        }
+
         return root
     }
 
+    private fun initFromCache(newCache: MutableMap<String,MutableList<Entry>>) {
+        chart?.run {
+            newCache.forEach { (label, entries) ->
+                data.getDataSetByLabel(label, true)?.let { lineData ->
+                    entries.forEach {  lineData.addEntry(it) }
+                    data.notifyDataChanged()
+                }
+            }
+
+            moveViewToX(lineData.entryCount.toFloat())
+            notifyDataSetChanged()
+            entriesCache = newCache
+            firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long
+        }
+    }
+
     private fun addEntry(obdMetric: ObdMetric) {
-        chart?.run{
+        chart?.run {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
                 val timestamp = (System.currentTimeMillis() - firstTimeStamp).toFloat()
-                val newVal = scaler.scaleToNewRange(obdMetric)
-                it.addEntry(Entry(timestamp, newVal, obdMetric))
+                val entry = Entry(timestamp, scaler.scaleToNewRange(obdMetric))
+                it.addEntry(entry)
                 data.notifyDataChanged()
                 notifyDataSetChanged()
                 moveViewToX(it.entryCount.toFloat())
+
+                entriesCache.getOrPut(obdMetric.command.pid.description){
+                    mutableListOf<Entry>()
+                }.add(entry)
             }
         }
     }
@@ -169,7 +167,8 @@ class GraphFragment : Fragment() {
                 maxSizePercent = 0.20f
                 xOffset = 40f
             }
-            xAxis.run{
+
+            xAxis.run {
                 position = XAxis.XAxisPosition.TOP_INSIDE
                 textSize = 10f
                 textColor = Color.GREEN
@@ -208,7 +207,7 @@ class GraphFragment : Fragment() {
     private fun createDataSet(obdMetric: ObdMetric) : LineDataSet {
         val values = mutableListOf<Entry>()
         val lineDataSet = LineDataSet(values, obdMetric.command.pid.description)
-        val col = generatedColors.nextInt()
+        val col = colorTemplate.nextInt()
         lineDataSet.run {
             label = obdMetric.command.pid.description
             lineDataSet.form = Legend.LegendForm.SQUARE
@@ -228,5 +227,22 @@ class GraphFragment : Fragment() {
             valueTextSize = 14f
         }
         return lineDataSet
+    }
+
+    private fun colorTemplate(): IntIterator {
+
+        val colorScheme = mutableListOf<Int>()
+        ColorTemplate.MATERIAL_COLORS.forEach {
+            colorScheme.add(it)
+        }
+
+        ColorTemplate.COLORFUL_COLORS.forEach {
+            colorScheme.add(it)
+        }
+
+        ColorTemplate.JOYFUL_COLORS.forEach {
+            colorScheme.add(it)
+        }
+        return colorScheme.toIntArray().iterator()
     }
 }

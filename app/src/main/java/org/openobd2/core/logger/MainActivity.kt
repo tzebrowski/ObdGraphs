@@ -27,6 +27,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.*
+import org.openobd2.core.logger.ui.common.Cache
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
 
@@ -146,6 +147,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val cache: MutableMap<String,Any> = mutableMapOf()
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
@@ -182,8 +185,8 @@ class MainActivity : AppCompatActivity() {
             DataLoggerService.startAction(this)
         })
         setupWindowManager()
+        Cache  = cache
     }
-
 
     override fun onResume() {
         super.onResume()
