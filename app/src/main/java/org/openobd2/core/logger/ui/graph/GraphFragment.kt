@@ -31,43 +31,17 @@ import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val ACTION_TOGGLE_VALUES = "chart.action.actionToggleValues"
-const val ACTION_TOGGLE_HIGHLIGHT = "chart.action.actionToggleHighlight"
-const val ACTION_TOGGLE_FILLED = "chart.action.actionToggleFilled"
-
 class GraphFragment : Fragment() {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                DATA_LOGGER_NOTIFICATION_STOPPED -> {
+                DATA_LOGGER_NOTIFICATION_CONNECTING -> {
                     chart?.run {
-                        // xAxis.axisMinimum = firstVisibleRange ?: 0f
-                        invalidate()
-                    }
-                }
-                ACTION_TOGGLE_VALUES -> {
-                    chart?.run {
-                        data.dataSets.forEach {
-                            it.setDrawValues(!it.isDrawValuesEnabled)
+                        if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()) {
+                            xAxis.axisMinimum = xAxis.axisMaximum
+                            Cache[CACHE_X_AXIS_MIN_PROPERTY_NAME] = xAxis.axisMinimum
                         }
-                        invalidate()
-                    }
-                }
-
-                ACTION_TOGGLE_HIGHLIGHT -> {
-                    chart?.run {
-                      data.isHighlightEnabled = !data.isHighlightEnabled
-                        invalidate()
-                    }
-                }
-
-                ACTION_TOGGLE_FILLED -> {
-                    chart?.run {
-                        data.dataSets.forEach {
-                            it.setDrawFilled(!it.isDrawFilledEnabled)
-                        }
-                        invalidate()
                     }
                 }
             }
@@ -133,36 +107,40 @@ class GraphFragment : Fragment() {
             }
         })
 
-        if (preferences.cacheEnabled) {
-            firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long? ?: System.currentTimeMillis()
-            Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
-                initFromCache(it as MutableMap<String, MutableList<Entry>>)
-            }
-        }
+        loadCaches()
 
         registerReceivers()
         return root
     }
 
-    private fun registerReceivers() {
-        requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_NOTIFICATION_STOPPED)
-            addAction(ACTION_TOGGLE_VALUES)
-            addAction(ACTION_TOGGLE_HIGHLIGHT)
-            addAction(ACTION_TOGGLE_FILLED)
-        })
-    }
+    private fun loadCaches() {
+        if (preferences.cacheEnabled) {
+            firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long? ?: System.currentTimeMillis()
+            Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
+                val cache = it as MutableMap<String, MutableList<Entry>>
+                chart?.run {
+                    cache.forEach { (label, entries) ->
+                        data.getDataSetByLabel(label, true)?.let { lineData ->
+                            entries.forEach { lineData.addEntry(it) }
+                            data.notifyDataChanged()
+                        }
+                    }
+                    notifyDataSetChanged()
 
-    private fun initFromCache(newCache: MutableMap<String, MutableList<Entry>>) {
-        chart?.run {
-            newCache.forEach { (label, entries) ->
-                data.getDataSetByLabel(label, true)?.let { lineData ->
-                    entries.forEach {  lineData.addEntry(it) }
-                    data.notifyDataChanged()
+                    Cache[CACHE_X_AXIS_MIN_PROPERTY_NAME]?.let {
+                        xAxis.axisMinimum = it as Float
+                    }
+
+                    invalidate()
                 }
             }
-            notifyDataSetChanged()
         }
+    }
+
+    private fun registerReceivers() {
+        requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
+            addAction(DATA_LOGGER_NOTIFICATION_CONNECTING)
+        })
     }
 
     private fun addEntry(obdMetric: ObdMetric) {

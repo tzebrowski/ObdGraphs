@@ -222,11 +222,11 @@ class MainActivity : AppCompatActivity() {
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_dashboard,
                 R.id.navigation_gauge,
+                R.id.navigation_graph,
+                R.id.navigation_dashboard,
                 R.id.navigation_debug,
                 R.id.navigation_metrics,
-                R.id.navigation_graph,
                 R.id.navigation_configuration
             )
         )

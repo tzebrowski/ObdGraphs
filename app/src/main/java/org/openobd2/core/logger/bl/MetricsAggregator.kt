@@ -12,6 +12,7 @@ import org.openobd2.core.logger.ui.graph.Scaler
 
 const val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
 const val CACHE_TS_PROPERTY_NAME = "cache.graph.ts"
+const val CACHE_X_AXIS_MIN_PROPERTY_NAME = "cache.graph.x_axis.min"
 
 internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
 

@@ -5,11 +5,6 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_dashboard">
 
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="org.openobd2.core.logger.ui.dashboard.DashFragment"
-        android:label="@string/title_dash"
-        tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_gauge"
@@ -17,6 +12,17 @@
         android:label="@string/title_gauge"
         tools:layout="@layout/fragment_gauge" />
 
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="org.openobd2.core.logger.ui.dashboard.DashFragment"
+        android:label="@string/title_dash"
+        tools:layout="@layout/fragment_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_graph"
+        android:name="org.openobd2.core.logger.ui.graph.GraphFragment"
+        android:label="@string/title_graph"
+        tools:layout="@layout/fragment_graph" />
 
     <fragment
         android:id="@+id/navigation_debug"
@@ -30,11 +36,6 @@
         android:label="@string/title_metrics"
         tools:layout="@layout/fragment_metrics" />
 
-    <fragment
-        android:id="@+id/navigation_graph"
-        android:name="org.openobd2.core.logger.ui.graph.GraphFragment"
-        android:label="@string/title_graph"
-        tools:layout="@layout/fragment_graph" />
 
     <fragment
         android:id="@+id/navigation_configuration"
