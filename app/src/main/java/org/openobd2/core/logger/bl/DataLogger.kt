@@ -19,12 +19,12 @@ import org.obd.metrics.diagnostic.Diagnostics
 import org.openobd2.core.logger.ui.preferences.*
 
 
-const val NOTIFICATION_ERROR_CONNECT = "data.logger.error.connect"
-const val NOTIFICATION_CONNECTED = "data.logger.connected"
-const val NOTIFICATION_CONNECTING = "data.logger.connecting"
-const val NOTIFICATION_STOPPED = "data.logger.stopped"
-const val NOTIFICATION_STOPPING = "data.logger.stopping"
-const val NOTIFICATION_ERROR = "data.logger.error"
+const val DATA_LOGGER_NOTIFICATION_ERROR_CONNECT = "data.logger.error.connect"
+const val DATA_LOGGER_NOTIFICATION_CONNECTED = "data.logger.connected"
+const val DATA_LOGGER_NOTIFICATION_CONNECTING = "data.logger.connecting"
+const val DATA_LOGGER_NOTIFICATION_STOPPED = "data.logger.stopped"
+const val DATA_LOGGER_NOTIFICATION_STOPPING = "data.logger.stopping"
+const val DATA_LOGGER_NOTIFICATION_ERROR = "data.logger.error"
 private const val LOGGER_TAG = "DATA_LOGGER_SVC"
 const val GENERIC_MODE = "Generic mode"
 
@@ -44,7 +44,7 @@ internal class DataLogger internal constructor() {
         override fun onConnecting() {
             Log.i(LOGGER_TAG, "Start collecting process")
             context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_CONNECTING
+                action = DATA_LOGGER_NOTIFICATION_CONNECTING
             })
         }
 
@@ -52,7 +52,7 @@ internal class DataLogger internal constructor() {
             Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
 
             context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_CONNECTED
+                action = DATA_LOGGER_NOTIFICATION_CONNECTED
             })
         }
 
@@ -73,7 +73,7 @@ internal class DataLogger internal constructor() {
                 start()
             } else {
                 context.sendBroadcast(Intent().apply {
-                    action = NOTIFICATION_ERROR
+                    action = DATA_LOGGER_NOTIFICATION_ERROR
                 })
             }
         }
@@ -87,7 +87,7 @@ internal class DataLogger internal constructor() {
             metricsAggregator.reset()
 
             context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_STOPPED
+                action = DATA_LOGGER_NOTIFICATION_STOPPED
             })
         }
 
@@ -95,7 +95,7 @@ internal class DataLogger internal constructor() {
             Log.i(LOGGER_TAG, "Stopping collecting process...")
 
             context.sendBroadcast(Intent().apply {
-                action = NOTIFICATION_STOPPING
+                action = DATA_LOGGER_NOTIFICATION_STOPPING
             })
         }
     }
@@ -178,7 +178,7 @@ internal class DataLogger internal constructor() {
                 BluetoothConnection(deviceName)
             }catch (e: IllegalStateException){
                 context.sendBroadcast(Intent().apply {
-                    action = NOTIFICATION_ERROR_CONNECT
+                    action = DATA_LOGGER_NOTIFICATION_ERROR_CONNECT
                 })
                 null
             }

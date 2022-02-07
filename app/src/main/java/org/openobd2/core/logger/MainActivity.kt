@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i(LOGGER_TAG, "Activating application.")
                     changeScreenBrightness(1f)
                 }
-                NOTIFICATION_ERROR_CONNECT -> {
+                DATA_LOGGER_NOTIFICATION_ERROR_CONNECT -> {
                     toast("Error occurred during. Please check your Bluetooth Connection settings.")
                 }
                 NOTIFICATION_METRICS_VIEW_TOGGLE -> {
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                     toggleNavigationItem(R.id.navigation_gauge)
                 }
 
-                NOTIFICATION_CONNECTING -> {
+                DATA_LOGGER_NOTIFICATION_CONNECTING -> {
                     toast("Connecting to the device.")
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     btn.refreshDrawableState()
                 }
 
-                NOTIFICATION_CONNECTED -> {
+                DATA_LOGGER_NOTIFICATION_CONNECTED -> {
                     toast(
                         "Connection to the device has been established." +
                                 "\n Start collecting data from ECU."
@@ -105,12 +105,12 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                NOTIFICATION_STOPPED -> {
+                DATA_LOGGER_NOTIFICATION_STOPPED -> {
                     toast("Connection with the device has been stopped.")
                     handleStop(context!!)
                 }
 
-                NOTIFICATION_ERROR -> {
+                DATA_LOGGER_NOTIFICATION_ERROR -> {
                     toast("Error occurred during. Please check your connection.")
                     handleStop(context!!)
                 }
@@ -261,13 +261,13 @@ class MainActivity : AppCompatActivity() {
     private fun registerReceiver() {
 
         registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(NOTIFICATION_CONNECTING)
-            addAction(NOTIFICATION_STOPPED)
-            addAction(NOTIFICATION_STOPPING)
-            addAction(NOTIFICATION_ERROR)
-            addAction(NOTIFICATION_CONNECTED)
+            addAction(DATA_LOGGER_NOTIFICATION_CONNECTING)
+            addAction(DATA_LOGGER_NOTIFICATION_STOPPED)
+            addAction(DATA_LOGGER_NOTIFICATION_STOPPING)
+            addAction(DATA_LOGGER_NOTIFICATION_ERROR)
+            addAction(DATA_LOGGER_NOTIFICATION_CONNECTED)
             addAction(ACTION_BATTERY_CHANGED)
-            addAction(NOTIFICATION_ERROR_CONNECT)
+            addAction(DATA_LOGGER_NOTIFICATION_ERROR_CONNECT)
             addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)
             addAction(NOTIFICATION_DEBUG_VIEW_TOGGLE)
             addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)

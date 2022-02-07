@@ -25,9 +25,9 @@ import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
+import org.openobd2.core.logger.bl.DATA_LOGGER_NOTIFICATION_STOPPED
 import org.openobd2.core.logger.ui.common.Cache
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
-import org.openobd2.core.logger.ui.preferences.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,6 +43,13 @@ class GraphFragment : Fragment() {
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                DATA_LOGGER_NOTIFICATION_STOPPED -> {
+                    chart?.run {
+                        //reset view
+                        xAxis.axisMinimum = firstVisibleRange!!
+                        invalidate()
+                    }
+                }
                 actionToggleValues -> {
                     chart?.run {
                         data.dataSets.forEach {
@@ -94,10 +101,11 @@ class GraphFragment : Fragment() {
     }
 
     private var chart: LineChart? = null
-    private var firstTimeStamp: Long = System.currentTimeMillis()
     private val colorTemplate: IntIterator  = colorScheme()
     private val scaler  = Scaler()
     private var entriesCache = mutableMapOf<String, MutableList<Entry>>()
+    private var firstTimeStamp: Long = System.currentTimeMillis()
+    private var firstVisibleRange: Float? = null
 
     private lateinit var preferences: GraphPreferences
 
@@ -113,13 +121,13 @@ class GraphFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_graph, container, false)
-        preferences = getGraphPreferences()
 
-        val visiblePids = Prefs.getLongSet("pref.graph.pids.selected")
+        preferences = getGraphPreferences()
         firstTimeStamp = System.currentTimeMillis()
+        firstVisibleRange = null
 
         chart = initializeChart(root).apply {
-            val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
+            val metrics = DataLogger.INSTANCE.getEmptyMetrics(preferences.selectedPids)
             data = LineData(metrics.map { createDataSet(it) }.toList())
             val gestureDetector = GestureDetector(root.context, GestureListener(requireContext()))
             val onTouchListener: View.OnTouchListener = View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(
@@ -131,7 +139,7 @@ class GraphFragment : Fragment() {
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             it?.let {
-                if (visiblePids.contains(it.command.pid.id)) {
+                if (preferences.selectedPids.contains(it.command.pid.id)) {
                     addEntry(it)
                 }
             }
@@ -147,10 +155,9 @@ class GraphFragment : Fragment() {
         return root
     }
 
-
-
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
+            addAction(DATA_LOGGER_NOTIFICATION_STOPPED)
             addAction(actionToggleValues)
             addAction(actionToggleHighlight)
             addAction(actionToggleFilled)
@@ -171,7 +178,6 @@ class GraphFragment : Fragment() {
         }
     }
 
-
     private fun addEntry(obdMetric: ObdMetric) {
         chart?.run {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
@@ -180,9 +186,15 @@ class GraphFragment : Fragment() {
                 it.addEntry(entry)
                 data.notifyDataChanged()
 
-                // move view port
-                if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()  && visibleXRange >= preferences.xAxisStartMovingAfter){
-                    xAxis.axisMinimum = xAxis.axisMinimum + preferences.xAxisMinimumShift
+                if (firstVisibleRange == null){
+                    firstVisibleRange = timestamp
+                }
+
+                if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()){
+
+                    if (visibleXRange >= preferences.xAxisStartMovingAfter) {
+                       xAxis.axisMinimum = xAxis.axisMinimum + preferences.xAxisMinimumShift
+                    }
                 }
 
                 notifyDataSetChanged()
