@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -27,8 +28,7 @@ class DashFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        setupDashRecyclerView()
-        setupGaugeRecyclerView()
+        configureView()
     }
 
     override fun onCreateView(
@@ -37,12 +37,56 @@ class DashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        setupDashRecyclerView()
-        setupGaugeRecyclerView()
+        configureView()
         return root
     }
 
-    private fun setupGaugeRecyclerView() {
+    private fun configureView() {
+        val gaugeVisible = Prefs.getBoolean("pref.dash.gauge.view.visible", false)
+        val dashboardVisible = Prefs.getBoolean("pref.dash.dash.view.visible", false)
+
+        if (gaugeVisible && dashboardVisible) {
+
+            configureRecyclerView(R.id.gauge_recycler_view, gaugeVisible, 0.25f, 0)
+            configureRecyclerView(R.id.dash_recycler_view, dashboardVisible, 0.75f, 0)
+
+            setupGaugeRecyclerView(2)
+            setupDashRecyclerView()
+
+        } else {
+            if (gaugeVisible && !dashboardVisible) {
+                configureRecyclerView(
+                    R.id.gauge_recycler_view,
+                    true,
+                    1f,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                configureRecyclerView(R.id.dash_recycler_view, false, 0f, 0)
+                setupGaugeRecyclerView(4)
+            }
+            if (!gaugeVisible && dashboardVisible) {
+                configureRecyclerView(
+                    R.id.dash_recycler_view,
+                    true,
+                    1f,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                configureRecyclerView(R.id.gauge_recycler_view, false, 0f, 0)
+                setupDashRecyclerView()
+            }
+        }
+    }
+
+    private fun configureRecyclerView(id:Int, visible:Boolean, weight: Float, width: Int) {
+        val view = root.findViewById<RecyclerView>(id)
+        view.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        (view.layoutParams as LinearLayout.LayoutParams).run {
+            this.weight = weight
+            this.width = width
+        }
+    }
+
+    private fun setupGaugeRecyclerView(spanCount: Int) {
         GaugeViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
@@ -50,7 +94,7 @@ class DashFragment : Fragment() {
             R.id.gauge_recycler_view,
             "pref.dash.gauge_pids.selected",
             R.layout.dash_gauge_item,
-            spanCount = 2)
+            spanCount = spanCount)
     }
 
     private fun setupDashRecyclerView() {

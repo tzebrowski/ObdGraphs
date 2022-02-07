@@ -194,6 +194,25 @@
             android:title="Gauge: Displayed PIDs" />
 
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.dash.gauge.view.visible"
+            android:summary="Gauge: Show the view"
+            android:title="Gauge: Show the view" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref.dash.dash.view.visible"
+            android:summary="Dash: Show the view"
+            android:title="Dash: Show the view" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref.graph.view.enabled"
+            android:summary="Show the view"
+            android:title="Show the view" />
+
+
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/dash_color_themes"
@@ -223,7 +242,6 @@
 
     <PreferenceCategory android:title="Graph">
         <CheckBoxPreference
-
             android:defaultValue="false"
             android:key="pref.graph.view.enabled"
             android:summary="Show the view"
