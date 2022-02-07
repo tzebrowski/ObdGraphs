@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import androidx.fragment.app.Fragment
@@ -36,6 +35,8 @@ const val actionToggleValues = "chart.action.actionToggleValues"
 const val actionToggleHighlight = "chart.action.actionToggleHighlight"
 const val actionToggleFilled = "chart.action.actionToggleFilled"
 
+private const val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
+private const val CACHE_TS_PROPERTY_NAME = "cache.graph.ts"
 
 class GraphFragment : Fragment() {
 
@@ -98,11 +99,7 @@ class GraphFragment : Fragment() {
     private val scaler  = Scaler()
     private var entriesCache = mutableMapOf<String, MutableList<Entry>>()
 
-    private val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
-    private val CACHE_TS_PROPERTY_NAME = "cache.graph.ts"
-
-    private var xAxisStartMovingAfterProp: Float = 0f
-    private var xAxisMinimumShiftProp: Float = 0f
+    private lateinit var preferences: GraphPreferences
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -116,6 +113,7 @@ class GraphFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_graph, container, false)
+        preferences = getGraphPreferences()
 
         val visiblePids = Prefs.getLongSet("pref.graph.pids.selected")
         firstTimeStamp = System.currentTimeMillis()
@@ -139,29 +137,19 @@ class GraphFragment : Fragment() {
             }
         })
 
-        Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
-            initFromCache(it as MutableMap<String, MutableList<Entry>>)
+        if (preferences.cacheEnabled) {
+            Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
+                initFromCache(it as MutableMap<String, MutableList<Entry>>)
+            }
         }
-        
-        loadPreferences()
+
         registerReceivers()
         return root
     }
 
-    private fun loadPreferences() {
-        xAxisStartMovingAfterProp =
-            Prefs.getString("pref.graph.x-axis.start-moving-after.time", "20000")!!.toFloat()
-        xAxisMinimumShiftProp = Prefs.getString("pref.graph.x-axis.minimum-shift.time", "20")!!.toFloat()
 
-        Log.i(
-            "GRAPH",
-            "Read properties from config xAxisStartMovingAfterProp=${xAxisStartMovingAfterProp}," +
-                    "xAxisMinimumShiftProp=${xAxisMinimumShiftProp}"
-        )
-    }
 
     private fun registerReceivers() {
-
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(actionToggleValues)
             addAction(actionToggleHighlight)
@@ -193,8 +181,8 @@ class GraphFragment : Fragment() {
                 data.notifyDataChanged()
 
                 // move view port
-                if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()  && visibleXRange >= xAxisStartMovingAfterProp){
-                    xAxis.axisMinimum = xAxis.axisMinimum + xAxisMinimumShiftProp
+                if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()  && visibleXRange >= preferences.xAxisStartMovingAfter){
+                    xAxis.axisMinimum = xAxis.axisMinimum + preferences.xAxisMinimumShift
                 }
 
                 notifyDataSetChanged()
