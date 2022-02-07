@@ -1,9 +1,12 @@
 package org.openobd2.core.logger.ui.graph
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
 import androidx.fragment.app.Fragment
@@ -25,13 +28,47 @@ import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
 import org.openobd2.core.logger.ui.common.Cache
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
-import org.openobd2.core.logger.ui.preferences.Prefs
-import org.openobd2.core.logger.ui.preferences.getLongSet
+import org.openobd2.core.logger.ui.preferences.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+const val actionToggleValues = "chart.action.actionToggleValues"
+const val actionToggleHighlight = "chart.action.actionToggleHighlight"
+const val actionToggleFilled = "chart.action.actionToggleFilled"
+
 
 class GraphFragment : Fragment() {
+
+    private var broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                actionToggleValues -> {
+                    chart?.run {
+                        data.dataSets.forEach {
+                            it.setDrawValues(!it.isDrawValuesEnabled)
+                        }
+                        invalidate()
+                    }
+                }
+
+                actionToggleHighlight -> {
+                    chart?.run {
+                      data.isHighlightEnabled = !data.isHighlightEnabled
+                        invalidate()
+                    }
+                }
+
+                actionToggleFilled -> {
+                    chart?.run {
+                        data.dataSets.forEach {
+                            it.setDrawFilled(!it.isDrawFilledEnabled)
+                        }
+                        invalidate()
+                    }
+                }
+            }
+        }
+    }
 
     private class GestureListener(val context: Context) : SimpleOnGestureListener() {
         override fun onDoubleTap(e: MotionEvent): Boolean {
@@ -42,7 +79,7 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private class ReverseValueFormatter(val pid: PidDefinition,val scaler: Scaler): ValueFormatter(){
+    private class ReverseValueFormatter(val pid: PidDefinition, val scaler: Scaler): ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
             return scaler.scaleToPidRange(pid, value).toString()
         }
@@ -57,19 +94,21 @@ class GraphFragment : Fragment() {
 
     private var chart: LineChart? = null
     private var firstTimeStamp: Long = System.currentTimeMillis()
-    private val colorTemplate: IntIterator  = colorTemplate()
+    private val colorTemplate: IntIterator  = colorScheme()
     private val scaler  = Scaler()
-    private var entriesCache = mutableMapOf<String,MutableList<Entry>>()
+    private var entriesCache = mutableMapOf<String, MutableList<Entry>>()
 
     private val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
     private val CACHE_TS_PROPERTY_NAME = "cache.graph.ts"
+
+    private var xAxisStartMovingAfterProp: Float = 0f
+    private var xAxisMinimumShiftProp: Float = 0f
 
     override fun onDestroyView() {
         super.onDestroyView()
         Cache[CACHE_ENTRIES_PROPERTY_NAME] = entriesCache
         Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,9 +120,8 @@ class GraphFragment : Fragment() {
         val visiblePids = Prefs.getLongSet("pref.graph.pids.selected")
         firstTimeStamp = System.currentTimeMillis()
 
-        val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
-
         chart = initializeChart(root).apply {
+            val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
             data = LineData(metrics.map { createDataSet(it) }.toList())
             val gestureDetector = GestureDetector(root.context, GestureListener(requireContext()))
             val onTouchListener: View.OnTouchListener = View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(
@@ -104,11 +142,34 @@ class GraphFragment : Fragment() {
         Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
             initFromCache(it as MutableMap<String, MutableList<Entry>>)
         }
-
+        
+        loadPreferences()
+        registerReceivers()
         return root
     }
 
-    private fun initFromCache(newCache: MutableMap<String,MutableList<Entry>>) {
+    private fun loadPreferences() {
+        xAxisStartMovingAfterProp =
+            Prefs.getString("pref.graph.x-axis.start-moving-after.time", "20000")!!.toFloat()
+        xAxisMinimumShiftProp = Prefs.getString("pref.graph.x-axis.minimum-shift.time", "20")!!.toFloat()
+
+        Log.i(
+            "GRAPH",
+            "Read properties from config xAxisStartMovingAfterProp=${xAxisStartMovingAfterProp}," +
+                    "xAxisMinimumShiftProp=${xAxisMinimumShiftProp}"
+        )
+    }
+
+    private fun registerReceivers() {
+
+        requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
+            addAction(actionToggleValues)
+            addAction(actionToggleHighlight)
+            addAction(actionToggleFilled)
+        })
+    }
+
+    private fun initFromCache(newCache: MutableMap<String, MutableList<Entry>>) {
         chart?.run {
             newCache.forEach { (label, entries) ->
                 data.getDataSetByLabel(label, true)?.let { lineData ->
@@ -116,13 +177,12 @@ class GraphFragment : Fragment() {
                     data.notifyDataChanged()
                 }
             }
-
-            moveViewToX(lineData.entryCount.toFloat())
             notifyDataSetChanged()
             entriesCache = newCache
             firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long
         }
     }
+
 
     private fun addEntry(obdMetric: ObdMetric) {
         chart?.run {
@@ -131,9 +191,14 @@ class GraphFragment : Fragment() {
                 val entry = Entry(timestamp, scaler.scaleToNewRange(obdMetric))
                 it.addEntry(entry)
                 data.notifyDataChanged()
-                notifyDataSetChanged()
-                moveViewToX(it.entryCount.toFloat())
 
+                // move view port
+                if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()  && visibleXRange >= xAxisStartMovingAfterProp){
+                    xAxis.axisMinimum = xAxis.axisMinimum + xAxisMinimumShiftProp
+                }
+
+                notifyDataSetChanged()
+                invalidate()
                 entriesCache.getOrPut(obdMetric.command.pid.description){
                     mutableListOf<Entry>()
                 }.add(entry)
@@ -153,7 +218,7 @@ class GraphFragment : Fragment() {
             setDrawGridBackground(false)
             isHighlightPerDragEnabled = true
             setBackgroundColor(Color.BLACK)
-            setViewPortOffsets(0f, 0f, 0f, 0f)
+            setViewPortOffsets(10f, 10f, 10f, 10f)
 
             legend.run {
                 isEnabled = true
@@ -185,20 +250,15 @@ class GraphFragment : Fragment() {
                 setDrawGridLines(true)
                 setDrawMarkers(true)
                 isGranularityEnabled = true
+
                 axisMinimum = 0f
-                axisMaximum = 7200f
+                axisMaximum = 5000f
                 textColor = Color.rgb(255, 192, 56)
+//                granularity = 1f
             }
 
             axisRight.run {
                 isEnabled = false
-                setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART)
-                textColor = ColorTemplate.getHoloBlue()
-                setDrawGridLines(true)
-                isGranularityEnabled = true
-                axisMinimum = -10f
-                axisMaximum = 1000f
-                textColor = Color.rgb(255, 192, 56)
             }
          }
     }
@@ -209,6 +269,7 @@ class GraphFragment : Fragment() {
         val lineDataSet = LineDataSet(values, obdMetric.command.pid.description)
         val col = colorTemplate.nextInt()
         lineDataSet.run {
+            mode = LineDataSet.Mode.CUBIC_BEZIER
             label = obdMetric.command.pid.description
             lineDataSet.form = Legend.LegendForm.SQUARE
             axisDependency = AxisDependency.LEFT
@@ -219,30 +280,14 @@ class GraphFragment : Fragment() {
             setDrawValues(true)
             setDrawFilled(true)
             fillColor = col
-            valueFormatter = ReverseValueFormatter(obdMetric.command.pid,scaler)
+            valueFormatter = ReverseValueFormatter(obdMetric.command.pid, scaler)
             fillAlpha = 35
             fillColor = col
             highLightColor = Color.rgb(244, 117, 117)
             setDrawCircleHole(false)
             valueTextSize = 14f
+            isHighlightEnabled = true
         }
         return lineDataSet
-    }
-
-    private fun colorTemplate(): IntIterator {
-
-        val colorScheme = mutableListOf<Int>()
-        ColorTemplate.MATERIAL_COLORS.forEach {
-            colorScheme.add(it)
-        }
-
-        ColorTemplate.COLORFUL_COLORS.forEach {
-            colorScheme.add(it)
-        }
-
-        ColorTemplate.JOYFUL_COLORS.forEach {
-            colorScheme.add(it)
-        }
-        return colorScheme.toIntArray().iterator()
     }
 }

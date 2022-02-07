@@ -212,6 +212,7 @@
             android:summary="Enable the view"
             android:title="Show the view" />
 
+
         <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:defaultValue="@array/perf_empty_array"
             android:key="pref.gauge.pids.selected"
@@ -222,10 +223,26 @@
 
     <PreferenceCategory android:title="Graph">
         <CheckBoxPreference
+
             android:defaultValue="false"
             android:key="pref.graph.view.enabled"
             android:summary="Show the view"
             android:title="Show the view" />
+
+        <EditTextPreference
+            android:inputType="number"
+            android:defaultValue="20"
+            android:dialogTitle="X-Axis: Moving time ms"
+            android:key="pref.graph.x-axis.minimum-shift.time"
+            android:title="X-Axis moving time" />
+
+        <EditTextPreference
+            android:inputType="number"
+            android:defaultValue="20000"
+            android:dialogTitle="X-Axis: Start moving after ms"
+            android:key="pref.graph.x-axis.start-moving-after.time"
+            android:title="X-Axis start moving after" />
+
         <org.openobd2.core.logger.ui.preferences.PidListPreferences
             android:defaultValue="@array/perf_empty_array"
             android:key="pref.graph.pids.selected"

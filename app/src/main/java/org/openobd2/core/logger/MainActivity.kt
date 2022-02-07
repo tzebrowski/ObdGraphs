@@ -11,9 +11,7 @@ import android.os.PowerManager
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.Log
-import android.view.Gravity
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -49,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                     lockScreen()
                 }
                 SCREEN_ON -> {
-                    Log.i(LOGGER_TAG,"Activating application.")
+                    Log.i(LOGGER_TAG, "Activating application.")
                     changeScreenBrightness(1f)
                 }
                 NOTIFICATION_ERROR_CONNECT -> {
@@ -147,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val cache: MutableMap<String,Any> = mutableMapOf()
+    private val cache: MutableMap<String, Any> = mutableMapOf()
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -242,23 +240,23 @@ class MainActivity : AppCompatActivity() {
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_debug)?.isVisible =
-            Prefs.isEnabled("pref.debug.view.enabled")
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.run{
+            findItem(R.id.navigation_debug)?.isVisible =
+                Prefs.isEnabled("pref.debug.view.enabled")
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_dashboard).isVisible =
-            Prefs.isEnabled( "pref.dash.view.enabled")
+            findItem(R.id.navigation_dashboard).isVisible =
+                Prefs.isEnabled("pref.dash.view.enabled")
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_gauge).isVisible =
-            Prefs.isEnabled("pref.gauge.view.enabled")
+            findItem(R.id.navigation_gauge).isVisible =
+                Prefs.isEnabled("pref.gauge.view.enabled")
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_metrics).isVisible =
-            Prefs.isEnabled("pref.metrics.view.enabled")
+            findItem(R.id.navigation_metrics).isVisible =
+                Prefs.isEnabled("pref.metrics.view.enabled")
 
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(R.id.navigation_graph).isVisible =
-            Prefs.isEnabled("pref.graph.view.enabled")
-
+            findItem(R.id.navigation_graph).isVisible =
+                Prefs.isEnabled("pref.graph.view.enabled")
+       }
     }
-
 
     private fun registerReceiver() {
 
