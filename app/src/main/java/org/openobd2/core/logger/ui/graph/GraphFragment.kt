@@ -23,20 +23,17 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.bl.*
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.MetricsAggregator
-import org.openobd2.core.logger.bl.DATA_LOGGER_NOTIFICATION_STOPPED
 import org.openobd2.core.logger.ui.common.Cache
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val actionToggleValues = "chart.action.actionToggleValues"
-const val actionToggleHighlight = "chart.action.actionToggleHighlight"
-const val actionToggleFilled = "chart.action.actionToggleFilled"
-
-private const val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
-private const val CACHE_TS_PROPERTY_NAME = "cache.graph.ts"
+const val ACTION_TOGGLE_VALUES = "chart.action.actionToggleValues"
+const val ACTION_TOGGLE_HIGHLIGHT = "chart.action.actionToggleHighlight"
+const val ACTION_TOGGLE_FILLED = "chart.action.actionToggleFilled"
 
 class GraphFragment : Fragment() {
 
@@ -45,12 +42,11 @@ class GraphFragment : Fragment() {
             when (intent?.action) {
                 DATA_LOGGER_NOTIFICATION_STOPPED -> {
                     chart?.run {
-                        //reset view
-                        xAxis.axisMinimum = firstVisibleRange!!
+                        // xAxis.axisMinimum = firstVisibleRange ?: 0f
                         invalidate()
                     }
                 }
-                actionToggleValues -> {
+                ACTION_TOGGLE_VALUES -> {
                     chart?.run {
                         data.dataSets.forEach {
                             it.setDrawValues(!it.isDrawValuesEnabled)
@@ -59,14 +55,14 @@ class GraphFragment : Fragment() {
                     }
                 }
 
-                actionToggleHighlight -> {
+                ACTION_TOGGLE_HIGHLIGHT -> {
                     chart?.run {
                       data.isHighlightEnabled = !data.isHighlightEnabled
                         invalidate()
                     }
                 }
 
-                actionToggleFilled -> {
+                ACTION_TOGGLE_FILLED -> {
                     chart?.run {
                         data.dataSets.forEach {
                             it.setDrawFilled(!it.isDrawFilledEnabled)
@@ -103,17 +99,9 @@ class GraphFragment : Fragment() {
     private var chart: LineChart? = null
     private val colorTemplate: IntIterator  = colorScheme()
     private val scaler  = Scaler()
-    private var entriesCache = mutableMapOf<String, MutableList<Entry>>()
     private var firstTimeStamp: Long = System.currentTimeMillis()
     private var firstVisibleRange: Float? = null
-
     private lateinit var preferences: GraphPreferences
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Cache[CACHE_ENTRIES_PROPERTY_NAME] = entriesCache
-        Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -146,6 +134,7 @@ class GraphFragment : Fragment() {
         })
 
         if (preferences.cacheEnabled) {
+            firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long? ?: System.currentTimeMillis()
             Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
                 initFromCache(it as MutableMap<String, MutableList<Entry>>)
             }
@@ -158,9 +147,9 @@ class GraphFragment : Fragment() {
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(DATA_LOGGER_NOTIFICATION_STOPPED)
-            addAction(actionToggleValues)
-            addAction(actionToggleHighlight)
-            addAction(actionToggleFilled)
+            addAction(ACTION_TOGGLE_VALUES)
+            addAction(ACTION_TOGGLE_HIGHLIGHT)
+            addAction(ACTION_TOGGLE_FILLED)
         })
     }
 
@@ -173,8 +162,6 @@ class GraphFragment : Fragment() {
                 }
             }
             notifyDataSetChanged()
-            entriesCache = newCache
-            firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long
         }
     }
 
@@ -199,9 +186,6 @@ class GraphFragment : Fragment() {
 
                 notifyDataSetChanged()
                 invalidate()
-                entriesCache.getOrPut(obdMetric.command.pid.description){
-                    mutableListOf<Entry>()
-                }.add(entry)
             }
         }
     }
