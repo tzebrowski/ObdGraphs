@@ -124,7 +124,7 @@ internal class DataLogger internal constructor() {
         .observer(metricsAggregator)
         .lifecycle(lifecycle).initialize()
 
-    val preferences: DataLoggerPreferences by lazy { getDataLoggerPreferences() }
+    val preferences by lazy { DataLoggerPreferences.instance }
 
     fun diagnostics(): Diagnostics {
         return workflow().diagnostics
@@ -152,7 +152,9 @@ internal class DataLogger internal constructor() {
     }
 
     fun start() {
+
         if (::context.isInitialized) {
+
             val query = query()
             Log.i(LOGGER_TAG, "Selected pids: ${query.pids}")
 
@@ -164,6 +166,7 @@ internal class DataLogger internal constructor() {
     }
 
     private fun connection() : AdapterConnection? {
+
         return if (preferences.connectionType == "wifi"){
             Log.i(LOGGER_TAG, "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ...")
             TcpConnection.of(preferences.tcpHost, preferences.tcpPort)

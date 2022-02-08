@@ -137,7 +137,6 @@ class DashFragment : Fragment() {
 
                 metricsViewContext.observerMetrics(metrics)
                 metricsViewContext.adapter.notifyDataSetChanged()
-
             }
         }
         val callback = if (dashboardPreferences.swipeToDeleteEnabled)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
 import org.openobd2.core.logger.bl.DataLogger
+import org.openobd2.core.logger.bl.DataLoggerPreferences
 import java.util.*
 
 class PidListPreferences(
@@ -11,6 +12,8 @@ class PidListPreferences(
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {
+    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+
     init {
 
         val entries: MutableList<CharSequence> =
@@ -24,7 +27,7 @@ class PidListPreferences(
                 entriesValues.add(p.id.toString())
             }
 
-        val default = if (Prefs.getMode() =="Generic mode")  hashSetOf<String>().apply {
+        val default = if (preferences.mode =="Generic mode")  hashSetOf<String>().apply {
 //            add("4") // Fuel system status
             add("7") // Short trims
             add("8")  // Long trim

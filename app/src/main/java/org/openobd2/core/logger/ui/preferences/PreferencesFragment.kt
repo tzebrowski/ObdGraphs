@@ -10,6 +10,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.bl.DataLoggerPreferences
 import org.openobd2.core.logger.bl.GENERIC_MODE
 
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "preferences.view.graph.toggle"
@@ -24,6 +25,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
+    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -110,7 +112,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val p1 = findPreference<Preference>("pref.pids.generic")
         val p2 = findPreference<Preference>("pref.pids.mode22")
 
-        when (Prefs.getMode()) {
+        when (preferences.mode) {
             GENERIC_MODE -> {
                 p1?.isVisible = true
                 p2?.isVisible = false
