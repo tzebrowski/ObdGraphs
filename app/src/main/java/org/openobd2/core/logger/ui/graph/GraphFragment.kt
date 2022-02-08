@@ -36,7 +36,7 @@ class GraphFragment : Fragment() {
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                DATA_LOGGER_NOTIFICATION_CONNECTING -> {
+                DATA_LOGGER_CONNECTING_EVENT -> {
                     chart?.run {
                         if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()) {
                             xAxis.axisMinimum = xAxis.axisMaximum
@@ -139,7 +139,7 @@ class GraphFragment : Fragment() {
 
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_NOTIFICATION_CONNECTING)
+            addAction(DATA_LOGGER_CONNECTING_EVENT)
         })
     }
 

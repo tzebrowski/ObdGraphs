@@ -21,10 +21,9 @@ import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.gauge.GaugeViewSetup
 import org.openobd2.core.logger.ui.preferences.*
 
-private const val SWIPE_TO_DELETE_PREF_KEY = "pref.dash.swipe.to.delete"
-
 class DashFragment : Fragment() {
     lateinit var root: View
+    private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences()  }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -42,19 +41,17 @@ class DashFragment : Fragment() {
     }
 
     private fun configureView() {
-        val gaugeVisible = Prefs.getBoolean("pref.dash.gauge.view.visible", false)
-        val dashboardVisible = Prefs.getBoolean("pref.dash.dash.view.visible", false)
 
-        if (gaugeVisible && dashboardVisible) {
+        if (dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
 
-            configureRecyclerView(R.id.gauge_recycler_view, gaugeVisible, 0.25f, 0)
-            configureRecyclerView(R.id.dash_recycler_view, dashboardVisible, 0.75f, 0)
+            configureRecyclerView(R.id.gauge_recycler_view, dashboardPreferences.gaugeViewVisible, 0.25f, 0)
+            configureRecyclerView(R.id.dash_recycler_view, dashboardPreferences.dashboardViewVisible, 0.75f, 0)
 
             setupGaugeRecyclerView(2)
             setupDashRecyclerView()
 
         } else {
-            if (gaugeVisible && !dashboardVisible) {
+            if (dashboardPreferences.gaugeViewVisible && !dashboardPreferences.dashboardViewVisible) {
                 configureRecyclerView(
                     R.id.gauge_recycler_view,
                     true,
@@ -64,7 +61,7 @@ class DashFragment : Fragment() {
                 configureRecyclerView(R.id.dash_recycler_view, false, 0f, 0)
                 setupGaugeRecyclerView(4)
             }
-            if (!gaugeVisible && dashboardVisible) {
+            if (!dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
                 configureRecyclerView(
                     R.id.dash_recycler_view,
                     true,
@@ -98,7 +95,7 @@ class DashFragment : Fragment() {
     }
 
     private fun setupDashRecyclerView() {
-        val metricsViewContext = MetricsViewContext(viewLifecycleOwner, Prefs.getLongSet("pref.dash.pids.selected"))
+        val metricsViewContext = MetricsViewContext(viewLifecycleOwner,dashboardPreferences.dashboardVisiblePids)
 
         val sortOrderMap = DashPreferences.SERIALIZER.load(requireContext())?.map {
             it.id to it.position
@@ -127,10 +124,7 @@ class DashFragment : Fragment() {
                 val itemId: ObdMetric = metrics[fromPosition]
                 metrics.remove(itemId)
 
-                Prefs.updateLongSet(
-                    "pref.dash.pids.selected",
-                    metrics.map { obdMetric -> obdMetric.command.pid.id }.toList()
-                )
+                updateDashboardPids(metrics.map { obdMetric -> obdMetric.command.pid.id }.toList())
 
                 DashPreferences.SERIALIZER.store(requireContext(), metrics)
                 val itemHeight = calculateItemHeight(metrics)
@@ -146,7 +140,7 @@ class DashFragment : Fragment() {
 
             }
         }
-        val callback = if (Prefs.isEnabled( SWIPE_TO_DELETE_PREF_KEY))
+        val callback = if (dashboardPreferences.swipeToDeleteEnabled)
             DragManageAdapter(
             requireContext(),
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,

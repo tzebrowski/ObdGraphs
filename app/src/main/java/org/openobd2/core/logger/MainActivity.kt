@@ -43,14 +43,14 @@ class MainActivity : AppCompatActivity() {
                         layout.isVisible = !layout.isVisible
                     }
                 }
-                SCREEN_OFF -> {
+                SCREEN_OFF_EVENT -> {
                     lockScreen()
                 }
-                SCREEN_ON -> {
+                SCREEN_ON_EVENT -> {
                     Log.i(LOGGER_TAG, "Activating application.")
                     changeScreenBrightness(1f)
                 }
-                DATA_LOGGER_NOTIFICATION_ERROR_CONNECT -> {
+                DATA_LOGGER_ERROR_CONNECT_EVENT -> {
                     toast("Error occurred during. Please check your Bluetooth Connection settings.")
                 }
                 NOTIFICATION_METRICS_VIEW_TOGGLE -> {
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                     toggleNavigationItem(R.id.navigation_gauge)
                 }
 
-                DATA_LOGGER_NOTIFICATION_CONNECTING -> {
+                DATA_LOGGER_CONNECTING_EVENT -> {
                     toast("Connecting to the device.")
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     btn.refreshDrawableState()
                 }
 
-                DATA_LOGGER_NOTIFICATION_CONNECTED -> {
+                DATA_LOGGER_CONNECTED_EVENT -> {
                     toast(
                         "Connection to the device has been established." +
                                 "\n Start collecting data from ECU."
@@ -105,12 +105,12 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                DATA_LOGGER_NOTIFICATION_STOPPED -> {
+                DATA_LOGGER_STOPPED_EVENT -> {
                     toast("Connection with the device has been stopped.")
                     handleStop(context!!)
                 }
 
-                DATA_LOGGER_NOTIFICATION_ERROR -> {
+                DATA_LOGGER_ERROR_EVENT -> {
                     toast("Error occurred during. Please check your connection.")
                     handleStop(context!!)
                 }
@@ -261,21 +261,21 @@ class MainActivity : AppCompatActivity() {
     private fun registerReceiver() {
 
         registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_NOTIFICATION_CONNECTING)
-            addAction(DATA_LOGGER_NOTIFICATION_STOPPED)
-            addAction(DATA_LOGGER_NOTIFICATION_STOPPING)
-            addAction(DATA_LOGGER_NOTIFICATION_ERROR)
-            addAction(DATA_LOGGER_NOTIFICATION_CONNECTED)
+            addAction(DATA_LOGGER_CONNECTING_EVENT)
+            addAction(DATA_LOGGER_STOPPED_EVENT)
+            addAction(DATA_LOGGER_STOPPING_EVENT)
+            addAction(DATA_LOGGER_ERROR_EVENT)
+            addAction(DATA_LOGGER_CONNECTED_EVENT)
             addAction(ACTION_BATTERY_CHANGED)
-            addAction(DATA_LOGGER_NOTIFICATION_ERROR_CONNECT)
+            addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
             addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)
             addAction(NOTIFICATION_DEBUG_VIEW_TOGGLE)
             addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)
             addAction(NOTIFICATION_DASH_VIEW_TOGGLE)
             addAction(NOTIFICATION_METRICS_VIEW_TOGGLE)
             addAction(TOGGLE_TOOLBAR_ACTION)
-            addAction(SCREEN_OFF)
-            addAction(SCREEN_ON)
+            addAction(SCREEN_OFF_EVENT)
+            addAction(SCREEN_ON_EVENT)
         })
     }
 

@@ -16,15 +16,15 @@ import org.obd.metrics.connection.TcpConnection
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.diagnostic.Diagnostics
-import org.openobd2.core.logger.ui.preferences.*
 
 
-const val DATA_LOGGER_NOTIFICATION_ERROR_CONNECT = "data.logger.error.connect"
-const val DATA_LOGGER_NOTIFICATION_CONNECTED = "data.logger.connected"
-const val DATA_LOGGER_NOTIFICATION_CONNECTING = "data.logger.connecting"
-const val DATA_LOGGER_NOTIFICATION_STOPPED = "data.logger.stopped"
-const val DATA_LOGGER_NOTIFICATION_STOPPING = "data.logger.stopping"
-const val DATA_LOGGER_NOTIFICATION_ERROR = "data.logger.error"
+const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
+const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
+const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
+const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
+const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
+const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
+
 private const val LOGGER_TAG = "DATA_LOGGER_SVC"
 const val GENERIC_MODE = "Generic mode"
 
@@ -44,7 +44,7 @@ internal class DataLogger internal constructor() {
         override fun onConnecting() {
             Log.i(LOGGER_TAG, "Start collecting process")
             context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_NOTIFICATION_CONNECTING
+                action = DATA_LOGGER_CONNECTING_EVENT
             })
         }
 
@@ -52,7 +52,7 @@ internal class DataLogger internal constructor() {
             Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
 
             context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_NOTIFICATION_CONNECTED
+                action = DATA_LOGGER_CONNECTED_EVENT
             })
         }
 
@@ -64,7 +64,7 @@ internal class DataLogger internal constructor() {
 
             stop()
 
-            if (Prefs.isReconnectWhenError() && "stopped" == msg) {
+            if (preferences.reconnectWhenError && "stopped" == msg) {
                 Log.e(
                     LOGGER_TAG,
                     "Flag to reconnect automatically when errors occurs is turn on." +
@@ -73,7 +73,7 @@ internal class DataLogger internal constructor() {
                 start()
             } else {
                 context.sendBroadcast(Intent().apply {
-                    action = DATA_LOGGER_NOTIFICATION_ERROR
+                    action = DATA_LOGGER_ERROR_EVENT
                 })
             }
         }
@@ -87,7 +87,7 @@ internal class DataLogger internal constructor() {
             metricsAggregator.reset()
 
             context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_NOTIFICATION_STOPPED
+                action = DATA_LOGGER_STOPPED_EVENT
             })
         }
 
@@ -95,7 +95,7 @@ internal class DataLogger internal constructor() {
             Log.i(LOGGER_TAG, "Stopping collecting process...")
 
             context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_NOTIFICATION_STOPPING
+                action = DATA_LOGGER_STOPPING_EVENT
             })
         }
     }
@@ -124,19 +124,17 @@ internal class DataLogger internal constructor() {
         .observer(metricsAggregator)
         .lifecycle(lifecycle).initialize()
 
+    val preferences: DataLoggerPreferences by lazy { getDataLoggerPreferences() }
+
     fun diagnostics(): Diagnostics {
         return workflow().diagnostics
     }
 
     fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
         val pidRegistry: PidDefinitionRegistry = pids()
-        val data: MutableList<ObdMetric> = arrayListOf()
-        pidIds.forEach { s: Long? ->
-            pidRegistry.findBy(s)?.apply {
-                data.add(ObdMetric.builder().command(ObdCommand(this)).value(null).build())
-            }
-        }
-        return data
+        return pidIds.map {
+            ObdMetric.builder().command(ObdCommand(pidRegistry.findBy(it))).value(null).build()
+        }.toMutableList()
     }
 
     fun pids(): PidDefinitionRegistry {
@@ -166,19 +164,17 @@ internal class DataLogger internal constructor() {
     }
 
     private fun connection() : AdapterConnection? {
-        return if (Prefs.getString("selected.connection.type") == "wifi"){
-            val host = Prefs.getString("pref.adapter.connection.tcp.host");
-            val port = Prefs.getString("pref.adapter.connection.tcp.port");
-            Log.i(LOGGER_TAG, "Creating TCP connection: ${host}:${port} ...")
-            TcpConnection.of(host, port!!.toInt())
+        return if (preferences.connectionType == "wifi"){
+            Log.i(LOGGER_TAG, "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ...")
+            TcpConnection.of(preferences.tcpHost, preferences.tcpPort)
         }else {
             try {
-                val deviceName = Prefs.getAdapterName()
+                val deviceName = preferences.adapterId
                 Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
                 BluetoothConnection(deviceName)
             }catch (e: IllegalStateException){
                 context.sendBroadcast(Intent().apply {
-                    action = DATA_LOGGER_NOTIFICATION_ERROR_CONNECT
+                    action = DATA_LOGGER_ERROR_CONNECT_EVENT
                 })
                 null
             }
@@ -187,36 +183,33 @@ internal class DataLogger internal constructor() {
 
     private fun adjustments(): Adjustments {
         return Adjustments.builder()
-            .batchEnabled(Prefs.isBatchEnabled())
-            .initDelay(Prefs.getInitDelay())
+            .batchEnabled(preferences.batchEnabled)
+            .initDelay(preferences.initDelay)
             .generator(
                 GeneratorSpec
                     .builder()
                     .smart(true)
-                    .enabled(Prefs.isEnabled("pref.debug.generator.enabled"))
+                    .enabled(preferences.generatorEnabled)
                     .increment(0.5).build()
             )
             .adaptiveTiming(
                 AdaptiveTimeoutPolicy
                     .builder()
-                    .enabled(Prefs.isEnabled("pref.adapter.adaptive.enabled"))
+                    .enabled(preferences.adaptiveConnectionEnabled)
                     .checkInterval(5000) //10s
-                    .commandFrequency(Prefs.getCommandFreq())
+                    .commandFrequency(preferences.commandFrequency)
                     .build()
             ).build()
     }
 
     private fun query(): Query {
         context.let {
-            return when (Prefs.getMode()) {
+            return when (preferences.mode) {
                 GENERIC_MODE -> {
-                    Query.builder().pids(Prefs.getMode01Pids().map { s -> s.toLong() }
-                        .toSet() as MutableSet<Long>).build()
+                    Query.builder().pids(preferences.mode01Pids).build()
                 }
                 else -> {
-                    Query.builder().pids(Prefs.getMode22Pids().map { s -> s.toLong() }
-                        .toSet() as MutableSet<Long>).build()
-
+                    Query.builder().pids(preferences.mode02Pids).build()
                 }
             }
         }
@@ -224,7 +217,7 @@ internal class DataLogger internal constructor() {
 
     private fun workflow(): Workflow {
         context.let {
-            return when (Prefs.getMode()) {
+            return when (preferences.mode) {
                 GENERIC_MODE -> {
                     mode1
                 }

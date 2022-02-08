@@ -23,9 +23,6 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
-import org.openobd2.core.logger.ui.preferences.Prefs
-import org.openobd2.core.logger.ui.preferences.isEnabled
-import java.sql.Timestamp
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -39,12 +36,12 @@ internal class DashboardViewAdapter internal constructor(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var colors: ColorTheme
     private lateinit var view: View
+    private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
-
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -82,20 +79,20 @@ internal class DashboardViewAdapter internal constructor(
             val percent75: Int = (holder.segments.numOfSegments * 75) / 100
             if (segmentNum > percent75) {
 
-                if (Prefs.isEnabled("pref.dash.top.values.red.color")) {
+                if (dashboardPreferences.colorsEnabled) {
                     (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
                         dataSet.gradientColors = colors.col2
                     }
                 }
 
-                if (Prefs.isEnabled("pref.dash.top.values.blink")) {
+                if (dashboardPreferences.blinkEnabled) {
                     if (!holder.anim.hasStarted() || holder.anim.hasEnded()) {
                         holder.itemView.startAnimation(holder.anim)
                     }
                 }
             } else {
-                if (Prefs.isEnabled("pref.dash.top.values.blink")) {
+                if (dashboardPreferences.blinkEnabled) {
                     holder.itemView.clearAnimation()
                 }
             }

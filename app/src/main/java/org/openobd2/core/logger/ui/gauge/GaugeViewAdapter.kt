@@ -24,7 +24,6 @@ import java.util.*
 
 private val DEFAULT_HEIGHT = 230
 private val LABEL_COLOR = "#01804F"
-private val COMMANDS_RATE_PREF_KEY = "pref.adapter.diagnosis.command.frequency.enabled"
 
 class GaugeViewAdapter internal constructor(
     context: Context,
@@ -46,6 +45,7 @@ class GaugeViewAdapter internal constructor(
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
+    private val preferences: GaugePreferences by lazy { getGaugePreferences() }
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
@@ -131,7 +131,7 @@ class GaugeViewAdapter internal constructor(
             }
         }
         holder.commandRate?.run {
-            if (Prefs.isEnabled(COMMANDS_RATE_PREF_KEY)) {
+            if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
                 val rate = DataLogger.INSTANCE.diagnostics().rate()
                     .findBy(RateType.MEAN, metric.command.pid)

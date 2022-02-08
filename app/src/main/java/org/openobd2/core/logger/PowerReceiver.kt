@@ -9,52 +9,49 @@ import android.content.Intent
 import android.util.Log
 import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.DataLoggerService
-import org.openobd2.core.logger.ui.preferences.Prefs
-import org.openobd2.core.logger.ui.preferences.isEnabled
-
 
 private const val LOGGER_TAG = "POW_RECEIVER"
-private const val ADAPTER_CONNECT_PREFERENCE_KEY = "pref.adapter.power.connect_adapter"
-private const val SCREEN_ON_OFF_PREFERENCE_KEY = "pref.adapter.power.screen_off"
-private const val BT_ON_OFF_PREFERENCE_KEY = " pref.adapter.power.bt_off"
 
-const val SCREEN_OFF = "power.screen.off"
-const val SCREEN_ON = "power.screen.on"
+const val SCREEN_OFF_EVENT = "power.screen.off"
+const val SCREEN_ON_EVENT = "power.screen.on"
 
 class PowerReceiver : BroadcastReceiver() {
+
+    private val powerPreferences: PowerPreferences by lazy { getPowerPreferences() }
+
     override fun onReceive(context: Context?, intent: Intent) {
         Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}")
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
 
-            if (Prefs.isEnabled(BT_ON_OFF_PREFERENCE_KEY)) {
+            if (powerPreferences.btOnOff) {
                 BluetoothAdapter.getDefaultAdapter().run {
                     enable()
                     startDiscovery()
                 }
             }
 
-            if (Prefs.isEnabled(ADAPTER_CONNECT_PREFERENCE_KEY)) {
+            if (powerPreferences.connectOnPower) {
                 DataLoggerService.startAction(context!!)
             }
 
-            if (Prefs.isEnabled(SCREEN_ON_OFF_PREFERENCE_KEY)) {
+            if (powerPreferences.screenOnOff) {
                 DataLogger.INSTANCE.init(context!!)
                 Log.i(LOGGER_TAG, "Start data logging")
                 startMainActivity(context)
                 context.sendBroadcast(Intent().apply {
-                    action = SCREEN_ON
+                    action = SCREEN_ON_EVENT
                 })
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
 
-            if (Prefs.isEnabled(BT_ON_OFF_PREFERENCE_KEY)) {
+            if (powerPreferences.btOnOff) {
                 BluetoothAdapter.getDefaultAdapter().run {
                     disable()
                 }
             }
 
-            if (Prefs.isEnabled(ADAPTER_CONNECT_PREFERENCE_KEY)) {
+            if (powerPreferences.connectOnPower) {
                 Log.i(
                     LOGGER_TAG,
                     "Stop data logging"
@@ -62,9 +59,9 @@ class PowerReceiver : BroadcastReceiver() {
                 DataLoggerService.stopAction(context!!)
             }
 
-            if (Prefs.isEnabled(SCREEN_ON_OFF_PREFERENCE_KEY)) {
+            if (powerPreferences.screenOnOff) {
                 context!!.sendBroadcast(Intent().apply {
-                    action = SCREEN_OFF
+                    action = SCREEN_OFF_EVENT
                 })
             }
         }
