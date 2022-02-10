@@ -15,8 +15,11 @@ import android.view.*
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -38,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 TOGGLE_TOOLBAR_ACTION -> {
-                    if (Prefs.isEnabled("pref.toolbar.hide.doubleclick")) {
+                    if (getMainActivityPreferences().hideToolbarDoubleClick) {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
                         layout.isVisible = !layout.isVisible
                     }
@@ -83,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                         android.graphics.PorterDuff.Mode.SRC_IN
                     )
 
-                    val btn: FloatingActionButton = findViewById(R.id.action_btn)
+                    val btn: FloatingActionButton = findViewById(R.id.connect_btn)
                     btn.backgroundTintList = resources.getColorStateList(R.color.purple_200)
                     btn.setOnClickListener(View.OnClickListener {
                         Log.i(LOGGER_TAG, "Stop data logging ")
@@ -121,7 +124,7 @@ class MainActivity : AppCompatActivity() {
             val progressBar: ProgressBar = findViewById(R.id.p_bar)
             progressBar.visibility = View.GONE
 
-            val btn: FloatingActionButton = findViewById(R.id.action_btn)
+            val btn: FloatingActionButton = findViewById(R.id.connect_btn)
             btn.backgroundTintList = resources.getColorStateList(R.color.purple_500)
             btn.setOnClickListener(View.OnClickListener {
                 Log.i(LOGGER_TAG, "Stop data logging ")
@@ -150,7 +153,7 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        if (Prefs.isEnabled("pref.toolbar.hide.landscape")) {
+        if (getMainActivityPreferences().hideToolbarLandscape) {
             val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
             layout.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
         }
@@ -170,21 +173,19 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
         setupNavigation()
-
         setupPreferences()
         registerReceiver()
 
-        val progressBar: ProgressBar = findViewById(R.id.p_bar)
-        progressBar.visibility = View.GONE
+        (findViewById(R.id.p_bar) as ProgressBar )?.run {
+            visibility = View.GONE
+        }
 
-        val btnStart: FloatingActionButton = findViewById(R.id.action_btn)
-        btnStart.setOnClickListener(View.OnClickListener {
-            Log.i(LOGGER_TAG, "Start data logging")
-            DataLoggerService.startAction(this)
-        })
         setupWindowManager()
+        setupNavigationBarButtons()
         Cache  = cache
     }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -227,35 +228,34 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_dashboard,
                 R.id.navigation_debug,
                 R.id.navigation_metrics,
-                R.id.navigation_configuration
+                R.id.navigation_preferences
             )
         )
-
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 
     private fun setupPreferences() {
         Prefs = PreferenceManager.getDefaultSharedPreferences(this)
-
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        val mainActivityPreferences = getMainActivityPreferences()
 
         findViewById<BottomNavigationView>(R.id.nav_view).menu.run{
             findItem(R.id.navigation_debug)?.isVisible =
-                Prefs.isEnabled("pref.debug.view.enabled")
+                mainActivityPreferences.showDebugView
 
             findItem(R.id.navigation_dashboard).isVisible =
-                Prefs.isEnabled("pref.dash.view.enabled")
+                mainActivityPreferences.showDashView
 
             findItem(R.id.navigation_gauge).isVisible =
-                Prefs.isEnabled("pref.gauge.view.enabled")
+                mainActivityPreferences.showGaugeView
 
             findItem(R.id.navigation_metrics).isVisible =
-                Prefs.isEnabled("pref.metrics.view.enabled")
+                mainActivityPreferences.showMetricsView
 
             findItem(R.id.navigation_graph).isVisible =
-                Prefs.isEnabled("pref.graph.view.enabled")
-       }
+                mainActivityPreferences.showGraphView
+        }
     }
 
     private fun registerReceiver() {
@@ -326,5 +326,31 @@ class MainActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+    }
+
+    private fun setupNavigationBarButtons() {
+
+        val btnStart: FloatingActionButton = findViewById(R.id.connect_btn)
+        btnStart.setOnClickListener(View.OnClickListener {
+            Log.i(LOGGER_TAG, "Start data logging")
+            DataLoggerService.startAction(this)
+        })
+
+        val menuButton: FloatingActionButton = findViewById(R.id.menu_btn)
+        menuButton.setOnClickListener(View.OnClickListener {
+            val pm = PopupMenu(this, menuButton)
+            pm.menuInflater.inflate(R.menu.context_menu, pm.menu)
+
+            pm.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+                val navController: NavController =
+                    Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment)
+                navController.navigate(R.id.navigation_preferences);
+
+                Log.e(LOGGER_TAG, "Selected item ${item}")
+                true
+            })
+
+            pm.show()
+        })
     }
 }

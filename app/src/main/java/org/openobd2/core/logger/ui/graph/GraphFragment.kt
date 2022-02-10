@@ -225,7 +225,6 @@ class GraphFragment : Fragment() {
          }
     }
 
-
     private fun createDataSet(obdMetric: ObdMetric) : LineDataSet {
         val values = mutableListOf<Entry>()
         val lineDataSet = LineDataSet(values, obdMetric.command.pid.description)

@@ -25,7 +25,7 @@
         android:title="@string/title_debug" />
     -->
     <item
-        android:id="@+id/navigation_configuration"
+        android:id="@+id/navigation_preferences"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/title_preferences" />
 

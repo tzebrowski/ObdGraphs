@@ -1,6 +1,7 @@
 package org.openobd2.core.logger.ui.preferences
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,21 +23,29 @@ const val NOTIFICATION_METRICS_VIEW_TOGGLE = "preferences.view.metrics.toggle"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
+    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
-    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val onCreateView = super.onCreateView(inflater, container, savedInstanceState)
         registerPrefModeChange()
         registerConnectionModeChange()
 
+        listView.setBackgroundColor(Color.LTGRAY);
+
+        registerCheckboxListeners()
+
+        return onCreateView
+    }
+
+    private fun registerCheckboxListeners() {
         registerCheckboxListener(
             "pref.graph.view.enabled",
             NOTIFICATION_GRAPH_VIEW_TOGGLE
@@ -59,8 +68,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             "pref.metrics.view.enabled",
             NOTIFICATION_METRICS_VIEW_TOGGLE
         )
-
-        return onCreateView
     }
 
     private fun registerCheckboxListener(key: String, actionName: String) {
@@ -138,5 +145,4 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 true
             }
     }
-
 }

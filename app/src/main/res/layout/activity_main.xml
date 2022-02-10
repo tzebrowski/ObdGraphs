@@ -73,13 +73,28 @@
                 app:menu="@menu/bottom_nav_menu" />
         </com.google.android.material.bottomappbar.BottomAppBar>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/action_btn"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_lock_idle_charging"
-            app:backgroundTint="#01804F"
-            app:fabSize="normal"
-            app:layout_anchor="@id/bottomAppBar" />
+            android:gravity="center"
+            app:layout_anchor="@id/bottomAppBar">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/connect_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_lock_idle_charging"
+                app:backgroundTint="#01804F"
+                app:fabSize="normal" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/menu_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_dialog_dialer"
+                app:backgroundTint="?android:attr/textColor"
+                app:fabSize="normal" />
+        </LinearLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,5 @@ fun getPowerPreferences(): PowerPreferences {
     val btOnOff = Prefs.isEnabled(BT_ON_OFF_PREFERENCE_KEY)
     val screenOnOff = Prefs.isEnabled(SCREEN_ON_OFF_PREFERENCE_KEY)
     val connectOnPower = Prefs.isEnabled(ADAPTER_CONNECT_PREFERENCE_KEY)
-
-
     return PowerPreferences(connectOnPower, screenOnOff, btOnOff)
 }
