@@ -1,4 +1,6 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:key="prefs.root">
 
     <PreferenceCategory
         android:key="adapter"
@@ -58,8 +60,27 @@
                 android:summary="Show commands freq" />
         </PreferenceCategory>
 
-
         <PreferenceCategory android:title="General settings">
+
+            <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:key="prefs.pids.query"
+                app:isPreferenceVisible="true"
+                android:singleLineTitle="false"
+                android:summary="PID's to query">
+
+                <PreferenceCategory android:title="Available PIDs">
+                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        android:key="pref.pids.generic"
+                        android:singleLineTitle="false"
+                        android:summary="Generic PID's for Mode 1" />
+
+                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        android:key="pref.pids.mode22"
+                        android:singleLineTitle="false"
+                        android:summary="Alfa Romeo specific PID's" />
+                </PreferenceCategory>
+            </PreferenceScreen>
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -80,7 +101,6 @@
                 android:key="pref.adapter.reconnect"
                 android:singleLineTitle="false"
                 android:summary="Reconnect automatically when error occurs" />
-
 
             <ListPreference
                 android:defaultValue="500"
@@ -144,118 +164,124 @@
             android:summary="Hide toolbar when double click" />
 
 
+        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:key="prefs.gauge"
+            android:summary="Gauge view configuration">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.gauge.view.enabled"
+                android:summary="Enable the view" />
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:key="pref.gauge.pids.selected"
+                android:summary="Displayed PID's" />
+        </PreferenceScreen>
+
+        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:key="prefs.graph"
+            android:summary="Graph view configuration">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.graph.view.enabled"
+                android:summary="Enable the view" />
+
+            <CheckBoxPreference
+
+                android:defaultValue="true"
+                android:key="pref.graph.cache.enabled"
+                android:summary="Cache enabled"/>
+
+            <EditTextPreference
+                android:inputType="number"
+                android:defaultValue="20"
+                android:dialogTitle="X-Axis: Moving time ms"
+                android:key="pref.graph.x-axis.minimum-shift.time"
+                android:singleLineTitle="false"
+                android:summary="X-Axis moving time" />
+
+            <EditTextPreference
+                android:inputType="number"
+                android:defaultValue="20000"
+                android:dialogTitle="X-Axis: Start moving after ms"
+                android:key="pref.graph.x-axis.start-moving-after.time"
+                android:singleLineTitle="false"
+                android:summary="X-Axis start moving after" />
+
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:key="pref.graph.pids.selected"
+                android:summary="Displayed PID's" />
+        </PreferenceScreen>
+
+
+        <PreferenceScreen
+            android:summary="Dashboard view configuration"
+            app:key="prefs.dashboard">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.top.values.blink"
+                android:singleLineTitle="false"
+                android:summary="Alarm for highest values" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.swipe.to.delete"
+                android:singleLineTitle="false"
+                android:summary="Swipe to delete metric" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.top.values.red.color"
+                android:singleLineTitle="false"
+                android:summary="Highlight top values"/>
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.dash.view.enabled"
+                android:summary="Enable the view" />
+
+
+            <ListPreference
+                android:defaultValue="0"
+                android:entries="@array/dash_color_themes"
+                android:entryValues="@array/dash_color_themes"
+                android:key="pref.dash.theme"
+                android:summary="Color theme" />
+
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:key="pref.dash.pids.selected"
+                android:summary="Dashboard: Displayed PID's" />
+
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:key="pref.dash.gauge_pids.selected"
+                android:summary="Gauge: Displayed PID's" />
+
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.gauge.view.visible"
+                android:summary="Gauge: Show the view" />
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.dash.dash.view.visible"
+                android:singleLineTitle="false"
+                android:summary="Dashboard: Show the view" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:summary="Metrics view configuration"
+            app:key="prefs.metrics">
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.metrics.view.enabled"
+                android:summary="Enable the view" />
+        </PreferenceScreen>
     </PreferenceCategory>
 
-
-    <PreferenceCategory android:title="Dashboard">
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.dash.top.values.blink"
-            android:singleLineTitle="false"
-            android:summary="Alarm for highest values" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.dash.swipe.to.delete"
-            android:singleLineTitle="false"
-            android:summary="Swipe to delete metric" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.dash.top.values.red.color"
-            android:singleLineTitle="false"
-            android:summary="Highlight top values"/>
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref.dash.view.enabled"
-            android:summary="Enable the view" />
-
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.graph.view.enabled"
-            android:summary="Show the view" />
-
-
-        <ListPreference
-            android:defaultValue="0"
-            android:entries="@array/dash_color_themes"
-            android:entryValues="@array/dash_color_themes"
-            android:key="pref.dash.theme"
-            android:summary="Color theme" />
-
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:key="pref.dash.pids.selected"
-            android:summary="Dashboard: Displayed PIDs" />
-
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:key="pref.dash.gauge_pids.selected"
-            android:summary="Gauge: Displayed PIDs" />
-
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.dash.gauge.view.visible"
-            android:summary="Gauge: Show the view" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref.dash.dash.view.visible"
-            android:singleLineTitle="false"
-            android:summary="Dashboard: Show the view" />
-
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Gauge">
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref.gauge.view.enabled"
-            android:summary="Enable the view" />
-
-
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:key="pref.gauge.pids.selected"
-            android:summary="Displayed PIDs" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Graph">
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.graph.view.enabled"
-            android:summary="Show the view" />
-
-        <CheckBoxPreference
-
-            android:defaultValue="true"
-            android:key="pref.graph.cache.enabled"
-            android:summary="Cache enabled"/>
-
-        <EditTextPreference
-            android:inputType="number"
-            android:defaultValue="20"
-            android:dialogTitle="X-Axis: Moving time ms"
-            android:key="pref.graph.x-axis.minimum-shift.time"
-            android:singleLineTitle="false"
-            android:summary="X-Axis moving time" />
-
-        <EditTextPreference
-            android:inputType="number"
-            android:defaultValue="20000"
-            android:dialogTitle="X-Axis: Start moving after ms"
-            android:key="pref.graph.x-axis.start-moving-after.time"
-            android:singleLineTitle="false"
-            android:summary="X-Axis start moving after" />
-
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:key="pref.graph.pids.selected"
-            android:summary="Displayed PIDs" />
-    </PreferenceCategory>
 
 
     <PreferenceCategory android:title="Debug">
@@ -269,22 +295,6 @@
             android:summary="Enable data generator"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Available PIDs">
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:key="pref.pids.generic"
-            android:singleLineTitle="false"
-            android:summary="Generic PID's for Mode 1" />
 
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:key="pref.pids.mode22"
-            android:singleLineTitle="false"
-            android:summary="Alfa Romeo specific PID's" />
-    </PreferenceCategory>
 
-    <PreferenceCategory android:title="Metrics">
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.metrics.view.enabled"
-            android:summary="Enable the view" />
-    </PreferenceCategory>
 </PreferenceScreen>

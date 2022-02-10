@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -342,14 +343,36 @@ class MainActivity : AppCompatActivity() {
             pm.menuInflater.inflate(R.menu.context_menu, pm.menu)
 
             pm.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-                val navController: NavController =
-                    Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment)
-                navController.navigate(R.id.navigation_preferences);
+                when (item.title){
+                   "PID's to query" -> {
+                       Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment).navigate(
+                           R.id.navigation_preferences,
+                           bundleOf("preferences.rootKey" to "prefs.pids.query")
+                       )
+                    }
 
-                Log.e(LOGGER_TAG, "Selected item ${item}")
+                    "View configuration" -> {
+
+                        val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
+                        val selectedItemId: Int = bottomNavigationView.selectedItemId
+                        val currentView: MenuItem = bottomNavigationView.menu.findItem(selectedItemId)
+
+                        val keyToNavigate = when (currentView.title){
+                            "Dashboard" -> "prefs.dashboard"
+                            "Gauge" ->  "prefs.gauge"
+                            "Graph" -> "prefs.graph"
+                            else -> "prefs.root"
+                        }
+
+                       Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment).navigate(
+                           R.id.navigation_preferences,
+                           bundleOf("preferences.rootKey" to keyToNavigate)
+                       )
+                    }
+                }
+
                 true
             })
-
             pm.show()
         })
     }

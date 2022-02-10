@@ -3,13 +3,11 @@ package org.openobd2.core.logger.ui.preferences
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.CheckBoxPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.DataLoggerPreferences
 import org.openobd2.core.logger.bl.GENERIC_MODE
@@ -25,8 +23,18 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
+    override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
+        super.onNavigateToScreen(preferenceScreen)
+        setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
+
+        if (arguments == null){
+            setPreferencesFromResource(R.xml.preferences, rootKey)
+        }else{
+            setPreferencesFromResource(R.xml.preferences, requireArguments().get("preferences.rootKey")  as String)
+        }
     }
 
     override fun onCreateView(
@@ -37,11 +45,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val onCreateView = super.onCreateView(inflater, container, savedInstanceState)
         registerPrefModeChange()
         registerConnectionModeChange()
-
         listView.setBackgroundColor(Color.LTGRAY);
-
         registerCheckboxListeners()
-
         return onCreateView
     }
 
