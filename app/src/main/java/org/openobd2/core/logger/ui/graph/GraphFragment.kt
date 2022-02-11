@@ -71,7 +71,7 @@ class GraphFragment : Fragment() {
     }
 
     private var chart: LineChart? = null
-    private var colorTemplate: IntIterator  = colorScheme()
+    private var colors: IntIterator  = Colors().generate()
     private val scaler  = Scaler()
     private var firstTimeStamp: Long = System.currentTimeMillis()
     private var firstVisibleRange: Float? = null
@@ -84,7 +84,7 @@ class GraphFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_graph, container, false)
 
-        colorTemplate  = colorScheme()
+        colors  = Colors().generate()
         preferences = getGraphPreferences()
         firstTimeStamp = System.currentTimeMillis()
         firstVisibleRange = null
@@ -229,7 +229,7 @@ class GraphFragment : Fragment() {
     private fun createDataSet(obdMetric: ObdMetric) : LineDataSet {
         val values = mutableListOf<Entry>()
         val lineDataSet = LineDataSet(values, obdMetric.command.pid.description)
-        val col = colorTemplate.nextInt()
+        val col = colors.nextInt()
         lineDataSet.run {
             mode = LineDataSet.Mode.CUBIC_BEZIER
             label = obdMetric.command.pid.description

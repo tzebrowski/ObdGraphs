@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AlfaDataLogger</string>
+    <string name="app_name">ObdGraphs</string>
     <string name="title_debug">Debug</string>
     <string name="navigation_title_gauge">Gauge</string>
     <string name="navigation_title_metrics">Metrics</string>

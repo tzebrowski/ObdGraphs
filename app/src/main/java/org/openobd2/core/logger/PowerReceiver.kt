@@ -17,7 +17,6 @@ const val SCREEN_ON_EVENT = "power.screen.on"
 
 class PowerReceiver : BroadcastReceiver() {
 
-
     override fun onReceive(context: Context?, intent: Intent) {
         Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}")
         val powerPreferences: PowerPreferences = getPowerPreferences()
