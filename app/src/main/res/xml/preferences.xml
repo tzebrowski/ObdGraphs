@@ -67,13 +67,20 @@
                 app:key="prefs.pids.query"
                 app:isPreferenceVisible="true"
                 android:singleLineTitle="false"
-                android:summary="PID's to query">
+                android:summary="Parameter IDs to query">
 
-                <PreferenceCategory android:title="Available PIDs">
+                <PreferenceCategory android:title="Parameter IDs to query">
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        android:key="pref.pids.generic"
+                        app:priority="high"
+                        android:key="pref.pids.generic.high"
                         android:singleLineTitle="false"
-                        android:summary="Generic PID's for Mode 1" />
+                        android:summary="High priority PID's" />
+
+                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        app:priority="low"
+                        android:key="pref.pids.generic.low"
+                        android:singleLineTitle="false"
+                        android:summary="Low priority PID's" />
 
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         android:key="pref.pids.mode22"
@@ -183,7 +190,7 @@
             app:key="prefs.graph"
             android:summary="Graph view configuration">
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="pref.graph.view.enabled"
                 android:summary="Enable the view" />
 
@@ -271,6 +278,18 @@
                 android:summary="Dashboard: Show the view" />
         </PreferenceScreen>
 
+        <PreferenceCategory android:title="Debug">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.debug.generator.enabled"
+                android:summary="Enable data generator"/>
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.debug.view.enabled"
+                android:summary="Enable the view"/>
+        </PreferenceCategory>
+
         <PreferenceScreen
             android:summary="Metrics view configuration"
             app:key="prefs.metrics">
@@ -281,20 +300,6 @@
                 android:summary="Enable the view" />
         </PreferenceScreen>
     </PreferenceCategory>
-
-
-
-    <PreferenceCategory android:title="Debug">
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.debug.view.enabled"
-            android:summary="Enable the view"/>
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref.debug.generator.enabled"
-            android:summary="Enable data generator"/>
-    </PreferenceCategory>
-
 
 
 </PreferenceScreen>

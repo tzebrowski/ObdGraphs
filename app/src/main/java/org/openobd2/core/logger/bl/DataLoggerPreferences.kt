@@ -8,6 +8,8 @@ import org.openobd2.core.logger.ui.preferences.getStringSet
 import org.openobd2.core.logger.ui.preferences.isEnabled
 
 data class DataLoggerPreferences(
+    var mode01Pids: MutableSet<Long>,
+    var mode02Pids: MutableSet<Long>,
     var connectionType: String,
     var tcpHost: String,
     var tcpPort: Int,
@@ -18,9 +20,7 @@ data class DataLoggerPreferences(
     var initDelay: Long,
     var mode: String,
     var generatorEnabled: Boolean,
-    var adaptiveConnectionEnabled: Boolean,
-    var mode01Pids: MutableSet<Long>,
-    var mode02Pids: MutableSet<Long>){
+    var adaptiveConnectionEnabled: Boolean){
 
     companion object  {
         private lateinit var strongReference: SharedPreferenceChangeListener
@@ -37,10 +37,14 @@ private val LOGGER_KEY = "PREFS"
 
 private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLoggerPreferences) : SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        Log.i(LOGGER_KEY,"Key to update ${key}")
 
         when (key) {
-            "pref.pids.generic" -> dataLoggerPreferences.mode01Pids =
-                Prefs.getStringSet(key).map { s -> s.toLong() }.toMutableSet()
+            "pref.pids.generic.low" -> dataLoggerPreferences.mode01Pids =
+                genericPids()
+            "pref.pids.generic.high" -> dataLoggerPreferences.mode01Pids =
+                genericPids()
+
             "pref.pids.mode22" -> dataLoggerPreferences.mode01Pids =
                 Prefs.getStringSet(key).map { s -> s.toLong() }.toMutableSet()
             "pref.mode" -> dataLoggerPreferences.mode =
@@ -73,8 +77,8 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
     val connectionType = Prefs.getString("selected.connection.type","wifi")!!
-    val tcpHost = Prefs.getString("pref.adapter.connection.tcp.host")!!
-    val tcpPort = Prefs.getString("pref.adapter.connection.tcp.port")!!.toInt()
+    val tcpHost = Prefs.getString("pref.adapter.connection.tcp.host","192.168.0.10")!!
+    val tcpPort = Prefs.getString("pref.adapter.connection.tcp.port","35000")!!.toInt()
     val batchEnabled =  Prefs.getBoolean("pref.adapter.batch.enabled", true)
     val reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
     val adapterId = Prefs.getString("pref.adapter.id", "OBDII")!!
@@ -84,24 +88,31 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val mode = Prefs.getString("pref.mode", "Generic mode")!!
     val generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
     val adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
-    val mode01Pids = Prefs.getStringSet("pref.pids.generic").map { s -> s.toLong() }.toMutableSet()
+
+
     val mode02Pids = Prefs.getStringSet("pref.pids.mode22").map { s -> s.toLong() }.toMutableSet()
 
-    val dataLoggerPreferences =  DataLoggerPreferences(connectionType,
-                    tcpHost,
-                    tcpPort,
-                    batchEnabled,
-                    reconnectWhenError,
-                    adapterId,
-                    commandFrequency,
-                    initDelay,
-                    mode,
-                    generatorEnabled,
-                    adaptiveConnectionEnabled,
-                    mode01Pids,
-                    mode02Pids)
+    val dataLoggerPreferences =  DataLoggerPreferences(
+        genericPids(),
+        mode02Pids,
+        connectionType,
+        tcpHost,
+        tcpPort,
+        batchEnabled,
+        reconnectWhenError,
+        adapterId,
+        commandFrequency,
+        initDelay,
+        mode,
+        generatorEnabled,
+        adaptiveConnectionEnabled)
 
     Log.i(LOGGER_KEY,"Loaded data logger preferences: $dataLoggerPreferences")
-
     return dataLoggerPreferences
+}
+
+private fun genericPids(): MutableSet<Long> {
+    val high = Prefs.getStringSet("pref.pids.generic.high").map { s -> s.toLong() }
+    val low = Prefs.getStringSet("pref.pids.generic.low").map { s -> s.toLong() }
+    return  (high + low).toMutableSet()
 }

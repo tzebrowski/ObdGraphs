@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
+    <item android:id="@+id/ctx_menu_pids_to_query"
         android:title="PID's to query" />
-    <item
+    <item android:id="@+id/ctx_menu_view_configuration"
         android:title="View configuration" />
 </menu>

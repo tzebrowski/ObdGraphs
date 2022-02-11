@@ -71,7 +71,7 @@ class GraphFragment : Fragment() {
     }
 
     private var chart: LineChart? = null
-    private val colorTemplate: IntIterator  = colorScheme()
+    private var colorTemplate: IntIterator  = colorScheme()
     private val scaler  = Scaler()
     private var firstTimeStamp: Long = System.currentTimeMillis()
     private var firstVisibleRange: Float? = null
@@ -84,6 +84,7 @@ class GraphFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_graph, container, false)
 
+        colorTemplate  = colorScheme()
         preferences = getGraphPreferences()
         firstTimeStamp = System.currentTimeMillis()
         firstVisibleRange = null
@@ -120,6 +121,7 @@ class GraphFragment : Fragment() {
                 val cache = it as MutableMap<String, MutableList<Entry>>
                 chart?.run {
                     cache.forEach { (label, entries) ->
+
                         data.getDataSetByLabel(label, true)?.let { lineData ->
                             entries.forEach { lineData.addEntry(it) }
                             data.notifyDataChanged()
@@ -216,7 +218,6 @@ class GraphFragment : Fragment() {
                 axisMinimum = 0f
                 axisMaximum = 5000f
                 textColor = Color.rgb(255, 192, 56)
-//                granularity = 1f
             }
 
             axisRight.run {

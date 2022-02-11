@@ -29,7 +29,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-
         if (arguments == null){
             setPreferencesFromResource(R.xml.preferences, rootKey)
         }else{

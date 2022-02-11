@@ -1,21 +1,18 @@
 package org.openobd2.core.logger.ui.graph
 
-import com.github.mikephil.charting.utils.ColorTemplate
+import android.graphics.Color
 
 fun colorScheme(): IntIterator {
 
     val colorScheme = mutableListOf<Int>()
-    colorScheme.add(android.R.color.holo_green_light)
-    colorScheme.add(android.R.color.holo_red_light)
-    colorScheme.add(android.R.color.holo_purple)
-    colorScheme.add(android.R.color.holo_green_dark)
-    colorScheme.add(android.R.color.holo_blue_bright)
-    colorScheme.add(android.R.color.holo_orange_light)
-    colorScheme.add(android.R.color.holo_red_dark)
-
-    ColorTemplate.MATERIAL_COLORS.forEach {
-        colorScheme.add(it)
-    }
+    colorScheme.add(Color.RED)
+    colorScheme.add(Color.BLUE)
+    colorScheme.add(Color.YELLOW)
+    colorScheme.add(Color.GREEN)
+    colorScheme.add(Color.CYAN)
+    colorScheme.add(Color.MAGENTA)
+    colorScheme.add(Color.LTGRAY)
+    colorScheme.add(Color.WHITE)
 
     return colorScheme.toIntArray().iterator()
 }

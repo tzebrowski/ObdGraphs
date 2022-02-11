@@ -19,7 +19,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -163,29 +162,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val policy = ThreadPolicy.Builder()
-            .permitAll().build()
-        StrictMode.setThreadPolicy(policy)
-
-        //keeps screen on
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        StrictMode.setThreadPolicy(ThreadPolicy.Builder()
+            .permitAll().build())
 
         DataLogger.INSTANCE.init(this.application)
 
         setContentView(R.layout.activity_main)
-        setupNavigation()
         setupPreferences()
-        registerReceiver()
-
-        (findViewById(R.id.p_bar) as ProgressBar )?.run {
-            visibility = View.GONE
-        }
-
+        setupProgressBar()
         setupWindowManager()
+        setupNavigationBar()
         setupNavigationBarButtons()
+        registerReceiver()
         Cache  = cache
     }
-
 
 
     override fun onResume() {
@@ -218,7 +208,13 @@ class MainActivity : AppCompatActivity() {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    private fun setupNavigation() {
+
+    private fun setupProgressBar() {
+        (findViewById(R.id.p_bar) as ProgressBar)?.run {
+            visibility = View.GONE
+        }
+    }
+    private fun setupNavigationBar() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
 
@@ -232,16 +228,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_preferences
             )
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-    }
 
-    private fun setupPreferences() {
-        Prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         val mainActivityPreferences = getMainActivityPreferences()
-
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.run{
+        findViewById<BottomNavigationView>(R.id.nav_view).menu.run {
             findItem(R.id.navigation_debug)?.isVisible =
                 mainActivityPreferences.showDebugView
 
@@ -257,6 +249,13 @@ class MainActivity : AppCompatActivity() {
             findItem(R.id.navigation_graph).isVisible =
                 mainActivityPreferences.showGraphView
         }
+
+        navView.selectedItemId = R.id.navigation_gauge
+    }
+
+    private fun setupPreferences() {
+        Prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 
     private fun registerReceiver() {
@@ -324,6 +323,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupWindowManager() {
+        //keeps screen on
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
@@ -343,24 +345,24 @@ class MainActivity : AppCompatActivity() {
             pm.menuInflater.inflate(R.menu.context_menu, pm.menu)
 
             pm.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-                when (item.title){
-                   "PID's to query" -> {
+                when (item.itemId){
+                  R.id.ctx_menu_pids_to_query -> {
                        Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment).navigate(
                            R.id.navigation_preferences,
                            bundleOf("preferences.rootKey" to "prefs.pids.query")
                        )
                     }
 
-                    "View configuration" -> {
+                    R.id.ctx_menu_view_configuration -> {
 
                         val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
                         val selectedItemId: Int = bottomNavigationView.selectedItemId
                         val currentView: MenuItem = bottomNavigationView.menu.findItem(selectedItemId)
 
-                        val keyToNavigate = when (currentView.title){
-                            "Dashboard" -> "prefs.dashboard"
-                            "Gauge" ->  "prefs.gauge"
-                            "Graph" -> "prefs.graph"
+                        val keyToNavigate = when (currentView.itemId){
+                            R.id.navigation_dashboard -> "prefs.dashboard"
+                            R.id.navigation_gauge ->  "prefs.gauge"
+                            R.id.navigation_graph -> "prefs.graph"
                             else -> "prefs.root"
                         }
 

@@ -91,6 +91,7 @@
                 android:id="@+id/menu_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
                 android:src="@android:drawable/ic_dialog_dialer"
                 app:backgroundTint="?android:attr/textColor"
                 app:fabSize="normal" />

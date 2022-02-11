@@ -7,12 +7,27 @@ import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.DataLoggerPreferences
 import java.util.*
 
+
 class PidListPreferences(
     context: Context?,
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {
-    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+    private val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+    private val defaultSelection = if (preferences.mode =="Generic mode")  hashSetOf<String>().apply {
+        add("7") // Short trims
+        add("8")  // Long trim
+        add("17") // MAF
+        add("22") // Oxygen sensor
+        add("6")  // Engine coolant temperature
+        add("12") // Intake manifold absolute pressure
+        add("13") // Engine RPM
+        add("16") // Intake air temperature
+        add("18") // Throttle position
+        add("14") // Vehicle speed
+        add("15") // Timing advance
+        add("9000") // Battery voltage
+    } else hashSetOf<String>()
 
     init {
 
@@ -21,30 +36,51 @@ class PidListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        DataLogger.INSTANCE.pids().findAll().sortedBy { pidDefinition -> pidDefinition.description }
-            .forEach { p ->
-                entries.add(p.description)
-                entriesValues.add(p.id.toString())
+        when (getPriority(attrs)){
+            "low"-> {
+                DataLogger.INSTANCE.pids().findAll()
+                    .filter { pidDefinition -> pidDefinition.priority > 4}
+                    .sortedBy { pidDefinition -> pidDefinition.priority }
+                    .forEach { p ->
+                        entries.add(p.description)
+                        entriesValues.add(p.id.toString())
+                    }
+                setDefaultValue(hashSetOf<String>())
             }
+            "high" -> {
+                DataLogger.INSTANCE.pids().findAll()
+                    .filter { pidDefinition -> pidDefinition.priority < 4}
+                    .sortedBy { pidDefinition -> pidDefinition.priority }
+                    .forEach { p ->
+                        entries.add(p.description)
+                        entriesValues.add(p.id.toString())
+                    }
+                setDefaultValue(defaultSelection)
+            }
+            else -> {
+                DataLogger.INSTANCE.pids().findAll()
+                   .sortedBy { pidDefinition -> pidDefinition.priority }
+                    .forEach { p ->
+                        entries.add(p.description)
+                        entriesValues.add(p.id.toString())
+                    }
+                setDefaultValue(defaultSelection)
+            }
+        }
 
-        val default = if (preferences.mode =="Generic mode")  hashSetOf<String>().apply {
-//            add("4") // Fuel system status
-            add("7") // Short trims
-            add("8")  // Long trim
-//            add("17") // MAF
-            add("22") // Oxygen sensor
-            add("6")  // Engine coolant temperature
-            add("12") // Intake manifold absolute pressure
-            add("13") // Engine RPM
-            add("16") // Intake air temperature
-            add("18") // Throttle position
-            add("14") // Vehicle speed
-            add("15") // Timing advance
-            add("9000") // Battery voltage
-        } else hashSetOf<String>()
 
-        setDefaultValue(default)
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
+    }
+
+    private fun getPriority(attrs: AttributeSet?): String {
+        return if ( attrs == null ) {
+            ""
+        } else {
+            val priority: String? = (0 until attrs.attributeCount)
+                .filter { index -> attrs.getAttributeName(index) == "priority" }
+                .map { index -> attrs.getAttributeValue(index) }.firstOrNull()
+            priority?: ""
+        }
     }
 }
