@@ -7,8 +7,9 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.util.Log
-import org.openobd2.core.logger.bl.DataLogger
-import org.openobd2.core.logger.bl.DataLoggerService
+import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.bl.datalogger.DataLoggerService
+
 
 private const val LOGGER_TAG = "POW_RECEIVER"
 

@@ -23,10 +23,10 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.*
-import org.openobd2.core.logger.bl.DataLogger
-import org.openobd2.core.logger.bl.MetricsAggregator
-import org.openobd2.core.logger.ui.common.Cache
+import org.openobd2.core.logger.bl.datalogger.*
+import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.bl.trip.TripRecorder
+
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,7 +40,7 @@ class GraphFragment : Fragment() {
                     chart?.run {
                         if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()) {
                             xAxis.axisMinimum = xAxis.axisMaximum
-                            Cache[CACHE_X_AXIS_MIN_PROPERTY_NAME] = xAxis.axisMinimum
+                            tripRecorder.startNewTrip(xAxis.axisMinimum)
                         }
                     }
                 }
@@ -76,6 +76,7 @@ class GraphFragment : Fragment() {
     private var firstTimeStamp: Long = System.currentTimeMillis()
     private var firstVisibleRange: Float? = null
     private lateinit var preferences: GraphPreferences
+    private val tripRecorder: TripRecorder by lazy { TripRecorder.INSTANCE }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,31 +109,28 @@ class GraphFragment : Fragment() {
             }
         })
 
-        loadCaches()
+        loadTrip()
 
         registerReceivers()
         return root
     }
 
-    private fun loadCaches() {
+    private fun loadTrip() {
         if (preferences.cacheEnabled) {
-            firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long? ?: System.currentTimeMillis()
-            Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
+            val trip = tripRecorder.getCurrentTrip()
+
+            firstTimeStamp = trip.firstTimeStamp
+            trip.entries.let {
                 val cache = it as MutableMap<String, MutableList<Entry>>
                 chart?.run {
                     cache.forEach { (label, entries) ->
-
                         data.getDataSetByLabel(label, true)?.let { lineData ->
                             entries.forEach { lineData.addEntry(it) }
                             data.notifyDataChanged()
                         }
                     }
                     notifyDataSetChanged()
-
-                    Cache[CACHE_X_AXIS_MIN_PROPERTY_NAME]?.let {
-                        xAxis.axisMinimum = it as Float
-                    }
-
+                    xAxis.axisMinimum = trip.ts
                     invalidate()
                 }
             }

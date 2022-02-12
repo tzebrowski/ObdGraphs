@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DefaultTheme">
         <service
-            android:name=".bl.DataLoggerService"
+            android:name=".bl.datalogger.DataLoggerService"
             android:exported="false"></service>
 
         <receiver

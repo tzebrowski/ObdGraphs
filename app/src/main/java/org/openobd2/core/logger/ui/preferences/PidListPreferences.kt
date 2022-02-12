@@ -3,8 +3,9 @@ package org.openobd2.core.logger.ui.preferences
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
-import org.openobd2.core.logger.bl.DataLogger
-import org.openobd2.core.logger.bl.DataLoggerPreferences
+import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
+import org.openobd2.core.logger.bl.datalogger.GENERIC_MODE
 import java.util.*
 
 
@@ -14,7 +15,7 @@ class PidListPreferences(
 ) :
     MultiSelectListPreference(context, attrs) {
     private val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
-    private val defaultSelection = if (preferences.mode =="Generic mode")  hashSetOf<String>().apply {
+    private val defaultSelection = if (preferences.mode == GENERIC_MODE)  hashSetOf<String>().apply {
         add("6")  // Engine coolant temperature
         add("12") // Intake manifold absolute pressure
         add("13") // Engine RPM
@@ -33,7 +34,7 @@ class PidListPreferences(
 
         when (getPriority(attrs)){
             "low"-> {
-                DataLogger.INSTANCE.pids().findAll()
+                DataLogger.INSTANCE.pidDefinitionRegistry().findAll()
                     .filter { pidDefinition -> pidDefinition.priority > 4}
                     .sortedBy { pidDefinition -> pidDefinition.priority }
                     .forEach { p ->
@@ -43,7 +44,7 @@ class PidListPreferences(
                 setDefaultValue(hashSetOf<String>())
             }
             "high" -> {
-                DataLogger.INSTANCE.pids().findAll()
+                DataLogger.INSTANCE.pidDefinitionRegistry().findAll()
                     .filter { pidDefinition -> pidDefinition.priority < 4}
                     .sortedBy { pidDefinition -> pidDefinition.priority }
                     .forEach { p ->
@@ -53,7 +54,7 @@ class PidListPreferences(
                 setDefaultValue(defaultSelection)
             }
             else -> {
-                DataLogger.INSTANCE.pids().findAll()
+                DataLogger.INSTANCE.pidDefinitionRegistry().findAll()
                    .sortedBy { pidDefinition -> pidDefinition.priority }
                     .forEach { p ->
                         entries.add(p.description)

@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.bl
+package org.openobd2.core.logger.bl.datalogger
 
 import android.content.Context
 import android.content.Intent
@@ -131,13 +131,13 @@ internal class DataLogger internal constructor() {
     }
 
     fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
-        val pidRegistry: PidDefinitionRegistry = pids()
+        val pidRegistry: PidDefinitionRegistry = pidDefinitionRegistry()
         return pidIds.map {
             ObdMetric.builder().command(ObdCommand(pidRegistry.findBy(it))).value(null).build()
         }.toMutableList()
     }
 
-    fun pids(): PidDefinitionRegistry {
+    fun pidDefinitionRegistry(): PidDefinitionRegistry {
         return workflow().pidRegistry
     }
 

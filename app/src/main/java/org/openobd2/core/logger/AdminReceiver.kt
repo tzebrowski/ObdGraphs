@@ -5,5 +5,4 @@ import android.content.Context
 import android.content.Intent
 
 
-class AdminReceiver : DeviceAdminReceiver() {
-}
+class AdminReceiver : DeviceAdminReceiver()

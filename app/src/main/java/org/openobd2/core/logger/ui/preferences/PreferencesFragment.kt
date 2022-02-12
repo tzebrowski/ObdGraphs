@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.preference.*
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.DataLoggerPreferences
-import org.openobd2.core.logger.bl.GENERIC_MODE
+import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
+import org.openobd2.core.logger.bl.datalogger.GENERIC_MODE
 
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "preferences.view.graph.toggle"
 const val NOTIFICATION_DEBUG_VIEW_TOGGLE = "preferences.view.debug.toggle"
@@ -44,7 +44,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val onCreateView = super.onCreateView(inflater, container, savedInstanceState)
         registerPrefModeChange()
         registerConnectionModeChange()
-        listView.setBackgroundColor(Color.LTGRAY);
+        listView.setBackgroundColor(Color.LTGRAY)
         registerCheckboxListeners()
         return onCreateView
     }
@@ -77,7 +77,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun registerCheckboxListener(key: String, actionName: String) {
         val preference = findPreference<CheckBoxPreference>(key)
         preference?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
+            Preference.OnPreferenceChangeListener { _, _ ->
                 requireContext().sendBroadcast(Intent().apply {
                     action = actionName
                 })

@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.bl
+package org.openobd2.core.logger.bl.datalogger
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket

@@ -28,6 +28,8 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.*
+import org.openobd2.core.logger.bl.datalogger.*
+import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.ui.common.Cache
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
@@ -210,7 +212,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setupProgressBar() {
-        (findViewById(R.id.p_bar) as ProgressBar)?.run {
+        (findViewById<ProgressBar>(R.id.p_bar)).run {
             visibility = View.GONE
         }
     }

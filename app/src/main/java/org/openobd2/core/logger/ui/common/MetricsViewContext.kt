@@ -4,8 +4,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
-import org.openobd2.core.logger.bl.DataLogger
-import org.openobd2.core.logger.bl.MetricsAggregator
+import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.bl.datalogger.MetricsAggregator
 
 class MetricsViewContext (private val owner: LifecycleOwner, private val visiblePids:  Set<Long>)  {
     lateinit var adapter: RecyclerView.Adapter<*>

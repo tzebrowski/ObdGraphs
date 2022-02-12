@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.bl
+package org.openobd2.core.logger.bl.datalogger
 
 import android.app.IntentService
 import android.content.Context

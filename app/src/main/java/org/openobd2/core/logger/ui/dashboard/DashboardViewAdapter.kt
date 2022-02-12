@@ -128,7 +128,7 @@ internal class DashboardViewAdapter internal constructor(
                     repeatCount = Animation.INFINITE
                 }
                 val numOfSegments = 30
-                this.segments = Segments(numOfSegments, pid.min?.toDouble(), pid.max?.toDouble())
+                this.segments = Segments(numOfSegments, pid.min.toDouble(), pid.max.toDouble())
 
                 this.label.text = pid.description
                 chart.run {

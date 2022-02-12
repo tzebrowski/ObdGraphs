@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.bl
+package org.openobd2.core.logger.bl.datalogger
 
 import android.content.SharedPreferences
 import android.util.Log
@@ -48,7 +48,7 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
             "pref.pids.mode22" -> dataLoggerPreferences.mode01Pids =
                 Prefs.getStringSet(key).map { s -> s.toLong() }.toMutableSet()
             "pref.mode" -> dataLoggerPreferences.mode =
-                Prefs.getString(key, "Generic mode")!!
+                Prefs.getString(key, GENERIC_MODE)!!
             "pref.debug.generator.enabled" -> dataLoggerPreferences.generatorEnabled =
                 Prefs.isEnabled(key)
             "pref.adapter.adaptive.enabled" -> dataLoggerPreferences.adaptiveConnectionEnabled =
@@ -85,7 +85,7 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val commandFrequency =  Prefs.getString("pref.adapter.command.freq", "6").toString().toLong()
     val initDelay = Prefs.getString("pref.adapter.init_delay", "500").toString().toLong()
 
-    val mode = Prefs.getString("pref.mode", "Generic mode")!!
+    val mode = Prefs.getString("pref.mode", GENERIC_MODE)!!
     val generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
     val adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
 

@@ -14,11 +14,9 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.DataLogger
+import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.dashboard.round
-import org.openobd2.core.logger.ui.preferences.Prefs
-import org.openobd2.core.logger.ui.preferences.isEnabled
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
 
@@ -83,16 +81,11 @@ class GaugeViewAdapter internal constructor(
         if (!holder.init){
             holder.label.text = metric.command.label
             holder.init = true
-
-            if (data.size == 1){
-                rescaleView(holder,1.4f,1.2f)
-            }
-
-            if (data.size == 2){
-                rescaleView(holder,1.2f,1.1f)
-            }
-            if (data.size == 3 || data.size == 4){
-                rescaleView(holder,1.1f,1.1f)
+            when (data.size){
+                1 -> rescaleView(holder,1.4f,1.2f)
+                2 -> rescaleView(holder,1.2f,1.1f)
+                3 -> rescaleView(holder,1.1f,1.1f)
+                4 -> rescaleView(holder,1.1f,1.1f)
             }
         }
 
@@ -160,15 +153,15 @@ class GaugeViewAdapter internal constructor(
     private fun rescaleView(holder: ViewHolder, scale1: Float, scale2: Float) {
         holder.label.textSize = (holder.label.textSize * scale1)
 
-        holder.value?.let {
+        holder.value.let {
             it.textSize = (it.textSize * scale1)
         }
 
-        holder.maxValue?.let {
+        holder.maxValue.let {
             it.textSize = (it.textSize * scale2)
         }
 
-        holder.minValue?.let {
+        holder.minValue.let {
             it.textSize = (it.textSize * scale2)
         }
 
@@ -182,24 +175,22 @@ class GaugeViewAdapter internal constructor(
             metric.timestamp
         } else {
             val diff = metric.timestamp - currentTs
-            Log.d("LogTS", "${metric.command.pid.description} = ${diff}")
+            Log.v("LogTS", "${metric.command.pid.description} = ${diff}")
             metric.timestamp
         }
     }
 
-    private fun convert(
-        metric: ObdMetric,
-        value: Double
+    private fun convert(metric: ObdMetric, value: Double
     ): Number {
-         if (metric.command.pid.type == null){
-             return value.round(2)
-         }
-        return when (metric.command.pid.type) {
-            PidDefinition.ValueType.DOUBLE -> value.round(2)
-            PidDefinition.ValueType.INT -> value.toInt()
-            PidDefinition.ValueType.SHORT -> value.toInt()
-            else -> value.round(1)
+        metric.command.pid.type?.let {
+            return when (metric.command.pid.type) {
+                PidDefinition.ValueType.DOUBLE -> value.round(2)
+                PidDefinition.ValueType.INT -> value.toInt()
+                PidDefinition.ValueType.SHORT -> value.toInt()
+                else -> value.round(1)
+            }
         }
+
     }
 
     override fun getItemCount(): Int {
