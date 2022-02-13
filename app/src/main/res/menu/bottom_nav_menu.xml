@@ -2,25 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/title_dash" />
-    <item
         android:id="@+id/navigation_gauge"
         android:icon="@android:drawable/ic_menu_gallery"
-        android:title="@string/title_gauge" />
+        android:title="@string/navigation_title_gauge" />
+    <item
+        android:id="@+id/navigation_graph"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="@string/navigation_title_graph" />
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@android:drawable/ic_dialog_dialer"
+        android:title="@string/navigation_title_dash" />
+
     <item
         android:id="@+id/navigation_metrics"
         android:icon="@android:drawable/ic_menu_compass"
-        android:title="@string/title_livedata" />
-    <item
-        android:id="@+id/navigation_debug"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_debug" />
-
-    <item
-        android:id="@+id/navigation_configuration"
+        android:title="@string/navigation_title_metrics" />
+     <item
+        android:id="@+id/navigation_preferences"
         android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/title_preferences" />
+        android:title="@string/navigation_title_preferences" />
 
 </menu>

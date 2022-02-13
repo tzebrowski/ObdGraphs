@@ -7,7 +7,7 @@
     android:layout_marginTop="1dp"
     android:layout_marginRight="1dp"
     android:layout_marginBottom="1dp"
-    android:background="@drawable/dash_item_background">
+    android:background="@drawable/dash_item_background_2">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,50 +24,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_row="0"
-            android:layout_column="0"
+            android:layout_column="2"
             android:alpha="0.5"
             android:gravity="center"
             android:text="label"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/dash_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_column="0"
-            android:orientation="horizontal">
+            android:alpha="0.7"
+            android:text="value"
+            android:textColor="#FFFF00"
+            android:textSize="54dp"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/dash_value"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:alpha="0.7"
-                android:text="Value"
-                android:textColor="#FFFF00"
-                android:textSize="44sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/dash_units"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="2dp"
-                android:alpha="0.5"
-                android:gravity="center|left"
-                android:text="units"
-                android:textColor="#1B2441"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
     </LinearLayout>
 
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_row="0"
         android:layout_column="0">
 

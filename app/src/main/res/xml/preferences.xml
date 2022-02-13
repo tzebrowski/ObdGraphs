@@ -1,167 +1,304 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:key="prefs.root">
 
     <PreferenceCategory
         android:key="adapter"
         android:title="Adapter settings">
-        <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:dialogTitle="Bluetooth OBD adapter name"
-            android:key="pref.adapter.id"
-            android:summary="Bluetooth OBD adapter name"
-            android:title="Adapters" />
+
+        <ListPreference
+            android:defaultValue="wifi"
+            android:dialogTitle="Adapter connection type"
+            android:entries="@array/connection_type_array"
+            android:entryValues="@array/connection_type_array"
+            android:key="selected.connection.type"
+            android:summary="Adapter connection type" />
+
+        <PreferenceCategory
+            android:key="connection.type.bluetooth"
+            android:title="Bluetooth settings">
+
+           <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:dialogTitle="Bluetooth adapter name"
+                android:key="pref.adapter.id"
+                android:summary="Available bluetooth devices" />
+        </PreferenceCategory>
+
+
+        <PreferenceCategory
+            android:key="connection.type.wifi"
+            android:title="Wifi settings">
+
+            <EditTextPreference
+                android:defaultValue="V-LINK"
+                android:dialogTitle="SSID"
+                android:key="pref.adapter.connection.tcp.wifi.ssid"
+                android:summary="SSID" />
+
+            <EditTextPreference
+                android:defaultValue="192.168.0.10"
+                android:dialogTitle="Host"
+                android:key="pref.adapter.connection.tcp.host"
+                android:summary="Host" />
+
+            <EditTextPreference
+                android:defaultValue="35000"
+                android:dialogTitle="Port"
+                android:key="pref.adapter.connection.tcp.port"
+                android:summary="Port" />
+
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="diagnosis"
+            android:title="Diagnosis">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="Show commands freq"
+                android:key="pref.adapter.diagnosis.command.frequency.enabled"
+                android:summary="Show commands freq" />
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="General settings">
+
+            <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                app:key="prefs.pids.query"
+                app:isPreferenceVisible="true"
+                android:singleLineTitle="false"
+                android:summary="Parameter IDs to query">
+
+                <PreferenceCategory android:title="Parameter IDs to query">
+                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        app:priority="high"
+                        android:key="pref.pids.generic.high"
+                        android:singleLineTitle="false"
+                        android:summary="High priority PID's" />
+
+                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        app:priority="low"
+                        android:key="pref.pids.generic.low"
+                        android:singleLineTitle="false"
+                        android:summary="Low priority PID's" />
+
+                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        android:key="pref.pids.mode22"
+                        android:singleLineTitle="false"
+                        android:summary="Alfa Romeo specific PID's" />
+                </PreferenceCategory>
+            </PreferenceScreen>
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:dialogTitle="Batch enabled"
+                android:key="pref.adapter.batch.enabled"
+                android:summary="Enable batch mode" />
+
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="Adaptive timeout enabled"
+                android:key="pref.adapter.adaptive.enabled"
+                android:summary="Adaptive timeout enabled" />
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:dialogTitle="Reconnect automatically"
+                android:key="pref.adapter.reconnect"
+                android:singleLineTitle="false"
+                android:summary="Reconnect automatically when error occurs" />
+
+            <ListPreference
+                android:defaultValue="500"
+                android:entries="@array/init_delay"
+                android:entryValues="@array/init_delay"
+                android:key="pref.adapter.init_delay"
+                android:summary="Init delay" />
+
+            <ListPreference
+                android:defaultValue="6"
+                android:entries="@array/command_frequency"
+                android:entryValues="@array/command_frequency"
+                android:key="pref.adapter.command.freq"
+                android:summary="Command frequency" />
+
+            <ListPreference
+                android:defaultValue="Generic mode"
+                android:dialogTitle="Adapter mode"
+                android:entries="@array/perf_modes_arrays"
+                android:entryValues="@array/perf_modes_arrays"
+                android:key="pref.mode"
+                android:summary="Adapter mode" />
+
+        </PreferenceCategory>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="power"
+        android:title="Power settings">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dialogTitle="Connect adapter on power"
+            android:key="pref.adapter.power.connect_adapter"
+            android:summary="Connect adapter on power" />
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:dialogTitle="Batch enabled"
-            android:key="pref.adapter.batch.enabled"
-            android:summary="Enable batch mode"
-            android:title="Enable batch mode" />
-
+            android:dialogTitle="Screen off"
+            android:key="pref.adapter.power.screen_off"
+            android:summary="Screen off when disconnected" />
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:dialogTitle="Adaptive timeout enabled"
-            android:key="pref.adapter.adaptive.enabled"
-            android:summary="Adaptive timeout enabled"
-            android:title="Adaptive timeout enabled" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dialogTitle="Reconnect automatically"
-            android:key="pref.adapter.reconnect"
-            android:summary="Reconnect automatically when error occurs"
-            android:title="Reconnect automatically" />
-
-
-        <ListPreference
-            android:defaultValue="500"
-            android:entries="@array/init_delay"
-            android:entryValues="@array/init_delay"
-            android:key="pref.adapter.init_delay"
-            android:summary="Init delay"
-            android:title="Init delay" />
-
-        <ListPreference
-            android:defaultValue="6"
-            android:entries="@array/command_frequency"
-            android:entryValues="@array/command_frequency"
-            android:key="pref.adapter.command.freq"
-            android:summary="Command frequency"
-            android:title="Command frequency" />
-
-        <ListPreference
-            android:defaultValue="Generic mode"
-            android:dialogTitle="Select mode"
-            android:entries="@array/perf_modes_arrays"
-            android:entryValues="@array/perf_modes_arrays"
-            android:key="pref.mode"
-            android:summary="Allows to specify OBD mode"
-            android:title="Mode" />
+            android:dialogTitle="Disable bluetooth"
+            android:key="pref.adapter.power.bt_off"
+            android:summary="Disable bluetooth" />
 
     </PreferenceCategory>
+
     <PreferenceCategory android:title="Views">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.toolbar.hide.landscape"
-            android:summary="Hide toolbar when landscape"
-            android:title="Landscape - hide toolbar" />
+            android:singleLineTitle="false"
+            android:summary="Hide toolbar when landscape" />
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.toolbar.hide.doubleclick"
-            android:summary="Hide toolbar when double click"
-            android:title="Double click - hide toolbar" />
+            android:singleLineTitle="false"
+            android:summary="Hide toolbar when double click" />
 
-        <PreferenceCategory android:title="Dash">
+
+        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:key="prefs.gauge"
+            android:summary="Gauge view configuration">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.gauge.view.enabled"
+                android:summary="Enable the view" />
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:key="pref.gauge.pids.selected"
+                android:summary="Displayed PID's" />
+        </PreferenceScreen>
+
+        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:key="prefs.graph"
+            android:summary="Graph view configuration">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.graph.view.enabled"
+                android:summary="Enable the view" />
+
+            <CheckBoxPreference
+
+                android:defaultValue="true"
+                android:key="pref.graph.cache.enabled"
+                android:summary="Cache enabled"/>
+
+            <EditTextPreference
+                android:inputType="number"
+                android:defaultValue="20"
+                android:dialogTitle="X-Axis: Moving time ms"
+                android:key="pref.graph.x-axis.minimum-shift.time"
+                android:singleLineTitle="false"
+                android:summary="X-Axis moving time" />
+
+            <EditTextPreference
+                android:inputType="number"
+                android:defaultValue="20000"
+                android:dialogTitle="X-Axis: Start moving after ms"
+                android:key="pref.graph.x-axis.start-moving-after.time"
+                android:singleLineTitle="false"
+                android:summary="X-Axis start moving after" />
+
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:key="pref.graph.pids.selected"
+                android:summary="Displayed PID's" />
+        </PreferenceScreen>
+
+
+        <PreferenceScreen
+            android:summary="Dashboard view configuration"
+            app:key="prefs.dashboard">
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.dash.top.values.blink"
-                android:summary="Alarm when highest values reached"
-                android:title="Alarm for highest values" />
+                android:singleLineTitle="false"
+                android:summary="Alarm for highest values" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.swipe.to.delete"
+                android:singleLineTitle="false"
+                android:summary="Swipe to delete metric" />
 
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.dash.top.values.red.color"
-                android:summary="Highlight top values with red color"
-                android:title="Highlight top values" />
+                android:singleLineTitle="false"
+                android:summary="Highlight top values"/>
 
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="pref.dash.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show the view" />
-
-
-            <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                android:key="pref.dash.pids.selected"
-                android:summary="Displayed PIDs"
-                android:title="Displayed PIDs" />
+                android:summary="Enable the view" />
 
 
             <ListPreference
-                android:defaultValue="1"
+                android:defaultValue="0"
                 android:entries="@array/dash_color_themes"
                 android:entryValues="@array/dash_color_themes"
                 android:key="pref.dash.theme"
-                android:title="Color theme" />
+                android:summary="Color theme" />
+
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:key="pref.dash.pids.selected"
+                android:summary="Dashboard: Displayed PID's" />
+
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:key="pref.dash.gauge_pids.selected"
+                android:summary="Gauge: Displayed PID's" />
 
 
-        </PreferenceCategory>
-
-        <PreferenceCategory android:title="Gauge">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.dash.gauge.view.visible"
+                android:summary="Gauge: Show the view" />
 
             <CheckBoxPreference
                 android:defaultValue="true"
-                android:key="pref.gauge.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show the view" />
-
-            <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                android:defaultValue="@array/perf_empty_array"
-                android:key="pref.gauge.pids.selected"
-                android:summary="Displayed PIDs"
-                android:title="Displayed PIDs" />
-
-        </PreferenceCategory>
-
+                android:key="pref.dash.dash.view.visible"
+                android:singleLineTitle="false"
+                android:summary="Dashboard: Show the view" />
+        </PreferenceScreen>
 
         <PreferenceCategory android:title="Debug">
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:key="pref.debug.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show tht view" />
-
+                android:key="pref.debug.generator.enabled"
+                android:summary="Enable data generator"/>
 
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:key="pref.debug.generator.enabled"
-                android:summary="Enable data generator"
-                android:title="Enable data generator" />
-
+                android:key="pref.debug.view.enabled"
+                android:summary="Enable the view"/>
         </PreferenceCategory>
 
-        <PreferenceCategory android:title="Metrics">
+        <PreferenceScreen
+            android:summary="Metrics view configuration"
+            app:key="prefs.metrics">
+
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.metrics.view.enabled"
-                android:summary="Enable the view"
-                android:title="Show the view" />
-        </PreferenceCategory>
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Supported PID's">
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:key="@string/pref.pids.generic"
-            android:summary="Generic PID's for Mode 1"
-            android:title="Generic" />
-
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:defaultValue="@array/perf_empty_array"
-            android:key="pref.pids.mode22"
-            android:summary="Alfa Romeo specific PID's"
-            android:title="Mode 22" />
+                android:summary="Enable the view" />
+        </PreferenceScreen>
     </PreferenceCategory>
 
 

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "org.openobd2.core.logger"
-        minSdkVersion 26
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -24,11 +24,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_10
-        targetCompatibility JavaVersion.VERSION_1_10
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '10'
+        jvmTarget = '1.8'
     }
 }
 
@@ -58,5 +58,7 @@ dependencies {
     implementation 'io.apisense:rhino-android:1.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
-    implementation ('io.github.tzebrowski:obd-metrics:1.0.2-SNAPSHOT'){ changing = true }
+    implementation 'com.dynatrace.dynahist:dynahist:1.1'
+    implementation ('io.github.tzebrowski:obd-metrics:3.3.0-SNAPSHOT'){ changing = true }
+    implementation 'pl.pawelkleczkowski.customgauge:CustomGauge:1.0.4'
 }

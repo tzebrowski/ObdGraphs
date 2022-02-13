@@ -1,20 +1,27 @@
 <resources>
-    <string name="app_name">AlfaDataLogger</string>
+    <string name="app_name">ObdGraphs</string>
     <string name="title_debug">Debug</string>
-    <string name="title_gauge">Gauge</string>
-    <string name="title_livedata">Metrics</string>
-    <string name="title_preferences">Preferences</string>
-    <string name="title_dash">Dash</string>
+    <string name="navigation_title_gauge">Gauge</string>
+    <string name="navigation_title_metrics">Metrics</string>
+    <string name="navigation_title_preferences">Preferences</string>
+    <string name="navigation_title_dash">Dashboard</string>
+    <string name="navigation_title_graph">Graph</string>
+
     <string name="search">Search</string>
     <string name="switch_l">Switch</string>
     <string name="pref.pids.generic">pref.pids.generic</string>
-
-
     <string-array name="perf_empty_array"></string-array>
+
+    <string-array name="connection_type_array">
+        <item name="connection.wifi">wifi</item>
+        <item name="connection.bluetooth">bluetooth</item>
+    </string-array>
 
     <string-array name="perf_modes_arrays">
         <item name="generic.mode">Generic mode</item>
+        <!--
         <item name="mode22.mode">Mode 22</item>
+        -->
     </string-array>
 
     <string-array name="dash_color_themes">

@@ -1,34 +1,39 @@
 package org.openobd2.core.logger.ui.preferences
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.CheckBoxPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.GENERIC_MODE
+import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
+import org.openobd2.core.logger.bl.datalogger.GENERIC_MODE
 
-const val NOTIFICATION_DEBUG_VIEW_SHOW = "preferences.view.debug.show"
-const val NOTIFICATION_DEBUG_VIEW_HIDE = "preferences.view.debug.hide"
-
-const val NOTIFICATION_DASH_VIEW_SHOW = "preferences.view.dash.show"
-const val NOTIFICATION_DASH_VIEW_HIDE = "preferences.view.dash.hide"
-
-const val NOTIFICATION_GAUGE_VIEW_SHOW = "preferences.view.gauge.show"
-const val NOTIFICATION_GAUGE_VIEW_HIDE = "preferences.view.gauge.hide"
-
-const val NOTIFICATION_METRICS_VIEW_SHOW = "preferences.view.metrics.show"
-const val NOTIFICATION_METRICS_VIEW_HIDE = "preferences.view.metrics.hide"
+const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "preferences.view.graph.toggle"
+const val NOTIFICATION_DEBUG_VIEW_TOGGLE = "preferences.view.debug.toggle"
+const val NOTIFICATION_DASH_VIEW_TOGGLE = "preferences.view.dash.toggle"
+const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "preferences.view.gauge.toggle"
+const val NOTIFICATION_METRICS_VIEW_TOGGLE = "preferences.view.metrics.toggle"
 
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
+    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+
+    override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
+        super.onNavigateToScreen(preferenceScreen)
+        setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.preferences, rootKey)
+        if (arguments == null){
+            setPreferencesFromResource(R.xml.preferences, rootKey)
+        }else{
+            setPreferencesFromResource(R.xml.preferences, requireArguments().get("preferences.rootKey")  as String)
+        }
     }
 
     override fun onCreateView(
@@ -36,56 +41,57 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         val onCreateView = super.onCreateView(inflater, container, savedInstanceState)
         registerPrefModeChange()
+        registerConnectionModeChange()
+        listView.setBackgroundColor(Color.LTGRAY)
+        registerCheckboxListeners()
+        return onCreateView
+    }
+
+    private fun registerCheckboxListeners() {
+        registerCheckboxListener(
+            "pref.graph.view.enabled",
+            NOTIFICATION_GRAPH_VIEW_TOGGLE
+        )
+
         registerCheckboxListener(
             "pref.debug.view.enabled",
-            NOTIFICATION_DEBUG_VIEW_SHOW,
-            NOTIFICATION_DEBUG_VIEW_HIDE
+            NOTIFICATION_DEBUG_VIEW_TOGGLE
         )
         registerCheckboxListener(
             "pref.gauge.view.enabled",
-            NOTIFICATION_GAUGE_VIEW_SHOW,
-            NOTIFICATION_GAUGE_VIEW_HIDE
+            NOTIFICATION_GAUGE_VIEW_TOGGLE
         )
         registerCheckboxListener(
             "pref.dash.view.enabled",
-            NOTIFICATION_DASH_VIEW_SHOW,
-            NOTIFICATION_DASH_VIEW_HIDE
+            NOTIFICATION_DASH_VIEW_TOGGLE
         )
 
         registerCheckboxListener(
             "pref.metrics.view.enabled",
-            NOTIFICATION_METRICS_VIEW_SHOW,
-            NOTIFICATION_METRICS_VIEW_HIDE
+            NOTIFICATION_METRICS_VIEW_TOGGLE
         )
-
-        return onCreateView
     }
 
-    private fun registerCheckboxListener(key: String, actionTrue: String, actionFalse: String) {
+    private fun registerCheckboxListener(key: String, actionName: String) {
         val preference = findPreference<CheckBoxPreference>(key)
         preference?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
+            Preference.OnPreferenceChangeListener { _, _ ->
                 requireContext().sendBroadcast(Intent().apply {
-                    action = if (newValue == true) {
-                        actionTrue
-                    } else {
-                        actionFalse
-                    }
+                    action = actionName
                 })
                 true
             }
     }
 
     private fun registerPrefModeChange() {
-        val prefMode = findPreference<ListPreference>("pref.mode")
-        val p1 = findPreference<Preference>("pref.pids.generic")
-        val p2 = findPreference<Preference>("pref.pids.mode22")
+        val prefMode = findPreference<ListPreference>("selected.connection.type")
+        val p1 = findPreference<Preference>("connection.type.bluetooth")
+        val p2 = findPreference<Preference>("connection.type.wifi")
 
-        when (Preferences.getMode(this.requireContext())) {
-            GENERIC_MODE -> {
+        when (Prefs.getString("selected.connection.type")) {
+            "bluetooth" -> {
                 p1?.isVisible = true
                 p2?.isVisible = false
             }
@@ -94,6 +100,37 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 p2?.isVisible = true
             }
         }
+
+        prefMode?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                when (newValue) {
+                    "bluetooth" -> {
+                        p1?.isVisible = true
+                        p2?.isVisible = false
+                    }
+                    else -> {
+                        p1?.isVisible = false
+                        p2?.isVisible = true
+                    }
+                }
+                true
+            }
+    }
+
+
+    private fun registerConnectionModeChange() {
+        val prefMode = findPreference<ListPreference>("pref.mode")
+        val p1 = findPreference<Preference>("pref.pids.generic")
+        val p2 = findPreference<Preference>("pref.pids.mode22")
+
+        if (preferences.isGenericModeSelected()){
+            p1?.isVisible = true
+            p2?.isVisible = false
+        }else{
+            p1?.isVisible = false
+            p2?.isVisible = true
+        }
+
 
         prefMode?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->

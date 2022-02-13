@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.MetricsAggregator
+import org.openobd2.core.logger.bl.datalogger.MetricsAggregator
 
 class DebugFragment : Fragment() {
 
