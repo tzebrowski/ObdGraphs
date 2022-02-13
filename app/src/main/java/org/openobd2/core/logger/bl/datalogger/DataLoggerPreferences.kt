@@ -7,6 +7,9 @@ import org.openobd2.core.logger.ui.preferences.getString
 import org.openobd2.core.logger.ui.preferences.getStringSet
 import org.openobd2.core.logger.ui.preferences.isEnabled
 
+const val GENERIC_MODE = "Generic mode"
+
+
 data class DataLoggerPreferences(
     var mode01Pids: MutableSet<Long>,
     var mode02Pids: MutableSet<Long>,
@@ -21,6 +24,10 @@ data class DataLoggerPreferences(
     var mode: String,
     var generatorEnabled: Boolean,
     var adaptiveConnectionEnabled: Boolean){
+
+    fun isGenericModeSelected() : Boolean {
+        return mode == GENERIC_MODE
+    }
 
     companion object  {
         private lateinit var strongReference: SharedPreferenceChangeListener

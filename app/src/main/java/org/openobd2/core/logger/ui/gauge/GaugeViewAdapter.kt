@@ -16,6 +16,7 @@ import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.ui.common.SpannableStringUtils
+import org.openobd2.core.logger.ui.common.isTablet
 import org.openobd2.core.logger.ui.dashboard.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
@@ -24,7 +25,7 @@ private val DEFAULT_HEIGHT = 230
 private val LABEL_COLOR = "#01804F"
 
 class GaugeViewAdapter internal constructor(
-    context: Context,
+    private val context: Context,
     val data: MutableList<ObdMetric>,
     private val resourceId: Int
 ): RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
@@ -55,16 +56,18 @@ class GaugeViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
-
-        (parent.measuredHeight / 1.8).run {
-            if (this > 0) {
-                if (data.size > 2)
-                    view.layoutParams.height = this.toInt()
-            } else {
-                view.layoutParams.height = DEFAULT_HEIGHT
+        if (isTablet(context)) {
+            (parent.measuredHeight / 1.8).run {
+                if (this > 0) {
+                    if (data.size > 2)
+                        view.layoutParams.height = this.toInt()
+                } else {
+                    view.layoutParams.height = DEFAULT_HEIGHT
+                }
             }
+        } else{
+            view.layoutParams.height = parent.measuredHeight  / 3
         }
-
         return ViewHolder(view)
     }
 
@@ -180,17 +183,21 @@ class GaugeViewAdapter internal constructor(
         }
     }
 
-    private fun convert(metric: ObdMetric, value: Double
-    ): Number {
-        metric.command.pid.type?.let {
-            return when (metric.command.pid.type) {
-                PidDefinition.ValueType.DOUBLE -> value.round(2)
-                PidDefinition.ValueType.INT -> value.toInt()
-                PidDefinition.ValueType.SHORT -> value.toInt()
-                else -> value.round(1)
-            }
+    private fun convert(metric: ObdMetric, value: Double): Number {
+
+        if (value.isNaN()){
+            return 0.0
         }
 
+        return if (metric.command.pid.type == null) 0.0 else
+            metric.command.pid.type.let {
+                return when (metric.command.pid.type) {
+                    PidDefinition.ValueType.DOUBLE -> value.round(2)
+                    PidDefinition.ValueType.INT -> value.toInt()
+                    PidDefinition.ValueType.SHORT -> value.toInt()
+                    else -> value.round(1)
+                }
+            }
     }
 
     override fun getItemCount(): Int {

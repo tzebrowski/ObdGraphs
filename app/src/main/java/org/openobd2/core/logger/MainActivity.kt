@@ -319,7 +319,7 @@ class MainActivity : AppCompatActivity() {
                 ).putExtra(
                     DevicePolicyManager.EXTRA_DEVICE_ADMIN, admin
                 )
-                this.startActivity(intent)
+                startActivity(intent)
             }
         }
     }

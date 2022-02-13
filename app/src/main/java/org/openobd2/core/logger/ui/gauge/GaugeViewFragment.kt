@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.logger.R
 
-
 class GaugeViewFragment : Fragment() {
     lateinit var root: View
 

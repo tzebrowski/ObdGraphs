@@ -9,6 +9,7 @@ import android.text.style.StyleSpan
 import android.widget.TextView
 
 class SpannableStringUtils {
+
     companion object {
         @JvmStatic
         fun generate(it: String?, color: Int, size: Float): SpannableString {
@@ -20,9 +21,7 @@ class SpannableStringUtils {
 
             val valSpanString = SpannableString(valText)
             valSpanString.setSpan(RelativeSizeSpan(size), 0, valSpanString.length, 0) // set size
-            //valSpanString.setSpan(UnderlineSpan(), 0, valSpanString.length, 0)
             valSpanString.setSpan(StyleSpan(Typeface.BOLD), 0, valSpanString.length, 0)
-            //valSpanString.setSpan(StyleSpan(Typeface.ITALIC), 0, valSpanString.length, 0)
             valSpanString.setSpan(
                 ForegroundColorSpan(color),
                 0,
@@ -31,6 +30,7 @@ class SpannableStringUtils {
             )
             return valSpanString
         }
+
         fun setHighLightedText(tv: TextView, textToHighlight: String, size: Float, color: Int) {
             val tvt = tv.text.toString()
             var ofe = tvt.indexOf(textToHighlight, 0)
@@ -39,7 +39,6 @@ class SpannableStringUtils {
             while (ofs < tvt.length && ofe != -1) {
                 ofe = tvt.indexOf(textToHighlight, ofs)
                 if (ofe == -1) break else {
-                    // you can change or add more span as per your need
                     wordToSpan.setSpan(
                         RelativeSizeSpan(size),
                         ofe,

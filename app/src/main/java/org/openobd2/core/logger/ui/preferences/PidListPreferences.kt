@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
 import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
-import org.openobd2.core.logger.bl.datalogger.GENERIC_MODE
 import java.util.*
 
 
@@ -15,7 +14,7 @@ class PidListPreferences(
 ) :
     MultiSelectListPreference(context, attrs) {
     private val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
-    private val defaultSelection = if (preferences.mode == GENERIC_MODE)  hashSetOf<String>().apply {
+    private val defaultSelection = if (preferences.isGenericModeSelected())  hashSetOf<String>().apply {
         add("6")  // Engine coolant temperature
         add("12") // Intake manifold absolute pressure
         add("13") // Engine RPM

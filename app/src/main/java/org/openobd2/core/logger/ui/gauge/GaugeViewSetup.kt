@@ -7,10 +7,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
+import org.openobd2.core.logger.ui.common.*
 import org.openobd2.core.logger.ui.common.DragManageAdapter
-import org.openobd2.core.logger.ui.common.MetricsViewContext
-import org.openobd2.core.logger.ui.common.SwappableAdapter
-import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.GaugePreferences
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getLongSet
@@ -37,7 +35,8 @@ class GaugeViewSetup {
             val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap)
             metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId)
             val recyclerView: RecyclerView = root.findViewById(recyclerViewId)
-            recyclerView.layoutManager = GridLayoutManager(context, spanCount?: calculateSpan(metrics))
+            recyclerView.layoutManager =
+                GridLayoutManager(context, spanCount ?: calculateSpan(context, metrics))
             recyclerView.adapter = metricsViewContext.adapter
 
             val dragCallback = DragManageAdapter(
@@ -75,16 +74,21 @@ class GaugeViewSetup {
             metricsViewContext.observerMetrics(metrics)
         }
 
-        private fun calculateSpan(metrics: MutableList<ObdMetric>) : Int{
-            return when (metrics.size) {
-                2 -> {
-                    2
-                }
-                1 -> {
-                    1
-                }
+        private fun calculateSpan(context: Context, metrics: MutableList<ObdMetric>): Int {
+            when (isTablet(context)) {
+                false -> return 2
                 else -> {
-                    (metrics.size / 2.0).roundToInt()
+                    return when (metrics.size) {
+                        2 -> {
+                            2
+                        }
+                        1 -> {
+                            1
+                        }
+                        else -> {
+                            (metrics.size / 2.0).roundToInt()
+                        }
+                    }
                 }
             }
         }

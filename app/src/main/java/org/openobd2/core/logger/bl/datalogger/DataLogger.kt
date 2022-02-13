@@ -26,7 +26,6 @@ const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 
 private const val LOGGER_TAG = "DATA_LOGGER_SVC"
-const val GENERIC_MODE = "Generic mode"
 
 internal class DataLogger internal constructor() {
 
@@ -206,28 +205,11 @@ internal class DataLogger internal constructor() {
     }
 
     private fun query(): Query {
-        context.let {
-            return when (preferences.mode) {
-                GENERIC_MODE -> {
-                    Query.builder().pids(preferences.mode01Pids).build()
-                }
-                else -> {
-                    Query.builder().pids(preferences.mode02Pids).build()
-                }
-            }
-        }
+       return if (preferences.isGenericModeSelected()) Query.builder().pids(preferences.mode01Pids).build()
+               else Query.builder().pids(preferences.mode02Pids).build()
     }
 
     private fun workflow(): Workflow {
-        context.let {
-            return when (preferences.mode) {
-                GENERIC_MODE -> {
-                    mode1
-                }
-                else -> {
-                    mode22
-                }
-            }
-        }
+        return if (preferences.isGenericModeSelected()) mode1 else mode22
     }
 }
