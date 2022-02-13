@@ -365,6 +365,7 @@ class MainActivity : AppCompatActivity() {
                             R.id.navigation_dashboard -> "prefs.dashboard"
                             R.id.navigation_gauge ->  "prefs.gauge"
                             R.id.navigation_graph -> "prefs.graph"
+                            R.id.navigation_metrics -> "prefs.metrics"
                             else -> "prefs.root"
                         }
 

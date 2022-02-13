@@ -1,6 +1,5 @@
 package org.openobd2.core.logger.ui.metrics
 
-
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.common.SpannableStringUtils
+import org.openobd2.core.logger.ui.common.setText
 
 class MetricsViewAdapter internal constructor(
     context: Context?,
@@ -40,10 +39,8 @@ class MetricsViewAdapter internal constructor(
             valueTxt += " " + (commandReply.command as ObdCommand).pid.units
         }
 
-        holder.metricNameTextView.text =
-            SpannableStringUtils.generate(commandReply.command.label, Color.GRAY, 1.1f)
-        holder.metricValueTextView.text =
-            SpannableStringUtils.generate(valueTxt, Color.parseColor("#01804F"), 1.4f)
+        holder.metricNameTextView.setText(commandReply.command.label, Color.GRAY, 1.1f)
+        holder.metricValueTextView.setText(valueTxt, Color.parseColor("#01804F"), 1.4f)
     }
 
     override fun getItemCount(): Int {
@@ -52,16 +49,12 @@ class MetricsViewAdapter internal constructor(
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        var metricNameTextView: TextView
-        var metricValueTextView: TextView
+        var metricNameTextView: TextView = itemView.findViewById(R.id.metric_name)
+        var metricValueTextView: TextView = itemView.findViewById(R.id.metric_value)
         override fun onClick(view: View?) {
-
         }
 
         init {
-            metricNameTextView = itemView.findViewById(R.id.metric_name)
-            metricValueTextView = itemView.findViewById(R.id.metric_value)
-
             itemView.setOnClickListener(this)
         }
     }

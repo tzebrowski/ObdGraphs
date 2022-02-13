@@ -22,7 +22,7 @@ import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.ui.common.SpannableStringUtils
+import org.openobd2.core.logger.ui.common.highLightText
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -101,8 +101,7 @@ internal class DashboardViewAdapter internal constructor(
         holder.label.text = obdCommand.pid.description
         val units = (metric.command as ObdCommand).pid.units
         holder.value.text = metric.valueToString() + " " + units
-        SpannableStringUtils.setHighLightedText(holder.value, units,0.3f,
-            Color.parseColor("#01804F"))
+        holder.value.highLightText(units,0.3f, Color.parseColor("#01804F"))
     }
 
     override fun getItemCount(): Int {

@@ -9,7 +9,6 @@ import org.openobd2.core.logger.ui.preferences.isEnabled
 
 const val GENERIC_MODE = "Generic mode"
 
-
 data class DataLoggerPreferences(
     var mode01Pids: MutableSet<Long>,
     var mode02Pids: MutableSet<Long>,
@@ -40,7 +39,7 @@ data class DataLoggerPreferences(
     }
 }
 
-private val LOGGER_KEY = "PREFS"
+const val LOGGER_KEY = "PREFS"
 
 private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLoggerPreferences) : SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -51,7 +50,6 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 genericPids()
             "pref.pids.generic.high" -> dataLoggerPreferences.mode01Pids =
                 genericPids()
-
             "pref.pids.mode22" -> dataLoggerPreferences.mode01Pids =
                 Prefs.getStringSet(key).map { s -> s.toLong() }.toMutableSet()
             "pref.mode" -> dataLoggerPreferences.mode =
@@ -60,7 +58,7 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 Prefs.isEnabled(key)
             "pref.adapter.adaptive.enabled" -> dataLoggerPreferences.adaptiveConnectionEnabled =
                 Prefs.isEnabled(key)
-            "selected.connection.type" ->  dataLoggerPreferences.connectionType =
+            "pref.selected.connection.type" ->  dataLoggerPreferences.connectionType =
                 Prefs.getString(key, "wifi")!!
             "pref.adapter.connection.tcp.host" -> dataLoggerPreferences.tcpHost =
                 Prefs.getString(key)!!

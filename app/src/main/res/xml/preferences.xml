@@ -185,6 +185,18 @@
                 android:summary="Displayed PID's" />
         </PreferenceScreen>
 
+        <PreferenceScreen
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:summary="Metrics view configuration"
+            app:key="prefs.metrics">
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.metrics.view.enabled"
+                android:summary="Enable the view" />
+        </PreferenceScreen>
+
         <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             app:key="prefs.graph"
@@ -289,17 +301,5 @@
                 android:key="pref.debug.view.enabled"
                 android:summary="Enable the view"/>
         </PreferenceCategory>
-
-        <PreferenceScreen
-            android:summary="Metrics view configuration"
-            app:key="prefs.metrics">
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.metrics.view.enabled"
-                android:summary="Enable the view" />
-        </PreferenceScreen>
     </PreferenceCategory>
-
-
 </PreferenceScreen>

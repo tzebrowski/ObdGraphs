@@ -16,12 +16,11 @@ import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
-import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.common.isTablet
+import org.openobd2.core.logger.ui.common.highLightText
 import org.openobd2.core.logger.ui.dashboard.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
-import kotlin.math.roundToInt
 
 private val LABEL_COLOR = "#01804F"
 
@@ -90,32 +89,32 @@ class GaugeViewAdapter internal constructor(
             val units = (metric.command as ObdCommand).pid.units
             text = metric.valueToString() + " " + units
 
-            SpannableStringUtils.setHighLightedText(
-                this, units, 0.3f,
+            highLightText(
+                units, 0.3f,
                 Color.parseColor(LABEL_COLOR))
         }
 
         DataLogger.INSTANCE.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
                 text = "min\n ${convert(metric, min)}"
-                SpannableStringUtils.setHighLightedText(
-                    this, "min", 0.5f,
+                highLightText(
+                    "min", 0.5f,
                     Color.parseColor(LABEL_COLOR)
                 )
             }
 
             holder.maxValue.run {
                 text = "max\n  ${convert(metric, max)} "
-                SpannableStringUtils.setHighLightedText(
-                    this, "max", 0.5f,
+                highLightText(
+                    "max", 0.5f,
                     Color.parseColor(LABEL_COLOR)
                 )
             }
 
             holder.avgValue?.run {
                 text = "avg\n ${convert(metric, mean)}"
-                SpannableStringUtils.setHighLightedText(
-                    this, "avg", 0.5f,
+                highLightText(
+                    "avg", 0.5f,
                     Color.parseColor(LABEL_COLOR)
                 )
             }
@@ -126,14 +125,13 @@ class GaugeViewAdapter internal constructor(
                 val rate = DataLogger.INSTANCE.diagnostics().rate()
                     .findBy(RateType.MEAN, metric.command.pid)
                 text = "rate " + rate.get().value.round(2)
-                SpannableStringUtils.setHighLightedText(
-                    this, "rate", 0.4f,
+                highLightText(
+                    "rate", 0.4f,
                     Color.parseColor(LABEL_COLOR)
                 )
             } else {
                 this.visibility = View.INVISIBLE
             }
-
         }
         if (holder.gauge == null) {
             holder.gauge = holder.itemView.findViewById(R.id.gauge_view)
@@ -144,7 +142,6 @@ class GaugeViewAdapter internal constructor(
             endValue = (metric.command as ObdCommand).pid.max.toInt()
             value = metric.valueToLong().toInt()
         }
-
     }
 
     private fun rescaleView(holder: ViewHolder, scale1: Float, scale2: Float) {
@@ -173,7 +170,7 @@ class GaugeViewAdapter internal constructor(
             return 0.0
         }
 
-        return if (metric.command.pid.type == null) 0.0 else
+        return if (metric.command.pid.type == null) value.toInt() else
             metric.command.pid.type.let {
                 return when (metric.command.pid.type) {
                     PidDefinition.ValueType.DOUBLE -> value.round(2)
