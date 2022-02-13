@@ -71,24 +71,22 @@ class GaugeViewAdapter internal constructor(
         return ViewHolder(view)
     }
 
-    var currentTs:Long = 0
-
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int
     ) {
         val metric = data.elementAt(position)
 
-        logTsDiff(metric)
-
         if (!holder.init){
             holder.label.text = metric.command.label
             holder.init = true
-            when (data.size){
-                1 -> rescaleView(holder,1.4f,1.2f)
-                2 -> rescaleView(holder,1.2f,1.1f)
-                3 -> rescaleView(holder,1.1f,1.1f)
-                4 -> rescaleView(holder,1.1f,1.1f)
+            if (isTablet(context)) {
+                when (data.size) {
+                    1 -> rescaleView(holder, 1.4f, 1.2f)
+                    2 -> rescaleView(holder, 1.2f, 1.1f)
+                    3 -> rescaleView(holder, 1.1f, 1.1f)
+                    4 -> rescaleView(holder, 1.1f, 1.1f)
+                }
             }
         }
 
@@ -170,16 +168,6 @@ class GaugeViewAdapter internal constructor(
 
         holder.avgValue?.let {
             it.textSize = (it.textSize * scale2)
-        }
-    }
-
-    private fun logTsDiff(metric: ObdMetric) {
-        currentTs = if (currentTs.equals(0)) {
-            metric.timestamp
-        } else {
-            val diff = metric.timestamp - currentTs
-            Log.v("LogTS", "${metric.command.pid.description} = ${diff}")
-            metric.timestamp
         }
     }
 

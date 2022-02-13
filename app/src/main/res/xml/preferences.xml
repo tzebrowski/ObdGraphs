@@ -7,11 +7,11 @@
         android:title="Adapter settings">
 
         <ListPreference
-            android:defaultValue="wifi"
+            android:defaultValue="bluetooth"
             android:dialogTitle="Adapter connection type"
             android:entries="@array/connection_type_array"
             android:entryValues="@array/connection_type_array"
-            android:key="selected.connection.type"
+            android:key="pref.selected.connection.type"
             android:summary="Adapter connection type" />
 
         <PreferenceCategory
@@ -165,7 +165,7 @@
             android:summary="Hide toolbar when landscape" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="pref.toolbar.hide.doubleclick"
             android:singleLineTitle="false"
             android:summary="Hide toolbar when double click" />

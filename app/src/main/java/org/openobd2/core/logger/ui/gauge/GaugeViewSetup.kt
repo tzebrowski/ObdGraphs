@@ -75,19 +75,13 @@ class GaugeViewSetup {
         }
 
         private fun calculateSpan(context: Context, metrics: MutableList<ObdMetric>): Int {
-            when (isTablet(context)) {
-                false -> return 2
+            return when (isTablet(context)) {
+                false -> 2
                 else -> {
-                    return when (metrics.size) {
-                        2 -> {
-                            2
-                        }
-                        1 -> {
-                            1
-                        }
-                        else -> {
-                            (metrics.size / 2.0).roundToInt()
-                        }
+                    when (metrics.size) {
+                        2 -> 2
+                        1 -> 1
+                        else -> (metrics.size / 2.0).roundToInt()
                     }
                 }
             }

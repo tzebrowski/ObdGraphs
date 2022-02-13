@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:text="Value"
             android:textColor="#FFFF00"
-            android:textSize="46sp" />
+            android:textSize="44sp" />
     </LinearLayout>
 
 
