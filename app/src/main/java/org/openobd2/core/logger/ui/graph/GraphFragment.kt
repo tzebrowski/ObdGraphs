@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
-import android.view.GestureDetector.SimpleOnGestureListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.github.mikephil.charting.charts.LineChart
@@ -27,7 +26,7 @@ import org.openobd2.core.logger.bl.datalogger.*
 import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.bl.trip.TripRecorder
 
-import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
+import org.openobd2.core.logger.ui.common.onDoubleClickListener
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,15 +44,6 @@ class GraphFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    private class GestureListener(val context: Context) : SimpleOnGestureListener() {
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            context.sendBroadcast(Intent().apply {
-                action = TOGGLE_TOOLBAR_ACTION
-            })
-            return true
         }
     }
 
@@ -93,11 +83,7 @@ class GraphFragment : Fragment() {
         chart = initializeChart(root).apply {
             val metrics = DataLogger.INSTANCE.getEmptyMetrics(preferences.selectedPids)
             data = LineData(metrics.map { createDataSet(it) }.toList())
-            val gestureDetector = GestureDetector(root.context, GestureListener(requireContext()))
-            val onTouchListener: View.OnTouchListener = View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(
-                event
-            ) }
-            setOnTouchListener(onTouchListener)
+            setOnTouchListener(onDoubleClickListener(requireContext()))
             invalidate()
         }
 

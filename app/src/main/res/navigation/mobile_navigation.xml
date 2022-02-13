@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="org.openobd2.core.logger.ui.dashboard.DashFragment"
+        android:name="org.openobd2.core.logger.ui.dashboard.DashboardFragment"
         android:label="@string/navigation_title_dash"
         tools:layout="@layout/fragment_dashboard" />
 
@@ -41,6 +41,6 @@
         android:id="@+id/navigation_preferences"
         android:name="org.openobd2.core.logger.ui.preferences.PreferencesFragment"
         android:label="@string/navigation_title_preferences"
-        tools:layout="@layout/fragment_configuration" />
+        tools:layout="@layout/fragment_preferences" />
 
 </navigation>

@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import org.openobd2.core.logger.R
 
 class GaugeViewFragment : Fragment() {
@@ -15,11 +13,7 @@ class GaugeViewFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        root.let {
-            val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-            recyclerView.layoutManager = GridLayoutManager(context, spanCount())
-            recyclerView.refreshDrawableState()
-        }
+        configureView()
     }
 
     override fun onCreateView(
@@ -28,6 +22,11 @@ class GaugeViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
+        configureView()
+        return root
+    }
+
+    private fun configureView() {
         GaugeViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
@@ -37,10 +36,5 @@ class GaugeViewFragment : Fragment() {
             R.layout.gauge_item,
             spanCount = null
         )
-        return root
-    }
-
-    private fun spanCount(): Int {
-        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
     }
 }

@@ -55,9 +55,9 @@
             android:title="Diagnosis">
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:dialogTitle="Show commands freq"
+                android:singleLineTitle="false"
                 android:key="pref.adapter.diagnosis.command.frequency.enabled"
-                android:summary="Show commands freq" />
+                android:summary="Display commands frequency" />
         </PreferenceCategory>
 
         <PreferenceCategory android:title="General settings">
@@ -107,7 +107,7 @@
                 android:dialogTitle="Reconnect automatically"
                 android:key="pref.adapter.reconnect"
                 android:singleLineTitle="false"
-                android:summary="Reconnect automatically when error occurs" />
+                android:summary="Reconnect automatically when errors occur" />
 
             <ListPreference
                 android:defaultValue="500"
@@ -144,7 +144,7 @@
             android:summary="Connect adapter on power" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:dialogTitle="Screen off"
             android:key="pref.adapter.power.screen_off"
             android:summary="Screen off when disconnected" />

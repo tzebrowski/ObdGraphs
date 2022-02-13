@@ -2,8 +2,9 @@ package org.openobd2.core.logger.ui.gauge
 
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +21,8 @@ import org.openobd2.core.logger.ui.common.isTablet
 import org.openobd2.core.logger.ui.dashboard.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
+import kotlin.math.roundToInt
 
-private val DEFAULT_HEIGHT = 230
 private val LABEL_COLOR = "#01804F"
 
 class GaugeViewAdapter internal constructor(
@@ -57,16 +58,11 @@ class GaugeViewAdapter internal constructor(
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
         if (isTablet(context)) {
-            (parent.measuredHeight / 1.8).run {
-                if (this > 0) {
-                    if (data.size > 2)
-                        view.layoutParams.height = this.toInt()
-                } else {
-                    view.layoutParams.height = DEFAULT_HEIGHT
-                }
-            }
-        } else{
-            view.layoutParams.height = parent.measuredHeight  / 3
+            val heightPixels = Resources.getSystem().displayMetrics.heightPixels
+            view.layoutParams.height = heightPixels / if (data.size > 2 ) 2 else 1
+        } else {
+            val x = if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
+            view.layoutParams.height = parent.measuredHeight / x
         }
         return ViewHolder(view)
     }
@@ -82,10 +78,10 @@ class GaugeViewAdapter internal constructor(
             holder.init = true
             if (isTablet(context)) {
                 when (data.size) {
-                    1 -> rescaleView(holder, 1.4f, 1.2f)
-                    2 -> rescaleView(holder, 1.2f, 1.1f)
-                    3 -> rescaleView(holder, 1.1f, 1.1f)
-                    4 -> rescaleView(holder, 1.1f, 1.1f)
+                    1 -> rescaleView(holder, 1.5f, 1.3f)
+                    2 -> rescaleView(holder, 1.25f, 1.15f)
+                    3 -> rescaleView(holder, 1.15f, 1.15f)
+                    4 -> rescaleView(holder, 1.15f, 1.15f)
                 }
             }
         }

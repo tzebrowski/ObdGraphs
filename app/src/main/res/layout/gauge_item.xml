@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:text="Label"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/value"
@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:text="Value"
             android:textColor="#FFFF00"
-            android:textSize="44sp" />
+            android:textSize="38sp" />
     </LinearLayout>
 
 

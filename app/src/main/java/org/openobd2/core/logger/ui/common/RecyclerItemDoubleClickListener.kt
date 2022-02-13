@@ -9,6 +9,22 @@ import androidx.recyclerview.widget.RecyclerView
 
 const val TOGGLE_TOOLBAR_ACTION: String = "TOGGLE_TOOLBAR"
 
+private class GestureListener(val context: Context) : GestureDetector.SimpleOnGestureListener() {
+    override fun onDoubleTap(e: MotionEvent): Boolean {
+        context.sendBroadcast(Intent().apply {
+            action = TOGGLE_TOOLBAR_ACTION
+        })
+        return true
+    }
+}
+
+fun onDoubleClickListener(context: Context) : View.OnTouchListener{
+    val gestureDetector = GestureDetector(context, GestureListener(context))
+    return  View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(
+        event
+    ) }
+}
+
 class ToggleToolbarDoubleClickListener(context: Context?) :
     RecyclerItemDoubleClickListener(context, object :
         OnItemDoubleClickListener {
@@ -50,5 +66,4 @@ open class RecyclerItemDoubleClickListener(
     }
 
     override fun onTouchEvent(view: RecyclerView, motionEvent: MotionEvent) {}
-
 }

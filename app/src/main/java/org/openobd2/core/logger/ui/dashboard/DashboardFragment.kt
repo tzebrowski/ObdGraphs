@@ -21,7 +21,7 @@ import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.gauge.GaugeViewSetup
 import org.openobd2.core.logger.ui.preferences.*
 
-class DashFragment : Fragment() {
+class DashboardFragment : Fragment() {
     lateinit var root: View
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences()  }
 
