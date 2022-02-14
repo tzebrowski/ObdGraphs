@@ -58,6 +58,7 @@ class DashboardFragment : Fragment() {
                     1f,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
+
                 configureRecyclerView(R.id.dash_recycler_view, false, 0f, 0)
                 setupGaugeRecyclerView(4)
             }
@@ -75,8 +76,8 @@ class DashboardFragment : Fragment() {
     }
 
     private fun configureRecyclerView(id:Int, visible:Boolean, weight: Float, width: Int) {
-        val view = root.findViewById<RecyclerView>(id)
-        view.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        val view: RecyclerView = root.findViewById<RecyclerView>(id)
+        view.visibility = if (visible) View.VISIBLE else View.GONE
         (view.layoutParams as LinearLayout.LayoutParams).run {
             this.weight = weight
             this.width = width

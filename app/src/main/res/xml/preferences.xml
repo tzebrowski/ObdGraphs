@@ -232,8 +232,12 @@
                 android:defaultValue="@array/perf_empty_array"
                 android:key="pref.graph.pids.selected"
                 android:summary="Displayed PID's" />
-        </PreferenceScreen>
 
+            <org.openobd2.core.logger.ui.preferences.TripsListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:key="pref.graph.trips.selected"
+                android:summary="Recorded trips" />
+        </PreferenceScreen>
 
         <PreferenceScreen
             android:summary="Dashboard view configuration"
