@@ -7,11 +7,11 @@
         android:title="Adapter settings">
 
         <ListPreference
-            android:defaultValue="wifi"
+            android:defaultValue="bluetooth"
             android:dialogTitle="Adapter connection type"
             android:entries="@array/connection_type_array"
             android:entryValues="@array/connection_type_array"
-            android:key="selected.connection.type"
+            android:key="pref.selected.connection.type"
             android:summary="Adapter connection type" />
 
         <PreferenceCategory
@@ -55,9 +55,9 @@
             android:title="Diagnosis">
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:dialogTitle="Show commands freq"
+                android:singleLineTitle="false"
                 android:key="pref.adapter.diagnosis.command.frequency.enabled"
-                android:summary="Show commands freq" />
+                android:summary="Display commands frequency" />
         </PreferenceCategory>
 
         <PreferenceCategory android:title="General settings">
@@ -107,7 +107,7 @@
                 android:dialogTitle="Reconnect automatically"
                 android:key="pref.adapter.reconnect"
                 android:singleLineTitle="false"
-                android:summary="Reconnect automatically when error occurs" />
+                android:summary="Reconnect automatically when errors occur" />
 
             <ListPreference
                 android:defaultValue="500"
@@ -144,7 +144,7 @@
             android:summary="Connect adapter on power" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:dialogTitle="Screen off"
             android:key="pref.adapter.power.screen_off"
             android:summary="Screen off when disconnected" />
@@ -165,7 +165,7 @@
             android:summary="Hide toolbar when landscape" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="pref.toolbar.hide.doubleclick"
             android:singleLineTitle="false"
             android:summary="Hide toolbar when double click" />
@@ -183,6 +183,18 @@
                 android:defaultValue="@array/perf_empty_array"
                 android:key="pref.gauge.pids.selected"
                 android:summary="Displayed PID's" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:summary="Metrics view configuration"
+            app:key="prefs.metrics">
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.metrics.view.enabled"
+                android:summary="Enable the view" />
         </PreferenceScreen>
 
         <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
@@ -220,8 +232,12 @@
                 android:defaultValue="@array/perf_empty_array"
                 android:key="pref.graph.pids.selected"
                 android:summary="Displayed PID's" />
-        </PreferenceScreen>
 
+            <org.openobd2.core.logger.ui.preferences.TripsListPreferences
+                android:defaultValue="@array/perf_empty_array"
+                android:key="pref.graph.trips.selected"
+                android:summary="Recorded trips" />
+        </PreferenceScreen>
 
         <PreferenceScreen
             android:summary="Dashboard view configuration"
@@ -289,17 +305,5 @@
                 android:key="pref.debug.view.enabled"
                 android:summary="Enable the view"/>
         </PreferenceCategory>
-
-        <PreferenceScreen
-            android:summary="Metrics view configuration"
-            app:key="prefs.metrics">
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.metrics.view.enabled"
-                android:summary="Enable the view" />
-        </PreferenceScreen>
     </PreferenceCategory>
-
-
 </PreferenceScreen>

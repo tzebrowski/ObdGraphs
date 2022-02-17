@@ -27,10 +27,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.openobd2.core.logger.bl.*
 import org.openobd2.core.logger.bl.datalogger.*
-import org.openobd2.core.logger.bl.datalogger.DataLogger
-import org.openobd2.core.logger.ui.common.Cache
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
 
@@ -163,11 +160,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ApplicationContext = this
+        Cache  = cache
 
         StrictMode.setThreadPolicy(ThreadPolicy.Builder()
             .permitAll().build())
-
-        DataLogger.INSTANCE.init(this.application)
 
         setContentView(R.layout.activity_main)
         setupPreferences()
@@ -176,7 +173,7 @@ class MainActivity : AppCompatActivity() {
         setupNavigationBar()
         setupNavigationBarButtons()
         registerReceiver()
-        Cache  = cache
+
     }
 
 
@@ -284,7 +281,7 @@ class MainActivity : AppCompatActivity() {
     private fun changeScreenBrightness(value: Float) {
         try {
 
-            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            val pm = getSystemService(android.content.Context.POWER_SERVICE) as PowerManager
             val wl = pm.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 "data_logger:wakeLock"
@@ -365,6 +362,7 @@ class MainActivity : AppCompatActivity() {
                             R.id.navigation_dashboard -> "prefs.dashboard"
                             R.id.navigation_gauge ->  "prefs.gauge"
                             R.id.navigation_graph -> "prefs.graph"
+                            R.id.navigation_metrics -> "prefs.metrics"
                             else -> "prefs.root"
                         }
 

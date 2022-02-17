@@ -21,7 +21,7 @@ import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
 import org.openobd2.core.logger.ui.gauge.GaugeViewSetup
 import org.openobd2.core.logger.ui.preferences.*
 
-class DashFragment : Fragment() {
+class DashboardFragment : Fragment() {
     lateinit var root: View
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences()  }
 
@@ -58,6 +58,7 @@ class DashFragment : Fragment() {
                     1f,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
+
                 configureRecyclerView(R.id.dash_recycler_view, false, 0f, 0)
                 setupGaugeRecyclerView(4)
             }
@@ -75,8 +76,8 @@ class DashFragment : Fragment() {
     }
 
     private fun configureRecyclerView(id:Int, visible:Boolean, weight: Float, width: Int) {
-        val view = root.findViewById<RecyclerView>(id)
-        view.visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        val view: RecyclerView = root.findViewById<RecyclerView>(id)
+        view.visibility = if (visible) View.VISIBLE else View.GONE
         (view.layoutParams as LinearLayout.LayoutParams).run {
             this.weight = weight
             this.width = width
@@ -102,12 +103,13 @@ class DashFragment : Fragment() {
         }!!.toMap()
 
         val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap)
-        val itemHeight = calculateItemHeight(metrics)
+        val spanCount = calculateSpanCount(metrics.size)
+        val itemHeight = calculateItemHeight(metrics,spanCount)
 
         metricsViewContext.adapter = DashboardViewAdapter(root.context, metrics, itemHeight)
         val recyclerView: RecyclerView = root.findViewById(R.id.dash_recycler_view)
 
-        recyclerView.layoutManager = GridLayoutManager(root.context, spanCount(metrics.size))
+        recyclerView.layoutManager = GridLayoutManager(root.context, calculateSpanCount(metrics.size))
         recyclerView.adapter = metricsViewContext.adapter
 
         val swappableAdapter = object: SwappableAdapter {
@@ -127,11 +129,12 @@ class DashFragment : Fragment() {
                 updateDashboardPids(metrics.map { obdMetric -> obdMetric.command.pid.id }.toList())
 
                 DashPreferences.SERIALIZER.store(requireContext(), metrics)
-                val itemHeight = calculateItemHeight(metrics)
+                val spanCount = calculateSpanCount(metrics.size)
+                val itemHeight = calculateItemHeight(metrics,spanCount)
                 metricsViewContext.adapter = DashboardViewAdapter(root.context, metrics, itemHeight)
                 val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
                 recyclerView.layoutManager =
-                    GridLayoutManager(root.context, spanCount(metrics.size))
+                    GridLayoutManager(root.context, calculateSpanCount(metrics.size))
                 recyclerView.adapter = metricsViewContext.adapter
                 recyclerView.refreshDrawableState()
 
@@ -163,50 +166,13 @@ class DashFragment : Fragment() {
         metricsViewContext.adapter.notifyDataSetChanged()
     }
 
-    private fun calculateItemHeight(metrics: MutableList<ObdMetric>): Int {
-        val heightPixels = Resources.getSystem().displayMetrics.heightPixels / 2
-        var itemHeight = 180
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            if (metrics.size == 7 || metrics.size == 8) {
-                itemHeight = (heightPixels / 2.5).toInt()
-            } else if (metrics.size == 5 || metrics.size == 6 ) {
-                itemHeight = (heightPixels / 2)
-            } else if (metrics.size == 2 ) {
-                itemHeight = (heightPixels / 1.3).toInt()
-            }else if (metrics.size == 4 ) {
-                itemHeight = (heightPixels / 2.6).toInt()
-            }else if (metrics.size == 1 ) {
-                itemHeight = (Resources.getSystem().displayMetrics.heightPixels / 1.3).toInt()
-            } else if (metrics.size == 3 ) {
-                itemHeight = (heightPixels / 1.9).toInt()
-            }
-
-        }else {
-            if (metrics.size == 6) {
-                itemHeight = (heightPixels / 3) - 44
-            } else if (metrics.size == 5) {
-                itemHeight = (heightPixels / 3) - 20
-            } else if (metrics.size == 4) {
-                itemHeight = (heightPixels / 4) - 10
-            } else if (metrics.size == 3 || metrics.size == 4) {
-                itemHeight = (heightPixels / 3) - 40
-            } else if (metrics.size == 2) {
-                itemHeight = (heightPixels / 2) - 40
-            } else if (metrics.size == 1) {
-                itemHeight =
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        heightPixels - 40
-                    } else {
-                        (heightPixels / 2) - 40
-                    }
-            }
-        }
-        itemHeight = (itemHeight * 1.3).toInt()
-        return itemHeight
+    private fun calculateItemHeight(metrics: MutableList<ObdMetric>, spanCount: Int): Int {
+        val heightPixels = Resources.getSystem().displayMetrics.heightPixels
+        return heightPixels / metrics.size * spanCount
     }
 
-    private fun spanCount(numberOfItems: Int): Int {
-        return if (numberOfItems <= 4) {
+    private fun calculateSpanCount(numberOfItems: Int): Int {
+        return if (numberOfItems <= 3) {
             1
         } else {
             if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1

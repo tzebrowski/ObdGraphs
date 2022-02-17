@@ -1,5 +1,6 @@
 package org.openobd2.core.logger
 
+import android.util.Log
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.isEnabled
 
@@ -12,6 +13,7 @@ data class MainActivityPreferences(val hideToolbarDoubleClick: Boolean,
                                    val showMetricsView: Boolean,
                                    val showGraphView: Boolean
 )
+const val LOGGER_KEY = "PREFS"
 
 fun getMainActivityPreferences(): MainActivityPreferences {
 
@@ -21,14 +23,17 @@ fun getMainActivityPreferences(): MainActivityPreferences {
     val showDashView = Prefs.isEnabled("pref.dash.view.enabled")
     val showGaugeView = Prefs.isEnabled("pref.gauge.view.enabled")
 
-    val showMetricsView = Prefs.isEnabled("pref.metrics.view.enabled")
-    val showGraphView = Prefs.isEnabled("pref.graph.view.enabled")
+    val showMetricsView = Prefs.getBoolean("pref.metrics.view.enabled",true)
+    val showGraphView = Prefs.getBoolean("pref.graph.view.enabled", true)
 
-    return MainActivityPreferences(hideToolbarDoubleClick,
+    val prefs =  MainActivityPreferences(hideToolbarDoubleClick,
         hideToolbarLandscape,
         showDebugView,
         showDashView,
         showGaugeView,
         showMetricsView,
         showGraphView)
+
+    Log.i(LOGGER_KEY,"Loaded MainActivity preferences: $prefs")
+    return prefs
 }

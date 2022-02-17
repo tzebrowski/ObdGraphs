@@ -2,8 +2,9 @@ package org.openobd2.core.logger.ui.gauge
 
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +16,12 @@ import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
-import org.openobd2.core.logger.ui.common.SpannableStringUtils
 import org.openobd2.core.logger.ui.common.isTablet
+import org.openobd2.core.logger.ui.common.highLightText
 import org.openobd2.core.logger.ui.dashboard.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
 
-private val DEFAULT_HEIGHT = 230
 private val LABEL_COLOR = "#01804F"
 
 class GaugeViewAdapter internal constructor(
@@ -57,21 +57,14 @@ class GaugeViewAdapter internal constructor(
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
         if (isTablet(context)) {
-            (parent.measuredHeight / 1.8).run {
-                if (this > 0) {
-                    if (data.size > 2)
-                        view.layoutParams.height = this.toInt()
-                } else {
-                    view.layoutParams.height = DEFAULT_HEIGHT
-                }
-            }
-        } else{
-            view.layoutParams.height = parent.measuredHeight  / 3
+            val heightPixels = Resources.getSystem().displayMetrics.heightPixels
+            view.layoutParams.height = heightPixels / if (data.size > 2 ) 2 else 1
+        } else {
+            val x = if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
+            view.layoutParams.height = parent.measuredHeight / x
         }
         return ViewHolder(view)
     }
-
-    var currentTs:Long = 0
 
     override fun onBindViewHolder(
         holder: ViewHolder,
@@ -79,16 +72,16 @@ class GaugeViewAdapter internal constructor(
     ) {
         val metric = data.elementAt(position)
 
-        logTsDiff(metric)
-
         if (!holder.init){
             holder.label.text = metric.command.label
             holder.init = true
-            when (data.size){
-                1 -> rescaleView(holder,1.4f,1.2f)
-                2 -> rescaleView(holder,1.2f,1.1f)
-                3 -> rescaleView(holder,1.1f,1.1f)
-                4 -> rescaleView(holder,1.1f,1.1f)
+            if (isTablet(context)) {
+                when (data.size) {
+                    1 -> rescaleView(holder, 1.5f, 1.3f)
+                    2 -> rescaleView(holder, 1.25f, 1.15f)
+                    3 -> rescaleView(holder, 1.15f, 1.15f)
+                    4 -> rescaleView(holder, 1.15f, 1.15f)
+                }
             }
         }
 
@@ -96,32 +89,32 @@ class GaugeViewAdapter internal constructor(
             val units = (metric.command as ObdCommand).pid.units
             text = metric.valueToString() + " " + units
 
-            SpannableStringUtils.setHighLightedText(
-                this, units, 0.3f,
+            highLightText(
+                units, 0.3f,
                 Color.parseColor(LABEL_COLOR))
         }
 
         DataLogger.INSTANCE.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
                 text = "min\n ${convert(metric, min)}"
-                SpannableStringUtils.setHighLightedText(
-                    this, "min", 0.5f,
+                highLightText(
+                    "min", 0.5f,
                     Color.parseColor(LABEL_COLOR)
                 )
             }
 
             holder.maxValue.run {
                 text = "max\n  ${convert(metric, max)} "
-                SpannableStringUtils.setHighLightedText(
-                    this, "max", 0.5f,
+                highLightText(
+                    "max", 0.5f,
                     Color.parseColor(LABEL_COLOR)
                 )
             }
 
             holder.avgValue?.run {
                 text = "avg\n ${convert(metric, mean)}"
-                SpannableStringUtils.setHighLightedText(
-                    this, "avg", 0.5f,
+                highLightText(
+                    "avg", 0.5f,
                     Color.parseColor(LABEL_COLOR)
                 )
             }
@@ -132,14 +125,13 @@ class GaugeViewAdapter internal constructor(
                 val rate = DataLogger.INSTANCE.diagnostics().rate()
                     .findBy(RateType.MEAN, metric.command.pid)
                 text = "rate " + rate.get().value.round(2)
-                SpannableStringUtils.setHighLightedText(
-                    this, "rate", 0.4f,
+                highLightText(
+                    "rate", 0.4f,
                     Color.parseColor(LABEL_COLOR)
                 )
             } else {
                 this.visibility = View.INVISIBLE
             }
-
         }
         if (holder.gauge == null) {
             holder.gauge = holder.itemView.findViewById(R.id.gauge_view)
@@ -150,7 +142,6 @@ class GaugeViewAdapter internal constructor(
             endValue = (metric.command as ObdCommand).pid.max.toInt()
             value = metric.valueToLong().toInt()
         }
-
     }
 
     private fun rescaleView(holder: ViewHolder, scale1: Float, scale2: Float) {
@@ -173,23 +164,13 @@ class GaugeViewAdapter internal constructor(
         }
     }
 
-    private fun logTsDiff(metric: ObdMetric) {
-        currentTs = if (currentTs.equals(0)) {
-            metric.timestamp
-        } else {
-            val diff = metric.timestamp - currentTs
-            Log.v("LogTS", "${metric.command.pid.description} = ${diff}")
-            metric.timestamp
-        }
-    }
-
     private fun convert(metric: ObdMetric, value: Double): Number {
 
         if (value.isNaN()){
             return 0.0
         }
 
-        return if (metric.command.pid.type == null) 0.0 else
+        return if (metric.command.pid.type == null) value.toInt() else
             metric.command.pid.type.let {
                 return when (metric.command.pid.type) {
                     PidDefinition.ValueType.DOUBLE -> value.round(2)

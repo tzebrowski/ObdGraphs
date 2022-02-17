@@ -3,14 +3,12 @@ package org.openobd2.core.logger.ui.preferences
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.preference.*
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
 import org.openobd2.core.logger.bl.datalogger.GENERIC_MODE
+import org.openobd2.core.logger.ui.common.onDoubleClickListener
 
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "preferences.view.graph.toggle"
 const val NOTIFICATION_DEBUG_VIEW_TOGGLE = "preferences.view.debug.toggle"
@@ -22,6 +20,7 @@ const val NOTIFICATION_METRICS_VIEW_TOGGLE = "preferences.view.metrics.toggle"
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+
 
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
         super.onNavigateToScreen(preferenceScreen)
@@ -41,12 +40,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val onCreateView = super.onCreateView(inflater, container, savedInstanceState)
+        val root = super.onCreateView(inflater, container, savedInstanceState)
         registerPrefModeChange()
         registerConnectionModeChange()
         listView.setBackgroundColor(Color.LTGRAY)
         registerCheckboxListeners()
-        return onCreateView
+
+        listView.setOnTouchListener(onDoubleClickListener(requireContext()))
+        return root
     }
 
     private fun registerCheckboxListeners() {
@@ -86,11 +87,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun registerPrefModeChange() {
-        val prefMode = findPreference<ListPreference>("selected.connection.type")
+        val prefMode = findPreference<ListPreference>("pref.selected.connection.type")
         val p1 = findPreference<Preference>("connection.type.bluetooth")
         val p2 = findPreference<Preference>("connection.type.wifi")
 
-        when (Prefs.getString("selected.connection.type")) {
+        when (Prefs.getString("pref.selected.connection.type")) {
             "bluetooth" -> {
                 p1?.isVisible = true
                 p2?.isVisible = false

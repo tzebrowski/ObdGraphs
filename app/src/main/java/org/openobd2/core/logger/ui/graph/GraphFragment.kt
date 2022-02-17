@@ -1,13 +1,10 @@
 package org.openobd2.core.logger.ui.graph
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import android.view.GestureDetector.SimpleOnGestureListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.github.mikephil.charting.charts.LineChart
@@ -22,38 +19,61 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.pid.PidDefinition
+import org.openobd2.core.logger.Cache
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.*
 import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.bl.trip.Trip
 import org.openobd2.core.logger.bl.trip.TripRecorder
 
-import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
+import org.openobd2.core.logger.ui.common.onDoubleClickListener
+import org.openobd2.core.logger.ui.preferences.Prefs
 import java.text.SimpleDateFormat
 import java.util.*
 
+private val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
+
 class GraphFragment : Fragment() {
 
-    private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                DATA_LOGGER_CONNECTING_EVENT -> {
-                    chart?.run {
-                        if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()) {
-                            xAxis.axisMinimum = xAxis.axisMaximum
-                            tripRecorder.startNewTrip(xAxis.axisMinimum)
+    private var prefsChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == "pref.graph.trips.selected") {
+                sharedPreferences!!.getString(key,null)?.let {
+                    if (it.isEmpty()){
+                        initializeChart(root)
+                    } else {
+                        context?.run {
+                            val trip = tripRecorder.loadTrip(it)
+                            initializeChartData(trip)
                         }
                     }
                 }
             }
         }
-    }
 
-    private class GestureListener(val context: Context) : SimpleOnGestureListener() {
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            context.sendBroadcast(Intent().apply {
-                action = TOGGLE_TOOLBAR_ACTION
-            })
-            return true
+    private var broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent? ) {
+            when (intent?.action) {
+                DATA_LOGGER_CONNECTING_EVENT -> {
+                    initializeChart(root)
+                }
+
+                DATA_LOGGER_CONNECTED_EVENT -> {
+                    chart?.run {
+                        firstTimeStamp = System.currentTimeMillis()
+                        tripRecorder.startNewTrip(firstTimeStamp, 0f)
+                        Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = true
+                    }
+                }
+                DATA_LOGGER_STOPPED_EVENT -> {
+                    chart?.run {
+                        if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()) {
+                            tripRecorder.saveTrip(context!!,xAxis.axisMinimum)
+                        }
+                    }
+                    Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = false
+                }
+            }
         }
     }
 
@@ -74,32 +94,30 @@ class GraphFragment : Fragment() {
     private var colors: IntIterator  = Colors().generate()
     private val scaler  = Scaler()
     private var firstTimeStamp: Long = System.currentTimeMillis()
-    private var firstVisibleRange: Float? = null
     private lateinit var preferences: GraphPreferences
     private val tripRecorder: TripRecorder by lazy { TripRecorder.INSTANCE }
+    private lateinit var root: View
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireContext().unregisterReceiver(broadcastReceiver)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_graph, container, false)
+
+        root = inflater.inflate(R.layout.fragment_graph, container, false)
+
+        Prefs.registerOnSharedPreferenceChangeListener(prefsChangeListener)
 
         colors  = Colors().generate()
         preferences = getGraphPreferences()
         firstTimeStamp = System.currentTimeMillis()
-        firstVisibleRange = null
 
-        chart = initializeChart(root).apply {
-            val metrics = DataLogger.INSTANCE.getEmptyMetrics(preferences.selectedPids)
-            data = LineData(metrics.map { createDataSet(it) }.toList())
-            val gestureDetector = GestureDetector(root.context, GestureListener(requireContext()))
-            val onTouchListener: View.OnTouchListener = View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(
-                event
-            ) }
-            setOnTouchListener(onTouchListener)
-            invalidate()
-        }
+        initializeChart(root)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -109,36 +127,64 @@ class GraphFragment : Fragment() {
             }
         })
 
-        loadTrip()
-
+        loadCurrentTrip()
         registerReceivers()
         return root
     }
 
-    private fun loadTrip() {
-        if (preferences.cacheEnabled) {
-            val trip = tripRecorder.getCurrentTrip()
+    private fun initializeChart(root: View) {
+        chart = buildChart(root).apply {
+            val metrics = DataLogger.INSTANCE.getEmptyMetrics(preferences.selectedPids)
+            data = LineData(metrics.map { createDataSet(it) }.toList())
+            setOnTouchListener(onDoubleClickListener(requireContext()))
+            invalidate()
+        }
+    }
 
-            firstTimeStamp = trip.firstTimeStamp
-            trip.entries.let {
-                val cache = it as MutableMap<String, MutableList<Entry>>
-                chart?.run {
-                    cache.forEach { (label, entries) ->
-                        data.getDataSetByLabel(label, true)?.let { lineData ->
-                            entries.forEach { lineData.addEntry(it) }
-                            data.notifyDataChanged()
-                        }
+    private fun loadCurrentTrip() {
+        if (preferences.cacheEnabled) {
+            initializeChartData(tripRecorder.getCurrentTrip())
+        }
+    }
+
+    private fun initializeChartData(trip: Trip) {
+        firstTimeStamp = trip.firstTimeStamp
+        trip.entries.let {
+            val cache = it as MutableMap<String, MutableList<Entry>>
+            chart?.run {
+                cache.forEach { (label, entries) ->
+                    data.getDataSetByLabel(label, true)?.let { lineData ->
+                        entries.forEach { entry ->  lineData.addEntry(entry) }
+                        data.notifyDataChanged()
                     }
-                    notifyDataSetChanged()
-                    xAxis.axisMinimum = trip.ts
-                    invalidate()
                 }
+                //last 30s
+                notifyDataSetChanged()
+                if (isDataCollectingProcessWorking()) {
+                    xAxis.axisMinimum = xAxis.axisMaximum - 200f
+                    debug("CACHE")
+                }else{
+                    xAxis.axisMinimum = 0f
+                }
+                invalidate()
             }
         }
     }
 
+    private fun LineChart.debug(label: String) {
+        Log.i(
+            "LineChart",
+            "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
+        )
+    }
+
+    private fun isDataCollectingProcessWorking() =
+        (Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] as Boolean?) ?: false
+
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
+            addAction(DATA_LOGGER_CONNECTED_EVENT)
+            addAction(DATA_LOGGER_STOPPED_EVENT)
             addAction(DATA_LOGGER_CONNECTING_EVENT)
         })
     }
@@ -150,25 +196,17 @@ class GraphFragment : Fragment() {
                 val entry = Entry(timestamp, scaler.scaleToNewRange(obdMetric))
                 it.addEntry(entry)
                 data.notifyDataChanged()
-
-                if (firstVisibleRange == null){
-                    firstVisibleRange = timestamp
-                }
-
-                if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()){
-
-                    if (visibleXRange >= preferences.xAxisStartMovingAfter) {
-                       xAxis.axisMinimum = xAxis.axisMinimum + preferences.xAxisMinimumShift
-                    }
-                }
-
                 notifyDataSetChanged()
+
+                if (!xAxis.axisMaximum.isNaN() && !xAxis.axisMaximum.isInfinite()){
+                    xAxis.axisMinimum = xAxis.axisMinimum + preferences.xAxisMinimumShift
+                }
                 invalidate()
             }
         }
     }
 
-    private fun initializeChart(root: View) : LineChart {
+    private fun buildChart(root: View) : LineChart {
         return (root.findViewById(R.id.graph_view_chart) as LineChart).apply {
             description.isEnabled = false
             setTouchEnabled(true)

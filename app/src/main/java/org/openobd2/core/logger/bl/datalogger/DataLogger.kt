@@ -16,7 +16,7 @@ import org.obd.metrics.connection.TcpConnection
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.diagnostic.Diagnostics
-
+import org.openobd2.core.logger.ApplicationContext
 
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
@@ -35,7 +35,7 @@ internal class DataLogger internal constructor() {
             DataLogger()
     }
 
-    private lateinit var context: Context
+    private val context: Context by lazy { ApplicationContext }
 
     private var metricsAggregator = MetricsAggregator()
 
@@ -141,26 +141,17 @@ internal class DataLogger internal constructor() {
     }
 
     fun stop() {
-        if (::context.isInitialized){
-            workflow().stop()
-        }
-    }
-
-    fun init(ctx: Context) {
-        this.context = ctx
+       workflow().stop()
     }
 
     fun start() {
 
-        if (::context.isInitialized) {
+        val query = query()
+        Log.i(LOGGER_TAG, "Selected pids: ${query.pids}")
 
-            val query = query()
-            Log.i(LOGGER_TAG, "Selected pids: ${query.pids}")
-
-            connection()?.run {
-                workflow().start(this, query, adjustments())
-                Log.i(LOGGER_TAG, "Start collecting process")
-            }
+        connection()?.run {
+            workflow().start(this, query, adjustments())
+            Log.i(LOGGER_TAG, "Start collecting process")
         }
     }
 

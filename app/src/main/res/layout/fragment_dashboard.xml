@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
 
-    tools:context=".ui.dashboard.DashFragment"
+    tools:context=".ui.dashboard.DashboardFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" android:weightSum="1.0">
