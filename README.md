@@ -1,66 +1,13 @@
-# Yet another Android OBD client application
+# `ObdGraphs` is an Android application which is intended to collect and display OBD related metrics.
+
 
 ## About
 
-This is a simple Android application that demonstrates the usage of ObdMetrics java framework.
-
+`ObdGraphs` is an Android application with graphical interface intended to collect and display OBD related metrics.
+It is build on top of `ObdMetrics` library and it visualize OBD metrics that are generated while vehicle is driving.
 
 | View    |           |
 | ------------ | ---- |
-| Dash view    |     ![Alt text](./res/screen5.png?raw=true "Dash view") |
-| Gauge view   |   ![Alt text](./res/screen4.png?raw=true "Gauge view")   |
-| Metrics view |    ![Alt text](./res/screen1.png?raw=true "Metrics view")  |
-| Debug view |    ![Alt text](./res/screen3.png?raw=true "Debug view")  |
-| Preferences view |    ![Alt text](./res/screen2.png?raw=true "Preferences view")  |
-
-
-
-
-### Integration with ObdMetrics
-
-<details>
-<summary>Code example</summary>
-<p>
-
-```kotlin
-import android.util.Log
-import org.openobd2.core.workflow.State
-import org.openobd2.core.workflow.Workflow
-
-internal class DataLogger {
-
-    private var mode1: Workflow =
-        WorkflowFactory.mode1().equationEngine("rhino")
-            .ecuSpecific(
-                EcuSpecific
-                    .builder()
-                    .initSequence(Mode1CommandGroup.INIT)
-                    .pidFile("mode01.json").build()
-            )
-            .observer(metricsAggregator)
-            .lifecycle(lifecycle)
-            .commandFrequency(80)
-            .initialize()
-
-   fun start() {
-
-    var adapterName = "OBDII"
-    var selectedPids = pref.getStringSet("pref.pids.generic", emptySet())!!
-    var batchEnabled: Boolean = PreferencesHelper.isBatchEnabled(context)
-   
-    var ctx = WorkflowContext.builder()
-        .filter(selectedPids.map { s -> s.toLong() }.toSet())
-        .batchEnabled(PreferencesHelper.isBatchEnabled(context))
-        .connection(BluetoothConnection(device.toString())).build()
-    mode1.start(ctx)
-   
-   }
-   
-   fun stop() {
-    mode1.stop()
-   }  
-}
-```
-
-</p>
-</details>
+| Dashboard view    |     ![Alt text](./res/Screenshot_1.png?raw=true "Dashboard view") |
+| Graph view   |   ![Alt text](./res/Screenshot_2.png?raw=true "Graph view")   |
+| Gauge view |    ![Alt text](./res/Screenshot_3.png?raw=true "Gauge view")  |

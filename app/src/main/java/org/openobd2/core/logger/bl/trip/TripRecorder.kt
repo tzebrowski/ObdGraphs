@@ -11,7 +11,9 @@ import org.openobd2.core.logger.Cache
 import org.openobd2.core.logger.ui.graph.Scaler
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
 import java.util.*
+
 
 private const val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
 private const val CACHE_TS_PROPERTY_NAME = "cache.graph.start_timestamp"
@@ -72,7 +74,8 @@ class TripRecorder private constructor() {
 
         val trip = getCurrentTrip()
         val content: String = jacksonObjectMapper().writeValueAsString(trip)
-        val fileName = "trip_${Date()}.json"
+        var format = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")
+        val fileName = "trip_${format.format(Date())}.json"
 
         Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
 

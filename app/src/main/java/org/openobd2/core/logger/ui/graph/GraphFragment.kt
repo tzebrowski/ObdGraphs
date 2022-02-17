@@ -31,14 +31,16 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import java.text.SimpleDateFormat
 import java.util.*
 
+private val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
+
 class GraphFragment : Fragment() {
 
     private var prefsChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == "pref.graph.trips.selected"){
+            if (key == "pref.graph.trips.selected") {
                 sharedPreferences!!.getString(key,null)?.let {
                     if (it.isEmpty()){
-                        initChart(root)
+                        initializeChart(root)
                     } else {
                         context?.run {
                             val trip = tripRecorder.loadTrip(it)
@@ -53,14 +55,14 @@ class GraphFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent? ) {
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    initChart(root)
+                    initializeChart(root)
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
                     chart?.run {
                         firstTimeStamp = System.currentTimeMillis()
                         tripRecorder.startNewTrip(firstTimeStamp, 0f)
-                        Cache["collecting_process_is_running"] = true
+                        Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = true
                     }
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
@@ -69,7 +71,7 @@ class GraphFragment : Fragment() {
                             tripRecorder.saveTrip(context!!,xAxis.axisMinimum)
                         }
                     }
-                    Cache["collecting_process_is_running"] = false
+                    Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = false
                 }
             }
         }
@@ -106,6 +108,7 @@ class GraphFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         root = inflater.inflate(R.layout.fragment_graph, container, false)
 
         Prefs.registerOnSharedPreferenceChangeListener(prefsChangeListener)
@@ -114,7 +117,7 @@ class GraphFragment : Fragment() {
         preferences = getGraphPreferences()
         firstTimeStamp = System.currentTimeMillis()
 
-        initChart(root)
+        initializeChart(root)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -129,7 +132,7 @@ class GraphFragment : Fragment() {
         return root
     }
 
-    private fun initChart(root: View) {
+    private fun initializeChart(root: View) {
         chart = buildChart(root).apply {
             val metrics = DataLogger.INSTANCE.getEmptyMetrics(preferences.selectedPids)
             data = LineData(metrics.map { createDataSet(it) }.toList())
@@ -157,7 +160,7 @@ class GraphFragment : Fragment() {
                 }
                 //last 30s
                 notifyDataSetChanged()
-                if (isDataCollectingProcessWorks()) {
+                if (isDataCollectingProcessWorking()) {
                     xAxis.axisMinimum = xAxis.axisMaximum - 200f
                     debug("CACHE")
                 }else{
@@ -169,14 +172,14 @@ class GraphFragment : Fragment() {
     }
 
     private fun LineChart.debug(label: String) {
-        Log.e(
+        Log.i(
             "LineChart",
             "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
         )
     }
 
-    private fun isDataCollectingProcessWorks() =
-        (Cache["collecting_process_is_running"] as Boolean?) ?: false
+    private fun isDataCollectingProcessWorking() =
+        (Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] as Boolean?) ?: false
 
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
@@ -196,7 +199,6 @@ class GraphFragment : Fragment() {
                 notifyDataSetChanged()
 
                 if (!xAxis.axisMaximum.isNaN() && !xAxis.axisMaximum.isInfinite()){
-                    Cache["xAxis.axisMinimum"] = xAxis.axisMinimum
                     xAxis.axisMinimum = xAxis.axisMinimum + preferences.xAxisMinimumShift
                 }
                 invalidate()
