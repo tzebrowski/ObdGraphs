@@ -33,7 +33,7 @@ class PidListPreferences(
 
         when (getPriority(attrs)){
             "low"-> {
-                DataLogger.INSTANCE.pidDefinitionRegistry().findAll()
+                DataLogger.instance.pidDefinitionRegistry().findAll()
                     .filter { pidDefinition -> pidDefinition.priority > 4}
                     .sortedBy { pidDefinition -> pidDefinition.priority }
                     .forEach { p ->
@@ -43,7 +43,7 @@ class PidListPreferences(
                 setDefaultValue(hashSetOf<String>())
             }
             "high" -> {
-                DataLogger.INSTANCE.pidDefinitionRegistry().findAll()
+                DataLogger.instance.pidDefinitionRegistry().findAll()
                     .filter { pidDefinition -> pidDefinition.priority < 4}
                     .sortedBy { pidDefinition -> pidDefinition.priority }
                     .forEach { p ->
@@ -53,7 +53,7 @@ class PidListPreferences(
                 setDefaultValue(defaultSelection)
             }
             else -> {
-                DataLogger.INSTANCE.pidDefinitionRegistry().findAll()
+                DataLogger.instance.pidDefinitionRegistry().findAll()
                    .sortedBy { pidDefinition -> pidDefinition.priority }
                     .forEach { p ->
                         entries.add(p.description)

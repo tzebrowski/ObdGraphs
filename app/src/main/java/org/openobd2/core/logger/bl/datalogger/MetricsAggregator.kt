@@ -19,7 +19,7 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
         }
     }
 
-    private val tripRecorder: TripRecorder by lazy { TripRecorder.INSTANCE}
+    private val tripRecorder: TripRecorder by lazy { TripRecorder.instance}
 
     fun reset() {
         debugData.postValue(null)

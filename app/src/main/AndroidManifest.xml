@@ -28,6 +28,14 @@
             android:name=".bl.datalogger.DataLoggerService"
             android:exported="false"></service>
 
+        <receiver android:name=".bl.trip.TripRecorderBroadcastReceiver" >
+            <intent-filter >
+                <action android:name="data.logger.connected" />
+                <action android:name="data.logger.stopped" />
+
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".AdminReceiver"
             android:label="device_admin"

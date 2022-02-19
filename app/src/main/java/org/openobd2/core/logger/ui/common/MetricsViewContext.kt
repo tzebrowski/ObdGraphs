@@ -12,7 +12,7 @@ class MetricsViewContext (private val owner: LifecycleOwner, private val visible
 
     fun findMetricsToDisplay(sortOrder: Map<Long, Int>): MutableList<ObdMetric> {
 
-        val metrics = DataLogger.INSTANCE.getEmptyMetrics(visiblePids)
+        val metrics = DataLogger.instance.getEmptyMetrics(visiblePids)
 
         metrics.sortWith(Comparator { m1: ObdMetric, m2: ObdMetric ->
             if (sortOrder.containsKey(m1.command.pid.id) && sortOrder.containsKey(

@@ -94,7 +94,7 @@ class GaugeViewAdapter internal constructor(
                 Color.parseColor(LABEL_COLOR))
         }
 
-        DataLogger.INSTANCE.diagnostics().histogram().findBy(metric.command.pid).run {
+        DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
                 text = "min\n ${convert(metric, min)}"
                 highLightText(
@@ -122,7 +122,7 @@ class GaugeViewAdapter internal constructor(
         holder.commandRate?.run {
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
-                val rate = DataLogger.INSTANCE.diagnostics().rate()
+                val rate = DataLogger.instance.diagnostics().rate()
                     .findBy(RateType.MEAN, metric.command.pid)
                 text = "rate " + rate.get().value.round(2)
                 highLightText(

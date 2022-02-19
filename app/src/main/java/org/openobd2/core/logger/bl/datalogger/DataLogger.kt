@@ -31,7 +31,7 @@ internal class DataLogger internal constructor() {
 
     companion object {
         @JvmStatic
-        var INSTANCE: DataLogger =
+        var instance: DataLogger =
             DataLogger()
     }
 

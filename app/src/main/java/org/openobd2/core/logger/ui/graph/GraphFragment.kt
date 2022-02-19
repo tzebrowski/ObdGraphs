@@ -23,7 +23,6 @@ import org.openobd2.core.logger.Cache
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.*
 import org.openobd2.core.logger.bl.datalogger.DataLogger
-import org.openobd2.core.logger.bl.trip.Trip
 import org.openobd2.core.logger.bl.trip.TripRecorder
 
 import org.openobd2.core.logger.ui.common.onDoubleClickListener
@@ -52,29 +51,17 @@ class GraphFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent? ) {
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
+                    Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = true
                     initializeChart(root)
                 }
-
-                DATA_LOGGER_CONNECTED_EVENT -> {
-                    chart.run {
-                        tripStartTimeStamp = System.currentTimeMillis()
-                        tripRecorder.startNewTrip(tripStartTimeStamp)
-                        Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = true
-                    }
-                }
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    chart.run {
-                        if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()) {
-                            tripRecorder.saveTrip(context!!,xAxis.axisMinimum)
-                        }
-                    }
                     Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = false
                 }
             }
         }
     }
 
-    private class ReverseValueFormatter(val pid: PidDefinition, val scaler: Scaler): ValueFormatter(){
+    private class ReverseValueFormatter(val pid: PidDefinition, val scaler: ValueScaler): ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
             return scaler.scaleToPidRange(pid, value).toString()
         }
@@ -86,13 +73,13 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private val simpleDateFormat = SimpleDateFormat("HH:mm:ss",Locale.getDefault())
+    private val simpleDateFormat = SimpleDateFormat("HH:mm:ss")
     private lateinit var chart: LineChart
     private var colors: IntIterator  = Colors().generate()
-    private val scaler  = Scaler()
+    private val scaler  = ValueScaler()
     private var tripStartTimeStamp: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
-    private val tripRecorder: TripRecorder by lazy { TripRecorder.INSTANCE }
+    private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
     private lateinit var root: View
 
     override fun onDestroyView() {
@@ -105,7 +92,7 @@ class GraphFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
 
         Prefs.registerOnSharedPreferenceChangeListener(prefsChangeListener)
@@ -130,7 +117,7 @@ class GraphFragment : Fragment() {
 
     private fun initializeChart(root: View) {
         chart = buildChart(root).apply {
-            val metrics = DataLogger.INSTANCE.getEmptyMetrics(preferences.selectedPids)
+            val metrics = DataLogger.instance.getEmptyMetrics(preferences.selectedPids)
             data = LineData(metrics.map { createDataSet(it.command.pid) }.toList())
             setOnTouchListener(onDoubleClickListener(requireContext()))
             invalidate()
@@ -139,30 +126,29 @@ class GraphFragment : Fragment() {
 
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
-            initializeChartData(tripRecorder.getCurrentTrip())
-        }
-    }
-
-    private fun initializeChartData(trip: Trip) {
-        tripStartTimeStamp = trip.firstTimeStamp
-        trip.entries.let { cache ->
-            chart.run {
-                cache.forEach { (label, entries) ->
-                    data.getDataSetByLabel(label, true)?.let { lineData ->
-                        entries.forEach { entry ->  lineData.addEntry(entry) }
-                        data.notifyDataChanged()
+            val trip = tripRecorder.getCurrentTrip()
+            tripStartTimeStamp = trip.firstTimeStamp
+            trip.entries.let { cache ->
+                chart.run {
+                    cache.forEach { (label, entries) ->
+                        data.getDataSetByLabel(label, true)?.let { lineData ->
+                            entries.forEach { entry ->  lineData.addEntry(entry) }
+                            data.notifyDataChanged()
+                        }
                     }
-                }
 
-                notifyDataSetChanged()
-                if (isDataCollectingProcessWorking()) {
-                    xAxis.axisMinimum = (xAxis.axisMaximum * 0.95f)
-                }else{
+                    notifyDataSetChanged()
+//                    if (isDataCollectingProcessWorking()) {
+//                        xAxis.axisMinimum = (xAxis.axisMaximum * 0.95f)
+//                    }else {
+//                        xAxis.axisMinimum = 0f
+//                    }
+
                     xAxis.axisMinimum = 0f
-                }
 
-                invalidate()
-                debug("Reset view port")
+                    invalidate()
+                    debug("Reset view port")
+                }
             }
         }
     }
@@ -188,7 +174,7 @@ class GraphFragment : Fragment() {
     private fun addEntry(obdMetric: ObdMetric) {
         chart.run {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
-                val ts = (System.currentTimeMillis() -tripStartTimeStamp).toFloat()
+                val ts = (System.currentTimeMillis() - tripStartTimeStamp).toFloat()
                 val entry = Entry(ts, scaler.scaleToNewRange(obdMetric))
                 it.addEntry(entry)
                 data.notifyDataChanged()
@@ -238,6 +224,7 @@ class GraphFragment : Fragment() {
                 textColor = Color.rgb(255, 192, 56)
                 setCenterAxisLabels(true)
                 valueFormatter = xAxisFormatter
+                isGranularityEnabled = true
             }
 
             axisLeft.run {

@@ -8,7 +8,7 @@ import com.github.mikephil.charting.data.Entry
 import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.ApplicationContext
 import org.openobd2.core.logger.Cache
-import org.openobd2.core.logger.ui.graph.Scaler
+import org.openobd2.core.logger.ui.graph.ValueScaler
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -20,27 +20,24 @@ private const val CACHE_TS_PROPERTY_NAME = "cache.graph.start_timestamp"
 private const val LOGGER_KEY = "TripRecorder"
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val firstTimeStamp: Long, val entries: MutableMap<String, MutableList<Entry>>) {}
+data class Trip(val firstTimeStamp: Long, val entries: Map<String, MutableList<Entry>>) {}
 
 class TripRecorder private constructor() {
 
     companion object {
+
         @JvmStatic
-        val INSTANCE:TripRecorder = TripRecorder().apply {
-            if (Cache[CACHE_ENTRIES_PROPERTY_NAME] == null) {
-                Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
+        val instance:TripRecorder = TripRecorder().apply {
+            Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
+            firstTimeStamp = System.currentTimeMillis().apply {
+                Cache[CACHE_TS_PROPERTY_NAME] = this
             }
-            if (firstTimeStamp == null) {
-                firstTimeStamp = System.currentTimeMillis().apply {
-                    Cache[CACHE_TS_PROPERTY_NAME] = this
-                }
-                Log.i(LOGGER_KEY, "Init cache with stamp: $firstTimeStamp")
-            }
+            Log.i(LOGGER_KEY, "Init cache with stamp: $firstTimeStamp")
         }
     }
 
     private var firstTimeStamp: Long? = null
-    private val scaler  = Scaler()
+    private val scaler  = ValueScaler()
     private val context: Context by lazy { ApplicationContext }
 
     fun addTripEntry(reply: ObdMetric) {
@@ -61,21 +58,25 @@ class TripRecorder private constructor() {
     fun getCurrentTrip(): Trip {
         val firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long
         val cacheEntries = Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<String, MutableList<Entry>>
-        Log.i(LOGGER_KEY,"Get current trip ts: $firstTimeStamp")
+        Log.i(LOGGER_KEY,"Get current trip ts: '${simpleDateFormat.format(Date(firstTimeStamp))}'")
         return Trip(firstTimeStamp, cacheEntries)
     }
 
-    fun startNewTrip(firstTimeStamp: Long) {
-        Log.e(LOGGER_KEY, "Starting new trip, time stamp: $firstTimeStamp")
-        resetCache(firstTimeStamp)
+    fun startNewTrip(newTs: Long) {
+        Log.i(LOGGER_KEY, "Starting new trip, time stamp: '${simpleDateFormat.format(Date(newTs))}'")
+        updateCache(newTs)
     }
 
-    fun saveTrip(context: Context, ts: Float) {
+   private val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss")
 
+    fun saveTrip() {
         val trip = getCurrentTrip()
         val content: String = jacksonObjectMapper().writeValueAsString(trip)
-        var format = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")
-        val fileName = "trip_${format.format(Date())}.json"
+        var format = simpleDateFormat
+        val end = format.format(Date())
+        val start = format.format(Date(trip.firstTimeStamp))
+
+        val fileName = "trip_$start - $end.json"
 
         Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
 
@@ -90,10 +91,9 @@ class TripRecorder private constructor() {
             .toMutableList()
     }
 
-
     fun setCurrentTrip(tripName: String) {
         if (tripName.isEmpty()) {
-            resetCache(System.currentTimeMillis())
+            updateCache(System.currentTimeMillis())
         }else {
             val file = File(context.cacheDir, tripName)
             val trip: Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
@@ -111,15 +111,26 @@ class TripRecorder private constructor() {
         fileName: String,
         content: String
     ) {
-        val file = File(context.cacheDir, fileName)
-        val fd = FileOutputStream(file)
-        fd.write(content.toByteArray())
-        fd.flush()
-        fd.close()
+        var fd: FileOutputStream? = null
+        try {
+
+            val file = File(context.cacheDir, fileName)
+            fd = FileOutputStream(file).apply {
+                write(content.toByteArray())
+            }
+
+        } finally {
+            fd?.run {
+                flush()
+                close()
+            }
+        }
     }
 
-    private fun resetCache(firstTimeStamp: Long) {
+    private fun updateCache(newTs: Long) {
+        (Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<String, MutableList<Entry>>).clear()
         Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
-        Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
+        Cache[CACHE_TS_PROPERTY_NAME] = newTs
+        firstTimeStamp = newTs
     }
 }
