@@ -31,7 +31,7 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import java.text.SimpleDateFormat
 import java.util.*
 
-private val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
+private const val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
 
 class GraphFragment : Fragment() {
 
@@ -39,12 +39,9 @@ class GraphFragment : Fragment() {
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "pref.graph.trips.selected") {
                 sharedPreferences!!.getString(key,null)?.let {
-                    if (it.isEmpty()){
-                        initializeChart(root)
-                    } else {
+                    if(!isDataCollectingProcessWorking()) {
                         context?.run {
-                            val trip = tripRecorder.loadTrip(it)
-                            initializeChartData(trip)
+                            tripRecorder.setCurrentTrip(it)
                         }
                     }
                 }
@@ -59,14 +56,14 @@ class GraphFragment : Fragment() {
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    chart?.run {
-                        firstTimeStamp = System.currentTimeMillis()
-                        tripRecorder.startNewTrip(firstTimeStamp, 0f)
+                    chart.run {
+                        tripStartTimeStamp = System.currentTimeMillis()
+                        tripRecorder.startNewTrip(tripStartTimeStamp)
                         Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = true
                     }
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    chart?.run {
+                    chart.run {
                         if (!visibleXRange.isNaN() && !visibleXRange.isInfinite()) {
                             tripRecorder.saveTrip(context!!,xAxis.axisMinimum)
                         }
@@ -84,16 +81,16 @@ class GraphFragment : Fragment() {
     }
 
     private val xAxisFormatter = object: ValueFormatter() {
-        val simpleDateFormat = SimpleDateFormat("HH:mm:ss")
         override fun getFormattedValue(value: Float): String {
-            return simpleDateFormat.format(Date(firstTimeStamp + value.toLong()))
+            return simpleDateFormat.format(Date(tripStartTimeStamp + value.toLong()))
         }
     }
 
-    private var chart: LineChart? = null
+    private val simpleDateFormat = SimpleDateFormat("HH:mm:ss",Locale.getDefault())
+    private lateinit var chart: LineChart
     private var colors: IntIterator  = Colors().generate()
     private val scaler  = Scaler()
-    private var firstTimeStamp: Long = System.currentTimeMillis()
+    private var tripStartTimeStamp: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
     private val tripRecorder: TripRecorder by lazy { TripRecorder.INSTANCE }
     private lateinit var root: View
@@ -107,7 +104,7 @@ class GraphFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         root = inflater.inflate(R.layout.fragment_graph, container, false)
 
@@ -115,7 +112,6 @@ class GraphFragment : Fragment() {
 
         colors  = Colors().generate()
         preferences = getGraphPreferences()
-        firstTimeStamp = System.currentTimeMillis()
 
         initializeChart(root)
 
@@ -135,7 +131,7 @@ class GraphFragment : Fragment() {
     private fun initializeChart(root: View) {
         chart = buildChart(root).apply {
             val metrics = DataLogger.INSTANCE.getEmptyMetrics(preferences.selectedPids)
-            data = LineData(metrics.map { createDataSet(it) }.toList())
+            data = LineData(metrics.map { createDataSet(it.command.pid) }.toList())
             setOnTouchListener(onDoubleClickListener(requireContext()))
             invalidate()
         }
@@ -148,25 +144,25 @@ class GraphFragment : Fragment() {
     }
 
     private fun initializeChartData(trip: Trip) {
-        firstTimeStamp = trip.firstTimeStamp
-        trip.entries.let {
-            val cache = it as MutableMap<String, MutableList<Entry>>
-            chart?.run {
+        tripStartTimeStamp = trip.firstTimeStamp
+        trip.entries.let { cache ->
+            chart.run {
                 cache.forEach { (label, entries) ->
                     data.getDataSetByLabel(label, true)?.let { lineData ->
                         entries.forEach { entry ->  lineData.addEntry(entry) }
                         data.notifyDataChanged()
                     }
                 }
-                //last 30s
+
                 notifyDataSetChanged()
                 if (isDataCollectingProcessWorking()) {
-                    xAxis.axisMinimum = xAxis.axisMaximum - 200f
-                    debug("CACHE")
+                    xAxis.axisMinimum = (xAxis.axisMaximum * 0.95f)
                 }else{
                     xAxis.axisMinimum = 0f
                 }
+
                 invalidate()
+                debug("Reset view port")
             }
         }
     }
@@ -190,10 +186,10 @@ class GraphFragment : Fragment() {
     }
 
     private fun addEntry(obdMetric: ObdMetric) {
-        chart?.run {
+        chart.run {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
-                val timestamp = (System.currentTimeMillis() - firstTimeStamp).toFloat()
-                val entry = Entry(timestamp, scaler.scaleToNewRange(obdMetric))
+                val ts = (System.currentTimeMillis() -tripStartTimeStamp).toFloat()
+                val entry = Entry(ts, scaler.scaleToNewRange(obdMetric))
                 it.addEntry(entry)
                 data.notifyDataChanged()
                 notifyDataSetChanged()
@@ -262,13 +258,13 @@ class GraphFragment : Fragment() {
          }
     }
 
-    private fun createDataSet(obdMetric: ObdMetric) : LineDataSet {
+    private fun createDataSet(pid: PidDefinition) : LineDataSet {
         val values = mutableListOf<Entry>()
-        val lineDataSet = LineDataSet(values, obdMetric.command.pid.description)
+        val lineDataSet = LineDataSet(values, pid.description)
         val col = colors.nextInt()
         lineDataSet.run {
             mode = LineDataSet.Mode.CUBIC_BEZIER
-            label = obdMetric.command.pid.description
+            label = pid.description
             lineDataSet.form = Legend.LegendForm.SQUARE
             axisDependency = AxisDependency.LEFT
             color = col
@@ -278,7 +274,7 @@ class GraphFragment : Fragment() {
             setDrawValues(true)
             setDrawFilled(true)
             fillColor = col
-            valueFormatter = ReverseValueFormatter(obdMetric.command.pid, scaler)
+            valueFormatter = ReverseValueFormatter(pid, scaler)
             fillAlpha = 35
             fillColor = col
             highLightColor = Color.rgb(244, 117, 117)

@@ -61,13 +61,13 @@ class TripRecorder private constructor() {
     fun getCurrentTrip(): Trip {
         val firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long
         val cacheEntries = Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<String, MutableList<Entry>>
-        Log.e(LOGGER_KEY,"Get current trip ts: $firstTimeStamp")
+        Log.i(LOGGER_KEY,"Get current trip ts: $firstTimeStamp")
         return Trip(firstTimeStamp, cacheEntries)
     }
 
-    fun startNewTrip(firstTimeStamp: Long,ts: Float) {
-        Log.e(LOGGER_KEY, "Starting new trip $ts, date: $firstTimeStamp")
-        resetCache(ts, firstTimeStamp)
+    fun startNewTrip(firstTimeStamp: Long) {
+        Log.e(LOGGER_KEY, "Starting new trip, time stamp: $firstTimeStamp")
+        resetCache(firstTimeStamp)
     }
 
     fun saveTrip(context: Context, ts: Float) {
@@ -91,17 +91,19 @@ class TripRecorder private constructor() {
     }
 
 
-    fun loadTrip(tripName: String): Trip {
-        val file = File(context.cacheDir, tripName)
-        val trip:Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
-        Log.i(LOGGER_KEY,"Trip '$tripName' was loaded from the cache")
+    fun setCurrentTrip(tripName: String) {
+        if (tripName.isEmpty()) {
+            resetCache(System.currentTimeMillis())
+        }else {
+            val file = File(context.cacheDir, tripName)
+            val trip: Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
+            Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache")
 
-        trip.run{
-            Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
-            Cache[CACHE_ENTRIES_PROPERTY_NAME] = entries
+            trip.run {
+                Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
+                Cache[CACHE_ENTRIES_PROPERTY_NAME] = entries
+            }
         }
-
-        return trip
     }
 
     private fun writeFile(
@@ -116,7 +118,7 @@ class TripRecorder private constructor() {
         fd.close()
     }
 
-    private fun resetCache(ts: Float, firstTimeStamp: Long) {
+    private fun resetCache(firstTimeStamp: Long) {
         Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
         Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
     }
