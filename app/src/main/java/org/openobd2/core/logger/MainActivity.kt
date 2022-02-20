@@ -28,6 +28,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.datalogger.*
+import org.openobd2.core.logger.bl.trip.TripRecorderBroadcastReceiver
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
 
@@ -36,7 +37,7 @@ private const val LOGGER_TAG = "DATA_LOGGER_UI"
 
 class MainActivity : AppCompatActivity() {
 
-    private var broadcastReceiver = object : BroadcastReceiver() {
+    private var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 TOGGLE_TOOLBAR_ACTION -> {
@@ -148,6 +149,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val cache: MutableMap<String, Any> = mutableMapOf()
+    private val tripRecorderBroadcastReceiver = TripRecorderBroadcastReceiver()
+    private val powerReceiver = PowerBroadcastReceiver()
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -185,7 +188,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(broadcastReceiver)
+        unregisterReceiver()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -256,9 +259,16 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 
+
+    private fun unregisterReceiver() {
+        unregisterReceiver(activityBroadcastReceiver)
+        unregisterReceiver(tripRecorderBroadcastReceiver)
+        unregisterReceiver(powerReceiver)
+    }
+
     private fun registerReceiver() {
 
-        registerReceiver(broadcastReceiver, IntentFilter().apply {
+        registerReceiver(activityBroadcastReceiver, IntentFilter().apply {
             addAction(DATA_LOGGER_CONNECTING_EVENT)
             addAction(DATA_LOGGER_STOPPED_EVENT)
             addAction(DATA_LOGGER_STOPPING_EVENT)
@@ -274,6 +284,16 @@ class MainActivity : AppCompatActivity() {
             addAction(TOGGLE_TOOLBAR_ACTION)
             addAction(SCREEN_OFF_EVENT)
             addAction(SCREEN_ON_EVENT)
+        })
+
+        registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {
+            addAction(DATA_LOGGER_CONNECTED_EVENT)
+            addAction(DATA_LOGGER_STOPPED_EVENT)
+        })
+
+        registerReceiver(powerReceiver, IntentFilter().apply {
+            addAction("android.intent.action.ACTION_POWER_CONNECTED")
+            addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
         })
     }
 
