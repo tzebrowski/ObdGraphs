@@ -38,7 +38,7 @@
             android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/pid_label"
+            android:text="@string/pid.label"
             android:textColor="@color/white"
             android:textSize="12sp" />
 
@@ -46,7 +46,7 @@
             android:id="@+id/value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/pid_value_no_data"
+            android:text="@string/pid.value"
             android:textColor="#FFFF00"
             android:textSize="38sp" />
     </LinearLayout>
@@ -66,7 +66,7 @@
             android:layout_marginStart="4sp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/pid_value_min"
+            android:text="@string/pid.value_min"
             android:textColor="#5CFFFF00"
             android:textSize="22sp" />
 
@@ -76,7 +76,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/pid_value_avg"
+            android:text="@string/pid.value_avg"
             android:textColor="#5CFFFF00"
             android:textSize="22sp" />
 
@@ -86,7 +86,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center|left"
-            android:text="@string/pid_value_max"
+            android:text="@string/pid.value_max"
             android:textColor="#5CFFFF00"
             android:textSize="22sp"
             android:textStyle="normal"

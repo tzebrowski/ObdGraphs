@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:alpha="0.5"
             android:gravity="center"
-            android:text="@string/pid_label"
+            android:text="@string/pid.label"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0.7"
-            android:text="@string/pid_value_no_data"
+            android:text="@string/pid.value"
             android:textColor="#FFFF00"
             android:textSize="34sp"
             android:textStyle="normal" />

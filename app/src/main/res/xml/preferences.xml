@@ -9,8 +9,8 @@
         <ListPreference
             android:defaultValue="bluetooth"
             android:dialogTitle="Adapter connection type"
-            android:entries="@array/connection_type_array"
-            android:entryValues="@array/connection_type_array"
+            android:entries="@array/prefs.connection_type_array"
+            android:entryValues="@array/prefs.connection_type_array"
             android:key="pref.selected.connection.type"
             android:summary="Adapter connection type" />
 
@@ -19,7 +19,7 @@
             android:title="Bluetooth settings">
 
            <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
-                android:defaultValue="@array/perf_empty_array"
+                android:defaultValue="@array/prefs.empty_array"
                 android:dialogTitle="Bluetooth adapter name"
                 android:key="pref.adapter.id"
                 android:summary="Available bluetooth devices" />
@@ -61,9 +61,7 @@
         </PreferenceCategory>
 
         <PreferenceCategory android:title="General settings">
-
-            <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <PreferenceScreen
                 app:key="prefs.pids.query"
                 app:isPreferenceVisible="true"
                 android:singleLineTitle="false"
@@ -111,23 +109,23 @@
 
             <ListPreference
                 android:defaultValue="500"
-                android:entries="@array/init_delay"
-                android:entryValues="@array/init_delay"
+                android:entries="@array/prefs.init_delay"
+                android:entryValues="@array/prefs.init_delay"
                 android:key="pref.adapter.init_delay"
                 android:summary="Init delay" />
 
             <ListPreference
                 android:defaultValue="6"
-                android:entries="@array/command_frequency"
-                android:entryValues="@array/command_frequency"
+                android:entries="@array/prefs.command_frequency"
+                android:entryValues="@array/prefs.command_frequency"
                 android:key="pref.adapter.command.freq"
                 android:summary="Command frequency" />
 
             <ListPreference
                 android:defaultValue="Generic mode"
                 android:dialogTitle="Adapter mode"
-                android:entries="@array/perf_modes_arrays"
-                android:entryValues="@array/perf_modes_arrays"
+                android:entries="@array/prefs.modes_arrays"
+                android:entryValues="@array/prefs.modes_arrays"
                 android:key="pref.mode"
                 android:summary="Adapter mode" />
 
@@ -171,23 +169,16 @@
             android:summary="Hide toolbar when double click" />
 
 
-        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            app:key="prefs.gauge"
-            android:summary="Gauge view configuration">
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref.gauge.view.enabled"
-                android:summary="Enable the view" />
-            <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                android:defaultValue="@array/perf_empty_array"
-                android:key="pref.gauge.pids.selected"
-                android:summary="Displayed PID's" />
-        </PreferenceScreen>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref.gauge.view.enabled"
+            android:summary="Enable the view" />
+        <org.openobd2.core.logger.ui.preferences.PidListPreferences
+            android:defaultValue="@array/prefs.empty_array"
+            android:key="pref.gauge.pids.selected"
+            android:summary="Displayed PID's" />
 
         <PreferenceScreen
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:summary="Metrics view configuration"
             app:key="prefs.metrics">
 
@@ -197,8 +188,7 @@
                 android:summary="Enable the view" />
         </PreferenceScreen>
 
-        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <PreferenceScreen
             app:key="prefs.graph"
             android:summary="Graph view configuration">
             <CheckBoxPreference
@@ -229,12 +219,12 @@
                 android:summary="X-Axis start moving after" />
 
             <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                android:defaultValue="@array/perf_empty_array"
+                android:defaultValue="@array/prefs.empty_array"
                 android:key="pref.graph.pids.selected"
                 android:summary="Displayed PID's" />
 
             <org.openobd2.core.logger.ui.preferences.TripsListPreferences
-                android:defaultValue="@array/perf_empty_array"
+                android:defaultValue="@array/prefs.empty_array"
                 android:key="pref.graph.trips.selected"
                 android:summary="Recorded trips" />
         </PreferenceScreen>
@@ -268,8 +258,8 @@
 
             <ListPreference
                 android:defaultValue="0"
-                android:entries="@array/dash_color_themes"
-                android:entryValues="@array/dash_color_themes"
+                android:entries="@array/prefs.dash_color_themes"
+                android:entryValues="@array/prefs.dash_color_themes"
                 android:key="pref.dash.theme"
                 android:summary="Color theme" />
 

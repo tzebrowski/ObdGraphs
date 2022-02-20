@@ -98,10 +98,12 @@ internal class DashboardViewAdapter internal constructor(
                 }
             }
         }
+
         holder.chart.invalidate()
         holder.label.text = obdCommand.pid.description
         val units = (metric.command as ObdCommand).pid.units
-        holder.value.text = metric.valueToString() + " " + units
+        val value = metric.valueToString() + " " + units
+        holder.value.text = value
         holder.value.highLightText(units,0.3f, Color.parseColor("#01804F"))
     }
 
@@ -117,7 +119,7 @@ internal class DashboardViewAdapter internal constructor(
         var anim: Animation = AlphaAnimation(0.0f, 1.0f)
 
         lateinit var segments: Segments
-        var initialized: Boolean = false
+        private var initialized: Boolean = false
 
         fun buildChart(pid: PidDefinition) {
             if (!initialized) {

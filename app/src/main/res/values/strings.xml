@@ -1,42 +1,41 @@
 <resources>
     <string name="app_name">ObdGraphs</string>
-    <string name="title_debug">Debug</string>
-    <string name="navigation_title_gauge">Gauge</string>
-    <string name="navigation_title_metrics">Metrics</string>
-    <string name="navigation_title_preferences">Preferences</string>
-    <string name="navigation_title_dash">Dashboard</string>
-    <string name="navigation_title_graph">Graph</string>
+    <string name="navigation.title_debug">Debug</string>
+    <string name="navigation.title_gauge">Gauge</string>
+    <string name="navigation.title_metrics">Metrics</string>
+    <string name="navigation.title_preferences">Preferences</string>
+    <string name="navigation.title_dashboard">Dashboard</string>
+    <string name="navigation.title_graph">Graph</string>
 
-    <string name="search">Search</string>
-    <string name="switch_l">Switch</string>
-    <string name="pref.pids.generic">pref.pids.generic</string>
-    <string name="pid_label">Label</string>
-    <string name="pid_value_no_data">No data</string>
-    <string name="pid_value_min">min</string>
-    <string name="pid_value_avg">avg</string>
-    <string name="pid_value_max">max</string>
-    <string-array name="perf_empty_array"></string-array>
+    <string name="pid.label">Label</string>
+    <string name="pid.value">No data</string>
+    <string name="pid.value_min">min</string>
+    <string name="pid.value_avg">avg</string>
+    <string name="pid.value_max">max</string>
 
-    <string-array name="connection_type_array">
+    <string-array name="prefs.empty_array"></string-array>
+    <string name="prefs.pids.generic">pref.pids.generic</string>
+
+    <string-array name="prefs.connection_type_array">
         <item name="connection.wifi">wifi</item>
         <item name="connection.bluetooth">bluetooth</item>
     </string-array>
 
-    <string-array name="perf_modes_arrays">
+    <string-array name="prefs.modes_arrays">
         <item name="generic.mode">Generic mode</item>
         <!--
         <item name="mode22.mode">Mode 22</item>
         -->
     </string-array>
 
-    <string-array name="dash_color_themes">
+    <string-array name="prefs.dash_color_themes">
         <item name="0">0</item>
         <item name="1">1</item>
         <item name="2">2</item>
         <item name="3">3</item>
     </string-array>
 
-    <string-array name="command_frequency">
+    <string-array name="prefs.command_frequency">
         <item name="1">1</item>
         <item name="2">2</item>
         <item name="3">3</item>
@@ -54,7 +53,7 @@
         <item name="15">15</item>
     </string-array>
 
-    <string-array name="init_delay">
+    <string-array name="prefs.init_delay">
         <item name="500">500</item>
         <item name="1000">1000</item>
         <item name="2000">2000</item>
