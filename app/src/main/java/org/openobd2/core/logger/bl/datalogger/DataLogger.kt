@@ -25,7 +25,7 @@ const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
 const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 
-private const val LOGGER_TAG = "DATA_LOGGER_SVC"
+private const val LOGGER_TAG = "DataLogger"
 
 internal class DataLogger internal constructor() {
 

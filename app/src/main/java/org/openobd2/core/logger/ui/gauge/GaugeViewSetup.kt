@@ -79,6 +79,7 @@ class GaugeViewSetup {
                 false -> 2
                 else -> {
                     when (metrics.size) {
+                        0 -> 1
                         2 -> 2
                         1 -> 1
                         else -> (metrics.size / 2.0).roundToInt()

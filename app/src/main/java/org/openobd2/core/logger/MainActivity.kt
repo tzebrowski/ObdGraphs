@@ -33,7 +33,7 @@ import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
 
 
-private const val LOGGER_TAG = "DATA_LOGGER_UI"
+private const val LOGGER_TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
