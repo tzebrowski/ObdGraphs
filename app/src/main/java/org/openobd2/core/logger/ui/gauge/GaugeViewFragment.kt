@@ -34,7 +34,8 @@ class GaugeViewFragment : Fragment() {
             R.id.recycler_view,
             "pref.gauge.pids.selected",
             R.layout.gauge_item,
-            spanCount = null
+            spanCount = null,
+            scaleAdapter = true
         )
     }
 }

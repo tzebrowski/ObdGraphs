@@ -10,10 +10,10 @@
 
     <pl.pawelkleczkowski.customgauge.CustomGauge
         android:id="@+id/gauge_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:gaugeDividerColor="@color/md_yellow_500"
-        app:gaugeDividerDrawFirst="false"
+        app:gaugeDividerDrawFirst="true"
         app:gaugeDividerDrawLast="true"
         app:gaugeDividerSize="1"
         app:gaugeDividerStep="10"

@@ -27,7 +27,8 @@ private const val LABEL_COLOR = "#01804F"
 class GaugeViewAdapter internal constructor(
     private val context: Context,
     val data: MutableList<ObdMetric>,
-    private val resourceId: Int
+    private val resourceId: Int,
+    private val scaleComponent: Boolean
 ): RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
 
     inner class ViewHolder internal constructor(itemView: View) :
@@ -59,6 +60,7 @@ class GaugeViewAdapter internal constructor(
         if (isTablet(context)) {
             val heightPixels = Resources.getSystem().displayMetrics.heightPixels
             view.layoutParams.height = heightPixels / if (data.size > 2 ) 2 else 1
+
         } else {
             val x = if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
             view.layoutParams.height = parent.measuredHeight / x
@@ -75,12 +77,14 @@ class GaugeViewAdapter internal constructor(
         if (!holder.init){
             holder.label.text = metric.command.label
             holder.init = true
-            if (isTablet(context)) {
+            if (scaleComponent && isTablet(context)) {
                 when (data.size) {
                     1 -> rescaleView(holder, 1.5f, 1.3f)
                     2 -> rescaleView(holder, 1.25f, 1.15f)
                     3 -> rescaleView(holder, 1.15f, 1.15f)
                     4 -> rescaleView(holder, 1.15f, 1.15f)
+                    5 -> rescaleView(holder, 1.15f, 1.15f)
+                    6 -> rescaleView(holder, 1.15f, 1.15f)
                 }
             }
         }

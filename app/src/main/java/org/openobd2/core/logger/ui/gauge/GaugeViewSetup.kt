@@ -23,7 +23,8 @@ class GaugeViewSetup {
             recyclerViewId: Int,
             pidPreferencesId: String,
             resourceId: Int,
-            spanCount: Int?
+            spanCount: Int?,
+            scaleAdapter: Boolean = false
         ) {
             val metricsViewContext =
                 MetricsViewContext(owner, Prefs.getLongSet(pidPreferencesId))
@@ -33,7 +34,7 @@ class GaugeViewSetup {
             }!!.toMap()
 
             val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap)
-            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId)
+            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId, scaleAdapter)
             val recyclerView: RecyclerView = root.findViewById(recyclerViewId)
             recyclerView.layoutManager =
                 GridLayoutManager(context, spanCount ?: calculateSpan(context, metrics))
