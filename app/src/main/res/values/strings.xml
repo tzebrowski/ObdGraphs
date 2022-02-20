@@ -10,6 +10,8 @@
     <string name="search">Search</string>
     <string name="switch_l">Switch</string>
     <string name="pref.pids.generic">pref.pids.generic</string>
+    <string name="pid_label">Label</string>
+    <string name="pid_value_no_data">No data</string>
     <string-array name="perf_empty_array"></string-array>
 
     <string-array name="connection_type_array">

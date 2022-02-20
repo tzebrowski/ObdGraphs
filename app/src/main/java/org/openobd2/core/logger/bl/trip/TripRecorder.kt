@@ -14,13 +14,12 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-private const val CACHE_ENTRIES_PROPERTY_NAME = "cache.graph.entries"
-private const val CACHE_TS_PROPERTY_NAME = "cache.graph.start_timestamp"
+private const val CACHE_ENTRIES_PROPERTY_NAME = "cache.trip.entries"
+private const val CACHE_TS_PROPERTY_NAME = "cache.trip.startT"
 private const val LOGGER_KEY = "TripRecorder"
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val firstTimeStamp: Long, val entries: Map<String, MutableList<Entry>>) {}
+data class Trip(val startTs: Long, val entries: Map<String, MutableList<Entry>>) {}
 
 class TripRecorder private constructor() {
 
@@ -29,25 +28,22 @@ class TripRecorder private constructor() {
         @JvmStatic
         val instance:TripRecorder = TripRecorder().apply {
             Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
-            firstTimeStamp = System.currentTimeMillis().apply {
-                Cache[CACHE_TS_PROPERTY_NAME] = this
-            }
-            Log.i(LOGGER_KEY, "Init cache with stamp: $firstTimeStamp")
+            Cache[CACHE_TS_PROPERTY_NAME] =  System.currentTimeMillis()
+            Log.i(LOGGER_KEY, "Init cache with stamp: $${Cache[CACHE_TS_PROPERTY_NAME]}")
         }
     }
 
-    private var firstTimeStamp: Long? = null
-    private val scaler  = ValueScaler()
+    private val valueScaler  = ValueScaler()
     private val context: Context by lazy { ApplicationContext }
 
     fun addTripEntry(reply: ObdMetric) {
         try {
             Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
                 val cache = it as MutableMap<String, MutableList<Entry>>
-                val timestamp = (System.currentTimeMillis() - firstTimeStamp!!).toFloat()
-                val entry = Entry(timestamp, scaler.scaleToNewRange(reply))
+                val timestamp = (System.currentTimeMillis() - (Cache[CACHE_TS_PROPERTY_NAME] as Long)).toFloat()
+                val entry = Entry(timestamp, valueScaler.scaleToNewRange(reply))
                 cache.getOrPut(reply.command.pid.description) {
-                    mutableListOf<Entry>()
+                    mutableListOf()
                 }.add(entry)
             }
         }catch (e: Throwable){
@@ -58,23 +54,23 @@ class TripRecorder private constructor() {
     fun getCurrentTrip(): Trip {
         val firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long
         val cacheEntries = Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<String, MutableList<Entry>>
-        Log.i(LOGGER_KEY,"Get current trip ts: '${simpleDateFormat.format(Date(firstTimeStamp))}'")
+        Log.i(LOGGER_KEY,"Get current trip ts: '${dateFormat.format(Date(firstTimeStamp))}'")
         return Trip(firstTimeStamp, cacheEntries)
     }
 
     fun startNewTrip(newTs: Long) {
-        Log.i(LOGGER_KEY, "Starting new trip, time stamp: '${simpleDateFormat.format(Date(newTs))}'")
+        Log.i(LOGGER_KEY, "Starting new trip, time stamp: '${dateFormat.format(Date(newTs))}'")
         updateCache(newTs)
     }
 
-   private val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss")
+   private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss")
 
-    fun saveTrip() {
+    fun saveCurrentTrip() {
+
         val trip = getCurrentTrip()
         val content: String = jacksonObjectMapper().writeValueAsString(trip)
-        var format = simpleDateFormat
-        val end = format.format(Date())
-        val start = format.format(Date(trip.firstTimeStamp))
+        val end = dateFormat.format(Date())
+        val start = dateFormat.format(Date(trip.startTs))
 
         val fileName = "trip_$start - $end.json"
 
@@ -100,7 +96,7 @@ class TripRecorder private constructor() {
             Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache")
 
             trip.run {
-                Cache[CACHE_TS_PROPERTY_NAME] = firstTimeStamp
+                Cache[CACHE_TS_PROPERTY_NAME] = startTs
                 Cache[CACHE_ENTRIES_PROPERTY_NAME] = entries
             }
         }
@@ -131,6 +127,5 @@ class TripRecorder private constructor() {
         (Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<String, MutableList<Entry>>).clear()
         Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
         Cache[CACHE_TS_PROPERTY_NAME] = newTs
-        firstTimeStamp = newTs
     }
 }

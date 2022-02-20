@@ -47,7 +47,7 @@ internal class DashboardViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        view = inflater.inflate(R.layout.dash_item, parent, false)
+        view = inflater.inflate(R.layout.dashboard_item, parent, false)
         view.layoutParams.height = height
         colors = Theme.getSelectedTheme(context)
         return ViewHolder(view)

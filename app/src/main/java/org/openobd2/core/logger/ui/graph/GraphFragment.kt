@@ -61,23 +61,23 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private class ReverseValueFormatter(val pid: PidDefinition, val scaler: ValueScaler): ValueFormatter(){
+    private class ReverseValueFormatter(val pid: PidDefinition, val valueScaler: ValueScaler): ValueFormatter(){
         override fun getFormattedValue(value: Float): String {
-            return scaler.scaleToPidRange(pid, value).toString()
+            return valueScaler.scaleToPidRange(pid, value).toString()
         }
     }
 
     private val xAxisFormatter = object: ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
-            return simpleDateFormat.format(Date(tripStartTimeStamp + value.toLong()))
+            return simpleDateFormat.format(Date(tripStartTs + value.toLong()))
         }
     }
 
     private val simpleDateFormat = SimpleDateFormat("HH:mm:ss")
     private lateinit var chart: LineChart
     private var colors: IntIterator  = Colors().generate()
-    private val scaler  = ValueScaler()
-    private var tripStartTimeStamp: Long = System.currentTimeMillis()
+    private val valueScaler  = ValueScaler()
+    private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
     private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
     private lateinit var root: View
@@ -127,7 +127,7 @@ class GraphFragment : Fragment() {
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
             val trip = tripRecorder.getCurrentTrip()
-            tripStartTimeStamp = trip.firstTimeStamp
+            tripStartTs = trip.startTs
             trip.entries.let { cache ->
                 chart.run {
                     cache.forEach { (label, entries) ->
@@ -138,12 +138,6 @@ class GraphFragment : Fragment() {
                     }
 
                     notifyDataSetChanged()
-//                    if (isDataCollectingProcessWorking()) {
-//                        xAxis.axisMinimum = (xAxis.axisMaximum * 0.95f)
-//                    }else {
-//                        xAxis.axisMinimum = 0f
-//                    }
-
                     xAxis.axisMinimum = 0f
 
                     invalidate()
@@ -174,8 +168,8 @@ class GraphFragment : Fragment() {
     private fun addEntry(obdMetric: ObdMetric) {
         chart.run {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
-                val ts = (System.currentTimeMillis() - tripStartTimeStamp).toFloat()
-                val entry = Entry(ts, scaler.scaleToNewRange(obdMetric))
+                val ts = (System.currentTimeMillis() - tripStartTs).toFloat()
+                val entry = Entry(ts, valueScaler.scaleToNewRange(obdMetric))
                 it.addEntry(entry)
                 data.notifyDataChanged()
                 notifyDataSetChanged()
@@ -261,7 +255,7 @@ class GraphFragment : Fragment() {
             setDrawValues(true)
             setDrawFilled(true)
             fillColor = col
-            valueFormatter = ReverseValueFormatter(pid, scaler)
+            valueFormatter = ReverseValueFormatter(pid, valueScaler)
             fillAlpha = 35
             fillColor = col
             highLightColor = Color.rgb(244, 117, 117)

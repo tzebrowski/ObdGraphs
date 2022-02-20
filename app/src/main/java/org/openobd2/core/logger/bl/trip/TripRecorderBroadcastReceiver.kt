@@ -18,7 +18,7 @@ class TripRecorderBroadcastReceiver : BroadcastReceiver() {
             }
             DATA_LOGGER_STOPPED_EVENT -> {
                 Log.i(LOGGER_KEY,"Received event: DATA_LOGGER_STOPPED_EVENT")
-                TripRecorder.instance.saveTrip()
+                TripRecorder.instance.saveCurrentTrip()
             }
         }
     }
