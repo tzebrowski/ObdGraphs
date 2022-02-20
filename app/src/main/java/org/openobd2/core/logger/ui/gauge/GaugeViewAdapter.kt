@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -173,8 +174,7 @@ class GaugeViewAdapter internal constructor(
         if (value.isNaN()){
             return 0.0
         }
-
-        return if (metric.command.pid.type == null) value.toInt() else
+        return if (metric.command.pid.type == null) value.round(2) else
             metric.command.pid.type.let {
                 return when (metric.command.pid.type) {
                     PidDefinition.ValueType.DOUBLE -> value.round(2)
