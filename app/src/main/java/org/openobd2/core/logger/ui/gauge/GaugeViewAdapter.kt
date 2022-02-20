@@ -24,15 +24,12 @@ import org.openobd2.core.logger.ui.graph.ValueScaler
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
 
-
 private const val LABEL_COLOR = "#01804F"
 
 class GaugeViewAdapter internal constructor(
     private val context: Context,
     val data: MutableList<ObdMetric>,
-    private val resourceId: Int,
-    private val spanCount: Int,
-    private val scaleComponent: Boolean
+    private val resourceId: Int
 ): RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
 
     inner class ViewHolder internal constructor(itemView: View) :
@@ -51,7 +48,6 @@ class GaugeViewAdapter internal constructor(
     private lateinit var view: View
     private val preferences: GaugePreferences by lazy { getGaugePreferences() }
     private val valueScaler  = ValueScaler()
-    private val ratio: Float by lazy {calculateScaleMultplier()}
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
@@ -63,14 +59,7 @@ class GaugeViewAdapter internal constructor(
         viewType: Int
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
-        if (isTablet(context)) {
-            val heightPixels = Resources.getSystem().displayMetrics.heightPixels
-            view.layoutParams.height = heightPixels / if (data.size > 2 ) 2 else 1
-        } else {
-            val x = if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
-            view.layoutParams.height = parent.measuredHeight / x
-        }
-
+        updateHeight(parent)
         return ViewHolder(view)
     }
 
@@ -78,16 +67,17 @@ class GaugeViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
-
         val metric = data.elementAt(position)
 
         if (!holder.init){
             holder.label.text = metric.command.label
-            if (scaleComponent && isTablet(context)) {
-                rescaleView(holder)
+            view.post {
+                if (isTablet(context)) {
+                    val multiplier = calculateScaleMultiplier(view)
+                    rescaleView(holder,multiplier)
+                }
+                holder.init = true
             }
-
-            holder.init = true
         }
 
         holder.value.run {
@@ -153,31 +143,29 @@ class GaugeViewAdapter internal constructor(
         return data.size
     }
 
-    private fun calculateScaleMultplier(): Float {
-        val width = (Resources.getSystem().displayMetrics.widthPixels / spanCount).toFloat()
+    private fun calculateScaleMultiplier(view: View): Float {
+        val width = view.measuredWidth.toFloat()
         val height = Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
 
         val max = Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels
         val currentVal = width * height
 
-        val ratio = valueScaler.scaleToNewRange(currentVal, 0.0f, max.toFloat(), 0.80f, 2.5f)
-        Log.d("GaugeViewAdapter", "r: $ratio, w: $width,h: $height")
+        val ratio = valueScaler.scaleToNewRange(currentVal, 0.0f, max.toFloat(), 0.70f, 2.5f)
+        Log.e("GaugeViewAdapter", "r: $ratio, w: $width,h: $height")
         return ratio
     }
 
-
-    private fun rescaleView(holder: ViewHolder) {
-        holder.label.textSize = (holder.label.textSize * ratio)
-        holder.value.textSize *= ratio
-        holder.maxValue.textSize *= ratio * 0.85f
-        holder.minValue.textSize *= ratio * 0.85f
+    private fun rescaleView(holder: ViewHolder, multiplier: Float) {
+        holder.label.textSize = (holder.label.textSize * multiplier)
+        holder.value.textSize *= multiplier
+        holder.maxValue.textSize *= multiplier * 0.85f
+        holder.minValue.textSize *= multiplier * 0.85f
         holder.avgValue?.let {
-            it.textSize *= ratio * 0.85f
+            it.textSize *= multiplier * 0.85f
         }
     }
 
     private fun convert(metric: ObdMetric, value: Double): Number {
-
         if (value.isNaN()){
             return 0.0
         }
@@ -190,5 +178,16 @@ class GaugeViewAdapter internal constructor(
                     else -> value.round(1)
                 }
             }
+    }
+
+    private fun updateHeight(parent: ViewGroup) {
+        if (isTablet(context)) {
+            val heightPixels = Resources.getSystem().displayMetrics.heightPixels
+            view.layoutParams.height = heightPixels / if (data.size > 2) 2 else 1
+        } else {
+            val x =
+                if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
+            view.layoutParams.height = parent.measuredHeight / x
+        }
     }
 }

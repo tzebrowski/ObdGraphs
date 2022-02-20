@@ -22,9 +22,7 @@ import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.Cache
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.*
-import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.bl.trip.TripRecorder
-
 import org.openobd2.core.logger.ui.common.onDoubleClickListener
 import org.openobd2.core.logger.ui.preferences.Prefs
 import java.text.SimpleDateFormat
@@ -138,7 +136,13 @@ class GraphFragment : Fragment() {
                     }
 
                     notifyDataSetChanged()
-                    xAxis.axisMinimum = 0f
+
+                    if (isDataCollectingProcessWorking()){
+                        xAxis.axisMinimum  = 0f;
+                    }else {
+                        Log.i(LOGGER_KEY,"Set scale minima of XAxis to 6f")
+                        setScaleMinima(6f, 0.1f)
+                    }
 
                     invalidate()
                     debug("Reset view port")
@@ -236,6 +240,8 @@ class GraphFragment : Fragment() {
             axisRight.run {
                 isEnabled = false
             }
+
+
          }
     }
 
