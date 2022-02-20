@@ -168,16 +168,18 @@
             android:singleLineTitle="false"
             android:summary="Hide toolbar when double click" />
 
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref.gauge.view.enabled"
-            android:summary="Enable the view" />
-        <org.openobd2.core.logger.ui.preferences.PidListPreferences
-            android:defaultValue="@array/prefs.empty_array"
-            android:key="pref.gauge.pids.selected"
-            android:summary="Displayed PID's" />
-
+        <PreferenceScreen
+            app:key="prefs.gauge"
+            android:summary="Gauge view configuration">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.gauge.view.enabled"
+                android:summary="Enable the view" />
+            <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                android:defaultValue="@array/prefs.empty_array"
+                android:key="pref.gauge.pids.selected"
+                android:summary="Displayed PID's" />
+        </PreferenceScreen>
         <PreferenceScreen
             android:summary="Metrics view configuration"
             app:key="prefs.metrics">
