@@ -1,33 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginStart="3dp"
-    android:layout_marginLeft="30dp"
-    android:layout_marginEnd="3dp"
-    android:layout_marginRight="30dp"
-    android:layout_marginBottom="3dp"
-    android:columnCount="3"
-    android:rowCount="3"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_margin="2sp"
     tools:context=".ui.gauge.GaugeViewFragment">
 
     <pl.pawelkleczkowski.customgauge.CustomGauge
         android:id="@+id/gauge_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_row="0"
-        android:layout_rowSpan="3"
-        android:layout_column="0"
-        android:layout_columnSpan="3"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:paddingLeft="2dp"
-        android:paddingTop="2dp"
-        android:paddingRight="2dp"
-        android:paddingBottom="2dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         app:gaugeDividerColor="@color/md_yellow_500"
         app:gaugeDividerDrawFirst="false"
         app:gaugeDividerDrawLast="true"
@@ -39,13 +22,11 @@
         app:gaugeStrokeCap="BUTT"
         app:gaugeStrokeColor="@color/md_grey_500"
         app:gaugeStrokeWidth="6dp"
-        app:gaugeSweepAngle="210" />
+        app:gaugeSweepAngle="180" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_row="1"
-        android:layout_column="0"
         android:layout_marginLeft="1sp"
         android:layout_marginTop="30sp"
         android:layout_marginRight="1sp"
@@ -57,16 +38,15 @@
             android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Label"
+            android:text="@string/pid_label"
             android:textColor="@color/white"
             android:textSize="12sp" />
 
         <TextView
             android:id="@+id/value"
             android:layout_width="wrap_content"
-
             android:layout_height="wrap_content"
-            android:text="Value"
+            android:text="@string/pid_value_no_data"
             android:textColor="#FFFF00"
             android:textSize="38sp" />
     </LinearLayout>
@@ -75,8 +55,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_row="1"
-        android:layout_column="0"
         android:layout_marginTop="70sp"
         android:orientation="horizontal"
         android:paddingTop="15dp">
@@ -85,10 +63,10 @@
             android:id="@+id/min_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4sp"
+            android:layout_marginStart="4sp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="min"
+            android:text="@string/pid_value_min"
             android:textColor="#5CFFFF00"
             android:textSize="22sp" />
 
@@ -98,7 +76,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="avg"
+            android:text="@string/pid_value_avg"
             android:textColor="#5CFFFF00"
             android:textSize="22sp" />
 
@@ -108,31 +86,31 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center|left"
-            android:text="max"
+            android:text="@string/pid_value_max"
             android:textColor="#5CFFFF00"
             android:textSize="22sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_row="1"
-        android:layout_column="0"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/command_rate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4sp"
+            android:layout_marginStart="4sp"
             android:layout_weight="1"
             android:gravity="right"
             android:textColor="#5CFFFF00"
             android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
 
-</GridLayout>
+</RelativeLayout>

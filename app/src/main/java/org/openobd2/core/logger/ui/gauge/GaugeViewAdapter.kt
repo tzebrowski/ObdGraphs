@@ -22,7 +22,7 @@ import org.openobd2.core.logger.ui.dashboard.round
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
 
-private val LABEL_COLOR = "#01804F"
+private const val LABEL_COLOR = "#01804F"
 
 class GaugeViewAdapter internal constructor(
     private val context: Context,
