@@ -17,11 +17,13 @@ import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
-import org.openobd2.core.logger.ui.common.isTablet
 import org.openobd2.core.logger.ui.common.highLightText
+import org.openobd2.core.logger.ui.common.isTablet
 import org.openobd2.core.logger.ui.dashboard.round
+import org.openobd2.core.logger.ui.graph.ValueScaler
 import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
+
 
 private const val LABEL_COLOR = "#01804F"
 
@@ -29,6 +31,7 @@ class GaugeViewAdapter internal constructor(
     private val context: Context,
     val data: MutableList<ObdMetric>,
     private val resourceId: Int,
+    private val spanCount: Int,
     private val scaleComponent: Boolean
 ): RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
 
@@ -47,6 +50,8 @@ class GaugeViewAdapter internal constructor(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val preferences: GaugePreferences by lazy { getGaugePreferences() }
+    private val valueScaler  = ValueScaler()
+    private val ratio: Float by lazy {calculateScaleMultplier()}
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
@@ -61,11 +66,11 @@ class GaugeViewAdapter internal constructor(
         if (isTablet(context)) {
             val heightPixels = Resources.getSystem().displayMetrics.heightPixels
             view.layoutParams.height = heightPixels / if (data.size > 2 ) 2 else 1
-
         } else {
             val x = if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
             view.layoutParams.height = parent.measuredHeight / x
         }
+
         return ViewHolder(view)
     }
 
@@ -73,21 +78,16 @@ class GaugeViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
+
         val metric = data.elementAt(position)
 
         if (!holder.init){
             holder.label.text = metric.command.label
-            holder.init = true
             if (scaleComponent && isTablet(context)) {
-                when (data.size) {
-                    1 -> rescaleView(holder, 1.5f, 1.3f)
-                    2 -> rescaleView(holder, 1.25f, 1.15f)
-                    3 -> rescaleView(holder, 1.15f, 1.15f)
-                    4 -> rescaleView(holder, 1.15f, 1.15f)
-                    5 -> rescaleView(holder, 1.15f, 1.15f)
-                    6 -> rescaleView(holder, 1.15f, 1.15f)
-                }
+                rescaleView(holder)
             }
+
+            holder.init = true
         }
 
         holder.value.run {
@@ -149,23 +149,30 @@ class GaugeViewAdapter internal constructor(
         }
     }
 
-    private fun rescaleView(holder: ViewHolder, scale1: Float, scale2: Float) {
-        holder.label.textSize = (holder.label.textSize * scale1)
+    override fun getItemCount(): Int {
+        return data.size
+    }
 
-        holder.value.let {
-            it.textSize = (it.textSize * scale1)
-        }
+    private fun calculateScaleMultplier(): Float {
+        val width = (Resources.getSystem().displayMetrics.widthPixels / spanCount).toFloat()
+        val height = Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
 
-        holder.maxValue.let {
-            it.textSize = (it.textSize * scale2)
-        }
+        val max = Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels
+        val currentVal = width * height
 
-        holder.minValue.let {
-            it.textSize = (it.textSize * scale2)
-        }
+        val ratio = valueScaler.scaleToNewRange(currentVal, 0.0f, max.toFloat(), 0.80f, 2.5f)
+        Log.d("GaugeViewAdapter", "r: $ratio, w: $width,h: $height")
+        return ratio
+    }
 
+
+    private fun rescaleView(holder: ViewHolder) {
+        holder.label.textSize = (holder.label.textSize * ratio)
+        holder.value.textSize *= ratio
+        holder.maxValue.textSize *= ratio * 0.85f
+        holder.minValue.textSize *= ratio * 0.85f
         holder.avgValue?.let {
-            it.textSize = (it.textSize * scale2)
+            it.textSize *= ratio * 0.85f
         }
     }
 
@@ -183,9 +190,5 @@ class GaugeViewAdapter internal constructor(
                     else -> value.round(1)
                 }
             }
-    }
-
-    override fun getItemCount(): Int {
-        return data.size
     }
 }

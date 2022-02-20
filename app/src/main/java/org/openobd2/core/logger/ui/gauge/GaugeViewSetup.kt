@@ -34,10 +34,13 @@ class GaugeViewSetup {
             }!!.toMap()
 
             val metrics = metricsViewContext.findMetricsToDisplay(sortOrderMap)
-            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId, scaleAdapter)
             val recyclerView: RecyclerView = root.findViewById(recyclerViewId)
             recyclerView.layoutManager =
                 GridLayoutManager(context, spanCount ?: calculateSpan(context, metrics))
+
+            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId,spanCount ?: calculateSpan(context, metrics),
+                scaleAdapter)
+
             recyclerView.adapter = metricsViewContext.adapter
 
             val dragCallback = DragManageAdapter(

@@ -24,7 +24,7 @@ class ValueScaler {
                 obdMetric.command.pid.max.toFloat(), NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL)
     }
 
-    private fun scaleToNewRange(
+    fun scaleToNewRange(
         currentValue: Float,
         currentMin: Float,
         currentMax: Float,
