@@ -23,6 +23,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.highLightText
+import org.openobd2.core.logger.ui.common.isTablet
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -190,11 +191,23 @@ internal class DashboardViewAdapter internal constructor(
                     dataSets.add(set1)
                 }
 
-                val data = BarData(dataSets)
-                data.setDrawValues(false)
+                val barData = BarData(dataSets)
+                barData.setDrawValues(false)
 
-                data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.05f
-                chart.data = data
+                barData.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.05f
+                chart.data = barData
+
+                if (isTablet(context)) {
+                    when (data.size) {
+                        1 -> value.textSize *= 1.6f
+                        2 -> value.textSize *= 1.5f
+                        3 -> value.textSize *= 1.4f
+                        4 -> value.textSize *= 1.3f
+                        5 -> value.textSize *= 1.2f
+                        6 -> value.textSize *= 1.2f
+                        else -> value.textSize *=  1.1f
+                    }
+                }
                 initialized = true
             }
         }
