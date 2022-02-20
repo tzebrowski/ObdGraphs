@@ -91,7 +91,7 @@ class DashboardFragment : Fragment() {
             root,
             R.id.gauge_recycler_view,
             "pref.dash.gauge_pids.selected",
-            R.layout.dash_gauge_item,
+            R.layout.dashboard_gauge_item,
             spanCount = spanCount)
     }
 
