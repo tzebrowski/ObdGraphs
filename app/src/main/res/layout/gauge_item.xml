@@ -8,17 +8,18 @@
     android:background="@drawable/gauge_item_background"
     tools:context=".ui.gauge.GaugeViewFragment">
 
-    <pl.pawelkleczkowski.customgauge.CustomGauge
+    <org.openobd2.core.logger.ui.gauge.Gauge
         android:id="@+id/gauge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:gaugeDividerColor="@color/md_yellow_500"
+        android:gravity="bottom|center"
+        app:gaugeDividerColor="@color/md_black_1000"
         app:gaugeDividerDrawFirst="true"
         app:gaugeDividerDrawLast="true"
-        app:gaugeDividerSize="1"
+        app:gaugeDividerSize="3"
         app:gaugeDividerStep="10"
         app:gaugePointEndColor="@android:color/holo_red_dark"
-        app:gaugePointStartColor="@android:color/holo_green_dark"
+        app:gaugePointStartColor="@android:color/holo_green_light"
         app:gaugeStartAngle="180"
         app:gaugeStrokeCap="BUTT"
         app:gaugeStrokeColor="@color/md_grey_500"
@@ -39,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="@string/pid.value"
             android:textColor="#FFFF00"
-            android:textSize="34sp" />
+            android:textSize="32sp" />
 
         <TextView
             android:id="@+id/label"
@@ -69,7 +70,7 @@
             android:gravity="center"
             android:text="@string/pid.value_min"
             android:textColor="#5CFFFF00"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/avg_value"
@@ -79,7 +80,7 @@
             android:gravity="center"
             android:text="@string/pid.value_avg"
             android:textColor="#5CFFFF00"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/max_value"
@@ -88,7 +89,7 @@
             android:layout_weight="1"
             android:text="@string/pid.value_max"
             android:textColor="#5CFFFF00"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="normal"
             tools:ignore="RtlHardcoded" />
 
@@ -107,7 +108,7 @@
             android:layout_weight="1"
             android:gravity="right"
             android:textColor="#5CFFFF00"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             tools:ignore="RtlHardcoded" />
 

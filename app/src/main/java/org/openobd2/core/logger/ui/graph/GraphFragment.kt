@@ -135,16 +135,11 @@ class GraphFragment : Fragment() {
                         }
                     }
 
+                    Log.i(LOGGER_KEY,"Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
+                    setScaleMinima(7f, 0.1f)
+                    moveViewToX(xAxis.axisMaximum - 5000f)
 
-                    if (isDataCollectingProcessWorking()){
-                        xAxis.axisMinimum  = 0f;
-                    }else {
-                        Log.i(LOGGER_KEY,"Set scale minima of XAxis to 6f")
-                        setScaleMinima(6f, 0.1f)
-                    }
-
-                    invalidate()
                     debug("Reset view port")
                 }
             }

@@ -21,7 +21,6 @@ import org.openobd2.core.logger.ui.common.highLightText
 import org.openobd2.core.logger.ui.common.isTablet
 import org.openobd2.core.logger.ui.dashboard.round
 import org.openobd2.core.logger.ui.graph.ValueScaler
-import pl.pawelkleczkowski.customgauge.CustomGauge
 import java.util.*
 
 private const val LABEL_COLOR = "#01804F"
@@ -40,7 +39,7 @@ class GaugeViewAdapter internal constructor(
         val minValue: TextView = itemView.findViewById(R.id.min_value)
         val maxValue: TextView = itemView.findViewById(R.id.max_value)
         var commandRate: TextView? = itemView.findViewById(R.id.command_rate)
-        var gauge: CustomGauge? = itemView.findViewById(R.id.gauge_view)
+        var gauge: Gauge? = itemView.findViewById(R.id.gauge_view)
         var init: Boolean = false
     }
 
@@ -70,7 +69,7 @@ class GaugeViewAdapter internal constructor(
         val metric = data.elementAt(position)
 
         if (!holder.init){
-            holder.label.text = metric.command.label
+            holder.label.text = metric.command.pid.description
             view.post {
                 if (isTablet(context)) {
                     val multiplier = calculateScaleMultiplier(view)
@@ -82,7 +81,7 @@ class GaugeViewAdapter internal constructor(
 
         holder.value.run {
             val units = (metric.command as ObdCommand).pid.units
-            text = metric.valueToString() + " " + units
+            text = "${convert(metric,metric.valueToDouble())} $units"
 
             highLightText(
                 units, 0.3f,
@@ -133,9 +132,9 @@ class GaugeViewAdapter internal constructor(
         }
 
         holder.gauge?.apply {
-            startValue = (metric.command as ObdCommand).pid.min.toInt()
-            endValue = (metric.command as ObdCommand).pid.max.toInt()
-            value = metric.valueToLong().toInt()
+            startValue = (metric.command as ObdCommand).pid.min.toFloat()
+            endValue = (metric.command as ObdCommand).pid.max.toFloat()
+            value = metric.valueToLong().toFloat()
         }
     }
 
@@ -150,8 +149,8 @@ class GaugeViewAdapter internal constructor(
         val max = Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels
         val currentVal = width * height
 
-        val ratio = valueScaler.scaleToNewRange(currentVal, 0.0f, max.toFloat(), 0.70f, 2.5f)
-        Log.e("GaugeViewAdapter", "r: $ratio, w: $width,h: $height")
+        val ratio = valueScaler.scaleToNewRange(currentVal, 0.0f, max.toFloat(), 0.80f, 3.0f)
+        Log.d("GaugeViewAdapter", "r: $ratio, w: $width,h: $height")
         return ratio
     }
 
@@ -162,6 +161,10 @@ class GaugeViewAdapter internal constructor(
         holder.minValue.textSize *= multiplier * 0.85f
         holder.avgValue?.let {
             it.textSize *= multiplier * 0.85f
+        }
+        holder.gauge?.let{
+            it.strokeWidth *= multiplier
+            it.init()
         }
     }
 
