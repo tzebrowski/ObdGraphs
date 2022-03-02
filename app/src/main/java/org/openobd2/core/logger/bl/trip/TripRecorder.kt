@@ -41,7 +41,7 @@ class TripRecorder private constructor() {
             Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
                 val cache = it as MutableMap<String, MutableList<Entry>>
                 val timestamp = (System.currentTimeMillis() - (Cache[CACHE_TS_PROPERTY_NAME] as Long)).toFloat()
-                val entry = Entry(timestamp, valueScaler.scaleToNewRange(reply))
+                val entry = Entry(timestamp, valueScaler.scaleToNewRange(reply), reply.command.pid.id)
                 cache.getOrPut(reply.command.pid.description) {
                     mutableListOf()
                 }.add(entry)

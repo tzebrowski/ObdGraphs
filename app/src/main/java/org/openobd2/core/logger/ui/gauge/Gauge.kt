@@ -58,8 +58,6 @@ class Gauge : View {
             invalidate()
         }
 
-
-
     constructor(context: Context?) : super(context) {
         init()
     }
@@ -70,7 +68,7 @@ class Gauge : View {
         strokeWidth = styledAttributes.getDimension(R.styleable.Gauge_gaugeStrokeWidth, 10f)
         strokeColor = styledAttributes.getColor(
             R.styleable.Gauge_gaugeStrokeColor,
-            ContextCompat.getColor(context, R.color.gray)
+            Color.parseColor("#0D000000")
         )
         strokeCap = styledAttributes.getString(R.styleable.Gauge_gaugeStrokeCap)!!
 
@@ -155,11 +153,14 @@ class Gauge : View {
         paint.shader = null
         canvas.drawArc(rectF, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
         paint.color = pointStartColor
-        paint.shader = LinearGradient(
+
+        val linearGradient = LinearGradient(
             getWidth().toFloat(), getHeight().toFloat(), 0f, 0f,
             pointEndColor,
             pointStartColor, Shader.TileMode.CLAMP
         )
+
+        paint.shader = linearGradient
         if (pointSize > 0) { //if size of pointer is defined
             if (point > startAngle + pointSize / 2) {
                 canvas.drawArc(
@@ -179,6 +180,10 @@ class Gauge : View {
                 paint
             )
         }
+        drawDivider(canvas)
+    }
+
+    private fun drawDivider(canvas: Canvas) {
         if (dividerSize > 0) {
             paint.color = dividerColor
             paint.shader = null

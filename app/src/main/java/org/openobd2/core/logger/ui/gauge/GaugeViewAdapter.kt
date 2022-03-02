@@ -59,6 +59,7 @@ class GaugeViewAdapter internal constructor(
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
         updateHeight(parent)
+
         return ViewHolder(view)
     }
 
@@ -67,7 +68,6 @@ class GaugeViewAdapter internal constructor(
         position: Int
     ) {
         val metric = data.elementAt(position)
-
         if (!holder.init){
             holder.label.text = metric.command.pid.description
             view.post {
@@ -81,7 +81,7 @@ class GaugeViewAdapter internal constructor(
 
         holder.value.run {
             val units = (metric.command as ObdCommand).pid.units
-            text = "${convert(metric,metric.valueToDouble())} $units"
+            text = "${valueToString(metric)} $units"
 
             highLightText(
                 units, 0.3f,
@@ -146,16 +146,17 @@ class GaugeViewAdapter internal constructor(
         val width = view.measuredWidth.toFloat()
         val height = Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
 
-        val max = Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels
-        val currentVal = width * height
-
-        val ratio = valueScaler.scaleToNewRange(currentVal, 0.0f, max.toFloat(), 0.80f, 3.0f)
-        Log.d("GaugeViewAdapter", "r: $ratio, w: $width,h: $height")
-        return ratio
+        val max = Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
+        val multiplier = valueScaler.scaleToNewRange(width * height, 0.0f, max, 1f, 3f)
+        Log.v("GaugeViewAdapter", "r: $multiplier, w: $width,h: $height")
+        return multiplier
     }
 
     private fun rescaleView(holder: ViewHolder, multiplier: Float) {
-        holder.label.textSize = (holder.label.textSize * multiplier)
+
+        Log.e("GaugeViewAdapter", "multiplier: $multiplier")
+
+        holder.label.textSize *= multiplier
         holder.value.textSize *= multiplier
         holder.maxValue.textSize *= multiplier * 0.85f
         holder.minValue.textSize *= multiplier * 0.85f
@@ -163,7 +164,7 @@ class GaugeViewAdapter internal constructor(
             it.textSize *= multiplier * 0.85f
         }
         holder.gauge?.let{
-            it.strokeWidth *= multiplier
+            it.strokeWidth *= multiplier * 1.15f
             it.init()
         }
     }
@@ -191,6 +192,14 @@ class GaugeViewAdapter internal constructor(
             val x =
                 if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
             view.layoutParams.height = parent.measuredHeight / x
+        }
+    }
+
+    private fun valueToString(metric: ObdMetric): String? {
+        return if (metric.value == null) {
+            "No data"
+        } else {
+            return convert(metric,metric.valueToDouble()).toString()
         }
     }
 }
