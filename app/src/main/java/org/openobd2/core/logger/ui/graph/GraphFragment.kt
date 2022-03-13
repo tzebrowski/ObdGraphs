@@ -86,8 +86,6 @@ class GraphFragment : Fragment() {
         requireContext().unregisterReceiver(broadcastReceiver)
     }
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -197,7 +195,7 @@ class GraphFragment : Fragment() {
             isHighlightPerDragEnabled = true
             setBackgroundColor(Color.BLACK)
             setViewPortOffsets(10f, 10f, 10f, 10f)
-            marker = MarkerWindow(context, R.layout.graph_marker_view)
+            marker = MarkerWindow(context, R.layout.graph_marker_view, this)
 
             legend.run {
                 isEnabled = true
