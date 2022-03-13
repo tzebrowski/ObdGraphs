@@ -7,11 +7,8 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.components.YAxis.AxisDependency
@@ -19,12 +16,9 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.metrics.ObdMetric
-import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
-import org.obd.metrics.pid.PidDefinitionRegistry
 import org.openobd2.core.logger.Cache
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.*
@@ -38,30 +32,6 @@ import java.util.*
 private const val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
 
 class GraphFragment : Fragment() {
-
-    class MarkerWindow(context: Context?, layoutResource: Int) :
-        MarkerView(context, layoutResource) {
-        private val valueScaler  = ValueScaler()
-
-        private fun getEmptyMetrics(value: Set<Pair<Long,Float>>): MutableList<ObdMetric> {
-            val pidRegistry: PidDefinitionRegistry =  DataLogger.instance.pidDefinitionRegistry()
-            return value.map {
-                val pid = pidRegistry.findBy(it.first)
-                val value  = valueScaler.scaleToPidRange(pid, it.second)
-                ObdMetric.builder().command(ObdCommand(pid)).value(value).build()
-            }.toMutableList()
-        }
-
-        override fun refreshContent(e: Entry, highlight: Highlight?) {
-            val id = (e.data as Long)
-            val emptyMetrics = getEmptyMetrics(setOf(Pair(id,e.y)))
-            val adapter = MarkerWindowViewAdapter(context, emptyMetrics)
-            val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
-            recyclerView.layoutManager = GridLayoutManager(context, 1)
-            recyclerView.adapter = adapter
-            super.refreshContent(e, highlight)
-        }
-    }
 
     private var prefsChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->

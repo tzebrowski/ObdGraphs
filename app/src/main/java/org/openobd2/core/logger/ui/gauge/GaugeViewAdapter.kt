@@ -154,7 +154,7 @@ class GaugeViewAdapter internal constructor(
 
     private fun rescaleView(holder: ViewHolder, multiplier: Float) {
 
-        Log.e("GaugeViewAdapter", "multiplier: $multiplier")
+        Log.v("GaugeViewAdapter", "multiplier: $multiplier")
 
         holder.label.textSize *= multiplier
         holder.value.textSize *= multiplier
