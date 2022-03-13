@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dash_item"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="200sp"
-    android:layout_marginLeft="1dp"
-    android:layout_marginTop="1dp"
-    android:layout_marginRight="1dp"
-    android:layout_marginBottom="1dp"
-    android:background="@drawable/dash_item_background_2">
+    android:layout_height="fill_parent"
+    android:layout_margin="1sp"
+    android:background="@drawable/dashboard_item_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_row="0"
-        android:layout_column="0"
-        android:layout_marginLeft="10dp"
-        android:gravity="left"
+        android:layout_marginStart="10sp"
+        android:gravity="start"
         android:orientation="vertical">
-
-
         <TextView
             android:id="@+id/dash_label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_row="0"
-            android:layout_column="2"
             android:alpha="0.5"
             android:gravity="center"
-            android:text="label"
+            android:text="@string/pid.label"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -36,24 +26,15 @@
             android:id="@+id/dash_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_row="1"
-            android:layout_column="0"
             android:alpha="0.7"
-            android:text="value"
+            android:text="@string/pid.value"
             android:textColor="#FFFF00"
-            android:textSize="54dp"
+            android:textSize="34sp"
             android:textStyle="normal" />
-
     </LinearLayout>
-
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_row="0"
-        android:layout_column="0">
-
-    </com.github.mikephil.charting.charts.BarChart>
-
-</GridLayout>
+        android:layout_height="match_parent" />
+</RelativeLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <TableLayout
+        android:id="@+id/livedata_table_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow android:background="@drawable/border">
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_column="2"
+                android:layout_marginLeft="3dp"
+                android:layout_weight="1"
+                android:text="Metric name"
+                android:textAllCaps="false"
+                android:textColor="#1C3D72"
+                android:textSize="20sp"
+                android:textStyle="bold"></TextView>
+
+            <TextView
+                android:layout_column="0"
+                android:layout_marginRight="3dp"
+                android:layout_weight="1"
+                android:backgroundTintMode="src_in"
+                android:gravity="right"
+                android:text="Value"
+                android:textColor="#1C3D72"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="26dp" />
+</RelativeLayout>

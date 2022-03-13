@@ -61,9 +61,7 @@ open class RecyclerItemDoubleClickListener(
         return false
     }
 
-    override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-        TODO("Not yet implemented")
-    }
+    override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
 
     override fun onTouchEvent(view: RecyclerView, motionEvent: MotionEvent) {}
 }

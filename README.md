@@ -11,3 +11,5 @@ It is build on top of `ObdMetrics` library and it visualize OBD metrics that are
 | Dashboard view    |     ![Alt text](./res/Screenshot_1.png?raw=true "Dashboard view") |
 | Graph view   |   ![Alt text](./res/Screenshot_2.png?raw=true "Graph view")   |
 | Gauge view |    ![Alt text](./res/Screenshot_3.png?raw=true "Gauge view")  |
+| Metrics view |    ![Alt text](./res/Screenshot_4.png?raw=true "Gauge view")  |
+

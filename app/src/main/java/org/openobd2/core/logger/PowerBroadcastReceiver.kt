@@ -7,16 +7,15 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.util.Log
-import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.bl.datalogger.DataLoggerService
 
 
-private const val LOGGER_TAG = "POW_RECEIVER"
+private const val LOGGER_TAG = "PowerBroadcastReceiver"
 
 const val SCREEN_OFF_EVENT = "power.screen.off"
 const val SCREEN_ON_EVENT = "power.screen.on"
 
-class PowerReceiver : BroadcastReceiver() {
+class PowerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent) {
         Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}")

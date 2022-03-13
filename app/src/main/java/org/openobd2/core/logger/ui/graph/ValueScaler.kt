@@ -1,12 +1,14 @@
 package org.openobd2.core.logger.ui.graph
 
+
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
-class Scaler {
 
-    private val NEW_RANGE_MIN_VAL = 0f
-    private val NEW_RANGE_MAX_VAL = 2000f
+private const val NEW_RANGE_MIN_VAL = 0f
+private const val NEW_RANGE_MAX_VAL = 2000f
+
+class ValueScaler {
 
     fun scaleToPidRange(
         pid: PidDefinition,
@@ -22,7 +24,7 @@ class Scaler {
                 obdMetric.command.pid.max.toFloat(), NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL)
     }
 
-    private fun scaleToNewRange(
+    fun scaleToNewRange(
         currentValue: Float,
         currentMin: Float,
         currentMax: Float,

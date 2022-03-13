@@ -23,6 +23,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.highLightText
+import org.openobd2.core.logger.ui.common.isTablet
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -47,7 +48,7 @@ internal class DashboardViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        view = inflater.inflate(R.layout.dash_item, parent, false)
+        view = inflater.inflate(R.layout.dashboard_item, parent, false)
         view.layoutParams.height = height
         colors = Theme.getSelectedTheme(context)
         return ViewHolder(view)
@@ -97,10 +98,12 @@ internal class DashboardViewAdapter internal constructor(
                 }
             }
         }
+
         holder.chart.invalidate()
         holder.label.text = obdCommand.pid.description
         val units = (metric.command as ObdCommand).pid.units
-        holder.value.text = metric.valueToString() + " " + units
+        val value = metric.valueToString() + " " + units
+        holder.value.text = value
         holder.value.highLightText(units,0.3f, Color.parseColor("#01804F"))
     }
 
@@ -116,7 +119,7 @@ internal class DashboardViewAdapter internal constructor(
         var anim: Animation = AlphaAnimation(0.0f, 1.0f)
 
         lateinit var segments: Segments
-        var initialized: Boolean = false
+        private var initialized: Boolean = false
 
         fun buildChart(pid: PidDefinition) {
             if (!initialized) {
@@ -190,11 +193,23 @@ internal class DashboardViewAdapter internal constructor(
                     dataSets.add(set1)
                 }
 
-                val data = BarData(dataSets)
-                data.setDrawValues(false)
+                val barData = BarData(dataSets)
+                barData.setDrawValues(false)
 
-                data.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.05f
-                chart.data = data
+                barData.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.05f
+                chart.data = barData
+
+                if (isTablet(context)) {
+                    when (data.size) {
+                        1 -> value.textSize *= 1.6f
+                        2 -> value.textSize *= 1.5f
+                        3 -> value.textSize *= 1.4f
+                        4 -> value.textSize *= 1.3f
+                        5 -> value.textSize *= 1.2f
+                        6 -> value.textSize *= 1.2f
+                        else -> value.textSize *=  1.1f
+                    }
+                }
                 initialized = true
             }
         }

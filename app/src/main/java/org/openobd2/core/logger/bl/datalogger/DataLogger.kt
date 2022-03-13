@@ -12,7 +12,6 @@ import org.obd.metrics.command.group.AlfaMed17CommandGroup
 import org.obd.metrics.command.group.Mode1CommandGroup
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.connection.AdapterConnection
-import org.obd.metrics.connection.TcpConnection
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.diagnostic.Diagnostics
@@ -25,13 +24,13 @@ const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
 const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 
-private const val LOGGER_TAG = "DATA_LOGGER_SVC"
+private const val LOGGER_TAG = "DataLogger"
 
 internal class DataLogger internal constructor() {
 
     companion object {
         @JvmStatic
-        var INSTANCE: DataLogger =
+        var instance: DataLogger =
             DataLogger()
     }
 
@@ -159,7 +158,7 @@ internal class DataLogger internal constructor() {
 
         return if (preferences.connectionType == "wifi"){
             Log.i(LOGGER_TAG, "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ...")
-            TcpConnection.of(preferences.tcpHost, preferences.tcpPort)
+            WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
         }else {
             try {
                 val deviceName = preferences.adapterId

@@ -1,5 +1,6 @@
 package org.openobd2.core.logger.bl.datalogger
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.Reply
@@ -19,7 +20,7 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
         }
     }
 
-    private val tripRecorder: TripRecorder by lazy { TripRecorder.INSTANCE}
+    private val tripRecorder: TripRecorder by lazy { TripRecorder.instance}
 
     fun reset() {
         debugData.postValue(null)
