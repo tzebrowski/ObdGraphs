@@ -6,7 +6,7 @@ import org.obd.metrics.pid.PidDefinition
 
 
 private const val NEW_RANGE_MIN_VAL = 0f
-private const val NEW_RANGE_MAX_VAL = 2000f
+private const val NEW_RANGE_MAX_VAL = 3500f
 
 class ValueScaler {
 

@@ -89,6 +89,12 @@
 
             <CheckBoxPreference
                 android:defaultValue="true"
+                android:dialogTitle="Result cache enabled"
+                android:key="pref.adapter.cache.result.enabled"
+                android:summary="Result cache enabled" />
+
+            <CheckBoxPreference
+                android:defaultValue="true"
                 android:dialogTitle="Batch enabled"
                 android:key="pref.adapter.batch.enabled"
                 android:summary="Enable batch mode" />

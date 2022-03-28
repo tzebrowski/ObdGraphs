@@ -1,6 +1,7 @@
 package org.openobd2.core.logger.ui.graph
 
 import android.content.Context
+import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
@@ -12,6 +13,9 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
+
+private const val SEARCH_SCOPE = 300
+private const val LOG_KEY = "MarkerWindow"
 
 class MarkerWindow(context: Context?, layoutResource: Int, private val chart: LineChart) :
     MarkerView(context, layoutResource) {
@@ -38,9 +42,10 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
         val metricsMap = mutableMapOf<Long, ObdMetric>()
         e.data?.let {
             metricsMap[(e.data.toString().toLong())] =
-                buildMetrics((e.data.toString().toLong() as Long), e.y)
+                buildMetrics((e.data.toString().toLong()), e.y)
         }
 
+        var time  = System.currentTimeMillis()
         chart.data.dataSets.forEach {
             var x = 0
 
@@ -55,11 +60,17 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
                         }
                     }
                 } else {
+                    if (x > SEARCH_SCOPE){
+                        Log.d(LOG_KEY,"Did not find entry for=${it.label}.")
+                        break
+                    }
                     x = updateXValue(x)
                 }
 
             } while (entriesForXValue.isEmpty())
         }
+        time = System.currentTimeMillis() - time
+        Log.d(LOG_KEY,"Build map, time: ${time}ms , values: ${metricsMap.values}.")
         return metricsMap.values
     }
 

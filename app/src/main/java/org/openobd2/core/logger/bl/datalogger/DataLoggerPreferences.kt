@@ -22,7 +22,8 @@ data class DataLoggerPreferences(
     var initDelay: Long,
     var mode: String,
     var generatorEnabled: Boolean,
-    var adaptiveConnectionEnabled: Boolean){
+    var adaptiveConnectionEnabled: Boolean,
+    var resultsCacheEnabled: Boolean){
 
     fun isGenericModeSelected() : Boolean {
         return mode == GENERIC_MODE
@@ -66,6 +67,10 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 Prefs.getString(key)!!.toInt()
             "pref.adapter.batch.enabled" -> dataLoggerPreferences.batchEnabled =
                 Prefs.getBoolean(key, true)
+
+            "pref.adapter.cache.result.enabled" -> dataLoggerPreferences.resultsCacheEnabled =
+                Prefs.getBoolean(key, true)
+
             "pref.adapter.reconnect" -> dataLoggerPreferences.reconnectWhenError =
                 Prefs.getBoolean(key, true)
             "pref.adapter.id" -> dataLoggerPreferences.adapterId =
@@ -93,7 +98,7 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val mode = Prefs.getString("pref.mode", GENERIC_MODE)!!
     val generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
     val adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
-
+    val resultsCacheEnabled = Prefs.isEnabled("pref.adapter.cache.result.enabled")
 
     val mode02Pids = Prefs.getStringSet("pref.pids.mode22").map { s -> s.toLong() }.toMutableSet()
 
@@ -110,7 +115,8 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         initDelay,
         mode,
         generatorEnabled,
-        adaptiveConnectionEnabled)
+        adaptiveConnectionEnabled,
+        resultsCacheEnabled)
 
     Log.i(LOGGER_KEY,"Loaded data logger preferences: $dataLoggerPreferences")
     return dataLoggerPreferences

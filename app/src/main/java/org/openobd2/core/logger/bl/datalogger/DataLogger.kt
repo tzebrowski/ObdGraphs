@@ -177,14 +177,14 @@ internal class DataLogger internal constructor() {
         return Adjustments.builder()
             .batchEnabled(preferences.batchEnabled)
             .initDelay(preferences.initDelay)
+            .cacheConfig(CacheConfig.builder().resultCacheEnabled(preferences.resultsCacheEnabled).build())
             .generator(
                 GeneratorSpec
                     .builder()
                     .smart(true)
                     .enabled(preferences.generatorEnabled)
                     .increment(0.5).build()
-            )
-            .adaptiveTiming(
+            ).adaptiveTiming(
                 AdaptiveTimeoutPolicy
                     .builder()
                     .enabled(preferences.adaptiveConnectionEnabled)
