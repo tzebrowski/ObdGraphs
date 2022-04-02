@@ -181,15 +181,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        registerReceiver()
         setupWindowManager()
         changeScreenBrightness(1f)
     }
 
-    override fun onPause() {
-        super.onPause()
-        unregisterReceiver()
-    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -259,6 +254,13 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 
+
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver()
+    }
 
     private fun unregisterReceiver() {
         unregisterReceiver(activityBroadcastReceiver)

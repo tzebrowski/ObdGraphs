@@ -18,8 +18,8 @@ const val SCREEN_ON_EVENT = "power.screen.on"
 class PowerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent) {
-        Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}")
         val powerPreferences: PowerPreferences = getPowerPreferences()
+        Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}")
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
 
@@ -31,6 +31,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (powerPreferences.connectOnPower) {
+                Log.i(LOGGER_TAG, "Connecting to the adapter")
                 DataLoggerService.startAction(context!!)
             }
 

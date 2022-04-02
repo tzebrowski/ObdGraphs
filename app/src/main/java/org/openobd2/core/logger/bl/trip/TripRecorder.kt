@@ -19,15 +19,10 @@ import java.util.*
 private const val CACHE_ENTRIES_PROPERTY_NAME = "cache.trip.entries"
 private const val CACHE_TS_PROPERTY_NAME = "cache.trip.startT"
 private const val LOGGER_KEY = "TripRecorder"
+private const val MIN_TRIP_LENGTH = 5
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Trip(val startTs: Long, val entries: Map<String, MutableList<Entry>>) {}
-
-private val i: Int
-    get() {
-        val minTripLength = 5
-        return minTripLength
-    }
 
 class TripRecorder private constructor() {
 
@@ -81,10 +76,9 @@ class TripRecorder private constructor() {
 
         val tripLength = if (trip.startTs == 0L)  0 else {(endDate.time - trip.startTs) / 1000}
 
-        Log.i(LOGGER_KEY, "Trip length $tripLength")
+        Log.i(LOGGER_KEY, "Recorded trip, length: ${tripLength}s")
 
-        val minTripLength = 5
-        if (recordShortTrip  || tripLength > minTripLength) {
+        if (recordShortTrip  || tripLength > MIN_TRIP_LENGTH) {
             val startString = dateFormat.format(Date(trip.startTs))
             val endString = dateFormat.format(endDate)
 
