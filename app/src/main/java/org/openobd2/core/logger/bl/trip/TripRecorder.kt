@@ -9,6 +9,8 @@ import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.ApplicationContext
 import org.openobd2.core.logger.Cache
 import org.openobd2.core.logger.ui.graph.ValueScaler
+import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.isEnabled
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -20,6 +22,12 @@ private const val LOGGER_KEY = "TripRecorder"
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Trip(val startTs: Long, val entries: Map<String, MutableList<Entry>>) {}
+
+private val i: Int
+    get() {
+        val minTripLength = 5
+        return minTripLength
+    }
 
 class TripRecorder private constructor() {
 
@@ -66,19 +74,29 @@ class TripRecorder private constructor() {
    private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss")
 
     fun saveCurrentTrip() {
-
         val trip = getCurrentTrip()
-        val content: String = jacksonObjectMapper().writeValueAsString(trip)
-        val end = dateFormat.format(Date())
-        val start = dateFormat.format(Date(trip.startTs))
 
-        val fileName = "trip_$start - $end.json"
+        val endDate = Date()
+        val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
 
-        Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
+        val tripLength = if (trip.startTs == 0L)  0 else {(endDate.time - trip.startTs) / 1000}
 
-        writeFile(context, fileName, content)
+        Log.i(LOGGER_KEY, "Trip length $tripLength")
 
-        Log.i(LOGGER_KEY, "Trip was written to the file: $fileName")
+        val minTripLength = 5
+        if (recordShortTrip  || tripLength > minTripLength) {
+            val startString = dateFormat.format(Date(trip.startTs))
+            val endString = dateFormat.format(endDate)
+
+            val content: String = jacksonObjectMapper().writeValueAsString(trip)
+            val fileName = "trip_$startString - $endString.json"
+            Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
+            writeFile(context, fileName, content)
+
+            Log.i(LOGGER_KEY, "Trip was written to the file: $fileName")
+        } else {
+            Log.i(LOGGER_KEY, "Trip was no saved. Trip time is less than ${trip.startTs}s")
+        }
     }
 
     fun findAllTripsBy(query:String = ""): MutableList<String> {

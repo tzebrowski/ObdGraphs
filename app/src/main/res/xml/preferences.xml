@@ -231,10 +231,19 @@
                 android:key="pref.graph.pids.selected"
                 android:summary="Displayed PID's" />
 
-            <org.openobd2.core.logger.ui.preferences.TripsListPreferences
-                android:defaultValue="@array/prefs.empty_array"
-                android:key="pref.graph.trips.selected"
-                android:summary="Recorded trips" />
+
+            <PreferenceCategory android:title="Trips">
+                <CheckBoxPreference
+                    android:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:key="pref.trips.recordings.save.short.trip"
+                    android:summary="Record trips shorten than 5s length (engine start)"/>
+
+                <org.openobd2.core.logger.ui.preferences.TripsListPreferences
+                    android:defaultValue="@array/prefs.empty_array"
+                    android:key="pref.graph.trips.selected"
+                    android:summary="Load trip" />
+            </PreferenceCategory>
         </PreferenceScreen>
 
         <PreferenceScreen
