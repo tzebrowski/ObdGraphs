@@ -60,6 +60,40 @@
                 android:summary="Display commands frequency" />
         </PreferenceCategory>
 
+        <PreferenceCategory
+        android:key="init"
+        android:title="Init">
+
+            <ListPreference
+                android:defaultValue="500"
+                android:entries="@array/prefs.init_delay"
+                android:entryValues="@array/prefs.init_delay"
+                android:key="pref.adapter.init.delay"
+                android:summary="Init delay" />
+
+            <ListPreference
+                android:defaultValue="AUTO"
+                android:entries="@array/prefs.init_protocol"
+                android:entryValues="@array/prefs.init_protocol"
+                android:key="pref.adapter.init.protocol"
+                android:summary="Protocol" />
+
+            <ListPreference
+                android:defaultValue=""
+                android:entries="@array/prefs.init_header"
+                android:entryValues="@array/prefs.init_header"
+                android:key="pref.adapter.init.header22"
+                android:summary="Header 22" />
+
+            <ListPreference
+                android:defaultValue=""
+                android:entries="@array/prefs.init_header"
+                android:entryValues="@array/prefs.init_header"
+                android:key="pref.adapter.init.header01"
+                android:summary="Header 01" />
+
+        </PreferenceCategory>
+
         <PreferenceCategory android:title="General settings">
             <PreferenceScreen
                 app:key="prefs.pids.query"
@@ -113,12 +147,6 @@
                 android:singleLineTitle="false"
                 android:summary="Reconnect automatically when errors occur" />
 
-            <ListPreference
-                android:defaultValue="500"
-                android:entries="@array/prefs.init_delay"
-                android:entryValues="@array/prefs.init_delay"
-                android:key="pref.adapter.init_delay"
-                android:summary="Init delay" />
 
             <ListPreference
                 android:defaultValue="6"

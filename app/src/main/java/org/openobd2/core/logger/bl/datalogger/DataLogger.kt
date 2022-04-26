@@ -8,14 +8,13 @@ import org.obd.metrics.Lifecycle
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.api.*
 import org.obd.metrics.codec.GeneratorSpec
-import org.obd.metrics.command.group.AlfaMed17CommandGroup
-import org.obd.metrics.command.group.Mode1CommandGroup
+import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.command.obd.ObdCommand
-import org.obd.metrics.connection.AdapterConnection
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.diagnostic.Diagnostics
 import org.openobd2.core.logger.ApplicationContext
+import java.io.File
 
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
@@ -98,34 +97,23 @@ internal class DataLogger internal constructor() {
         }
     }
 
-    private var mode1: Workflow = WorkflowFactory.mode1().equationEngine("rhino")
-        .pidSpec(
-            PidSpec
-                .builder()
-                .initSequence(Mode1CommandGroup.INIT)
-                .pidFile(Urls.resourceToUrl("mode01.json"))
-                .pidFile(Urls.resourceToUrl("extra.json"))
-                .build()
-        ).observer(metricsAggregator)
-        .lifecycle(lifecycle)
-        .initialize()
-
-    private var mode22: Workflow = WorkflowFactory
-        .generic()
-        .pidSpec(
-            PidSpec
-                .builder()
-                .initSequence(AlfaMed17CommandGroup.CAN_INIT)
-                .pidFile(Urls.resourceToUrl("alfa.json")).build()
-        )
-        .equationEngine("rhino")
-        .observer(metricsAggregator)
-        .lifecycle(lifecycle).initialize()
+    private val workflow: Workflow  by lazy {
+        Workflow.instance().equationEngine("rhino")
+            .pids(
+                Pids.builder()
+                    .resource(Urls.resourceToUrl("alfa.json"))
+                    .resource(Urls.resourceToUrl("mode01.json"))
+                    .resource(Urls.resourceToUrl("extra.json"))
+                    .build()
+            ).observer(metricsAggregator)
+            .lifecycle(lifecycle)
+            .initialize()
+    }
 
     val preferences by lazy { DataLoggerPreferences.instance }
 
     fun diagnostics(): Diagnostics {
-        return workflow().diagnostics
+        return workflow.diagnostics
     }
 
     fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
@@ -136,27 +124,26 @@ internal class DataLogger internal constructor() {
     }
 
     fun pidDefinitionRegistry(): PidDefinitionRegistry {
-        return workflow().pidRegistry
+        return workflow.pidRegistry
     }
 
     fun stop() {
-       workflow().stop()
+       workflow.stop()
     }
 
     fun start() {
 
         val query = query()
-        Log.i(LOGGER_TAG, "Selected pids: ${query.pids}")
+        Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
 
         connection()?.run {
-            workflow().start(this, query, adjustments())
+            workflow.start(this, query, init(),
+                adjustments())
             Log.i(LOGGER_TAG, "Start collecting process")
         }
     }
 
-    private fun connection() : AdapterConnection? {
-
-        return if (preferences.connectionType == "wifi"){
+    private fun connection()  = if (preferences.connectionType == "wifi") {
             Log.i(LOGGER_TAG, "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ...")
             WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
         }else {
@@ -171,13 +158,19 @@ internal class DataLogger internal constructor() {
                 null
             }
         }
-    }
 
-    private fun adjustments(): Adjustments {
-        return Adjustments.builder()
+    private fun init() = Init.builder()
+        .delay(preferences.initDelay)
+        .header(Init.Header.builder().mode("22").header(preferences.initHeader22).build())
+        .header(Init.Header.builder().mode("01").header(preferences.initHeader01).build())
+        .protocol(Init.Protocol.valueOf(preferences.initProtocol))
+        .sequence(DefaultCommandGroup.INIT).build()
+
+    private fun adjustments() = Adjustments.builder()
             .batchEnabled(preferences.batchEnabled)
-            .initDelay(preferences.initDelay)
-            .cacheConfig(CacheConfig.builder().resultCacheEnabled(preferences.resultsCacheEnabled).build())
+            .cacheConfig(CacheConfig.builder()
+                .resultCacheFilePath(File(context.cacheDir,"formula_cache.json").absolutePath)
+                .resultCacheEnabled(preferences.resultsCacheEnabled).build())
             .generator(
                 GeneratorSpec
                     .builder()
@@ -192,14 +185,9 @@ internal class DataLogger internal constructor() {
                     .commandFrequency(preferences.commandFrequency)
                     .build()
             ).build()
-    }
 
-    private fun query(): Query {
-       return if (preferences.isGenericModeSelected()) Query.builder().pids(preferences.mode01Pids).build()
-               else Query.builder().pids(preferences.mode02Pids).build()
-    }
 
-    private fun workflow(): Workflow {
-        return if (preferences.isGenericModeSelected()) mode1 else mode22
-    }
+    private fun query() =
+        if (preferences.isGenericModeSelected()) Query.builder().pids(preferences.mode01Pids).build()
+        else Query.builder().pids(preferences.mode02Pids).build()
 }

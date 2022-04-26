@@ -39,6 +39,7 @@ class GaugeViewAdapter internal constructor(
         val minValue: TextView = itemView.findViewById(R.id.min_value)
         val maxValue: TextView = itemView.findViewById(R.id.max_value)
         var commandRate: TextView? = itemView.findViewById(R.id.command_rate)
+        var pidMode: TextView? = itemView.findViewById(R.id.pid_mode)
         var gauge: Gauge? = itemView.findViewById(R.id.gauge_view)
         var init: Boolean = false
     }
@@ -70,6 +71,14 @@ class GaugeViewAdapter internal constructor(
         val metric = data.elementAt(position)
         if (!holder.init){
             holder.label.text = metric.command.pid.description
+            holder.pidMode?.run {
+                text = "mode " + metric.command.pid.mode
+                highLightText(
+                    "mode", 0.4f,
+                    Color.parseColor(LABEL_COLOR)
+                )
+            }
+
             view.post {
                 if (isTablet(context)) {
                     val multiplier = calculateScaleMultiplier(view)
@@ -156,12 +165,12 @@ class GaugeViewAdapter internal constructor(
 
         Log.v("GaugeViewAdapter", "multiplier: $multiplier")
 
-        holder.label.textSize *= multiplier
-        holder.value.textSize *= multiplier
-        holder.maxValue.textSize *= multiplier * 0.85f
-        holder.minValue.textSize *= multiplier * 0.85f
+        holder.label.textSize *= multiplier * 0.75f
+        holder.value.textSize *= multiplier * 0.85f
+        holder.maxValue.textSize *= multiplier * 0.65f
+        holder.minValue.textSize *= multiplier * 0.65f
         holder.avgValue?.let {
-            it.textSize *= multiplier * 0.85f
+            it.textSize *= multiplier * 0.65f
         }
         holder.gauge?.let{
             it.strokeWidth *= multiplier * 1.15f

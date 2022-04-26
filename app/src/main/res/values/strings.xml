@@ -12,6 +12,8 @@
     <string name="pid.value_min">min</string>
     <string name="pid.value_avg">avg</string>
     <string name="pid.value_max">max</string>
+    <string name="pid.mode">mode 01</string>
+
 
     <string-array name="prefs.empty_array"></string-array>
     <string name="prefs.pids.generic">pref.pids.generic</string>
@@ -61,5 +63,18 @@
         <item name="4000">4000</item>
         <item name="5000">5000</item>
         <item name="6000">6000</item>
+    </string-array>
+
+    <string-array name="prefs.init_protocol">
+        <item name="AUTO">AUTO</item>
+        <item name="CAN_11">CAN_11</item>
+        <item name="CAN_29">CAN_29</item>
+    </string-array>
+
+    <string-array name="prefs.init_header">
+        <item name=""></item>
+        <item name="DA10F1">DA10F1</item>
+        <item name="DB33F1">DB33F1</item>
+        <item name="7DF">7DF</item>
     </string-array>
 </resources>

@@ -1,7 +1,7 @@
 package org.openobd2.core.logger.bl.datalogger
 
 
-import org.obd.metrics.connection.AdapterConnection
+import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
