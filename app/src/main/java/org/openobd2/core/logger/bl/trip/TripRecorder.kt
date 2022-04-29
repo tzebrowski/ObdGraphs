@@ -22,7 +22,7 @@ private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val startTs: Long, val entries: Map<String, MutableList<Entry>>) {}
+data class Trip(val startTs: Long, val entries: Map<Long, MutableList<Entry>>) {}
 
 class TripRecorder private constructor() {
 
@@ -30,7 +30,7 @@ class TripRecorder private constructor() {
 
         @JvmStatic
         val instance:TripRecorder = TripRecorder().apply {
-            Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
+            Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<Long, MutableList<Entry>>()
             Cache[CACHE_TS_PROPERTY_NAME] =  System.currentTimeMillis()
             Log.i(LOGGER_KEY, "Init cache with stamp: $${Cache[CACHE_TS_PROPERTY_NAME]}")
         }
@@ -42,10 +42,10 @@ class TripRecorder private constructor() {
     fun addTripEntry(reply: ObdMetric) {
         try {
             Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
-                val cache = it as MutableMap<String, MutableList<Entry>>
+                val cache = it as MutableMap<Long, MutableList<Entry>>
                 val timestamp = (System.currentTimeMillis() - (Cache[CACHE_TS_PROPERTY_NAME] as Long)).toFloat()
                 val entry = Entry(timestamp, valueScaler.scaleToNewRange(reply), reply.command.pid.id)
-                cache.getOrPut(reply.command.pid.description) {
+                cache.getOrPut(reply.command.pid.id) {
                     mutableListOf()
                 }.add(entry)
             }
@@ -56,7 +56,7 @@ class TripRecorder private constructor() {
 
     fun getCurrentTrip(): Trip {
         val firstTimeStamp = Cache[CACHE_TS_PROPERTY_NAME] as Long
-        val cacheEntries = Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<String, MutableList<Entry>>
+        val cacheEntries = Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<Long, MutableList<Entry>>
         Log.i(LOGGER_KEY,"Get current trip ts: '${dateFormat.format(Date(firstTimeStamp))}'")
         return Trip(firstTimeStamp, cacheEntries)
     }

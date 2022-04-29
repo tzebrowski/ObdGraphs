@@ -127,11 +127,13 @@ class GraphFragment : Fragment() {
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
             val trip = tripRecorder.getCurrentTrip()
+            val registry = DataLogger.instance.pidDefinitionRegistry()
             tripStartTs = trip.startTs
             trip.entries.let { cache ->
                 chart.run {
-                    cache.forEach { (label, entries) ->
-                        data.getDataSetByLabel(label, true)?.let { lineData ->
+                    cache.forEach { (id, entries) ->
+                        val pid = registry.findBy(id)
+                        data.getDataSetByLabel(pid.description, true)?.let { lineData ->
                             entries.forEach { entry ->  lineData.addEntry(entry) }
                             data.notifyDataChanged()
                         }
