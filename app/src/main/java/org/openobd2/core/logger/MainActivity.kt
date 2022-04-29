@@ -11,7 +11,10 @@ import android.os.PowerManager
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity

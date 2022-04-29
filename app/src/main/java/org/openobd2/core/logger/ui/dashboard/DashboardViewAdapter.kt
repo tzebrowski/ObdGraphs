@@ -25,7 +25,6 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.highLightText
 import org.openobd2.core.logger.ui.common.isTablet
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 internal class DashboardViewAdapter internal constructor(

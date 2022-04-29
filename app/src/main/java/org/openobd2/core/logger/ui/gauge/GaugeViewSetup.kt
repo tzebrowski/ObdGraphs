@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.ui.common.*
-import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.preferences.GaugePreferences
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getLongSet

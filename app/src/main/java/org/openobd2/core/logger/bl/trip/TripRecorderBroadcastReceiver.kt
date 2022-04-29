@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import org.openobd2.core.logger.bl.datalogger.*
+import org.openobd2.core.logger.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.openobd2.core.logger.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 
 private const val LOGGER_KEY = "TripRecorderBroadcastReceiver"
 

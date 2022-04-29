@@ -3,7 +3,9 @@ package org.openobd2.core.logger.ui.preferences
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.preference.*
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences

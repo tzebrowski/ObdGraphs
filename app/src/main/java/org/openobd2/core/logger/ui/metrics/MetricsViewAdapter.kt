@@ -9,14 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
-import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.ui.common.convert
 import org.openobd2.core.logger.ui.common.setText
-import org.openobd2.core.logger.ui.dashboard.round
 
-private const val LABEL_COLOR = "#01804F"
 
 class MetricsViewAdapter internal constructor(
     context: Context?,

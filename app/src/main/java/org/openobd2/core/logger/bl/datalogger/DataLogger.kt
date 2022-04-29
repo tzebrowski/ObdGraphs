@@ -10,9 +10,9 @@ import org.obd.metrics.api.*
 import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
-import org.obd.metrics.diagnostic.Diagnostics
 import org.openobd2.core.logger.ApplicationContext
 import java.io.File
 
