@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
-import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.ui.common.convert
 import org.openobd2.core.logger.ui.common.highLightText
 import org.openobd2.core.logger.ui.common.isTablet
 import org.openobd2.core.logger.ui.dashboard.round
@@ -99,7 +99,7 @@ class GaugeViewAdapter internal constructor(
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
-                text = "min\n ${convert(metric, min)}"
+                text = "min\n ${metric.convert(min)}"
                 highLightText(
                     "min", 0.5f,
                     Color.parseColor(LABEL_COLOR)
@@ -107,7 +107,7 @@ class GaugeViewAdapter internal constructor(
             }
 
             holder.maxValue.run {
-                text = "max\n  ${convert(metric, max)} "
+                text = "max\n  ${metric.convert(max)} "
                 highLightText(
                     "max", 0.5f,
                     Color.parseColor(LABEL_COLOR)
@@ -115,7 +115,7 @@ class GaugeViewAdapter internal constructor(
             }
 
             holder.avgValue?.run {
-                text = "avg\n ${convert(metric, mean)}"
+                text = "avg\n ${metric.convert(mean)}"
                 highLightText(
                     "avg", 0.5f,
                     Color.parseColor(LABEL_COLOR)
@@ -178,21 +178,6 @@ class GaugeViewAdapter internal constructor(
         }
     }
 
-    private fun convert(metric: ObdMetric, value: Double): Number {
-        if (value.isNaN()){
-            return 0.0
-        }
-        return if (metric.command.pid.type == null) value.round(2) else
-            metric.command.pid.type.let {
-                return when (metric.command.pid.type) {
-                    PidDefinition.ValueType.DOUBLE -> value.round(2)
-                    PidDefinition.ValueType.INT -> value.toInt()
-                    PidDefinition.ValueType.SHORT -> value.toInt()
-                    else -> value.round(1)
-                }
-            }
-    }
-
     private fun updateHeight(parent: ViewGroup) {
         if (isTablet(context)) {
             val heightPixels = Resources.getSystem().displayMetrics.heightPixels
@@ -208,7 +193,7 @@ class GaugeViewAdapter internal constructor(
         return if (metric.value == null) {
             "No data"
         } else {
-            return convert(metric,metric.valueToDouble()).toString()
+            return metric.convert(metric.valueToDouble()).toString()
         }
     }
 }

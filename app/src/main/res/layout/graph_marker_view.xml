@@ -6,7 +6,7 @@
     android:background="@drawable/border">
 
     <TableLayout
-        android:layout_width="400dp"
+        android:layout_width="420dp"
         android:layout_height="fill_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,6 +43,14 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Avg"
+                android:textColor="#1C3D72"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_weight="1"

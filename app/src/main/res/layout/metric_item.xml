@@ -52,8 +52,17 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
-
                 android:text="Max"
+                android:textColor="#1C3D72"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/metric_avg_value"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Avg"
                 android:textColor="#1C3D72"
                 android:textSize="14sp"
                 android:textStyle="normal" />

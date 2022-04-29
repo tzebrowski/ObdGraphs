@@ -11,6 +11,7 @@ import org.obd.metrics.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.ui.common.convert
 import org.openobd2.core.logger.ui.common.setText
 import org.openobd2.core.logger.ui.dashboard.round
 
@@ -40,8 +41,9 @@ class MarkerWindowViewAdapter internal constructor(
         holder.metricMode.setText(metric.command.pid.mode, Color.parseColor("#01804F"), 0.9f)
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
-            holder.metricMaxValue.setText(convert(metric, max).toString(), Color.parseColor("#01804F"), 1.0f)
-            holder.metricMinValue.setText(convert(metric, min).toString(), Color.parseColor("#01804F"), 1.0f)
+            holder.metricMaxValue.setText(metric.convert(max).toString(), Color.parseColor("#01804F"), 1.0f)
+            holder.metricMinValue.setText(metric.convert(min).toString(), Color.parseColor("#01804F"), 1.0f)
+            holder.metricMeanValue.setText(metric.convert(mean).toString(), Color.parseColor("#01804F"), 1.0f)
         }
         holder.metricValue.setText(metric.valueToString(), Color.parseColor("#01804F"), 1.1f)
     }
@@ -57,6 +59,7 @@ class MarkerWindowViewAdapter internal constructor(
         var metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
         var metricMode: TextView = itemView.findViewById(R.id.metric_mode)
         var metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
+        var metricMeanValue: TextView = itemView.findViewById(R.id.metric_avg_value)
 
         override fun onClick(view: View?) {
         }
@@ -64,20 +67,5 @@ class MarkerWindowViewAdapter internal constructor(
         init {
             itemView.setOnClickListener(this)
         }
-    }
-
-    private fun convert(metric: ObdMetric, value: Double): Number {
-        if (value.isNaN()){
-            return 0.0
-        }
-        return if (metric.command.pid.type == null) value.round(2) else
-            metric.command.pid.type.let {
-                return when (metric.command.pid.type) {
-                    PidDefinition.ValueType.DOUBLE -> value.round(2)
-                    PidDefinition.ValueType.INT -> value.toInt()
-                    PidDefinition.ValueType.SHORT -> value.toInt()
-                    else -> value.round(1)
-                }
-            }
     }
 }

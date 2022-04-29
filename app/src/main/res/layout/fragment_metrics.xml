@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.metrics.GraphFragment">
+    android:layout_height="match_parent">
 
     <TableLayout
         android:id="@+id/livedata_table_layout"
@@ -51,7 +50,6 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:gravity="right"
-
                 android:text="Max"
                 android:textColor="#1C3D72"
                 android:textSize="20sp"
@@ -61,8 +59,17 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
+                android:text="Avg"
+                android:textColor="#1C3D72"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="right"
                 android:paddingRight="6dp"
-                android:text="Value"
+                android:text="Current value"
                 android:textColor="#1C3D72"
                 android:textSize="20sp"
                 android:textStyle="bold" />

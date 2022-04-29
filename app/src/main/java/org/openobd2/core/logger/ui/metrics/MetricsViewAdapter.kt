@@ -12,6 +12,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.ui.common.convert
 import org.openobd2.core.logger.ui.common.setText
 import org.openobd2.core.logger.ui.dashboard.round
 
@@ -48,8 +49,9 @@ class MetricsViewAdapter internal constructor(
         holder.metricMode.setText(metric.command.pid.mode, Color.parseColor("#01804F"), 1.2f)
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
-            holder.metricMaxValue.setText(convert(metric, max).toString(), Color.parseColor("#01804F"), 1.2f)
-            holder.metricMinValue.setText(convert(metric, min).toString(), Color.parseColor("#01804F"), 1.2f)
+            holder.metricMaxValue.setText(metric.convert(max).toString(), Color.parseColor("#01804F"), 1.2f)
+            holder.metricMinValue.setText(metric.convert(min).toString(), Color.parseColor("#01804F"), 1.2f)
+            holder.metricMeanValue.setText(metric.convert(mean).toString(), Color.parseColor("#01804F"), 1.2f)
         }
         holder.metricValue.setText(valueTxt, Color.parseColor("#01804F"), 1.3f)
     }
@@ -65,6 +67,7 @@ class MetricsViewAdapter internal constructor(
         var metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
         var metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
         var metricMode: TextView = itemView.findViewById(R.id.metric_mode)
+        var metricMeanValue: TextView = itemView.findViewById(R.id.metric_avg_value)
 
         override fun onClick(view: View?) {
         }
@@ -74,18 +77,4 @@ class MetricsViewAdapter internal constructor(
         }
     }
 
-    private fun convert(metric: ObdMetric, value: Double): Number {
-        if (value.isNaN()){
-            return 0.0
-        }
-        return if (metric.command.pid.type == null) value.round(2) else
-            metric.command.pid.type.let {
-                return when (metric.command.pid.type) {
-                    PidDefinition.ValueType.DOUBLE -> value.round(2)
-                    PidDefinition.ValueType.INT -> value.toInt()
-                    PidDefinition.ValueType.SHORT -> value.toInt()
-                    else -> value.round(1)
-                }
-            }
-    }
 }
