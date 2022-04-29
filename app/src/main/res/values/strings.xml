@@ -14,20 +14,11 @@
     <string name="pid.value_max">max</string>
     <string name="pid.mode">mode 01</string>
 
-
     <string-array name="prefs.empty_array"></string-array>
-    <string name="prefs.pids.generic">pref.pids.generic</string>
 
     <string-array name="prefs.connection_type_array">
         <item name="connection.wifi">wifi</item>
         <item name="connection.bluetooth">bluetooth</item>
-    </string-array>
-
-    <string-array name="prefs.modes_arrays">
-        <item name="generic.mode">Generic mode</item>
-        <!--
-        <item name="mode22.mode">Mode 22</item>
-        -->
     </string-array>
 
     <string-array name="prefs.dash_color_themes">

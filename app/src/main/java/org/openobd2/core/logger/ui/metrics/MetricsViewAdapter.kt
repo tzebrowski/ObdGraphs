@@ -9,8 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.bl.datalogger.DataLogger
 import org.openobd2.core.logger.ui.common.setText
+import org.openobd2.core.logger.ui.dashboard.round
+
+private const val LABEL_COLOR = "#01804F"
 
 class MetricsViewAdapter internal constructor(
     context: Context?,
@@ -24,7 +29,7 @@ class MetricsViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        val view: View = mInflater.inflate(R.layout.livedata_item, parent, false)
+        val view: View = mInflater.inflate(R.layout.metric_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -33,14 +38,20 @@ class MetricsViewAdapter internal constructor(
         position: Int
     ) {
 
-        val commandReply = mData.elementAt(position)
-        var valueTxt: String? = commandReply.valueToString()
+        val metric = mData.elementAt(position) as ObdMetric
+        var valueTxt: String? = metric.valueToString()
         if (valueTxt != null) {
-            valueTxt += " " + (commandReply.command as ObdCommand).pid.units
+            valueTxt += " " + (metric.command as ObdCommand).pid.units
         }
 
-        holder.metricNameTextView.setText(commandReply.command.label, Color.GRAY, 1.1f)
-        holder.metricValueTextView.setText(valueTxt, Color.parseColor("#01804F"), 1.4f)
+        holder.metricName.setText(metric.command.label, Color.GRAY, 1.2f)
+        holder.metricMode.setText(metric.command.pid.mode, Color.parseColor("#01804F"), 1.2f)
+
+        DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
+            holder.metricMaxValue.setText(convert(metric, max).toString(), Color.parseColor("#01804F"), 1.2f)
+            holder.metricMinValue.setText(convert(metric, min).toString(), Color.parseColor("#01804F"), 1.2f)
+        }
+        holder.metricValue.setText(valueTxt, Color.parseColor("#01804F"), 1.3f)
     }
 
     override fun getItemCount(): Int {
@@ -49,13 +60,32 @@ class MetricsViewAdapter internal constructor(
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        var metricNameTextView: TextView = itemView.findViewById(R.id.metric_name)
-        var metricValueTextView: TextView = itemView.findViewById(R.id.metric_value)
+        var metricName: TextView = itemView.findViewById(R.id.metric_name)
+        var metricValue: TextView = itemView.findViewById(R.id.metric_value)
+        var metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
+        var metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
+        var metricMode: TextView = itemView.findViewById(R.id.metric_mode)
+
         override fun onClick(view: View?) {
         }
 
         init {
             itemView.setOnClickListener(this)
         }
+    }
+
+    private fun convert(metric: ObdMetric, value: Double): Number {
+        if (value.isNaN()){
+            return 0.0
+        }
+        return if (metric.command.pid.type == null) value.round(2) else
+            metric.command.pid.type.let {
+                return when (metric.command.pid.type) {
+                    PidDefinition.ValueType.DOUBLE -> value.round(2)
+                    PidDefinition.ValueType.INT -> value.toInt()
+                    PidDefinition.ValueType.SHORT -> value.toInt()
+                    else -> value.round(1)
+                }
+            }
     }
 }

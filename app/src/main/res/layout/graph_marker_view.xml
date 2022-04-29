@@ -6,37 +6,66 @@
     android:background="@drawable/border">
 
     <TableLayout
-        android:layout_width="fill_parent"
+        android:layout_width="400dp"
         android:layout_height="fill_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TableRow>
+        <TableRow android:background="@drawable/border">
 
             <TextView
-                android:layout_width="200dp"
-                android:layout_column="2"
-                android:layout_marginLeft="3dp"
-                android:layout_weight="1"
-                android:text="Metric name"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:gravity="left"
+                android:text="Mode"
+                android:textColor="#1C3D72"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_weight="1.5"
+                android:layout_width="0dp"
+                android:gravity="left"
+                android:text="Name"
                 android:textAllCaps="false"
                 android:textColor="#1C3D72"
-                android:textSize="20sp"
-                android:textStyle="bold"></TextView>
+                android:textSize="16sp"
+                android:textStyle="bold"/>
 
             <TextView
-                android:layout_column="0"
-                android:layout_marginRight="3dp"
                 android:layout_weight="1"
-                android:backgroundTintMode="src_in"
+                android:layout_width="0dp"
                 android:gravity="right"
+                android:text="Min"
+                android:textColor="#1C3D72"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:gravity="right"
+
+                android:text="Max"
+                android:textColor="#1C3D72"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:paddingRight="6dp"
+                android:gravity="right"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:text="Value"
                 android:textColor="#1C3D72"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
         </TableRow>
+
+
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView

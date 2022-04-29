@@ -35,9 +35,9 @@ class PidListPreferences(
             "low"-> {
                 DataLogger.instance.pidDefinitionRegistry().findAll()
                     .filter { pidDefinition -> pidDefinition.priority > 4}
-                    .sortedBy { pidDefinition -> pidDefinition.priority }
+                    .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " +  pidDefinition.description }
                     .forEach { p ->
-                        entries.add(p.description)
+                        entries.add("[" + p.mode + "] " +  p.description)
                         entriesValues.add(p.id.toString())
                     }
                 setDefaultValue(hashSetOf<String>())
@@ -45,9 +45,9 @@ class PidListPreferences(
             "high" -> {
                 DataLogger.instance.pidDefinitionRegistry().findAll()
                     .filter { pidDefinition -> pidDefinition.priority < 4}
-                    .sortedBy { pidDefinition -> pidDefinition.priority }
+                    .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " +  pidDefinition.description }
                     .forEach { p ->
-                        entries.add(p.description)
+                        entries.add("[" + p.mode + "] " +  p.description)
                         entriesValues.add(p.id.toString())
                     }
                 setDefaultValue(defaultSelection)
@@ -55,14 +55,13 @@ class PidListPreferences(
             else -> {
                 DataLogger.instance.pidDefinitionRegistry().findAll()
                    .sortedBy { pidDefinition -> pidDefinition.priority }
-                    .forEach { p ->
-                        entries.add(p.description)
+                   .forEach { p ->
+                        entries.add("[" + p.mode + "] " +  p.description)
                         entriesValues.add(p.id.toString())
                     }
                 setDefaultValue(defaultSelection)
             }
         }
-
 
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()

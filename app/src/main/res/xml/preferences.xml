@@ -113,11 +113,6 @@
                         android:key="pref.pids.generic.low"
                         android:singleLineTitle="false"
                         android:summary="Low priority PID's" />
-
-                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        android:key="pref.pids.mode22"
-                        android:singleLineTitle="false"
-                        android:summary="Alfa Romeo specific PID's" />
                 </PreferenceCategory>
             </PreferenceScreen>
 
@@ -154,15 +149,6 @@
                 android:entryValues="@array/prefs.command_frequency"
                 android:key="pref.adapter.command.freq"
                 android:summary="Command frequency" />
-
-            <ListPreference
-                android:defaultValue="Generic mode"
-                android:dialogTitle="Adapter mode"
-                android:entries="@array/prefs.modes_arrays"
-                android:entryValues="@array/prefs.modes_arrays"
-                android:key="pref.mode"
-                android:summary="Adapter mode" />
-
         </PreferenceCategory>
     </PreferenceCategory>
 
