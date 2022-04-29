@@ -29,7 +29,7 @@ class GaugeViewAdapter internal constructor(
     private val context: Context,
     val data: MutableList<ObdMetric>,
     private val resourceId: Int
-): RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
@@ -47,7 +47,7 @@ class GaugeViewAdapter internal constructor(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val preferences: GaugePreferences by lazy { getGaugePreferences() }
-    private val valueScaler  = ValueScaler()
+    private val valueScaler = ValueScaler()
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
@@ -69,7 +69,7 @@ class GaugeViewAdapter internal constructor(
         position: Int
     ) {
         val metric = data.elementAt(position)
-        if (!holder.init){
+        if (!holder.init) {
             holder.label.text = metric.command.pid.description
             holder.pidMode?.run {
                 text = "mode " + metric.command.pid.mode
@@ -82,7 +82,7 @@ class GaugeViewAdapter internal constructor(
             view.post {
                 if (isTablet(context)) {
                     val multiplier = calculateScaleMultiplier(view)
-                    rescaleView(holder,multiplier)
+                    rescaleView(holder, multiplier)
                 }
                 holder.init = true
             }
@@ -94,7 +94,8 @@ class GaugeViewAdapter internal constructor(
 
             highLightText(
                 units, 0.3f,
-                Color.parseColor(LABEL_COLOR))
+                Color.parseColor(LABEL_COLOR)
+            )
         }
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
@@ -155,7 +156,8 @@ class GaugeViewAdapter internal constructor(
         val width = view.measuredWidth.toFloat()
         val height = Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
 
-        val max = Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
+        val max =
+            Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
         val multiplier = valueScaler.scaleToNewRange(width * height, 0.0f, max, 1f, 3f)
         Log.v("GaugeViewAdapter", "r: $multiplier, w: $width,h: $height")
         return multiplier
@@ -172,7 +174,7 @@ class GaugeViewAdapter internal constructor(
         holder.avgValue?.let {
             it.textSize *= multiplier * 0.65f
         }
-        holder.gauge?.let{
+        holder.gauge?.let {
             it.strokeWidth *= multiplier * 1.15f
             it.init()
         }

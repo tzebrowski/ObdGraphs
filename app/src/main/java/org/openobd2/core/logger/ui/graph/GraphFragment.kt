@@ -132,10 +132,12 @@ class GraphFragment : Fragment() {
             tripStartTs = trip.startTs
             trip.entries.let { cache ->
                 chart.run {
-                    cache.forEach { (id, entries) ->
+                    cache.forEach { (id, entry) ->
                         val pid = registry.findBy(id)
                         data.getDataSetByLabel(pid.description, true)?.let { lineData ->
-                            entries.forEach { entry ->  lineData.addEntry(entry) }
+                            entry.entries.forEach{
+                                lineData.addEntry(it)
+                            }
                             data.notifyDataChanged()
                         }
                     }
