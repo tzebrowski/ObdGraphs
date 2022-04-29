@@ -38,8 +38,8 @@ class GraphFragment : Fragment() {
     private var prefsChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "pref.graph.trips.selected") {
-                sharedPreferences!!.getString(key,null)?.let {
-                    if(!isDataCollectingProcessWorking()) {
+                sharedPreferences!!.getString(key, null)?.let {
+                    if (!isDataCollectingProcessWorking()) {
                         context?.run {
                             tripRecorder.setCurrentTrip(it)
                         }
@@ -49,7 +49,7 @@ class GraphFragment : Fragment() {
         }
 
     private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent? ) {
+        override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = true
@@ -62,13 +62,14 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private class ReverseValueFormatter(val pid: PidDefinition, val valueScaler: ValueScaler): ValueFormatter(){
+    private class ReverseValueFormatter(val pid: PidDefinition, val valueScaler: ValueScaler) :
+        ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return valueScaler.scaleToPidRange(pid, value).toString()
         }
     }
 
-    private val xAxisFormatter = object: ValueFormatter() {
+    private val xAxisFormatter = object : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return simpleDateFormat.format(Date(tripStartTs + value.toLong()))
         }
@@ -76,8 +77,8 @@ class GraphFragment : Fragment() {
 
     private val simpleDateFormat = SimpleDateFormat("HH:mm:ss")
     private lateinit var chart: LineChart
-    private var colors: IntIterator  = Colors().generate()
-    private val valueScaler  = ValueScaler()
+    private var colors: IntIterator = Colors().generate()
+    private val valueScaler = ValueScaler()
     private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
     private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
@@ -98,7 +99,7 @@ class GraphFragment : Fragment() {
 
         Prefs.registerOnSharedPreferenceChangeListener(prefsChangeListener)
 
-        colors  = Colors().generate()
+        colors = Colors().generate()
         preferences = getGraphPreferences()
 
         initializeChart(root)
@@ -135,14 +136,14 @@ class GraphFragment : Fragment() {
                     cache.forEach { (id, entry) ->
                         val pid = registry.findBy(id)
                         data.getDataSetByLabel(pid.description, true)?.let { lineData ->
-                            entry.entries.forEach{
+                            entry.entries.forEach {
                                 lineData.addEntry(it)
                             }
                             data.notifyDataChanged()
                         }
                     }
 
-                    Log.i(LOGGER_KEY,"Set scale minima of XAxis to 7f")
+                    Log.i(LOGGER_KEY, "Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
                     setScaleMinima(7f, 0.1f)
                     moveViewToX(xAxis.axisMaximum - 5000f)
@@ -175,12 +176,13 @@ class GraphFragment : Fragment() {
         chart.run {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
                 val ts = (System.currentTimeMillis() - tripStartTs).toFloat()
-                val entry = Entry(ts, valueScaler.scaleToNewRange(obdMetric), obdMetric.command.pid.id)
+                val entry =
+                    Entry(ts, valueScaler.scaleToNewRange(obdMetric), obdMetric.command.pid.id)
                 it.addEntry(entry)
                 data.notifyDataChanged()
                 notifyDataSetChanged()
 
-                if (!xAxis.axisMaximum.isNaN() && !xAxis.axisMaximum.isInfinite()){
+                if (!xAxis.axisMaximum.isNaN() && !xAxis.axisMaximum.isInfinite()) {
                     xAxis.axisMinimum = xAxis.axisMinimum + preferences.xAxisMinimumShift
                 }
                 invalidate()
@@ -188,7 +190,7 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private fun buildChart(root: View) : LineChart {
+    private fun buildChart(root: View): LineChart {
         return (root.findViewById(R.id.graph_view_chart) as LineChart).apply {
             description.isEnabled = false
             setTouchEnabled(true)
@@ -243,10 +245,10 @@ class GraphFragment : Fragment() {
             axisRight.run {
                 isEnabled = false
             }
-         }
+        }
     }
 
-    private fun createDataSet(pid: PidDefinition) : LineDataSet {
+    private fun createDataSet(pid: PidDefinition): LineDataSet {
         val values = mutableListOf<Entry>()
         val lineDataSet = LineDataSet(values, pid.description)
         val col = colors.nextInt()

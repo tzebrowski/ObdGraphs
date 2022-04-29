@@ -6,7 +6,7 @@ import org.openobd2.core.logger.ui.dashboard.round
 
 
 fun ObdMetric.convert(value: Double): Number {
-    if (value.isNaN()){
+    if (value.isNaN()) {
         return 0.0
     }
     return if (command.pid.type == null) value.round(2) else

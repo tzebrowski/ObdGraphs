@@ -18,7 +18,7 @@
         android:id="@+id/navigation_metrics"
         android:icon="@android:drawable/ic_menu_compass"
         android:title="@string/navigation.title_metrics" />
-     <item
+    <item
         android:id="@+id/navigation_preferences"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/navigation.title_preferences" />

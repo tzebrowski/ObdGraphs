@@ -57,9 +57,7 @@ class WifiConnection(private val inetSocketAddress: InetSocketAddress) : Adapter
         close()
         try {
             Thread.sleep(500)
-        } catch (e: InterruptedException) {
-           e.printStackTrace()
-        }
+        } catch (e: InterruptedException) { }
         connect()
     }
 

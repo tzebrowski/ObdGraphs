@@ -16,8 +16,8 @@
         <TableRow android:background="@drawable/border">
 
             <TextView
-                android:layout_weight="0.5"
                 android:layout_width="0dp"
+                android:layout_weight="0.5"
                 android:gravity="left"
                 android:text="Mode"
                 android:textColor="#1C3D72"
@@ -25,18 +25,18 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_weight="1.5"
                 android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:gravity="left"
                 android:text="Name"
                 android:textAllCaps="false"
                 android:textColor="#1C3D72"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
-                android:layout_weight="1"
                 android:layout_width="0dp"
+                android:layout_weight="1"
                 android:gravity="right"
                 android:text="Min"
                 android:textColor="#1C3D72"
@@ -53,8 +53,8 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_weight="1"
                 android:layout_width="0dp"
+                android:layout_weight="1"
                 android:gravity="right"
 
                 android:text="Max"
@@ -63,10 +63,10 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:paddingRight="6dp"
-                android:gravity="right"
-                android:layout_weight="1"
                 android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:paddingRight="6dp"
                 android:text="Value"
                 android:textColor="#1C3D72"
                 android:textSize="16sp"

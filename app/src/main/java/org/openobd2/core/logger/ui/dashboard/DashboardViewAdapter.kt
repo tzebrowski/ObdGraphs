@@ -103,7 +103,7 @@ internal class DashboardViewAdapter internal constructor(
         val units = (metric.command as ObdCommand).pid.units
         val value = metric.valueToString() + " " + units
         holder.value.text = value
-        holder.value.highLightText(units,0.3f, Color.parseColor("#01804F"))
+        holder.value.highLightText(units, 0.3f, Color.parseColor("#01804F"))
     }
 
     override fun getItemCount(): Int {
@@ -122,7 +122,7 @@ internal class DashboardViewAdapter internal constructor(
 
         fun buildChart(pid: PidDefinition) {
             if (!initialized) {
-                anim.run{
+                anim.run {
                     duration = 300
                     startOffset = 20
                     repeatMode = Animation.REVERSE
@@ -176,7 +176,7 @@ internal class DashboardViewAdapter internal constructor(
                         setDrawInside(false)
                         form = Legend.LegendForm.SQUARE
                     }
-                    axisRight.run{
+                    axisRight.run {
                         setDrawGridLines(false)
                     }
                 }
@@ -206,7 +206,7 @@ internal class DashboardViewAdapter internal constructor(
                         4 -> value.textSize *= 1.3f
                         5 -> value.textSize *= 1.2f
                         6 -> value.textSize *= 1.2f
-                        else -> value.textSize *=  1.1f
+                        else -> value.textSize *= 1.1f
                     }
                 }
                 initialized = true

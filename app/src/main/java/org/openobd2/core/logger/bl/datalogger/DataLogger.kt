@@ -97,7 +97,7 @@ internal class DataLogger internal constructor() {
         }
     }
 
-    private val workflow: Workflow  by lazy {
+    private val workflow: Workflow by lazy {
         Workflow.instance().equationEngine("rhino")
             .pids(
                 Pids.builder()
@@ -128,7 +128,7 @@ internal class DataLogger internal constructor() {
     }
 
     fun stop() {
-       workflow.stop()
+        workflow.stop()
     }
 
     fun start() {
@@ -137,27 +137,32 @@ internal class DataLogger internal constructor() {
         Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
 
         connection()?.run {
-            workflow.start(this, query, init(),
-                adjustments())
+            workflow.start(
+                this, query, init(),
+                adjustments()
+            )
             Log.i(LOGGER_TAG, "Start collecting process")
         }
     }
 
-    private fun connection()  = if (preferences.connectionType == "wifi") {
-            Log.i(LOGGER_TAG, "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ...")
-            WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
-        }else {
-            try {
-                val deviceName = preferences.adapterId
-                Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
-                BluetoothConnection(deviceName)
-            }catch (e: IllegalStateException){
-                context.sendBroadcast(Intent().apply {
-                    action = DATA_LOGGER_ERROR_CONNECT_EVENT
-                })
-                null
-            }
+    private fun connection() = if (preferences.connectionType == "wifi") {
+        Log.i(
+            LOGGER_TAG,
+            "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ..."
+        )
+        WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
+    } else {
+        try {
+            val deviceName = preferences.adapterId
+            Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
+            BluetoothConnection(deviceName)
+        } catch (e: IllegalStateException) {
+            context.sendBroadcast(Intent().apply {
+                action = DATA_LOGGER_ERROR_CONNECT_EVENT
+            })
+            null
         }
+    }
 
     private fun init() = Init.builder()
         .delay(preferences.initDelay)
@@ -167,27 +172,30 @@ internal class DataLogger internal constructor() {
         .sequence(DefaultCommandGroup.INIT).build()
 
     private fun adjustments() = Adjustments.builder()
-            .batchEnabled(preferences.batchEnabled)
-            .cacheConfig(CacheConfig.builder()
-                .resultCacheFilePath(File(context.cacheDir,"formula_cache.json").absolutePath)
-                .resultCacheEnabled(preferences.resultsCacheEnabled).build())
-            .generator(
-                GeneratorSpec
-                    .builder()
-                    .smart(true)
-                    .enabled(preferences.generatorEnabled)
-                    .increment(0.5).build()
-            ).adaptiveTiming(
-                AdaptiveTimeoutPolicy
-                    .builder()
-                    .enabled(preferences.adaptiveConnectionEnabled)
-                    .checkInterval(5000) //10s
-                    .commandFrequency(preferences.commandFrequency)
-                    .build()
-            ).build()
+        .batchEnabled(preferences.batchEnabled)
+        .cacheConfig(
+            CacheConfig.builder()
+                .resultCacheFilePath(File(context.cacheDir, "formula_cache.json").absolutePath)
+                .resultCacheEnabled(preferences.resultsCacheEnabled).build()
+        )
+        .generator(
+            GeneratorSpec
+                .builder()
+                .smart(true)
+                .enabled(preferences.generatorEnabled)
+                .increment(0.5).build()
+        ).adaptiveTiming(
+            AdaptiveTimeoutPolicy
+                .builder()
+                .enabled(preferences.adaptiveConnectionEnabled)
+                .checkInterval(5000) //10s
+                .commandFrequency(preferences.commandFrequency)
+                .build()
+        ).build()
 
 
     private fun query() =
-        if (preferences.isGenericModeSelected()) Query.builder().pids(preferences.mode01Pids).build()
+        if (preferences.isGenericModeSelected()) Query.builder().pids(preferences.mode01Pids)
+            .build()
         else Query.builder().pids(preferences.mode02Pids).build()
 }

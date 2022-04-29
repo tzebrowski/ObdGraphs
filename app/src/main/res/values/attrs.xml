@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="priority" format="string"/>
+    <attr name="priority" format="string" />
     <declare-styleable name="Gauge">
         <attr name="gaugePointSize" format="integer" />
         <attr name="gaugePointStartColor" format="color" />

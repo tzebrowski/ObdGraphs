@@ -14,14 +14,22 @@ class ValueScaler {
         pid: PidDefinition,
         value: Float
     ): Float {
-        return scaleToNewRange(value,NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL, pid.min.toFloat(), pid.max.toFloat())
+        return scaleToNewRange(
+            value,
+            NEW_RANGE_MIN_VAL,
+            NEW_RANGE_MAX_VAL,
+            pid.min.toFloat(),
+            pid.max.toFloat()
+        )
     }
 
     fun scaleToNewRange(
         obdMetric: ObdMetric
     ): Float {
-        return scaleToNewRange(obdMetric.valueToDouble().toFloat(),obdMetric.command.pid.min.toFloat(),
-                obdMetric.command.pid.max.toFloat(), NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL)
+        return scaleToNewRange(
+            obdMetric.valueToDouble().toFloat(), obdMetric.command.pid.min.toFloat(),
+            obdMetric.command.pid.max.toFloat(), NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL
+        )
     }
 
     fun scaleToNewRange(

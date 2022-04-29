@@ -30,10 +30,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        if (arguments == null){
+        if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
-        }else{
-            setPreferencesFromResource(R.xml.preferences, requireArguments().get("preferences.rootKey")  as String)
+        } else {
+            setPreferencesFromResource(
+                R.xml.preferences,
+                requireArguments().get("preferences.rootKey") as String
+            )
         }
     }
 
@@ -126,10 +129,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val p1 = findPreference<Preference>("pref.pids.generic")
         val p2 = findPreference<Preference>("pref.pids.mode22")
 
-        if (preferences.isGenericModeSelected()){
+        if (preferences.isGenericModeSelected()) {
             p1?.isVisible = true
             p2?.isVisible = false
-        }else{
+        } else {
             p1?.isVisible = false
             p2?.isVisible = true
         }

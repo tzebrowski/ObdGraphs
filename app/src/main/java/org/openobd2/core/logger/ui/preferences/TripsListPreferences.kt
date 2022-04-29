@@ -23,7 +23,7 @@ class TripsListPreferences(
         entries.add("")
         entriesValues.add("")
 
-        TripRecorder.instance.findAllTripsBy().forEach{
+        TripRecorder.instance.findAllTripsBy().forEach {
             val label = it.substring(5, it.length - 5)
             entries.add(label)
             entriesValues.add(it)

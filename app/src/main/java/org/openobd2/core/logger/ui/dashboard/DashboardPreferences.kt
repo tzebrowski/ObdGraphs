@@ -6,20 +6,23 @@ import org.openobd2.core.logger.ui.preferences.isEnabled
 import org.openobd2.core.logger.ui.preferences.updateLongSet
 
 
-data class DashboardPreferences(val swipeToDeleteEnabled: Boolean,
-                                val gaugeViewVisible: Boolean,
-                                val dashboardViewVisible: Boolean,
-                                val dashboardVisiblePids: Set<Long>,
-                                val colorsEnabled: Boolean,
-                                val blinkEnabled: Boolean)
+data class DashboardPreferences(
+    val swipeToDeleteEnabled: Boolean,
+    val gaugeViewVisible: Boolean,
+    val dashboardViewVisible: Boolean,
+    val dashboardVisiblePids: Set<Long>,
+    val colorsEnabled: Boolean,
+    val blinkEnabled: Boolean
+)
 
-fun updateDashboardPids(list: List<Long>){
+fun updateDashboardPids(list: List<Long>) {
     Prefs.updateLongSet(
         "pref.dash.pids.selected",
         list
     )
 }
-fun getDashboardPreferences() : DashboardPreferences{
+
+fun getDashboardPreferences(): DashboardPreferences {
 
     val swipeToDelete =
         Prefs.getBoolean("pref.dash.swipe.to.delete", false)
@@ -31,6 +34,8 @@ fun getDashboardPreferences() : DashboardPreferences{
     val colors = Prefs.isEnabled("pref.dash.top.values.red.color")
     val blink = Prefs.isEnabled("pref.dash.top.values.blink")
 
-    return DashboardPreferences(swipeToDelete, gaugeVisible,
-        dashboardVisible, visiblePids, colors, blink)
+    return DashboardPreferences(
+        swipeToDelete, gaugeVisible,
+        dashboardVisible, visiblePids, colors, blink
+    )
 }

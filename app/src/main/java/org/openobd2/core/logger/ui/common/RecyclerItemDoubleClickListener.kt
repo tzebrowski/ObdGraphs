@@ -18,11 +18,13 @@ private class GestureListener(val context: Context) : GestureDetector.SimpleOnGe
     }
 }
 
-fun onDoubleClickListener(context: Context) : View.OnTouchListener{
+fun onDoubleClickListener(context: Context): View.OnTouchListener {
     val gestureDetector = GestureDetector(context, GestureListener(context))
-    return  View.OnTouchListener { _, event -> gestureDetector.onTouchEvent(
-        event
-    ) }
+    return View.OnTouchListener { _, event ->
+        gestureDetector.onTouchEvent(
+            event
+        )
+    }
 }
 
 class ToggleToolbarDoubleClickListener(context: Context?) :

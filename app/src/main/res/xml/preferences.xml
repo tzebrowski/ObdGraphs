@@ -18,7 +18,7 @@
             android:key="connection.type.bluetooth"
             android:title="Bluetooth settings">
 
-           <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
+            <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
                 android:defaultValue="@array/prefs.empty_array"
                 android:dialogTitle="Bluetooth adapter name"
                 android:key="pref.adapter.id"
@@ -55,14 +55,14 @@
             android:title="Diagnosis">
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:singleLineTitle="false"
                 android:key="pref.adapter.diagnosis.command.frequency.enabled"
+                android:singleLineTitle="false"
                 android:summary="Display commands frequency" />
         </PreferenceCategory>
 
         <PreferenceCategory
-        android:key="init"
-        android:title="Init">
+            android:key="init"
+            android:title="Init">
 
             <ListPreference
                 android:defaultValue="500"
@@ -96,23 +96,23 @@
 
         <PreferenceCategory android:title="General settings">
             <PreferenceScreen
-                app:key="prefs.pids.query"
-                app:isPreferenceVisible="true"
                 android:singleLineTitle="false"
-                android:summary="Parameter IDs to query">
+                android:summary="Parameter IDs to query"
+                app:isPreferenceVisible="true"
+                app:key="prefs.pids.query">
 
                 <PreferenceCategory android:title="Parameter IDs to query">
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        app:priority="high"
                         android:key="pref.pids.generic.high"
                         android:singleLineTitle="false"
-                        android:summary="High priority PID's" />
+                        android:summary="High priority PID's"
+                        app:priority="high" />
 
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        app:priority="low"
                         android:key="pref.pids.generic.low"
                         android:singleLineTitle="false"
-                        android:summary="Low priority PID's" />
+                        android:summary="Low priority PID's"
+                        app:priority="low" />
                 </PreferenceCategory>
             </PreferenceScreen>
 
@@ -189,8 +189,8 @@
             android:summary="Hide toolbar when double click" />
 
         <PreferenceScreen
-            app:key="prefs.gauge"
-            android:summary="Gauge view configuration">
+            android:summary="Gauge view configuration"
+            app:key="prefs.gauge">
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="pref.gauge.view.enabled"
@@ -211,8 +211,8 @@
         </PreferenceScreen>
 
         <PreferenceScreen
-            app:key="prefs.graph"
-            android:summary="Graph view configuration">
+            android:summary="Graph view configuration"
+            app:key="prefs.graph">
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="pref.graph.view.enabled"
@@ -222,20 +222,20 @@
 
                 android:defaultValue="true"
                 android:key="pref.graph.cache.enabled"
-                android:summary="Cache enabled"/>
+                android:summary="Cache enabled" />
 
             <EditTextPreference
-                android:inputType="number"
                 android:defaultValue="20"
                 android:dialogTitle="X-Axis: Moving time ms"
+                android:inputType="number"
                 android:key="pref.graph.x-axis.minimum-shift.time"
                 android:singleLineTitle="false"
                 android:summary="X-Axis moving time" />
 
             <EditTextPreference
-                android:inputType="number"
                 android:defaultValue="20000"
                 android:dialogTitle="X-Axis: Start moving after ms"
+                android:inputType="number"
                 android:key="pref.graph.x-axis.start-moving-after.time"
                 android:singleLineTitle="false"
                 android:summary="X-Axis start moving after" />
@@ -248,10 +248,10 @@
 
             <PreferenceCategory android:title="Trips">
                 <CheckBoxPreference
-                    android:singleLineTitle="false"
                     android:defaultValue="false"
                     android:key="pref.trips.recordings.save.short.trip"
-                    android:summary="Record trips shorten than 5s length (engine start)"/>
+                    android:singleLineTitle="false"
+                    android:summary="Record trips shorten than 5s length (engine start)" />
 
                 <org.openobd2.core.logger.ui.preferences.TripsListPreferences
                     android:defaultValue="@array/prefs.empty_array"
@@ -279,7 +279,7 @@
                 android:defaultValue="false"
                 android:key="pref.dash.top.values.red.color"
                 android:singleLineTitle="false"
-                android:summary="Highlight top values"/>
+                android:summary="Highlight top values" />
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -319,12 +319,12 @@
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
-                android:summary="Enable data generator"/>
+                android:summary="Enable data generator" />
 
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.debug.view.enabled"
-                android:summary="Enable the view"/>
+                android:summary="Enable the view" />
         </PreferenceCategory>
     </PreferenceCategory>
 </PreferenceScreen>

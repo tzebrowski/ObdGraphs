@@ -12,6 +12,7 @@ import kotlin.math.abs
 // This class is a copy of https://github.com/pkleczko/CustomGauge
 // It includes minor extensions.
 private const val DEFAULT_LONG_POINTER_SIZE = 1
+
 class Gauge : View {
     private lateinit var paint: Paint
     var strokeWidth = 0f
@@ -19,14 +20,14 @@ class Gauge : View {
     private lateinit var rectF: RectF
     private var startAngle = 0
     private var sweepAngle = 0
-    var startValue:Float = 0f
+    var startValue: Float = 0f
     private var pointAngle = 0.0
     private var point = 0
     private var pointSize = 0
     private var pointStartColor = 0
     private var pointEndColor = 0
     private var dividerColor: Int = 0
-    private var dividerSize:Float = 0f
+    private var dividerSize: Float = 0f
     private var dividerStepAngle = 0
     private var dividersCount = 0
     private var isDividerDrawFirst = false
@@ -35,7 +36,7 @@ class Gauge : View {
     private var strokeCap: String = "BUTT"
         set(newValue) {
             field = newValue
-            if (::paint.isInitialized){
+            if (::paint.isInitialized) {
                 if (strokeCap == "BUTT") {
                     paint.strokeCap = Paint.Cap.BUTT
                 } else if (strokeCap == "ROUND") {
@@ -44,14 +45,14 @@ class Gauge : View {
             }
         }
 
-    var endValue:Float = 0.0f
+    var endValue: Float = 0.0f
         set(newValue) {
             field = newValue
             pointAngle = abs(sweepAngle).toDouble() / (endValue - startValue)
             invalidate()
         }
 
-    var value:Float = 0.0f
+    var value: Float = 0.0f
         set(newValue) {
             field = newValue
             point = (startAngle + (value - startValue) * pointAngle).toInt()
@@ -100,7 +101,8 @@ class Gauge : View {
         val dividerStep = styledAttributes.getInt(R.styleable.Gauge_gaugeDividerStep, 0)
         isDividerDrawFirst =
             styledAttributes.getBoolean(R.styleable.Gauge_gaugeDividerDrawFirst, true)
-        isDividerDrawLast = styledAttributes.getBoolean(R.styleable.Gauge_gaugeDividerDrawLast, true)
+        isDividerDrawLast =
+            styledAttributes.getBoolean(R.styleable.Gauge_gaugeDividerDrawLast, true)
 
         // calculating one point sweep
         pointAngle = abs(sweepAngle).toDouble() / (endValue - startValue)
@@ -141,7 +143,8 @@ class Gauge : View {
         val height = size - 2 * padding
         val radius = if (width < height) width / 2 else height / 2
 
-        val calculatedHeight:Float =  if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
+        val calculatedHeight: Float =
+            if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
 
         val rectLeft = (getWidth() - 2 * padding) / 2 - radius + padding
         val rectTop = (calculatedHeight - 2 * padding) / 2 - radius + padding

@@ -14,15 +14,16 @@ class PidListPreferences(
 ) :
     MultiSelectListPreference(context, attrs) {
     private val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
-    private val defaultSelection = if (preferences.isGenericModeSelected())  hashSetOf<String>().apply {
-        add("6")  // Engine coolant temperature
-        add("12") // Intake manifold absolute pressure
-        add("13") // Engine RPM
-        add("16") // Intake air temperature
-        add("18") // Throttle position
-        add("15") // Timing advance
-        add("9000") // Battery voltage
-    } else hashSetOf<String>()
+    private val defaultSelection =
+        if (preferences.isGenericModeSelected()) hashSetOf<String>().apply {
+            add("6")  // Engine coolant temperature
+            add("12") // Intake manifold absolute pressure
+            add("13") // Engine RPM
+            add("16") // Intake air temperature
+            add("18") // Throttle position
+            add("15") // Timing advance
+            add("9000") // Battery voltage
+        } else hashSetOf<String>()
 
     init {
 
@@ -31,32 +32,32 @@ class PidListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        when (getPriority(attrs)){
-            "low"-> {
+        when (getPriority(attrs)) {
+            "low" -> {
                 DataLogger.instance.pidDefinitionRegistry().findAll()
-                    .filter { pidDefinition -> pidDefinition.priority > 4}
-                    .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " +  pidDefinition.description }
+                    .filter { pidDefinition -> pidDefinition.priority > 4 }
+                    .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " + pidDefinition.description }
                     .forEach { p ->
-                        entries.add("[" + p.mode + "] " +  p.description)
+                        entries.add("[" + p.mode + "] " + p.description)
                         entriesValues.add(p.id.toString())
                     }
                 setDefaultValue(hashSetOf<String>())
             }
             "high" -> {
                 DataLogger.instance.pidDefinitionRegistry().findAll()
-                    .filter { pidDefinition -> pidDefinition.priority < 4}
-                    .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " +  pidDefinition.description }
+                    .filter { pidDefinition -> pidDefinition.priority < 4 }
+                    .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " + pidDefinition.description }
                     .forEach { p ->
-                        entries.add("[" + p.mode + "] " +  p.description)
+                        entries.add("[" + p.mode + "] " + p.description)
                         entriesValues.add(p.id.toString())
                     }
                 setDefaultValue(defaultSelection)
             }
             else -> {
                 DataLogger.instance.pidDefinitionRegistry().findAll()
-                   .sortedBy { pidDefinition -> pidDefinition.priority }
-                   .forEach { p ->
-                        entries.add("[" + p.mode + "] " +  p.description)
+                    .sortedBy { pidDefinition -> pidDefinition.priority }
+                    .forEach { p ->
+                        entries.add("[" + p.mode + "] " + p.description)
                         entriesValues.add(p.id.toString())
                     }
                 setDefaultValue(defaultSelection)
@@ -68,13 +69,13 @@ class PidListPreferences(
     }
 
     private fun getPriority(attrs: AttributeSet?): String {
-        return if ( attrs == null ) {
+        return if (attrs == null) {
             ""
         } else {
             val priority: String? = (0 until attrs.attributeCount)
                 .filter { index -> attrs.getAttributeName(index) == "priority" }
                 .map { index -> attrs.getAttributeValue(index) }.firstOrNull()
-            priority?: ""
+            priority ?: ""
         }
     }
 }

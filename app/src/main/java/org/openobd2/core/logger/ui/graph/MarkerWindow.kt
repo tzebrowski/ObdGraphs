@@ -19,12 +19,12 @@ private const val LOG_KEY = "MarkerWindow"
 
 class MarkerWindow(context: Context?, layoutResource: Int, private val chart: LineChart) :
     MarkerView(context, layoutResource) {
-    private val valueScaler  = ValueScaler()
+    private val valueScaler = ValueScaler()
 
-    private fun buildMetrics( id: Long, v: Float): ObdMetric {
-        val pidRegistry: PidDefinitionRegistry =  DataLogger.instance.pidDefinitionRegistry()
+    private fun buildMetrics(id: Long, v: Float): ObdMetric {
+        val pidRegistry: PidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
         val pid = pidRegistry.findBy(id)
-        val value  = valueScaler.scaleToPidRange(pid,v)
+        val value = valueScaler.scaleToPidRange(pid, v)
         return ObdMetric.builder().command(ObdCommand(pid)).value(value).build()
     }
 
@@ -45,7 +45,7 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
                 buildMetrics((e.data.toString().toLong()), e.y)
         }
 
-        var time  = System.currentTimeMillis()
+        var time = System.currentTimeMillis()
         chart.data.dataSets.forEach {
             var x = 0
 
@@ -60,8 +60,8 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
                         }
                     }
                 } else {
-                    if (x > SEARCH_SCOPE){
-                        Log.d(LOG_KEY,"Did not find entry for=${it.label}.")
+                    if (x > SEARCH_SCOPE) {
+                        Log.d(LOG_KEY, "Did not find entry for=${it.label}.")
                         break
                     }
                     x = updateXValue(x)
@@ -70,7 +70,7 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
             } while (entriesForXValue.isEmpty())
         }
         time = System.currentTimeMillis() - time
-        Log.d(LOG_KEY,"Build map, time: ${time}ms , values: ${metricsMap.values}.")
+        Log.d(LOG_KEY, "Build map, time: ${time}ms , values: ${metricsMap.values}.")
         return metricsMap.values
     }
 

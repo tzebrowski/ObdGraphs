@@ -19,7 +19,10 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent) {
         val powerPreferences: PowerPreferences = getPowerPreferences()
-        Log.i(LOGGER_TAG, "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}")
+        Log.i(
+            LOGGER_TAG,
+            "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}"
+        )
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
 

@@ -167,10 +167,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ApplicationContext = this
-        Cache  = cache
+        Cache = cache
 
-        StrictMode.setThreadPolicy(ThreadPolicy.Builder()
-            .permitAll().build())
+        StrictMode.setThreadPolicy(
+            ThreadPolicy.Builder()
+                .permitAll().build()
+        )
 
         setContentView(R.layout.activity_main)
         setupPreferences()
@@ -213,6 +215,7 @@ class MainActivity : AppCompatActivity() {
             visibility = View.GONE
         }
     }
+
     private fun setupNavigationBar() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -256,8 +259,6 @@ class MainActivity : AppCompatActivity() {
         Prefs = PreferenceManager.getDefaultSharedPreferences(this)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
-
-
 
 
     override fun onDestroy() {
@@ -317,7 +318,7 @@ class MainActivity : AppCompatActivity() {
             params.screenBrightness = value
             window.attributes = params
             wl.release()
-        } catch (e: Throwable){
+        } catch (e: Throwable) {
             Log.e(LOGGER_TAG, "Failed to change screen brightness", e)
         }
     }
@@ -368,32 +369,35 @@ class MainActivity : AppCompatActivity() {
             pm.menuInflater.inflate(R.menu.context_menu, pm.menu)
 
             pm.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-                when (item.itemId){
-                  R.id.ctx_menu_pids_to_query -> {
-                       Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment).navigate(
-                           R.id.navigation_preferences,
-                           bundleOf("preferences.rootKey" to "prefs.pids.query")
-                       )
+                when (item.itemId) {
+                    R.id.ctx_menu_pids_to_query -> {
+                        Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment)
+                            .navigate(
+                                R.id.navigation_preferences,
+                                bundleOf("preferences.rootKey" to "prefs.pids.query")
+                            )
                     }
 
                     R.id.ctx_menu_view_configuration -> {
 
                         val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
                         val selectedItemId: Int = bottomNavigationView.selectedItemId
-                        val currentView: MenuItem = bottomNavigationView.menu.findItem(selectedItemId)
+                        val currentView: MenuItem =
+                            bottomNavigationView.menu.findItem(selectedItemId)
 
-                        val keyToNavigate = when (currentView.itemId){
+                        val keyToNavigate = when (currentView.itemId) {
                             R.id.navigation_dashboard -> "prefs.dashboard"
-                            R.id.navigation_gauge ->  "prefs.gauge"
+                            R.id.navigation_gauge -> "prefs.gauge"
                             R.id.navigation_graph -> "prefs.graph"
                             R.id.navigation_metrics -> "prefs.metrics"
                             else -> "prefs.root"
                         }
 
-                       Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment).navigate(
-                           R.id.navigation_preferences,
-                           bundleOf("preferences.rootKey" to keyToNavigate)
-                       )
+                        Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment)
+                            .navigate(
+                                R.id.navigation_preferences,
+                                bundleOf("preferences.rootKey" to keyToNavigate)
+                            )
                     }
                 }
 

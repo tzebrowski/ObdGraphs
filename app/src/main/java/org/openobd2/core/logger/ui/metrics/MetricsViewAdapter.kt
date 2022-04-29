@@ -46,9 +46,21 @@ class MetricsViewAdapter internal constructor(
         holder.metricMode.setText(metric.command.pid.mode, Color.parseColor("#01804F"), 1.2f)
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
-            holder.metricMaxValue.setText(metric.convert(max).toString(), Color.parseColor("#01804F"), 1.2f)
-            holder.metricMinValue.setText(metric.convert(min).toString(), Color.parseColor("#01804F"), 1.2f)
-            holder.metricMeanValue.setText(metric.convert(mean).toString(), Color.parseColor("#01804F"), 1.2f)
+            holder.metricMaxValue.setText(
+                metric.convert(max).toString(),
+                Color.parseColor("#01804F"),
+                1.2f
+            )
+            holder.metricMinValue.setText(
+                metric.convert(min).toString(),
+                Color.parseColor("#01804F"),
+                1.2f
+            )
+            holder.metricMeanValue.setText(
+                metric.convert(mean).toString(),
+                Color.parseColor("#01804F"),
+                1.2f
+            )
         }
         holder.metricValue.setText(valueTxt, Color.parseColor("#01804F"), 1.3f)
     }
