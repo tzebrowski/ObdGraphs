@@ -17,8 +17,7 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val CACHE_ENTRIES_PROPERTY_NAME = "cache.trip.entries"
-private const val CACHE_TS_PROPERTY_NAME = "cache.trip.startT"
+private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
@@ -26,13 +25,13 @@ private const val MIN_TRIP_LENGTH = 5
 data class TripEntry(
     val id: Long,
     val entries: MutableList<Entry>,
-    val min: Number,
-    val max: Number,
-    val mean: Number
+    var min: Number = 0,
+    var max: Number = 0,
+    var mean: Number = 0
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val startTs: Long, val entries: Map<Long, TripEntry>) {}
+data class Trip(val startTs: Long, val entries: MutableMap<Long, TripEntry>) {}
 
 class TripRecorder private constructor() {
 
@@ -40,26 +39,31 @@ class TripRecorder private constructor() {
 
         @JvmStatic
         val instance: TripRecorder = TripRecorder().apply {
-            Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<Long, MutableList<Entry>>()
-            Cache[CACHE_TS_PROPERTY_NAME] = System.currentTimeMillis()
-            Log.i(LOGGER_KEY, "Init cache with stamp: $${Cache[CACHE_TS_PROPERTY_NAME]}")
+            val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())
+            Cache[CACHE_TRIP_PROPERTY_NAME] = trip
+            Log.i(LOGGER_KEY, "Init Trip with stamp: $${trip.startTs}")
         }
     }
 
     private val valueScaler = ValueScaler()
     private val context: Context by lazy { ApplicationContext }
+    private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss",Locale.getDefault())
 
-    fun addTripEntry(reply: ObdMetric) {
+    fun addTripEntry(metric: ObdMetric) {
         try {
-            Cache[CACHE_ENTRIES_PROPERTY_NAME]?.let {
-                val cache = it as MutableMap<Long, MutableList<Entry>>
-                val timestamp =
-                    (System.currentTimeMillis() - (Cache[CACHE_TS_PROPERTY_NAME] as Long)).toFloat()
-                val entry =
-                    Entry(timestamp, valueScaler.scaleToNewRange(reply), reply.command.pid.id)
-                cache.getOrPut(reply.command.pid.id) {
-                    mutableListOf()
-                }.add(entry)
+            Cache[CACHE_TRIP_PROPERTY_NAME]?.let {
+                val trip = it as Trip
+                val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
+                val key = metric.command.pid.id
+                val newRecord =
+                    Entry(ts, valueScaler.scaleToNewRange(metric), key)
+
+                if (trip.entries.containsKey(key)) {
+                    val tripEntry = trip.entries[key]!!
+                    tripEntry.entries.add(newRecord)
+                } else {
+                    trip.entries[key] = TripEntry(id = key, entries = mutableListOf(newRecord))
+                }
             }
         } catch (e: Throwable) {
             Log.e(LOGGER_KEY, "Failed to add cache entry", e)
@@ -67,25 +71,12 @@ class TripRecorder private constructor() {
     }
 
     fun getCurrentTrip(): Trip {
-        val startTs = Cache[CACHE_TS_PROPERTY_NAME] as Long
-        val cacheEntries =
-            Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<Long, MutableList<Entry>>
-        Log.i(LOGGER_KEY, "Get current trip ts: '${dateFormat.format(Date(startTs))}'")
 
-        val histogram = DataLogger.instance.diagnostics().histogram()
-        val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
+        val trip =
+            Cache[CACHE_TRIP_PROPERTY_NAME] as Trip
 
-        val entries = cacheEntries.map { entry ->
-            val histogramSupplier = histogram.findBy(pidDefinitionRegistry.findBy(entry.key))
-            entry.key to TripEntry(
-                entries = entry.value,
-                id = entry.key,
-                max = histogramSupplier.max,
-                mean = histogramSupplier.mean,
-                min = histogramSupplier.min
-            )
-        }.toMap()
-        return Trip(startTs, entries = entries)
+        Log.i(LOGGER_KEY, "Get current trip ts: '${dateFormat.format(Date(trip.startTs))}'")
+        return trip
     }
 
     fun startNewTrip(newTs: Long) {
@@ -93,10 +84,20 @@ class TripRecorder private constructor() {
         updateCache(newTs)
     }
 
-    private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss")
 
     fun saveCurrentTrip() {
-        val trip = getCurrentTrip()
+        val trip =
+            Cache[CACHE_TRIP_PROPERTY_NAME] as Trip
+
+        val histogram = DataLogger.instance.diagnostics().histogram()
+        val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
+
+        trip.entries.forEach { (t, u) ->
+            val histogramSupplier = histogram.findBy(pidDefinitionRegistry.findBy(t))
+            u.max = histogramSupplier.max
+            u.min = histogramSupplier.min
+            u.mean = histogramSupplier.mean
+        }
 
         val endDate = Date()
         val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
@@ -122,10 +123,16 @@ class TripRecorder private constructor() {
         }
     }
 
-    fun findAllTripsBy(query: String = ""): MutableList<String> {
-        return context.cacheDir.list().filter { it.startsWith("trip_") || it.contains("") }
+    fun findAllTripsBy(query: String = ".json"): MutableList<String> {
+        Log.i(LOGGER_KEY, "Find all trips with query: $query")
+
+        val result  = context.cacheDir.list().filter { it.startsWith("trip_") || it.contains("") }
             .sortedByDescending { it }
             .toMutableList()
+
+        Log.i(LOGGER_KEY, "Find all trips with query: $query . Result size: ${result.size}")
+
+        return result
     }
 
     fun setCurrentTrip(tripName: String) {
@@ -135,11 +142,7 @@ class TripRecorder private constructor() {
             val file = File(context.cacheDir, tripName)
             val trip: Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
             Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache")
-
-            trip.run {
-                Cache[CACHE_TS_PROPERTY_NAME] = startTs
-                Cache[CACHE_ENTRIES_PROPERTY_NAME] = entries
-            }
+            Cache[CACHE_TRIP_PROPERTY_NAME] = trip
         }
     }
 
@@ -150,7 +153,6 @@ class TripRecorder private constructor() {
     ) {
         var fd: FileOutputStream? = null
         try {
-
             val file = File(context.cacheDir, fileName)
             fd = FileOutputStream(file).apply {
                 write(content.toByteArray())
@@ -165,8 +167,8 @@ class TripRecorder private constructor() {
     }
 
     private fun updateCache(newTs: Long) {
-        (Cache[CACHE_ENTRIES_PROPERTY_NAME] as MutableMap<String, MutableList<Entry>>).clear()
-        Cache[CACHE_ENTRIES_PROPERTY_NAME] = mutableMapOf<String, MutableList<Entry>>()
-        Cache[CACHE_TS_PROPERTY_NAME] = newTs
+        val trip = Trip(startTs = newTs, entries = mutableMapOf())
+        Cache[CACHE_TRIP_PROPERTY_NAME] = trip
+        Log.i(LOGGER_KEY, "Init new Trip with stamp: $${trip.startTs}")
     }
 }
