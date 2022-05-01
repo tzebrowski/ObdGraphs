@@ -34,28 +34,15 @@ class MarkerWindowViewAdapter internal constructor(
         position: Int
     ) {
 
-        val metric = mData.elementAt(position) as ObdMetric
-        holder.metricName.setText(metric.command.label, Color.GRAY, 1.0f)
-        holder.metricMode.setText(metric.command.pid.mode, Color.parseColor("#01804F"), 0.9f)
-
-        DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
-            holder.metricMaxValue.setText(
-                metric.convert(max).toString(),
-                Color.parseColor("#01804F"),
-                1.0f
-            )
-            holder.metricMinValue.setText(
-                metric.convert(min).toString(),
-                Color.parseColor("#01804F"),
-                1.0f
-            )
-            holder.metricMeanValue.setText(
-                metric.convert(mean).toString(),
-                Color.parseColor("#01804F"),
-                1.0f
-            )
+        mData.elementAt(position).run {
+            holder.metricName.setText(command.label, Color.GRAY, 1.0f)
+            holder.metricMode.setText(command.pid.mode, Color.parseColor("#01804F"), 0.9f)
+            holder.metricValue.setText(valueToString(), Color.parseColor("#01804F"), 1.1f)
         }
-        holder.metricValue.setText(metric.valueToString(), Color.parseColor("#01804F"), 1.1f)
+
+        holder.metricMaxValue.visibility = View.GONE
+        holder.metricMinValue.visibility = View.GONE
+        holder.metricMeanValue.visibility = View.GONE
     }
 
     override fun getItemCount(): Int {

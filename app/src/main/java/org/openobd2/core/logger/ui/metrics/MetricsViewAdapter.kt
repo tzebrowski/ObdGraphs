@@ -27,8 +27,7 @@ class MetricsViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        val view: View = mInflater.inflate(R.layout.metric_item, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(mInflater.inflate(R.layout.metric_item, parent, false))
     }
 
     override fun onBindViewHolder(
@@ -36,7 +35,7 @@ class MetricsViewAdapter internal constructor(
         position: Int
     ) {
 
-        val metric = mData.elementAt(position) as ObdMetric
+        val metric = mData.elementAt(position)
         var valueTxt: String? = metric.valueToString()
         if (valueTxt != null) {
             valueTxt += " " + (metric.command as ObdCommand).pid.units
@@ -85,5 +84,4 @@ class MetricsViewAdapter internal constructor(
             itemView.setOnClickListener(this)
         }
     }
-
 }

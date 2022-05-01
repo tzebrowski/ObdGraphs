@@ -6,19 +6,18 @@
     android:background="@drawable/border">
 
     <TableLayout
-        android:layout_width="420dp"
+        android:layout_width="350dp"
         android:layout_height="fill_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TableRow android:background="@drawable/border">
-
+        <TableRow>
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
-                android:gravity="left"
+                android:gravity="start"
                 android:text="Mode"
                 android:textColor="#1C3D72"
                 android:textSize="16sp"
@@ -27,7 +26,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
-                android:gravity="left"
+                android:gravity="start"
                 android:text="Name"
                 android:textAllCaps="false"
                 android:textColor="#1C3D72"
@@ -37,35 +36,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:gravity="right"
-                android:text="Min"
-                android:textColor="#1C3D72"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="Avg"
-                android:textColor="#1C3D72"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="right"
-
-                android:text="Max"
-                android:textColor="#1C3D72"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="right"
+                android:gravity="end"
                 android:paddingRight="6dp"
                 android:text="Value"
                 android:textColor="#1C3D72"
