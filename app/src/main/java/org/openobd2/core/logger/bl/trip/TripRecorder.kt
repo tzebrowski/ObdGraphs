@@ -31,7 +31,7 @@ data class TripEntry(
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val startTs: Long, val entries: MutableMap<Long, TripEntry>) {}
+data class Trip(val startTs: Long, val entries: MutableMap<Long, TripEntry>)
 
 class TripRecorder private constructor() {
 
@@ -47,7 +47,8 @@ class TripRecorder private constructor() {
 
     private val valueScaler = ValueScaler()
     private val context: Context by lazy { ApplicationContext }
-    private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM.dd HH:mm:ss",Locale.getDefault())
+    private val dateFormat: SimpleDateFormat =
+        SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
 
     fun addTripEntry(metric: ObdMetric) {
         try {
@@ -71,6 +72,9 @@ class TripRecorder private constructor() {
     }
 
     fun getCurrentTrip(): Trip {
+        if (null == Cache[CACHE_TRIP_PROPERTY_NAME]) {
+            startNewTrip(System.currentTimeMillis())
+        }
 
         val trip =
             Cache[CACHE_TRIP_PROPERTY_NAME] as Trip
@@ -126,7 +130,7 @@ class TripRecorder private constructor() {
     fun findAllTripsBy(query: String = ".json"): MutableList<String> {
         Log.i(LOGGER_KEY, "Find all trips with query: $query")
 
-        val result  = context.cacheDir.list().filter { it.startsWith("trip_") || it.contains("") }
+        val result = context.cacheDir.list().filter { it.startsWith("trip_") || it.contains("") }
             .sortedByDescending { it }
             .toMutableList()
 
@@ -141,7 +145,7 @@ class TripRecorder private constructor() {
         } else {
             val file = File(context.cacheDir, tripName)
             val trip: Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
-            Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache")
+            Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache.")
             Cache[CACHE_TRIP_PROPERTY_NAME] = trip
         }
     }

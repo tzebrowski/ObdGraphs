@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TableLayout
-        android:id="@+id/livedata_table_layout"
+        android:id="@+id/graph_view_table_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -248,6 +248,12 @@
 
             <PreferenceCategory android:title="Trips">
                 <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.trips.recordings.display_info"
+                    android:singleLineTitle="false"
+                    android:summary="Display Trip Info" />
+
+                <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.trips.recordings.save.short.trip"
                     android:singleLineTitle="false"

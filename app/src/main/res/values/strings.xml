@@ -13,6 +13,8 @@
     <string name="pid.value_avg">avg</string>
     <string name="pid.value_max">max</string>
     <string name="pid.mode">mode 01</string>
+    <string name="context_menu.parameters_id_to_query">Parameters ID to query</string>
+    <string name="context_menu.view_configuration">View configuration</string>
 
     <string-array name="prefs.empty_array"></string-array>
 

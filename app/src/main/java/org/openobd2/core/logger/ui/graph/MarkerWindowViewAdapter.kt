@@ -9,8 +9,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.ObdMetric
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.datalogger.DataLogger
-import org.openobd2.core.logger.ui.common.convert
 import org.openobd2.core.logger.ui.common.setText
 
 class MarkerWindowViewAdapter internal constructor(

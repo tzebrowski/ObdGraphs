@@ -7,8 +7,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -83,6 +86,7 @@ class GraphFragment : Fragment() {
     private lateinit var preferences: GraphPreferences
     private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
     private lateinit var root: View
+    private lateinit var tripViewAdapter: TripViewAdapter
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -104,6 +108,29 @@ class GraphFragment : Fragment() {
 
         initializeChart(root)
 
+        registerMetricsObserver()
+
+        initializeTripDetails()
+        loadCurrentTrip()
+        registerReceivers()
+
+        val displayInfoPanel = Prefs.getBoolean("pref.trips.recordings.display_info", true)
+        configureRecyclerView(R.id.graph_view_chart, true, 5f)
+        configureRecyclerView(R.id.graph_view_table_layout, displayInfoPanel, 0.2f)
+        configureRecyclerView(R.id.recycler_view, displayInfoPanel, 1.3f)
+        return root
+    }
+
+    private fun configureRecyclerView(id: Int, visible: Boolean, weight: Float) {
+        val view: View = root.findViewById(id)
+        view.visibility = if (visible) View.VISIBLE else View.GONE
+        (view.layoutParams as LinearLayout.LayoutParams).run {
+            this.weight = weight
+            this.width = LinearLayout.LayoutParams.MATCH_PARENT
+        }
+    }
+
+    private fun registerMetricsObserver() {
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
             it?.let {
                 if (preferences.selectedPids.contains(it.command.pid.id)) {
@@ -111,10 +138,13 @@ class GraphFragment : Fragment() {
                 }
             }
         })
+    }
 
-        loadCurrentTrip()
-        registerReceivers()
-        return root
+    private fun initializeTripDetails() {
+        tripViewAdapter = TripViewAdapter(root.context, mutableListOf())
+        val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+        recyclerView.layoutManager = GridLayoutManager(root.context, 1)
+        recyclerView.adapter = tripViewAdapter
     }
 
     private fun initializeChart(root: View) {
@@ -131,6 +161,10 @@ class GraphFragment : Fragment() {
             val trip = tripRecorder.getCurrentTrip()
             val registry = DataLogger.instance.pidDefinitionRegistry()
             tripStartTs = trip.startTs
+
+            tripViewAdapter.mData.addAll(trip.entries.values)
+            tripViewAdapter.notifyDataSetChanged()
+
             trip.entries.let { cache ->
                 chart.run {
                     cache.forEach { (id, entry) ->
