@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/border">
+    android:background="@drawable/metric_window_background">
 
     <TableLayout
         android:layout_width="350dp"
@@ -15,11 +15,12 @@
 
         <TableRow>
             <TextView
+                android:paddingStart="2dp"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="start"
                 android:text="Mode"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -29,7 +30,7 @@
                 android:gravity="start"
                 android:text="Name"
                 android:textAllCaps="false"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -39,7 +40,7 @@
                 android:gravity="end"
                 android:paddingRight="6dp"
                 android:text="Value"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </TableRow>

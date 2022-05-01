@@ -13,14 +13,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TableRow android:background="@drawable/border">
+        <TableRow android:background="@drawable/metric_window_background">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="left"
                 android:text="Mode"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -30,7 +30,7 @@
                 android:gravity="left"
                 android:text="Metric name"
                 android:textAllCaps="false"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -40,7 +40,7 @@
                 android:gravity="right"
 
                 android:text="Min"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="Max"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="Avg"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -69,7 +69,7 @@
                 android:gravity="right"
                 android:paddingRight="6dp"
                 android:text="Current value"
-                android:textColor="#1C3D72"
+                android:textColor="#FFFF00"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </TableRow>
