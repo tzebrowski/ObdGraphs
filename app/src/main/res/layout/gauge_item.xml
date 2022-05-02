@@ -9,6 +9,23 @@
     tools:context=".ui.gauge.GaugeViewFragment">
 
     <org.openobd2.core.logger.ui.gauge.Gauge
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom|center"
+        app:gaugeDividerColor="@color/md_black_1000"
+        app:gaugeDividerDrawFirst="true"
+        app:gaugeDividerDrawLast="true"
+        app:gaugeDividerSize="3"
+        app:gaugeDividerStep="10"
+        app:gaugePointEndColor="@color/md_red_900"
+        app:gaugePointStartColor="@color/md_red_500"
+        app:gaugeStartAngle="180"
+        app:gaugeStrokeCap="BUTT"
+        app:gaugeStrokeColor="@color/md_grey_500"
+        app:gaugeStrokeWidth="4dp"
+        app:gaugeSweepAngle="180" />
+
+    <org.openobd2.core.logger.ui.gauge.Gauge
         android:id="@+id/gauge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,14 +35,13 @@
         app:gaugeDividerDrawLast="true"
         app:gaugeDividerSize="3"
         app:gaugeDividerStep="10"
-        app:gaugePointEndColor="@android:color/holo_red_dark"
-        app:gaugePointStartColor="@android:color/holo_green_light"
+        app:gaugePointEndColor="#f00e0e"
+        app:gaugePointStartColor="#f00e0e"
         app:gaugeStartAngle="180"
         app:gaugeStrokeCap="BUTT"
-        app:gaugeStrokeColor="@color/md_grey_500"
-        app:gaugeStrokeWidth="4dp"
+        app:gaugeStrokeColor="@color/md_black_1000"
+        app:gaugeStrokeWidth="10dp"
         app:gaugeSweepAngle="180" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,7 +56,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/pid.value"
-            android:textColor="#FFFF00"
+            android:textColor="@color/md_white_1000"
             android:textSize="30sp" />
 
         <TextView
@@ -71,7 +87,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/pid.value_min"
-            android:textColor="#5CFFFF00"
+            android:textColor="@color/md_white_1000"
             android:textSize="20sp" />
 
         <TextView
@@ -81,7 +97,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/pid.value_avg"
-            android:textColor="#5CFFFF00"
+            android:textColor="@color/md_white_1000"
             android:textSize="20sp" />
 
         <TextView
@@ -90,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/pid.value_max"
-            android:textColor="#5CFFFF00"
+            android:textColor="@color/md_white_1000"
             android:textSize="20sp"
             android:textStyle="normal"
             tools:ignore="RtlHardcoded" />
@@ -109,8 +125,8 @@
             android:layout_weight="1"
             android:paddingStart="10dp"
             android:text="@string/pid.mode"
-            android:textColor="#5CFFFF00"
-            android:textSize="20sp"
+            android:textColor="@color/md_white_1000"
+            android:textSize="16sp"
             android:textStyle="normal"
             tools:ignore="RtlHardcoded" />
 
@@ -121,9 +137,9 @@
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:gravity="right"
-            android:textColor="#5CFFFF00"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textColor="@color/md_white_1000"
+            android:textSize="16sp"
+            android:textStyle="normal"
             tools:ignore="RtlHardcoded" />
 
     </LinearLayout>
