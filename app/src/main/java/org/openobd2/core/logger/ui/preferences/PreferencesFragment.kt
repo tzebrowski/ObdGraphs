@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.preference.*
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
-import org.openobd2.core.logger.bl.datalogger.GENERIC_MODE
 import org.openobd2.core.logger.ui.common.onDoubleClickListener
 
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "preferences.view.graph.toggle"
@@ -47,7 +46,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState)
         registerPrefModeChange()
-        registerConnectionModeChange()
         listView.setBackgroundColor(Color.LTGRAY)
         registerCheckboxListeners()
 
@@ -111,37 +109,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceChangeListener { _, newValue ->
                 when (newValue) {
                     "bluetooth" -> {
-                        p1?.isVisible = true
-                        p2?.isVisible = false
-                    }
-                    else -> {
-                        p1?.isVisible = false
-                        p2?.isVisible = true
-                    }
-                }
-                true
-            }
-    }
-
-
-    private fun registerConnectionModeChange() {
-        val prefMode = findPreference<ListPreference>("pref.mode")
-        val p1 = findPreference<Preference>("pref.pids.generic")
-        val p2 = findPreference<Preference>("pref.pids.mode22")
-
-        if (preferences.isGenericModeSelected()) {
-            p1?.isVisible = true
-            p2?.isVisible = false
-        } else {
-            p1?.isVisible = false
-            p2?.isVisible = true
-        }
-
-
-        prefMode?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
-                when (newValue) {
-                    GENERIC_MODE -> {
                         p1?.isVisible = true
                         p2?.isVisible = false
                     }

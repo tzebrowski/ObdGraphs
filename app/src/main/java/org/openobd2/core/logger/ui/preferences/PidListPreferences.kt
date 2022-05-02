@@ -15,16 +15,14 @@ class PidListPreferences(
     MultiSelectListPreference(context, attrs) {
     private val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
     private val defaultSelection =
-        if (preferences.isGenericModeSelected()) hashSetOf<String>().apply {
+        hashSetOf<String>().apply {
             add("6")  // Engine coolant temperature
             add("12") // Intake manifold absolute pressure
             add("13") // Engine RPM
             add("16") // Intake air temperature
             add("18") // Throttle position
             add("15") // Timing advance
-            add("9000") // Battery voltage
-        } else hashSetOf<String>()
-
+        }
     init {
 
         val entries: MutableList<CharSequence> =

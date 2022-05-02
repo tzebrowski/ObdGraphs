@@ -4,6 +4,16 @@ import android.content.SharedPreferences
 
 lateinit var Prefs: SharedPreferences
 
+private const val ECU_SUPPORTED_PIDS = "datalogger.supported.pids"
+
+fun SharedPreferences.getECUSupportedPids(): MutableSet<String> {
+    return getStringSet(ECU_SUPPORTED_PIDS, emptySet())!!
+}
+
+fun SharedPreferences.updateECUSupportedPids(list: Set<String>) {
+    edit().putStringSet(ECU_SUPPORTED_PIDS,list).commit()
+}
+
 fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
     return edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).apply()
 }

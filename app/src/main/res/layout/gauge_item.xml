@@ -23,7 +23,7 @@
         app:gaugeStartAngle="180"
         app:gaugeStrokeCap="BUTT"
         app:gaugeStrokeColor="@color/md_grey_500"
-        app:gaugeStrokeWidth="6dp"
+        app:gaugeStrokeWidth="4dp"
         app:gaugeSweepAngle="180" />
 
     <LinearLayout

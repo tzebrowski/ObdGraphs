@@ -54,6 +54,10 @@ class GaugeViewAdapter internal constructor(
         notifyItemMoved(fromPosition, toPosition)
     }
 
+    override fun getItemId(position: Int): Long {
+        return data[position].command.pid.id
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -68,6 +72,7 @@ class GaugeViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
+
         val metric = data.elementAt(position)
         if (!holder.init) {
             holder.label.text = metric.command.pid.description

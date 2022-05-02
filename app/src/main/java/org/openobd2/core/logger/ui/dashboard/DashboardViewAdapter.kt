@@ -43,6 +43,10 @@ internal class DashboardViewAdapter internal constructor(
         notifyItemMoved(fromPosition, toPosition)
     }
 
+    override fun getItemId(position: Int): Long {
+        return data[position].command.pid.id
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int

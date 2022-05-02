@@ -120,6 +120,7 @@ class DashboardFragment : Fragment() {
 
         metricsViewContext.adapter = DashboardViewAdapter(root.context, metrics, itemHeight)
         val recyclerView: RecyclerView = root.findViewById(R.id.dash_recycler_view)
+        metricsViewContext.adapter.setHasStableIds(true)
 
         recyclerView.layoutManager =
             GridLayoutManager(root.context, calculateSpanCount(metrics.size))

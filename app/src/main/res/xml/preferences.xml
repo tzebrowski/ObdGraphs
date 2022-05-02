@@ -105,14 +105,21 @@
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         android:key="pref.pids.generic.high"
                         android:singleLineTitle="false"
-                        android:summary="High priority PID's"
+                        android:summary="High priority Parameter IDs"
                         app:priority="high" />
 
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         android:key="pref.pids.generic.low"
                         android:singleLineTitle="false"
-                        android:summary="Low priority PID's"
+                        android:summary="Low priority Parameter IDs"
                         app:priority="low" />
+
+                    <org.openobd2.core.logger.ui.preferences.SupportedPidsPreferences
+                        android:key="pref.pids.supported"
+                        android:singleLineTitle="false"
+                        android:summary="Parameter IDs supported by ECU"
+                       />
+
                 </PreferenceCategory>
             </PreferenceScreen>
 

@@ -11,7 +11,6 @@ const val GENERIC_MODE = "Generic mode"
 
 data class DataLoggerPreferences(
     var mode01Pids: MutableSet<Long>,
-    var mode02Pids: MutableSet<Long>,
     var connectionType: String,
     var tcpHost: String,
     var tcpPort: Int,
@@ -29,9 +28,6 @@ data class DataLoggerPreferences(
     var initProtocol: String
 ) {
 
-    fun isGenericModeSelected(): Boolean {
-        return mode == GENERIC_MODE
-    }
 
     companion object {
         private lateinit var strongReference: SharedPreferenceChangeListener
@@ -56,8 +52,6 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 genericPids()
             "pref.pids.generic.high" -> dataLoggerPreferences.mode01Pids =
                 genericPids()
-            "pref.pids.mode22" -> dataLoggerPreferences.mode01Pids =
-                Prefs.getStringSet(key).map { s -> s.toLong() }.toMutableSet()
             "pref.mode" -> dataLoggerPreferences.mode =
                 Prefs.getString(key, GENERIC_MODE)!!
             "pref.debug.generator.enabled" -> dataLoggerPreferences.generatorEnabled =
@@ -113,7 +107,6 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
     val adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
     val resultsCacheEnabled = Prefs.isEnabled("pref.adapter.cache.result.enabled")
-    val mode02Pids = Prefs.getStringSet("pref.pids.mode22").map { s -> s.toLong() }.toMutableSet()
 
     val initHeader22 = Prefs.getString("pref.adapter.init.header22", "")!!
     val initHeader01 = Prefs.getString("pref.adapter.init.header01", "")!!
@@ -121,7 +114,6 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
     val dataLoggerPreferences = DataLoggerPreferences(
         genericPids(),
-        mode02Pids,
         connectionType,
         tcpHost,
         tcpPort,

@@ -2,6 +2,7 @@ package org.openobd2.core.logger.bl.datalogger
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
@@ -14,7 +15,10 @@ import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.openobd2.core.logger.ApplicationContext
+import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.updateECUSupportedPids
 import java.io.File
+
 
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
@@ -51,6 +55,7 @@ internal class DataLogger internal constructor() {
             context.sendBroadcast(Intent().apply {
                 action = DATA_LOGGER_CONNECTED_EVENT
             })
+            Prefs.updateECUSupportedPids(deviceProperties.capabilities)
         }
 
         override fun onError(msg: String, tr: Throwable?) {
@@ -103,6 +108,7 @@ internal class DataLogger internal constructor() {
                 Pids.builder()
                     .resource(Urls.resourceToUrl("alfa.json"))
                     .resource(Urls.resourceToUrl("mode01.json"))
+                    .resource(Urls.resourceToUrl("mode01_3.json")) // supported PID's
                     .resource(Urls.resourceToUrl("extra.json"))
                     .build()
             ).observer(metricsAggregator)
@@ -132,11 +138,11 @@ internal class DataLogger internal constructor() {
     }
 
     fun start() {
-
-        val query = query()
-        Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
-
         connection()?.run {
+
+            val query = query()
+            Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
+
             workflow.start(
                 this, query, init(),
                 adjustments()
@@ -194,8 +200,5 @@ internal class DataLogger internal constructor() {
         ).build()
 
 
-    private fun query() =
-        if (preferences.isGenericModeSelected()) Query.builder().pids(preferences.mode01Pids)
-            .build()
-        else Query.builder().pids(preferences.mode02Pids).build()
+    private fun query() = Query.builder().pids(preferences.mode01Pids).build()
 }
