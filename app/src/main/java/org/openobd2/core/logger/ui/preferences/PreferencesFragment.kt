@@ -90,11 +90,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun registerPrefModeChange() {
-        val prefMode = findPreference<ListPreference>("pref.selected.connection.type")
-        val p1 = findPreference<Preference>("connection.type.bluetooth")
-        val p2 = findPreference<Preference>("connection.type.wifi")
+        val prefMode = findPreference<ListPreference>("pref.connection.type")
+        val p1 = findPreference<Preference>("pref.adapter.connection.type.bluetooth")
+        val p2 = findPreference<Preference>("pref.adapter.connection.type.wifi")
 
-        when (Prefs.getString("pref.selected.connection.type")) {
+        when (Prefs.getString("pref.connection.type")) {
             "bluetooth" -> {
                 p1?.isVisible = true
                 p2?.isVisible = false
