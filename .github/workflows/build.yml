@@ -1,0 +1,25 @@
+name: Build 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout project source code
+      uses: actions/checkout@v2
+
+    - name: Cache Maven Dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2 # maven dependencies are stored in `~/.m2` on Linux
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+   - name: Build the app
+	run: ./gradlew build
