@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -21,6 +22,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.pid.PidDefinition
@@ -78,7 +81,30 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private val simpleDateFormat = SimpleDateFormat("HH:mm:ss")
+    private val onGestureListener = object : OnChartGestureListener {
+        override fun onChartGestureStart(me: MotionEvent, lastPerformedGesture: ChartGesture) {}
+        override fun onChartGestureEnd(me: MotionEvent, lastPerformedGesture: ChartGesture) {
+            if (lastPerformedGesture != ChartGesture.SINGLE_TAP) {
+                chart.highlightValues(null)
+            }
+        }
+
+        override fun onChartLongPressed(me: MotionEvent) {}
+        override fun onChartDoubleTapped(me: MotionEvent) {}
+        override fun onChartSingleTapped(me: MotionEvent) {}
+        override fun onChartFling(
+            me1: MotionEvent,
+            me2: MotionEvent,
+            velocityX: Float,
+            velocityY: Float
+        ) {
+        }
+
+        override fun onChartScale(me: MotionEvent, scaleX: Float, scaleY: Float) {}
+        override fun onChartTranslate(me: MotionEvent, dX: Float, dY: Float) {}
+    }
+
+    private val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     private lateinit var chart: LineChart
     private var colors: IntIterator = Colors().generate()
     private val valueScaler = ValueScaler()
@@ -147,13 +173,16 @@ class GraphFragment : Fragment() {
         recyclerView.adapter = tripViewAdapter
     }
 
+
     private fun initializeChart(root: View) {
         chart = buildChart(root).apply {
             val metrics = DataLogger.instance.getEmptyMetrics(preferences.selectedPids)
             data = LineData(metrics.map { createDataSet(it.command.pid) }.toList())
             setOnTouchListener(onDoubleClickListener(requireContext()))
             invalidate()
+            onChartGestureListener = onGestureListener
         }
+
     }
 
     private fun loadCurrentTrip() {
@@ -223,6 +252,7 @@ class GraphFragment : Fragment() {
             }
         }
     }
+
 
     private fun buildChart(root: View): LineChart {
         return (root.findViewById(R.id.graph_view_chart) as LineChart).apply {

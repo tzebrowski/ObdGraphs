@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 const val TOGGLE_TOOLBAR_ACTION: String = "TOGGLE_TOOLBAR"
 
-private class GestureListener(val context: Context) : GestureDetector.SimpleOnGestureListener() {
+class DoubleClickGestureListener(val context: Context) : GestureDetector.SimpleOnGestureListener() {
     override fun onDoubleTap(e: MotionEvent): Boolean {
         context.sendBroadcast(Intent().apply {
             action = TOGGLE_TOOLBAR_ACTION
@@ -19,7 +19,7 @@ private class GestureListener(val context: Context) : GestureDetector.SimpleOnGe
 }
 
 fun onDoubleClickListener(context: Context): View.OnTouchListener {
-    val gestureDetector = GestureDetector(context, GestureListener(context))
+    val gestureDetector = GestureDetector(context, DoubleClickGestureListener(context))
     return View.OnTouchListener { _, event ->
         gestureDetector.onTouchEvent(
             event
