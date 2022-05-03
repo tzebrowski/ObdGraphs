@@ -91,10 +91,10 @@ class MainActivity : AppCompatActivity() {
 
                     val btn: FloatingActionButton = findViewById(R.id.connect_btn)
                     btn.backgroundTintList = resources.getColorStateList(R.color.purple_200)
-                    btn.setOnClickListener(View.OnClickListener {
+                    btn.setOnClickListener {
                         Log.i(LOGGER_TAG, "Stop data logging ")
                         DataLoggerService.stopAction(context!!)
-                    })
+                    }
                     btn.refreshDrawableState()
                 }
 
@@ -129,10 +129,10 @@ class MainActivity : AppCompatActivity() {
 
             val btn: FloatingActionButton = findViewById(R.id.connect_btn)
             btn.backgroundTintList = resources.getColorStateList(R.color.purple_500)
-            btn.setOnClickListener(View.OnClickListener {
+            btn.setOnClickListener {
                 Log.i(LOGGER_TAG, "Stop data logging ")
                 DataLoggerService.startAction(context)
-            })
+            }
         }
 
         private fun toggleNavigationItem(id: Int) {
@@ -306,7 +306,7 @@ class MainActivity : AppCompatActivity() {
     private fun changeScreenBrightness(value: Float) {
         try {
 
-            val pm = getSystemService(android.content.Context.POWER_SERVICE) as PowerManager
+            val pm = getSystemService(POWER_SERVICE) as PowerManager
             val wl = pm.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 "data_logger:wakeLock"
@@ -358,17 +358,17 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigationBarButtons() {
 
         val btnStart: FloatingActionButton = findViewById(R.id.connect_btn)
-        btnStart.setOnClickListener(View.OnClickListener {
+        btnStart.setOnClickListener {
             Log.i(LOGGER_TAG, "Start data logging")
             DataLoggerService.startAction(this)
-        })
+        }
 
         val menuButton: FloatingActionButton = findViewById(R.id.menu_btn)
-        menuButton.setOnClickListener(View.OnClickListener {
+        menuButton.setOnClickListener {
             val pm = PopupMenu(this, menuButton)
             pm.menuInflater.inflate(R.menu.context_menu, pm.menu)
 
-            pm.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            pm.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.ctx_menu_pids_to_query -> {
                         Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment)
@@ -402,8 +402,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 true
-            })
+            }
             pm.show()
-        })
+        }
     }
 }

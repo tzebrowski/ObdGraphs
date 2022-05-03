@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
 import org.openobd2.core.logger.bl.datalogger.DataLogger
-import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
 import java.util.*
 
 
@@ -13,7 +12,6 @@ class PidListPreferences(
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {
-    private val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
     private val defaultSelection =
         hashSetOf<String>().apply {
             add("6")  // Engine coolant temperature

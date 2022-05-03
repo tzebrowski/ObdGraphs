@@ -86,7 +86,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun configureRecyclerView(id: Int, visible: Boolean, weight: Float, width: Int) {
-        val view: RecyclerView = root.findViewById<RecyclerView>(id)
+        val view: RecyclerView = root.findViewById(id)
         view.visibility = if (visible) View.VISIBLE else View.GONE
         (view.layoutParams as LinearLayout.LayoutParams).run {
             this.weight = weight

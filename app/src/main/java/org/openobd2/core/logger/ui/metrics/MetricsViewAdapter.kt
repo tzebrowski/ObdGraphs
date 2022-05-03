@@ -17,17 +17,16 @@ import org.openobd2.core.logger.ui.common.setText
 
 class MetricsViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<ObdMetric>
+    private var data: MutableCollection<ObdMetric>
 ) :
     RecyclerView.Adapter<MetricsViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<ObdMetric> = data
-    private val mInflater: LayoutInflater = LayoutInflater.from(context)
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.metric_item, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.metric_item, parent, false))
     }
 
     override fun onBindViewHolder(
@@ -35,7 +34,7 @@ class MetricsViewAdapter internal constructor(
         position: Int
     ) {
 
-        val metric = mData.elementAt(position)
+        val metric = data.elementAt(position)
         var valueTxt: String? = metric.valueToString()
         if (valueTxt != null) {
             valueTxt += " " + (metric.command as ObdCommand).pid.units
@@ -65,7 +64,7 @@ class MetricsViewAdapter internal constructor(
     }
 
     override fun getItemCount(): Int {
-        return mData.size
+        return data.size
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),

@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import org.openobd2.core.logger.R
 
 class GaugeViewFragment : Fragment() {
-    lateinit var root: View
+    private lateinit var root: View
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)

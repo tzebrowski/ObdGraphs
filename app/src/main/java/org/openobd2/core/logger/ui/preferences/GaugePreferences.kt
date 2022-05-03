@@ -2,9 +2,7 @@ package org.openobd2.core.logger.ui.preferences
 
 import org.obd.metrics.ObdMetric
 
-class GaugePreferences(id: Long, position: Int) {
-    var id: Long = id
-    var position: Int = position
+class GaugePreferences(var id: Long, var position: Int) {
 
     companion object {
         class Serializer : RecycleViewPreferences<GaugePreferences>("prefs.gauge.pids.settings") {

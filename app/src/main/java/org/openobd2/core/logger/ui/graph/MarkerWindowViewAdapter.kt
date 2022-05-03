@@ -13,10 +13,9 @@ import org.openobd2.core.logger.ui.common.setText
 
 class MarkerWindowViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<ObdMetric>
+    private var data: MutableCollection<ObdMetric>
 ) :
     RecyclerView.Adapter<MarkerWindowViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<ObdMetric> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
@@ -32,7 +31,7 @@ class MarkerWindowViewAdapter internal constructor(
         position: Int
     ) {
 
-        mData.elementAt(position).run {
+        data.elementAt(position).run {
             holder.metricName.setText(command.label, Color.GRAY, 1.0f)
             holder.metricMode.setText(command.pid.mode, Color.parseColor("#01804F"), 0.9f)
             holder.metricValue.setText(valueToString(), Color.parseColor("#01804F"), 1.1f)
@@ -44,7 +43,7 @@ class MarkerWindowViewAdapter internal constructor(
     }
 
     override fun getItemCount(): Int {
-        return mData.size
+        return data.size
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),

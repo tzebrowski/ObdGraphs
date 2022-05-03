@@ -2,7 +2,6 @@ package org.openobd2.core.logger.bl.datalogger
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.util.Log
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle

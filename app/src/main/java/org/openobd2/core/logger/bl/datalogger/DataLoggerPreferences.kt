@@ -45,7 +45,7 @@ const val LOGGER_KEY = "PREFS"
 private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLoggerPreferences) :
     SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        Log.i(LOGGER_KEY, "Key to update ${key}")
+        Log.i(LOGGER_KEY, "Key to update $key")
 
         when (key) {
             "pref.pids.generic.low" -> dataLoggerPreferences.mode01Pids =
@@ -88,7 +88,7 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 Prefs.getString(key, "AUTO").toString()
 
         }
-        Log.i(LOGGER_KEY, "Update data logger preferences ${dataLoggerPreferences}")
+        Log.i(LOGGER_KEY, "Update data logger preferences $dataLoggerPreferences")
     }
 }
 

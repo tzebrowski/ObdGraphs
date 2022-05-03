@@ -21,7 +21,7 @@ class MetricsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_metrics, container, false)
-        var data: MutableList<ObdMetric> = arrayListOf()
+        val data: MutableList<ObdMetric> = arrayListOf()
         val adapter = MetricsViewAdapter(root.context, data)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {

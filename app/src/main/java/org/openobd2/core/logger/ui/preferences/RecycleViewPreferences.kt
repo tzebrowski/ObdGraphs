@@ -8,8 +8,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.obd.metrics.ObdMetric
 
 
-abstract class RecycleViewPreferences<T> constructor(prefName: String) {
-    private val prefName = prefName
+abstract class RecycleViewPreferences<T> constructor(private val prefName: String) {
     private var mapper = ObjectMapper()
 
     interface MetricsMapper<T> {

@@ -33,21 +33,15 @@ class WifiConnection(private val inetSocketAddress: InetSocketAddress) : Adapter
     override fun close() {
 
         try {
-            inputStream.let {
-                it.close()
-            }
+            inputStream.close()
         } catch (e: IOException) {
         }
         try {
-            outputStream.let {
-                it.close()
-            }
+            outputStream.close()
         } catch (e: IOException) {
         }
         try {
-            socket.let {
-                it.close()
-            }
+            socket.close()
         } catch (e: IOException) {
         }
     }

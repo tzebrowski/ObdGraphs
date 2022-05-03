@@ -11,15 +11,12 @@ interface SwappableAdapter {
 }
 
 internal class DragManageAdapter(
-    ctx: Context,
+    private var  context: Context,
     dragDirs: Int,
     swipeDirs: Int,
-    adapter: SwappableAdapter
+    private var adapter: SwappableAdapter
 ) :
     ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
-    private var adapter = adapter
-    private var context = ctx
-
 
     override fun onMove(
         recyclerView: RecyclerView,

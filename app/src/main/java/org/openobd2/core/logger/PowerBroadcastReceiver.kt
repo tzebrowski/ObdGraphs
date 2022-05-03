@@ -41,7 +41,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
             if (powerPreferences.screenOnOff) {
                 Log.i(LOGGER_TAG, "Start data logging")
                 startMainActivity(context!!)
-                context!!.sendBroadcast(Intent().apply {
+                context.sendBroadcast(Intent().apply {
                     action = SCREEN_ON_EVENT
                 })
             }

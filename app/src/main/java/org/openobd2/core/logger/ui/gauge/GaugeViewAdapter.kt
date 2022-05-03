@@ -196,7 +196,7 @@ class GaugeViewAdapter internal constructor(
         }
     }
 
-    private fun valueToString(metric: ObdMetric): String? {
+    private fun valueToString(metric: ObdMetric): String {
         return if (metric.value == null) {
             "No data"
         } else {
