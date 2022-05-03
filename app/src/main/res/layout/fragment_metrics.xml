@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <TableLayout
+        android:background="@drawable/metric_window_background"
         android:id="@+id/graph_view_table_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -13,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TableRow android:background="@drawable/metric_window_background">
+        <TableRow>
 
             <TextView
                 android:layout_width="0dp"

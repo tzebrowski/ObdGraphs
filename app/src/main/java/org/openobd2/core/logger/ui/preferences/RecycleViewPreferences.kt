@@ -35,7 +35,7 @@ abstract class RecycleViewPreferences<T> constructor(private val prefName: Strin
         val writeValueAsString = mapper.writeValueAsString(mapIndexed)
         val edit = pref.edit()
         edit.putString(prefName, writeValueAsString)
-        edit.commit()
+        edit.apply()
     }
 
     fun load(context: Context): List<T>? {
