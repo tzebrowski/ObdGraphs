@@ -20,7 +20,7 @@
                 android:layout_weight="0.5"
                 android:gravity="left"
                 android:paddingStart="2dp"
-                android:text="Mode"
+                android:text="@string/pid.mode"
                 android:textColor="#1C3D72"
                 android:textSize="14sp"
                 android:textStyle="normal" />
@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:gravity="left"
-                android:text="Metric name"
+                android:text="@string/pid.metric_name"
                 android:textAllCaps="false"
                 android:textColor="#1C3D72"
                 android:textSize="14sp"
@@ -41,7 +41,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Min"
+                android:text="@string/pid.value_min"
                 android:textColor="#1C3D72"
                 android:textSize="14sp"
                 android:textStyle="normal" />
@@ -52,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Max"
+                android:text="@string/pid.value_max"
                 android:textColor="#1C3D72"
                 android:textSize="14sp"
                 android:textStyle="normal" />
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Avg"
+                android:text="@string/pid.value_avg"
                 android:textColor="#1C3D72"
                 android:textSize="14sp"
                 android:textStyle="normal" />
@@ -73,7 +73,7 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:paddingRight="6dp"
-                android:text="Value"
+                android:text="@string/pid.value"
                 android:textColor="#1C3D72"
                 android:textSize="14sp"
                 android:textStyle="bold" />

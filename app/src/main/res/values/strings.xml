@@ -7,12 +7,13 @@
     <string name="navigation.title_dashboard">Dashboard</string>
     <string name="navigation.title_graph">Graph</string>
 
-    <string name="pid.label">Label</string>
-    <string name="pid.value">No data</string>
-    <string name="pid.value_min">min</string>
-    <string name="pid.value_avg">avg</string>
-    <string name="pid.value_max">max</string>
-    <string name="pid.mode">mode 01</string>
+    <string name="pid.metric_name">Metric</string>
+    <string name="pid.value">Value</string>
+    <string name="pid.value_no_data">No data</string>
+    <string name="pid.value_min">Min</string>
+    <string name="pid.value_avg">Avg</string>
+    <string name="pid.value_max">Max</string>
+    <string name="pid.mode">Mode</string>
     <string name="context_menu.parameters_id_to_query">Parameters ID to query</string>
     <string name="context_menu.view_configuration">View configuration</string>
 

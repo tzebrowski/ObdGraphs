@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:alpha="0.5"
             android:gravity="center"
-            android:text="@string/pid.label"
+            android:text="@string/pid.metric_name"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />

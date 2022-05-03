@@ -32,6 +32,8 @@ class Gauge : View {
     private var dividersCount = 0
     private var isDividerDrawFirst = false
     private var isDividerDrawLast = false
+    private lateinit var linearGradient: LinearGradient
+
 
     private var strokeCap: String = "BUTT"
         set(newValue) {
@@ -113,6 +115,13 @@ class Gauge : View {
             dividersCount = 100 / dividerStep
             dividerStepAngle = sweepAngle / dividersCount
         }
+
+        linearGradient = LinearGradient(
+            width.toFloat(), height.toFloat(), 0f, 0f,
+            pointEndColor,
+            pointStartColor, Shader.TileMode.CLAMP
+        )
+
         styledAttributes.recycle()
         init()
     }
@@ -157,11 +166,7 @@ class Gauge : View {
         canvas.drawArc(rectF, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
         paint.color = pointStartColor
 
-        val linearGradient = LinearGradient(
-            getWidth().toFloat(), getHeight().toFloat(), 0f, 0f,
-            pointEndColor,
-            pointStartColor, Shader.TileMode.CLAMP
-        )
+
 
         paint.shader = linearGradient
         if (pointSize > 0) { //if size of pointer is defined

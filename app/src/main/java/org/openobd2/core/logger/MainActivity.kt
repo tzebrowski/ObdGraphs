@@ -304,22 +304,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changeScreenBrightness(value: Float) {
+        val pm = getSystemService(POWER_SERVICE) as PowerManager
+        val wl = pm.newWakeLock(
+            PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+            "data_logger:wakeLock"
+        )
         try {
 
-            val pm = getSystemService(POWER_SERVICE) as PowerManager
-            val wl = pm.newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                "data_logger:wakeLock"
-            )
-            wl.acquire()
+            wl.acquire(5000)//wait 5s
             val params: WindowManager.LayoutParams =
                 window.attributes
             params.flags = params.flags or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
             params.screenBrightness = value
             window.attributes = params
-            wl.release()
+
         } catch (e: Throwable) {
             Log.e(LOGGER_TAG, "Failed to change screen brightness", e)
+        } finally {
+            wl.release()
         }
     }
 

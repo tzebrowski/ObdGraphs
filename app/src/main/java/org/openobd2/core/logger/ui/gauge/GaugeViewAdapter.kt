@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,7 +76,8 @@ class GaugeViewAdapter internal constructor(
         if (!holder.init) {
             holder.label.text = metric.command.pid.description
             holder.pidMode?.run {
-                text = "mode " + metric.command.pid.mode
+                val txt = "mode ${ metric.command.pid.mode}"
+                text = txt
                 highLightText(
                     "mode", 0.4f,
                     Color.parseColor(LABEL_COLOR)
@@ -95,7 +95,8 @@ class GaugeViewAdapter internal constructor(
 
         holder.value.run {
             val units = (metric.command as ObdCommand).pid.units
-            text = "${valueToString(metric)} $units"
+            val txt = "${valueToString(metric)} $units"
+            text = txt
 
             highLightText(
                 units, 0.3f,
@@ -105,7 +106,8 @@ class GaugeViewAdapter internal constructor(
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
-                text = "min\n ${metric.convert(min)}"
+                val txt = "min\n ${metric.convert(min)}"
+                text = txt
                 highLightText(
                     "min", 0.5f,
                     Color.parseColor(LABEL_COLOR)
@@ -113,7 +115,8 @@ class GaugeViewAdapter internal constructor(
             }
 
             holder.maxValue.run {
-                text = "max\n  ${metric.convert(max)} "
+                val txt = "max\n  ${metric.convert(max)} "
+                text =  txt
                 highLightText(
                     "max", 0.5f,
                     Color.parseColor(LABEL_COLOR)
@@ -121,7 +124,8 @@ class GaugeViewAdapter internal constructor(
             }
 
             holder.avgValue?.run {
-                text = "avg\n ${metric.convert(mean)}"
+                val txt = "avg\n ${metric.convert(mean)}"
+                text = txt
                 highLightText(
                     "avg", 0.5f,
                     Color.parseColor(LABEL_COLOR)
@@ -133,7 +137,8 @@ class GaugeViewAdapter internal constructor(
                 this.visibility = View.VISIBLE
                 val rate = DataLogger.instance.diagnostics().rate()
                     .findBy(RateType.MEAN, metric.command.pid)
-                text = "rate " + rate.get().value.round(2)
+                val txt = "rate ${rate.get().value.round(2)}"
+                text = txt
                 highLightText(
                     "rate", 0.4f,
                     Color.parseColor(LABEL_COLOR)
@@ -163,14 +168,10 @@ class GaugeViewAdapter internal constructor(
 
         val max =
             Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
-        val multiplier = valueScaler.scaleToNewRange(width * height, 0.0f, max, 1f, 3f)
-        Log.v("GaugeViewAdapter", "r: $multiplier, w: $width,h: $height")
-        return multiplier
+        return valueScaler.scaleToNewRange(width * height, 0.0f, max, 1f, 3f)
     }
 
     private fun rescaleView(holder: ViewHolder, multiplier: Float) {
-
-        Log.v("GaugeViewAdapter", "multiplier: $multiplier")
 
         holder.label.textSize *= multiplier * 0.75f
         holder.value.textSize *= multiplier * 0.85f

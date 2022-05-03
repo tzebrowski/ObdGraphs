@@ -85,32 +85,31 @@
 
         <PreferenceCategory android:title="@string/pref.general_settings">
             <PreferenceScreen
-                android:singleLineTitle="false"
+
                 android:summary="@string/prefs.pids_query"
                 app:isPreferenceVisible="true"
                 app:key="prefs.pids.query">
 
                 <PreferenceCategory android:title="@string/prefs.pids_query">
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        android:key="pref.pids.generic.high"
-                        android:singleLineTitle="false"
-                        android:summary="@string/pref.pids_generic_high"
                         android:dialogTitle="@string/pref.pids_generic_high"
-                        app:priority="high"  />
+
+                        android:key="pref.pids.generic.high"
+                        android:summary="@string/pref.pids_generic_high"
+                        app:priority="high" />
 
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        android:key="pref.pids.generic.low"
-                        android:singleLineTitle="false"
-                        android:summary="@string/pref.pids_generic_low"
                         android:dialogTitle="@string/pref.pids_generic_low"
+
+                        android:key="pref.pids.generic.low"
+                        android:summary="@string/pref.pids_generic_low"
                         app:priority="low" />
 
                     <org.openobd2.core.logger.ui.preferences.SupportedPidsPreferences
-                        android:key="pref.pids.supported"
-                        android:singleLineTitle="false"
                         android:dialogTitle="@string/pref.pids_supported"
-                        android:summary="@string/pref.pids_supported"
-                       />
+
+                        android:key="pref.pids.supported"
+                        android:summary="@string/pref.pids_supported" />
 
                 </PreferenceCategory>
             </PreferenceScreen>
@@ -138,7 +137,7 @@
                 android:defaultValue="true"
                 android:dialogTitle="@string/pref.adapter_reconnect"
                 android:key="pref.adapter.reconnect"
-                android:singleLineTitle="false"
+
                 android:summary="@string/pref.adapter_reconnect" />
 
 
@@ -179,25 +178,25 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.toolbar.hide.landscape"
-            android:singleLineTitle="false"
+
             android:summary="@string/pref.toolbar_hide_landscape" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref.toolbar.hide.doubleclick"
-            android:singleLineTitle="false"
+
             android:summary="@string/pref.toolbar_hide_doubleclick" />
 
         <PreferenceScreen
-            android:title="@string/pref.gauge_category"
             android:summary="@string/pref.gauge_category"
+            android:title="@string/pref.gauge_category"
             app:key="prefs.gauge">
 
             <PreferenceCategory android:title="@string/pref.general_settings">
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.gauge_display_command_rate"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.gauge_display_command_rate" />
                 <CheckBoxPreference
                     android:defaultValue="true"
@@ -207,14 +206,14 @@
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
                     android:defaultValue="@array/prefs.empty_array"
-                    android:key="pref.gauge.pids.selected"
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.gauge.pids.selected"
                     android:summary="@string/pref.displayed_parameter_ids" />
             </PreferenceCategory>
         </PreferenceScreen>
         <PreferenceScreen
-            android:title="@string/pref.metrics_category"
             android:summary="@string/pref.metrics_category"
+            android:title="@string/pref.metrics_category"
             app:key="prefs.metrics">
 
             <CheckBoxPreference
@@ -244,7 +243,7 @@
                     android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
                     android:inputType="number"
                     android:key="pref.graph.x-axis.minimum-shift.time"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.graph_x_axis_minimum_shift_time" />
 
                 <EditTextPreference
@@ -252,15 +251,15 @@
                     android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
                     android:inputType="number"
                     android:key="pref.graph.x-axis.start-moving-after.time"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.graph_x_axis_start_moving_after_time" />
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
                     android:defaultValue="@array/prefs.empty_array"
-                    android:key="pref.graph.pids.selected"
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.graph.pids.selected"
                     android:summary="@string/pref.displayed_parameter_ids" />
             </PreferenceCategory>
 
@@ -268,13 +267,13 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.trips.recordings.display_info"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.trips_recordings_display_info" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.trips.recordings.save.short.trip"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.trips_recordings_save_short_trip" />
 
                 <org.openobd2.core.logger.ui.preferences.TripsListPreferences
@@ -291,19 +290,19 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.dash.top.values.blink"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.dash_top_values_blink" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.dash.swipe.to.delete"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.dash_swipe_to_delete" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.dash.top.values.red.color"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.dash_top_values_red_color" />
 
                 <CheckBoxPreference
@@ -326,18 +325,18 @@
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="pref.dash.dash.view.visible"
-                    android:singleLineTitle="false"
+
                     android:summary="@string/pref.dash_dash_view_visible" />
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                    android:key="pref.dash.pids.selected"
                     android:dialogTitle="@string/pref.dash_pids_selected"
+                    android:key="pref.dash.pids.selected"
                     android:summary="@string/pref.dash_pids_selected" />
 
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                    android:key="pref.dash.gauge_pids.selected"
                     android:dialogTitle="@string/pref.dash_gauge_pids_selected"
+                    android:key="pref.dash.gauge_pids.selected"
                     android:summary="@string/pref.dash_gauge_pids_selected" />
             </PreferenceCategory>
 

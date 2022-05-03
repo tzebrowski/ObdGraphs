@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="4sp"
-            android:text="@string/pid.label"
+            android:text="@string/pid.metric_name"
             android:textColor="@color/white"
             android:textSize="13sp" />
 

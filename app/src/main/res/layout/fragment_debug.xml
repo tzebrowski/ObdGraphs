@@ -20,7 +20,7 @@
         <TextView
             android:id="@+id/text_home"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:scrollbars="vertical"
             android:textAlignment="center"
             android:textSize="12sp" />

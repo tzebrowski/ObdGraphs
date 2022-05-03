@@ -31,7 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="left"
-                android:text="Mode"
+                android:text="@string/pid.mode"
                 android:textColor="#FFFF00"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -40,7 +40,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:gravity="left"
-                android:text="Metric name"
+                android:text="@string/pid.metric_name"
                 android:textAllCaps="false"
                 android:textColor="#FFFF00"
                 android:textSize="16sp"
@@ -50,8 +50,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
-
-                android:text="Min"
+                android:text="@string/pid.value_min"
                 android:textColor="#FFFF00"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -60,7 +59,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Max"
+                android:text="@string/pid.value_max"
                 android:textColor="#FFFF00"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -69,7 +68,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Avg"
+                android:text="@string/pid.value_avg"
                 android:textColor="#FFFF00"
                 android:textSize="16sp"
                 android:textStyle="normal"/>
