@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,4 +22,4 @@ jobs:
           ${{ runner.os }}-build-
           ${{ runner.os }}-
    - name: Build the app
-	run: ./gradlew build
+	 run: ./gradlew build
