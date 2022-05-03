@@ -70,7 +70,6 @@
     <string name="pref.adapter_init_header22">Header 22</string>
     <string name="pref.adapter_init_header01">Header 01</string>
     <string name="pref.init_category">Init</string>
-    <string name="pref.diagnosis_category">Diagnosis</string>
 
     <string-array name="prefs.empty_array"></string-array>
 
