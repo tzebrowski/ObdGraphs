@@ -106,18 +106,21 @@
                         android:key="pref.pids.generic.high"
                         android:singleLineTitle="false"
                         android:summary="High priority Parameter IDs"
-                        app:priority="high" />
+                        android:dialogTitle="High priority Parameter IDs"
+                        app:priority="high"  />
 
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         android:key="pref.pids.generic.low"
                         android:singleLineTitle="false"
                         android:summary="Low priority Parameter IDs"
+                        android:dialogTitle="Low priority Parameter IDs"
                         app:priority="low" />
 
                     <org.openobd2.core.logger.ui.preferences.SupportedPidsPreferences
                         android:key="pref.pids.supported"
                         android:singleLineTitle="false"
-                        android:summary="Parameter IDs supported by ECU"
+                        android:dialogTitle="Parameter IDs supported by ECU\n(fetched after first successful connection to the ECU)"
+                        android:summary="Parameter IDs supported by ECU\n(fetched after first successful connection to the ECU)"
                        />
 
                 </PreferenceCategory>

@@ -2,7 +2,7 @@ package org.openobd2.core.logger.ui.preferences
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.preference.MultiSelectListPreference
+import androidx.preference.ListPreference
 import org.openobd2.core.logger.bl.datalogger.DataLogger
 import java.util.*
 
@@ -11,7 +11,7 @@ class SupportedPidsPreferences(
     context: Context?,
     attrs: AttributeSet?
 ) :
-    MultiSelectListPreference(context, attrs) {
+    ListPreference(context, attrs) {
 
     init {
 
@@ -19,15 +19,13 @@ class SupportedPidsPreferences(
             LinkedList()
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
-
-        val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
-
+        val pids = DataLogger.instance.pidDefinitionRegistry().findAll()
         Prefs.getECUSupportedPids().forEach { it ->
-            val pid = pidDefinitionRegistry.findBy(it)
-            entries.add(it)
-            entriesValues.add(it)
+            pids.firstOrNull { f -> f.pid == it }?.let { pid ->
+                entries.add(pid.description)
+                entriesValues.add(pid.description)
+            }
         }
-
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
     }
