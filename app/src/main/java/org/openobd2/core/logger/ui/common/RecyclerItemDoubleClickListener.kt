@@ -20,7 +20,9 @@ class DoubleClickGestureListener(val context: Context) : GestureDetector.SimpleO
 
 fun onDoubleClickListener(context: Context): View.OnTouchListener {
     val gestureDetector = GestureDetector(context, DoubleClickGestureListener(context))
-    return View.OnTouchListener { _, event ->
+    return View.OnTouchListener { v, event ->
+        if (event.action == MotionEvent.ACTION_UP) v.performClick()
+
         gestureDetector.onTouchEvent(
             event
         )

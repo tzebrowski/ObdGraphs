@@ -22,8 +22,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigationBar() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
+        val navController = navController()
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -254,6 +254,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         navView.selectedItemId = R.id.navigation_gauge
+    }
+
+    private fun navController(): NavController {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        return navHostFragment.navController
     }
 
     private fun setupPreferences() {
@@ -374,7 +380,7 @@ class MainActivity : AppCompatActivity() {
             pm.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.ctx_menu_pids_to_query -> {
-                        Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment)
+                        this@MainActivity.navController()
                             .navigate(
                                 R.id.navigation_preferences,
                                 bundleOf("preferences.rootKey" to "prefs.pids.query")
@@ -396,7 +402,7 @@ class MainActivity : AppCompatActivity() {
                             else -> "prefs.root"
                         }
 
-                        Navigation.findNavController(this@MainActivity, R.id.nav_host_fragment)
+                        this@MainActivity.navController()
                             .navigate(
                                 R.id.navigation_preferences,
                                 bundleOf("preferences.rootKey" to keyToNavigate)
