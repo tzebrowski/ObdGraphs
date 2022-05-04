@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TableLayout
+
+    <TableRow
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -12,71 +13,68 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TableRow >
+        <TextView
+            android:id="@+id/metric_mode"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:gravity="start"
+            android:paddingStart="2dp"
+            android:text="@string/pid.mode"
+            android:textColor="#1C3D72"
+            android:textSize="14sp"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/metric_mode"
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:paddingStart="2dp"
-                android:text="@string/pid.mode"
-                android:textColor="#1C3D72"
-                android:textSize="14sp"
-                android:textStyle="normal" />
+        <TextView
+            android:id="@+id/metric_name"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:gravity="start"
+            android:text="@string/pid.metric_name"
+            android:textAllCaps="false"
+            android:textColor="#1C3D72"
+            android:textSize="14sp"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/metric_name"
-                android:layout_width="0dp"
-                android:layout_weight="1.5"
-                android:gravity="start"
-                android:text="@string/pid.metric_name"
-                android:textAllCaps="false"
-                android:textColor="#1C3D72"
-                android:textSize="14sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/metric_min_value"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="@string/pid.value_min"
-                android:textColor="#1C3D72"
-                android:textSize="14sp"
-                android:textStyle="normal" />
+        <TextView
+            android:id="@+id/metric_min_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/pid.value_min"
+            android:textColor="#1C3D72"
+            android:textSize="14sp"
+            android:textStyle="normal" />
 
 
-            <TextView
-                android:id="@+id/metric_max_value"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="@string/pid.value_max"
-                android:textColor="#1C3D72"
-                android:textSize="14sp"
-                android:textStyle="normal" />
+        <TextView
+            android:id="@+id/metric_max_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/pid.value_max"
+            android:textColor="#1C3D72"
+            android:textSize="14sp"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/metric_avg_value"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="@string/pid.value_avg"
-                android:textColor="#1C3D72"
-                android:textSize="14sp"
-                android:textStyle="normal" />
+        <TextView
+            android:id="@+id/metric_avg_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/pid.value_avg"
+            android:textColor="#1C3D72"
+            android:textSize="14sp"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/metric_value"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingEnd="6dp"
-                android:text="@string/pid.value"
-                android:textColor="#1C3D72"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </TableRow>
-    </TableLayout>
+        <TextView
+            android:id="@+id/metric_value"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:paddingEnd="6dp"
+            android:text="@string/pid.value"
+            android:textColor="#1C3D72"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </TableRow>
 </androidx.constraintlayout.widget.ConstraintLayout>
