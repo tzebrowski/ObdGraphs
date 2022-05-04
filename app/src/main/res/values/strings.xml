@@ -18,7 +18,7 @@
     <string name="context_menu.view_configuration">View configuration</string>
 
     <string name="pref.dash_pids_selected">Dashboard: Displayed Parameter IDs</string>
-    <string name="pref.dash_gauge_pids_selected">Gauge: Displayed Parameter IDs</string>
+    <string name="pref.dash_tiles_pids_selected">Tiles: Displayed Parameter IDs</string>
     <string name="pref.displayed_parameter_ids">Displayed Parameter IDs</string>
     <string name="pref.pids_generic_high">High priority Parameter IDs</string>
     <string name="pref.pids_generic_low">Low priority Parameter IDs</string>
@@ -60,7 +60,7 @@
     <string name="pref.graph_x_axis_minimum_shift_time">X-Axis moving time</string>
     <string name="pref.graph_cache_enabled">Cache enabled</string>
     <string name="pref.debug_generator_enabled">Enable data generator</string>
-    <string name="pref.dash_gauge_view_visible">Gauge: Show the view</string>
+    <string name="pref.dash_tiles_view_visible">Tiles: Show the view</string>
     <string name="pref.dash_dash_view_visible">Dashboard: Show the view</string>
     <string name="pref.dash_theme">Color theme</string>
     <string name="pref.dash_top_values_red_color">Highlight top values</string>

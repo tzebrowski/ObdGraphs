@@ -320,7 +320,7 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.dash.gauge.view.visible"
-                    android:summary="@string/pref.dash_gauge_view_visible" />
+                    android:summary="@string/pref.dash_tiles_view_visible" />
 
                 <CheckBoxPreference
                     android:defaultValue="true"
@@ -335,9 +335,9 @@
                     android:summary="@string/pref.dash_pids_selected" />
 
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                    android:dialogTitle="@string/pref.dash_gauge_pids_selected"
+                    android:dialogTitle="@string/pref.dash_tiles_pids_selected"
                     android:key="pref.dash.gauge_pids.selected"
-                    android:summary="@string/pref.dash_gauge_pids_selected" />
+                    android:summary="@string/pref.dash_tiles_pids_selected" />
             </PreferenceCategory>
 
         </PreferenceScreen>

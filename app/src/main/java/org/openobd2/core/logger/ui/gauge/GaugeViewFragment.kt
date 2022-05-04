@@ -27,7 +27,7 @@ class GaugeViewFragment : Fragment() {
     }
 
     private fun configureView() {
-        GaugeViewSetup.onCreateView(
+        TilesViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
             root,

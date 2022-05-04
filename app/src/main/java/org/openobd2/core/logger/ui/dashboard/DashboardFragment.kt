@@ -18,7 +18,7 @@ import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.MetricsViewContext
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
-import org.openobd2.core.logger.ui.gauge.GaugeViewSetup
+import org.openobd2.core.logger.ui.gauge.TilesViewSetup
 import org.openobd2.core.logger.ui.preferences.DashPreferences
 
 class DashboardFragment : Fragment() {
@@ -42,44 +42,44 @@ class DashboardFragment : Fragment() {
 
     private fun configureView() {
 
-        if (dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
+        if (dashboardPreferences.tilesViewVisible && dashboardPreferences.dashboardViewVisible) {
 
             configureRecyclerView(
-                R.id.gauge_recycler_view,
-                dashboardPreferences.gaugeViewVisible,
+                R.id.tiles_recycler_view,
+                dashboardPreferences.tilesViewVisible,
                 0.25f,
                 0
             )
             configureRecyclerView(
-                R.id.dash_recycler_view,
+                R.id.dashboard_recycler_view,
                 dashboardPreferences.dashboardViewVisible,
                 0.75f,
                 0
             )
 
-            setupGaugeRecyclerView(2)
+            setupTilesRecyclerView(2)
             setupDashRecyclerView()
 
         } else {
-            if (dashboardPreferences.gaugeViewVisible && !dashboardPreferences.dashboardViewVisible) {
+            if (dashboardPreferences.tilesViewVisible && !dashboardPreferences.dashboardViewVisible) {
                 configureRecyclerView(
-                    R.id.gauge_recycler_view,
+                    R.id.tiles_recycler_view,
                     true,
                     1f,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
 
-                configureRecyclerView(R.id.dash_recycler_view, false, 0f, 0)
-                setupGaugeRecyclerView(4)
+                configureRecyclerView(R.id.dashboard_recycler_view, false, 0f, 0)
+                setupTilesRecyclerView(4)
             }
-            if (!dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
+            if (!dashboardPreferences.tilesViewVisible && dashboardPreferences.dashboardViewVisible) {
                 configureRecyclerView(
-                    R.id.dash_recycler_view,
+                    R.id.dashboard_recycler_view,
                     true,
                     1f,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                configureRecyclerView(R.id.gauge_recycler_view, false, 0f, 0)
+                configureRecyclerView(R.id.tiles_recycler_view, false, 0f, 0)
                 setupDashRecyclerView()
             }
         }
@@ -94,14 +94,14 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun setupGaugeRecyclerView(spanCount: Int) {
-        GaugeViewSetup.onCreateView(
+    private fun setupTilesRecyclerView(spanCount: Int) {
+        TilesViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
             root,
-            R.id.gauge_recycler_view,
+            R.id.tiles_recycler_view,
             "pref.dash.gauge_pids.selected",
-            R.layout.dashboard_gauge_item,
+            R.layout.dashboard_tiles_item,
             spanCount = spanCount
         )
     }
@@ -119,7 +119,7 @@ class DashboardFragment : Fragment() {
         val itemHeight = calculateItemHeight(metrics, spanCount)
 
         metricsViewContext.adapter = DashboardViewAdapter(root.context, metrics, itemHeight)
-        val recyclerView: RecyclerView = root.findViewById(R.id.dash_recycler_view)
+        val recyclerView: RecyclerView = root.findViewById(R.id.dashboard_recycler_view)
         metricsViewContext.adapter.setHasStableIds(true)
 
         recyclerView.layoutManager =

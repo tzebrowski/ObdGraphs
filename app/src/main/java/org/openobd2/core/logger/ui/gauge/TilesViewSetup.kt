@@ -13,7 +13,7 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getLongSet
 import kotlin.math.roundToInt
 
-class GaugeViewSetup {
+class TilesViewSetup {
     companion object {
         fun onCreateView(
             owner: LifecycleOwner,
