@@ -1,6 +1,6 @@
 # `ObdGraphs` is an Android application which is intended to collect and display OBD related metrics.
 
-![CI](https://github.com/tzebrowski/ObdGraphs/workflows/Build/badge.svg?branch=main)
+![CI](https://github.com/tzebrowski/ObdGraphs/actions/workflows/build.yml/badge.svg)
 
 ## About
 

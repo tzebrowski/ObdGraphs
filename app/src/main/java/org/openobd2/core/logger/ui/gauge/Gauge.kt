@@ -166,8 +166,6 @@ class Gauge : View {
         canvas.drawArc(rectF, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
         paint.color = pointStartColor
 
-
-
         paint.shader = linearGradient
         if (pointSize > 0) { //if size of pointer is defined
             if (point > startAngle + pointSize / 2) {

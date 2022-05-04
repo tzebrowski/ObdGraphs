@@ -12,8 +12,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="1sp"
-        android:layout_marginRight="1sp"
+        android:layout_marginStart="1sp"
+        android:layout_marginEnd="1sp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -53,7 +53,8 @@
             android:gravity="center"
             android:text="@string/pid.value_min"
             android:textColor="#5CFFFF00"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            tools:ignore="TextContrastCheck" />
 
         <TextView
             android:id="@+id/max_value"
@@ -64,6 +65,6 @@
             android:text="@string/pid.value_max"
             android:textColor="#5CFFFF00"
             android:textSize="22sp"
-            tools:ignore="RtlHardcoded" />
+            tools:ignore="RtlHardcoded,TextContrastCheck" />
     </LinearLayout>
 </RelativeLayout>

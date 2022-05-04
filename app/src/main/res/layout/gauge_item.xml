@@ -45,8 +45,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="1sp"
-        android:layout_marginRight="1sp"
+        android:layout_marginStart="1sp"
+        android:layout_marginEnd="1sp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
-            android:gravity="right"
+            android:gravity="end"
             android:textColor="@color/md_white_1000"
             android:textSize="16sp"
             android:textStyle="normal"

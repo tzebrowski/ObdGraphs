@@ -9,8 +9,8 @@
         <ListPreference
             android:defaultValue="bluetooth"
             android:dialogTitle="@string/pref.selected_connection_type"
-            android:entries="@array/prefs.connection_type_array"
-            android:entryValues="@array/prefs.connection_type_array"
+            android:entries="@array/pref.connection_type_array"
+            android:entryValues="@array/pref.connection_type_array"
             android:key="pref.connection.type"
             android:summary="@string/pref.selected_connection_type" />
 
@@ -19,7 +19,7 @@
             android:title="@string/pref.bluetooth_category">
 
             <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
-                android:defaultValue="@array/prefs.empty_array"
+                android:defaultValue="@array/pref.empty_array"
                 android:dialogTitle="@string/pref.adapter_id"
                 android:key="pref.adapter.id"
                 android:summary="@string/pref.adapter_id" />
@@ -55,29 +55,29 @@
 
             <ListPreference
                 android:defaultValue="500"
-                android:entries="@array/prefs.init_delay"
-                android:entryValues="@array/prefs.init_delay"
+                android:entries="@array/pref.init_delay"
+                android:entryValues="@array/pref.init_delay"
                 android:key="pref.adapter.init.delay"
                 android:summary="@string/pref.adapter_init_delay" />
 
             <ListPreference
                 android:defaultValue="AUTO"
-                android:entries="@array/prefs.init_protocol"
-                android:entryValues="@array/prefs.init_protocol"
+                android:entries="@array/pref.init_protocol"
+                android:entryValues="@array/pref.init_protocol"
                 android:key="pref.adapter.init.protocol"
                 android:summary="@string/pref.adapter_init_protocol" />
 
             <ListPreference
                 android:defaultValue=""
-                android:entries="@array/prefs.init_header"
-                android:entryValues="@array/prefs.init_header"
+                android:entries="@array/pref.init_header"
+                android:entryValues="@array/pref.init_header"
                 android:key="pref.adapter.init.header22"
                 android:summary="@string/pref.adapter_init_header22" />
 
             <ListPreference
                 android:defaultValue=""
-                android:entries="@array/prefs.init_header"
-                android:entryValues="@array/prefs.init_header"
+                android:entries="@array/pref.init_header"
+                android:entryValues="@array/pref.init_header"
                 android:key="pref.adapter.init.header01"
                 android:summary="@string/pref.adapter_init_header01" />
 
@@ -143,8 +143,8 @@
 
             <ListPreference
                 android:defaultValue="6"
-                android:entries="@array/prefs.command_frequency"
-                android:entryValues="@array/prefs.command_frequency"
+                android:entries="@array/pref.command_frequency"
+                android:entryValues="@array/pref.command_frequency"
                 android:key="pref.adapter.command.freq"
                 android:summary="@string/pref.adapter_command_freq" />
         </PreferenceCategory>
@@ -205,7 +205,7 @@
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                    android:defaultValue="@array/prefs.empty_array"
+                    android:defaultValue="@array/pref.empty_array"
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
                     android:key="pref.gauge.pids.selected"
                     android:summary="@string/pref.displayed_parameter_ids" />
@@ -257,7 +257,7 @@
 
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                    android:defaultValue="@array/prefs.empty_array"
+                    android:defaultValue="@array/pref.empty_array"
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
                     android:key="pref.graph.pids.selected"
                     android:summary="@string/pref.displayed_parameter_ids" />
@@ -277,7 +277,7 @@
                     android:summary="@string/pref.trips_recordings_save_short_trip" />
 
                 <org.openobd2.core.logger.ui.preferences.TripsListPreferences
-                    android:defaultValue="@array/prefs.empty_array"
+                    android:defaultValue="@array/pref.empty_array"
                     android:key="pref.graph.trips.selected"
                     android:summary="@string/pref.graph_trips_selected" />
             </PreferenceCategory>
@@ -312,8 +312,8 @@
 
                 <ListPreference
                     android:defaultValue="0"
-                    android:entries="@array/prefs.dash_color_themes"
-                    android:entryValues="@array/prefs.dash_color_themes"
+                    android:entries="@array/pref.dash_color_themes"
+                    android:entryValues="@array/pref.dash_color_themes"
                     android:key="pref.dash.theme"
                     android:summary="@string/pref.dash_theme" />
 

@@ -72,21 +72,24 @@
     <string name="pref.adapter_init_header01">Header 01</string>
     <string name="pref.init_category">Init</string>
 
-    <string-array name="prefs.empty_array"></string-array>
+    <string name="activity.btn_menu">Menu</string>
+    <string name="activity.btn_start">Start/Stop</string>
 
-    <string-array name="prefs.connection_type_array">
+    <string-array name="pref.empty_array"></string-array>
+
+    <string-array name="pref.connection_type_array">
         <item name="connection.wifi">wifi</item>
         <item name="connection.bluetooth">bluetooth</item>
     </string-array>
 
-    <string-array name="prefs.dash_color_themes">
+    <string-array name="pref.dash_color_themes">
         <item name="0">0</item>
         <item name="1">1</item>
         <item name="2">2</item>
         <item name="3">3</item>
     </string-array>
 
-    <string-array name="prefs.command_frequency">
+    <string-array name="pref.command_frequency">
         <item name="1">1</item>
         <item name="2">2</item>
         <item name="3">3</item>
@@ -104,7 +107,7 @@
         <item name="15">15</item>
     </string-array>
 
-    <string-array name="prefs.init_delay">
+    <string-array name="pref.init_delay">
         <item name="500">500</item>
         <item name="1000">1000</item>
         <item name="2000">2000</item>
@@ -114,13 +117,13 @@
         <item name="6000">6000</item>
     </string-array>
 
-    <string-array name="prefs.init_protocol">
+    <string-array name="pref.init_protocol">
         <item name="AUTO">AUTO</item>
         <item name="CAN_11">CAN_11</item>
         <item name="CAN_29">CAN_29</item>
     </string-array>
 
-    <string-array name="prefs.init_header">
+    <string-array name="pref.init_header">
         <item name=""></item>
         <item name="DA10F1">DA10F1</item>
         <item name="DB33F1">DB33F1</item>

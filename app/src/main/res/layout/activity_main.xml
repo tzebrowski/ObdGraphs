@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black">
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/p_bar"
@@ -80,6 +79,7 @@
             app:layout_anchor="@id/bottomAppBar">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:contentDescription="@string/activity.btn_start"
                 android:id="@+id/connect_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,10 +88,11 @@
                 app:fabSize="normal" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:contentDescription="@string/activity.btn_menu"
                 android:id="@+id/menu_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
+                android:layout_marginStart="3dp"
                 android:src="@android:drawable/ic_dialog_dialer"
                 app:backgroundTint="?android:attr/textColor"
                 app:fabSize="normal" />

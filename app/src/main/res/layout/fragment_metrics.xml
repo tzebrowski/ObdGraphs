@@ -19,7 +19,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
-                android:gravity="left"
+                android:gravity="start"
                 android:text="@string/pid.mode"
                 android:textColor="#FFFF00"
                 android:textSize="20sp"
@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
-                android:gravity="left"
+                android:gravity="start"
                 android:text="@string/pid.metric_name"
                 android:textAllCaps="false"
                 android:textColor="#FFFF00"
@@ -38,7 +38,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:gravity="right"
+                android:gravity="end"
 
                 android:text="@string/pid.value_min"
                 android:textColor="#FFFF00"
@@ -49,7 +49,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="@string/pid.value_max"
                 android:textColor="#FFFF00"
                 android:textSize="20sp"
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="@string/pid.value_avg"
                 android:textColor="#FFFF00"
                 android:textSize="20sp"
@@ -67,8 +67,8 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:gravity="right"
-                android:paddingRight="6dp"
+                android:gravity="end"
+                android:paddingEnd="6dp"
                 android:text="@string/pid.value"
                 android:textColor="#FFFF00"
                 android:textSize="20sp"
