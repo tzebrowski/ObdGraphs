@@ -67,6 +67,7 @@
             android:layout_weight="1"
             android:gravity="end"
             android:paddingEnd="6dp"
+            android:paddingStart="0dp"
             android:text="@string/pid.value"
             android:textColor="#FFFF00"
             android:textSize="20sp"

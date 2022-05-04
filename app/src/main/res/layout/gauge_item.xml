@@ -124,6 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingStart="10dp"
+            android:paddingEnd="0dp"
             android:text="@string/pid.mode"
             android:textColor="@color/md_white_1000"
             android:textSize="16sp"
