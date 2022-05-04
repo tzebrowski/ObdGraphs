@@ -46,7 +46,7 @@ class TripRecorder private constructor() {
     }
 
     private val valueScaler = ValueScaler()
-    private val context: Context by lazy { ApplicationContext }
+    private val context: Context by lazy { ApplicationContext.get()!! }
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
 

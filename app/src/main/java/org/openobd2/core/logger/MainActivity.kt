@@ -34,6 +34,7 @@ import org.openobd2.core.logger.bl.datalogger.*
 import org.openobd2.core.logger.bl.trip.TripRecorderBroadcastReceiver
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.preferences.*
+import java.lang.ref.WeakReference
 
 
 private const val LOGGER_TAG = "MainActivity"
@@ -166,7 +167,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ApplicationContext = this
+        ApplicationContext = WeakReference(this)
         Cache = cache
 
         StrictMode.setThreadPolicy(

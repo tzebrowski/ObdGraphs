@@ -36,7 +36,7 @@ internal class DataLogger internal constructor() {
             DataLogger()
     }
 
-    private val context: Context by lazy { ApplicationContext }
+    private val context: Context by lazy { ApplicationContext.get()!! }
 
     private var metricsAggregator = MetricsAggregator()
 
