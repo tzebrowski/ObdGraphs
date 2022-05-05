@@ -8,6 +8,10 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import org.openobd2.core.logger.R
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.round
+import kotlin.math.sin
+
 
 // This class is a copy of https://github.com/pkleczko/CustomGauge
 // It includes minor extensions.
@@ -34,6 +38,10 @@ class Gauge : View {
     private var isDividerDrawLast = false
     private lateinit var linearGradient: LinearGradient
 
+    var gaugeDrawNumbers = false
+
+
+    private val numbersPaint = Paint()
 
     private var strokeCap: String = "BUTT"
         set(newValue) {
@@ -122,25 +130,61 @@ class Gauge : View {
             pointStartColor, Shader.TileMode.CLAMP
         )
 
+        gaugeDrawNumbers =  styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawNumbers, false)
+
         styledAttributes.recycle()
         init()
     }
 
     fun init() {
-        //main Paint
         paint = Paint()
         paint.color = strokeColor
         paint.strokeWidth = strokeWidth
         paint.isAntiAlias = true
-        if (!TextUtils.isEmpty(strokeCap)) {
+
+        if (TextUtils.isEmpty(strokeCap)) {
+            paint.strokeCap = Paint.Cap.BUTT
+        } else {
             if (strokeCap == "BUTT") paint.strokeCap =
                 Paint.Cap.BUTT else if (strokeCap == "ROUND") paint.strokeCap =
                 Paint.Cap.ROUND
-        } else paint.strokeCap = Paint.Cap.BUTT
+        }
+
         paint.style = Paint.Style.STROKE
         rectF = RectF()
         value = startValue
         point = startAngle
+    }
+
+    private fun drawNums(canvas: Canvas) {
+        val size = measuredWidth.toFloat()
+        val padding = strokeWidth
+        val w = size - 2 * padding
+        val h = size - 2 * padding
+        val radius = if (w < h) w / 2 else h / 2
+
+        val calculatedHeight: Float =
+            if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
+
+        numbersPaint.color = resources.getColor(R.color.md_grey_500, null)
+        numbersPaint.textSize = strokeWidth * 0.60f
+
+        val step = dividerSize / 2
+        val angle = startAngle - (3 * step)
+        val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
+        val stepValue = round(endValue / max).toInt()
+
+        for (i in 0 .. max) {
+            val txt = (stepValue * i).toString()
+            val rect = Rect();
+
+            numbersPaint.getTextBounds(txt, 0, txt.length, rect)
+            val i1 = i * step
+            val angle =  (angle + (i1))
+            val x = (w / 2 + cos(angle) * radius - rect.width() / 2 ) + 20
+            val y = calculatedHeight / 2 + sin(angle) * radius + rect.height() / 2
+            canvas.drawText(txt , x, y, numbersPaint)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -186,6 +230,11 @@ class Gauge : View {
                 paint
             )
         }
+
+        if (gaugeDrawNumbers) {
+            drawNums(canvas)
+        }
+
         drawDivider(canvas)
     }
 

@@ -196,12 +196,18 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.gauge_display_command_rate"
-
                     android:summary="@string/pref.gauge_display_command_rate" />
+
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.gauge_display_numbers"
+                    android:summary="@string/pref.gauge_display_numbers" />
+
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="pref.gauge.view.enabled"
                     android:summary="@string/pref.enable_view" />
+
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.PidListPreferences
@@ -243,7 +249,6 @@
                     android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
                     android:inputType="number"
                     android:key="pref.graph.x-axis.minimum-shift.time"
-
                     android:summary="@string/pref.graph_x_axis_minimum_shift_time" />
 
                 <EditTextPreference

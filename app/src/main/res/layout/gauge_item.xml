@@ -17,20 +17,21 @@
         app:gaugeDividerDrawLast="true"
         app:gaugeDividerSize="3"
         app:gaugeDividerStep="10"
-        app:gaugePointEndColor="@color/md_red_900"
-        app:gaugePointStartColor="@color/md_red_500"
+        app:gaugePointEndColor="@color/md_black_1000"
+        app:gaugePointStartColor="@color/md_black_1000"
         app:gaugeStartAngle="180"
         app:gaugeStrokeCap="BUTT"
         app:gaugeStrokeColor="@color/md_grey_500"
         app:gaugeStrokeWidth="4dp"
-        app:gaugeSweepAngle="180" />
+        app:gaugeSweepAngle="180"
+        app:gaugeDrawNumbers="false"/>
 
     <org.openobd2.core.logger.ui.gauge.Gauge
         android:id="@+id/gauge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom|center"
-        app:gaugeDividerColor="@color/md_black_1000"
+        app:gaugeDividerColor="@color/md_grey_500"
         app:gaugeDividerDrawFirst="true"
         app:gaugeDividerDrawLast="true"
         app:gaugeDividerSize="3"
@@ -40,8 +41,9 @@
         app:gaugeStartAngle="180"
         app:gaugeStrokeCap="BUTT"
         app:gaugeStrokeColor="@color/md_black_1000"
-        app:gaugeStrokeWidth="10dp"
-        app:gaugeSweepAngle="180" />
+        app:gaugeStrokeWidth="11dp"
+        app:gaugeSweepAngle="180"
+        app:gaugeDrawNumbers="true"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

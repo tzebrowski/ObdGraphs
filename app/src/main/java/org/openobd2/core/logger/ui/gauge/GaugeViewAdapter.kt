@@ -20,6 +20,7 @@ import org.openobd2.core.logger.ui.common.highLightText
 import org.openobd2.core.logger.ui.common.isTablet
 import org.openobd2.core.logger.ui.dashboard.round
 import org.openobd2.core.logger.ui.graph.ValueScaler
+import org.openobd2.core.logger.ui.preferences.Prefs
 import java.util.*
 
 private const val LABEL_COLOR = "#01804F"
@@ -41,6 +42,10 @@ class GaugeViewAdapter internal constructor(
         var pidMode: TextView? = itemView.findViewById(R.id.pid_mode)
         var gauge: Gauge? = itemView.findViewById(R.id.gauge_view)
         var init: Boolean = false
+
+        init {
+            gauge?.gaugeDrawNumbers = Prefs.getBoolean("pref.gauge_display_numbers",true)
+        }
     }
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
