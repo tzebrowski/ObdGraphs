@@ -44,7 +44,7 @@ class GaugeViewAdapter internal constructor(
         var init: Boolean = false
 
         init {
-            gauge?.gaugeDrawNumbers = Prefs.getBoolean("pref.gauge_display_numbers",true)
+            gauge?.gaugeDrawScale = Prefs.getBoolean("pref.gauge_display_scale",true)
         }
     }
 

@@ -24,7 +24,7 @@
         app:gaugeStrokeColor="@color/md_grey_500"
         app:gaugeStrokeWidth="4dp"
         app:gaugeSweepAngle="180"
-        app:gaugeDrawNumbers="false"/>
+        app:gaugeDrawScale="false"/>
 
     <org.openobd2.core.logger.ui.gauge.Gauge
         android:id="@+id/gauge_view"
@@ -43,7 +43,7 @@
         app:gaugeStrokeColor="@color/md_black_1000"
         app:gaugeStrokeWidth="11dp"
         app:gaugeSweepAngle="180"
-        app:gaugeDrawNumbers="true"/>
+        app:gaugeDrawScale="true"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -200,8 +200,8 @@
 
                 <CheckBoxPreference
                     android:defaultValue="true"
-                    android:key="pref.gauge_display_numbers"
-                    android:summary="@string/pref.gauge_display_numbers" />
+                    android:key="pref.gauge_display_scale"
+                    android:summary="@string/pref.gauge_display_scale" />
 
                 <CheckBoxPreference
                     android:defaultValue="true"

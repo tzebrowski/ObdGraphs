@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_debug">Debug</string>
     <string name="navigation.title_gauge">Gauge</string>
@@ -31,7 +31,7 @@
     <string name="pref.selected_connection_type">Adapter connection type</string>
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge_display_command_rate">Display commands frequency</string>
-    <string name="pref.gauge_display_numbers">Display numbers on the gauge</string>
+    <string name="pref.gauge_display_scale">Display scale on the gauge</string>
 
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
@@ -77,7 +77,7 @@
     <string name="activity.btn_menu">Menu</string>
     <string name="activity.btn_start">Start/Stop</string>
 
-    <string-array name="pref.empty_array"></string-array>
+    <string-array name="pref.empty_array" />
 
     <string-array name="pref.connection_type_array">
         <item name="connection.wifi">wifi</item>
@@ -102,11 +102,6 @@
         <item name="8">8</item>
         <item name="9">9</item>
         <item name="10">10</item>
-        <item name="11">11</item>
-        <item name="12">12</item>
-        <item name="13">13</item>
-        <item name="14">14</item>
-        <item name="15">15</item>
     </string-array>
 
     <string-array name="pref.init_delay">
@@ -121,12 +116,12 @@
 
     <string-array name="pref.init_protocol">
         <item name="AUTO">AUTO</item>
-        <item name="CAN_11">CAN_11</item>
+        <item name="CAN_11" tools:ignore="Typos">CAN_11</item>
         <item name="CAN_29">CAN_29</item>
     </string-array>
 
     <string-array name="pref.init_header">
-        <item name=""></item>
+        <item name="" />
         <item name="DA10F1">DA10F1</item>
         <item name="DB33F1">DB33F1</item>
         <item name="7DF">7DF</item>

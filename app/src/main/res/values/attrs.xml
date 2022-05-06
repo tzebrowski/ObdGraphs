@@ -17,7 +17,7 @@
         <attr name="gaugeDividerStep" format="integer" />
         <attr name="gaugeDividerDrawFirst" format="boolean" />
         <attr name="gaugeDividerDrawLast" format="boolean" />
-        <attr name="gaugeDrawNumbers" format="boolean" />
+        <attr name="gaugeDrawScale" format="boolean" />
 
     </declare-styleable>
 </resources>

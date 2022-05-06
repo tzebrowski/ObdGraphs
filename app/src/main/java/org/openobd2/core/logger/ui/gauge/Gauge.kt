@@ -38,9 +38,7 @@ class Gauge : View {
     private var isDividerDrawLast = false
     private lateinit var linearGradient: LinearGradient
 
-    var gaugeDrawNumbers = false
-
-
+    var gaugeDrawScale = false
     private val numbersPaint = Paint()
 
     private var strokeCap: String = "BUTT"
@@ -130,7 +128,7 @@ class Gauge : View {
             pointStartColor, Shader.TileMode.CLAMP
         )
 
-        gaugeDrawNumbers =  styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawNumbers, false)
+        gaugeDrawScale =  styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawScale, false)
 
         styledAttributes.recycle()
         init()
@@ -156,7 +154,8 @@ class Gauge : View {
         point = startAngle
     }
 
-    private fun drawNums(canvas: Canvas) {
+    private fun drawScale(canvas: Canvas) {
+
         val size = measuredWidth.toFloat()
         val padding = strokeWidth
         val w = size - 2 * padding
@@ -167,22 +166,22 @@ class Gauge : View {
             if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
 
         numbersPaint.color = resources.getColor(R.color.md_grey_500, null)
-        numbersPaint.textSize = strokeWidth * 0.60f
+        numbersPaint.textSize = strokeWidth * 0.8f
 
-        val step = dividerSize / 2
-        val angle = startAngle - (3 * step)
+        val step = dividerSize / 2f
+        val startAngle = this.startAngle - (2.5f * step)
         val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
         val stepValue = round(endValue / max).toInt()
 
-        for (i in 0 .. max) {
-            val txt = (stepValue * i).toString()
-            val rect = Rect();
+        for (i in 0 .. max step 2) {
+
+            val txt = if (i == max - 1) "${endValue.toInt()}" else "${(stepValue * i)}"
+            val rect = Rect()
 
             numbersPaint.getTextBounds(txt, 0, txt.length, rect)
-            val i1 = i * step
-            val angle =  (angle + (i1))
+            val angle = startAngle + i * step
             val x = (w / 2 + cos(angle) * radius - rect.width() / 2 ) + 20
-            val y = calculatedHeight / 2 + sin(angle) * radius + rect.height() / 2
+            val y = (calculatedHeight / 2 + sin(angle) * radius + rect.height() / 2) + 40
             canvas.drawText(txt , x, y, numbersPaint)
         }
     }
@@ -231,8 +230,8 @@ class Gauge : View {
             )
         }
 
-        if (gaugeDrawNumbers) {
-            drawNums(canvas)
+        if (gaugeDrawScale) {
+            drawScale(canvas)
         }
 
         drawDivider(canvas)
@@ -242,17 +241,16 @@ class Gauge : View {
         if (dividerSize > 0) {
             paint.color = dividerColor
             paint.shader = null
-            var i = if (isDividerDrawFirst) 0 else 1
+            val i = if (isDividerDrawFirst) 0 else 1
             val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
-            while (i < max) {
+            for ( j in i .. max step 2) {
                 canvas.drawArc(
                     rectF,
-                    (startAngle + i * dividerStepAngle).toFloat(),
+                    (startAngle + j * dividerStepAngle).toFloat(),
                     dividerSize,
                     false,
                     paint
                 )
-                i++
             }
         }
     }
