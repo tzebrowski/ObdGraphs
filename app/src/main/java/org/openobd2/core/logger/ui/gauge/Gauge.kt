@@ -2,14 +2,15 @@ package org.openobd2.core.logger.ui.gauge
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.*
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.openobd2.core.logger.R
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.round
+import kotlin.math.sin
 
 
 private const val DEFAULT_LONG_POINTER_SIZE = 1
@@ -22,8 +23,8 @@ class Gauge : View {
     private var strokeColor = 0
     private lateinit var progressRect: RectF
     private lateinit var decorRect: RectF
-    private var  radius: Float = 0f
-    private var  calculatedHeight: Float = 0f
+    private var radius: Float = 0f
+    private var calculatedHeight: Float = 0f
     private var calculatedWidth: Float = 0f
     private var startAngle = 0
     private var sweepAngle = 0
@@ -127,7 +128,7 @@ class Gauge : View {
             pointStartColor, Shader.TileMode.CLAMP
         )
 
-        gaugeDrawScale =  styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawScale, false)
+        gaugeDrawScale = styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawScale, false)
 
         styledAttributes.recycle()
         init()
@@ -174,7 +175,8 @@ class Gauge : View {
 
         decorRect = RectF()
         val diff = 16f
-        decorRect[progressRect.left - diff, progressRect.top - diff,  progressRect.right + diff] =  progressRect.bottom + diff
+        decorRect[progressRect.left - diff, progressRect.top - diff, progressRect.right + diff] =
+            progressRect.bottom + diff
     }
 
 
@@ -185,7 +187,7 @@ class Gauge : View {
         paint.shader = null
         canvas.drawArc(progressRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
-        paint.color = resources.getColor(R.color.md_grey_500,null)
+        paint.color = resources.getColor(R.color.md_grey_500, null)
         paint.shader = null
         paint.strokeWidth = 5f
         paint.isAntiAlias = true
@@ -227,7 +229,7 @@ class Gauge : View {
             paint.shader = null
             val i = if (isDividerDrawFirst) 0 else 1
             val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
-            for ( j in i .. max step SCALE_STEP) {
+            for (j in i..max step SCALE_STEP) {
                 canvas.drawArc(
                     progressRect,
                     (startAngle + j * dividerStepAngle).toFloat(),
@@ -241,21 +243,20 @@ class Gauge : View {
 
     private fun drawScale(canvas: Canvas) {
         paint.shader = null
-        val step = dividerSize
-        val startAngle = this.startAngle - (2.1f * step)
-        val max = dividersCount / SCALE_STEP
-        val stepValue = round(endValue / max)
-        val radius = this.radius - 20.0f
-        for (i in 0 .. max) {
+        val scaleStartAngle = startAngle - dividerSize
+        val numberOfItems = (dividersCount / SCALE_STEP) - 1
+        val stepValue = round(endValue / numberOfItems)
+        val radius = this.radius - 21.0f - "$endValue".length
+        for (i in 0..numberOfItems) {
 
             val txt = "${(round(stepValue * i)).toInt()}"
             val rect = Rect()
 
             numbersPaint.getTextBounds(txt, 0, txt.length, rect)
-            val angle = startAngle + i  * step
-            val x = (width / 2.0f + cos(angle) * radius- rect.width() / 2)
+            val angle = scaleStartAngle + i * dividerSize
+            val x = (width / 2.0f + cos(angle) * radius - rect.width() / 2)
             val y = (calculatedHeight / 2.0f + sin(angle) * radius + rect.height() / 2)
-            canvas.drawText(txt , x, y, numbersPaint)
+            canvas.drawText(txt, x, y, numbersPaint)
         }
     }
 }
