@@ -184,8 +184,13 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="pref.toolbar.hide.doubleclick"
-
             android:summary="@string/pref.toolbar_hide_doubleclick" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref.toolbar.hide.connected"
+            android:summary="@string/pref.toolbar_hide_connected" />
+
 
         <PreferenceScreen
             android:summary="@string/pref.gauge_category"

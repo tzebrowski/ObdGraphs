@@ -110,6 +110,11 @@ class MainActivity : AppCompatActivity() {
                         Color.parseColor("#01804F"),
                         android.graphics.PorterDuff.Mode.SRC_IN
                     )
+
+                    if (getMainActivityPreferences().hideToolbarConnected) {
+                        val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
+                        layout.isVisible = !layout.isVisible
+                    }
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
@@ -133,6 +138,11 @@ class MainActivity : AppCompatActivity() {
             btn.setOnClickListener {
                 Log.i(LOGGER_TAG, "Stop data logging ")
                 DataLoggerService.startAction(context)
+            }
+
+            if (getMainActivityPreferences().hideToolbarConnected) {
+                val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
+                layout.isVisible = true
             }
         }
 

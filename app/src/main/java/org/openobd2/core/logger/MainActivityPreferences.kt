@@ -12,7 +12,8 @@ data class MainActivityPreferences(
     val showDashView: Boolean,
     val showGaugeView: Boolean,
     val showMetricsView: Boolean,
-    val showGraphView: Boolean
+    val showGraphView: Boolean,
+    val hideToolbarConnected: Boolean
 )
 
 const val LOGGER_KEY = "PREFS"
@@ -27,6 +28,7 @@ fun getMainActivityPreferences(): MainActivityPreferences {
 
     val showMetricsView = Prefs.getBoolean("pref.metrics.view.enabled", true)
     val showGraphView = Prefs.getBoolean("pref.graph.view.enabled", true)
+    val hideToolbarConnected = Prefs.isEnabled("pref.toolbar.hide.connected")
 
     val prefs = MainActivityPreferences(
         hideToolbarDoubleClick,
@@ -35,7 +37,8 @@ fun getMainActivityPreferences(): MainActivityPreferences {
         showDashView,
         showGaugeView,
         showMetricsView,
-        showGraphView
+        showGraphView,
+        hideToolbarConnected
     )
 
     Log.i(LOGGER_KEY, "Loaded MainActivity preferences: $prefs")
