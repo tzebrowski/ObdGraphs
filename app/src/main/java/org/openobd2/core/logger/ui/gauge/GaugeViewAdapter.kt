@@ -186,7 +186,7 @@ class GaugeViewAdapter internal constructor(
             it.textSize *= multiplier * 0.65f
         }
         holder.gauge?.let {
-            it.strokeWidth *= multiplier * 1.15f
+            it.scale(multiplier * 1.15f)
             it.init()
         }
     }

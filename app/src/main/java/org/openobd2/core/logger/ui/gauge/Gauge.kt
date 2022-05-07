@@ -19,7 +19,7 @@ private const val SCALE_STEP = 2
 // This class is an extension of https://github.com/pkleczko/CustomGauge
 class Gauge : View {
     private lateinit var paint: Paint
-    var strokeWidth = 0f
+    private var multiplier = 1f
     private var strokeColor = 0
     private lateinit var progressRect: RectF
     private lateinit var decorRect: RectF
@@ -29,6 +29,7 @@ class Gauge : View {
     private var startAngle = 0
     private var sweepAngle = 0
     var startValue: Float = 0f
+    private var strokeWidth = 0f
     private var pointAngle = 0.0
     private var point = 0
     private var pointSize = 0
@@ -44,6 +45,10 @@ class Gauge : View {
 
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
+
+    internal fun scale (multiplier: Float) {
+        this.multiplier = multiplier
+    }
 
     private var strokeCap: String = Paint.Cap.BUTT.name
         set(newValue) {
@@ -132,9 +137,14 @@ class Gauge : View {
 
         styledAttributes.recycle()
         init()
+
+
     }
 
     internal fun init() {
+        strokeWidth *= multiplier
+        var decorLineOffset = 12 * multiplier
+
         paint = Paint()
         paint.color = strokeColor
         paint.strokeWidth = strokeWidth
@@ -174,9 +184,8 @@ class Gauge : View {
         progressRect[rectLeft, rectTop, rectRight] = rectBottom
 
         decorRect = RectF()
-        val diff = 16f
-        decorRect[progressRect.left - diff, progressRect.top - diff, progressRect.right + diff] =
-            progressRect.bottom + diff
+        decorRect[progressRect.left - decorLineOffset, progressRect.top - decorLineOffset, progressRect.right + decorLineOffset] =
+            progressRect.bottom + decorLineOffset
     }
 
 
