@@ -2,26 +2,29 @@ package org.openobd2.core.logger.ui.gauge
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.*
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.openobd2.core.logger.R
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.round
-import kotlin.math.sin
+import kotlin.math.*
 
 
-// This class is a copy of https://github.com/pkleczko/CustomGauge
-// It includes minor extensions.
 private const val DEFAULT_LONG_POINTER_SIZE = 1
+private const val SCALE_STEP = 2
 
+// This class is an extension of https://github.com/pkleczko/CustomGauge
 class Gauge : View {
     private lateinit var paint: Paint
     var strokeWidth = 0f
     private var strokeColor = 0
-    private lateinit var rectF: RectF
+    private lateinit var progressRect: RectF
+    private lateinit var decorRect: RectF
+    private var  radius: Float = 0f
+    private var  calculatedHeight: Float = 0f
+    private var calculatedWidth: Float = 0f
     private var startAngle = 0
     private var sweepAngle = 0
     var startValue: Float = 0f
@@ -41,15 +44,11 @@ class Gauge : View {
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
 
-    private var strokeCap: String = "BUTT"
+    private var strokeCap: String = Paint.Cap.BUTT.name
         set(newValue) {
             field = newValue
             if (::paint.isInitialized) {
-                if (strokeCap == "BUTT") {
-                    paint.strokeCap = Paint.Cap.BUTT
-                } else if (strokeCap == "ROUND") {
-                    paint.strokeCap = Paint.Cap.ROUND
-                }
+                paint.strokeCap = Paint.Cap.valueOf(strokeCap)
             }
         }
 
@@ -134,7 +133,7 @@ class Gauge : View {
         init()
     }
 
-    fun init() {
+    internal fun init() {
         paint = Paint()
         paint.color = strokeColor
         paint.strokeWidth = strokeWidth
@@ -143,98 +142,83 @@ class Gauge : View {
         if (TextUtils.isEmpty(strokeCap)) {
             paint.strokeCap = Paint.Cap.BUTT
         } else {
-            if (strokeCap == "BUTT") paint.strokeCap =
-                Paint.Cap.BUTT else if (strokeCap == "ROUND") paint.strokeCap =
-                Paint.Cap.ROUND
+            paint.strokeCap = Paint.Cap.valueOf(strokeCap)
         }
 
         paint.style = Paint.Style.STROKE
-        rectF = RectF()
+
         value = startValue
         point = startAngle
-    }
-
-    private fun drawScale(canvas: Canvas) {
-
-        val size = measuredWidth.toFloat()
-        val padding = strokeWidth
-        val w = size - 2 * padding
-        val h = size - 2 * padding
-        val radius = if (w < h) w / 2 else h / 2
-
-        val calculatedHeight: Float =
-            if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
 
         numbersPaint.color = resources.getColor(R.color.md_grey_500, null)
         numbersPaint.textSize = strokeWidth * 0.8f
 
-        val step = dividerSize / 2f
-        val startAngle = this.startAngle - (2.5f * step)
-        val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
-        val stepValue = round(endValue / max).toInt()
-
-        for (i in 0 .. max step 2) {
-
-            val txt = if (i == max - 1) "${endValue.toInt()}" else "${(stepValue * i)}"
-            val rect = Rect()
-
-            numbersPaint.getTextBounds(txt, 0, txt.length, rect)
-            val angle = startAngle + i * step
-            val x = (w / 2 + cos(angle) * radius - rect.width() / 2 ) + 20
-            val y = (calculatedHeight / 2 + sin(angle) * radius + rect.height() / 2) + 40
-            canvas.drawText(txt , x, y, numbersPaint)
-        }
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
         val padding = strokeWidth
         val size = measuredWidth.toFloat()
 
-        val width = size - 2 * padding
+        calculatedWidth = size - 2 * padding
         val height = size - 2 * padding
-        val radius = if (width < height) width / 2 else height / 2
 
-        val calculatedHeight: Float =
+        radius = if (calculatedWidth < height) calculatedWidth / 2 else height / 2
+
+        calculatedHeight =
             if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
 
         val rectLeft = (getWidth() - 2 * padding) / 2 - radius + padding
         val rectTop = (calculatedHeight - 2 * padding) / 2 - radius + padding
 
-        val rectRight = (getWidth() - 2 * padding) / 2 - radius + padding + width
+        val rectRight = (getWidth() - 2 * padding) / 2 - radius + padding + calculatedWidth
         val rectBottom = (getHeight() - 2 * padding) / 2 - radius + padding + height
-        rectF[rectLeft, rectTop, rectRight] = rectBottom
+        progressRect = RectF()
+        progressRect[rectLeft, rectTop, rectRight] = rectBottom
+
+        decorRect = RectF()
+        val diff = 16f
+        decorRect[progressRect.left - diff, progressRect.top - diff,  progressRect.right + diff] =  progressRect.bottom + diff
+    }
+
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
         paint.color = strokeColor
         paint.shader = null
-        canvas.drawArc(rectF, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
-        paint.color = pointStartColor
+        canvas.drawArc(progressRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
+        paint.color = resources.getColor(R.color.md_grey_500,null)
+        paint.shader = null
+        paint.strokeWidth = 5f
+        paint.isAntiAlias = true
+        canvas.drawArc(decorRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
+
+        paint.strokeWidth = strokeWidth
+        paint.color = pointStartColor
         paint.shader = linearGradient
         if (pointSize > 0) { //if size of pointer is defined
             if (point > startAngle + pointSize / 2) {
                 canvas.drawArc(
-                    rectF, (point - pointSize / 2).toFloat(), pointSize.toFloat(), false,
+                    progressRect, (point - pointSize / 2).toFloat(), pointSize.toFloat(), false,
                     paint
                 )
             } else { //to avoid exceeding start/zero point
-                canvas.drawArc(rectF, point.toFloat(), pointSize.toFloat(), false, paint)
+                canvas.drawArc(progressRect, point.toFloat(), pointSize.toFloat(), false, paint)
             }
         } else { //draw from start point to value point (long pointer)
             if (value == startValue) //use non-zero default value for start point (to avoid lack of pointer for start/zero value)
                 canvas.drawArc(
-                    rectF, startAngle.toFloat(), DEFAULT_LONG_POINTER_SIZE.toFloat(), false,
+                    progressRect, startAngle.toFloat(), DEFAULT_LONG_POINTER_SIZE.toFloat(), false,
                     paint
                 ) else canvas.drawArc(
-                rectF, startAngle.toFloat(), (point - startAngle).toFloat(), false,
+                progressRect, startAngle.toFloat(), (point - startAngle).toFloat(), false,
                 paint
             )
         }
+        drawDivider(canvas)
 
         if (gaugeDrawScale) {
             drawScale(canvas)
         }
 
-        drawDivider(canvas)
     }
 
     private fun drawDivider(canvas: Canvas) {
@@ -243,15 +227,35 @@ class Gauge : View {
             paint.shader = null
             val i = if (isDividerDrawFirst) 0 else 1
             val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
-            for ( j in i .. max step 2) {
+            for ( j in i .. max step SCALE_STEP) {
                 canvas.drawArc(
-                    rectF,
+                    progressRect,
                     (startAngle + j * dividerStepAngle).toFloat(),
                     dividerSize,
                     false,
                     paint
                 )
             }
+        }
+    }
+
+    private fun drawScale(canvas: Canvas) {
+        paint.shader = null
+        val step = dividerSize
+        val startAngle = this.startAngle - (2.1f * step)
+        val max = dividersCount / SCALE_STEP
+        val stepValue = round(endValue / max)
+        val radius = this.radius - 20.0f
+        for (i in 0 .. max) {
+
+            val txt = "${(round(stepValue * i)).toInt()}"
+            val rect = Rect()
+
+            numbersPaint.getTextBounds(txt, 0, txt.length, rect)
+            val angle = startAngle + i  * step
+            val x = (width / 2.0f + cos(angle) * radius- rect.width() / 2)
+            val y = (calculatedHeight / 2.0f + sin(angle) * radius + rect.height() / 2)
+            canvas.drawText(txt , x, y, numbersPaint)
         }
     }
 }
