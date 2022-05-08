@@ -32,7 +32,7 @@ android {
     }
 
     lintOptions {
-        disable 'KtxExtensionAvailable','GradleDependency'
+        disable 'KtxExtensionAvailable','GradleDependency', 'ViewConstructor'
     }
 }
 
