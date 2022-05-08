@@ -7,8 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.ui.preferences.Prefs
 
-class GaugeViewFragment : Fragment() {
+class GaugeFragment : Fragment() {
     private lateinit var root: View
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -27,14 +28,15 @@ class GaugeViewFragment : Fragment() {
     }
 
     private fun configureView() {
-        TilesViewSetup.onCreateView(
+        GaugeViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
             root,
             R.id.recycler_view,
             "pref.gauge.pids.selected",
             R.layout.gauge_item,
-            spanCount = null
+            spanCount = null,
+            enableDragManager =   Prefs.getBoolean("pref.gauge_enable_drag_and_drop",false)
         )
     }
 }

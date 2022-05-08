@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_gauge"
-        android:name="org.openobd2.core.logger.ui.gauge.GaugeViewFragment"
+        android:name="org.openobd2.core.logger.ui.gauge.GaugeFragment"
         android:label="@string/navigation.title_gauge"
         tools:layout="@layout/fragment_gauge" />
 

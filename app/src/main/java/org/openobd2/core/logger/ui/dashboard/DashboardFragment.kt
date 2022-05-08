@@ -18,7 +18,7 @@ import org.openobd2.core.logger.ui.common.DragManageAdapter
 import org.openobd2.core.logger.ui.common.MetricsViewContext
 import org.openobd2.core.logger.ui.common.SwappableAdapter
 import org.openobd2.core.logger.ui.common.ToggleToolbarDoubleClickListener
-import org.openobd2.core.logger.ui.gauge.TilesViewSetup
+import org.openobd2.core.logger.ui.gauge.GaugeViewSetup
 import org.openobd2.core.logger.ui.preferences.DashPreferences
 
 class DashboardFragment : Fragment() {
@@ -95,7 +95,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupTilesRecyclerView(spanCount: Int) {
-        TilesViewSetup.onCreateView(
+        GaugeViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
             root,

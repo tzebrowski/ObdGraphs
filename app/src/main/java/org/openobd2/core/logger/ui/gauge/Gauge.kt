@@ -46,7 +46,7 @@ class Gauge : View {
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
 
-    internal fun scale (multiplier: Float) {
+    internal fun scale(multiplier: Float) {
         this.multiplier = multiplier
     }
 
@@ -137,13 +137,11 @@ class Gauge : View {
 
         styledAttributes.recycle()
         init()
-
-
     }
 
     internal fun init() {
         strokeWidth *= multiplier
-        var decorLineOffset = 12 * multiplier
+        val decorLineOffset = 12 * multiplier
 
         paint = Paint()
         paint.color = strokeColor
@@ -184,7 +182,9 @@ class Gauge : View {
         progressRect[rectLeft, rectTop, rectRight] = rectBottom
 
         decorRect = RectF()
-        decorRect[progressRect.left - decorLineOffset, progressRect.top - decorLineOffset, progressRect.right + decorLineOffset] =
+        decorRect[progressRect.left - decorLineOffset,
+                progressRect.top - decorLineOffset,
+                progressRect.right + decorLineOffset] =
             progressRect.bottom + decorLineOffset
     }
 
@@ -224,47 +224,44 @@ class Gauge : View {
                 paint
             )
         }
-        drawDivider(canvas)
-
+        if (dividerSize > 0) {
+            drawDivider(canvas)
+        }
         if (gaugeDrawScale) {
             drawScale(canvas)
         }
-
     }
 
     private fun drawDivider(canvas: Canvas) {
-        if (dividerSize > 0) {
-            paint.color = dividerColor
-            paint.shader = null
-            val i = if (isDividerDrawFirst) 0 else 1
-            val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
-            for (j in i..max step SCALE_STEP) {
-                canvas.drawArc(
-                    progressRect,
-                    (startAngle + j * dividerStepAngle).toFloat(),
-                    dividerSize,
-                    false,
-                    paint
-                )
-            }
+        paint.color = dividerColor
+        paint.shader = null
+        val i = if (isDividerDrawFirst) 0 else 1
+        val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
+        for (j in i..max step SCALE_STEP) {
+            canvas.drawArc(
+                progressRect,
+                (startAngle + j * dividerStepAngle).toFloat(),
+                dividerSize,
+                false,
+                paint
+            )
         }
     }
 
     private fun drawScale(canvas: Canvas) {
         paint.shader = null
-        val scaleStartAngle = startAngle - dividerSize
+        val baseAngle = startAngle - dividerSize
         val numberOfItems = (dividersCount / SCALE_STEP) - 1
         val stepValue = round(endValue / numberOfItems)
-        val radius = this.radius - 21.0f - "$endValue".length
-        for (i in 0..numberOfItems) {
+        val baseRadius = this.radius - 21.0f - "$endValue".length
 
+        for (i in 0..numberOfItems) {
             val txt = "${(round(stepValue * i)).toInt()}"
             val rect = Rect()
-
             numbersPaint.getTextBounds(txt, 0, txt.length, rect)
-            val angle = scaleStartAngle + i * dividerSize
-            val x = (width / 2.0f + cos(angle) * radius - rect.width() / 2)
-            val y = (calculatedHeight / 2.0f + sin(angle) * radius + rect.height() / 2)
+            val angle = baseAngle + i * dividerSize
+            val x = (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2)
+            val y = (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2)
             canvas.drawText(txt, x, y, numbersPaint)
         }
     }

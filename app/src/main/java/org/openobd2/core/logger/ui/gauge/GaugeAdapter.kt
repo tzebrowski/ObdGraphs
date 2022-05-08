@@ -25,11 +25,11 @@ import java.util.*
 
 private const val LABEL_COLOR = "#01804F"
 
-class GaugeViewAdapter internal constructor(
+class GaugeAdapter internal constructor(
     private val context: Context,
     val data: MutableList<ObdMetric>,
     private val resourceId: Int
-) : RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<GaugeAdapter.ViewHolder>() {
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
@@ -185,6 +185,7 @@ class GaugeViewAdapter internal constructor(
         holder.avgValue?.let {
             it.textSize *= multiplier * 0.65f
         }
+
         holder.gauge?.let {
             it.scale(multiplier * 1.15f)
             it.init()

@@ -13,7 +13,7 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getLongSet
 import kotlin.math.roundToInt
 
-class TilesViewSetup {
+class GaugeViewSetup {
     companion object {
         fun onCreateView(
             owner: LifecycleOwner,
@@ -22,8 +22,10 @@ class TilesViewSetup {
             recyclerViewId: Int,
             pidPreferencesId: String,
             resourceId: Int,
-            spanCount: Int?
+            spanCount: Int?,
+            enableDragManager: Boolean = true
         ) {
+
             val metricsViewContext =
                 MetricsViewContext(owner, Prefs.getLongSet(pidPreferencesId))
 
@@ -36,17 +38,36 @@ class TilesViewSetup {
             recyclerView.layoutManager =
                 GridLayoutManager(context, spanCount ?: calculateSpan(context, metrics))
 
-            metricsViewContext.adapter = GaugeViewAdapter(context, metrics, resourceId)
+            metricsViewContext.adapter = GaugeAdapter(context, metrics, resourceId)
             metricsViewContext.adapter.setHasStableIds(true)
             recyclerView.adapter = metricsViewContext.adapter
 
+            if (enableDragManager) {
+                attachDragManager(context, metricsViewContext, recyclerView)
+            }
+
+            recyclerView.addOnItemTouchListener(
+                ToggleToolbarDoubleClickListener(
+                    context
+                )
+            )
+
+            metricsViewContext.adapter.notifyDataSetChanged()
+            metricsViewContext.observerMetrics(metrics)
+        }
+
+        private fun attachDragManager(
+            context: Context,
+            metricsViewContext: MetricsViewContext,
+            recyclerView: RecyclerView
+        ) {
             val dragCallback = DragManageAdapter(
                 context,
                 ItemTouchHelper.UP or ItemTouchHelper.DOWN,
                 ItemTouchHelper.START or ItemTouchHelper.END,
                 object : SwappableAdapter {
                     override fun swapItems(fromPosition: Int, toPosition: Int) {
-                        (metricsViewContext.adapter as GaugeViewAdapter).swapItems(
+                        (metricsViewContext.adapter as GaugeAdapter).swapItems(
                             fromPosition,
                             toPosition
                         )
@@ -58,21 +79,12 @@ class TilesViewSetup {
                     override fun storePreferences(context: Context) {
                         GaugePreferences.SERIALIZER.store(
                             context,
-                            (metricsViewContext.adapter as GaugeViewAdapter).data
+                            (metricsViewContext.adapter as GaugeAdapter).data
                         )
                     }
                 }
             )
-
             ItemTouchHelper(dragCallback).attachToRecyclerView(recyclerView)
-            recyclerView.addOnItemTouchListener(
-                ToggleToolbarDoubleClickListener(
-                    context
-                )
-            )
-
-            metricsViewContext.adapter.notifyDataSetChanged()
-            metricsViewContext.observerMetrics(metrics)
         }
 
         private fun calculateSpan(context: Context, metrics: MutableList<ObdMetric>): Int {

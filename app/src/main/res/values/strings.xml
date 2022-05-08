@@ -31,6 +31,7 @@
     <string name="pref.selected_connection_type">Adapter connection type</string>
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge_display_command_rate">Display commands frequency</string>
+    <string name="pref.gauge_enable_drag_and_drop">Enable drag and drop</string>
     <string name="pref.gauge_display_scale">Display scale on the gauge</string>
 
     <string name="pref.adapter_init_delay">Init delay</string>
