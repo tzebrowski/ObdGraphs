@@ -15,7 +15,7 @@
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
     <string name="context_menu.parameters_id_to_query">Parameters ID to query</string>
-    <string name="context_menu.view_configuration">View configuration</string>
+    <string name="context_menu.view_configuration">Quick settings</string>
 
     <string name="pref.dash_pids_selected">Dashboard: Displayed Parameter IDs</string>
     <string name="pref.dash_tiles_pids_selected">Tiles: Displayed Parameter IDs</string>
@@ -85,6 +85,15 @@
     <string-array name="pref.connection_type_array">
         <item name="connection.wifi">wifi</item>
         <item name="connection.bluetooth">bluetooth</item>
+    </string-array>
+
+    <string name="pref.profile.settings">Profiles settings</string>
+    <string name="pref.profile.available_list">Available profiles</string>
+
+    <string-array name="pref.profile.list">
+        <item name="" />
+        <item name="profile_1">Giulietta QV</item>
+        <item name="profile_2">VW Med 17_5</item>
     </string-array>
 
     <string-array name="pref.dash_color_themes">

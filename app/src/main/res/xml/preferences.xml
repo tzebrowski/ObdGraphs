@@ -3,6 +3,20 @@
     app:key="prefs.root">
 
     <PreferenceCategory
+        android:key="profiles"
+        android:title="@string/pref.profile.settings">
+
+        <ListPreference
+            android:defaultValue=""
+            android:entries="@array/pref.profile.list"
+            android:entryValues="@array/pref.profile.list"
+            android:key="pref.profile.id"
+            android:summary="@string/pref.profile.available_list" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
         android:key="adapter"
         android:title="@string/pref.adapter_settings">
 

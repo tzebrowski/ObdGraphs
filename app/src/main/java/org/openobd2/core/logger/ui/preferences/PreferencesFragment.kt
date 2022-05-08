@@ -22,7 +22,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
-
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
         super.onNavigateToScreen(preferenceScreen)
         setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
@@ -45,11 +44,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState)
-        registerPrefModeChange()
-        listView.setBackgroundColor(Color.LTGRAY)
+
+        registerConnectionTypeListener()
+        registerProfileListener()
         registerCheckboxListeners()
 
+        listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
+
         return root
     }
 
@@ -89,13 +91,16 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
     }
 
-    private fun registerPrefModeChange() {
-        val prefMode = findPreference<ListPreference>("pref.connection.type")
+    private fun registerConnectionTypeListener() {
+        val connectionType = "pref.connection.type"
+        val bluetooth = "bluetooth"
+
+        val prefMode = findPreference<ListPreference>(connectionType)
         val p1 = findPreference<Preference>("pref.adapter.connection.type.bluetooth")
         val p2 = findPreference<Preference>("pref.adapter.connection.type.wifi")
 
-        when (Prefs.getString("pref.connection.type")) {
-            "bluetooth" -> {
+        when (Prefs.getString(connectionType)) {
+            bluetooth -> {
                 p1?.isVisible = true
                 p2?.isVisible = false
             }
@@ -108,7 +113,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         prefMode?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 when (newValue) {
-                    "bluetooth" -> {
+                    bluetooth -> {
                         p1?.isVisible = true
                         p2?.isVisible = false
                     }
