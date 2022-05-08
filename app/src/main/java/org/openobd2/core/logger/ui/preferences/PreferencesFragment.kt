@@ -96,8 +96,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val bluetooth = "bluetooth"
 
         val prefMode = findPreference<ListPreference>(PREFERENCE_CONNECTION_TYPE)
-        val p1 = findPreference<Preference>("pref.adapter.connection.type.bluetooth")
-        val p2 = findPreference<Preference>("pref.adapter.connection.type.wifi")
+        val p1 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.$bluetooth")
+        val p2 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.wifi")
 
         when (Prefs.getString(PREFERENCE_CONNECTION_TYPE)) {
             bluetooth -> {
