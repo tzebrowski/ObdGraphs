@@ -46,13 +46,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState)
 
+        registerCheckboxListeners()
         registerConnectionTypeListener()
         registerProfileListener()
-        registerCheckboxListeners()
+        saveUserProfile()
 
         listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
-
         return root
     }
 

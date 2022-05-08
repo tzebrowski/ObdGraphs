@@ -35,7 +35,6 @@ class DisplayedPidListPreferences(
         entriesValues: MutableList<CharSequence>
     ) {
         val query = Prefs.getStringSet("pref.pids.generic.high")
-        Log.e("eee", "query $query")
         DataLogger.instance.pidDefinitionRegistry().findAll()
             .filter { pidDefinition -> pidDefinition.priority < 4 }
             .filter { pidDefinition -> query.contains(pidDefinition.id.toString()) }

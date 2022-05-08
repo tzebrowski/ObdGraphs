@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity() {
         navView.selectedItemId = R.id.navigation_gauge
     }
 
-    private fun navController(): NavController {
+    fun navController(): NavController {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         return navHostFragment.navController

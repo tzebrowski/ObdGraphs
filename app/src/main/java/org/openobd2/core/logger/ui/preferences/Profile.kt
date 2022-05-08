@@ -3,57 +3,93 @@ package org.openobd2.core.logger.ui.preferences
 import android.util.Log
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import org.openobd2.core.logger.ApplicationContext
+import org.openobd2.core.logger.MainActivity
+import org.openobd2.core.logger.R
 
 private const val LOG_KEY = "Profile"
 
-private data class Connection(
-    val type: String,
-    val commandFrequency: String
-)
 
+fun PreferencesFragment.saveUserProfile() {
+    val button = preferenceManager.findPreference("pref.profile.save_current") as Preference?
+    button?.setOnPreferenceClickListener {
+        Prefs.edit().let {
+            var selectedProfile = selectedProfile()
 
-private data class Init(
-    val protocol: String,
-    val header01: String,
-    val header22: String,
-    val delay: String
-)
+            Log.i(LOG_KEY, "Saving user profile within $selectedProfile")
 
-private data class Profile(val init: Init, val connection: Connection)
+            Prefs.all.forEach { (pref, value) ->
+                if (!pref.startsWith("profile_")) {
 
-private val profiles = hashMapOf(
-    "Giulietta QV" to Profile(
-        Init("CAN_29", "DB33F1", "DA10F1", "1000"),
-        Connection("wifi", "3")
-    ),
-    "VW Med 17_5" to Profile(
-        Init("CAN_11", "7DF", "", "2000"),
-        Connection("bluetooth", "5")
-    )
-)
-
-fun PreferencesFragment.registerProfileListener() {
-    findPreference<ListPreference>("pref.profile.id")?.let {
-        updateProfileSettings(it.value)
-        it.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
-                updateProfileSettings(newValue.toString())
-                true
+                    Log.i(LOG_KEY, "Saving user profile $selectedProfile.$pref = $value")
+                    when (value) {
+                        is String -> {
+                            it.putString("$selectedProfile.$pref", value)
+                        }
+                        is Set<*> -> {
+                            it.putStringSet("$selectedProfile.$pref", value as MutableSet<String>?)
+                        }
+                        is Int -> {
+                            it.putInt("$selectedProfile.$pref", value)
+                        }
+                        is Boolean -> {
+                            it.putBoolean("$selectedProfile.$pref", value)
+                        }
+                    }
+                }
             }
+            it
+        }.apply()
+        true
     }
 }
 
-private fun updateProfileSettings(profileId: String?) {
-    Log.i(LOG_KEY, "Update settings based on the profile: $profileId")
-    profiles[profileId]?.run {
-        Prefs.edit().let {
-            // init
-            it.putString("pref.adapter.init.protocol", init.protocol)
-            it.putString("pref.adapter.init.header22", init.header22)
-            it.putString("pref.adapter.init.header01", init.header01)
-            it.putString("pref.adapter.init.delay", init.delay)
-            it.putString("pref.adapter.command.freq", connection.commandFrequency)
-            it.putString(PREFERENCE_CONNECTION_TYPE, connection.type)
-        }.apply()
+private fun selectedProfile(): String {
+    var selectedProfile = Prefs.getString("pref.profile.id")!!
+    selectedProfile = selectedProfile.replace(" ", "_").toLowerCase()
+    return selectedProfile
+}
+
+fun PreferencesFragment.registerProfileListener() {
+    findPreference<ListPreference>("pref.profile.id")?.let {
+        it.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                loadProfileSettings(newValue.toString())
+                (ApplicationContext.get() as MainActivity).navController()
+                    .navigate(R.id.navigation_preferences, null)
+                true
+            }
     }
+
+}
+
+private fun loadProfileSettings(profileId: String?) {
+    val selectedProfile = profileId!!.replace(" ", "_").toLowerCase()
+    Log.i(LOG_KEY, "Loading user profile: $selectedProfile")
+
+    Prefs.edit().let {
+        Prefs.all.forEach { (pref, value) ->
+            if (pref.startsWith(selectedProfile)) {
+
+                val originalPrefName = pref.substring(selectedProfile.length + 1)
+                Log.i(LOG_KEY, "Loading user profile $originalPrefName = $value")
+
+                when (value) {
+                    is String -> {
+                        it.putString(originalPrefName, value)
+                    }
+                    is Set<*> -> {
+                        it.putStringSet(originalPrefName, value as MutableSet<String>?)
+                    }
+                    is Int -> {
+                        it.putInt(originalPrefName, value)
+                    }
+                    is Boolean -> {
+                        it.putBoolean(originalPrefName, value)
+                    }
+                }
+            }
+        }
+        it
+    }.apply()
 }

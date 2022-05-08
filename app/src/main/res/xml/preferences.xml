@@ -7,20 +7,26 @@
         android:title="@string/pref.profile.settings">
 
         <ListPreference
-            android:defaultValue=""
+            app:useSimpleSummaryProvider="true"
+            android:defaultValue="Profile 1"
             android:entries="@array/pref.profile.list"
             android:entryValues="@array/pref.profile.list"
             android:key="pref.profile.id"
-            android:summary="@string/pref.profile.available_list"
             android:title="@string/pref.profile.available_list" />
-    </PreferenceCategory>
 
+        <Preference
+            android:summary="@string/pref.profile.save_user_settings_summary"
+            android:title="@string/pref.profile.save_user_settings"
+            android:key="pref.profile.save_current"/>
+
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="adapter"
         android:title="@string/pref.adapter_settings">
 
         <ListPreference
+            app:useSimpleSummaryProvider="true"
             android:defaultValue="bluetooth"
             android:dialogTitle="@string/pref.selected_connection_type"
             android:entries="@array/pref.connection_type_array"
@@ -68,6 +74,7 @@
             android:title="@string/pref.init_category">
 
             <ListPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue="500"
                 android:entries="@array/pref.init_delay"
                 android:entryValues="@array/pref.init_delay"
@@ -75,6 +82,7 @@
                 android:title="@string/pref.adapter_init_delay" />
 
             <ListPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue="AUTO"
                 android:entries="@array/pref.init_protocol"
                 android:entryValues="@array/pref.init_protocol"
@@ -82,6 +90,7 @@
                 android:title="@string/pref.adapter_init_protocol" />
 
             <ListPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue=""
                 android:entries="@array/pref.init_header"
                 android:entryValues="@array/pref.init_header"
@@ -89,6 +98,7 @@
                 android:title="@string/pref.adapter_init_header22" />
 
             <ListPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue=""
                 android:entries="@array/pref.init_header"
                 android:entryValues="@array/pref.init_header"
@@ -106,12 +116,14 @@
 
                 <PreferenceCategory android:title="@string/prefs.pids_query">
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        app:useSimpleSummaryProvider="true"
                         android:dialogTitle="@string/pref.pids_generic_high"
                         android:key="pref.pids.generic.high"
                         android:title="@string/pref.pids_generic_high"
                         app:priority="high" />
 
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                        app:useSimpleSummaryProvider="true"
                         android:dialogTitle="@string/pref.pids_generic_low"
                         android:key="pref.pids.generic.low"
                         android:title="@string/pref.pids_generic_low"
@@ -153,6 +165,7 @@
 
 
             <ListPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue="6"
                 android:entries="@array/pref.command_frequency"
                 android:entryValues="@array/pref.command_frequency"
