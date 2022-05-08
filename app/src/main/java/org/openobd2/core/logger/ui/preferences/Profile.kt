@@ -7,7 +7,8 @@ import androidx.preference.Preference
 private const val LOG_KEY = "Profile"
 
 private data class Connection(
-    val type: String)
+    val type: String,
+    val commandFrequency: String)
 
 
 private data class Init(
@@ -21,11 +22,11 @@ private data class Profile(val init: Init, val connection: Connection)
 private val profiles = hashMapOf(
     "Giulietta QV" to Profile(
         Init("CAN_29", "DB33F1", "DA10F1","1000"),
-        Connection("wifi")
+        Connection("wifi","3")
     ),
     "VW Med 17_5" to Profile(
         Init("CAN_11", "7DF", "","2000"),
-        Connection("bluetooth")
+        Connection("bluetooth","5")
     )
 )
 
@@ -49,8 +50,8 @@ private fun updateProfileSettings(profileId: String?) {
             it.putString("pref.adapter.init.header22", init.header22)
             it.putString("pref.adapter.init.header01", init.header01)
             it.putString("pref.adapter.init.delay", init.delay)
-
-            it.putString("pref.connection.type", connection.type)
+            it.putString("pref.adapter.command.freq", connection.commandFrequency)
+            it.putString(PREFERENCE_CONNECTION_TYPE, connection.type)
 
         }.apply()
     }

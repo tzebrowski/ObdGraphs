@@ -2,10 +2,7 @@ package org.openobd2.core.logger.bl.datalogger
 
 import android.content.SharedPreferences
 import android.util.Log
-import org.openobd2.core.logger.ui.preferences.Prefs
-import org.openobd2.core.logger.ui.preferences.getString
-import org.openobd2.core.logger.ui.preferences.getStringSet
-import org.openobd2.core.logger.ui.preferences.isEnabled
+import org.openobd2.core.logger.ui.preferences.*
 
 const val GENERIC_MODE = "Generic mode"
 
@@ -58,7 +55,7 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 Prefs.isEnabled(key)
             "pref.adapter.adaptive.enabled" -> dataLoggerPreferences.adaptiveConnectionEnabled =
                 Prefs.isEnabled(key)
-            "pref.connection.type" -> dataLoggerPreferences.connectionType =
+            PREFERENCE_CONNECTION_TYPE -> dataLoggerPreferences.connectionType =
                 Prefs.getString(key, "wifi")!!
             "pref.adapter.connection.tcp.host" -> dataLoggerPreferences.tcpHost =
                 Prefs.getString(key)!!
@@ -94,7 +91,7 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 
 private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
-    val connectionType = Prefs.getString("pref.connection.type", "bluetooth")!!
+    val connectionType = Prefs.getString(PREFERENCE_CONNECTION_TYPE, "bluetooth")!!
     val tcpHost = Prefs.getString("pref.adapter.connection.tcp.host", "192.168.0.10")!!
     val tcpPort = Prefs.getString("pref.adapter.connection.tcp.port", "35000")!!.toInt()
     val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)

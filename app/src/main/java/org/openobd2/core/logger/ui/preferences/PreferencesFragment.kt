@@ -17,6 +17,7 @@ const val NOTIFICATION_DASH_VIEW_TOGGLE = "preferences.view.dash.toggle"
 const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "preferences.view.gauge.toggle"
 const val NOTIFICATION_METRICS_VIEW_TOGGLE = "preferences.view.metrics.toggle"
 
+const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
@@ -92,14 +93,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun registerConnectionTypeListener() {
-        val connectionType = "pref.connection.type"
         val bluetooth = "bluetooth"
 
-        val prefMode = findPreference<ListPreference>(connectionType)
+        val prefMode = findPreference<ListPreference>(PREFERENCE_CONNECTION_TYPE)
         val p1 = findPreference<Preference>("pref.adapter.connection.type.bluetooth")
         val p2 = findPreference<Preference>("pref.adapter.connection.type.wifi")
 
-        when (Prefs.getString(connectionType)) {
+        when (Prefs.getString(PREFERENCE_CONNECTION_TYPE)) {
             bluetooth -> {
                 p1?.isVisible = true
                 p2?.isVisible = false

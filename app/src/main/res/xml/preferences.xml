@@ -25,7 +25,7 @@
             android:dialogTitle="@string/pref.selected_connection_type"
             android:entries="@array/pref.connection_type_array"
             android:entryValues="@array/pref.connection_type_array"
-            android:key="pref.connection.type"
+            android:key="pref.adapter.connection.type"
             android:summary="@string/pref.selected_connection_type" />
 
         <PreferenceCategory
