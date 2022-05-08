@@ -107,21 +107,18 @@
                 <PreferenceCategory android:title="@string/prefs.pids_query">
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         android:dialogTitle="@string/pref.pids_generic_high"
-
                         android:key="pref.pids.generic.high"
                         android:title="@string/pref.pids_generic_high"
                         app:priority="high" />
 
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         android:dialogTitle="@string/pref.pids_generic_low"
-
                         android:key="pref.pids.generic.low"
                         android:title="@string/pref.pids_generic_low"
                         app:priority="low" />
 
                     <org.openobd2.core.logger.ui.preferences.SupportedPidsPreferences
                         android:dialogTitle="@string/pref.pids_supported"
-
                         android:key="pref.pids.supported"
                         android:title="@string/pref.pids_supported" />
 
@@ -234,7 +231,7 @@
 
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
                     android:defaultValue="@array/pref.empty_array"
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
                     android:key="pref.gauge.pids.selected"
@@ -285,7 +282,7 @@
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
                     android:defaultValue="@array/pref.empty_array"
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
                     android:key="pref.graph.pids.selected"

@@ -14,7 +14,7 @@
     <string name="pid.value_avg">Avg</string>
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
-    <string name="context_menu.parameters_id_to_query">Parameters ID to query</string>
+    <string name="context_menu.parameters_id_to_query">Parameter IDs to query</string>
     <string name="context_menu.view_configuration">Quick settings</string>
 
     <string name="pref.dash_pids_selected">Dashboard: Displayed Parameter IDs</string>

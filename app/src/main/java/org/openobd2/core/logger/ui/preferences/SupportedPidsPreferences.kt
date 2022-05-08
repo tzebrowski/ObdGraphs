@@ -25,7 +25,7 @@ class SupportedPidsPreferences(
             pids.firstOrNull { f -> f.pid == it }?.let { pid ->
                 entries.add(pid.description)
                 entriesValues.add(pid.description)
-                summary +=  "- ${pid.description}\n"
+                summary += "- ${pid.description}\n"
             }
         }
 

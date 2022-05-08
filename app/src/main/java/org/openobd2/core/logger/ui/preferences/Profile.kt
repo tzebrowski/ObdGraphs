@@ -8,25 +8,27 @@ private const val LOG_KEY = "Profile"
 
 private data class Connection(
     val type: String,
-    val commandFrequency: String)
+    val commandFrequency: String
+)
 
 
 private data class Init(
     val protocol: String,
     val header01: String,
     val header22: String,
-    val delay: String)
+    val delay: String
+)
 
 private data class Profile(val init: Init, val connection: Connection)
 
 private val profiles = hashMapOf(
     "Giulietta QV" to Profile(
-        Init("CAN_29", "DB33F1", "DA10F1","1000"),
-        Connection("wifi","3")
+        Init("CAN_29", "DB33F1", "DA10F1", "1000"),
+        Connection("wifi", "3")
     ),
     "VW Med 17_5" to Profile(
-        Init("CAN_11", "7DF", "","2000"),
-        Connection("bluetooth","5")
+        Init("CAN_11", "7DF", "", "2000"),
+        Connection("bluetooth", "5")
     )
 )
 
@@ -52,7 +54,6 @@ private fun updateProfileSettings(profileId: String?) {
             it.putString("pref.adapter.init.delay", init.delay)
             it.putString("pref.adapter.command.freq", connection.commandFrequency)
             it.putString(PREFERENCE_CONNECTION_TYPE, connection.type)
-
         }.apply()
     }
 }
