@@ -49,7 +49,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         registerCheckboxListeners()
         registerConnectionTypeListener()
         registerProfileListener()
-        saveUserProfile()
+        registerSaveUserPreferences()
 
         listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))

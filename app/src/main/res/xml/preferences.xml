@@ -39,6 +39,7 @@
             android:title="@string/pref.bluetooth_category">
 
             <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue="@array/pref.empty_array"
                 android:dialogTitle="@string/pref.adapter_id"
                 android:key="pref.adapter.id"
@@ -50,17 +51,20 @@
             android:title="@string/pref.wifi_category">
 
             <EditTextPreference
+                app:useSimpleSummaryProvider="true"
                 android:dialogTitle="@string/pref.adapter_connection_tcp_ssid"
                 android:key="pref.adapter.connection.tcp.wifi.ssid"
                 android:title="@string/pref.adapter_connection_tcp_ssid" />
 
             <EditTextPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue="192.168.0.10"
                 android:dialogTitle="@string/pref.adapter_connection_tcp_host"
                 android:key="pref.adapter.connection.tcp.host"
                 android:title="@string/pref.adapter_connection_tcp_host" />
 
             <EditTextPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue="35000"
                 android:dialogTitle="Port"
                 android:key="pref.adapter_connection_tcp_port"
@@ -160,7 +164,6 @@
                 android:defaultValue="true"
                 android:dialogTitle="@string/pref.adapter_reconnect"
                 android:key="pref.adapter.reconnect"
-
                 android:title="@string/pref.adapter_reconnect" />
 
 
@@ -202,7 +205,6 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref.toolbar.hide.landscape"
-
             android:title="@string/pref.toolbar_hide_landscape" />
 
         <CheckBoxPreference
@@ -273,12 +275,12 @@
                     android:title="@string/pref.enable_view" />
 
                 <CheckBoxPreference
-
                     android:defaultValue="true"
                     android:key="pref.graph.cache.enabled"
                     android:title="@string/pref.graph_cache_enabled" />
 
                 <EditTextPreference
+                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="20"
                     android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
                     android:inputType="number"
@@ -286,11 +288,11 @@
                     android:title="@string/pref.graph_x_axis_minimum_shift_time" />
 
                 <EditTextPreference
+                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="20000"
                     android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
                     android:inputType="number"
                     android:key="pref.graph.x-axis.start-moving-after.time"
-
                     android:title="@string/pref.graph_x_axis_start_moving_after_time" />
             </PreferenceCategory>
 
@@ -329,13 +331,11 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.dash.top.values.blink"
-
                     android:title="@string/pref.dash_top_values_blink" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.dash.swipe.to.delete"
-
                     android:title="@string/pref.dash_swipe_to_delete" />
 
                 <CheckBoxPreference
@@ -364,7 +364,6 @@
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="pref.dash.dash.view.visible"
-
                     android:title="@string/pref.dash_dash_view_visible" />
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.pids_category">
