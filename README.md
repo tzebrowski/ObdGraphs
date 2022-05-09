@@ -9,10 +9,12 @@ related metrics. It is build on top of `ObdMetrics` library and it visualize OBD
 generated while vehicle is driving. 
 
 ## Features
-* Trips - application stores all vehicle `trips` on the external storage. 
-  At any time user can open saved trips and check telemetry collected while vehicle was driving in the past
-* Real-time metrics visualization  - application uses multiple performance techniques to collect and display vehicle telemetry data as fast as possible
- 
+* Trips - the application associate all metrics collected during the session to the `trip`. 
+  `Trip` is stored on the external storage. At any time user can open already saved `trip` and check telemetry collected while vehicle was driving in the past
+* Real-time metrics visualization  - the application uses multiple performance techniques to collect and display vehicle telemetry data as fast as possible
+* Profiles - the application allows binding all configurable preferences to the distinct profile. 
+  User can select different profile at any time and load specified preferences like: displayed views, collected metrics, protocol settings (can speed, headers)
+  At this moment five fully configurable profiles are allowed. 
  
 
 ## Views
@@ -49,7 +51,7 @@ Application offers multiple configurable screens which visualize vehicle telemet
 
 * Performance optimization 
 * Features
-  * Profiles - there should be possible to assign vehicle specified settings (protocol, can, headers, pids) to the configurable profile
+  * Profiles - there should be possible to assign vehicle specified settings (protocol, can, headers, PIDs) to the configurable profile
   * Loading external PID definition file - there should be possible to load PID from the external place
-  * Publishing trips to the cloud - there should be possible to publish collected trip to the cloud backedn service
+  * Publishing trips to the cloud - there should be possible to publish collected trip to the cloud backend service
 * Release to google play
