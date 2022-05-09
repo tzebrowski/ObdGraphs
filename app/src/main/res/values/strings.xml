@@ -89,7 +89,6 @@
 
     <string name="pref.profile.settings">Profiles settings</string>
     <string name="pref.profile.available_list">Available profiles</string>
-    <string name="pref.profile.details">Details of current profile</string>
     <string name="pref.profile.save_user_settings">Save current settings to User Profile</string>
     <string name="pref.profile.save_user_settings_summary">This operation saves all user chooses into currently selected profile</string>
 
@@ -97,7 +96,9 @@
         <item name="profile_1">Profile 1</item>
         <item name="profile_2">Profile 2</item>
         <item name="profile_3">Profile 3</item>
-    </string-array>
+        <item name="profile_4">Profile 4</item>
+        <item name="profile_5">Profile 5</item>
+   </string-array>
 
     <string-array name="pref.dash_color_themes">
         <item name="0">0</item>
