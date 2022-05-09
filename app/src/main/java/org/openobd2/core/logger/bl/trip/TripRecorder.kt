@@ -90,41 +90,44 @@ class TripRecorder private constructor() {
 
 
     fun saveCurrentTrip() {
-        val trip =
-            Cache[CACHE_TRIP_PROPERTY_NAME] as Trip
+        Cache[CACHE_TRIP_PROPERTY_NAME]?.let {
+            val trip  = it  as Trip
 
-        val histogram = DataLogger.instance.diagnostics().histogram()
-        val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
 
-        trip.entries.forEach { (t, u) ->
-            val histogramSupplier = histogram.findBy(pidDefinitionRegistry.findBy(t))
-            u.max = histogramSupplier.max
-            u.min = histogramSupplier.min
-            u.mean = histogramSupplier.mean
+            val histogram = DataLogger.instance.diagnostics().histogram()
+            val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
+
+            trip.entries.forEach { (t, u) ->
+                val histogramSupplier = histogram.findBy(pidDefinitionRegistry.findBy(t))
+                u.max = histogramSupplier.max
+                u.min = histogramSupplier.min
+                u.mean = histogramSupplier.mean
+            }
+
+            val endDate = Date()
+            val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
+
+            val tripLength = if (trip.startTs == 0L) 0 else {
+                (endDate.time - trip.startTs) / 1000
+            }
+
+            Log.i(LOGGER_KEY, "Recorded trip, length: ${tripLength}s")
+
+            if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
+                val startString = dateFormat.format(Date(trip.startTs))
+                val endString = dateFormat.format(endDate)
+
+                val content: String = jacksonObjectMapper().writeValueAsString(trip)
+                val fileName = "trip_$startString - $endString.json"
+                Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
+                writeFile(context, fileName, content)
+
+                Log.i(LOGGER_KEY, "Trip was written to the file: $fileName")
+            } else {
+                Log.i(LOGGER_KEY, "Trip was no saved. Trip time is less than ${trip.startTs}s")
+            }
         }
 
-        val endDate = Date()
-        val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
-
-        val tripLength = if (trip.startTs == 0L) 0 else {
-            (endDate.time - trip.startTs) / 1000
-        }
-
-        Log.i(LOGGER_KEY, "Recorded trip, length: ${tripLength}s")
-
-        if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
-            val startString = dateFormat.format(Date(trip.startTs))
-            val endString = dateFormat.format(endDate)
-
-            val content: String = jacksonObjectMapper().writeValueAsString(trip)
-            val fileName = "trip_$startString - $endString.json"
-            Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
-            writeFile(context, fileName, content)
-
-            Log.i(LOGGER_KEY, "Trip was written to the file: $fileName")
-        } else {
-            Log.i(LOGGER_KEY, "Trip was no saved. Trip time is less than ${trip.startTs}s")
-        }
     }
 
     fun findAllTripsBy(query: String = ".json"): MutableList<String> {
