@@ -182,7 +182,6 @@ class GraphFragment : Fragment() {
             invalidate()
             onChartGestureListener = onGestureListener
         }
-
     }
 
     private fun loadCurrentTrip() {

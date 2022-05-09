@@ -1,6 +1,5 @@
 package org.openobd2.core.logger.ui.preferences
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,14 +9,6 @@ import androidx.preference.*
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
 import org.openobd2.core.logger.ui.common.onDoubleClickListener
-
-const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "preferences.view.graph.toggle"
-const val NOTIFICATION_DEBUG_VIEW_TOGGLE = "preferences.view.debug.toggle"
-const val NOTIFICATION_DASH_VIEW_TOGGLE = "preferences.view.dash.toggle"
-const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "preferences.view.gauge.toggle"
-const val NOTIFICATION_METRICS_VIEW_TOGGLE = "preferences.view.metrics.toggle"
-
-const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
@@ -46,50 +37,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState)
 
-        registerCheckboxListeners()
+        registerViewsPreferenceChangeListeners()
         registerConnectionTypeListener()
         registerProfileListener()
         registerSaveUserPreferences()
-
         listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
         return root
-    }
-
-    private fun registerCheckboxListeners() {
-        registerCheckboxListener(
-            "pref.graph.view.enabled",
-            NOTIFICATION_GRAPH_VIEW_TOGGLE
-        )
-
-        registerCheckboxListener(
-            "pref.debug.view.enabled",
-            NOTIFICATION_DEBUG_VIEW_TOGGLE
-        )
-        registerCheckboxListener(
-            "pref.gauge.view.enabled",
-            NOTIFICATION_GAUGE_VIEW_TOGGLE
-        )
-        registerCheckboxListener(
-            "pref.dash.view.enabled",
-            NOTIFICATION_DASH_VIEW_TOGGLE
-        )
-
-        registerCheckboxListener(
-            "pref.metrics.view.enabled",
-            NOTIFICATION_METRICS_VIEW_TOGGLE
-        )
-    }
-
-    private fun registerCheckboxListener(key: String, actionName: String) {
-        val preference = findPreference<CheckBoxPreference>(key)
-        preference?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, _ ->
-                requireContext().sendBroadcast(Intent().apply {
-                    action = actionName
-                })
-                true
-            }
     }
 
     private fun registerConnectionTypeListener() {

@@ -37,6 +37,8 @@ fun PreferencesFragment.registerProfileListener() {
                 loadProfile(newValue.toString())
                 (ApplicationContext.get() as MainActivity).navController()
                     .navigate(R.id.navigation_preferences, null)
+
+                updateToolbar()
                 true
             }
     }
