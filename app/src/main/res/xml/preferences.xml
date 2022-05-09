@@ -367,12 +367,12 @@
                     android:title="@string/pref.dash_dash_view_visible" />
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
                     android:dialogTitle="@string/pref.dash_pids_selected"
                     android:key="pref.dash.pids.selected"
                     android:title="@string/pref.dash_pids_selected" />
 
-                <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
                     android:dialogTitle="@string/pref.dash_tiles_pids_selected"
                     android:key="pref.dash.gauge_pids.selected"
                     android:title="@string/pref.dash_tiles_pids_selected" />
