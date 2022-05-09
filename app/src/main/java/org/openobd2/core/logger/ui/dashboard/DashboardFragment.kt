@@ -190,7 +190,8 @@ class DashboardFragment : Fragment() {
 
     private fun calculateItemHeight(metrics: MutableList<ObdMetric>, spanCount: Int): Int {
         val heightPixels = Resources.getSystem().displayMetrics.heightPixels
-        return heightPixels / metrics.size * spanCount
+        val size =  if (metrics.size == 0) 1  else metrics.size
+        return heightPixels / size * spanCount
     }
 
     private fun calculateSpanCount(numberOfItems: Int): Int {
