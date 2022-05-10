@@ -252,17 +252,19 @@ class Gauge : View {
         paint.shader = null
         val baseAngle = startAngle - dividerSize
         val numberOfItems = (dividersCount / SCALE_STEP) - 1
-        val stepValue = round(endValue / numberOfItems)
+
+        val stepValue = round((endValue - startValue) / numberOfItems)
         val baseRadius = this.radius - 21.0f - "$endValue".length
 
         for (i in 0..numberOfItems) {
-            val txt = "${(round(stepValue * i)).toInt()}"
+            val scaleValue =(round(startValue + stepValue * i)).toInt().toString()
             val rect = Rect()
-            numbersPaint.getTextBounds(txt, 0, txt.length, rect)
+            numbersPaint.getTextBounds(scaleValue, 0, scaleValue.length, rect)
             val angle = baseAngle + i * dividerSize
+
             val x = (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2)
             val y = (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2)
-            canvas.drawText(txt, x, y, numbersPaint)
+            canvas.drawText(scaleValue, x, y, numbersPaint)
         }
     }
 }
