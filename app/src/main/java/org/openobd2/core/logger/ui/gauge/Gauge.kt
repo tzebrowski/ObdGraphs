@@ -173,10 +173,10 @@ class Gauge : View {
         calculatedHeight =
             if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
 
-        val rectLeft = (getWidth() - 2 * padding) / 2 - radius + padding
+        val rectLeft = (width - 2 * padding) / 2 - radius + padding
         val rectTop = (calculatedHeight - 2 * padding) / 2 - radius + padding
 
-        val rectRight = (getWidth() - 2 * padding) / 2 - radius + padding + calculatedWidth
+        val rectRight = (width - 2 * padding) / 2 - radius + padding + calculatedWidth
         val rectBottom = (getHeight() - 2 * padding) / 2 - radius + padding + height
         progressRect = RectF()
         progressRect[rectLeft, rectTop, rectRight] = rectBottom
@@ -250,21 +250,20 @@ class Gauge : View {
 
     private fun drawScale(canvas: Canvas) {
         paint.shader = null
-        val baseAngle = startAngle - dividerSize
-        val numberOfItems = (dividersCount / SCALE_STEP) - 1
+        val numberOfItems = (dividersCount / SCALE_STEP)
 
         val stepValue = round((endValue - startValue) / numberOfItems)
-        val baseRadius = this.radius - 21.0f - "$endValue".length
+        val baseRadius = this.radius - 32.0f - "$endValue".length
 
         for (i in 0..numberOfItems) {
-            val scaleValue =(round(startValue + stepValue * i)).toInt().toString()
+            val value = (round(startValue + stepValue * i)).toInt().toString()
             val rect = Rect()
-            numbersPaint.getTextBounds(scaleValue, 0, scaleValue.length, rect)
-            val angle = baseAngle + i * dividerSize
-
-            val x = (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2)
-            val y = (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2)
-            canvas.drawText(scaleValue, x, y, numbersPaint)
+            numbersPaint.getTextBounds(value, 0, value.length, rect)
+            val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
+            val x = (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
+            val y =
+                (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
+            canvas.drawText(value, x, y, numbersPaint)
         }
     }
 }
