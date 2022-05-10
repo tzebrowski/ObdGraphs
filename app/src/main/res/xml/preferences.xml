@@ -223,11 +223,37 @@
             android:title="@string/pref.gauge_category"
             app:key="prefs.gauge">
 
+            <PreferenceCategory android:title="@string/pref.pids_category">
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
+                    android:defaultValue="@array/pref.empty_array"
+                    android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.gauge.pids.selected"
+                    android:title="@string/pref.displayed_parameter_ids" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="@string/pref.theme">
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.gauge_display_background"
+                    android:title="@string/pref.gauge_display_background" />
+
+                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                    android:defaultValue="@android:color/holo_red_light"
+                    android:title="@string/pref.gauge_background_color"
+                    android:key="pref.gauge_background_color" />
+            </PreferenceCategory>
+
             <PreferenceCategory android:title="@string/pref.general_settings">
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.gauge.view.enabled"
+                    android:title="@string/pref.enable_view" />
+
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.gauge_enable_drag_and_drop"
                     android:title="@string/pref.gauge_enable_drag_and_drop" />
+
 
                 <CheckBoxPreference
                     android:defaultValue="false"
@@ -239,18 +265,6 @@
                     android:key="pref.gauge_display_scale"
                     android:title="@string/pref.gauge_display_scale" />
 
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref.gauge.view.enabled"
-                    android:title="@string/pref.enable_view" />
-
-            </PreferenceCategory>
-            <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
-                    android:defaultValue="@array/pref.empty_array"
-                    android:dialogTitle="@string/pref.displayed_parameter_ids"
-                    android:key="pref.gauge.pids.selected"
-                    android:title="@string/pref.displayed_parameter_ids" />
             </PreferenceCategory>
         </PreferenceScreen>
         <PreferenceScreen
@@ -267,6 +281,14 @@
         <PreferenceScreen
             android:title="@string/pref.graph_category"
             app:key="prefs.graph">
+
+            <PreferenceCategory android:title="@string/pref.pids_category">
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
+                    android:defaultValue="@array/pref.empty_array"
+                    android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.graph.pids.selected"
+                    android:title="@string/pref.displayed_parameter_ids" />
+            </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.general_settings">
                 <CheckBoxPreference
@@ -296,13 +318,6 @@
                     android:title="@string/pref.graph_x_axis_start_moving_after_time" />
             </PreferenceCategory>
 
-            <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
-                    android:defaultValue="@array/pref.empty_array"
-                    android:dialogTitle="@string/pref.displayed_parameter_ids"
-                    android:key="pref.graph.pids.selected"
-                    android:title="@string/pref.displayed_parameter_ids" />
-            </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.trips_category">
                 <CheckBoxPreference
@@ -327,6 +342,19 @@
         <PreferenceScreen
             android:title="@string/pref.dashboard_category"
             app:key="prefs.dashboard">
+
+            <PreferenceCategory android:title="@string/pref.pids_category">
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
+                    android:dialogTitle="@string/pref.dash_pids_selected"
+                    android:key="pref.dash.pids.selected"
+                    android:title="@string/pref.dash_pids_selected" />
+
+                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
+                    android:dialogTitle="@string/pref.dash_tiles_pids_selected"
+                    android:key="pref.dash.gauge_pids.selected"
+                    android:title="@string/pref.dash_tiles_pids_selected" />
+            </PreferenceCategory>
+
             <PreferenceCategory android:title="@string/pref.general_settings">
                 <CheckBoxPreference
                     android:defaultValue="false"
@@ -365,17 +393,6 @@
                     android:defaultValue="true"
                     android:key="pref.dash.dash.view.visible"
                     android:title="@string/pref.dash_dash_view_visible" />
-            </PreferenceCategory>
-            <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
-                    android:dialogTitle="@string/pref.dash_pids_selected"
-                    android:key="pref.dash.pids.selected"
-                    android:title="@string/pref.dash_pids_selected" />
-
-                <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
-                    android:dialogTitle="@string/pref.dash_tiles_pids_selected"
-                    android:key="pref.dash.gauge_pids.selected"
-                    android:title="@string/pref.dash_tiles_pids_selected" />
             </PreferenceCategory>
 
         </PreferenceScreen>

@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
                     if (getMainActivityPreferences().hideToolbarConnected) {
                         val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
-                        layout.isVisible = true
+                        layout.isVisible = false
                     }
                 }
 

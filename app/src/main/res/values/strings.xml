@@ -32,7 +32,9 @@
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge_display_command_rate">Display commands frequency</string>
     <string name="pref.gauge_enable_drag_and_drop">Enable drag and drop</string>
-    <string name="pref.gauge_display_scale">Display scale on the gauge</string>
+    <string name="pref.gauge_display_scale">Display scale</string>
+    <string name="pref.gauge_display_background">Display background</string>
+    <string name="pref.gauge_background_color">Background color</string>
 
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
@@ -81,6 +83,7 @@
     <string name="activity.btn_start">Start/Stop</string>
 
     <string-array name="pref.empty_array" />
+    <string name="pref.theme">Theme</string>
 
     <string-array name="pref.connection_type_array">
         <item name="connection.wifi">wifi</item>

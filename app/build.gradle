@@ -64,4 +64,7 @@ dependencies {
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
     implementation('io.github.tzebrowski:obd-metrics:4.4.1-SNAPSHOT') { changing = true }
+    implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
+    implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
+    debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
 }

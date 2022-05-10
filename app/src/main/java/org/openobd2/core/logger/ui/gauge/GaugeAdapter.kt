@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +26,7 @@ import org.openobd2.core.logger.ui.dashboard.round
 import org.openobd2.core.logger.ui.graph.ValueScaler
 import org.openobd2.core.logger.ui.preferences.Prefs
 import java.util.*
+
 
 private const val LABEL_COLOR = "#01804F"
 
@@ -44,7 +49,23 @@ class GaugeAdapter internal constructor(
         var init: Boolean = false
 
         init {
-            gauge?.gaugeDrawScale = Prefs.getBoolean("pref.gauge_display_scale",true)
+            gauge?.gaugeDrawScale = Prefs.getBoolean("pref.gauge_display_scale", true)
+            val displayBackground = Prefs.getBoolean("pref.gauge_display_background", true)
+            if (displayBackground) {
+                updateDrawable()
+            } else {
+                view.background = null
+            }
+        }
+
+        private fun updateDrawable() {
+            val drawable = view.background as GradientDrawable
+            val filter: ColorFilter =
+                PorterDuffColorFilter(
+                    Prefs.getInt("pref.gauge_background_color", -1),
+                    PorterDuff.Mode.SRC_IN
+                )
+            drawable.colorFilter = filter
         }
     }
 
@@ -81,7 +102,7 @@ class GaugeAdapter internal constructor(
         if (!holder.init) {
             holder.label.text = metric.command.pid.description
             holder.pidMode?.run {
-                val txt = "mode ${ metric.command.pid.mode}"
+                val txt = "mode ${metric.command.pid.mode}"
                 text = txt
                 highLightText(
                     "mode", 0.4f,
@@ -121,7 +142,7 @@ class GaugeAdapter internal constructor(
 
             holder.maxValue.run {
                 val txt = "max\n  ${metric.convert(max)} "
-                text =  txt
+                text = txt
                 highLightText(
                     "max", 0.5f,
                     Color.parseColor(LABEL_COLOR)
