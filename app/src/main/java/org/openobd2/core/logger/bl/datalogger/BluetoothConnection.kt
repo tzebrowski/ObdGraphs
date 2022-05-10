@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.util.Log
 import org.obd.metrics.transport.AdapterConnection
+import org.openobd2.core.logger.ui.preferences.Prefs
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
@@ -20,6 +22,8 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
     private var device: String? = btDeviceName
     private val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
+    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+
     init {
         Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $btDeviceName")
         if (!mBluetoothAdapter.isEnabled) throw IllegalStateException("Bluetooth stack is disabled")
@@ -27,6 +31,9 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
 
     override fun reconnect() {
         Log.i(LOGGER_TAG, "Reconnecting to the device: $device")
+        if (preferences.reconnectWhenError && preferences.hardReset) {
+            throw IOException("Doing hard reset")
+        }
         input?.close()
         output?.close()
         socket.close()

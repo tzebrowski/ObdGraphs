@@ -65,7 +65,7 @@ internal class DataLogger internal constructor() {
 
             stop()
 
-            if (preferences.reconnectWhenError && "stopped" == msg) {
+            if (preferences.reconnectWhenError) {
                 Log.e(
                     LOGGER_TAG,
                     "Flag to reconnect automatically when errors occurs is turn on." +
@@ -137,16 +137,18 @@ internal class DataLogger internal constructor() {
     }
 
     fun start() {
-        connection()?.run {
+        ApplicationContext.get()?.runOnUiThread {
+            connection()?.run {
 
-            val query = query()
-            Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
+                val query = query()
+                Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
 
-            workflow.start(
-                this, query, init(),
-                adjustments()
-            )
-            Log.i(LOGGER_TAG, "Start collecting process")
+                workflow.start(
+                    this, query, init(),
+                    adjustments()
+                )
+                Log.i(LOGGER_TAG, "Start collecting process")
+            }
         }
     }
 
@@ -195,6 +197,7 @@ internal class DataLogger internal constructor() {
                 .enabled(preferences.adaptiveConnectionEnabled)
                 .checkInterval(5000) //10s
                 .commandFrequency(preferences.commandFrequency)
+                .minimumTimeout(100)
                 .build()
         ).build()
 

@@ -28,6 +28,8 @@
     <string name="pref.adapter_cache_result_enabled">Result cache enabled</string>
     <string name="pref.adapter_adaptive_enabled">Adaptive timeout enabled</string>
     <string name="pref.adapter_reconnect">Reconnect automatically when errors occur</string>
+    <string name="pref.adapter.reconnect.hard_reset">Hard reset during reconnect</string>
+
     <string name="pref.selected_connection_type">Adapter connection type</string>
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge_display_command_rate">Display commands frequency</string>
@@ -39,6 +41,8 @@
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>
+    <string name="pref.adapter.general_settings">Adapter advanced settings</string>
+
     <string name="pref.pids_category">Parameter IDs</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.graph_category">Graph view configuration</string>

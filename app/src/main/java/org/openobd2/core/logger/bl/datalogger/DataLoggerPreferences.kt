@@ -22,7 +22,8 @@ data class DataLoggerPreferences(
     var resultsCacheEnabled: Boolean,
     var initHeader22: String,
     var initHeader01: String,
-    var initProtocol: String
+    var initProtocol: String,
+    var hardReset: Boolean
 ) {
 
 
@@ -67,6 +68,8 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
             "pref.adapter.cache.result.enabled" -> dataLoggerPreferences.resultsCacheEnabled =
                 Prefs.getBoolean(key, true)
 
+            "pref.adapter.reconnect.hard_reset" -> dataLoggerPreferences.hardReset =
+                Prefs.getBoolean(key, false)
             "pref.adapter.reconnect" -> dataLoggerPreferences.reconnectWhenError =
                 Prefs.getBoolean(key, true)
             "pref.adapter.id" -> dataLoggerPreferences.adapterId =
@@ -109,6 +112,9 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val initHeader01 = Prefs.getString("pref.adapter.init.header01", "")!!
     val initProtocol = Prefs.getString("pref.adapter.init.protocol", "AUTO")!!
 
+    val hardReset =
+        Prefs.getBoolean("pref.adapter.reconnect.hard_reset", false)
+
     val dataLoggerPreferences = DataLoggerPreferences(
         genericPids(),
         connectionType,
@@ -125,7 +131,8 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         resultsCacheEnabled,
         initHeader22,
         initHeader01,
-        initProtocol
+        initProtocol,
+        hardReset
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")

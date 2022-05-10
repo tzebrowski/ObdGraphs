@@ -111,13 +111,11 @@
 
         </PreferenceCategory>
 
-        <PreferenceCategory android:title="@string/pref.general_settings">
+        <PreferenceCategory android:title="@string/pref.adapter.general_settings">
             <PreferenceScreen
-
                 android:title="@string/prefs.pids_query"
                 app:isPreferenceVisible="true"
                 app:key="prefs.pids.query">
-
                 <PreferenceCategory android:title="@string/prefs.pids_query">
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         app:useSimpleSummaryProvider="true"
@@ -137,7 +135,6 @@
                         android:dialogTitle="@string/pref.pids_supported"
                         android:key="pref.pids.supported"
                         android:title="@string/pref.pids_supported" />
-
                 </PreferenceCategory>
             </PreferenceScreen>
 
@@ -166,6 +163,11 @@
                 android:key="pref.adapter.reconnect"
                 android:title="@string/pref.adapter_reconnect" />
 
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="@string/pref.adapter_reconnect"
+                android:key="pref.adapter.reconnect.hard_reset"
+                android:title="@string/pref.adapter.reconnect.hard_reset" />
 
             <ListPreference
                 app:useSimpleSummaryProvider="true"
