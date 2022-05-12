@@ -10,8 +10,6 @@ import android.util.Log
 import org.openobd2.core.logger.bl.datalogger.DataLoggerService
 
 
-private const val LOGGER_TAG = "PowerBroadcastReceiver"
-
 const val SCREEN_OFF_EVENT = "power.screen.off"
 const val SCREEN_ON_EVENT = "power.screen.on"
 
@@ -20,7 +18,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {
         val powerPreferences: PowerPreferences = getPowerPreferences()
         Log.i(
-            LOGGER_TAG,
+            ACTIVITY_LOGGER_TAG,
             "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}"
         )
 
@@ -34,12 +32,12 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (powerPreferences.connectOnPower) {
-                Log.i(LOGGER_TAG, "Connecting to the adapter")
+                Log.i(ACTIVITY_LOGGER_TAG, "Connecting to the adapter")
                 DataLoggerService.startAction(context!!)
             }
 
             if (powerPreferences.screenOnOff) {
-                Log.i(LOGGER_TAG, "Start data logging")
+                Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
                 startMainActivity(context!!)
                 context.sendBroadcast(Intent().apply {
                     action = SCREEN_ON_EVENT
@@ -55,7 +53,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
 
             if (powerPreferences.connectOnPower) {
                 Log.i(
-                    LOGGER_TAG,
+                    ACTIVITY_LOGGER_TAG,
                     "Stop data logging"
                 )
                 DataLoggerService.stopAction(context!!)
@@ -80,7 +78,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
     private fun isActivityVisibleOnTheScreen(context: Context, activityClass: Class<*>): Boolean {
         val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val taskInfo = activityManager.getRunningTasks(1)
-        Log.d(LOGGER_TAG, "Current top activity ${taskInfo[0].topActivity!!.className}")
+        Log.d(ACTIVITY_LOGGER_TAG, "Current top activity ${taskInfo[0].topActivity!!.className}")
         val componentInfo = taskInfo[0].topActivity
         return activityClass.canonicalName.equals(componentInfo!!.className, ignoreCase = true)
     }
