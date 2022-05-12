@@ -6,12 +6,13 @@ import android.content.*
 import android.content.Intent.ACTION_BATTERY_CHANGED
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.PowerManager
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.util.Log
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
@@ -20,6 +21,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
@@ -33,6 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.openobd2.core.logger.bl.datalogger.*
 import org.openobd2.core.logger.bl.trip.TripRecorderBroadcastReceiver
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
+import org.openobd2.core.logger.ui.common.toast
 import org.openobd2.core.logger.ui.preferences.*
 import java.lang.ref.WeakReference
 
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                     changeScreenBrightness(1f)
                 }
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-                    toast("Error occurred during. Please check your Bluetooth Connection settings.")
+                    toast(R.string.main_activity_toast_connection_connect_error)
                 }
                 NOTIFICATION_METRICS_VIEW_TOGGLE -> {
                     toggleNavigationItem(R.id.navigation_metrics)
@@ -81,17 +84,17 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    toast("Connecting to the device.")
-
+                    toast(R.string.main_activity_toast_connection_connecting)
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
                     progressBar.visibility = View.VISIBLE
-                    progressBar.indeterminateDrawable.setColorFilter(
+                    progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
                         Color.parseColor("#C22636"),
-                        android.graphics.PorterDuff.Mode.SRC_IN
+                        PorterDuff.Mode.SRC_IN
                     )
 
                     val btn: FloatingActionButton = findViewById(R.id.connect_btn)
-                    btn.backgroundTintList = resources.getColorStateList(R.color.purple_200)
+                    btn.backgroundTintList =
+                        ContextCompat.getColorStateList(applicationContext, R.color.purple_200)
                     btn.setOnClickListener {
                         Log.i(LOGGER_TAG, "Stop data logging ")
                         DataLoggerService.stopAction(context!!)
@@ -100,15 +103,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    toast(
-                        "Connection to the device has been established." +
-                                "\n Start collecting data from ECU."
-                    )
+                    toast(R.string.main_activity_toast_connection_established)
 
                     val progressBar: ProgressBar = findViewById(R.id.p_bar)
-                    progressBar.indeterminateDrawable.setColorFilter(
+                    progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
                         Color.parseColor("#01804F"),
-                        android.graphics.PorterDuff.Mode.SRC_IN
+                        PorterDuff.Mode.SRC_IN
                     )
 
                     if (getMainActivityPreferences().hideToolbarConnected) {
@@ -118,12 +118,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    toast("Connection with the device has been stopped.")
+                    toast(R.string.main_activity_toast_connection_stopped)
                     handleStop(context!!)
                 }
 
                 DATA_LOGGER_ERROR_EVENT -> {
-                    toast("Error occurred during. Please check your connection.")
+                    toast(R.string.main_activity_toast_connection_error)
                     handleStop(context!!)
                 }
             }
@@ -134,7 +134,8 @@ class MainActivity : AppCompatActivity() {
             progressBar.visibility = View.GONE
 
             val btn: FloatingActionButton = findViewById(R.id.connect_btn)
-            btn.backgroundTintList = resources.getColorStateList(R.color.purple_500)
+            btn.backgroundTintList =
+                ContextCompat.getColorStateList(applicationContext, R.color.purple_500)
             btn.setOnClickListener {
                 Log.i(LOGGER_TAG, "Stop data logging ")
                 DataLoggerService.startAction(context)
@@ -150,15 +151,6 @@ class MainActivity : AppCompatActivity() {
             findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)?.run {
                 this.isVisible = !this.isVisible
             }
-        }
-
-        private fun toast(text: String) {
-            val toast = Toast.makeText(
-                applicationContext, text,
-                Toast.LENGTH_LONG
-            )
-            toast.setGravity(Gravity.CENTER, 0, 0)
-            toast.show()
         }
     }
 

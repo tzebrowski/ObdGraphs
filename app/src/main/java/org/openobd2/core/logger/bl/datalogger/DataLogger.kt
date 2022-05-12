@@ -153,17 +153,24 @@ internal class DataLogger internal constructor() {
     }
 
     private fun connection() = if (preferences.connectionType == "wifi") {
-        Log.i(
-            LOGGER_TAG,
-            "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ..."
-        )
-        WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
+        try {
+            Log.i(
+                LOGGER_TAG,
+                "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ..."
+            )
+            WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
+        } catch (e: Exception) {
+            context.sendBroadcast(Intent().apply {
+                action = DATA_LOGGER_ERROR_CONNECT_EVENT
+            })
+            null
+        }
     } else {
         try {
             val deviceName = preferences.adapterId
             Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
             BluetoothConnection(deviceName)
-        } catch (e: IllegalStateException) {
+        } catch (e: Exception) {
             context.sendBroadcast(Intent().apply {
                 action = DATA_LOGGER_ERROR_CONNECT_EVENT
             })

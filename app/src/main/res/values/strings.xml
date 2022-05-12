@@ -1,4 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="main_activity.toast.connection.error">Error occurred during. Please check your connection.</string>
+    <string name="main_activity.toast.connection.stopped">Connection with the device has been stopped.</string>
+    <string name="main_activity.toast.connection.established">Connection to the device has been established.\n Start collecting data from ECU.</string>
+    <string name="main_activity.toast.connection.connecting">Connecting to the device.</string>
+    <string name="main_activity.toast.connection.connect_error"> Error occurred during. Please check your Bluetooth Connection settings.</string>
+
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_debug">Debug</string>
     <string name="navigation.title_gauge">Gauge</string>
