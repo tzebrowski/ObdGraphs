@@ -2,6 +2,7 @@ package org.openobd2.core.logger.ui.dashboard
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,12 +19,14 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.github.mikephil.charting.model.GradientColor
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.highLightText
 import org.openobd2.core.logger.ui.common.isTablet
+import org.openobd2.core.logger.ui.preferences.Prefs
 import java.util.*
 
 
@@ -34,7 +37,6 @@ internal class DashboardViewAdapter internal constructor(
 ) :
     RecyclerView.Adapter<DashboardViewAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private lateinit var colors: ColorTheme
     private lateinit var view: View
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
 
@@ -53,7 +55,6 @@ internal class DashboardViewAdapter internal constructor(
     ): ViewHolder {
         view = inflater.inflate(R.layout.dashboard_item, parent, false)
         view.layoutParams.height = height
-        colors = Theme.getSelectedTheme(context)
         return ViewHolder(view)
     }
 
@@ -76,8 +77,9 @@ internal class DashboardViewAdapter internal constructor(
 
             (0..segmentNum).forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                dataSet.color = colors.col1[0].startColor
-                dataSet.gradientColors = colors.col1
+                dataSet.color = Prefs.getInt("pref.dash.background_color_1",-1)
+                dataSet.gradientColors = listOf(GradientColor(Prefs.getInt("pref.dash.background_color_1",-1),
+                    Prefs.getInt("pref.dash.background_color_2",-1)))
             }
 
             val percent75: Int = (holder.segments.numOfSegments * 75) / 100
@@ -86,7 +88,8 @@ internal class DashboardViewAdapter internal constructor(
                 if (dashboardPreferences.colorsEnabled) {
                     (percent75..segmentNum).forEach { e ->
                         val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.gradientColors = colors.col2
+                        dataSet.gradientColors = listOf(GradientColor(Prefs.getInt("pref.dash.background_color_1",-1),
+                            Prefs.getInt("pref.dash.background_color_1",-1)))
                     }
                 }
 

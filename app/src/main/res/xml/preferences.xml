@@ -5,19 +5,22 @@
     <PreferenceScreen
         android:key="pref.profiles"
         android:title="@string/pref.profile.settings">
+            <PreferenceCategory
+                android:title="@string/pref.profile.settings">
 
-        <ListPreference
-            app:useSimpleSummaryProvider="true"
-            android:defaultValue="Profile 1"
-            android:entries="@array/pref.profile.list"
-            android:entryValues="@array/pref.profile.list"
-            android:key="pref.profile.id"
-            android:title="@string/pref.profile.available_list" />
+            <ListPreference
+                app:useSimpleSummaryProvider="true"
+                android:defaultValue="Profile 1"
+                android:entries="@array/pref.profile.list"
+                android:entryValues="@array/pref.profile.list"
+                android:key="pref.profile.id"
+                android:title="@string/pref.profile.available_list" />
 
-        <Preference
-            android:summary="@string/pref.profile.save_user_settings_summary"
-            android:title="@string/pref.profile.save_user_settings"
-            android:key="pref.profile.save_current"/>
+            <Preference
+                android:summary="@string/pref.profile.save_user_settings_summary"
+                android:title="@string/pref.profile.save_user_settings"
+                android:key="pref.profile.save_current"/>
+        </PreferenceCategory>
     </PreferenceScreen>
 
     <PreferenceCategory
@@ -355,6 +358,18 @@
                     android:key="pref.dash.gauge_pids.selected"
                     android:title="@string/pref.dash_tiles_pids_selected" />
             </PreferenceCategory>
+            <PreferenceCategory android:title="@string/pref.theme">
+                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                    android:defaultValue="@android:color/holo_green_light"
+                    android:title="@string/pref.dash.background_color_1"
+                    android:key="pref.dash.background_color_1" />
+
+                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                    android:defaultValue="@android:color/holo_green_light"
+                    android:title="@string/pref.dash.background_color_2"
+                    android:key="pref.dash.background_color_2" />
+
+            </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.general_settings">
                 <CheckBoxPreference
@@ -378,12 +393,6 @@
                     android:key="pref.dash.view.enabled"
                     android:title="@string/pref.enable_view" />
 
-                <ListPreference
-                    android:defaultValue="0"
-                    android:entries="@array/pref.dash_color_themes"
-                    android:entryValues="@array/pref.dash_color_themes"
-                    android:key="pref.dash.theme"
-                    android:title="@string/pref.dash_theme" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"

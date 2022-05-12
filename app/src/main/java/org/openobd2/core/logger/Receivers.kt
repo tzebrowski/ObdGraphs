@@ -131,6 +131,12 @@ private fun MainActivity.toggleNavigationItem(id: Int) {
     }
 }
 
+internal fun MainActivity.unregisterReceiver() {
+    unregisterReceiver(activityBroadcastReceiver)
+    unregisterReceiver(tripRecorderBroadcastReceiver)
+    unregisterReceiver(powerReceiver)
+}
+
 internal fun MainActivity.registerReceiver() {
 
     registerReceiver(activityBroadcastReceiver, IntentFilter().apply {

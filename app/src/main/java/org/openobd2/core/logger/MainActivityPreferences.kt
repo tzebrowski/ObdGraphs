@@ -4,7 +4,6 @@ import android.util.Log
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.isEnabled
 
-
 data class MainActivityPreferences(
     val hideToolbarDoubleClick: Boolean,
     val hideToolbarLandscape: Boolean,
