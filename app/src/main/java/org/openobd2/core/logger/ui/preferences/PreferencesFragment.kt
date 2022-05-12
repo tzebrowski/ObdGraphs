@@ -10,6 +10,8 @@ import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
 import org.openobd2.core.logger.ui.common.onDoubleClickListener
 
+const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
+
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
@@ -25,7 +27,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         } else {
             setPreferencesFromResource(
                 R.xml.preferences,
-                requireArguments().get("preferences.rootKey") as String
+                requireArguments().get(PREFERENCE_SCREEN_KEY) as String
             )
         }
     }

@@ -393,10 +393,17 @@ class MainActivity : AppCompatActivity() {
                         this@MainActivity.navController()
                             .navigate(
                                 R.id.navigation_preferences,
-                                bundleOf("preferences.rootKey" to "prefs.pids.query")
+                                bundleOf(PREFERENCE_SCREEN_KEY to "pref.pids.query")
                             )
                     }
 
+                    R.id.ctx_menu_view_profiles -> {
+                        this@MainActivity.navController()
+                            .navigate(
+                                R.id.navigation_preferences,
+                                bundleOf(PREFERENCE_SCREEN_KEY to "pref.profiles")
+                            )
+                    }
                     R.id.ctx_menu_view_configuration -> {
 
                         val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -405,17 +412,17 @@ class MainActivity : AppCompatActivity() {
                             bottomNavigationView.menu.findItem(selectedItemId)
 
                         val keyToNavigate = when (currentView.itemId) {
-                            R.id.navigation_dashboard -> "prefs.dashboard"
-                            R.id.navigation_gauge -> "prefs.gauge"
-                            R.id.navigation_graph -> "prefs.graph"
-                            R.id.navigation_metrics -> "prefs.metrics"
-                            else -> "prefs.root"
+                            R.id.navigation_dashboard -> "pref.dashboard"
+                            R.id.navigation_gauge -> "pref.gauge"
+                            R.id.navigation_graph -> "pref.graph"
+                            R.id.navigation_metrics -> "pref.metrics"
+                            else -> "pref.root"
                         }
 
                         this@MainActivity.navController()
                             .navigate(
                                 R.id.navigation_preferences,
-                                bundleOf("preferences.rootKey" to keyToNavigate)
+                                bundleOf(PREFERENCE_SCREEN_KEY to keyToNavigate)
                             )
                     }
                 }

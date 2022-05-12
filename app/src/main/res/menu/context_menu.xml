@@ -7,4 +7,7 @@
     <item
         android:id="@+id/ctx_menu_view_configuration"
         android:title="@string/context_menu.view_configuration" />
+    <item
+        android:id="@+id/ctx_menu_view_profiles"
+        android:title="@string/context_menu.profiles" />
 </menu>

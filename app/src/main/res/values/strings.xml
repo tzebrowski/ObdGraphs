@@ -16,6 +16,7 @@
     <string name="pid.mode">Mode</string>
     <string name="context_menu.parameters_id_to_query">Parameter IDs to query</string>
     <string name="context_menu.view_configuration">Quick settings</string>
+    <string name="context_menu.profiles">Profiles</string>
 
     <string name="pref.dash_pids_selected">Dashboard: Displayed Parameter IDs</string>
     <string name="pref.dash_tiles_pids_selected">Tiles: Displayed Parameter IDs</string>
@@ -23,7 +24,7 @@
     <string name="pref.pids_generic_high">High priority Parameter IDs</string>
     <string name="pref.pids_generic_low">Low priority Parameter IDs</string>
     <string name="pref.pids_supported">Parameter IDs supported by ECU\n(fetched after first successful connection to the ECU)</string>
-    <string name="prefs.pids_query">Parameter IDs to query</string>
+    <string name="pref.pids_query">Parameter IDs to query</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
     <string name="pref.adapter_cache_result_enabled">Result cache enabled</string>
     <string name="pref.adapter_adaptive_enabled">Adaptive timeout enabled</string>

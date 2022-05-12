@@ -1,9 +1,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:key="prefs.root">
+    app:key="pref.root">
 
-    <PreferenceCategory
-        android:key="profiles"
+    <PreferenceScreen
+        android:key="pref.profiles"
         android:title="@string/pref.profile.settings">
 
         <ListPreference
@@ -18,8 +18,7 @@
             android:summary="@string/pref.profile.save_user_settings_summary"
             android:title="@string/pref.profile.save_user_settings"
             android:key="pref.profile.save_current"/>
-
-    </PreferenceCategory>
+    </PreferenceScreen>
 
     <PreferenceCategory
         android:key="adapter"
@@ -113,10 +112,10 @@
 
         <PreferenceCategory android:title="@string/pref.adapter.general_settings">
             <PreferenceScreen
-                android:title="@string/prefs.pids_query"
+                android:title="@string/pref.pids_query"
                 app:isPreferenceVisible="true"
-                app:key="prefs.pids.query">
-                <PreferenceCategory android:title="@string/prefs.pids_query">
+                app:key="pref.pids.query">
+                <PreferenceCategory android:title="@string/pref.pids_query">
                     <org.openobd2.core.logger.ui.preferences.PidListPreferences
                         app:useSimpleSummaryProvider="true"
                         android:dialogTitle="@string/pref.pids_generic_high"
@@ -223,7 +222,7 @@
         <PreferenceScreen
             android:summary="@string/pref.gauge_category"
             android:title="@string/pref.gauge_category"
-            app:key="prefs.gauge">
+            app:key="pref.gauge">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
@@ -272,7 +271,7 @@
         <PreferenceScreen
             android:summary="@string/pref.metrics_category"
             android:title="@string/pref.metrics_category"
-            app:key="prefs.metrics">
+            app:key="pref.metrics">
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -282,7 +281,7 @@
 
         <PreferenceScreen
             android:title="@string/pref.graph_category"
-            app:key="prefs.graph">
+            app:key="pref.graph">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
@@ -343,7 +342,7 @@
 
         <PreferenceScreen
             android:title="@string/pref.dashboard_category"
-            app:key="prefs.dashboard">
+            app:key="pref.dashboard">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
                 <org.openobd2.core.logger.ui.preferences.DisplayedPidListPreferences
