@@ -27,6 +27,7 @@ const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 
 private const val LOGGER_TAG = "DataLogger"
+private const val MAX_RECONNECT_ATTEMPT = 3
 
 internal class DataLogger internal constructor() {
 
@@ -39,6 +40,8 @@ internal class DataLogger internal constructor() {
     private val context: Context by lazy { ApplicationContext.get()!! }
 
     private var metricsAggregator = MetricsAggregator()
+
+    private var reconnectAttemptCount = 0
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
@@ -65,14 +68,16 @@ internal class DataLogger internal constructor() {
 
             stop()
 
-            if (preferences.reconnectWhenError) {
+            if (preferences.reconnectWhenError && reconnectAttemptCount < MAX_RECONNECT_ATTEMPT) {
                 Log.e(
                     LOGGER_TAG,
                     "Flag to reconnect automatically when errors occurs is turn on." +
-                            " Re-establishing new connection"
+                            " Re-establishing new connection. Reconnect attempt count=$reconnectAttemptCount"
                 )
                 start()
+                reconnectAttemptCount++
             } else {
+                reconnectAttemptCount = 0
                 context.sendBroadcast(Intent().apply {
                     action = DATA_LOGGER_ERROR_EVENT
                 })
