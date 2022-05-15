@@ -7,7 +7,7 @@ class Colors {
     private val colors: Stack<Int> = Stack()
     val color: Int
         get() {
-            if (colors.size === 0) {
+            if (colors.size == 0) {
                 while (!recycle.isEmpty()) colors.push(recycle.pop())
                 Collections.shuffle(colors)
             }

@@ -75,9 +75,14 @@ internal fun MainActivity.receive(context: Context?, intent: Intent?) {
                 ContextCompat.getColorStateList(applicationContext, R.color.purple_200)
             btn.setOnClickListener {
                 Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
-                DataLoggerService.stopAction(context!!)
+                DataLoggerService.stopAction()
             }
             btn.refreshDrawableState()
+        }
+
+        DATA_LOGGER_NO_NETWORK_EVENT -> {
+            toast(R.string.main_activity_toast_connection_no_network)
+            handleStop()
         }
 
         DATA_LOGGER_CONNECTED_EVENT -> {
@@ -97,17 +102,17 @@ internal fun MainActivity.receive(context: Context?, intent: Intent?) {
 
         DATA_LOGGER_STOPPED_EVENT -> {
             toast(R.string.main_activity_toast_connection_stopped)
-            handleStop(context!!)
+            handleStop()
         }
 
         DATA_LOGGER_ERROR_EVENT -> {
             toast(R.string.main_activity_toast_connection_error)
-            handleStop(context!!)
+            handleStop()
         }
     }
 }
 
-private fun MainActivity.handleStop(context: Context) {
+private fun MainActivity.handleStop() {
     val progressBar: ProgressBar = findViewById(R.id.p_bar)
     progressBar.visibility = View.GONE
 
@@ -116,7 +121,7 @@ private fun MainActivity.handleStop(context: Context) {
         ContextCompat.getColorStateList(applicationContext, R.color.purple_500)
     btn.setOnClickListener {
         Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
-        DataLoggerService.startAction(context)
+        DataLoggerService.startAction()
     }
 
     if (getMainActivityPreferences().hideToolbarConnected) {
@@ -145,6 +150,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(DATA_LOGGER_STOPPING_EVENT)
         addAction(DATA_LOGGER_ERROR_EVENT)
         addAction(DATA_LOGGER_CONNECTED_EVENT)
+        addAction(DATA_LOGGER_NO_NETWORK_EVENT)
         addAction(Intent.ACTION_BATTERY_CHANGED)
         addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
         addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)

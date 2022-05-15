@@ -1,19 +1,29 @@
 package org.openobd2.core.logger
 
 import android.app.ActivityManager
-import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.util.Log
 import org.openobd2.core.logger.bl.datalogger.DataLoggerService
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 
 const val SCREEN_OFF_EVENT = "power.screen.off"
 const val SCREEN_ON_EVENT = "power.screen.on"
 
+private const val CONNECT_TASK_DELAY_S = 5L
+
 class PowerBroadcastReceiver : BroadcastReceiver() {
+
+    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+    private val dataLoggerTask = Runnable {
+        Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
+        DataLoggerService.startAction()
+    }
 
     override fun onReceive(context: Context?, intent: Intent) {
         val powerPreferences: PowerPreferences = getPowerPreferences()
@@ -23,32 +33,34 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
         )
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
-
-            if (powerPreferences.btOnOff) {
-                BluetoothAdapter.getDefaultAdapter().run {
-                    enable()
-                    startDiscovery()
+            if (powerPreferences.switchNetworkOffOn) {
+                true.run {
+                    bluetooth(this)
+                    wifi(this)
+                    if (powerPreferences.connectOnPower) {
+                        Log.i(
+                            ACTIVITY_LOGGER_TAG,
+                            "Schedule connect task WITH delay: $CONNECT_TASK_DELAY_S"
+                        )
+                        scheduleService.schedule(dataLoggerTask, CONNECT_TASK_DELAY_S, TimeUnit.SECONDS)
+                    }
+                }
+            } else {
+                if (powerPreferences.connectOnPower) {
+                    DataLoggerService.startAction()
                 }
             }
 
-            if (powerPreferences.connectOnPower) {
-                Log.i(ACTIVITY_LOGGER_TAG, "Connecting to the adapter")
-                DataLoggerService.startAction(context!!)
-            }
-
             if (powerPreferences.screenOnOff) {
-                Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
                 startMainActivity(context!!)
                 context.sendBroadcast(Intent().apply {
                     action = SCREEN_ON_EVENT
                 })
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
-
-            if (powerPreferences.btOnOff) {
-                BluetoothAdapter.getDefaultAdapter().run {
-                    disable()
-                }
+            if (powerPreferences.switchNetworkOffOn) {
+                bluetooth(false)
+                wifi(false)
             }
 
             if (powerPreferences.connectOnPower) {
@@ -56,7 +68,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
                     ACTIVITY_LOGGER_TAG,
                     "Stop data logging"
                 )
-                DataLoggerService.stopAction(context!!)
+                DataLoggerService.stopAction()
             }
 
             if (powerPreferences.screenOnOff) {

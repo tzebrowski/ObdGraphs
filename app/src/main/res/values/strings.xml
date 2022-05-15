@@ -4,7 +4,8 @@
     <string name="main_activity.toast.connection.stopped">Connection with the device has been stopped.</string>
     <string name="main_activity.toast.connection.established">Connection to the device has been established.\n Start collecting data from ECU.</string>
     <string name="main_activity.toast.connection.connecting">Connecting to the device.</string>
-    <string name="main_activity.toast.connection.connect_error"> Error occurred during. Please check your Bluetooth Connection settings.</string>
+    <string name="main_activity.toast.connection.connect_error"> Error occurred during connection.\nPlease check your network settings.</string>
+    <string name="main_activity.toast.connection.no_network">Network connection might be turned off.\n Please check your settings.</string>
 
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_debug">Debug</string>
@@ -65,7 +66,7 @@
     <string name="pref.adapter_command_freq">Command frequency</string>
     <string name="pref.adapter_power_connect_adapter">Connect adapter on power</string>
     <string name="pref.adapter_power_screen_off">Screen off when disconnected</string>
-    <string name="pref.adapter_power_bt_off">Disable bluetooth</string>
+    <string name="pref.adapter_power_bt_off">Switch Network Off/On</string>
     <string name="pref.power_settings">Power settings</string>
     <string name="pref.toolbar_hide_landscape">Fullscreen when landscape</string>
     <string name="pref.toolbar_hide_doubleclick">Fullscreen when double click</string>

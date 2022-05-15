@@ -199,7 +199,7 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:dialogTitle="@string/pref.adapter_power_bt_off"
-            android:key="pref.adapter.power.bt_off"
+            android:key="pref.adapter.power.switch_network_on_off"
             android:title="@string/pref.adapter_power_bt_off" />
 
     </PreferenceCategory>

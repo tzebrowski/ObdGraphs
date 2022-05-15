@@ -6,12 +6,12 @@ import org.openobd2.core.logger.ui.preferences.isEnabled
 data class PowerPreferences(
     val connectOnPower: Boolean,
     val screenOnOff: Boolean,
-    val btOnOff: Boolean
+    val switchNetworkOffOn: Boolean
 )
 
 private const val ADAPTER_CONNECT_PREFERENCE_KEY = "pref.adapter.power.connect_adapter"
 private const val SCREEN_ON_OFF_PREFERENCE_KEY = "pref.adapter.power.screen_off"
-private const val BT_ON_OFF_PREFERENCE_KEY = " pref.adapter.power.bt_off"
+private const val BT_ON_OFF_PREFERENCE_KEY = "pref.adapter.power.switch_network_on_off"
 
 fun getPowerPreferences(): PowerPreferences {
 

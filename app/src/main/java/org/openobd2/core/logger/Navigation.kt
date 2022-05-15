@@ -56,7 +56,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
     val btnStart: FloatingActionButton = findViewById(R.id.connect_btn)
     btnStart.setOnClickListener {
         Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
-        DataLoggerService.startAction(this)
+        DataLoggerService.startAction()
     }
 
     val menuButton: FloatingActionButton = findViewById(R.id.menu_btn)

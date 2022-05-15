@@ -60,7 +60,7 @@ open class RecyclerItemDoubleClickListener(
     override fun onInterceptTouchEvent(view: RecyclerView, e: MotionEvent): Boolean {
         val childView = view.findChildViewUnder(e.x, e.y)
         if (childView != null && doubleClickListener != null && gestureDetector.onTouchEvent(e)) {
-            doubleClickListener.onItemDoubleClick(childView, view.getChildPosition(childView))
+            doubleClickListener.onItemDoubleClick(childView, view.getChildAdapterPosition(childView))
         }
         return false
     }

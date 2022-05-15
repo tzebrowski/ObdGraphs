@@ -25,6 +25,8 @@ const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
 const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
 const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
+const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
+
 
 private const val LOGGER_TAG = "DataLogger"
 private const val MAX_RECONNECT_ATTEMPT = 3
@@ -158,29 +160,35 @@ internal class DataLogger internal constructor() {
     }
 
     private fun connection() = if (preferences.connectionType == "wifi") {
-        try {
-            Log.i(
-                LOGGER_TAG,
-                "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort} ..."
-            )
-            WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
-        } catch (e: Exception) {
-            context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_ERROR_CONNECT_EVENT
-            })
-            null
-        }
+        wifiConnection()
     } else {
-        try {
-            val deviceName = preferences.adapterId
-            Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
-            BluetoothConnection(deviceName)
-        } catch (e: Exception) {
-            context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_ERROR_CONNECT_EVENT
-            })
-            null
-        }
+        bluetoothConnection()
+    }
+
+    private fun bluetoothConnection() = try {
+        val deviceName = preferences.adapterId
+        Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
+        BluetoothConnection(deviceName)
+    } catch (e: Exception) {
+        Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
+        context.sendBroadcast(Intent().apply {
+            action = DATA_LOGGER_ERROR_CONNECT_EVENT
+        })
+        null
+    }
+
+    private fun wifiConnection() = try {
+        Log.i(
+            LOGGER_TAG,
+            "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort}."
+        )
+        WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
+    } catch (e: Exception) {
+        Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
+        context.sendBroadcast(Intent().apply {
+            action = DATA_LOGGER_ERROR_CONNECT_EVENT
+        })
+        null
     }
 
     private fun init() = Init.builder()
