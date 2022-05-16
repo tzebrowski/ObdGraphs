@@ -7,23 +7,12 @@ import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.util.Log
 import org.openobd2.core.logger.bl.datalogger.DataLoggerService
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
-
 
 const val SCREEN_OFF_EVENT = "power.screen.off"
 const val SCREEN_ON_EVENT = "power.screen.on"
 
-private const val CONNECT_TASK_DELAY_S = 5L
 
 class PowerBroadcastReceiver : BroadcastReceiver() {
-
-    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-    private val dataLoggerTask = Runnable {
-        Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
-        DataLoggerService.startAction()
-    }
 
     override fun onReceive(context: Context?, intent: Intent) {
         val powerPreferences: PowerPreferences = getPowerPreferences()
@@ -37,13 +26,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
                 true.run {
                     bluetooth(this)
                     wifi(this)
-                    if (powerPreferences.connectOnPower) {
-                        Log.i(
-                            ACTIVITY_LOGGER_TAG,
-                            "Schedule connect task WITH delay: $CONNECT_TASK_DELAY_S"
-                        )
-                        scheduleService.schedule(dataLoggerTask, CONNECT_TASK_DELAY_S, TimeUnit.SECONDS)
-                    }
+                    scheduleDataLogger()
                 }
             } else {
                 if (powerPreferences.connectOnPower) {
