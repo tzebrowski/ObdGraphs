@@ -165,7 +165,15 @@
                 android:key="pref.adapter.reconnect"
                 android:title="@string/pref.adapter_reconnect" />
 
+            <EditTextPreference
+                app:useSimpleSummaryProvider="true"
+                android:defaultValue="0"
+                android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
+                android:key="pref.adapter.reconnect.max_retry"
+                android:title="@string/pref.adapter_reconnect_max_retry" />
+
             <CheckBoxPreference
+                app:useSimpleSummaryProvider="true"
                 android:defaultValue="false"
                 android:dialogTitle="@string/pref.adapter_reconnect"
                 android:key="pref.adapter.reconnect.hard_reset"

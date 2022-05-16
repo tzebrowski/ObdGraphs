@@ -29,7 +29,6 @@ const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
 
 private const val LOGGER_TAG = "DataLogger"
-private const val MAX_RECONNECT_ATTEMPT = 3
 
 internal class DataLogger internal constructor() {
 
@@ -70,7 +69,7 @@ internal class DataLogger internal constructor() {
 
             stop()
 
-            if (preferences.reconnectWhenError && reconnectAttemptCount < MAX_RECONNECT_ATTEMPT) {
+            if (preferences.reconnectWhenError && reconnectAttemptCount < preferences.maxReconnectRetry) {
                 Log.e(
                     LOGGER_TAG,
                     "Flag to reconnect automatically when errors occurs is turn on." +

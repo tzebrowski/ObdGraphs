@@ -23,7 +23,8 @@ data class DataLoggerPreferences(
     var initHeader22: String,
     var initHeader01: String,
     var initProtocol: String,
-    var hardReset: Boolean
+    var hardReset: Boolean,
+    var maxReconnectRetry: Int
 ) {
 
 
@@ -72,6 +73,10 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 Prefs.getBoolean(key, false)
             "pref.adapter.reconnect" -> dataLoggerPreferences.reconnectWhenError =
                 Prefs.getBoolean(key, true)
+
+            "pref.adapter.reconnect.max_retry" -> dataLoggerPreferences.maxReconnectRetry =
+                Prefs.getString(key, "0")!!.toInt()
+
             "pref.adapter.id" -> dataLoggerPreferences.adapterId =
                 Prefs.getString(key, "OBDII")!!
             "pref.adapter.command.freq" -> dataLoggerPreferences.commandFrequency =
@@ -115,6 +120,10 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val hardReset =
         Prefs.getBoolean("pref.adapter.reconnect.hard_reset", false)
 
+    val maxReconnectRetry =
+        Prefs.getString("pref.adapter.reconnect.max_retry", "0")!!.toInt()
+
+
     val dataLoggerPreferences = DataLoggerPreferences(
         genericPids(),
         connectionType,
@@ -132,7 +141,8 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         initHeader22,
         initHeader01,
         initProtocol,
-        hardReset
+        hardReset,
+        maxReconnectRetry
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")
