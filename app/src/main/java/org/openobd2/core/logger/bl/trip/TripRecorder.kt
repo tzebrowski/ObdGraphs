@@ -52,8 +52,7 @@ class TripRecorder private constructor() {
 
     fun addTripEntry(metric: ObdMetric) {
         try {
-            Cache[CACHE_TRIP_PROPERTY_NAME]?.let {
-                val trip = it as Trip
+            getTripFromCache()?.let { trip ->
                 val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
                 val key = metric.command.pid.id
                 val newRecord =
@@ -72,13 +71,11 @@ class TripRecorder private constructor() {
     }
 
     fun getCurrentTrip(): Trip {
-        if (null == Cache[CACHE_TRIP_PROPERTY_NAME]) {
+        if (null == getTripFromCache()) {
             startNewTrip(System.currentTimeMillis())
         }
 
-        val trip =
-            Cache[CACHE_TRIP_PROPERTY_NAME] as Trip
-
+        val trip = getTripFromCache()!!
         Log.i(LOGGER_KEY, "Get current trip ts: '${dateFormat.format(Date(trip.startTs))}'")
         return trip
     }
@@ -90,10 +87,7 @@ class TripRecorder private constructor() {
 
 
     fun saveCurrentTrip() {
-        Cache[CACHE_TRIP_PROPERTY_NAME]?.let {
-            val trip  = it  as Trip
-
-
+       getTripFromCache()?.let { trip ->
             val histogram = DataLogger.instance.diagnostics().histogram()
             val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
 
@@ -129,6 +123,7 @@ class TripRecorder private constructor() {
         }
 
     }
+
 
     fun findAllTripsBy(query: String = ".json"): MutableList<String> {
         Log.i(LOGGER_KEY, "Find all trips with query: $query")
@@ -178,4 +173,7 @@ class TripRecorder private constructor() {
         Cache[CACHE_TRIP_PROPERTY_NAME] = trip
         Log.i(LOGGER_KEY, "Init new Trip with stamp: $${trip.startTs}")
     }
+
+    private fun getTripFromCache(): Trip? = Cache[CACHE_TRIP_PROPERTY_NAME]  as Trip?
+
 }
