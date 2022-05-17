@@ -285,7 +285,7 @@
             app:key="pref.metrics">
 
             <CheckBoxPreference
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:key="pref.metrics.view.enabled"
                 android:title="@string/pref.enable_view" />
         </PreferenceScreen>
@@ -420,11 +420,6 @@
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
                 android:title="@string/pref.debug_generator_enabled" />
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.debug.view.enabled"
-                android:title="@string/pref.enable_view" />
         </PreferenceCategory>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -48,10 +48,6 @@ internal fun MainActivity.receive(intent: Intent?) {
             toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
         }
 
-        NOTIFICATION_DEBUG_VIEW_TOGGLE -> {
-            toggleNavigationItem(DEBUG_VIEW_ID, R.id.navigation_debug)
-        }
-
         NOTIFICATION_DASH_VIEW_TOGGLE -> {
             toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
         }
@@ -153,7 +149,6 @@ internal fun MainActivity.registerReceiver() {
         addAction(Intent.ACTION_BATTERY_CHANGED)
         addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
         addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)
-        addAction(NOTIFICATION_DEBUG_VIEW_TOGGLE)
         addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)
         addAction(NOTIFICATION_DASH_VIEW_TOGGLE)
         addAction(NOTIFICATION_METRICS_VIEW_TOGGLE)

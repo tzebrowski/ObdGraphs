@@ -24,17 +24,10 @@
         tools:layout="@layout/fragment_graph" />
 
     <fragment
-        android:id="@+id/navigation_debug"
-        android:name="org.openobd2.core.logger.ui.debug.DebugFragment"
-        android:label="@string/navigation.title_debug"
-        tools:layout="@layout/fragment_debug" />
-
-    <fragment
         android:id="@+id/navigation_metrics"
         android:name="org.openobd2.core.logger.ui.metrics.MetricsFragment"
         android:label="@string/navigation.title_metrics"
         tools:layout="@layout/fragment_metrics" />
-
 
     <fragment
         android:id="@+id/navigation_preferences"

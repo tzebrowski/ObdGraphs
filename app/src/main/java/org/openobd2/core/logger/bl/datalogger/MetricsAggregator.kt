@@ -11,10 +11,6 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
 
     companion object {
         @JvmStatic
-        val debugData: MutableLiveData<Reply<*>> = MutableLiveData<Reply<*>>().apply {
-        }
-
-        @JvmStatic
         val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>().apply {
         }
     }
@@ -22,7 +18,6 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
     private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
 
     fun reset() {
-        debugData.postValue(null)
         metrics.postValue(null)
     }
 

@@ -21,7 +21,6 @@ internal fun MainActivity.setupNavigationBar() {
             R.id.navigation_gauge,
             R.id.navigation_graph,
             R.id.navigation_dashboard,
-            R.id.navigation_debug,
             R.id.navigation_metrics,
             R.id.navigation_preferences
         )
@@ -32,9 +31,6 @@ internal fun MainActivity.setupNavigationBar() {
 
     val mainActivityPreferences = getMainActivityPreferences()
     findViewById<BottomNavigationView>(R.id.nav_view).menu.run {
-        findItem(R.id.navigation_debug)?.isVisible =
-            mainActivityPreferences.showDebugView
-
         findItem(R.id.navigation_dashboard).isVisible =
             mainActivityPreferences.showDashView
 
