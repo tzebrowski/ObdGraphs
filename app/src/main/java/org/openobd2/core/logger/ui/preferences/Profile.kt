@@ -15,7 +15,7 @@ private const val PREF_PROFILE_ID = "pref.profile.id"
 fun PreferencesFragment.registerSaveUserPreferences() {
     (preferenceManager.findPreference("pref.profile.save_current") as Preference?)
         ?.setOnPreferenceClickListener {
-           Prefs.edit().let {
+            Prefs.edit().let {
                 val profileName = selectedProfile()
                 Log.i(LOG_KEY, "Saving user preference to profile='$profileName'")
                 Prefs.all
@@ -26,8 +26,8 @@ fun PreferencesFragment.registerSaveUserPreferences() {
                     }
                 it.apply()
             }
-        true
-    }
+            true
+        }
 }
 
 fun PreferencesFragment.registerProfileListener() {
@@ -37,7 +37,6 @@ fun PreferencesFragment.registerProfileListener() {
                 loadProfile(newValue.toString())
                 (ApplicationContext.get() as MainActivity).navController()
                     .navigate(R.id.navigation_preferences, null)
-
                 updateToolbar()
                 true
             }
@@ -64,7 +63,9 @@ internal fun SharedPreferences.Editor.updatePreference(
     }
 }
 
-private fun profileToId(profileId: String) = profileId.replace(" ", "_").toLowerCase(Locale.getDefault())
+private fun profileToId(profileId: String) =
+    profileId.replace(" ", "_").toLowerCase(Locale.getDefault())
+
 private fun selectedProfile(): String = profileToId(Prefs.getString(PREF_PROFILE_ID)!!)
 
 private fun loadProfile(profileId: String) {

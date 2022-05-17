@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.*
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceScreen
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
 import org.openobd2.core.logger.ui.common.onDoubleClickListener
@@ -19,6 +22,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
         super.onNavigateToScreen(preferenceScreen)
         setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
+        registerListeners()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -38,14 +42,17 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState)
-
-        registerViewsPreferenceChangeListeners()
         registerConnectionTypeListener()
-        registerProfileListener()
-        registerSaveUserPreferences()
+        registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
         return root
+    }
+
+    private fun registerListeners() {
+        registerViewsPreferenceChangeListeners()
+        registerProfileListener()
+        registerSaveUserPreferences()
     }
 
     private fun registerConnectionTypeListener() {

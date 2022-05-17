@@ -1,6 +1,5 @@
 package org.openobd2.core.logger
 
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
@@ -23,7 +22,7 @@ import org.openobd2.core.logger.ui.preferences.*
 internal val tripRecorderBroadcastReceiver = TripRecorderBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()
 
-internal fun MainActivity.receive(context: Context?, intent: Intent?) {
+internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
         TOGGLE_TOOLBAR_ACTION -> {
             if (getMainActivityPreferences().hideToolbarDoubleClick) {
@@ -42,23 +41,23 @@ internal fun MainActivity.receive(context: Context?, intent: Intent?) {
             toast(R.string.main_activity_toast_connection_connect_error)
         }
         NOTIFICATION_METRICS_VIEW_TOGGLE -> {
-            toggleNavigationItem(R.id.navigation_metrics)
+            toggleNavigationItem(METRICS_VIEW_ID, R.id.navigation_metrics)
         }
 
         NOTIFICATION_GRAPH_VIEW_TOGGLE -> {
-            toggleNavigationItem(R.id.navigation_graph)
+            toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
         }
 
         NOTIFICATION_DEBUG_VIEW_TOGGLE -> {
-            toggleNavigationItem(R.id.navigation_debug)
+            toggleNavigationItem(DEBUG_VIEW_ID, R.id.navigation_debug)
         }
 
         NOTIFICATION_DASH_VIEW_TOGGLE -> {
-            toggleNavigationItem(R.id.navigation_dashboard)
+            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
         }
 
         NOTIFICATION_GAUGE_VIEW_TOGGLE -> {
-            toggleNavigationItem(R.id.navigation_gauge)
+            toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
         }
 
         DATA_LOGGER_CONNECTING_EVENT -> {
@@ -130,9 +129,9 @@ private fun MainActivity.handleStop() {
     }
 }
 
-private fun MainActivity.toggleNavigationItem(id: Int) {
+private fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
     findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)?.run {
-        this.isVisible = !this.isVisible
+        this.isVisible = Prefs.getBoolean(prefKey, true)
     }
 }
 

@@ -22,7 +22,7 @@ const val ACTIVITY_LOGGER_TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            receive(context,intent)
+            receive(intent)
         }
     }
 
