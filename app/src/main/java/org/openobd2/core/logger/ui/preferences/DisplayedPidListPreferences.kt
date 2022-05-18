@@ -2,7 +2,6 @@ package org.openobd2.core.logger.ui.preferences
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.preference.MultiSelectListPreference
 import org.openobd2.core.logger.bl.datalogger.DataLogger
 import java.util.*

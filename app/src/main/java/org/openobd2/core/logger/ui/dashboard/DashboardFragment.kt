@@ -142,23 +142,25 @@ class DashboardFragment : Fragment() {
             }
 
             override fun deleteItems(fromPosition: Int) {
-                val metrics = (metricsViewContext.adapter as DashboardViewAdapter).data
-                val itemId: ObdMetric = metrics[fromPosition]
-                metrics.remove(itemId)
+                val data = (metricsViewContext.adapter as DashboardViewAdapter).data
+                val itemId: ObdMetric = data[fromPosition]
+                data.remove(itemId)
 
-                updateDashboardPids(metrics.map { obdMetric -> obdMetric.command.pid.id }.toList())
+                updateDashboardPids(data.map { obdMetric -> obdMetric.command.pid.id }.toList())
 
-                DashPreferences.SERIALIZER.store(requireContext(), metrics)
-                val spanCount = calculateSpanCount(metrics.size)
-                val itemHeight = calculateItemHeight(metrics, spanCount)
-                metricsViewContext.adapter = DashboardViewAdapter(root.context, metrics, itemHeight)
-                val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-                recyclerView.layoutManager =
-                    GridLayoutManager(root.context, calculateSpanCount(metrics.size))
-                recyclerView.adapter = metricsViewContext.adapter
-                recyclerView.refreshDrawableState()
+                DashPreferences.SERIALIZER.store(requireContext(), data)
+                metricsViewContext.adapter = DashboardViewAdapter(
+                    root.context,
+                    data,
+                    calculateItemHeight(data, calculateSpanCount(data.size))
+                )
+                val view: RecyclerView = root.findViewById(R.id.recycler_view)
+                view.layoutManager =
+                    GridLayoutManager(root.context, calculateSpanCount(data.size))
+                view.adapter = metricsViewContext.adapter
+                view.refreshDrawableState()
 
-                metricsViewContext.observerMetrics(metrics)
+                metricsViewContext.observerMetrics(data)
                 metricsViewContext.adapter.notifyDataSetChanged()
             }
         }
@@ -190,7 +192,7 @@ class DashboardFragment : Fragment() {
 
     private fun calculateItemHeight(metrics: MutableList<ObdMetric>, spanCount: Int): Int {
         val heightPixels = Resources.getSystem().displayMetrics.heightPixels
-        val size =  if (metrics.size == 0) 1  else metrics.size
+        val size = if (metrics.size == 0) 1 else metrics.size
         return heightPixels / size * spanCount
     }
 

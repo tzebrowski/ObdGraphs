@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.util.Log
 import org.obd.metrics.transport.AdapterConnection
-import org.openobd2.core.logger.ui.preferences.Prefs
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream

@@ -12,12 +12,16 @@ private val dataLoggerTask = Runnable {
     DataLoggerService.startAction()
 }
 
-private const val CONNECT_TASK_DELAY_S = 5L
-
 fun scheduleDataLogger() {
+    val powerPreferences: PowerPreferences = getPowerPreferences()
+
     Log.i(
         ACTIVITY_LOGGER_TAG,
-        "Schedule connect task WITH delay: $CONNECT_TASK_DELAY_S"
+        "Schedule connect task WITH delay: ${powerPreferences.startDataLoggingAfter}"
     )
-    scheduleService.schedule(dataLoggerTask, CONNECT_TASK_DELAY_S, TimeUnit.SECONDS)
+    scheduleService.schedule(
+        dataLoggerTask,
+        powerPreferences.startDataLoggingAfter,
+        TimeUnit.SECONDS
+    )
 }

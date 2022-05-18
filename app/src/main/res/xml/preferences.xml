@@ -210,6 +210,13 @@
             android:key="pref.adapter.power.switch_network_on_off"
             android:title="@string/pref.adapter_power_bt_off" />
 
+        <EditTextPreference
+            app:useSimpleSummaryProvider="true"
+            android:defaultValue="10"
+            android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
+            android:key="pref.adapter.power.start_data_logging.after"
+            android:title="@string/pref.adapter_power_start_data_logging_after" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref.view_category">

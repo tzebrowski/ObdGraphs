@@ -10,8 +10,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-private const val LOGGER_TAG = "MainActivity"
-
 internal fun MainActivity.lockScreen() {
     val pm = getSystemService(AppCompatActivity.POWER_SERVICE) as PowerManager
     if (pm.isInteractive) {

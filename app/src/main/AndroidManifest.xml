@@ -30,9 +30,10 @@
         android:theme="@style/Theme.DefaultTheme">
         <service
             android:name=".bl.datalogger.DataLoggerService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <receiver
+            android:exported="true"
             android:name=".AdminReceiver"
             android:label="device_admin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
@@ -45,6 +46,7 @@
         </receiver>
 
         <activity
+            android:exported="true"
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize">
             <intent-filter>
