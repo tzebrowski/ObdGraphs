@@ -15,8 +15,7 @@
                 android:entryValues="@array/pref.profile.list"
                 android:key="pref.profile.id"
                 android:title="@string/pref.profile.available_list" />
-
-            <Preference
+           <Preference
                 android:summary="@string/pref.profile.save_user_settings_summary"
                 android:title="@string/pref.profile.save_user_settings"
                 android:key="pref.profile.save_current"/>
@@ -141,7 +140,7 @@
             </PreferenceScreen>
 
             <CheckBoxPreference
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:dialogTitle="@string/pref.adapter_cache_result_enabled"
                 android:key="pref.adapter.cache.result.enabled"
                 android:title="@string/pref.adapter_cache_result_enabled" />
