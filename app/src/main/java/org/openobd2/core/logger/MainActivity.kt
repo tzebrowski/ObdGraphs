@@ -1,7 +1,9 @@
 package org.openobd2.core.logger
 
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.StrictMode
@@ -14,7 +16,7 @@ import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
-import org.openobd2.core.logger.ui.preferences.*
+import org.openobd2.core.logger.ui.preferences.Prefs
 import java.lang.ref.WeakReference
 
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
@@ -54,6 +56,11 @@ class MainActivity : AppCompatActivity() {
         setupNavigationBar()
         setupNavigationBarButtons()
         registerReceiver()
+        registerExceptionHandler()
+    }
+
+    private fun registerExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
 
     override fun onResume() {
@@ -75,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-     fun navController(): NavController {
+    fun navController(): NavController {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         return navHostFragment.navController
