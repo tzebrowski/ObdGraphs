@@ -15,7 +15,7 @@ fun getPowerPreferences(): PowerPreferences {
     val btOnOff = Prefs.isEnabled("pref.adapter.power.switch_network_on_off")
     val screenOnOff = Prefs.isEnabled("pref.adapter.power.screen_off")
     val connectOnPower = Prefs.isEnabled("pref.adapter.power.connect_adapter")
-    val startDataLoggingAfter = Prefs.getLong("pref.adapter.power.start_data_logging.after", 10)
+    val startDataLoggingAfter = Prefs.getString("pref.adapter.power.start_data_logging.after", "10")!!.toLong()
     return PowerPreferences(
         connectOnPower,
         screenOnOff,
