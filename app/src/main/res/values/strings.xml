@@ -104,6 +104,7 @@
         <item name="connection.bluetooth">bluetooth</item>
     </string-array>
 
+    <string name="pref.profile.update_name">Profile name</string>
     <string name="pref.profile.settings">Profiles settings</string>
     <string name="pref.profile.available_list">Available profiles</string>
     <string name="pref.profile.save_user_settings">Save current settings to User Profile</string>

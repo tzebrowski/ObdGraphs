@@ -19,9 +19,9 @@
 
            <org.openobd2.core.logger.ui.preferences.profile.ProfileNamePreference
                 app:useSimpleSummaryProvider="true"
-                android:dialogTitle="Profile name"
+                android:dialogTitle="@string/pref.profile.update_name"
                 android:key="pref.profile.current_name"
-                android:title="Profile name" />
+                android:title="@string/pref.profile.update_name" />
         </PreferenceCategory>
     </PreferenceScreen>
 

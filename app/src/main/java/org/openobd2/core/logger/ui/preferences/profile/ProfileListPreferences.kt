@@ -19,11 +19,11 @@ class ProfileListPreferences(
 
     init {
         val map = linkedMapOf(
-            profile_1_id to Prefs.getString("pref.profile.names.$profile_1_id","Profile 1"),
-            profile_2_id to Prefs.getString("pref.profile.names.$profile_2_id","Profile 2"),
-            profile_3_id to Prefs.getString("pref.profile.names.$profile_3_id","Profile 3"),
-            profile_4_id to Prefs.getString("pref.profile.names.$profile_4_id","Profile 4"),
-            profile_5_id to Prefs.getString("pref.profile.names.$profile_5_id","Profile 5")
+            profile_1_id to Prefs.getString("$PROFILE_NAME_PRFIX.$profile_1_id", "Profile 1"),
+            profile_2_id to Prefs.getString("$PROFILE_NAME_PRFIX.$profile_2_id", "Profile 2"),
+            profile_3_id to Prefs.getString("$PROFILE_NAME_PRFIX.$profile_3_id", "Profile 3"),
+            profile_4_id to Prefs.getString("$PROFILE_NAME_PRFIX.$profile_4_id", "Profile 4"),
+            profile_5_id to Prefs.getString("$PROFILE_NAME_PRFIX.$profile_5_id", "Profile 5")
         )
         setDefaultValue(profile_1_id)
 
