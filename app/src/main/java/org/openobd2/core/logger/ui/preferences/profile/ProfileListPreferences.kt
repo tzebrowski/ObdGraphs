@@ -27,7 +27,7 @@ class ProfileListPreferences(
         )
         setDefaultValue(profile_1_id)
 
-        setEntries(map.values.toTypedArray())
+        entries = map.values.toTypedArray()
         entryValues = map.keys.toTypedArray()
     }
 }

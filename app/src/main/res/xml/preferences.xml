@@ -4,7 +4,9 @@
 
     <PreferenceScreen
         android:key="pref.profiles"
+        android:summary="@string/pref.profile.settings"
         android:title="@string/pref.profile.settings">
+
             <PreferenceCategory
                 android:title="@string/pref.profile.settings">
 
@@ -27,6 +29,7 @@
 
     <PreferenceCategory
         android:key="adapter"
+        android:summary="@string/pref.adapter_settings"
         android:title="@string/pref.adapter_settings">
 
         <ListPreference
@@ -114,8 +117,11 @@
 
         </PreferenceCategory>
 
-        <PreferenceCategory android:title="@string/pref.adapter.general_settings">
+        <PreferenceCategory
+            android:summary="@string/pref.adapter.general_settings"
+            android:title="@string/pref.adapter.general_settings">
             <PreferenceScreen
+                android:summary="@string/pref.pids_query"
                 android:title="@string/pref.pids_query"
                 app:isPreferenceVisible="true"
                 app:key="pref.pids.query">
@@ -192,6 +198,7 @@
 
     <PreferenceCategory
         android:key="power"
+        android:summary="@string/pref.power_settings"
         android:title="@string/pref.power_settings">
         <CheckBoxPreference
             android:defaultValue="false"
@@ -301,6 +308,7 @@
 
         <PreferenceScreen
             android:title="@string/pref.graph_category"
+            android:summary="@string/pref.graph_category"
             app:key="pref.graph">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
@@ -362,6 +370,7 @@
 
         <PreferenceScreen
             android:title="@string/pref.dashboard_category"
+            android:summary="@string/pref.dashboard_category"
             app:key="pref.dashboard">
 
             <PreferenceCategory android:title="@string/pref.pids_category">

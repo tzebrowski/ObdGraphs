@@ -1,7 +1,9 @@
 package org.openobd2.core.logger.ui.preferences
 
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,10 @@ import org.openobd2.core.logger.ui.preferences.profile.registerSaveUserPreferenc
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
+
+    private val onSharedPreferenceChangeListener =SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        Log.v("Prefs", "Preference $key changed")
+    }
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
@@ -36,6 +42,16 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 requireArguments().get(PREFERENCE_SCREEN_KEY) as String
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
     }
 
     override fun onCreateView(

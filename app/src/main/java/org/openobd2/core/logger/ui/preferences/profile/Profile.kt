@@ -25,7 +25,7 @@ fun PreferencesFragment.registerSaveUserPreferences() {
                 Log.i(LOG_KEY, "Saving user preference to profile='$profileName'")
                 Prefs.all
                     .filter { (pref, _) -> !pref.startsWith("profile_") }
-                    .filter { (pref, _) -> !pref.startsWith("$PROFILE_NAME_PRFIX") }
+                    .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PRFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PREF_PROFILE_CURRENT_NAME_ID) }
                     .forEach { (pref, value) ->
                         Log.d(LOG_KEY, "User preference '$profileName.$pref'=$value")
@@ -70,7 +70,7 @@ internal fun SharedPreferences.Editor.updatePreference(
     }
 }
 
-fun getCurrentProfile(): String = Prefs.getString(PREF_PROFILE_ID)!!
+internal fun getCurrentProfile(): String = Prefs.getString(PREF_PROFILE_ID)!!
 
 private fun loadProfile(selectedProfile: String) {
     Log.i(LOG_KEY, "Loading user preferences from the profile='$selectedProfile'")
@@ -78,7 +78,8 @@ private fun loadProfile(selectedProfile: String) {
     Prefs.edit().let {
         Prefs.all
             .filter { (pref, _) -> pref.startsWith(selectedProfile) }
-            .filter { (pref, _) -> !pref.startsWith("$PROFILE_NAME_PRFIX") }
+            .filter { (pref, _) -> !pref.startsWith(
+                PROFILE_NAME_PRFIX) }
             .filter { (pref, _) -> !pref.startsWith(PREF_PROFILE_CURRENT_NAME_ID) }
             .forEach { (pref, value) ->
                 pref.substring(selectedProfile.length + 1).run {

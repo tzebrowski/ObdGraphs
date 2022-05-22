@@ -63,19 +63,11 @@ internal fun MainActivity.setupNavigationBarButtons() {
         pm.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.ctx_menu_pids_to_query -> {
-                    this.navController()
-                        .navigate(
-                            R.id.navigation_preferences,
-                            bundleOf(PREFERENCE_SCREEN_KEY to "pref.pids.query")
-                        )
+                    navigateToPreferencesScreen("pref.pids.query")
                 }
 
                 R.id.ctx_menu_view_profiles -> {
-                    this.navController()
-                        .navigate(
-                            R.id.navigation_preferences,
-                            bundleOf(PREFERENCE_SCREEN_KEY to "pref.profiles")
-                        )
+                    navigateToPreferencesScreen("pref.profiles")
                 }
                 R.id.ctx_menu_view_configuration -> {
 
@@ -84,24 +76,25 @@ internal fun MainActivity.setupNavigationBarButtons() {
                     val currentView: MenuItem =
                         bottomNavigationView.menu.findItem(selectedItemId)
 
-                    val keyToNavigate = when (currentView.itemId) {
+                    navigateToPreferencesScreen( when (currentView.itemId) {
                         R.id.navigation_dashboard -> "pref.dashboard"
                         R.id.navigation_gauge -> "pref.gauge"
                         R.id.navigation_graph -> "pref.graph"
                         R.id.navigation_metrics -> "pref.metrics"
                         else -> "pref.root"
-                    }
-
-                    this.navController()
-                        .navigate(
-                            R.id.navigation_preferences,
-                            bundleOf(PREFERENCE_SCREEN_KEY to keyToNavigate)
-                        )
+                    })
                 }
             }
-
             true
         }
         pm.show()
     }
+}
+
+fun navigateToPreferencesScreen(prefKey: String) {
+    (ApplicationContext.get() as MainActivity).navController()
+        .navigate(
+            R.id.navigation_preferences,
+            bundleOf(PREFERENCE_SCREEN_KEY to prefKey)
+        )
 }
