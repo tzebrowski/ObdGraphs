@@ -111,15 +111,7 @@
     <string name="pref.dash.background_color_1">Start color 1</string>
     <string name="pref.dash.background_color_2">End color 2</string>
 
-    <string-array name="pref.profile.list">
-        <item name="profile_1">Profile 1</item>
-        <item name="profile_2">Profile 2</item>
-        <item name="profile_3">Profile 3</item>
-        <item name="profile_4">Profile 4</item>
-        <item name="profile_5">Profile 5</item>
-   </string-array>
-
-    <string-array name="pref.command_frequency">
+    <string-array name="pref.numbers_1_10">
         <item name="1">1</item>
         <item name="2">2</item>
         <item name="3">3</item>

@@ -12,6 +12,8 @@ import androidx.preference.PreferenceScreen
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.datalogger.DataLoggerPreferences
 import org.openobd2.core.logger.ui.common.onDoubleClickListener
+import org.openobd2.core.logger.ui.preferences.profile.registerProfileListener
+import org.openobd2.core.logger.ui.preferences.profile.registerSaveUserPreferences
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 
