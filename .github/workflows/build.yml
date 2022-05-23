@@ -11,6 +11,7 @@ jobs:
           TMP_KEYSTORE_FILE_PATH="${RUNNER_TEMP}"/keystore
           mkdir "${TMP_KEYSTORE_FILE_PATH}"
           echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/release_keystore.jks
+          echo "${TMP_KEYSTORE_FILE_PATH}"
       - name: Checkout the code
         uses: actions/checkout@v2
       - name: Build the app
