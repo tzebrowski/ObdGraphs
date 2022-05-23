@@ -19,7 +19,7 @@ jobs:
           ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-          ANDROID_RELEASE_KEYSTORE: "${TMP_KEYSTORE_FILE_PATH}/release_keystore.jks"
+          ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
         run: sh ./gradlew app:bundleRelease
       - name: Deploy artifcats
         uses: actions/upload-artifact@v2
