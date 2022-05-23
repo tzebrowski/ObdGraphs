@@ -21,7 +21,7 @@ jobs:
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           ANDROID_RELEASE_KEYSTORE: "${TMP_KEYSTORE_FILE_PATH}"/release_keystore.jks
       - name: Upload
-          uses: actions/upload-artifact@v2
-          with:
-            name: Build Artifacts
-            path: app/build/outputs/
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build Artifacts
+          path: app/build/outputs/
