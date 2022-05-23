@@ -4,7 +4,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Decode Keystore
+          env:
+            ENCODED_STRING: ${{ secrets.SIGNING_KEYSTORE }}
+          run: |
+            TMP_KEYSTORE_FILE_PATH="${RUNNER_TEMP}"/keystore
+            mkdir "${TMP_KEYSTORE_FILE_PATH}"
+            echo $ENCODED_STRING | base64 -di > "${TMP_KEYSTORE_FILE_PATH}"/release_keystore.jks
+
       - name: Checkout the code
         uses: actions/checkout@v2
       - name: Build the app
-        run: sh ./gradlew build
+        run: sh ./gradlew app:bundleRelease
+        env:
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          ANDROID_RELEASE_KEYSTORE: "${TMP_KEYSTORE_FILE_PATH}"/release_keystore.jks
+      - name: Upload
+          uses: actions/upload-artifact@v2
+          with:
+            name: Build Artifacts
+            path: app/build/outputs/
