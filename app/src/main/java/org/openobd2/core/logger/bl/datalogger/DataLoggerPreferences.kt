@@ -48,9 +48,9 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 
         when (key) {
             "pref.pids.generic.low" -> dataLoggerPreferences.mode01Pids =
-                genericPids()
+                genericPidList()
             "pref.pids.generic.high" -> dataLoggerPreferences.mode01Pids =
-                genericPids()
+                genericPidList()
             "pref.mode" -> dataLoggerPreferences.mode =
                 Prefs.getString(key, GENERIC_MODE)!!
             "pref.debug.generator.enabled" -> dataLoggerPreferences.generatorEnabled =
@@ -125,7 +125,7 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
 
     val dataLoggerPreferences = DataLoggerPreferences(
-        genericPids(),
+        genericPidList(),
         connectionType,
         tcpHost,
         tcpPort,
@@ -149,7 +149,7 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     return dataLoggerPreferences
 }
 
-private fun genericPids(): MutableSet<Long> {
+private fun genericPidList(): MutableSet<Long> {
     val high = Prefs.getStringSet("pref.pids.generic.high").map { s -> s.toLong() }
     val low = Prefs.getStringSet("pref.pids.generic.low").map { s -> s.toLong() }
     return (high + low).toMutableSet()

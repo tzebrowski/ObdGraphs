@@ -12,9 +12,10 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getString
 import org.openobd2.core.logger.ui.preferences.updateToolbar
 
+private const val PROFILE_CURRENT_NAME_ID = "pref.profile.current_name"
 const val LOG_KEY = "Profile"
-const val PREF_PROFILE_ID = "pref.profile.id"
-private const val PREF_PROFILE_CURRENT_NAME_ID = "pref.profile.current_name"
+const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
+const val PROFILE_ID = "pref.profile.id"
 const val PROFILE_NAME_PREFIX = "pref.profile.names"
 
 fun PreferencesFragment.registerSaveUserPreferences() {
@@ -26,7 +27,8 @@ fun PreferencesFragment.registerSaveUserPreferences() {
                 Prefs.all
                     .filter { (pref, _) -> !pref.startsWith("profile_") }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
-                    .filter { (pref, _) -> !pref.startsWith(PREF_PROFILE_CURRENT_NAME_ID) }
+                    .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_ID) }
+                    .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
                     .forEach { (pref, value) ->
                         Log.v(LOG_KEY, "'$profileName.$pref'=$value")
                         it.updatePreference("$profileName.$pref", value)
@@ -38,7 +40,7 @@ fun PreferencesFragment.registerSaveUserPreferences() {
 }
 
 fun PreferencesFragment.registerProfileListener() {
-    findPreference<ListPreference>(PREF_PROFILE_ID)?.let {
+    findPreference<ListPreference>(PROFILE_ID)?.let {
         it.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 loadProfile(newValue.toString())
@@ -70,7 +72,7 @@ internal fun SharedPreferences.Editor.updatePreference(
     }
 }
 
-internal fun getCurrentProfile(): String = Prefs.getString(PREF_PROFILE_ID)!!
+internal fun getCurrentProfile(): String = Prefs.getString(PROFILE_ID)!!
 
 fun loadProfile(profileName: String) {
     Log.i(LOG_KEY, "Loading user preferences from the profile='$profileName'")
@@ -78,9 +80,9 @@ fun loadProfile(profileName: String) {
     Prefs.edit().let {
         Prefs.all
             .filter { (pref, _) -> pref.startsWith(profileName) }
-            .filter { (pref, _) -> !pref.startsWith(
-                PROFILE_NAME_PREFIX) }
-            .filter { (pref, _) -> !pref.startsWith(PREF_PROFILE_CURRENT_NAME_ID) }
+            .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
+            .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_ID) }
+            .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
             .forEach { (pref, value) ->
                 pref.substring(profileName.length + 1).run {
                     Log.d(LOG_KEY, "Loading user preference $this = $value")
@@ -95,6 +97,6 @@ fun loadProfile(profileName: String) {
 
 private fun updateCurrentProfileValue() {
     val prefName = Prefs.getString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "Profile 1")
-    Log.i(LOG_KEY, "Setting $PREF_PROFILE_CURRENT_NAME_ID=$prefName")
-    Prefs.edit().putString(PREF_PROFILE_CURRENT_NAME_ID, prefName).apply()
+    Log.i(LOG_KEY, "Setting $PROFILE_CURRENT_NAME_ID=$prefName")
+    Prefs.edit().putString(PROFILE_CURRENT_NAME_ID, prefName).apply()
 }
