@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.profile.installProfiles
 import java.lang.ref.WeakReference
 
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
@@ -56,8 +57,8 @@ class MainActivity : AppCompatActivity() {
         setupNavigationBar()
         setupNavigationBarButtons()
         registerReceiver()
-        registerExceptionHandler()
 
+        registerExceptionHandler()
         installProfiles()
     }
 

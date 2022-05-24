@@ -18,7 +18,7 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.updateECUSupportedPids
 import java.io.File
 
-
+const val DATA_LOGGER_ADAPTER_NOT_SET_EVENT = "data.logger.adapter.not_set"
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
@@ -47,17 +47,12 @@ internal class DataLogger internal constructor() {
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
             Log.i(LOGGER_TAG, "Start collecting process")
-            context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_CONNECTING_EVENT
-            })
+            sendBroadcast(DATA_LOGGER_CONNECTING_EVENT)
         }
 
         override fun onRunning(deviceProperties: DeviceProperties) {
             Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
-
-            context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_CONNECTED_EVENT
-            })
+            sendBroadcast(DATA_LOGGER_CONNECTED_EVENT)
             Prefs.updateECUSupportedPids(deviceProperties.capabilities)
         }
 
@@ -79,9 +74,7 @@ internal class DataLogger internal constructor() {
                 reconnectAttemptCount++
             } else {
                 reconnectAttemptCount = 0
-                context.sendBroadcast(Intent().apply {
-                    action = DATA_LOGGER_ERROR_EVENT
-                })
+                sendBroadcast(DATA_LOGGER_ERROR_EVENT)
             }
         }
 
@@ -93,17 +86,12 @@ internal class DataLogger internal constructor() {
 
             metricsAggregator.reset()
 
-            context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_STOPPED_EVENT
-            })
+            sendBroadcast(DATA_LOGGER_STOPPED_EVENT)
         }
 
         override fun onStopping() {
             Log.i(LOGGER_TAG, "Stopping collecting process...")
-
-            context.sendBroadcast(Intent().apply {
-                action = DATA_LOGGER_STOPPING_EVENT
-            })
+            sendBroadcast(DATA_LOGGER_STOPPING_EVENT)
         }
     }
 
@@ -167,12 +155,17 @@ internal class DataLogger internal constructor() {
     private fun bluetoothConnection() = try {
         val deviceName = preferences.adapterId
         Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
-        BluetoothConnection(deviceName)
+
+        if (deviceName.isEmpty()){
+            sendBroadcast(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+            null
+        }else {
+            BluetoothConnection(deviceName)
+        }
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
-        context.sendBroadcast(Intent().apply {
-            action = DATA_LOGGER_ERROR_CONNECT_EVENT
-        })
+        sendBroadcast(DATA_LOGGER_ERROR_CONNECT_EVENT)
+
         null
     }
 
@@ -184,9 +177,7 @@ internal class DataLogger internal constructor() {
         WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
-        context.sendBroadcast(Intent().apply {
-            action = DATA_LOGGER_ERROR_CONNECT_EVENT
-        })
+        sendBroadcast(DATA_LOGGER_ERROR_CONNECT_EVENT)
         null
     }
 
@@ -222,4 +213,10 @@ internal class DataLogger internal constructor() {
 
 
     private fun query() = Query.builder().pids(preferences.mode01Pids).build()
+
+    private fun sendBroadcast(actionName: String) {
+        context.sendBroadcast(Intent().apply {
+            action = actionName
+        })
+    }
 }

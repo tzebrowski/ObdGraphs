@@ -4,19 +4,73 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.preference.ListPreference
 import androidx.preference.Preference
-import org.openobd2.core.logger.ApplicationContext
-import org.openobd2.core.logger.MainActivity
-import org.openobd2.core.logger.R
+import org.openobd2.core.logger.*
+import org.openobd2.core.logger.toggleNavigationItem
 import org.openobd2.core.logger.ui.preferences.PreferencesFragment
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getString
 import org.openobd2.core.logger.ui.preferences.updateToolbar
+import java.util.*
 
+private const val DEFAULT_PROFILE_TO_LOAD = "profile_2"
 private const val PROFILE_CURRENT_NAME_ID = "pref.profile.current_name"
-const val LOG_KEY = "Profile"
-const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
-const val PROFILE_ID = "pref.profile.id"
-const val PROFILE_NAME_PREFIX = "pref.profile.names"
+private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
+private const val PROFILE_ID = "pref.profile.id"
+internal const val PROFILE_NAME_PREFIX = "pref.profile.names"
+internal const val LOG_KEY = "Profile"
+
+fun installProfiles() {
+
+    if (!Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)) {
+        Log.e(ACTIVITY_LOGGER_TAG, "Installing profile")
+        val prefsEditor = Prefs.edit()
+
+        arrayOf("default.properties", "giulietta.properties").forEach { fileName ->
+            val prop = Properties()
+            prop.load(ApplicationContext.get()!!.assets.open(fileName))
+            prop.forEach { t, u ->
+                val value = u.toString()
+                val key = t.toString()
+
+                Log.i(ACTIVITY_LOGGER_TAG, "Inserting $key=$value")
+
+                when {
+                    value.isBoolean() -> {
+                        prefsEditor.putBoolean(key, value.toBoolean())
+                    }
+                    value.isArray() -> {
+                        val v = value
+                            .replace("[", "")
+                            .replace("]", "")
+                            .split(",")
+                            .map { it.trim() }
+                            .filter { it.isNotEmpty() }
+                            .toMutableSet()
+                        prefsEditor.putStringSet(key,v)
+                    }
+                    value.isNumeric() -> {
+                        prefsEditor.putInt(key, value.toInt())
+                    }
+                    else -> {
+                        prefsEditor.putString(key, value.replace("\"", "").replace("\"", ""))
+                    }
+                }
+            }
+        }
+        prefsEditor.putString(PROFILE_ID, DEFAULT_PROFILE_TO_LOAD)
+        prefsEditor.putBoolean(PROFILE_INSTALLATION_KEY, true)
+        prefsEditor.apply()
+
+        loadProfile(DEFAULT_PROFILE_TO_LOAD)
+        updateToolbar()
+    }
+}
+
+private fun String.isArray() = startsWith("[") || endsWith("]")
+private fun String.isBoolean(): Boolean = startsWith("false") || startsWith("true")
+private fun String.isNumeric(): Boolean = matches(Regex("-?\\d+"))
+private fun String.toBoolean(): Boolean  = startsWith("true")
+
 
 fun PreferencesFragment.registerSaveUserPreferences() {
     (preferenceManager.findPreference("pref.profile.save_current") as Preference?)

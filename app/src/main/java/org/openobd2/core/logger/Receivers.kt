@@ -49,6 +49,12 @@ internal fun MainActivity.receive(intent: Intent?) {
         DATA_LOGGER_ERROR_CONNECT_EVENT -> {
             toast(R.string.main_activity_toast_connection_connect_error)
         }
+
+        DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
+            navigateToPreferencesScreen("pref.adapter")
+            toast(R.string.main_activity_toast_adapter_is_not_selected)
+        }
+
         NOTIFICATION_METRICS_VIEW_TOGGLE -> {
             toggleNavigationItem(METRICS_VIEW_ID, R.id.navigation_metrics)
         }
@@ -149,6 +155,7 @@ internal fun MainActivity.unregisterReceiver() {
 internal fun MainActivity.registerReceiver() {
 
     registerReceiver(activityBroadcastReceiver, IntentFilter().apply {
+        addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
         addAction(DATA_LOGGER_CONNECTING_EVENT)
         addAction(DATA_LOGGER_STOPPED_EVENT)
         addAction(DATA_LOGGER_STOPPING_EVENT)

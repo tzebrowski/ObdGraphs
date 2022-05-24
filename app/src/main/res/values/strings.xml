@@ -6,6 +6,7 @@
     <string name="main_activity.toast.connection.connecting">Connecting to the device.</string>
     <string name="main_activity.toast.connection.connect_error"> Error occurred during connection.\nPlease check your network settings.</string>
     <string name="main_activity.toast.connection.no_network">Network connection might be turned off.\n Please check your settings.</string>
+    <string name="main_activity.toast.adapter_is_not_selected">Adapter is not selected. Please select Adapter and try again.</string>
 
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_gauge">Gauge</string>

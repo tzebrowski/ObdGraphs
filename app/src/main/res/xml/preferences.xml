@@ -27,8 +27,8 @@
         </PreferenceCategory>
     </PreferenceScreen>
 
-    <PreferenceCategory
-        android:key="adapter"
+    <PreferenceScreen
+        android:key="pref.adapter"
         android:summary="@string/pref.adapter_settings"
         android:title="@string/pref.adapter_settings">
 
@@ -79,7 +79,7 @@
         </PreferenceCategory>
 
 
-        <PreferenceCategory
+        <PreferenceScreen
             android:key="init"
             android:title="@string/pref.init_category">
 
@@ -116,7 +116,7 @@
                 android:key="pref.adapter.init.header01"
                 android:title="@string/pref.adapter_init_header01" />
 
-        </PreferenceCategory>
+        </PreferenceScreen>
 
         <PreferenceCategory
             android:summary="@string/pref.adapter.general_settings"
@@ -197,7 +197,7 @@
                 android:key="pref.adapter.command.freq"
                 android:title="@string/pref.adapter_command_freq" />
         </PreferenceCategory>
-    </PreferenceCategory>
+    </PreferenceScreen>
 
     <PreferenceCategory
         android:key="power"
