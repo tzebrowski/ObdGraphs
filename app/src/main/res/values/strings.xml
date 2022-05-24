@@ -51,16 +51,16 @@
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>
-    <string name="pref.adapter.general_settings">Adapter advanced settings</string>
+    <string name="pref.adapter.general_settings">Advanced settings</string>
 
     <string name="pref.pids_category">Parameter IDs</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
     <string name="pref.metrics_category">Metrics view configuration</string>
-    <string name="pref.adapter_settings">Adapter settings</string>
-    <string name="pref.bluetooth_category">Bluetooth settings</string>
-    <string name="pref.wifi_category">Wifi settings</string>
+    <string name="pref.adapter_category">Adapter</string>
+    <string name="pref.bluetooth_category">Bluetooth</string>
+    <string name="pref.wifi_category">Wifi</string>
     <string name="pref.adapter_connection_tcp_ssid">SSID</string>
     <string name="pref.adapter_connection_tcp_host">Host</string>
     <string name="pref.adapter_connection_tcp_port">Port</string>
@@ -70,7 +70,7 @@
     <string name="pref.adapter_power_bt_off">Switch Network Off/On</string>
     <string name="pref.adapter_power_start_data_logging_after">Start data logging after specified period of time (in seconds)</string>
 
-    <string name="pref.power_settings">Power settings</string>
+    <string name="pref.power_category">Power</string>
     <string name="pref.toolbar_hide_landscape">Fullscreen when landscape</string>
     <string name="pref.toolbar_hide_doubleclick">Fullscreen when double click</string>
     <string name="pref.toolbar_hide_connected">Fullscreen when connected</string>
@@ -105,8 +105,9 @@
         <item name="connection.bluetooth">bluetooth</item>
     </string-array>
 
+    <string name="pref.settings">Settings</string>
     <string name="pref.profile.update_name">Profile name</string>
-    <string name="pref.profile.settings">Profiles settings</string>
+    <string name="pref.profile.category">Profiles</string>
     <string name="pref.profile.available_list">Available profiles</string>
     <string name="pref.profile.save_user_settings">Save current settings to User Profile</string>
     <string name="pref.profile.save_user_settings_summary">This operation saves all user chooses into currently selected profile</string>

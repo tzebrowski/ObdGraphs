@@ -2,207 +2,207 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:key="pref.root">
 
-    <PreferenceScreen
-        android:key="pref.profiles"
-        android:summary="@string/pref.profile.settings"
-        android:title="@string/pref.profile.settings">
-
-            <PreferenceCategory
-                android:title="@string/pref.profile.settings">
-
-            <org.openobd2.core.logger.ui.preferences.profile.ProfileListPreferences
-                app:useSimpleSummaryProvider="true"
-                android:key="pref.profile.id"
-                android:title="@string/pref.profile.available_list" />
-           <Preference
-                android:summary="@string/pref.profile.save_user_settings_summary"
-                android:title="@string/pref.profile.save_user_settings"
-                android:key="pref.profile.save_current"/>
-
-           <org.openobd2.core.logger.ui.preferences.profile.ProfileNamePreference
-                app:useSimpleSummaryProvider="true"
-                android:dialogTitle="@string/pref.profile.update_name"
-                android:key="pref.profile.current_name"
-                android:title="@string/pref.profile.update_name" />
-        </PreferenceCategory>
-    </PreferenceScreen>
-
-    <PreferenceScreen
-        android:key="pref.adapter"
-        android:summary="@string/pref.adapter_settings"
-        android:title="@string/pref.adapter_settings">
-
-        <ListPreference
-            app:useSimpleSummaryProvider="true"
-            android:defaultValue="bluetooth"
-            android:dialogTitle="@string/pref.selected_connection_type"
-            android:entries="@array/pref.connection_type_array"
-            android:entryValues="@array/pref.connection_type_array"
-            android:key="pref.adapter.connection.type"
-            android:title="@string/pref.selected_connection_type" />
-
-        <PreferenceCategory
-            android:key="pref.adapter.connection.type.bluetooth"
-            android:title="@string/pref.bluetooth_category">
-
-            <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue="@array/pref.empty_array"
-                android:dialogTitle="@string/pref.adapter_id"
-                android:key="pref.adapter.id"
-                android:title="@string/pref.adapter_id" />
-        </PreferenceCategory>
-
-        <PreferenceCategory
-            android:key="pref.adapter.connection.type.wifi"
-            android:title="@string/pref.wifi_category">
-
-            <EditTextPreference
-                app:useSimpleSummaryProvider="true"
-                android:dialogTitle="@string/pref.adapter_connection_tcp_ssid"
-                android:key="pref.adapter.connection.tcp.wifi.ssid"
-                android:title="@string/pref.adapter_connection_tcp_ssid" />
-
-            <EditTextPreference
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue="192.168.0.10"
-                android:dialogTitle="@string/pref.adapter_connection_tcp_host"
-                android:key="pref.adapter.connection.tcp.host"
-                android:title="@string/pref.adapter_connection_tcp_host" />
-
-            <EditTextPreference
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue="35000"
-                android:dialogTitle="Port"
-                android:key="pref.adapter_connection_tcp_port"
-                android:title="@string/pref.adapter_connection_tcp_port" />
-        </PreferenceCategory>
-
-
+    <PreferenceCategory
+        android:title="@string/pref.profile.category">
         <PreferenceScreen
-            android:key="init"
-            android:title="@string/pref.init_category">
+            android:key="pref.profiles"
+            android:title="@string/pref.settings">
+                <org.openobd2.core.logger.ui.preferences.profile.ProfileListPreferences
+                    app:useSimpleSummaryProvider="true"
+                    android:key="pref.profile.id"
+                    android:title="@string/pref.profile.available_list" />
+               <Preference
+                    android:summary="@string/pref.profile.save_user_settings_summary"
+                    android:title="@string/pref.profile.save_user_settings"
+                    android:key="pref.profile.save_current"/>
 
-            <ListPreference
-                android:inputType="number"
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue="500"
-                android:entries="@array/pref.init_delay"
-                android:entryValues="@array/pref.init_delay"
-                android:key="pref.adapter.init.delay"
-                android:title="@string/pref.adapter_init_delay" />
+               <org.openobd2.core.logger.ui.preferences.profile.ProfileNamePreference
+                    app:useSimpleSummaryProvider="true"
+                    android:dialogTitle="@string/pref.profile.update_name"
+                    android:key="pref.profile.current_name"
+                    android:title="@string/pref.profile.update_name" />
+        </PreferenceScreen>
+    </PreferenceCategory>
 
-            <ListPreference
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue="AUTO"
-                android:entries="@array/pref.init_protocol"
-                android:entryValues="@array/pref.init_protocol"
-                android:key="pref.adapter.init.protocol"
-                android:title="@string/pref.adapter_init_protocol" />
+    <PreferenceCategory android:title="@string/pref.pids_query">
+        <PreferenceScreen
+            android:title="@string/pref.pids_query"
+            app:isPreferenceVisible="true"
+            app:key="pref.pids.query">
 
-            <ListPreference
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue=""
-                android:entries="@array/pref.init_header"
-                android:entryValues="@array/pref.init_header"
-                android:key="pref.adapter.init.header22"
-                android:title="@string/pref.adapter_init_header22" />
+                <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                    app:useSimpleSummaryProvider="true"
+                    android:dialogTitle="@string/pref.pids_generic_high"
+                    android:key="pref.pids.generic.high"
+                    android:title="@string/pref.pids_generic_high"
+                    app:priority="high" />
 
-            <ListPreference
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue=""
-                android:entries="@array/pref.init_header"
-                android:entryValues="@array/pref.init_header"
-                android:key="pref.adapter.init.header01"
-                android:title="@string/pref.adapter_init_header01" />
+                <org.openobd2.core.logger.ui.preferences.PidListPreferences
+                    app:useSimpleSummaryProvider="true"
+                    android:dialogTitle="@string/pref.pids_generic_low"
+                    android:key="pref.pids.generic.low"
+                    android:title="@string/pref.pids_generic_low"
+                    app:priority="low" />
+
+                <org.openobd2.core.logger.ui.preferences.SupportedPidsPreferences
+                    android:dialogTitle="@string/pref.pids_supported"
+                    android:key="pref.pids.supported"
+                    android:title="@string/pref.pids_supported" />
 
         </PreferenceScreen>
-
-        <PreferenceCategory
-            android:summary="@string/pref.adapter.general_settings"
-            android:title="@string/pref.adapter.general_settings">
-            <PreferenceScreen
-                android:summary="@string/pref.pids_query"
-                android:title="@string/pref.pids_query"
-                app:isPreferenceVisible="true"
-                app:key="pref.pids.query">
-                <PreferenceCategory android:title="@string/pref.pids_query">
-                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        app:useSimpleSummaryProvider="true"
-                        android:dialogTitle="@string/pref.pids_generic_high"
-                        android:key="pref.pids.generic.high"
-                        android:title="@string/pref.pids_generic_high"
-                        app:priority="high" />
-
-                    <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                        app:useSimpleSummaryProvider="true"
-                        android:dialogTitle="@string/pref.pids_generic_low"
-                        android:key="pref.pids.generic.low"
-                        android:title="@string/pref.pids_generic_low"
-                        app:priority="low" />
-
-                    <org.openobd2.core.logger.ui.preferences.SupportedPidsPreferences
-                        android:dialogTitle="@string/pref.pids_supported"
-                        android:key="pref.pids.supported"
-                        android:title="@string/pref.pids_supported" />
-                </PreferenceCategory>
-            </PreferenceScreen>
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:dialogTitle="@string/pref.adapter_cache_result_enabled"
-                android:key="pref.adapter.cache.result.enabled"
-                android:title="@string/pref.adapter_cache_result_enabled" />
-
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:dialogTitle="@string/pref.adapter_batch_enabled"
-                android:key="pref.adapter.batch.enabled"
-                android:title="@string/pref.adapter_batch_enabled" />
+    </PreferenceCategory>
 
 
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:dialogTitle="@string/pref.adapter_adaptive_enabled"
-                android:key="pref.adapter.adaptive.enabled"
-                android:title="@string/pref.adapter_adaptive_enabled" />
-
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:dialogTitle="@string/pref.adapter_reconnect"
-                android:key="pref.adapter.reconnect"
-                android:title="@string/pref.adapter_reconnect" />
-
-            <EditTextPreference
-                android:inputType="number"
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue="0"
-                android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
-                android:key="pref.adapter.reconnect.max_retry"
-                android:title="@string/pref.adapter_reconnect_max_retry" />
-
-            <CheckBoxPreference
-                app:useSimpleSummaryProvider="true"
-                android:defaultValue="false"
-                android:dialogTitle="@string/pref.adapter_reconnect"
-                android:key="pref.adapter.reconnect.hard_reset"
-                android:title="@string/pref.adapter.reconnect.hard_reset" />
+    <PreferenceCategory
+        android:title="@string/pref.adapter_category">
+        <PreferenceScreen
+            android:key="pref.adapter"
+            android:title="@string/pref.settings">
 
             <ListPreference
-                android:inputType="number"
                 app:useSimpleSummaryProvider="true"
-                android:defaultValue="6"
-                android:entries="@array/pref.numbers_1_10"
-                android:entryValues="@array/pref.numbers_1_10"
-                android:key="pref.adapter.command.freq"
-                android:title="@string/pref.adapter_command_freq" />
-        </PreferenceCategory>
-    </PreferenceScreen>
+                android:defaultValue="bluetooth"
+                android:dialogTitle="@string/pref.selected_connection_type"
+                android:entries="@array/pref.connection_type_array"
+                android:entryValues="@array/pref.connection_type_array"
+                android:key="pref.adapter.connection.type"
+                android:title="@string/pref.selected_connection_type" />
+
+            <PreferenceCategory
+                android:key="pref.adapter.connection.type.bluetooth"
+                android:title="@string/pref.bluetooth_category">
+
+                <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="@array/pref.empty_array"
+                    android:dialogTitle="@string/pref.adapter_id"
+                    android:key="pref.adapter.id"
+                    android:title="@string/pref.adapter_id" />
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                android:key="pref.adapter.connection.type.wifi"
+                android:title="@string/pref.wifi_category">
+
+                <EditTextPreference
+                    app:useSimpleSummaryProvider="true"
+                    android:dialogTitle="@string/pref.adapter_connection_tcp_ssid"
+                    android:key="pref.adapter.connection.tcp.wifi.ssid"
+                    android:title="@string/pref.adapter_connection_tcp_ssid" />
+
+                <EditTextPreference
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="192.168.0.10"
+                    android:dialogTitle="@string/pref.adapter_connection_tcp_host"
+                    android:key="pref.adapter.connection.tcp.host"
+                    android:title="@string/pref.adapter_connection_tcp_host" />
+
+                <EditTextPreference
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="35000"
+                    android:dialogTitle="Port"
+                    android:key="pref.adapter_connection_tcp_port"
+                    android:title="@string/pref.adapter_connection_tcp_port" />
+            </PreferenceCategory>
+
+            <PreferenceCategory android:title="@string/pref.init_category">
+                <PreferenceScreen
+                    android:key="init"
+                    android:title="@string/pref.init_category">
+
+                    <ListPreference
+                        android:inputType="number"
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="500"
+                        android:entries="@array/pref.init_delay"
+                        android:entryValues="@array/pref.init_delay"
+                        android:key="pref.adapter.init.delay"
+                        android:title="@string/pref.adapter_init_delay" />
+
+                    <ListPreference
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="AUTO"
+                        android:entries="@array/pref.init_protocol"
+                        android:entryValues="@array/pref.init_protocol"
+                        android:key="pref.adapter.init.protocol"
+                        android:title="@string/pref.adapter_init_protocol" />
+
+                    <ListPreference
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue=""
+                        android:entries="@array/pref.init_header"
+                        android:entryValues="@array/pref.init_header"
+                        android:key="pref.adapter.init.header22"
+                        android:title="@string/pref.adapter_init_header22" />
+
+                    <ListPreference
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue=""
+                        android:entries="@array/pref.init_header"
+                        android:entryValues="@array/pref.init_header"
+                        android:key="pref.adapter.init.header01"
+                        android:title="@string/pref.adapter_init_header01" />
+
+                </PreferenceScreen>
+            </PreferenceCategory>
+            <PreferenceCategory
+                android:title="@string/pref.adapter.general_settings">
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.adapter_cache_result_enabled"
+                    android:key="pref.adapter.cache.result.enabled"
+                    android:title="@string/pref.adapter_cache_result_enabled" />
+
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.adapter_batch_enabled"
+                    android:key="pref.adapter.batch.enabled"
+                    android:title="@string/pref.adapter_batch_enabled" />
+
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.adapter_adaptive_enabled"
+                    android:key="pref.adapter.adaptive.enabled"
+                    android:title="@string/pref.adapter_adaptive_enabled" />
+
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.adapter_reconnect"
+                    android:key="pref.adapter.reconnect"
+                    android:title="@string/pref.adapter_reconnect" />
+
+                <EditTextPreference
+                    android:inputType="number"
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="0"
+                    android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
+                    android:key="pref.adapter.reconnect.max_retry"
+                    android:title="@string/pref.adapter_reconnect_max_retry" />
+
+                <CheckBoxPreference
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.adapter_reconnect"
+                    android:key="pref.adapter.reconnect.hard_reset"
+                    android:title="@string/pref.adapter.reconnect.hard_reset" />
+
+                <ListPreference
+                    android:inputType="number"
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="6"
+                    android:entries="@array/pref.numbers_1_10"
+                    android:entryValues="@array/pref.numbers_1_10"
+                    android:key="pref.adapter.command.freq"
+                    android:title="@string/pref.adapter_command_freq" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="power"
-        android:summary="@string/pref.power_settings"
-        android:title="@string/pref.power_settings">
+        android:title="@string/pref.power_category">
         <CheckBoxPreference
             android:defaultValue="false"
             android:dialogTitle="@string/pref.adapter_power_connect_adapter"
