@@ -18,7 +18,7 @@ class ProfileNamePreference(
         onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
             Log.i(LOG_KEY, "Updating profile value: ${getCurrentProfile()}=$newValue")
             Prefs.edit()
-                .putString("$PROFILE_NAME_PRFIX.${getCurrentProfile()}", newValue.toString())
+                .putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newValue.toString())
                 .apply()
             navigateToPreferencesScreen("pref.profiles")
             true

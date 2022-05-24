@@ -15,7 +15,7 @@ data class MainActivityPreferences(
     val hideToolbarConnected: Boolean
 )
 
-const val LOGGER_KEY = "PREFS"
+const val PREFS_LOGGER_TAG = "PREFS"
 
 fun getMainActivityPreferences(): MainActivityPreferences {
 
@@ -40,6 +40,6 @@ fun getMainActivityPreferences(): MainActivityPreferences {
         hideToolbarConnected
     )
 
-    Log.i(LOGGER_KEY, "Loaded MainActivity preferences: $prefs")
+    Log.i(PREFS_LOGGER_TAG, "Loaded MainActivity preferences: $prefs")
     return prefs
 }

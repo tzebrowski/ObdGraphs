@@ -84,6 +84,7 @@
             android:title="@string/pref.init_category">
 
             <ListPreference
+                android:inputType="number"
                 app:useSimpleSummaryProvider="true"
                 android:defaultValue="500"
                 android:entries="@array/pref.init_delay"
@@ -173,6 +174,7 @@
                 android:title="@string/pref.adapter_reconnect" />
 
             <EditTextPreference
+                android:inputType="number"
                 app:useSimpleSummaryProvider="true"
                 android:defaultValue="0"
                 android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
@@ -187,6 +189,7 @@
                 android:title="@string/pref.adapter.reconnect.hard_reset" />
 
             <ListPreference
+                android:inputType="number"
                 app:useSimpleSummaryProvider="true"
                 android:defaultValue="6"
                 android:entries="@array/pref.numbers_1_10"

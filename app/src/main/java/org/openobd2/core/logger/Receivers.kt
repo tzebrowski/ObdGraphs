@@ -22,6 +22,15 @@ import org.openobd2.core.logger.ui.preferences.*
 internal val tripRecorderBroadcastReceiver = TripRecorderBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()
 
+const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"
+const val NOTIFICATION_DASH_VIEW_TOGGLE = "view.dash.toggle"
+const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "view.gauge.toggle"
+const val NOTIFICATION_METRICS_VIEW_TOGGLE = "view.metrics.toggle"
+const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
+const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
+const val DASH_VIEW_ID = "pref.dash.view.enabled"
+const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
+
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
         TOGGLE_TOOLBAR_ACTION -> {
@@ -125,7 +134,7 @@ private fun MainActivity.handleStop() {
     }
 }
 
-private fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
+internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
     findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)?.run {
         this.isVisible = Prefs.getBoolean(prefKey, true)
     }

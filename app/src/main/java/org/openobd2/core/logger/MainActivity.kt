@@ -57,6 +57,8 @@ class MainActivity : AppCompatActivity() {
         setupNavigationBarButtons()
         registerReceiver()
         registerExceptionHandler()
+
+        installProfiles()
     }
 
     private fun registerExceptionHandler() {
@@ -76,6 +78,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver()
+    }
+
     private fun setupProgressBar() {
         (findViewById<ProgressBar>(R.id.p_bar)).run {
             visibility = View.GONE
@@ -93,8 +100,4 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver()
-    }
 }
