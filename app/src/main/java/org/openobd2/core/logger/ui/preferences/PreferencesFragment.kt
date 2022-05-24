@@ -60,7 +60,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?
     ): View? {
         val root = super.onCreateView(inflater, container, savedInstanceState)
-        registerConnectionTypeListener()
         registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
@@ -68,6 +67,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun registerListeners() {
+        registerConnectionTypeListener()
         registerViewsPreferenceChangeListeners()
         registerProfileListener()
         registerSaveUserPreferences()
