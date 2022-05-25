@@ -52,6 +52,7 @@
     <string name="pref.gauge_display_background">Display background</string>
     <string name="pref.gauge_background_color">Background color</string>
 
+    <string name="pref.adapter_init_header_new">Add new CAN header</string>
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>
@@ -94,8 +95,8 @@
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
     <string name="pref.view_category">Views</string>
-    <string name="pref.adapter_init_header22">Header 22</string>
-    <string name="pref.adapter_init_header01">Header 01</string>
+    <string name="pref.adapter_init_header22">CAN Header for the mode "22"</string>
+    <string name="pref.adapter_init_header01">CAN Header for the mode "01"</string>
     <string name="pref.init_category">Init</string>
 
     <string name="activity.btn_menu">Menu</string>
@@ -146,12 +147,5 @@
         <item name="AUTO">AUTO</item>
         <item name="CAN_11" tools:ignore="Typos">CAN_11</item>
         <item name="CAN_29">CAN_29</item>
-    </string-array>
-
-    <string-array name="pref.init_header">
-        <item name="" />
-        <item name="DA10F1">DA10F1</item>
-        <item name="DB33F1">DB33F1</item>
-        <item name="7DF">7DF</item>
     </string-array>
 </resources>

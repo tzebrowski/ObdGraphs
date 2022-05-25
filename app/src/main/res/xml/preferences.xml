@@ -107,7 +107,7 @@
 
             <PreferenceCategory android:title="@string/pref.init_category">
                 <PreferenceScreen
-                    android:key="init"
+                    android:key="pref.init"
                     android:title="@string/pref.settings">
 
                     <ListPreference
@@ -127,27 +127,25 @@
                         android:key="pref.adapter.init.protocol"
                         android:title="@string/pref.adapter_init_protocol" />
 
-                    <ListPreference
+                    <org.openobd2.core.logger.ui.preferences.header.HeaderListPreferences
                         app:useSimpleSummaryProvider="true"
-                        android:defaultValue=""
-                        android:entries="@array/pref.init_header"
-                        android:entryValues="@array/pref.init_header"
                         android:key="pref.adapter.init.header22"
                         android:title="@string/pref.adapter_init_header22" />
 
-                    <ListPreference
+                    <org.openobd2.core.logger.ui.preferences.header.HeaderListPreferences
                         app:useSimpleSummaryProvider="true"
-                        android:defaultValue=""
-                        android:entries="@array/pref.init_header"
-                        android:entryValues="@array/pref.init_header"
                         android:key="pref.adapter.init.header01"
                         android:title="@string/pref.adapter_init_header01" />
 
+                    <org.openobd2.core.logger.ui.preferences.header.HeaderNamePreference
+                        app:useSimpleSummaryProvider="true"
+                        android:dialogTitle="Add new CAN header"
+                        android:key="pref.adapter.init.header.new"
+                        android:title="@string/pref.adapter_init_header_new" />
                 </PreferenceScreen>
             </PreferenceCategory>
             <PreferenceCategory
                 android:title="@string/pref.adapter.general_settings">
-
                 <CheckBoxPreference
                     app:enabled="@bool/FF_RESULT_CACHE_ENABLED"
                     android:defaultValue="false"
@@ -161,7 +159,6 @@
                     android:dialogTitle="@string/pref.adapter_batch_enabled"
                     android:key="pref.adapter.batch.enabled"
                     android:title="@string/pref.adapter_batch_enabled" />
-
 
                 <CheckBoxPreference
                     android:defaultValue="false"

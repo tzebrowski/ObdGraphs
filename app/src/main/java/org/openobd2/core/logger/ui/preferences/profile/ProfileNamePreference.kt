@@ -8,7 +8,6 @@ import androidx.preference.Preference.OnPreferenceChangeListener
 import org.openobd2.core.logger.navigateToPreferencesScreen
 import org.openobd2.core.logger.ui.preferences.Prefs
 
-
 class ProfileNamePreference(
     context: Context?,
     attrs: AttributeSet?
