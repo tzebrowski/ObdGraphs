@@ -47,6 +47,12 @@ android {
             renderscriptDebuggable false
             zipAlignEnabled true
             signingConfig signingConfigs.release
+
+            resValue "bool", "DEBUG_BUILD", "false"
+        }
+
+        debug {
+            resValue "bool", "DEBUG_BUILD", "true"
         }
     }
     compileOptions {

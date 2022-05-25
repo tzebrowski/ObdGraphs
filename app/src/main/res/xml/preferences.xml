@@ -108,7 +108,7 @@
             <PreferenceCategory android:title="@string/pref.init_category">
                 <PreferenceScreen
                     android:key="init"
-                    android:title="@string/pref.init_category">
+                    android:title="@string/pref.settings">
 
                     <ListPreference
                         android:inputType="number"
@@ -436,7 +436,9 @@
 
         </PreferenceScreen>
 
-        <PreferenceCategory android:title="Debug">
+        <PreferenceCategory
+            app:isPreferenceVisible="@bool/DEBUG_BUILD"
+            android:title="Debug">
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
