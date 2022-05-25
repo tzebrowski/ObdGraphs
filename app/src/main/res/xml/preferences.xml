@@ -149,11 +149,11 @@
                 android:title="@string/pref.adapter.general_settings">
 
                 <CheckBoxPreference
-                    app:enabled="@bool/EXPERIMENTAL_ENABLED"
+                    app:enabled="@bool/FF_RESULT_CACHE_ENABLED"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_cache_result_enabled"
                     android:key="pref.adapter.cache.result.enabled"
-                    android:summary="@string/pref.experimental"
+                    android:summary="@string/pref.experimental_result_cache_enabled"
                     android:title="@string/pref.adapter_cache_result_enabled" />
 
                 <CheckBoxPreference
@@ -218,11 +218,11 @@
             android:title="@string/pref.adapter_power_screen_off" />
 
         <CheckBoxPreference
-            app:enabled="@bool/EXPERIMENTAL_ENABLED"
+            app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED"
             android:defaultValue="false"
             android:dialogTitle="@string/pref.adapter_power_bt_off"
             android:key="pref.adapter.power.switch_network_on_off"
-            android:summary="@string/pref.experimental"
+            android:summary="@string/pref.experimental_switch_network_enabled"
             android:title="@string/pref.adapter_power_bt_off" />
 
         <EditTextPreference

@@ -1,4 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- FEATURE FLAGS -->
+    <string name="pref.experimental_switch_network_enabled">This feature is in the experimental phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
+    <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
+
 
     <string name="main_activity.toast.connection.error">Error occurred during. Please check your connection.</string>
     <string name="main_activity.toast.connection.stopped">Connection with the device has been stopped.</string>
@@ -105,7 +109,7 @@
         <item name="connection.bluetooth">bluetooth</item>
     </string-array>
 
-    <string name="pref.experimental">This feature is in the experimental phase.\nIt is enabled only for DEBUG builds.</string>
+
     <string name="pref.settings">Settings</string>
     <string name="pref.profile.update_name">Profile name</string>
     <string name="pref.profile.category">Profiles</string>
