@@ -105,6 +105,7 @@
         <item name="connection.bluetooth">bluetooth</item>
     </string-array>
 
+    <string name="pref.experimental">This feature is in the experimental phase.\nIt is enabled only for DEBUG builds.</string>
     <string name="pref.settings">Settings</string>
     <string name="pref.profile.update_name">Profile name</string>
     <string name="pref.profile.category">Profiles</string>

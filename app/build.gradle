@@ -48,10 +48,12 @@ android {
             zipAlignEnabled true
             signingConfig signingConfigs.release
 
+            resValue "bool", "EXPERIMENTAL_ENABLED", "false"
             resValue "bool", "DEBUG_BUILD", "false"
         }
 
         debug {
+            resValue "bool", "EXPERIMENTAL_ENABLED", "true"
             resValue "bool", "DEBUG_BUILD", "true"
         }
     }
