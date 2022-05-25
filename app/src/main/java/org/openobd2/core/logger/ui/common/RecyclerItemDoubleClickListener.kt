@@ -1,20 +1,18 @@
 package org.openobd2.core.logger.ui.common
 
 import android.content.Context
-import android.content.Intent
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import org.openobd2.core.logger.sendBroadcastEvent
 
 const val TOGGLE_TOOLBAR_ACTION: String = "TOGGLE_TOOLBAR"
 
 class DoubleClickGestureListener(val context: Context) : GestureDetector.SimpleOnGestureListener() {
     override fun onDoubleTap(e: MotionEvent): Boolean {
-        context.sendBroadcast(Intent().apply {
-            action = TOGGLE_TOOLBAR_ACTION
-        })
-        return true
+        sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
+       return true
     }
 }
 
@@ -33,9 +31,7 @@ class ToggleToolbarDoubleClickListener(context: Context?) :
     RecyclerItemDoubleClickListener(context, object :
         OnItemDoubleClickListener {
         override fun onItemDoubleClick(view: View?, position: Int) {
-            context?.sendBroadcast(Intent().apply {
-                action = TOGGLE_TOOLBAR_ACTION
-            })
+            sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
         }
     })
 

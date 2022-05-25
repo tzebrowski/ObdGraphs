@@ -1,7 +1,6 @@
 package org.openobd2.core.logger.bl.datalogger
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
@@ -14,6 +13,7 @@ import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.openobd2.core.logger.ApplicationContext
+import org.openobd2.core.logger.sendBroadcastEvent
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.updateECUSupportedPids
 import java.io.File
@@ -47,12 +47,12 @@ internal class DataLogger internal constructor() {
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
             Log.i(LOGGER_TAG, "Start collecting process")
-            sendBroadcast(DATA_LOGGER_CONNECTING_EVENT)
+            sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
         override fun onRunning(deviceProperties: DeviceProperties) {
             Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
-            sendBroadcast(DATA_LOGGER_CONNECTED_EVENT)
+            sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
             Prefs.updateECUSupportedPids(deviceProperties.capabilities)
         }
 
@@ -74,7 +74,7 @@ internal class DataLogger internal constructor() {
                 reconnectAttemptCount++
             } else {
                 reconnectAttemptCount = 0
-                sendBroadcast(DATA_LOGGER_ERROR_EVENT)
+                sendBroadcastEvent(DATA_LOGGER_ERROR_EVENT)
             }
         }
 
@@ -86,12 +86,12 @@ internal class DataLogger internal constructor() {
 
             metricsAggregator.reset()
 
-            sendBroadcast(DATA_LOGGER_STOPPED_EVENT)
+            sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
         }
 
         override fun onStopping() {
             Log.i(LOGGER_TAG, "Stopping collecting process...")
-            sendBroadcast(DATA_LOGGER_STOPPING_EVENT)
+            sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
         }
     }
 
@@ -157,14 +157,14 @@ internal class DataLogger internal constructor() {
         Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
 
         if (deviceName.isEmpty()){
-            sendBroadcast(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+            sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             null
         }else {
             BluetoothConnection(deviceName)
         }
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
-        sendBroadcast(DATA_LOGGER_ERROR_CONNECT_EVENT)
+        sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
 
         null
     }
@@ -177,7 +177,7 @@ internal class DataLogger internal constructor() {
         WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
-        sendBroadcast(DATA_LOGGER_ERROR_CONNECT_EVENT)
+        sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
         null
     }
 
@@ -213,10 +213,4 @@ internal class DataLogger internal constructor() {
 
 
     private fun query() = Query.builder().pids(preferences.mode01Pids).build()
-
-    private fun sendBroadcast(actionName: String) {
-        context.sendBroadcast(Intent().apply {
-            action = actionName
-        })
-    }
 }

@@ -36,9 +36,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
 
             if (powerPreferences.screenOnOff) {
                 startMainActivity(context!!)
-                context.sendBroadcast(Intent().apply {
-                    action = SCREEN_ON_EVENT
-                })
+                sendBroadcastEvent(SCREEN_ON_EVENT)
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
             if (powerPreferences.switchNetworkOffOn) {
@@ -55,9 +53,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (powerPreferences.screenOnOff) {
-                context!!.sendBroadcast(Intent().apply {
-                    action = SCREEN_OFF_EVENT
-                })
+                sendBroadcastEvent(SCREEN_OFF_EVENT)
             }
         }
     }

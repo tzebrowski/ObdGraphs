@@ -100,5 +100,4 @@ class MainActivity : AppCompatActivity() {
         Prefs = PreferenceManager.getDefaultSharedPreferences(this)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
-
 }
