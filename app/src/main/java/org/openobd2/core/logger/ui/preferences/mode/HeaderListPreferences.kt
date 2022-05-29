@@ -1,9 +1,10 @@
-package org.openobd2.core.logger.ui.preferences.header
+package org.openobd2.core.logger.ui.preferences.mode
 
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.ListPreference
+import org.openobd2.core.logger.navigateToPreferencesScreen
 import org.openobd2.core.logger.ui.preferences.Prefs
 
 class HeaderListPreferences(
@@ -13,6 +14,15 @@ class HeaderListPreferences(
     ListPreference(context, attrs) {
 
     init {
+        onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
+            Log.i(LOG_KEY, "Updating mode name: ${getCurrentMode()}=$newValue")
+            Prefs.edit()
+                .putString("$MODE_HEADER_PREFIX.${getCurrentMode()}", newValue.toString())
+                .apply()
+            navigateToPreferencesScreen(PREFERENCE_PAGE)
+            true
+        }
+
         val values = linkedMapOf(
             "" to "",
             "DA10F1" to "DA10F1",
@@ -25,8 +35,9 @@ class HeaderListPreferences(
 
         if (numberOfHeaders > 0){
             (1 .. numberOfHeaders).forEach {
-                val header = Prefs.getString("pref.adapter.init.header.$it", "").toString()
-                values[header] = header
+                Prefs.getString("pref.adapter.init.header.$it", "")?.let { header ->
+                    values[header] = header
+                }
             }
         }
 

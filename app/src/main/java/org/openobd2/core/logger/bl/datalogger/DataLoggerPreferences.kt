@@ -7,7 +7,7 @@ import org.openobd2.core.logger.ui.preferences.*
 const val GENERIC_MODE = "Generic mode"
 
 data class DataLoggerPreferences(
-    var mode01Pids: MutableSet<Long>,
+    var pids: MutableSet<Long>,
     var connectionType: String,
     var tcpHost: String,
     var tcpPort: Int,
@@ -20,8 +20,6 @@ data class DataLoggerPreferences(
     var generatorEnabled: Boolean,
     var adaptiveConnectionEnabled: Boolean,
     var resultsCacheEnabled: Boolean,
-    var initHeader22: String,
-    var initHeader01: String,
     var initProtocol: String,
     var hardReset: Boolean,
     var maxReconnectRetry: Int
@@ -47,9 +45,9 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
         Log.i(LOGGER_KEY, "Key to update $key")
 
         when (key) {
-            "pref.pids.generic.low" -> dataLoggerPreferences.mode01Pids =
+            "pref.pids.generic.low" -> dataLoggerPreferences.pids =
                 genericPidList()
-            "pref.pids.generic.high" -> dataLoggerPreferences.mode01Pids =
+            "pref.pids.generic.high" -> dataLoggerPreferences.pids =
                 genericPidList()
             "pref.mode" -> dataLoggerPreferences.mode =
                 Prefs.getString(key, GENERIC_MODE)!!
@@ -84,10 +82,6 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 
             "pref.adapter.init.delay" -> dataLoggerPreferences.initDelay =
                 Prefs.getString(key, "500").toString().toLong()
-            "pref.adapter.init.header22" -> dataLoggerPreferences.initHeader22 =
-                Prefs.getString(key, "").toString()
-            "pref.adapter.init.header01" -> dataLoggerPreferences.initHeader01 =
-                Prefs.getString(key, "").toString()
 
             "pref.adapter.init.protocol" -> dataLoggerPreferences.initProtocol =
                 Prefs.getString(key, "AUTO").toString()
@@ -113,8 +107,6 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
     val resultsCacheEnabled = Prefs.isEnabled("pref.adapter.cache.result.enabled")
 
-    val initHeader22 = Prefs.getString("pref.adapter.init.header22", "")!!
-    val initHeader01 = Prefs.getString("pref.adapter.init.header01", "")!!
     val initProtocol = Prefs.getString("pref.adapter.init.protocol", "AUTO")!!
 
     val hardReset =
@@ -125,24 +117,22 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
 
     val dataLoggerPreferences = DataLoggerPreferences(
-        genericPidList(),
-        connectionType,
-        tcpHost,
-        tcpPort,
-        batchEnabled,
-        reconnectWhenError,
-        adapterId,
-        commandFrequency,
-        initDelay,
-        mode,
-        generatorEnabled,
-        adaptiveConnectionEnabled,
-        resultsCacheEnabled,
-        initHeader22,
-        initHeader01,
-        initProtocol,
-        hardReset,
-        maxReconnectRetry
+        pids = genericPidList(),
+        connectionType = connectionType,
+        tcpHost = tcpHost,
+        tcpPort = tcpPort,
+        batchEnabled = batchEnabled,
+        reconnectWhenError = reconnectWhenError,
+        adapterId = adapterId,
+        commandFrequency = commandFrequency,
+        initDelay = initDelay,
+        mode = mode,
+        generatorEnabled = generatorEnabled,
+        adaptiveConnectionEnabled = adaptiveConnectionEnabled,
+        resultsCacheEnabled = resultsCacheEnabled,
+        initProtocol = initProtocol,
+        hardReset = hardReset,
+        maxReconnectRetry = maxReconnectRetry
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")

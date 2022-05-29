@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.preferences.header
+package org.openobd2.core.logger.ui.preferences.mode
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,9 +8,6 @@ import androidx.preference.Preference.OnPreferenceChangeListener
 import org.openobd2.core.logger.navigateToPreferencesScreen
 import org.openobd2.core.logger.ui.preferences.Prefs
 
-internal const val LOG_KEY = "Header"
-
-internal const val CAN_HEADER_COUNTER_PREF = "pref.adapter.init.header.counter"
 
 class HeaderNamePreference(
     context: Context?,
@@ -29,7 +26,7 @@ class HeaderNamePreference(
                 apply()
             }
 
-            navigateToPreferencesScreen("pref.init")
+            navigateToPreferencesScreen(PREFERENCE_PAGE)
             true
         }
     }

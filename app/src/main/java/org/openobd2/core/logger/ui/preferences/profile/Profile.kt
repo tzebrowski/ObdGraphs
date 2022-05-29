@@ -9,6 +9,7 @@ import org.openobd2.core.logger.toggleNavigationItem
 import org.openobd2.core.logger.ui.preferences.PreferencesFragment
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getString
+import org.openobd2.core.logger.ui.preferences.mode.resetModesAndHeaders
 import org.openobd2.core.logger.ui.preferences.updateToolbar
 import java.util.*
 
@@ -131,6 +132,8 @@ internal fun getCurrentProfile(): String = Prefs.getString(PROFILE_ID)!!
 
 fun loadProfile(profileName: String) {
     Log.i(LOG_KEY, "Loading user preferences from the profile='$profileName'")
+
+    resetModesAndHeaders()
 
     Prefs.edit().let {
         Prefs.all

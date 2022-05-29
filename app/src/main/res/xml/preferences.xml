@@ -110,6 +110,7 @@
                     android:key="pref.init"
                     android:title="@string/pref.settings">
 
+
                     <ListPreference
                         android:inputType="number"
                         app:useSimpleSummaryProvider="true"
@@ -127,17 +128,24 @@
                         android:key="pref.adapter.init.protocol"
                         android:title="@string/pref.adapter_init_protocol" />
 
-                    <org.openobd2.core.logger.ui.preferences.header.HeaderListPreferences
+                    <org.openobd2.core.logger.ui.preferences.mode.ModeListPreferences
                         app:useSimpleSummaryProvider="true"
-                        android:key="pref.adapter.init.header22"
-                        android:title="@string/pref.adapter_init_header22" />
+                        android:key="pref.adapter.init.mode.selected"
+                        android:title="@string/pref.adapter_init_mode_selected" />
 
-                    <org.openobd2.core.logger.ui.preferences.header.HeaderListPreferences
+                    <org.openobd2.core.logger.ui.preferences.mode.ModeNamePreference
+                        android:inputType="number"
                         app:useSimpleSummaryProvider="true"
-                        android:key="pref.adapter.init.header01"
-                        android:title="@string/pref.adapter_init_header01" />
+                        android:dialogTitle="@string/pref.adapter_init_mode_set_mode_id"
+                        android:key="pref.adapter.init.mode.id"
+                        android:title="@string/pref.adapter_init_mode_set_mode_id" />
 
-                    <org.openobd2.core.logger.ui.preferences.header.HeaderNamePreference
+                    <org.openobd2.core.logger.ui.preferences.mode.HeaderListPreferences
+                        app:useSimpleSummaryProvider="true"
+                        android:key="pref.adapter.init.mode.header"
+                        android:title="@string/pref.adapter_init_mode_header_selected" />
+
+                    <org.openobd2.core.logger.ui.preferences.mode.HeaderNamePreference
                         app:useSimpleSummaryProvider="true"
                         android:dialogTitle="Add new CAN header"
                         android:key="pref.adapter.init.header.new"

@@ -52,6 +52,9 @@
     <string name="pref.gauge_display_background">Display background</string>
     <string name="pref.gauge_background_color">Background color</string>
 
+    <string name="pref.adapter_init_mode_selected">Select Mode</string>
+    <string name="pref.adapter_init_mode_header_selected">Set CAN Header for the current Mode</string>
+    <string name="pref.adapter_init_mode_set_mode_id">Update Mode ID</string>
     <string name="pref.adapter_init_header_new">Add new CAN header</string>
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
@@ -95,8 +98,7 @@
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
     <string name="pref.view_category">Views</string>
-    <string name="pref.adapter_init_header22">CAN Header for the mode "22"</string>
-    <string name="pref.adapter_init_header01">CAN Header for the mode "01"</string>
+
     <string name="pref.init_category">Init</string>
 
     <string name="activity.btn_menu">Menu</string>

@@ -15,6 +15,7 @@ import org.obd.metrics.pid.Urls
 import org.openobd2.core.logger.ApplicationContext
 import org.openobd2.core.logger.sendBroadcastEvent
 import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.mode.getModesAndHeaders
 import org.openobd2.core.logger.ui.preferences.updateECUSupportedPids
 import java.io.File
 
@@ -183,8 +184,7 @@ internal class DataLogger internal constructor() {
 
     private fun init() = Init.builder()
         .delay(preferences.initDelay)
-        .header(Init.Header.builder().mode("22").header(preferences.initHeader22).build())
-        .header(Init.Header.builder().mode("01").header(preferences.initHeader01).build())
+        .headers(getModesAndHeaders().map { entry ->  Init.Header.builder().mode(entry.key).header(entry.value).build() }.toMutableList())
         .protocol(Init.Protocol.valueOf(preferences.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
@@ -212,5 +212,5 @@ internal class DataLogger internal constructor() {
         ).build()
 
 
-    private fun query() = Query.builder().pids(preferences.mode01Pids).build()
+    private fun query() = Query.builder().pids(preferences.pids).build()
 }
