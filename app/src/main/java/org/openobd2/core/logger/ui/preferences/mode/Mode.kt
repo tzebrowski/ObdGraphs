@@ -26,12 +26,12 @@ fun resetModesAndHeaders() {
     }
 }
 
-internal fun getAvailableModes() = (1..MAX_MODES).map { "mode_$it" }
 
 fun getModesAndHeaders(): Map<String, String> {
     return getAvailableModes().associate { getModeID(it) to getModeHeader(it) }
 }
 
+internal fun getAvailableModes() = (1..MAX_MODES).map { "mode_$it" }
 internal fun getCurrentMode(): String = Prefs.getString(MODE_ID, "")!!
 private fun getModeHeader(id: String) = Prefs.getString("$MODE_HEADER_PREFIX.$id", "")!!
 private fun getModeID(id: String) = Prefs.getString("$MODE_NAME_PREFIX.$id", "")!!

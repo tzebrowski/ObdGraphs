@@ -8,37 +8,36 @@ import androidx.preference.Preference.OnPreferenceChangeListener
 import org.openobd2.core.logger.navigateToPreferencesScreen
 import org.openobd2.core.logger.ui.preferences.Prefs
 
-
 class ModeListPreferences(
     context: Context?,
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {
 
-    init {
+    private val preferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
+        val modeId = Prefs.getString("$MODE_NAME_PREFIX.$newValue", "")
+        val modeHeader = Prefs.getString("$MODE_HEADER_PREFIX.$newValue", "")
 
-        onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
-            val modeId = Prefs.getString("$MODE_NAME_PREFIX.$newValue", "")
-            val modeHeader = Prefs.getString("$MODE_HEADER_PREFIX.$newValue", "")
+        Log.i(LOG_KEY, "Updating mode $modeId=$modeHeader")
 
-            Log.i(LOG_KEY, "Updating mode $modeId=$modeHeader")
-
-            val edit = Prefs.edit()
-            edit.run {
-                putString(PREF_ADAPTER_MODE_ID_EDITOR, modeId)
-                putString(PREF_CAN_HEADER_EDITOR, modeHeader)
-                apply()
-            }
-
-            navigateToPreferencesScreen(PREFERENCE_PAGE)
-            true
+        Prefs.edit().run {
+            putString(PREF_ADAPTER_MODE_ID_EDITOR, modeId)
+            putString(PREF_CAN_HEADER_EDITOR, modeHeader)
+            apply()
         }
 
-        val map = getAvailableModes().associate { it to Prefs.getString("$MODE_NAME_PREFIX.$it", "") }
+        navigateToPreferencesScreen(PREFERENCE_PAGE)
+        true
+    }
 
-        setDefaultValue(map.keys.first())
+    init {
 
-        entries = map.values.toTypedArray()
-        entryValues = map.keys.toTypedArray()
+        onPreferenceChangeListener = preferenceChangeListener
+
+        getAvailableModes().associateWith { Prefs.getString("$MODE_NAME_PREFIX.$it", "") }.let {
+            setDefaultValue(it.keys.first())
+            entries = it.values.toTypedArray()
+            entryValues = it.keys.toTypedArray()
+        }
     }
 }

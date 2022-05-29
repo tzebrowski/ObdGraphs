@@ -44,7 +44,8 @@
     <string name="pref.adapter_reconnect_max_retry">Maximum number of attempt reconnecting when errors occur</string>
     <string name="pref.adapter.reconnect.hard_reset">Hard reset during reconnect</string>
 
-    <string name="pref.selected_connection_type">Adapter connection type</string>
+    <string name="pref.selected_connection_category">Connection settings</string>
+    <string name="pref.selected_connection_type">Type of connection</string>
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge_display_command_rate">Display commands frequency</string>
     <string name="pref.gauge_enable_drag_and_drop">Enable drag and drop</string>
@@ -52,10 +53,12 @@
     <string name="pref.gauge_display_background">Display background</string>
     <string name="pref.gauge_background_color">Background color</string>
 
-    <string name="pref.adapter_init_mode_selected">Select Mode</string>
-    <string name="pref.adapter_init_mode_header_selected">Set CAN Header for the current Mode</string>
-    <string name="pref.adapter_init_mode_set_mode_id">Update Mode ID</string>
-    <string name="pref.adapter_init_header_new">Add new CAN header</string>
+    <string name="pref.adapter_init_mode_selected">Select PID Mode</string>
+    <string name="pref.adapter_init_mode_header_selected">Set CAN Header for the current PID Mode</string>
+    <string name="pref.adapter_init_mode_set_mode_id">Update PID Mode</string>
+    <string name="pref.adapter_init_header_new">Add header</string>
+    <string name="pref.adapter_init_header_settings">CAN header settings</string>
+
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>

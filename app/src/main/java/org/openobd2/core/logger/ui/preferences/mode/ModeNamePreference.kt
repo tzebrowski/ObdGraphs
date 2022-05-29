@@ -14,14 +14,16 @@ class ModeNamePreference(
     attrs: AttributeSet?
 ) :
     EditTextPreference(context, attrs) {
+    private val preferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
+        Log.i(LOG_KEY, "Updating mode name: ${getCurrentMode()}=$newValue")
+        Prefs.edit()
+            .putString("$MODE_NAME_PREFIX.${getCurrentMode()}", newValue.toString())
+            .apply()
+        navigateToPreferencesScreen(PREFERENCE_PAGE)
+        true
+    }
+
     init {
-        onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
-            Log.i(LOG_KEY, "Updating mode name: ${getCurrentMode()}=$newValue")
-            Prefs.edit()
-                .putString("$MODE_NAME_PREFIX.${getCurrentMode()}", newValue.toString())
-                .apply()
-            navigateToPreferencesScreen(PREFERENCE_PAGE)
-            true
-        }
+        onPreferenceChangeListener = preferenceChangeListener
     }
 }
