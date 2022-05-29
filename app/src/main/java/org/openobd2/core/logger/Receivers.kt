@@ -17,7 +17,7 @@ import org.openobd2.core.logger.bl.datalogger.*
 import org.openobd2.core.logger.bl.trip.TripRecorderBroadcastReceiver
 import org.openobd2.core.logger.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.openobd2.core.logger.ui.common.toast
-import org.openobd2.core.logger.ui.preferences.*
+import org.openobd2.core.logger.ui.preferences.Prefs
 
 internal val tripRecorderBroadcastReceiver = TripRecorderBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()

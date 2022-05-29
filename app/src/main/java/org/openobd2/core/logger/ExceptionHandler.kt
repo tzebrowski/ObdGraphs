@@ -4,8 +4,7 @@ import android.content.Context
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.Date
+import java.util.*
 
 class ExceptionHandler : Thread.UncaughtExceptionHandler {
     private val delegate: Thread.UncaughtExceptionHandler? =

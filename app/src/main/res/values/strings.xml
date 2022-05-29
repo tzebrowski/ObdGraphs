@@ -117,6 +117,7 @@
 
 
     <string name="pref.settings">Settings</string>
+    <string name="pref.profile.max_profiles">Max profiles</string>
     <string name="pref.profile.update_name">Profile name</string>
     <string name="pref.profile.category">Profiles</string>
     <string name="pref.profile.available_list">Available profiles</string>

@@ -3,13 +3,11 @@ package org.openobd2.core.logger.ui.preferences.profile
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
+import androidx.preference.Preference.OnPreferenceChangeListener
+import org.openobd2.core.logger.navigateToPreferencesScreen
 import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.updateToolbar
 
-private const val profile_1_id = "profile_1"
-private const val profile_2_id = "profile_2"
-private const val profile_3_id = "profile_3"
-private const val profile_4_id = "profile_4"
-private const val profile_5_id = "profile_5"
 
 class ProfileListPreferences(
     context: Context?,
@@ -18,16 +16,20 @@ class ProfileListPreferences(
     ListPreference(context, attrs) {
 
     init {
-        val map = linkedMapOf(
-            profile_1_id to Prefs.getString("$PROFILE_NAME_PREFIX.$profile_1_id", "Profile 1"),
-            profile_2_id to Prefs.getString("$PROFILE_NAME_PREFIX.$profile_2_id", "Profile 2"),
-            profile_3_id to Prefs.getString("$PROFILE_NAME_PREFIX.$profile_3_id", "Profile 3"),
-            profile_4_id to Prefs.getString("$PROFILE_NAME_PREFIX.$profile_4_id", "Profile 4"),
-            profile_5_id to Prefs.getString("$PROFILE_NAME_PREFIX.$profile_5_id", "Profile 5")
-        )
-        setDefaultValue(profile_1_id)
+        (1..Prefs.getString("pref.profile.max_profiles","5")!!.toInt())
+            .associate { "profile_$it" to Prefs.getString("$PROFILE_NAME_PREFIX.profile_$it", "Profile $it") }
+            .let {
+            entries = it.values.toTypedArray()
+            entryValues = it.keys.toTypedArray()
+            setDefaultValue(it.keys.first())
+        }
 
-        entries = map.values.toTypedArray()
-        entryValues = map.keys.toTypedArray()
+        onPreferenceChangeListener =
+            OnPreferenceChangeListener { _, newValue ->
+                loadProfile(newValue.toString())
+                updateToolbar()
+                navigateToPreferencesScreen(PROFILES_PREFERENCE_ID)
+                true
+            }
     }
 }

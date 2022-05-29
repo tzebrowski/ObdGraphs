@@ -11,7 +11,8 @@
                     app:useSimpleSummaryProvider="true"
                     android:key="pref.profile.id"
                     android:title="@string/pref.profile.available_list" />
-               <Preference
+
+                <org.openobd2.core.logger.ui.preferences.profile.ProfileSavePreference
                     android:summary="@string/pref.profile.save_user_settings_summary"
                     android:title="@string/pref.profile.save_user_settings"
                     android:key="pref.profile.save_current"/>
@@ -21,6 +22,14 @@
                     android:dialogTitle="@string/pref.profile.update_name"
                     android:key="pref.profile.current_name"
                     android:title="@string/pref.profile.update_name" />
+
+                <EditTextPreference
+                    android:inputType="number"
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="5"
+                    android:dialogTitle="@string/pref.profile.max_profiles"
+                    android:key="pref.profile.max_profiles"
+                    android:title="@string/pref.profile.max_profiles" />
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -138,6 +147,7 @@
                             android:title="@string/pref.adapter_init_mode_selected" />
 
                         <org.openobd2.core.logger.ui.preferences.mode.ModeNamePreference
+                            android:digits="0123456789."
                             android:inputType="number"
                             app:useSimpleSummaryProvider="true"
                             android:dialogTitle="@string/pref.adapter_init_mode_set_mode_id"
@@ -160,6 +170,12 @@
                     </PreferenceCategory>
                 </PreferenceScreen>
             </PreferenceCategory>
+
+            <PreferenceCategory
+                android:title="@string/pref.adapter.general_settings">
+
+            </PreferenceCategory>
+
             <PreferenceCategory
                 android:title="@string/pref.adapter.general_settings">
                 <CheckBoxPreference

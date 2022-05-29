@@ -2,23 +2,21 @@ package org.openobd2.core.logger.ui.preferences.profile
 
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import org.openobd2.core.logger.*
-import org.openobd2.core.logger.toggleNavigationItem
-import org.openobd2.core.logger.ui.preferences.PreferencesFragment
+import org.openobd2.core.logger.ACTIVITY_LOGGER_TAG
+import org.openobd2.core.logger.ApplicationContext
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getString
 import org.openobd2.core.logger.ui.preferences.mode.resetModesAndHeaders
 import org.openobd2.core.logger.ui.preferences.updateToolbar
 import java.util.*
 
-private const val DEFAULT_PROFILE_TO_LOAD = "profile_2"
-private const val PROFILE_CURRENT_NAME_ID = "pref.profile.current_name"
-private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
+internal const val DEFAULT_PROFILE_TO_LOAD = "profile_2"
+internal const val PROFILE_CURRENT_NAME_ID = "pref.profile.current_name"
+internal const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
 private const val PROFILE_ID = "pref.profile.id"
 internal const val PROFILE_NAME_PREFIX = "pref.profile.names"
 internal const val LOG_KEY = "Profile"
+const val PROFILES_PREFERENCE_ID = "pref.profiles"
 
 fun installProfiles() {
 
@@ -71,42 +69,6 @@ private fun String.isArray() = startsWith("[") || endsWith("]")
 private fun String.isBoolean(): Boolean = startsWith("false") || startsWith("true")
 private fun String.isNumeric(): Boolean = matches(Regex("-?\\d+"))
 private fun String.toBoolean(): Boolean  = startsWith("true")
-
-
-fun PreferencesFragment.registerSaveUserPreferences() {
-    (preferenceManager.findPreference("pref.profile.save_current") as Preference?)
-        ?.setOnPreferenceClickListener {
-            Prefs.edit().let {
-                val profileName = getCurrentProfile()
-                Log.i(LOG_KEY, "Saving user preference to profile='$profileName'")
-                Prefs.all
-                    .filter { (pref, _) -> !pref.startsWith("profile_") }
-                    .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
-                    .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_ID) }
-                    .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
-                    .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
-                    .forEach { (pref, value) ->
-                        Log.v(LOG_KEY, "'$profileName.$pref'=$value")
-                        it.updatePreference("$profileName.$pref", value)
-                    }
-                it.apply()
-            }
-            true
-        }
-}
-
-fun PreferencesFragment.registerProfileListener() {
-    findPreference<ListPreference>(PROFILE_ID)?.let {
-        it.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
-                loadProfile(newValue.toString())
-                (ApplicationContext.get() as MainActivity).navController()
-                    .navigate(R.id.navigation_preferences, null)
-                updateToolbar()
-                true
-            }
-    }
-}
 
 internal fun SharedPreferences.Editor.updatePreference(
     prefName: String,
