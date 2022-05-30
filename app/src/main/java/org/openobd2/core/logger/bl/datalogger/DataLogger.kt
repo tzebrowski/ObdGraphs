@@ -1,6 +1,9 @@
 package org.openobd2.core.logger.bl.datalogger
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
@@ -12,13 +15,15 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
+import org.obd.metrics.transport.AdapterConnection
 import org.openobd2.core.logger.ApplicationContext
 import org.openobd2.core.logger.sendBroadcastEvent
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.mode.getModesAndHeaders
-import org.openobd2.core.logger.ui.preferences.updateECUSupportedPids
+import org.openobd2.core.logger.ui.preferences.updatePIDSupportedByECU
 import java.io.File
 
+const val RESOURCE_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
 const val DATA_LOGGER_ADAPTER_NOT_SET_EVENT = "data.logger.adapter.not_set"
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
@@ -28,22 +33,31 @@ const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
-
 private const val LOGGER_TAG = "DataLogger"
 
-internal class DataLogger internal constructor() {
-
+class DataLogger internal constructor() {
     companion object {
         @JvmStatic
-        var instance: DataLogger =
+        internal var instance: DataLogger =
             DataLogger()
     }
 
+    inner class EventsReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+
+            if (intent.action === RESOURCE_LIST_CHANGED_EVENT) {
+                workflow = workflow()
+            }
+        }
+    }
+
     private val context: Context by lazy { ApplicationContext.get()!! }
+    private val preferences by lazy { DataLoggerPreferences.instance }
 
     private var metricsAggregator = MetricsAggregator()
-
     private var reconnectAttemptCount = 0
+    private val broadcastReceiver = EventsReceiver()
+    private var workflow: Workflow = workflow()
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
@@ -54,7 +68,7 @@ internal class DataLogger internal constructor() {
         override fun onRunning(deviceProperties: DeviceProperties) {
             Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
-            Prefs.updateECUSupportedPids(deviceProperties.capabilities)
+            Prefs.updatePIDSupportedByECU(deviceProperties.capabilities)
         }
 
         override fun onError(msg: String, tr: Throwable?) {
@@ -96,30 +110,25 @@ internal class DataLogger internal constructor() {
         }
     }
 
-    private val workflow: Workflow by lazy {
-        Workflow.instance().equationEngine("rhino")
-            .pids(
-                Pids.builder()
-                    .resource(Urls.resourceToUrl("alfa.json"))
-                    .resource(Urls.resourceToUrl("mode01.json"))
-                    .resource(Urls.resourceToUrl("mode01_3.json")) // supported PID's
-                    .resource(Urls.resourceToUrl("extra.json"))
-                    .build()
-            ).observer(metricsAggregator)
-            .lifecycle(lifecycle)
-            .initialize()
+    init {
+        ApplicationContext.get()?.let {
+            it.registerReceiver(broadcastReceiver, IntentFilter().apply {
+                addAction(RESOURCE_LIST_CHANGED_EVENT)
+            })
+        }
     }
 
-    val preferences by lazy { DataLoggerPreferences.instance }
 
     fun diagnostics(): Diagnostics {
         return workflow.diagnostics
     }
 
-    fun getEmptyMetrics(pidIds: Set<Long>): MutableList<ObdMetric> {
+    fun getEmptyMetrics(ids: Set<Long>): MutableList<ObdMetric> {
         val pidRegistry: PidDefinitionRegistry = pidDefinitionRegistry()
-        return pidIds.map {
-            ObdMetric.builder().command(ObdCommand(pidRegistry.findBy(it))).value(null).build()
+        return ids.mapNotNull {
+            pidRegistry.findBy(it)?.let { pid ->
+                ObdMetric.builder().command(ObdCommand(pid)).value(null).build()
+            }
         }.toMutableList()
     }
 
@@ -153,20 +162,19 @@ internal class DataLogger internal constructor() {
         bluetoothConnection()
     }
 
-    private fun bluetoothConnection() = try {
+    private fun bluetoothConnection(): AdapterConnection? = try {
         val deviceName = preferences.adapterId
         Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
 
-        if (deviceName.isEmpty()){
+        if (deviceName.isEmpty()) {
             sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             null
-        }else {
+        } else {
             BluetoothConnection(deviceName)
         }
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
         sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
-
         null
     }
 
@@ -184,7 +192,9 @@ internal class DataLogger internal constructor() {
 
     private fun init() = Init.builder()
         .delay(preferences.initDelay)
-        .headers(getModesAndHeaders().map { entry ->  Init.Header.builder().mode(entry.key).header(entry.value).build() }.toMutableList())
+        .headers(getModesAndHeaders().map { entry ->
+            Init.Header.builder().mode(entry.key).header(entry.value).build()
+        }.toMutableList())
         .protocol(Init.Protocol.valueOf(preferences.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
@@ -211,6 +221,13 @@ internal class DataLogger internal constructor() {
                 .build()
         ).build()
 
+    private fun workflow() = Workflow.instance().equationEngine("rhino")
+        .pids(Pids.builder().resources(
+            preferences.resources.map { Urls.resourceToUrl(it) }.toMutableList()
+        ).build())
+        .observer(metricsAggregator)
+        .lifecycle(lifecycle)
+        .initialize()
 
     private fun query() = Query.builder().pids(preferences.pids).build()
 }

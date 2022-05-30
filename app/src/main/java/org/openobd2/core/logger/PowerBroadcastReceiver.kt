@@ -30,7 +30,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
                 }
             } else {
                 if (powerPreferences.connectOnPower) {
-                    DataLoggerService.startAction()
+                    DataLoggerService.start()
                 }
             }
 
@@ -49,7 +49,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
                     ACTIVITY_LOGGER_TAG,
                     "Stop data logging"
                 )
-                DataLoggerService.stopAction()
+                DataLoggerService.stop()
             }
 
             if (powerPreferences.screenOnOff) {

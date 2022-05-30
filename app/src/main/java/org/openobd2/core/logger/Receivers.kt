@@ -85,7 +85,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 ContextCompat.getColorStateList(applicationContext, R.color.purple_200)
             btn.setOnClickListener {
                 Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
-                DataLoggerService.stopAction()
+                DataLoggerService.stop()
             }
             btn.refreshDrawableState()
         }
@@ -131,7 +131,7 @@ private fun MainActivity.handleStop() {
         ContextCompat.getColorStateList(applicationContext, R.color.purple_500)
     btn.setOnClickListener {
         Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
-        DataLoggerService.startAction()
+        DataLoggerService.start()
     }
 
     if (getMainActivityPreferences().hideToolbarConnected) {

@@ -36,7 +36,6 @@
     <string name="pref.pids_generic_high">High priority Parameter IDs</string>
     <string name="pref.pids_generic_low">Low priority Parameter IDs</string>
     <string name="pref.pids_supported">Parameter IDs supported by ECU\n(fetched after first successful connection to the ECU)</string>
-    <string name="pref.pids_query">Parameter IDs to query</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
     <string name="pref.adapter_cache_result_enabled">Result cache enabled</string>
     <string name="pref.adapter_adaptive_enabled">Adaptive timeout enabled</string>
@@ -63,6 +62,9 @@
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>
     <string name="pref.adapter.general_settings">Advanced settings</string>
+
+    <string name="pref.registry.category">PID Registry</string>
+
 
     <string name="pref.pids_category">Parameter IDs</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
@@ -125,6 +127,8 @@
     <string name="pref.profile.save_user_settings_summary">This operation saves all user chooses into currently selected profile</string>
     <string name="pref.dash.background_color_1">Start color 1</string>
     <string name="pref.dash.background_color_2">End color 2</string>
+    <string name="pref.pids.registry.resource_list">Resources list</string>
+    <string name="pref.pids.registry.resource.list_summary">PID definition resources files. Application also read it form the external storage.</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

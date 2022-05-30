@@ -1,4 +1,4 @@
-package org.openobd2.core.logger.ui.preferences
+package org.openobd2.core.logger.ui.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet

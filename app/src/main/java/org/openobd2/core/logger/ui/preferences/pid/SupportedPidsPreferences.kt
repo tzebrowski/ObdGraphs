@@ -1,9 +1,11 @@
-package org.openobd2.core.logger.ui.preferences
+package org.openobd2.core.logger.ui.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.ui.preferences.Prefs
+import org.openobd2.core.logger.ui.preferences.getECUSupportedPids
 import java.util.*
 
 

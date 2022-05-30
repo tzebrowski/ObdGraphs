@@ -22,10 +22,9 @@ data class DataLoggerPreferences(
     var resultsCacheEnabled: Boolean,
     var initProtocol: String,
     var hardReset: Boolean,
-    var maxReconnectRetry: Int
+    var maxReconnectRetry: Int,
+    var resources: Set<String>
 ) {
-
-
     companion object {
         private lateinit var strongReference: SharedPreferenceChangeListener
         val instance: DataLoggerPreferences by lazy {
@@ -42,7 +41,7 @@ const val LOGGER_KEY = "PREFS"
 private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLoggerPreferences) :
     SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        Log.i(LOGGER_KEY, "Key to update $key")
+        Log.d(LOGGER_KEY, "Key to update $key")
 
         when (key) {
             "pref.pids.generic.low" -> dataLoggerPreferences.pids =
@@ -85,12 +84,20 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 
             "pref.adapter.init.protocol" -> dataLoggerPreferences.initProtocol =
                 Prefs.getString(key, "AUTO").toString()
-
+            "pref.pids.registry.list" -> dataLoggerPreferences.resources =
+                resources()
         }
         Log.i(LOGGER_KEY, "Update data logger preferences $dataLoggerPreferences")
     }
+
+
 }
 
+private fun resources(): MutableSet<String> =
+    Prefs.getStringSet(
+        "pref.pids.registry.list",
+        setOf("alfa.json", "mode01.json", "mode01_3.json", "extra.json")
+    )!!
 private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
     val connectionType = Prefs.getString(PREFERENCE_CONNECTION_TYPE, "bluetooth")!!
@@ -115,7 +122,6 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val maxReconnectRetry =
         Prefs.getString("pref.adapter.reconnect.max_retry", "0")!!.toInt()
 
-
     val dataLoggerPreferences = DataLoggerPreferences(
         pids = getPidList(),
         connectionType = connectionType,
@@ -132,7 +138,8 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         resultsCacheEnabled = resultsCacheEnabled,
         initProtocol = initProtocol,
         hardReset = hardReset,
-        maxReconnectRetry = maxReconnectRetry
+        maxReconnectRetry = maxReconnectRetry,
+        resources =  resources()
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")

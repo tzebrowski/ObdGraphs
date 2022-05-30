@@ -33,30 +33,37 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref.pids_query">
+    <PreferenceCategory
+        android:title="@string/pref.registry.category">
         <PreferenceScreen
-            android:title="@string/pref.pids_query"
-            app:isPreferenceVisible="true"
-            app:key="pref.pids.query">
+            android:key="pref.registry"
+            android:title="@string/pref.settings">
 
-                <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                    app:useSimpleSummaryProvider="true"
-                    android:dialogTitle="@string/pref.pids_generic_high"
-                    android:key="pref.pids.generic.high"
-                    android:title="@string/pref.pids_generic_high"
-                    app:priority="high" />
+            <org.openobd2.core.logger.ui.preferences.pid.PidResourceListPreferences
+                app:useSimpleSummaryProvider="true"
+                android:dialogTitle="@string/pref.adapter_id"
+                android:key="pref.pids.registry.list"
+                android:title="@string/pref.pids.registry.resource_list"
+                android:summary="@string/pref.pids.registry.resource.list_summary"/>
 
-                <org.openobd2.core.logger.ui.preferences.PidListPreferences
-                    app:useSimpleSummaryProvider="true"
-                    android:dialogTitle="@string/pref.pids_generic_low"
-                    android:key="pref.pids.generic.low"
-                    android:title="@string/pref.pids_generic_low"
-                    app:priority="low" />
+            <org.openobd2.core.logger.ui.preferences.pid.PidListPreferences
+                app:useSimpleSummaryProvider="true"
+                android:dialogTitle="@string/pref.pids_generic_high"
+                android:key="pref.pids.generic.high"
+                android:title="@string/pref.pids_generic_high"
+                app:priority="high" />
 
-                <org.openobd2.core.logger.ui.preferences.SupportedPidsPreferences
-                    android:dialogTitle="@string/pref.pids_supported"
-                    android:key="pref.pids.supported"
-                    android:title="@string/pref.pids_supported" />
+            <org.openobd2.core.logger.ui.preferences.pid.PidListPreferences
+                app:useSimpleSummaryProvider="true"
+                android:dialogTitle="@string/pref.pids_generic_low"
+                android:key="pref.pids.generic.low"
+                android:title="@string/pref.pids_generic_low"
+                app:priority="low" />
+
+            <org.openobd2.core.logger.ui.preferences.pid.SupportedPidsPreferences
+                android:dialogTitle="@string/pref.pids_supported"
+                android:key="pref.pids.supported"
+                android:title="@string/pref.pids_supported" />
 
         </PreferenceScreen>
     </PreferenceCategory>

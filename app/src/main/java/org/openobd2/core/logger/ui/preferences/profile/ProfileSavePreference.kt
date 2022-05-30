@@ -19,7 +19,7 @@ class ProfileSavePreference(
                 Prefs.all
                     .filter { (pref, _) -> !pref.startsWith("profile_") }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
-                    .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_ID) }
+                    .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
                     .forEach { (pref, value) ->

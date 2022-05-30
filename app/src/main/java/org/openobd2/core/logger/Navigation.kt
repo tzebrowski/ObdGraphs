@@ -52,7 +52,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
     val btnStart: FloatingActionButton = findViewById(R.id.connect_btn)
     btnStart.setOnClickListener {
         Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
-        DataLoggerService.startAction()
+        DataLoggerService.start()
     }
 
     val menuButton: FloatingActionButton = findViewById(R.id.menu_btn)
@@ -63,7 +63,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
         pm.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.ctx_menu_pids_to_query -> {
-                    navigateToPreferencesScreen("pref.pids.query")
+                    navigateToPreferencesScreen("pref.registry")
                 }
 
                 R.id.ctx_menu_view_profiles -> {

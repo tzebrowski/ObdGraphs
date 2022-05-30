@@ -19,7 +19,7 @@ class ProfileNamePreference(
             Prefs.edit()
                 .putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newValue.toString())
                 .apply()
-            navigateToPreferencesScreen(PROFILES_PREFERENCE_ID)
+            navigateToPreferencesScreen(PROFILES_PREF)
             true
         }
     }

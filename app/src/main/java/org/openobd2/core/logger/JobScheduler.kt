@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
 private val dataLoggerTask = Runnable {
     Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
-    DataLoggerService.startAction()
+    DataLoggerService.start()
 }
 
 fun scheduleDataLogger() {

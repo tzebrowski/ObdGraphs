@@ -1,7 +1,6 @@
 package org.openobd2.core.logger.bl.datalogger
 
 import android.app.IntentService
-import android.content.Context
 import android.content.Intent
 import org.openobd2.core.logger.ApplicationContext
 
@@ -24,24 +23,20 @@ class DataLoggerService : IntentService("DataLoggerService") {
     companion object {
 
         @JvmStatic
-        fun startAction() {
+        fun start() {
             ApplicationContext.get()?.let {
-                val context: Context =  it
-                val intent = Intent(context, DataLoggerService::class.java).apply {
+                it.startService(Intent(it, DataLoggerService::class.java).apply {
                     action = ACTION_START
-                }
-                context.startService(intent)
+                })
             }
         }
 
         @JvmStatic
-        fun stopAction() {
+        fun stop() {
             ApplicationContext.get()?.let {
-                val context: Context = it
-                val intent = Intent(context, DataLoggerService::class.java).apply {
+                it.startService(Intent(it, DataLoggerService::class.java).apply {
                     action = ACTION_STOP
-                }
-                context.startService(intent)
+                })
             }
         }
     }

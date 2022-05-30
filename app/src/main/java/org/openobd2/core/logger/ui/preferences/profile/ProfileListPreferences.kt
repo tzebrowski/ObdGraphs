@@ -16,7 +16,7 @@ class ProfileListPreferences(
     ListPreference(context, attrs) {
 
     init {
-        (1..Prefs.getString("pref.profile.max_profiles","5")!!.toInt())
+        (1..Prefs.getString(MAX_PROFILES_PREF,"5")!!.toInt())
             .associate { "profile_$it" to Prefs.getString("$PROFILE_NAME_PREFIX.profile_$it", "Profile $it") }
             .let {
             entries = it.values.toTypedArray()
@@ -28,7 +28,7 @@ class ProfileListPreferences(
             OnPreferenceChangeListener { _, newValue ->
                 loadProfile(newValue.toString())
                 updateToolbar()
-                navigateToPreferencesScreen(PROFILES_PREFERENCE_ID)
+                navigateToPreferencesScreen(PROFILES_PREF)
                 true
             }
     }
