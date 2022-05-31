@@ -48,12 +48,14 @@ android {
             zipAlignEnabled true
             signingConfig signingConfigs.release
 
+            resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "false"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "false"
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "false"
             resValue "bool", "DEBUG_BUILD", "false"
         }
 
         debug {
+            resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "true"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "true"
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "true"
             resValue "bool", "DEBUG_BUILD", "true"

@@ -2,6 +2,7 @@
     <!-- FEATURE FLAGS -->
     <string name="pref.experimental_switch_network_enabled">This feature is in the experimental phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
     <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
+    <string name="pref.experimental_read_external_storage_enabled">This feature is in the experimental phase.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
 
 
     <string name="main_activity.toast.connection.error">Error occurred during. Please check your connection.</string>
@@ -129,6 +130,7 @@
     <string name="pref.dash.background_color_2">End color 2</string>
     <string name="pref.pids.registry.resource_list">Resources list</string>
     <string name="pref.pids.registry.resource.list_summary">PID definition resources files. Application also read it form the external storage.</string>
+    <string name="pref.pids.registry.resource.external_storage">Access PID resources files from the external storage</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

@@ -41,10 +41,18 @@
 
             <org.openobd2.core.logger.ui.preferences.pid.PidResourceListPreferences
                 app:useSimpleSummaryProvider="true"
-                android:dialogTitle="@string/pref.adapter_id"
+                android:dialogTitle="@string/pref.pids.registry.resource_list"
                 android:key="pref.pids.registry.list"
                 android:title="@string/pref.pids.registry.resource_list"
                 android:summary="@string/pref.pids.registry.resource.list_summary"/>
+
+            <CheckBoxPreference
+                app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED"
+                android:defaultValue="false"
+                android:dialogTitle="@string/pref.pids.registry.resource.external_storage"
+                android:key="pref.pids.registry.access_external_storage"
+                app:title="@string/pref.experimental_read_external_storage_enabled"
+                android:title="@string/pref.pids.registry.resource.external_storage" />
 
             <org.openobd2.core.logger.ui.preferences.pid.PidListPreferences
                 app:useSimpleSummaryProvider="true"
@@ -64,6 +72,7 @@
                 android:dialogTitle="@string/pref.pids_supported"
                 android:key="pref.pids.supported"
                 android:title="@string/pref.pids_supported" />
+
 
         </PreferenceScreen>
     </PreferenceCategory>
@@ -180,7 +189,6 @@
 
             <PreferenceCategory
                 android:title="@string/pref.adapter.general_settings">
-
             </PreferenceCategory>
 
             <PreferenceCategory

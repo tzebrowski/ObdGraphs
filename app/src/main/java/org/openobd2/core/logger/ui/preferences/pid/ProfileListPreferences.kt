@@ -6,6 +6,7 @@ import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.openobd2.core.logger.bl.datalogger.RESOURCE_LIST_CHANGED_EVENT
 import org.openobd2.core.logger.bl.datalogger.defaultPidFiles
+import org.openobd2.core.logger.bl.datalogger.getExternalPidResources
 import org.openobd2.core.logger.navigateToPreferencesScreen
 import org.openobd2.core.logger.sendBroadcastEvent
 
@@ -18,7 +19,13 @@ class PidResourceListPreferences(
 
     init {
 
-        defaultPidFiles.let {
+        val files = defaultPidFiles.toMutableMap().apply {
+            getExternalPidResources(context)?.let {
+                putAll(it)
+            }
+        }
+
+        files.let {
             entries = it.values.toTypedArray()
             entryValues = it.keys.toTypedArray()
             setDefaultValue(it.keys)

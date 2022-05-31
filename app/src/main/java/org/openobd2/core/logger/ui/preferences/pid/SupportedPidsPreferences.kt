@@ -8,7 +8,6 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.getECUSupportedPids
 import java.util.*
 
-
 class SupportedPidsPreferences(
     context: Context?,
     attrs: AttributeSet?
@@ -21,10 +20,11 @@ class SupportedPidsPreferences(
             LinkedList()
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
-        val pids = DataLogger.instance.pidDefinitionRegistry().findAll()
+        val pidList = DataLogger.instance.pidDefinitionRegistry().findAll()
         var summary = ""
+
         Prefs.getECUSupportedPids().forEach {
-            pids.firstOrNull { f -> f.pid == it }?.let { pid ->
+            pidList.firstOrNull { f -> f.pid == it }?.let { pid ->
                 entries.add(pid.description)
                 entriesValues.add(pid.description)
                 summary += "- ${pid.description}\n"
