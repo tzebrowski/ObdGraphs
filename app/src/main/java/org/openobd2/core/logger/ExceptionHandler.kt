@@ -1,6 +1,10 @@
 package org.openobd2.core.logger
 
 import android.content.Context
+import android.os.Environment
+import android.util.Log
+import org.openobd2.core.logger.ui.preferences.mode.LOG_KEY
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -48,14 +52,15 @@ class ExceptionHandler : Thread.UncaughtExceptionHandler {
         ApplicationContext.get()?.let {
             try {
                 val date = dateFormat.format(Date(System.currentTimeMillis()))
-                val trace: FileOutputStream = it.openFileOutput(
-                    "$date-stack_trace.txt",
-                    Context.MODE_PRIVATE
-                )
-                trace.write(report.toByteArray())
-                trace.close()
+                val directory = "${Environment.getExternalStorageDirectory().absolutePath}/Android/data/${it.packageName}"
+                val file = File(directory, "$date-crash.txt")
+                Log.i(LOG_KEY, "Dumping crash file to: ${file.absolutePath}")
+                FileOutputStream(file).run {
+                    write(report.toByteArray())
+                    close()
+                }
             } catch (ioe: IOException) {
-                // ...
+                ioe.printStackTrace()
             }
         }
     }
