@@ -6,6 +6,13 @@ import org.openobd2.core.logger.ui.preferences.*
 
 const val GENERIC_MODE = "Generic mode"
 
+val defaultPidFiles = mapOf(
+    "alfa.json" to "Giulietta QV",
+    "mode01.json" to "Mode 01",
+    "mode01_3.json" to "Mode 01.3",
+    "extra.json" to "Extra"
+)
+
 data class DataLoggerPreferences(
     var pids: MutableSet<Long>,
     var connectionType: String,
@@ -89,17 +96,9 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
         }
         Log.i(LOGGER_KEY, "Update data logger preferences $dataLoggerPreferences")
     }
-
-
 }
 
-private fun resources(): MutableSet<String> =
-    Prefs.getStringSet(
-        "pref.pids.registry.list",
-        setOf("alfa.json", "mode01.json", "mode01_3.json", "extra.json")
-    )!!
 private fun getDataLoggerPreferences(): DataLoggerPreferences {
-
     val connectionType = Prefs.getString(PREFERENCE_CONNECTION_TYPE, "bluetooth")!!
     val tcpHost = Prefs.getString("pref.adapter.connection.tcp.host", "192.168.0.10")!!
     val tcpPort = Prefs.getString("pref.adapter.connection.tcp.port", "35000")!!.toInt()
@@ -139,13 +138,16 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         initProtocol = initProtocol,
         hardReset = hardReset,
         maxReconnectRetry = maxReconnectRetry,
-        resources =  resources()
+        resources = resources()
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")
     return dataLoggerPreferences
 }
 
+private fun resources(): MutableSet<String> =
+    Prefs.getStringSet("pref.pids.registry.list", defaultPidFiles.keys)!!
+
 private fun getPidList() =
     (Prefs.getStringSet("pref.pids.generic.high").map { s -> s.toLong() }
-    + Prefs.getStringSet("pref.pids.generic.low").map { s -> s.toLong() }).toMutableSet()
+            + Prefs.getStringSet("pref.pids.generic.low").map { s -> s.toLong() }).toMutableSet()
