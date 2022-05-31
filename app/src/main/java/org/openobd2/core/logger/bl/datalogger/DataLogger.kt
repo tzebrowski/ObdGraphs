@@ -42,9 +42,8 @@ class DataLogger internal constructor() {
             DataLogger()
     }
 
-    inner class EventsReceiver : BroadcastReceiver() {
+    private inner class EventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
-
             if (intent.action === RESOURCE_LIST_CHANGED_EVENT) {
                 workflow = workflow()
             }
