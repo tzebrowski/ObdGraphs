@@ -52,7 +52,7 @@ class ExceptionHandler : Thread.UncaughtExceptionHandler {
         ApplicationContext.get()?.let {
             try {
                 val date = dateFormat.format(Date(System.currentTimeMillis()))
-                val directory = "${Environment.getExternalStorageDirectory().absolutePath}/Android/data/${it.packageName}"
+                val directory = "${it.getExternalFilesDir("crashes")?.absolutePath}"
                 val file = File(directory, "$date-crash.txt")
                 Log.i(LOG_KEY, "Dumping crash file to: ${file.absolutePath}")
                 FileOutputStream(file).run {
