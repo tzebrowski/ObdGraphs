@@ -6,6 +6,8 @@ import org.openobd2.core.logger.ui.preferences.Prefs
 import java.io.File
 
 private const val STORAGE_FILE_CODING_KEY = "storage:"
+private const val LOG_TAG = "PidResourceListPreferences"
+private const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
 
 internal fun externalResourceToURL(it: String) =
     File(it.substring(STORAGE_FILE_CODING_KEY.length, it.length)).toURI().toURL()
@@ -14,23 +16,25 @@ internal fun isExternalStorageResource(it: String) = it.startsWith(STORAGE_FILE_
 
 fun getExternalPidResources(context: Context?): MutableMap<String, String>? {
 
-    if (Prefs.getBoolean("pref.pids.registry.access_external_storage", false)) {
-        val directory = "${context?.getExternalFilesDir("pid")?.absolutePath}"
+    if (Prefs.getBoolean(ACCESS_EXTERNAL_STORAGE_ENABLED, false)) {
+        val directory = getExternalPidDirectory(context)
+        val files = File(directory).listFiles()
         Log.d(
-            "PidResourceListPreferences",
+            LOG_TAG,
             "Reading directory $directory for available extra PID resource files. " +
-                    "\nFound number of files: ${File(directory).listFiles()?.size}"
+                    "\nFound number of files: ${files?.size}"
         )
-        val files = mutableMapOf<String,String>()
-        File(directory).listFiles()?.forEach {
 
+        return files?.associate {
             Log.d(
-                "PidResourceListPreferences", "Found file: ${it.absolutePath}." +
+                LOG_TAG, "Found file: ${it.absolutePath}." +
                         "\n Adding to the path."
             )
-            files["${STORAGE_FILE_CODING_KEY}${it.absolutePath}"] = it.absolutePath
-        }
-        return files
+            "${STORAGE_FILE_CODING_KEY}${it.absolutePath}" to it.absolutePath
+        }?.toMutableMap()
     }
     return null
 }
+
+private fun getExternalPidDirectory(context: Context?): String? =
+    context?.getExternalFilesDir("pid")?.absolutePath
