@@ -3,6 +3,7 @@ package org.openobd2.core.logger.ui.preferences.pid
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
+import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.bl.datalogger.DataLogger
 import java.util.*
 
@@ -12,72 +13,52 @@ class PidListPreferences(
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {
-    private val defaultSelection =
-        hashSetOf<String>().apply {
-            add("6")  // Engine coolant temperature
-            add("12") // Intake manifold absolute pressure
-            add("13") // Engine RPM
-            add("16") // Intake air temperature
-            add("18") // Throttle position
-            add("15") // Timing advance
-        }
+    private val priority = getPriority(attrs)
 
     init {
+        load()
+    }
 
+    private fun load() {
+
+        setDefaultValue(hashSetOf<String>())
+
+        when (priority) {
+            "low" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority > 4 }
+            "high" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority < 4 }
+            else -> Pair(mutableListOf(), mutableListOf())
+        }.let {
+            values = emptySet()
+            entries = it.first.toTypedArray()
+            entryValues = it.second.toTypedArray()
+        }
+    }
+
+    private fun findPidDefinitionByPriority(predicate: (PidDefinition) -> Boolean): Pair<MutableList<CharSequence>, MutableList<CharSequence>> {
         val entries: MutableList<CharSequence> =
             LinkedList()
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        when (getPriority(attrs)) {
-            "low" -> {
-                lowPriority(entries, entriesValues)
-                setDefaultValue(hashSetOf<String>())
-            }
-            "high" -> {
-                highPriority(entries, entriesValues)
-                setDefaultValue(defaultSelection)
-            }
-        }
-
-        setEntries(entries.toTypedArray())
-        entryValues = entriesValues.toTypedArray()
-    }
-
-    private fun highPriority(
-        entries: MutableList<CharSequence>,
-        entriesValues: MutableList<CharSequence>
-    ) {
-        DataLogger.instance.pidDefinitionRegistry().findAll()
-            .filter { pidDefinition -> pidDefinition.priority < 4 }
+        getPidList()
+            .filter { p -> predicate.invoke(p) }
             .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " + pidDefinition.description }
             .forEach { p ->
                 entries.add("[" + p.mode + "] " + p.description)
                 entriesValues.add(p.id.toString())
             }
+
+        return Pair(entries, entriesValues)
     }
 
-    private fun lowPriority(
-        entries: MutableList<CharSequence>,
-        entriesValues: MutableList<CharSequence>
-    ) {
-        DataLogger.instance.pidDefinitionRegistry().findAll()
-            .filter { pidDefinition -> pidDefinition.priority > 4 }
-            .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " + pidDefinition.description }
-            .forEach { p ->
-                entries.add("[" + p.mode + "] " + p.description)
-                entriesValues.add(p.id.toString())
-            }
-    }
+    private fun getPidList() = DataLogger.instance.pidDefinitionRegistry().findAll()
 
-    private fun getPriority(attrs: AttributeSet?): String {
-        return if (attrs == null) {
-            ""
-        } else {
-            val priority: String? = (0 until attrs.attributeCount)
-                .filter { index -> attrs.getAttributeName(index) == "priority" }
-                .map { index -> attrs.getAttributeValue(index) }.firstOrNull()
-            priority ?: ""
-        }
+    private fun getPriority(attrs: AttributeSet?): String = if (attrs == null) {
+        ""
+    } else {
+        val priority: String? = (0 until attrs.attributeCount)
+            .filter { index -> attrs.getAttributeName(index) == "priority" }
+            .map { index -> attrs.getAttributeValue(index) }.firstOrNull()
+        priority ?: ""
     }
 }
