@@ -1,10 +1,14 @@
 package org.openobd2.core.logger.ui.preferences.pid
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
 import org.obd.metrics.pid.PidDefinition
 import org.openobd2.core.logger.bl.datalogger.DataLogger
+import org.openobd2.core.logger.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import java.util.*
 
 
@@ -13,14 +17,37 @@ class PidListPreferences(
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {
-    private val priority = getPriority(attrs)
 
-    init {
-        load()
+
+    private val priority = getPriority(attrs)
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            if (intent.action === WORKFLOW_RELOAD_EVENT) {
+                initialize()
+            }
+        }
     }
 
-    private fun load() {
+    init {
+        initialize()
+        registerReceiver(context)
+    }
 
+    override fun onDetached() {
+        super.onDetached()
+        context?.unregisterReceiver(broadcastReceiver)
+    }
+
+    private fun registerReceiver(context: Context?) {
+        context?.registerReceiver(
+            broadcastReceiver,
+            IntentFilter().apply {
+                addAction(WORKFLOW_RELOAD_EVENT)
+            }
+        )
+    }
+
+    private fun initialize() {
         setDefaultValue(hashSetOf<String>())
 
         when (priority) {

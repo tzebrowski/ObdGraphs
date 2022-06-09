@@ -23,6 +23,7 @@ import org.openobd2.core.logger.ui.preferences.mode.getModesAndHeaders
 import org.openobd2.core.logger.ui.preferences.updatePIDSupportedByECU
 import java.io.File
 
+const val WORKFLOW_RELOAD_EVENT = "data.logger.workflow.reload.event"
 const val RESOURCE_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
 const val DATA_LOGGER_ADAPTER_NOT_SET_EVENT = "data.logger.adapter.not_set"
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
@@ -46,6 +47,7 @@ class DataLogger internal constructor() {
         override fun onReceive(context: Context?, intent: Intent) {
             if (intent.action === RESOURCE_LIST_CHANGED_EVENT) {
                 workflow = workflow()
+                sendBroadcastEvent(WORKFLOW_RELOAD_EVENT)
             }
         }
     }
