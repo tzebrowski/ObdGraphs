@@ -51,7 +51,7 @@
                 android:defaultValue="false"
                 android:dialogTitle="@string/pref.pids.registry.resource.external_storage"
                 android:key="pref.pids.registry.access_external_storage"
-                app:title="@string/pref.experimental_read_external_storage_enabled"
+                android:summary="@string/pref.experimental_read_external_storage_enabled"
                 android:title="@string/pref.pids.registry.resource.external_storage" />
 
             <org.openobd2.core.logger.ui.preferences.pid.PidListPreferences
