@@ -7,7 +7,7 @@ import java.io.File
 
 private const val STORAGE_FILE_CODING_KEY = "storage:"
 private const val LOG_TAG = "PidResourceListPreferences"
-private const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
+const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
 
 internal fun externalResourceToURL(it: String) =
     File(it.substring(STORAGE_FILE_CODING_KEY.length, it.length)).toURI().toURL()
@@ -15,8 +15,16 @@ internal fun externalResourceToURL(it: String) =
 internal fun isExternalStorageResource(it: String) = it.startsWith(STORAGE_FILE_CODING_KEY)
 
 fun getExternalPidResources(context: Context?): MutableMap<String, String>? {
+    return getExternalPidResources(context) {
+        Prefs.getBoolean(
+            ACCESS_EXTERNAL_STORAGE_ENABLED,
+            false
+        )
+    }
+}
 
-    if (Prefs.getBoolean(ACCESS_EXTERNAL_STORAGE_ENABLED, false)) {
+fun getExternalPidResources(context: Context?, isFeatureEnabled: () -> Boolean): MutableMap<String, String>? {
+    if (isFeatureEnabled()) {
         val directory = getExternalPidDirectory(context)
         val files = File(directory).listFiles()
         Log.d(
