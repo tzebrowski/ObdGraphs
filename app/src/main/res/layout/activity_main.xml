@@ -79,10 +79,10 @@
             app:layout_anchor="@id/bottomAppBar">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:contentDescription="@string/activity.btn_start"
                 android:id="@+id/connect_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/activity.btn_start"
                 android:src="@android:drawable/ic_lock_idle_charging"
                 app:backgroundTint="#01804F"
                 app:fabSize="normal" />

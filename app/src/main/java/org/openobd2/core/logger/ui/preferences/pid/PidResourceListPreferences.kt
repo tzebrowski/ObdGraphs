@@ -20,7 +20,7 @@ class PidResourceListPreferences(
     MultiSelectListPreference(context, attrs) {
 
     init {
-        initialize() { getExternalPidResources(context)}
+        initialize() { getExternalPidResources(context) }
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
@@ -33,15 +33,15 @@ class PidResourceListPreferences(
     override fun onAttached() {
         super.onAttached()
 
-        findPreferenceInHierarchy<CheckBoxPreference>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run{
+        findPreferenceInHierarchy<CheckBoxPreference>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run {
             onPreferenceChangeListener = OnPreferenceChangeListener { _, new ->
-                initialize(){ getExternalPidResources(context) { new.toString().toBoolean() }}
+                initialize() { getExternalPidResources(context) { new.toString().toBoolean() } }
                 true
             }
         }
     }
 
-    private fun initialize(files: ()-> MutableMap<String,String>? = { null }) {
+    private fun initialize(files: () -> MutableMap<String, String>? = { null }) {
         val mutableMap = defaultPidFiles.toMutableMap().apply {
             files()?.let {
                 putAll(it)

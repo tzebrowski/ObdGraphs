@@ -46,7 +46,7 @@ fun installProfiles() {
                             .map { it.trim() }
                             .filter { it.isNotEmpty() }
                             .toMutableSet()
-                        prefsEditor.putStringSet(key,v)
+                        prefsEditor.putStringSet(key, v)
                     }
                     value.isNumeric() -> {
                         prefsEditor.putInt(key, value.toInt())
@@ -69,7 +69,7 @@ fun installProfiles() {
 private fun String.isArray() = startsWith("[") || endsWith("]")
 private fun String.isBoolean(): Boolean = startsWith("false") || startsWith("true")
 private fun String.isNumeric(): Boolean = matches(Regex("-?\\d+"))
-private fun String.toBoolean(): Boolean  = startsWith("true")
+private fun String.toBoolean(): Boolean = startsWith("true")
 
 internal fun SharedPreferences.Editor.updatePreference(
     prefName: String,

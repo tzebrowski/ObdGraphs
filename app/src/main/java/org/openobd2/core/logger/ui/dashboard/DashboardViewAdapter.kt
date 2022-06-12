@@ -75,10 +75,16 @@ internal class DashboardViewAdapter internal constructor(
             }
 
             (0..segmentNum).forEach { e ->
-                val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                dataSet.color = Prefs.getInt("pref.dash.background_color_1",-1)
-                dataSet.gradientColors = listOf(GradientColor(Prefs.getInt("pref.dash.background_color_1",-1),
-                    Prefs.getInt("pref.dash.background_color_2",-1)))
+                (holder.chart.data.getDataSetByIndex(e) as BarDataSet).run {
+                    color = Prefs.getInt("pref.dash.background_color_1", -1)
+                    gradientColors = listOf(
+                        GradientColor(
+                            Prefs.getInt("pref.dash.background_color_1", -1),
+                            Prefs.getInt("pref.dash.background_color_2", -1)
+                        )
+                    )
+
+                }
             }
 
             val percent75: Int = (holder.segments.numOfSegments * 75) / 100
@@ -86,9 +92,14 @@ internal class DashboardViewAdapter internal constructor(
 
                 if (dashboardPreferences.colorsEnabled) {
                     (percent75..segmentNum).forEach { e ->
-                        val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                        dataSet.gradientColors = listOf(GradientColor(Prefs.getInt("pref.dash.background_color_1",-1),
-                            Prefs.getInt("pref.dash.background_color_1",-1)))
+                        (holder.chart.data.getDataSetByIndex(e) as BarDataSet).run{
+                            gradientColors = listOf(
+                                GradientColor(
+                                    Prefs.getInt("pref.dash.background_color_1", -1),
+                                    Prefs.getInt("pref.dash.background_color_1", -1)
+                                )
+                            )
+                        }
                     }
                 }
 

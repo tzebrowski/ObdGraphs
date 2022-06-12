@@ -87,7 +87,7 @@ class TripRecorder private constructor() {
 
 
     fun saveCurrentTrip() {
-       getTripFromCache()?.let { trip ->
+        getTripFromCache()?.let { trip ->
             val histogram = DataLogger.instance.diagnostics().histogram()
             val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
 
@@ -124,15 +124,14 @@ class TripRecorder private constructor() {
 
     }
 
-
-    fun findAllTripsBy(query: String = ".json"): MutableList<String> {
+    fun findAllTripsBy(query: String = ".json"): MutableList<String>? {
         Log.i(LOGGER_KEY, "Find all trips with query: $query")
 
-        val result = context.cacheDir.list().filter { it.startsWith("trip_") || it.contains("") }
-            .sortedByDescending { it }
-            .toMutableList()
+        val result = context.cacheDir.list()?.filter { it.startsWith("trip_") || it.contains("") }
+            ?.sortedByDescending { it }
+            ?.toMutableList()
 
-        Log.i(LOGGER_KEY, "Find all trips with query: $query . Result size: ${result.size}")
+        Log.i(LOGGER_KEY, "Find all trips with query: $query . Result size: ${result?.size}")
 
         return result
     }
@@ -174,6 +173,6 @@ class TripRecorder private constructor() {
         Log.i(LOGGER_KEY, "Init new Trip with stamp: $${trip.startTs}")
     }
 
-    private fun getTripFromCache(): Trip? = Cache[CACHE_TRIP_PROPERTY_NAME]  as Trip?
+    private fun getTripFromCache(): Trip? = Cache[CACHE_TRIP_PROPERTY_NAME] as Trip?
 
 }

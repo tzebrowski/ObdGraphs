@@ -1,7 +1,5 @@
 package org.openobd2.core.logger
 
-import android.content.Context
-import android.os.Environment
 import android.util.Log
 import org.openobd2.core.logger.ui.preferences.mode.LOG_KEY
 import java.io.File

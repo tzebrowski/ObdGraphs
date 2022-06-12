@@ -15,7 +15,7 @@ fun convert(pid: PidDefinition, input: Number): Number {
     if (value.isNaN()) {
         return 0.0
     }
-    return if (pid.type ==  null) value.round(2) else
+    return if (pid.type == null) value.round(2) else
         pid.type.let {
             return when (pid.type) {
                 PidDefinition.ValueType.DOUBLE -> value.round(2)

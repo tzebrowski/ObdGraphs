@@ -8,8 +8,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.obd.metrics.transport.DefaultConnector"
-        level="info" additivity="false">
+    <logger name="org.obd.metrics.transport.DefaultConnector" additivity="false" level="info">
         <appender-ref ref="logcat" />
     </logger>
 

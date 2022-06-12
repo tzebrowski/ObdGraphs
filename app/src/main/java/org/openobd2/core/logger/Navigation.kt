@@ -76,13 +76,15 @@ internal fun MainActivity.setupNavigationBarButtons() {
                     val currentView: MenuItem =
                         bottomNavigationView.menu.findItem(selectedItemId)
 
-                    navigateToPreferencesScreen( when (currentView.itemId) {
-                        R.id.navigation_dashboard -> "pref.dashboard"
-                        R.id.navigation_gauge -> "pref.gauge"
-                        R.id.navigation_graph -> "pref.graph"
-                        R.id.navigation_metrics -> "pref.metrics"
-                        else -> "pref.root"
-                    })
+                    navigateToPreferencesScreen(
+                        when (currentView.itemId) {
+                            R.id.navigation_dashboard -> "pref.dashboard"
+                            R.id.navigation_gauge -> "pref.gauge"
+                            R.id.navigation_graph -> "pref.graph"
+                            R.id.navigation_metrics -> "pref.metrics"
+                            else -> "pref.root"
+                        }
+                    )
                 }
             }
             true

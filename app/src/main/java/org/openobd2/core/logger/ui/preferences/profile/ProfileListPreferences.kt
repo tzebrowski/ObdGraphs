@@ -16,13 +16,18 @@ class ProfileListPreferences(
     ListPreference(context, attrs) {
 
     init {
-        (1..Prefs.getString(MAX_PROFILES_PREF,"5")!!.toInt())
-            .associate { "profile_$it" to Prefs.getString("$PROFILE_NAME_PREFIX.profile_$it", "Profile $it") }
+        (1..Prefs.getString(MAX_PROFILES_PREF, "5")!!.toInt())
+            .associate {
+                "profile_$it" to Prefs.getString(
+                    "$PROFILE_NAME_PREFIX.profile_$it",
+                    "Profile $it"
+                )
+            }
             .let {
-            entries = it.values.toTypedArray()
-            entryValues = it.keys.toTypedArray()
-            setDefaultValue(it.keys.first())
-        }
+                entries = it.values.toTypedArray()
+                entryValues = it.keys.toTypedArray()
+                setDefaultValue(it.keys.first())
+            }
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, newValue ->

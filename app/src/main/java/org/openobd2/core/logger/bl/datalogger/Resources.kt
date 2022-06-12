@@ -23,23 +23,28 @@ fun getExternalPidResources(context: Context?): MutableMap<String, String>? {
     }
 }
 
-fun getExternalPidResources(context: Context?, isFeatureEnabled: () -> Boolean): MutableMap<String, String>? {
+fun getExternalPidResources(
+    context: Context?,
+    isFeatureEnabled: () -> Boolean
+): MutableMap<String, String>? {
     if (isFeatureEnabled()) {
-        val directory = getExternalPidDirectory(context)
-        val files = File(directory).listFiles()
-        Log.d(
-            LOG_TAG,
-            "Reading directory $directory for available extra PID resource files. " +
-                    "\nFound number of files: ${files?.size}"
-        )
-
-        return files?.associate {
+        getExternalPidDirectory(context)?.let { directory ->
+            val files = File(directory).listFiles()
             Log.d(
-                LOG_TAG, "Found file: ${it.absolutePath}." +
-                        "\n Adding to the path."
+                LOG_TAG,
+                "Reading directory $directory for available extra PID resource files. " +
+                        "\nFound number of files: ${files?.size}"
             )
-            "${STORAGE_FILE_CODING_KEY}${it.absolutePath}" to it.absolutePath
-        }?.toMutableMap()
+
+            return files?.associate {
+                Log.d(
+                    LOG_TAG, "Found file: ${it.absolutePath}." +
+                            "\n Adding to the path."
+                )
+                "${STORAGE_FILE_CODING_KEY}${it.absolutePath}" to it.absolutePath
+            }?.toMutableMap()
+
+        }
     }
     return null
 }

@@ -18,14 +18,15 @@
         app:gaugeDividerDrawLast="true"
         app:gaugeDividerSize="4"
         app:gaugeDividerStep="10"
+        app:gaugeDrawScale="true"
         app:gaugePointEndColor="#f00e0e"
         app:gaugePointStartColor="#f00e0e"
         app:gaugeStartAngle="180"
         app:gaugeStrokeCap="BUTT"
         app:gaugeStrokeColor="@color/md_black_1000"
         app:gaugeStrokeWidth="11dp"
-        app:gaugeSweepAngle="180"
-        app:gaugeDrawScale="true"/>
+        app:gaugeSweepAngle="180" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

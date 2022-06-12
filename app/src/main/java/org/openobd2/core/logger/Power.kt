@@ -13,7 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 internal fun MainActivity.lockScreen() {
     val pm = getSystemService(AppCompatActivity.POWER_SERVICE) as PowerManager
     if (pm.isInteractive) {
-        val policy = getSystemService(AppCompatActivity.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        val policy =
+            getSystemService(AppCompatActivity.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         try {
             policy.lockNow()
         } catch (ex: SecurityException) {

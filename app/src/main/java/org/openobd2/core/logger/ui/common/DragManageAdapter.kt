@@ -11,7 +11,7 @@ interface SwappableAdapter {
 }
 
 internal class DragManageAdapter(
-    private var  context: Context,
+    private var context: Context,
     dragDirs: Int,
     swipeDirs: Int,
     private var adapter: SwappableAdapter

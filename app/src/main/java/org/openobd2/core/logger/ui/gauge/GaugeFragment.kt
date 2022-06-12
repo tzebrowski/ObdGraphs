@@ -36,7 +36,7 @@ class GaugeFragment : Fragment() {
             "pref.gauge.pids.selected",
             R.layout.gauge_item,
             spanCount = null,
-            enableDragManager =   Prefs.getBoolean("pref.gauge_enable_drag_and_drop",false)
+            enableDragManager = Prefs.getBoolean("pref.gauge_enable_drag_and_drop", false)
         )
     }
 }

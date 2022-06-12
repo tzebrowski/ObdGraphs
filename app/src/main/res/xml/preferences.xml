@@ -2,71 +2,69 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:key="pref.root">
 
-    <PreferenceCategory
-        android:title="@string/pref.profile.category">
+    <PreferenceCategory android:title="@string/pref.profile.category">
         <PreferenceScreen
             android:key="pref.profiles"
             android:title="@string/pref.settings">
-                <org.openobd2.core.logger.ui.preferences.profile.ProfileListPreferences
-                    app:useSimpleSummaryProvider="true"
-                    android:key="pref.profile.id"
-                    android:title="@string/pref.profile.available_list" />
+            <org.openobd2.core.logger.ui.preferences.profile.ProfileListPreferences
+                android:key="pref.profile.id"
+                android:title="@string/pref.profile.available_list"
+                app:useSimpleSummaryProvider="true" />
 
-                <org.openobd2.core.logger.ui.preferences.profile.ProfileSavePreference
-                    android:summary="@string/pref.profile.save_user_settings_summary"
-                    android:title="@string/pref.profile.save_user_settings"
-                    android:key="pref.profile.save_current"/>
+            <org.openobd2.core.logger.ui.preferences.profile.ProfileSavePreference
+                android:key="pref.profile.save_current"
+                android:summary="@string/pref.profile.save_user_settings_summary"
+                android:title="@string/pref.profile.save_user_settings" />
 
-               <org.openobd2.core.logger.ui.preferences.profile.ProfileNamePreference
-                    app:useSimpleSummaryProvider="true"
-                    android:dialogTitle="@string/pref.profile.update_name"
-                    android:key="pref.profile.current_name"
-                    android:title="@string/pref.profile.update_name" />
+            <org.openobd2.core.logger.ui.preferences.profile.ProfileNamePreference
+                android:dialogTitle="@string/pref.profile.update_name"
+                android:key="pref.profile.current_name"
+                android:title="@string/pref.profile.update_name"
+                app:useSimpleSummaryProvider="true" />
 
-                <EditTextPreference
-                    android:inputType="number"
-                    app:useSimpleSummaryProvider="true"
-                    android:defaultValue="5"
-                    android:dialogTitle="@string/pref.profile.max_profiles"
-                    android:key="pref.profile.max_profiles"
-                    android:title="@string/pref.profile.max_profiles" />
+            <EditTextPreference
+                android:defaultValue="5"
+                android:dialogTitle="@string/pref.profile.max_profiles"
+                android:inputType="number"
+                android:key="pref.profile.max_profiles"
+                android:title="@string/pref.profile.max_profiles"
+                app:useSimpleSummaryProvider="true" />
         </PreferenceScreen>
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/pref.registry.category">
+    <PreferenceCategory android:title="@string/pref.registry.category">
         <PreferenceScreen
             android:key="pref.registry"
             android:title="@string/pref.settings">
 
             <org.openobd2.core.logger.ui.preferences.pid.PidResourceListPreferences
-                app:useSimpleSummaryProvider="true"
                 android:dialogTitle="@string/pref.pids.registry.resource_list"
                 android:key="pref.pids.registry.list"
+                android:summary="@string/pref.pids.registry.resource.list_summary"
                 android:title="@string/pref.pids.registry.resource_list"
-                android:summary="@string/pref.pids.registry.resource.list_summary"/>
+                app:useSimpleSummaryProvider="true" />
 
             <CheckBoxPreference
-                app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED"
                 android:defaultValue="false"
                 android:dialogTitle="@string/pref.pids.registry.resource.external_storage"
                 android:key="pref.pids.registry.access_external_storage"
                 android:summary="@string/pref.experimental_read_external_storage_enabled"
-                android:title="@string/pref.pids.registry.resource.external_storage" />
+                android:title="@string/pref.pids.registry.resource.external_storage"
+                app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED" />
 
             <org.openobd2.core.logger.ui.preferences.pid.PidListPreferences
-                app:useSimpleSummaryProvider="true"
                 android:dialogTitle="@string/pref.pids_generic_high"
                 android:key="pref.pids.generic.high"
                 android:title="@string/pref.pids_generic_high"
-                app:priority="high" />
+                app:priority="high"
+                app:useSimpleSummaryProvider="true" />
 
             <org.openobd2.core.logger.ui.preferences.pid.PidListPreferences
-                app:useSimpleSummaryProvider="true"
                 android:dialogTitle="@string/pref.pids_generic_low"
                 android:key="pref.pids.generic.low"
                 android:title="@string/pref.pids_generic_low"
-                app:priority="low" />
+                app:priority="low"
+                app:useSimpleSummaryProvider="true" />
 
             <org.openobd2.core.logger.ui.preferences.pid.SupportedPidsPreferences
                 android:dialogTitle="@string/pref.pids_supported"
@@ -78,34 +76,32 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory
-        android:title="@string/pref.adapter_category">
+    <PreferenceCategory android:title="@string/pref.adapter_category">
         <PreferenceScreen
             android:key="pref.adapter"
             android:title="@string/pref.settings">
 
-            <PreferenceCategory
-                android:title="@string/pref.selected_connection_category">
+            <PreferenceCategory android:title="@string/pref.selected_connection_category">
 
                 <ListPreference
-                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="bluetooth"
                     android:dialogTitle="@string/pref.selected_connection_type"
                     android:entries="@array/pref.connection_type_array"
                     android:entryValues="@array/pref.connection_type_array"
                     android:key="pref.adapter.connection.type"
-                    android:title="@string/pref.selected_connection_type" />
+                    android:title="@string/pref.selected_connection_type"
+                    app:useSimpleSummaryProvider="true" />
 
                 <PreferenceCategory
                     android:key="pref.adapter.connection.type.bluetooth"
                     android:title="@string/pref.bluetooth_category">
 
                     <org.openobd2.core.logger.ui.preferences.AdaptersListPreferences
-                        app:useSimpleSummaryProvider="true"
                         android:defaultValue="@array/pref.empty_array"
                         android:dialogTitle="@string/pref.adapter_id"
                         android:key="pref.adapter.id"
-                        android:title="@string/pref.adapter_id" />
+                        android:title="@string/pref.adapter_id"
+                        app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
 
                 <PreferenceCategory
@@ -113,24 +109,24 @@
                     android:title="@string/pref.wifi_category">
 
                     <EditTextPreference
-                        app:useSimpleSummaryProvider="true"
                         android:dialogTitle="@string/pref.adapter_connection_tcp_ssid"
                         android:key="pref.adapter.connection.tcp.wifi.ssid"
-                        android:title="@string/pref.adapter_connection_tcp_ssid" />
+                        android:title="@string/pref.adapter_connection_tcp_ssid"
+                        app:useSimpleSummaryProvider="true" />
 
                     <EditTextPreference
-                        app:useSimpleSummaryProvider="true"
                         android:defaultValue="192.168.0.10"
                         android:dialogTitle="@string/pref.adapter_connection_tcp_host"
                         android:key="pref.adapter.connection.tcp.host"
-                        android:title="@string/pref.adapter_connection_tcp_host" />
+                        android:title="@string/pref.adapter_connection_tcp_host"
+                        app:useSimpleSummaryProvider="true" />
 
                     <EditTextPreference
-                        app:useSimpleSummaryProvider="true"
                         android:defaultValue="35000"
                         android:dialogTitle="Port"
                         android:key="pref.adapter_connection_tcp_port"
-                        android:title="@string/pref.adapter_connection_tcp_port" />
+                        android:title="@string/pref.adapter_connection_tcp_port"
+                        app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.init_category">
@@ -139,67 +135,62 @@
                     android:title="@string/pref.settings">
 
                     <ListPreference
-                        android:inputType="number"
-                        app:useSimpleSummaryProvider="true"
                         android:defaultValue="500"
                         android:entries="@array/pref.init_delay"
                         android:entryValues="@array/pref.init_delay"
+                        android:inputType="number"
                         android:key="pref.adapter.init.delay"
-                        android:title="@string/pref.adapter_init_delay" />
+                        android:title="@string/pref.adapter_init_delay"
+                        app:useSimpleSummaryProvider="true" />
 
                     <ListPreference
-                        app:useSimpleSummaryProvider="true"
                         android:defaultValue="AUTO"
                         android:entries="@array/pref.init_protocol"
                         android:entryValues="@array/pref.init_protocol"
                         android:key="pref.adapter.init.protocol"
-                        android:title="@string/pref.adapter_init_protocol" />
+                        android:title="@string/pref.adapter_init_protocol"
+                        app:useSimpleSummaryProvider="true" />
 
-                    <PreferenceCategory
-                        android:title="Configure PID Mode">
+                    <PreferenceCategory android:title="Configure PID Mode">
                         <org.openobd2.core.logger.ui.preferences.mode.ModeListPreferences
-                            app:useSimpleSummaryProvider="true"
                             android:key="pref.adapter.init.mode.selected"
-                            android:title="@string/pref.adapter_init_mode_selected" />
+                            android:title="@string/pref.adapter_init_mode_selected"
+                            app:useSimpleSummaryProvider="true" />
 
                         <org.openobd2.core.logger.ui.preferences.mode.ModeNamePreference
+                            android:dialogTitle="@string/pref.adapter_init_mode_set_mode_id"
                             android:digits="0123456789."
                             android:inputType="number"
-                            app:useSimpleSummaryProvider="true"
-                            android:dialogTitle="@string/pref.adapter_init_mode_set_mode_id"
                             android:key="pref.adapter.init.mode.id"
-                            android:title="@string/pref.adapter_init_mode_set_mode_id" />
+                            android:title="@string/pref.adapter_init_mode_set_mode_id"
+                            app:useSimpleSummaryProvider="true" />
                     </PreferenceCategory>
 
                     <org.openobd2.core.logger.ui.preferences.mode.HeaderListPreferences
-                        app:useSimpleSummaryProvider="true"
                         android:key="pref.adapter.init.mode.header"
-                        android:title="@string/pref.adapter_init_mode_header_selected" />
+                        android:title="@string/pref.adapter_init_mode_header_selected"
+                        app:useSimpleSummaryProvider="true" />
 
-                    <PreferenceCategory
-                        android:title="@string/pref.adapter_init_header_settings">
+                    <PreferenceCategory android:title="@string/pref.adapter_init_header_settings">
                         <org.openobd2.core.logger.ui.preferences.mode.HeaderNamePreference
-                            app:useSimpleSummaryProvider="true"
                             android:dialogTitle="@string/pref.adapter_init_header_new"
                             android:key="pref.adapter.init.header.new"
-                            android:title="@string/pref.adapter_init_header_new" />
+                            android:title="@string/pref.adapter_init_header_new"
+                            app:useSimpleSummaryProvider="true" />
                     </PreferenceCategory>
                 </PreferenceScreen>
             </PreferenceCategory>
 
-            <PreferenceCategory
-                android:title="@string/pref.adapter.general_settings">
-            </PreferenceCategory>
+            <PreferenceCategory android:title="@string/pref.adapter.general_settings"></PreferenceCategory>
 
-            <PreferenceCategory
-                android:title="@string/pref.adapter.general_settings">
+            <PreferenceCategory android:title="@string/pref.adapter.general_settings">
                 <CheckBoxPreference
-                    app:enabled="@bool/FF_RESULT_CACHE_ENABLED"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_cache_result_enabled"
                     android:key="pref.adapter.cache.result.enabled"
                     android:summary="@string/pref.experimental_result_cache_enabled"
-                    android:title="@string/pref.adapter_cache_result_enabled" />
+                    android:title="@string/pref.adapter_cache_result_enabled"
+                    app:enabled="@bool/FF_RESULT_CACHE_ENABLED" />
 
                 <CheckBoxPreference
                     android:defaultValue="true"
@@ -220,28 +211,28 @@
                     android:title="@string/pref.adapter_reconnect" />
 
                 <EditTextPreference
-                    android:inputType="number"
-                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="0"
                     android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
+                    android:inputType="number"
                     android:key="pref.adapter.reconnect.max_retry"
-                    android:title="@string/pref.adapter_reconnect_max_retry" />
+                    android:title="@string/pref.adapter_reconnect_max_retry"
+                    app:useSimpleSummaryProvider="true" />
 
                 <CheckBoxPreference
-                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_reconnect"
                     android:key="pref.adapter.reconnect.hard_reset"
-                    android:title="@string/pref.adapter.reconnect.hard_reset" />
+                    android:title="@string/pref.adapter.reconnect.hard_reset"
+                    app:useSimpleSummaryProvider="true" />
 
                 <ListPreference
-                    android:inputType="number"
-                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="6"
                     android:entries="@array/pref.numbers_1_10"
                     android:entryValues="@array/pref.numbers_1_10"
+                    android:inputType="number"
                     android:key="pref.adapter.command.freq"
-                    android:title="@string/pref.adapter_command_freq" />
+                    android:title="@string/pref.adapter_command_freq"
+                    app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -262,20 +253,20 @@
             android:title="@string/pref.adapter_power_screen_off" />
 
         <CheckBoxPreference
-            app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED"
             android:defaultValue="false"
             android:dialogTitle="@string/pref.adapter_power_bt_off"
             android:key="pref.adapter.power.switch_network_on_off"
             android:summary="@string/pref.experimental_switch_network_enabled"
-            android:title="@string/pref.adapter_power_bt_off" />
+            android:title="@string/pref.adapter_power_bt_off"
+            app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED" />
 
         <EditTextPreference
-            android:inputType="number"
-            app:useSimpleSummaryProvider="true"
             android:defaultValue="10"
             android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
+            android:inputType="number"
             android:key="pref.adapter.power.start_data_logging.after"
-            android:title="@string/pref.adapter_power_start_data_logging_after" />
+            android:title="@string/pref.adapter_power_start_data_logging_after"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
@@ -318,8 +309,8 @@
 
                 <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
                     android:defaultValue="@android:color/holo_red_light"
-                    android:title="@string/pref.gauge_background_color"
-                    android:key="pref.gauge_background_color" />
+                    android:key="pref.gauge_background_color"
+                    android:title="@string/pref.gauge_background_color" />
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.general_settings">
@@ -358,8 +349,8 @@
         </PreferenceScreen>
 
         <PreferenceScreen
-            android:title="@string/pref.graph_category"
             android:summary="@string/pref.graph_category"
+            android:title="@string/pref.graph_category"
             app:key="pref.graph">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
@@ -382,20 +373,20 @@
                     android:title="@string/pref.graph_cache_enabled" />
 
                 <EditTextPreference
-                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="20"
                     android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
                     android:inputType="number"
                     android:key="pref.graph.x-axis.minimum-shift.time"
-                    android:title="@string/pref.graph_x_axis_minimum_shift_time" />
+                    android:title="@string/pref.graph_x_axis_minimum_shift_time"
+                    app:useSimpleSummaryProvider="true" />
 
                 <EditTextPreference
-                    app:useSimpleSummaryProvider="true"
                     android:defaultValue="20000"
                     android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
                     android:inputType="number"
                     android:key="pref.graph.x-axis.start-moving-after.time"
-                    android:title="@string/pref.graph_x_axis_start_moving_after_time" />
+                    android:title="@string/pref.graph_x_axis_start_moving_after_time"
+                    app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
 
 
@@ -420,8 +411,8 @@
         </PreferenceScreen>
 
         <PreferenceScreen
-            android:title="@string/pref.dashboard_category"
             android:summary="@string/pref.dashboard_category"
+            android:title="@string/pref.dashboard_category"
             app:key="pref.dashboard">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
@@ -438,13 +429,13 @@
             <PreferenceCategory android:title="@string/pref.theme">
                 <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
                     android:defaultValue="@android:color/holo_green_light"
-                    android:title="@string/pref.dash.background_color_1"
-                    android:key="pref.dash.background_color_1" />
+                    android:key="pref.dash.background_color_1"
+                    android:title="@string/pref.dash.background_color_1" />
 
                 <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
                     android:defaultValue="@android:color/holo_green_light"
-                    android:title="@string/pref.dash.background_color_2"
-                    android:key="pref.dash.background_color_2" />
+                    android:key="pref.dash.background_color_2"
+                    android:title="@string/pref.dash.background_color_2" />
 
             </PreferenceCategory>
 
@@ -485,8 +476,8 @@
         </PreferenceScreen>
 
         <PreferenceCategory
-            app:isPreferenceVisible="@bool/DEBUG_BUILD"
-            android:title="Debug">
+            android:title="Debug"
+            app:isPreferenceVisible="@bool/DEBUG_BUILD">
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"

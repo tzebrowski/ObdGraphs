@@ -19,9 +19,10 @@ const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
-    private val onSharedPreferenceChangeListener =SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        Log.v("Prefs", "Preference $key changed")
-    }
+    private val onSharedPreferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            Log.v("Prefs", "Preference $key changed")
+        }
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
@@ -44,12 +45,16 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
+            onSharedPreferenceChangeListener
+        )
     }
 
     override fun onPause() {
         super.onPause()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(
+            onSharedPreferenceChangeListener
+        )
     }
 
     override fun onCreateView(

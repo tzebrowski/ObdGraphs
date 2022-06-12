@@ -223,15 +223,17 @@ class DataLogger internal constructor() {
         ).build()
 
     private fun workflow() = Workflow.instance().equationEngine("rhino")
-        .pids(Pids.builder().resources(
-            preferences.resources.map {
-                if (isExternalStorageResource(it)){
-                    externalResourceToURL(it)
-                }else{
-                    Urls.resourceToUrl(it)
-                }
-            }.toMutableList()
-        ).build())
+        .pids(
+            Pids.builder().resources(
+                preferences.resources.map {
+                    if (isExternalStorageResource(it)) {
+                        externalResourceToURL(it)
+                    } else {
+                        Urls.resourceToUrl(it)
+                    }
+                }.toMutableList()
+            ).build()
+        )
         .observer(metricsAggregator)
         .lifecycle(lifecycle)
         .initialize()

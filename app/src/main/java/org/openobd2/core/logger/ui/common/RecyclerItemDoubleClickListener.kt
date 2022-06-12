@@ -12,7 +12,7 @@ const val TOGGLE_TOOLBAR_ACTION: String = "TOGGLE_TOOLBAR"
 class DoubleClickGestureListener(val context: Context) : GestureDetector.SimpleOnGestureListener() {
     override fun onDoubleTap(e: MotionEvent): Boolean {
         sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
-       return true
+        return true
     }
 }
 
@@ -56,7 +56,10 @@ open class RecyclerItemDoubleClickListener(
     override fun onInterceptTouchEvent(view: RecyclerView, e: MotionEvent): Boolean {
         val childView = view.findChildViewUnder(e.x, e.y)
         if (childView != null && doubleClickListener != null && gestureDetector.onTouchEvent(e)) {
-            doubleClickListener.onItemDoubleClick(childView, view.getChildAdapterPosition(childView))
+            doubleClickListener.onItemDoubleClick(
+                childView,
+                view.getChildAdapterPosition(childView)
+            )
         }
         return false
     }
