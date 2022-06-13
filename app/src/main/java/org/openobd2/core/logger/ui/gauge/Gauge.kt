@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.openobd2.core.logger.R
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.round
@@ -41,10 +42,11 @@ class Gauge : View {
     private var dividersCount = 0
     private var isDividerDrawFirst = false
     private var isDividerDrawLast = false
-    private lateinit var linearGradient: LinearGradient
-
+    private var linearGradient: LinearGradient
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
+    private val initialized = AtomicBoolean(false)
+
 
     internal fun scale(multiplier: Float) {
         this.multiplier = multiplier
@@ -72,11 +74,8 @@ class Gauge : View {
             invalidate()
         }
 
-    constructor(context: Context?) : super(context) {
-        init()
-    }
-
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+
         val styledAttributes = context.obtainStyledAttributes(attrs, R.styleable.Gauge, 0, 0)
         // stroke style
         strokeWidth = styledAttributes.getDimension(R.styleable.Gauge_gaugeStrokeWidth, 10f)
@@ -134,9 +133,7 @@ class Gauge : View {
         )
 
         gaugeDrawScale = styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawScale, false)
-
         styledAttributes.recycle()
-        init()
     }
 
     internal fun init() {
@@ -191,6 +188,10 @@ class Gauge : View {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        if (!initialized.getAndSet(true)) {
+            init()
+        }
 
         paint.color = strokeColor
         paint.shader = null
