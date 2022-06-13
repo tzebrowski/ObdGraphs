@@ -405,7 +405,7 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.trips.recordings.save.short.trip"
-
+                    app:singleLineTitle="false"
                     android:title="@string/pref.trips_recordings_save_short_trip" />
 
                 <org.openobd2.core.logger.ui.preferences.TripsListPreferences
