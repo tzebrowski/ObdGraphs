@@ -58,7 +58,6 @@ class DataLogger internal constructor() {
     private var metricsAggregator = MetricsAggregator()
     private var reconnectAttemptCount = 0
     private val broadcastReceiver = EventsReceiver()
-    private var workflow: Workflow = workflow()
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
@@ -73,7 +72,7 @@ class DataLogger internal constructor() {
         }
 
         override fun onError(msg: String, tr: Throwable?) {
-            Log.e(
+            Log.i(
                 LOGGER_TAG,
                 "An error occurred during interaction with the device. Msg: $msg"
             )
@@ -110,6 +109,8 @@ class DataLogger internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
         }
     }
+
+    private var workflow: Workflow = workflow()
 
     init {
         ApplicationContext.get()?.let {
