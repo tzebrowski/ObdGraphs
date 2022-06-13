@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.ui.common.isTablet
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 import kotlin.math.cos
@@ -138,7 +139,7 @@ class Gauge : View {
 
     internal fun init() {
         strokeWidth *= multiplier
-        val decorLineOffset = 12 * multiplier
+        val decorLineOffset =  if (isTablet(context)) 12 * multiplier else 20 * multiplier
 
         paint = Paint()
         paint.color = strokeColor
