@@ -45,6 +45,7 @@
                 app:useSimpleSummaryProvider="true" />
 
             <CheckBoxPreference
+                app:singleLineTitle="false"
                 android:defaultValue="false"
                 android:dialogTitle="@string/pref.pids.registry.resource.external_storage"
                 android:key="pref.pids.registry.access_external_storage"
@@ -53,6 +54,7 @@
                 app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED" />
 
             <org.openobd2.core.logger.ui.preferences.pid.PidListPreferences
+                app:singleLineTitle="false"
                 android:dialogTitle="@string/pref.pids_generic_high"
                 android:key="pref.pids.generic.high"
                 android:title="@string/pref.pids_generic_high"
@@ -67,6 +69,7 @@
                 app:useSimpleSummaryProvider="true" />
 
             <org.openobd2.core.logger.ui.preferences.pid.SupportedPidsPreferences
+                app:singleLineTitle="false"
                 android:dialogTitle="@string/pref.pids_supported"
                 android:key="pref.pids.supported"
                 android:title="@string/pref.pids_supported" />
@@ -167,6 +170,7 @@
                     </PreferenceCategory>
 
                     <org.openobd2.core.logger.ui.preferences.mode.HeaderListPreferences
+                        app:singleLineTitle="false"
                         android:key="pref.adapter.init.mode.header"
                         android:title="@string/pref.adapter_init_mode_header_selected"
                         app:useSimpleSummaryProvider="true" />
@@ -181,7 +185,7 @@
                 </PreferenceScreen>
             </PreferenceCategory>
 
-            <PreferenceCategory android:title="@string/pref.adapter.general_settings"></PreferenceCategory>
+            <PreferenceCategory android:title="@string/pref.adapter.general_settings" />
 
             <PreferenceCategory android:title="@string/pref.adapter.general_settings">
                 <CheckBoxPreference
@@ -205,6 +209,7 @@
                     android:title="@string/pref.adapter_adaptive_enabled" />
 
                 <CheckBoxPreference
+                    app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.adapter_reconnect"
                     android:key="pref.adapter.reconnect"
@@ -247,6 +252,7 @@
             android:title="@string/pref.adapter_power_connect_adapter" />
 
         <CheckBoxPreference
+            app:singleLineTitle="false"
             android:defaultValue="false"
             android:dialogTitle="@string/pref.adapter_power_screen_off"
             android:key="pref.adapter.power.screen_off"
@@ -326,6 +332,7 @@
 
 
                 <CheckBoxPreference
+                    app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:key="pref.gauge_display_command_rate"
                     android:title="@string/pref.gauge_display_command_rate" />
