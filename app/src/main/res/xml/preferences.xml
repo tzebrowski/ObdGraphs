@@ -185,8 +185,6 @@
                 </PreferenceScreen>
             </PreferenceCategory>
 
-            <PreferenceCategory android:title="@string/pref.adapter.general_settings" />
-
             <PreferenceCategory android:title="@string/pref.adapter.general_settings">
                 <CheckBoxPreference
                     android:defaultValue="false"
