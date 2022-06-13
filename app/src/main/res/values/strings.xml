@@ -66,7 +66,6 @@
 
     <string name="pref.registry.category">PID Registry</string>
 
-
     <string name="pref.pids_category">Parameter IDs</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.graph_category">Graph view configuration</string>
@@ -124,8 +123,8 @@
     <string name="pref.profile.update_name">Profile name</string>
     <string name="pref.profile.category">Profiles</string>
     <string name="pref.profile.available_list">Available profiles</string>
-    <string name="pref.profile.save_user_settings">Save current settings to User Profile</string>
-    <string name="pref.profile.save_user_settings_summary">This operation saves all user chooses into currently selected profile</string>
+    <string name="pref.profile.save_user_settings">Save current profile preferences</string>
+    <string name="pref.profile.save_user_settings_summary">This operation saves all user selections into the currently selected profile</string>
     <string name="pref.dash.background_color_1">Start color 1</string>
     <string name="pref.dash.background_color_2">End color 2</string>
     <string name="pref.pids.registry.resource_list">Resources list</string>
