@@ -5,10 +5,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="2sp"
-    android:background="@drawable/gauge_item_background"
+
     tools:context=".ui.gauge.GaugeFragment">
 
     <org.openobd2.core.logger.ui.gauge.Gauge
+        android:background="@drawable/gauge_item_background"
         android:id="@+id/gauge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

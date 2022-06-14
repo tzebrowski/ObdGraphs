@@ -1,6 +1,5 @@
 package org.openobd2.core.logger.ui.gauge
 
-
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -26,7 +25,7 @@ import org.openobd2.core.logger.ui.dashboard.round
 import org.openobd2.core.logger.ui.graph.ValueScaler
 import org.openobd2.core.logger.ui.preferences.Prefs
 import java.util.*
-
+import kotlin.math.roundToInt
 
 private const val LABEL_COLOR = "#01804F"
 
@@ -49,17 +48,25 @@ class GaugeAdapter internal constructor(
         var init: Boolean = false
 
         init {
+
             gauge?.gaugeDrawScale = Prefs.getBoolean("pref.gauge_display_scale", true)
             val displayBackground = Prefs.getBoolean("pref.gauge_display_background", true)
+
             if (displayBackground) {
                 updateDrawable()
             } else {
                 view.background = null
             }
+
+            if (isTablet(context)) {
+                rescaleTextSize(this, calculateScaleMultiplier(itemView))
+            } else {
+                rescaleTextSize(this, calculateScaleMultiplier(itemView) * 0.35f)
+            }
         }
 
         private fun updateDrawable() {
-            val drawable = view.background as GradientDrawable
+            val drawable = gauge?.background as GradientDrawable
             val filter: ColorFilter =
                 PorterDuffColorFilter(
                     Prefs.getInt("pref.gauge_background_color", -1),
@@ -89,7 +96,6 @@ class GaugeAdapter internal constructor(
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
         updateHeight(parent)
-
         return ViewHolder(view)
     }
 
@@ -97,7 +103,6 @@ class GaugeAdapter internal constructor(
         holder: ViewHolder,
         position: Int
     ) {
-
         val metric = data.elementAt(position)
         if (!holder.init) {
             holder.label.text = metric.command.pid.description
@@ -109,14 +114,7 @@ class GaugeAdapter internal constructor(
                     Color.parseColor(LABEL_COLOR)
                 )
             }
-
-            view.post {
-                if (isTablet(context)) {
-                    rescaleTextSize(holder, calculateScaleMultiplier(view))
-                }
-
-                holder.init = true
-            }
+            holder.init = true
         }
 
         holder.value.run {
@@ -173,6 +171,7 @@ class GaugeAdapter internal constructor(
                 this.visibility = View.INVISIBLE
             }
         }
+
         if (holder.gauge == null) {
             holder.gauge = holder.itemView.findViewById(R.id.gauge_view)
         }
@@ -188,17 +187,27 @@ class GaugeAdapter internal constructor(
         return data.size
     }
 
-    private fun calculateScaleMultiplier(view: View): Float {
-        val width = view.measuredWidth.toFloat()
-        val height = Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
+    private fun calculateScaleMultiplier(itemView: View): Float {
+        itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-        val max =
+        val widthDivider = when (data.size) {
+            1 -> 1
+            2 -> 2
+            else -> {
+                (data.size / 2f).roundToInt()
+            }
+        }
+
+        val width = Resources.getSystem().displayMetrics.widthPixels / widthDivider
+        val height = itemView.measuredHeight.toFloat()
+
+        val targetSize =
             Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
-        return valueScaler.scaleToNewRange(width * height, 0.0f, max, 1f, 3f)
+        val currentSize = width * height
+        return valueScaler.scaleToNewRange(currentSize, 0.0f, targetSize, 1f, 3f)
     }
 
     private fun rescaleTextSize(holder: ViewHolder, multiplier: Float) {
-
         holder.label.textSize *= multiplier * 0.75f
         holder.value.textSize *= multiplier * 0.85f
         holder.maxValue.textSize *= multiplier * 0.65f

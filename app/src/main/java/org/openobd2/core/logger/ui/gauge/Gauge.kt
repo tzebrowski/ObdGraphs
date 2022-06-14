@@ -189,7 +189,6 @@ class Gauge : View {
             progressRect.bottom + decorLineOffset
     }
 
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -272,11 +271,15 @@ class Gauge : View {
         }
     }
 
-    private fun calculateRescaleValue(): Float = valueScaler.scaleToNewRange(
+    private fun calculateRescaleValue(): Float = (valueScaler.scaleToNewRange(
         measuredWidth.toFloat() * measuredHeight.toFloat(),
         0.0f,
         Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat(),
         1f,
-        3f
+        3f).apply {
+            if (!isTablet(context)) {
+                return this * 0.85f
+            }
+        }
     )
 }

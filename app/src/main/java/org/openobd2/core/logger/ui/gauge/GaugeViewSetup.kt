@@ -1,6 +1,7 @@
 package org.openobd2.core.logger.ui.gauge
 
 import android.content.Context
+import android.content.res.Configuration
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
@@ -89,7 +90,13 @@ class GaugeViewSetup {
 
         private fun calculateSpan(context: Context, metrics: MutableList<ObdMetric>): Int {
             return when (isTablet(context)) {
-                false -> 2
+                false -> {
+                    return if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        3
+                    } else {
+                        2
+                    }
+                }
                 else -> {
                     when (metrics.size) {
                         0 -> 1
