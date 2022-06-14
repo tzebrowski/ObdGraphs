@@ -21,8 +21,6 @@ class DisplayedPidListPreferences(
             LinkedList()
 
         highPriority(entries, entriesValues)
-        entries.add("----------------------------------------------------------------------")
-        entriesValues.add("-1")
         lowPriority(entries, entriesValues)
 
         setEntries(entries.toTypedArray())
