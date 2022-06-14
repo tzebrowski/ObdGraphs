@@ -1,6 +1,7 @@
 package org.openobd2.core.logger.ui.gauge
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.*
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -8,6 +9,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.ui.common.isTablet
+import org.openobd2.core.logger.ui.graph.ValueScaler
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 import kotlin.math.cos
@@ -21,7 +23,6 @@ private const val SCALE_STEP = 2
 // This class is an extension of https://github.com/pkleczko/CustomGauge
 class Gauge : View {
     private lateinit var paint: Paint
-    private var multiplier = 1f
     private var strokeColor = 0
     private lateinit var progressRect: RectF
     private lateinit var decorRect: RectF
@@ -47,11 +48,7 @@ class Gauge : View {
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
     private val initialized = AtomicBoolean(false)
-
-
-    internal fun scale(multiplier: Float) {
-        this.multiplier = multiplier
-    }
+    private val valueScaler = ValueScaler()
 
     private var strokeCap: String = Paint.Cap.BUTT.name
         set(newValue) {
@@ -138,8 +135,9 @@ class Gauge : View {
     }
 
     internal fun init() {
-        strokeWidth *= multiplier
-        val decorLineOffset =  if (isTablet(context)) 12 * multiplier else 20 * multiplier
+
+        val rescaleValue = calculateRescaleValue()
+        val decorLineOffset = if (isTablet(context)) 12 * rescaleValue else 20 * rescaleValue
 
         paint = Paint()
         paint.color = strokeColor
@@ -158,13 +156,18 @@ class Gauge : View {
         point = startAngle
 
         numbersPaint.color = resources.getColor(R.color.md_grey_500, null)
+        strokeWidth *= rescaleValue
         numbersPaint.textSize = strokeWidth * 0.8f
 
         val padding = strokeWidth
+
         val size = measuredWidth.toFloat()
 
         calculatedWidth = size - 2 * padding
         val height = size - 2 * padding
+
+        calculatedHeight =
+            if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
 
         radius = if (calculatedWidth < height) calculatedWidth / 2 else height / 2
 
@@ -268,4 +271,12 @@ class Gauge : View {
             canvas.drawText(value, x, y, numbersPaint)
         }
     }
+
+    private fun calculateRescaleValue(): Float = valueScaler.scaleToNewRange(
+        measuredWidth.toFloat() * measuredHeight.toFloat(),
+        0.0f,
+        Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat(),
+        1f,
+        3f
+    )
 }

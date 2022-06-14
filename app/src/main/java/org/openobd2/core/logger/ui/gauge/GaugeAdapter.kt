@@ -112,9 +112,9 @@ class GaugeAdapter internal constructor(
 
             view.post {
                 if (isTablet(context)) {
-                    val multiplier = calculateScaleMultiplier(view)
-                    rescaleView(holder, multiplier)
+                    rescaleTextSize(holder, calculateScaleMultiplier(view))
                 }
+
                 holder.init = true
             }
         }
@@ -197,7 +197,7 @@ class GaugeAdapter internal constructor(
         return valueScaler.scaleToNewRange(width * height, 0.0f, max, 1f, 3f)
     }
 
-    private fun rescaleView(holder: ViewHolder, multiplier: Float) {
+    private fun rescaleTextSize(holder: ViewHolder, multiplier: Float) {
 
         holder.label.textSize *= multiplier * 0.75f
         holder.value.textSize *= multiplier * 0.85f
@@ -205,11 +205,6 @@ class GaugeAdapter internal constructor(
         holder.minValue.textSize *= multiplier * 0.65f
         holder.avgValue?.let {
             it.textSize *= multiplier * 0.65f
-        }
-
-        holder.gauge?.let {
-            it.scale(multiplier * 1.15f)
-            it.init()
         }
     }
 
