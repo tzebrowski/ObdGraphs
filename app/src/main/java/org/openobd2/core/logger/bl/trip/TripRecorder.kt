@@ -13,6 +13,7 @@ import org.openobd2.core.logger.ui.graph.ValueScaler
 import org.openobd2.core.logger.ui.preferences.Prefs
 import org.openobd2.core.logger.ui.preferences.isEnabled
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -141,9 +142,14 @@ class TripRecorder private constructor() {
             updateCache(System.currentTimeMillis())
         } else {
             val file = File(context.cacheDir, tripName)
-            val trip: Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
-            Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache.")
-            Cache[CACHE_TRIP_PROPERTY_NAME] = trip
+            try {
+                val trip: Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
+                Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache.")
+                Cache[CACHE_TRIP_PROPERTY_NAME] = trip
+            } catch (e: FileNotFoundException) {
+                Log.e(LOGGER_KEY, "Did not find trip '$tripName'.", e)
+                updateCache(System.currentTimeMillis())
+            }
         }
     }
 
