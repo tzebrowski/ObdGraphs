@@ -14,19 +14,6 @@ internal const val PREF_ADAPTER_MODE_ID_EDITOR = "pref.adapter.init.mode.id"
 
 internal const val MAX_MODES = 7
 
-fun resetModesAndHeaders() {
-    Prefs.edit().run {
-        getAvailableModes().forEach {
-            putString("$MODE_HEADER_PREFIX.$it", "")
-            putString("$MODE_NAME_PREFIX.$it", "")
-        }
-        putString(PREF_CAN_HEADER_EDITOR, "")
-        putString(PREF_ADAPTER_MODE_ID_EDITOR, "")
-        apply()
-    }
-}
-
-
 fun getModesAndHeaders(): Map<String, String> {
     return getAvailableModes().associate { getModeID(it) to getModeHeader(it) }
 }

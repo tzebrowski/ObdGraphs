@@ -64,9 +64,9 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
             PREFERENCE_CONNECTION_TYPE -> dataLoggerPreferences.connectionType =
                 Prefs.getString(key, "wifi")!!
             "pref.adapter.connection.tcp.host" -> dataLoggerPreferences.tcpHost =
-                Prefs.getString(key)!!
+                Prefs.getString(key,"192.168.0.10")!!
             "pref.adapter.connection.tcp.port" -> dataLoggerPreferences.tcpPort =
-                Prefs.getString(key)!!.toInt()
+                Prefs.getString(key,"35000")!!.toInt()
             "pref.adapter.batch.enabled" -> dataLoggerPreferences.batchEnabled =
                 Prefs.getBoolean(key, true)
 
