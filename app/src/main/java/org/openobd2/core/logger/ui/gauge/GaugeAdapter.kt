@@ -61,7 +61,7 @@ class GaugeAdapter internal constructor(
             if (isTablet(context)) {
                 rescaleTextSize(this, calculateScaleMultiplier(itemView))
             } else {
-                rescaleTextSize(this, calculateScaleMultiplier(itemView) * 0.35f)
+                rescaleTextSize(this, calculateScaleMultiplier(itemView) * 0.29f)
             }
         }
 
