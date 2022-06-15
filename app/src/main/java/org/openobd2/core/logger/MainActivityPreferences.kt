@@ -40,6 +40,6 @@ fun getMainActivityPreferences(): MainActivityPreferences {
         hideToolbarConnected
     )
 
-    Log.i(PREFS_LOGGER_TAG, "Loaded MainActivity preferences: $prefs")
+    Log.d(PREFS_LOGGER_TAG, "Loaded MainActivity preferences: $prefs")
     return prefs
 }

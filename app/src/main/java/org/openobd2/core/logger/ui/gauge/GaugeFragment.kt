@@ -14,7 +14,7 @@ class GaugeFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        configureView()
+        configureView(false)
     }
 
     override fun onCreateView(
@@ -23,11 +23,11 @@ class GaugeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
-        configureView()
+        configureView(true)
         return root
     }
 
-    private fun configureView() {
+    private fun configureView(enableOnTouchListener: Boolean) {
         GaugeViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
@@ -36,7 +36,8 @@ class GaugeFragment : Fragment() {
             "pref.gauge.pids.selected",
             R.layout.gauge_item,
             spanCount = null,
-            enableDragManager = Prefs.getBoolean("pref.gauge_enable_drag_and_drop", false)
+            enableDragManager = Prefs.getBoolean("pref.gauge_enable_drag_and_drop", false),
+            enableOnTouchListener = enableOnTouchListener
         )
     }
 }

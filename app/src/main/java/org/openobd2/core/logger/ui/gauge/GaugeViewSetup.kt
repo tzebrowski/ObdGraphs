@@ -24,7 +24,8 @@ class GaugeViewSetup {
             pidPreferencesId: String,
             resourceId: Int,
             spanCount: Int?,
-            enableDragManager: Boolean = true
+            enableDragManager: Boolean = true,
+            enableOnTouchListener: Boolean = false
         ) {
 
             val metricsViewContext =
@@ -47,11 +48,13 @@ class GaugeViewSetup {
                 attachDragManager(context, metricsViewContext, recyclerView)
             }
 
-            recyclerView.addOnItemTouchListener(
-                ToggleToolbarDoubleClickListener(
-                    context
+            if (enableOnTouchListener){
+                recyclerView.addOnItemTouchListener(
+                    ToggleToolbarDoubleClickListener(
+                        context
+                    )
                 )
-            )
+            }
 
             metricsViewContext.adapter.notifyDataSetChanged()
             metricsViewContext.observerMetrics(metrics)
