@@ -84,9 +84,9 @@
     <string name="pref.adapter_power_start_data_logging_after">Start data logging after specified period of time (in seconds)</string>
 
     <string name="pref.power_category">Power</string>
-    <string name="pref.toolbar_hide_landscape">Fullscreen when landscape</string>
-    <string name="pref.toolbar_hide_doubleclick">Fullscreen when double click</string>
-    <string name="pref.toolbar_hide_connected">Fullscreen when connected</string>
+    <string name="pref.toolbar_hide_landscape">Hide toolbar when landscape</string>
+    <string name="pref.toolbar_hide_doubleclick">Hide toolbar when double click</string>
+    <string name="pref.toolbar_hide_connected">Hide toolbar when connected</string>
 
     <string name="pref.enable_view">Enable view</string>
     <string name="pref.trips_recordings_display_info">Display Trip Info</string>
@@ -103,7 +103,7 @@
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
     <string name="pref.view_category">Views</string>
-
+    <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Init</string>
 
     <string name="activity.btn_menu">Menu</string>

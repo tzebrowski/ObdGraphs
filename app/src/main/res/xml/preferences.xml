@@ -274,23 +274,26 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref.view_category">
-
+    <PreferenceCategory android:title="@string/pref.toolbar_category">
         <CheckBoxPreference
+            app:singleLineTitle="false"
             android:defaultValue="false"
             android:key="pref.toolbar.hide.landscape"
             android:title="@string/pref.toolbar_hide_landscape" />
-
         <CheckBoxPreference
+            app:singleLineTitle="false"
             android:defaultValue="true"
             android:key="pref.toolbar.hide.doubleclick"
             android:title="@string/pref.toolbar_hide_doubleclick" />
-
         <CheckBoxPreference
+            app:singleLineTitle="false"
             android:defaultValue="true"
             android:key="pref.toolbar.hide.connected"
             android:title="@string/pref.toolbar_hide_connected" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref.view_category">
 
         <PreferenceScreen
             android:summary="@string/pref.gauge_category"
