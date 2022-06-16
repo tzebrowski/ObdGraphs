@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:weightSum="1.0"
-    tools:context=".ui.dashboard.DashboardFragment">
+    tools:context="org.obd.graphs.ui.dashboard.DashboardFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dashboard_recycler_view"

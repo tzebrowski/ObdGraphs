@@ -2,18 +2,18 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
 }
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "org.openobd2.core.logger"
+        applicationId "org.obd.graphs.app"
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        //applicationIdSuffix kotlin_version
         testFunctionalTest false
         testHandleProfiling false
     }
@@ -55,6 +55,8 @@ android {
         }
 
         debug {
+            minifyEnabled false
+
             resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "true"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "true"
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "true"
@@ -101,7 +103,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
-    implementation('io.github.tzebrowski:obd-metrics:4.4.1-SNAPSHOT') { changing = true }
+    implementation('io.github.tzebrowski:obd-metrics:4.5.0-SNAPSHOT') { changing = true }
     implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
     debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'

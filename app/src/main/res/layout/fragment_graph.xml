@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.graph.GraphFragment">
+    tools:context="org.obd.graphs.ui.graph.GraphFragment">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/graph_view_chart"

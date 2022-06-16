@@ -6,7 +6,7 @@
     android:layout_margin="3sp"
     android:background="@drawable/dash_item_background"
     android:columnCount="3"
-    tools:context=".ui.gauge.GaugeFragment">
+    tools:context="org.obd.graphs.ui.gauge.GaugeFragment">
 
 
     <LinearLayout

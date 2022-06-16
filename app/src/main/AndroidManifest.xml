@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.openobd2.core.logger">
+    package="org.obd.graphs">
 
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -36,11 +36,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DefaultTheme">
         <service
-            android:name=".bl.datalogger.DataLoggerService"
+            android:name="org.obd.graphs.bl.datalogger.DataLoggerService"
             android:exported="false" />
 
         <receiver
-            android:name=".AdminReceiver"
+            android:name="org.obd.graphs.AdminReceiver"
             android:exported="true"
             android:label="device_admin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
@@ -53,7 +53,7 @@
         </receiver>
 
         <activity
-            android:name=".MainActivity"
+            android:name="org.obd.graphs.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true">
             <intent-filter>
