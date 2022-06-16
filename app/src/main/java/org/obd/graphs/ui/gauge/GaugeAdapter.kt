@@ -66,13 +66,15 @@ class GaugeAdapter internal constructor(
         }
 
         private fun updateDrawable() {
-            val drawable = gauge?.background as GradientDrawable
-            val filter: ColorFilter =
-                PorterDuffColorFilter(
-                    Prefs.getInt("pref.gauge_background_color", -1),
-                    PorterDuff.Mode.SRC_IN
-                )
-            drawable.colorFilter = filter
+            gauge?.background?.let {
+                val drawable =  it as GradientDrawable
+                val filter: ColorFilter =
+                    PorterDuffColorFilter(
+                        Prefs.getInt("pref.gauge_background_color", -1),
+                        PorterDuff.Mode.SRC_IN
+                    )
+                drawable.colorFilter = filter
+            }
         }
     }
 
