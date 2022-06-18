@@ -14,7 +14,6 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.R
 import org.obd.graphs.bl.trip.TripRecorderBroadcastReceiver
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.toast
