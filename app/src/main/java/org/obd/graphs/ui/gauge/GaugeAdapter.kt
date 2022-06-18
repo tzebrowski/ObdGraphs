@@ -32,7 +32,8 @@ private const val LABEL_COLOR = "#01804F"
 class GaugeAdapter internal constructor(
     private val context: Context,
     val data: MutableList<ObdMetric>,
-    private val resourceId: Int
+    private val resourceId: Int,
+    private val height: Int? = null
 ) : RecyclerView.Adapter<GaugeAdapter.ViewHolder>() {
 
     inner class ViewHolder internal constructor(itemView: View) :
@@ -220,13 +221,16 @@ class GaugeAdapter internal constructor(
     }
 
     private fun updateHeight(parent: ViewGroup) {
-        if (isTablet(context)) {
-            val heightPixels = Resources.getSystem().displayMetrics.heightPixels
-            view.layoutParams.height = heightPixels / if (data.size > 2) 2 else 1
+        if (height == null){
+            if (isTablet(context)) {
+                view.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
+            } else {
+                val x =
+                    if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
+                view.layoutParams.height = parent.measuredHeight / x
+            }
         } else {
-            val x =
-                if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
-            view.layoutParams.height = parent.measuredHeight / x
+            view.layoutParams.height = height
         }
     }
 

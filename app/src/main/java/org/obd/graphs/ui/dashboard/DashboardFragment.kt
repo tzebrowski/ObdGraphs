@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.ObdMetric
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.MetricsViewContext
@@ -20,6 +19,7 @@ import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 import org.obd.graphs.ui.gauge.GaugeViewSetup
 import org.obd.graphs.ui.preferences.DashPreferences
+import org.obd.metrics.ObdMetric
 
 class DashboardFragment : Fragment() {
     lateinit var root: View
@@ -27,7 +27,7 @@ class DashboardFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        configureView()
+        configureView(false)
     }
 
     override fun onCreateView(
@@ -36,17 +36,17 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        configureView()
+        configureView(true)
         return root
     }
 
-    private fun configureView() {
+    private fun configureView(enableOnTouchListener: Boolean) {
 
-        if (dashboardPreferences.tilesViewVisible && dashboardPreferences.dashboardViewVisible) {
+        if (dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
 
             configureRecyclerView(
-                R.id.tiles_recycler_view,
-                dashboardPreferences.tilesViewVisible,
+                R.id.gauge_recycler_view,
+                dashboardPreferences.gaugeViewVisible,
                 0.25f,
                 0
             )
@@ -57,30 +57,30 @@ class DashboardFragment : Fragment() {
                 0
             )
 
-            setupTilesRecyclerView(2)
-            setupDashRecyclerView()
+            setupGaugeRecyclerView(1, enableOnTouchListener)
+            setupDashRecyclerView(enableOnTouchListener)
 
         } else {
-            if (dashboardPreferences.tilesViewVisible && !dashboardPreferences.dashboardViewVisible) {
+            if (dashboardPreferences.gaugeViewVisible && !dashboardPreferences.dashboardViewVisible) {
                 configureRecyclerView(
-                    R.id.tiles_recycler_view,
+                    R.id.gauge_recycler_view,
                     true,
                     1f,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
 
                 configureRecyclerView(R.id.dashboard_recycler_view, false, 0f, 0)
-                setupTilesRecyclerView(4)
+                setupGaugeRecyclerView(2, enableOnTouchListener)
             }
-            if (!dashboardPreferences.tilesViewVisible && dashboardPreferences.dashboardViewVisible) {
+            if (!dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
                 configureRecyclerView(
                     R.id.dashboard_recycler_view,
                     true,
                     1f,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                configureRecyclerView(R.id.tiles_recycler_view, false, 0f, 0)
-                setupDashRecyclerView()
+                configureRecyclerView(R.id.gauge_recycler_view, false, 0f, 0)
+                setupDashRecyclerView(enableOnTouchListener)
             }
         }
     }
@@ -94,19 +94,21 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun setupTilesRecyclerView(spanCount: Int) {
+    private fun setupGaugeRecyclerView(spanCount: Int, enableOnTouchListener: Boolean) {
         GaugeViewSetup.onCreateView(
             viewLifecycleOwner,
             requireContext(),
             root,
-            R.id.tiles_recycler_view,
+            R.id.gauge_recycler_view,
             "pref.dash.gauge_pids.selected",
-            R.layout.dashboard_tiles_item,
-            spanCount = spanCount
+            R.layout.dashboard_gauge_item,
+            spanCount = spanCount,
+            enableOnTouchListener = enableOnTouchListener,
+            height = Resources.getSystem().displayMetrics.heightPixels / 3
         )
     }
 
-    private fun setupDashRecyclerView() {
+    private fun setupDashRecyclerView(enableOnTouchListener: Boolean) {
         val metricsViewContext =
             MetricsViewContext(viewLifecycleOwner, dashboardPreferences.dashboardVisiblePids)
 
@@ -180,11 +182,14 @@ class DashboardFragment : Fragment() {
 
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
         recyclerView.refreshDrawableState()
-        recyclerView.addOnItemTouchListener(
-            ToggleToolbarDoubleClickListener(
-                requireContext()
+
+        if (enableOnTouchListener) {
+            recyclerView.addOnItemTouchListener(
+                ToggleToolbarDoubleClickListener(
+                    requireContext()
+                )
             )
-        )
+        }
 
         metricsViewContext.observerMetrics(metrics)
         metricsViewContext.adapter.notifyDataSetChanged()

@@ -17,7 +17,7 @@
         android:focusableInTouchMode="true" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tiles_recycler_view"
+        android:id="@+id/gauge_recycler_view"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.25"

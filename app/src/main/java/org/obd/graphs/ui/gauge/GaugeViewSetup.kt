@@ -26,7 +26,8 @@ class GaugeViewSetup {
             resourceId: Int,
             spanCount: Int?,
             enableDragManager: Boolean = true,
-            enableOnTouchListener: Boolean = false
+            enableOnTouchListener: Boolean = false,
+            height: Int? = null
         ) {
 
             val metricsViewContext =
@@ -41,7 +42,7 @@ class GaugeViewSetup {
             recyclerView.layoutManager =
                 GridLayoutManager(context, spanCount ?: calculateSpan(context, metrics))
 
-            metricsViewContext.adapter = GaugeAdapter(context, metrics, resourceId)
+            metricsViewContext.adapter = GaugeAdapter(context, metrics, resourceId, height)
             metricsViewContext.adapter.setHasStableIds(true)
             recyclerView.adapter = metricsViewContext.adapter
 

@@ -8,7 +8,7 @@ import org.obd.graphs.ui.preferences.updateLongSet
 
 data class DashboardPreferences(
     val swipeToDeleteEnabled: Boolean,
-    val tilesViewVisible: Boolean,
+    val gaugeViewVisible: Boolean,
     val dashboardViewVisible: Boolean,
     val dashboardVisiblePids: Set<Long>,
     val colorsEnabled: Boolean,

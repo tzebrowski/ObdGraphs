@@ -423,64 +423,63 @@
             android:title="@string/pref.dashboard_category"
             app:key="pref.dashboard">
 
-            <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
-                    android:dialogTitle="@string/pref.dash_pids_selected"
-                    android:key="pref.dash.pids.selected"
-                    android:title="@string/pref.dash_pids_selected" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.dash.view.enabled"
+                android:title="@string/pref.enable_view" />
 
-                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
-                    android:dialogTitle="@string/pref.dash_tiles_pids_selected"
-                    android:key="pref.dash.gauge_pids.selected"
-                    android:title="@string/pref.dash_tiles_pids_selected" />
-            </PreferenceCategory>
-            <PreferenceCategory android:title="@string/pref.theme">
-                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                    android:defaultValue="@android:color/holo_green_light"
-                    android:key="pref.dash.background_color_1"
-                    android:title="@string/pref.dash.background_color_1" />
-
-                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                    android:defaultValue="@android:color/holo_green_light"
-                    android:key="pref.dash.background_color_2"
-                    android:title="@string/pref.dash.background_color_2" />
-
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/pref.general_settings">
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.dash.top.values.blink"
-                    android:title="@string/pref.dash_top_values_blink" />
-
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.dash.swipe.to.delete"
-                    android:title="@string/pref.dash_swipe_to_delete" />
-
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.dash.top.values.red.color"
-
-                    android:title="@string/pref.dash_top_values_red_color" />
-
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref.dash.view.enabled"
-                    android:title="@string/pref.enable_view" />
-
-
+            <PreferenceCategory android:title="@string/navigation.title_gauge">
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.dash.gauge.view.visible"
-                    android:title="@string/pref.dash_tiles_view_visible" />
+                    android:title="@string/pref.enable_view" />
 
+                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                    android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.dash.gauge_pids.selected"
+                    android:title="@string/pref.displayed_parameter_ids" />
+            </PreferenceCategory>
+            <PreferenceCategory  android:title="@string/navigation.title_dashboard">
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="pref.dash.dash.view.visible"
-                    android:title="@string/pref.dash_dash_view_visible" />
-            </PreferenceCategory>
+                    android:title="@string/pref.enable_view" />
 
+                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                    android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.dash.pids.selected"
+                    android:title="@string/pref.displayed_parameter_ids" />
+
+                <PreferenceCategory android:title="@string/pref.theme">
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="@android:color/holo_green_light"
+                        android:key="pref.dash.background_color_1"
+                        android:title="@string/pref.dash.background_color_1" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="@android:color/holo_green_light"
+                        android:key="pref.dash.background_color_2"
+                        android:title="@string/pref.dash.background_color_2" />
+
+                </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.general_settings">
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.top.values.blink"
+                        android:title="@string/pref.dash_top_values_blink" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.swipe.to.delete"
+                        android:title="@string/pref.dash_swipe_to_delete" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.top.values.red.color"
+                        android:title="@string/pref.dash_top_values_red_color" />
+                </PreferenceCategory>
+            </PreferenceCategory>
         </PreferenceScreen>
 
         <PreferenceCategory
