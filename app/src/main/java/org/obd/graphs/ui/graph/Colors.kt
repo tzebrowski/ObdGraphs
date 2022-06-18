@@ -31,8 +31,8 @@ class Colors {
     fun generate(): IntIterator {
 
         val colorScheme = mutableListOf<Int>()
-        val randomCollors = Colors()
-        repeat((0 until 30).count()) { colorScheme.add(randomCollors.color) }
+        val randomColors = Colors()
+        repeat((0 until 30).count()) { colorScheme.add(randomColors.color) }
 
         return colorScheme.toIntArray().iterator()
     }
