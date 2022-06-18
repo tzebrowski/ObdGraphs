@@ -20,7 +20,7 @@ class PidResourceListPreferences(
     MultiSelectListPreference(context, attrs) {
 
     init {
-        initialize() { getExternalPidResources(context) }
+        initialize { getExternalPidResources(context) }
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
