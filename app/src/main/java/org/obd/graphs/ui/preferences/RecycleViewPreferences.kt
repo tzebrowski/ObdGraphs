@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.obd.metrics.ObdMetric
 
+open class RecycleViewPreference(var id: Long, var position: Int)
 
 abstract class RecycleViewPreferences<T> constructor(private val prefName: String) {
     private var mapper = ObjectMapper()

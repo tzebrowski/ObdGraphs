@@ -35,7 +35,7 @@ class PidResourceListPreferences(
 
         findPreferenceInHierarchy<CheckBoxPreference>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run {
             onPreferenceChangeListener = OnPreferenceChangeListener { _, new ->
-                initialize() { getExternalPidResources(context) { new.toString().toBoolean() } }
+                initialize { getExternalPidResources(context) { new.toString().toBoolean() } }
                 true
             }
         }

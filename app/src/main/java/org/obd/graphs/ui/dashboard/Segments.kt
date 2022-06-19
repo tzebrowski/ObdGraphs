@@ -10,7 +10,7 @@ fun Double.round(decimals: Int): Double {
 }
 
 
-internal class Segments(
+class Segments(
     val numOfSegments: Int,
     private val minValue: Double,
     maxValue: Double

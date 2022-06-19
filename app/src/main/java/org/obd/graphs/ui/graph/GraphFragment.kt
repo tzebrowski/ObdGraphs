@@ -34,6 +34,8 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.trip.TripRecorder
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.preferences.Prefs
+import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.pid.PidDefinitionRegistry
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -158,13 +160,13 @@ class GraphFragment : Fragment() {
     }
 
     private fun registerMetricsObserver() {
-        MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
+        MetricsAggregator.metrics.observe(viewLifecycleOwner) {
             it?.let {
                 if (preferences.selectedPids.contains(it.command.pid.id)) {
                     addEntry(it)
                 }
             }
-        })
+        }
     }
 
     private fun initializeTripDetails() {
@@ -176,9 +178,15 @@ class GraphFragment : Fragment() {
 
 
     private fun initializeChart(root: View) {
+
         chart = buildChart(root).apply {
-            val metrics = DataLogger.instance.getEmptyMetrics(preferences.selectedPids)
-            data = LineData(metrics.map { createDataSet(it.command.pid) }.toList())
+
+            val pidRegistry: PidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
+            val metrics =  preferences.selectedPids.mapNotNull {
+                pidRegistry.findBy(it)
+            }.toMutableList()
+
+            data = LineData(metrics.map { createDataSet(it) }.toList())
             setOnTouchListener(onDoubleClickListener(requireContext()))
             invalidate()
             onChartGestureListener = onGestureListener

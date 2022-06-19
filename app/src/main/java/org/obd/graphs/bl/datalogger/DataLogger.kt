@@ -7,11 +7,15 @@ import android.content.IntentFilter
 import android.util.Log
 import org.obd.metrics.DeviceProperties
 import org.obd.metrics.Lifecycle
-import org.obd.metrics.ObdMetric
-import org.obd.metrics.api.*
+import org.obd.metrics.api.Workflow
+import org.obd.metrics.api.Init
+import org.obd.metrics.api.AdaptiveTimeoutPolicy
+import org.obd.metrics.api.Adjustments
+import org.obd.metrics.api.CacheConfig
+import org.obd.metrics.api.Pids
+import org.obd.metrics.api.Query
 import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.command.group.DefaultCommandGroup
-import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
@@ -125,14 +129,6 @@ class DataLogger internal constructor() {
         return workflow.diagnostics
     }
 
-    fun getEmptyMetrics(ids: Set<Long>): MutableList<ObdMetric> {
-        val pidRegistry: PidDefinitionRegistry = pidDefinitionRegistry()
-        return ids.mapNotNull {
-            pidRegistry.findBy(it)?.let { pid ->
-                ObdMetric.builder().command(ObdCommand(pid)).value(null).build()
-            }
-        }.toMutableList()
-    }
 
     fun pidDefinitionRegistry(): PidDefinitionRegistry {
         return workflow.pidRegistry

@@ -13,9 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.ObdMetric
-import org.obd.metrics.command.obd.ObdCommand
-import org.obd.metrics.diagnostic.RateType
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.ui.common.convert
@@ -24,17 +21,21 @@ import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.dashboard.round
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
+import org.obd.metrics.ObdMetric
+import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.diagnostic.RateType
 import java.util.*
 import kotlin.math.roundToInt
 
 private const val LABEL_COLOR = "#01804F"
 
-class GaugeAdapter internal constructor(
-    private val context: Context,
-    val data: MutableList<ObdMetric>,
-    private val resourceId: Int,
-    private val height: Int? = null
-) : RecyclerView.Adapter<GaugeAdapter.ViewHolder>() {
+class GaugeAdapter(
+    context: Context,
+    data: MutableList<ObdMetric>,
+    resourceId: Int,
+    height: Int? = null
+) :
+    SimpleAdapter<GaugeAdapter.ViewHolder>(context, data, resourceId, height) {
 
     inner class ViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
@@ -68,7 +69,7 @@ class GaugeAdapter internal constructor(
 
         private fun updateDrawable() {
             gauge?.background?.let {
-                val drawable =  it as GradientDrawable
+                val drawable = it as GradientDrawable
                 val filter: ColorFilter =
                     PorterDuffColorFilter(
                         Prefs.getInt("pref.gauge_background_color", -1),
@@ -221,9 +222,10 @@ class GaugeAdapter internal constructor(
     }
 
     private fun updateHeight(parent: ViewGroup) {
-        if (height == null){
+        if (height == null) {
             if (isTablet(context)) {
-                view.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
+                view.layoutParams.height =
+                    Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
             } else {
                 val x =
                     if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3

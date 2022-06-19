@@ -25,16 +25,18 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
+import org.obd.graphs.ui.gauge.SimpleAdapter
 import org.obd.graphs.ui.preferences.Prefs
 import java.util.*
 
 
-internal class DashboardViewAdapter internal constructor(
-    private val context: Context,
-    val data: MutableList<ObdMetric>,
-    private val height: Int
+class DashboardViewAdapter(
+    context: Context,
+    data: MutableList<ObdMetric>,
+    resourceId: Int,
+    height: Int? = null
 ) :
-    RecyclerView.Adapter<DashboardViewAdapter.ViewHolder>() {
+    SimpleAdapter<DashboardViewAdapter.ViewHolder>(context, data, resourceId, height) {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
@@ -52,8 +54,10 @@ internal class DashboardViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        view = inflater.inflate(R.layout.dashboard_item, parent, false)
-        view.layoutParams.height = height
+        view = inflater.inflate(resourceId, parent, false)
+        if (height != null) {
+            view.layoutParams.height = height
+        }
         return ViewHolder(view)
     }
 

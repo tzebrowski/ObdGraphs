@@ -30,5 +30,6 @@ internal class DragManageAdapter(
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         adapter.deleteItems(viewHolder.adapterPosition)
+        adapter.storePreferences(context)
     }
 }
