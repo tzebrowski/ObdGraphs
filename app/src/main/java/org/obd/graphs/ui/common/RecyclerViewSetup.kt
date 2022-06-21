@@ -1,28 +1,23 @@
-package org.obd.graphs.ui.dashboard
+package org.obd.graphs.ui.common
 
 import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Resources
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ApplicationContext
-import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.gauge.AdapterContext
-import org.obd.graphs.ui.gauge.SimpleAdapter
 import org.obd.graphs.ui.preferences.*
 import org.obd.metrics.ObdMetric
 
-class DashboardViewSetup {
+class RecyclerViewSetup {
 
     fun configureView(
         viewLifecycleOwner: LifecycleOwner,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
         adapterContext: AdapterContext,
-        enableDragManager: Boolean = true,
+        enableDragManager: Boolean = false,
         enableSwipeToDelete: Boolean = false,
         enableOnTouchListener: Boolean = false,
         adapter: (
@@ -31,18 +26,15 @@ class DashboardViewSetup {
             resourceId: Int,
             height: Int?
         ) -> SimpleAdapter<*>,
-        recycleViewPreferences: () -> RecycleViewPreferences<out RecycleViewPreference>
+        metricsSerializerPref: String
     ) {
 
-        val viewSerializer = recycleViewPreferences()
+        val viewSerializer = RecycleViewPreferences(metricsSerializerPref)
         val metricsIds = Prefs.getLongSet(metricsIdsPref)
         val metrics =  MetricsProvider().findMetrics(metricsIds, getSortOrderMap(viewSerializer))
-        val spanCount = calculateSpanCount(metrics.size)
-        val itemHeight = calculateItemHeight(metrics, spanCount)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
 
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), spanCount)
-
-        recyclerView.adapter = adapter(requireContext(),metrics,adapterContext.layoutId, itemHeight).apply {
+        recyclerView.adapter = adapter(requireContext(),metrics,adapterContext.layoutId,adapterContext.height).apply {
             setHasStableIds(true)
             notifyDataSetChanged()
         }
@@ -61,8 +53,8 @@ class DashboardViewSetup {
         MetricsObserver().observe(metricsIds,viewLifecycleOwner,adapter(recyclerView), metrics)
     }
 
-    private fun getSortOrderMap(viewSerializer: RecycleViewPreferences<out RecycleViewPreference>): Map<Long, Int>? =
-        viewSerializer.load(requireContext())?.associate {
+    private fun getSortOrderMap(viewSerializer: RecycleViewPreferences): Map<Long, Int>? =
+        viewSerializer.load()?.associate {
             it.id to it.position
         }
 
@@ -71,7 +63,7 @@ class DashboardViewSetup {
     private fun createSwappableAdapter(
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewSerializer: RecycleViewPreferences<out RecycleViewPreference>
+        viewSerializer: RecycleViewPreferences
     ): SwappableAdapter = object : SwappableAdapter {
         override fun swapItems(fromPosition: Int, toPosition: Int) {
             adapter(recyclerView).swapItems(
@@ -82,7 +74,6 @@ class DashboardViewSetup {
 
         override fun storePreferences(context: Context) {
             viewSerializer.store(
-                context,
                 adapter(recyclerView).data
             )
         }
@@ -120,7 +111,7 @@ class DashboardViewSetup {
         enableSwipeToDelete: Boolean = false,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewSerializer: RecycleViewPreferences<out RecycleViewPreference>
+        viewSerializer: RecycleViewPreferences
     ) {
         if (enableDragManager) {
             val swappableAdapter = createSwappableAdapter(recyclerView,metricsIdsPref,viewSerializer)
@@ -143,20 +134,5 @@ class DashboardViewSetup {
     }
 
     private fun adapter(recyclerView: RecyclerView) =
-        (recyclerView.adapter as DashboardViewAdapter)
-
-
-    private fun calculateItemHeight(metrics: MutableList<ObdMetric>, spanCount: Int): Int {
-        val heightPixels = Resources.getSystem().displayMetrics.heightPixels
-        val size = if (metrics.size == 0) 1 else metrics.size
-        return heightPixels / size * spanCount
-    }
-
-    private fun calculateSpanCount(numberOfItems: Int): Int {
-        return if (numberOfItems <= 3) {
-            1
-        } else {
-            if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-        }
-    }
+        (recyclerView.adapter as SimpleAdapter)
 }

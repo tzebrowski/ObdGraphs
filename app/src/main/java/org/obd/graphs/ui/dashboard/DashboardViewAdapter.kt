@@ -25,7 +25,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
-import org.obd.graphs.ui.gauge.SimpleAdapter
+import org.obd.graphs.ui.common.SimpleAdapter
 import org.obd.graphs.ui.preferences.Prefs
 import java.util.*
 
@@ -40,11 +40,6 @@ class DashboardViewAdapter(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
-
-    fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(data, fromPosition, toPosition)
-        notifyItemMoved(fromPosition, toPosition)
-    }
 
     override fun getItemId(position: Int): Long {
         return data[position].command.pid.id

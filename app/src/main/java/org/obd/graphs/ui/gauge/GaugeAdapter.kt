@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.ui.common.SimpleAdapter
 import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
@@ -24,7 +25,6 @@ import org.obd.graphs.ui.preferences.Prefs
 import org.obd.metrics.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
-import java.util.*
 import kotlin.math.roundToInt
 
 private const val LABEL_COLOR = "#01804F"
@@ -37,8 +37,9 @@ class GaugeAdapter(
 ) :
     SimpleAdapter<GaugeAdapter.ViewHolder>(context, data, resourceId, height) {
 
-    inner class ViewHolder internal constructor(itemView: View) :
+    inner class ViewHolder internal constructor(itemView: View):
         RecyclerView.ViewHolder(itemView) {
+
         val label: TextView = itemView.findViewById(R.id.label)
         val value: TextView = itemView.findViewById(R.id.value)
         val avgValue: TextView? = itemView.findViewById(R.id.avg_value)
@@ -84,11 +85,6 @@ class GaugeAdapter(
     private lateinit var view: View
     private val preferences: GaugePreferences by lazy { getGaugePreferences() }
     private val valueScaler = ValueScaler()
-
-    fun swapItems(fromPosition: Int, toPosition: Int) {
-        Collections.swap(data, fromPosition, toPosition)
-        notifyItemMoved(fromPosition, toPosition)
-    }
 
     override fun getItemId(position: Int): Long {
         return data[position].command.pid.id

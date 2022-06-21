@@ -11,10 +11,11 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.ui.common.RecyclerViewSetup
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.gauge.GaugeAdapter
-import org.obd.graphs.ui.gauge.GaugeViewSetup
-import org.obd.graphs.ui.preferences.GaugePreferences
+import org.obd.graphs.ui.preferences.Prefs
+import org.obd.graphs.ui.preferences.getLongSet
 import org.obd.metrics.ObdMetric
 
 class DashboardFragment : Fragment() {
@@ -92,12 +93,17 @@ class DashboardFragment : Fragment() {
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
 
-        DashboardViewSetup().configureView(
+        RecyclerViewSetup().configureView(
             viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.dashboard_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext = AdapterContext(
-                layoutId = R.layout.dashboard_item
+                layoutId = R.layout.dashboard_item,
+                spanCount = calculateSpanCount(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
+                height = calculateHeight(
+                    Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size,
+                    calculateSpanCount(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
+                )
             ),
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
@@ -107,13 +113,13 @@ class DashboardFragment : Fragment() {
                         height: Int? ->
                 DashboardViewAdapter(context, data, resourceId, height)
             },
-            recycleViewPreferences = { org.obd.graphs.ui.preferences.DashboardPreferences.Serializer() }
+            metricsSerializerPref = "prefs.dash.pids.settings"
         )
     }
 
     private fun setupGaugeRecyclerView(spanCount: Int, enableOnTouchListener: Boolean) {
 
-        GaugeViewSetup().configureView(
+        RecyclerViewSetup().configureView(
             viewLifecycleOwner,
             root.findViewById(R.id.gauge_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.gaugeSelectedMetrics.first,
@@ -123,13 +129,28 @@ class DashboardFragment : Fragment() {
                 height = Resources.getSystem().displayMetrics.heightPixels / 3
             ),
             enableOnTouchListener = enableOnTouchListener,
+            enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
                         data: MutableList<ObdMetric>,
                         resourceId: Int,
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)
             },
-            recycleViewPreferences = { GaugePreferences.Serializer() }
+            metricsSerializerPref = "prefs.gauge.pids.settings"
         )
+    }
+
+    private fun calculateHeight(numberOfItems: Int, spanCount: Int): Int {
+        val heightPixels = Resources.getSystem().displayMetrics.heightPixels
+        val size = if (numberOfItems == 0) 1 else numberOfItems
+        return heightPixels / size * spanCount
+    }
+
+    private fun calculateSpanCount(numberOfItems: Int): Int {
+        return if (numberOfItems <= 3) {
+            1
+        } else {
+            if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+        }
     }
 }

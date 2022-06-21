@@ -1,36 +1,33 @@
 package org.obd.graphs.ui.preferences
 
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import org.obd.graphs.ApplicationContext
 import org.obd.metrics.ObdMetric
 
-open class RecycleViewPreference(var id: Long, var position: Int)
+class ItemPreference(var id: Long, var position: Int)
 
-abstract class RecycleViewPreferences<T> constructor(private val prefName: String) {
+class RecycleViewPreferences constructor(private val prefName: String) {
     private var mapper = ObjectMapper()
 
-    interface MetricsMapper<T> {
-        fun map(m: ObdMetric, index: Int): T
+    fun map(m: ObdMetric, index: Int): ItemPreference {
+        return ItemPreference(m.command.pid.id, index)
     }
-
-    abstract fun metricsMapper(): MetricsMapper<T>
-    abstract fun genericType(): Class<T>
 
     init {
         mapper.registerModule(KotlinModule())
     }
 
     fun store(
-        context: Context,
         data: MutableList<ObdMetric>
     ) {
 
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+        val pref = sharedPreferences()
         val mapIndexed = data.mapIndexed { index, metric ->
-            metricsMapper().map(metric, index)
+            map(metric, index)
         }
 
         val writeValueAsString = mapper.writeValueAsString(mapIndexed)
@@ -39,17 +36,21 @@ abstract class RecycleViewPreferences<T> constructor(private val prefName: Strin
         edit.apply()
     }
 
-    fun load(context: Context): List<T>? {
-        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+    fun load(): List<ItemPreference>? {
+        val pref = sharedPreferences()
         val it = pref.getString(prefName, "")
         val listType: CollectionType =
             mapper.typeFactory.constructCollectionType(
                 ArrayList::class.java,
-                genericType()
+                ItemPreference::class.java
             )
 
         return if (it!!.isEmpty()) listOf() else mapper.readValue(
             it, listType
         )
+    }
+
+    private fun sharedPreferences(): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(ApplicationContext.get()!!)
     }
 }
