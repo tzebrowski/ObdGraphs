@@ -9,6 +9,7 @@ data class DashboardPreferences(
     val swipeToDeleteEnabled: Boolean,
     val gaugeViewVisible: Boolean,
     val dashboardViewVisible: Boolean,
+    val dragAndDropEnabled: Boolean,
     val dashboardSelectedMetrics: Pair<String,Set<Long>>,
     val gaugeSelectedMetrics: Pair<String,Set<Long>>,
     val colorsEnabled: Boolean,
@@ -24,6 +25,7 @@ fun getDashboardPreferences(): DashboardPreferences {
     val swipeToDelete =
         Prefs.getBoolean("pref.dash.swipe.to.delete", false)
 
+    val dragAndDropEnabled =  Prefs.getBoolean("pref.dash.enable_drag", false)
     val gaugeViewVisible = Prefs.getBoolean("pref.dash.gauge.view.visible", false)
     val dashboardVisible = Prefs.getBoolean("pref.dash.dash.view.visible", false)
     val dashboardSelectedMetrics = Prefs.getLongSet(SELECTED_DASHBOARD_METRICS)
@@ -39,6 +41,7 @@ fun getDashboardPreferences(): DashboardPreferences {
         dashboardSelectedMetrics = Pair(SELECTED_DASHBOARD_METRICS,dashboardSelectedMetrics),
         gaugeSelectedMetrics = Pair(SELECTED_GAUGE_METRICS,gaugeSelectedMetrics),
         colorsEnabled = colors,
-        blinkEnabled = blink
+        blinkEnabled = blink,
+        dragAndDropEnabled = dragAndDropEnabled
     )
 }

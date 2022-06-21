@@ -105,7 +105,7 @@ class DashboardFragment : Fragment() {
                     calculateSpanCount(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
                 )
             ),
-            enableDragManager = true,
+            enableDragManager = dashboardPreferences.dragAndDropEnabled,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
@@ -129,7 +129,7 @@ class DashboardFragment : Fragment() {
                 spanCount = spanCount,
                 height = Resources.getSystem().displayMetrics.heightPixels / 3
             ),
-            enableDragManager = true,
+            enableDragManager = dashboardPreferences.dragAndDropEnabled,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,

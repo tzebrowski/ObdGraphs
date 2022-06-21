@@ -471,6 +471,11 @@
 
                     <CheckBoxPreference
                         android:defaultValue="false"
+                        android:key="pref.dash.enable_drag"
+                        android:title="@string/pref.dash_enable_drag_and_drop" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
                         android:key="pref.dash.swipe.to.delete"
                         android:title="@string/pref.dash_swipe_to_delete" />
 
