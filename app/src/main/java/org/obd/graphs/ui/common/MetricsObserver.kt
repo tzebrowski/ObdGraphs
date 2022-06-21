@@ -13,14 +13,16 @@ internal class MetricsObserver {
         adapter: RecyclerView.Adapter<*>,
         data: MutableList<ObdMetric>
     ) = MetricsAggregator.metrics.observe(lifecycleOwner) {
-        if (metrics.contains(it.command.pid.id)) {
-            val indexOf = data.indexOf(it)
-            if (indexOf == -1) {
-                data.add(it)
-                adapter.notifyItemInserted(data.indexOf(it))
-            } else {
-                data[indexOf] = it
-                adapter.notifyItemChanged(indexOf, it)
+        it?.run {
+            if (metrics.contains(command.pid.id)) {
+                val indexOf = data.indexOf(this)
+                if (indexOf == -1) {
+                    data.add(this)
+                    adapter.notifyItemInserted(data.indexOf(this))
+                } else {
+                    data[indexOf] = this
+                    adapter.notifyItemChanged(indexOf, this)
+                }
             }
         }
     }
