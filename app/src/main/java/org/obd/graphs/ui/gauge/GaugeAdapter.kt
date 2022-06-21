@@ -15,7 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
-import org.obd.graphs.ui.common.SimpleAdapter
+import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet

@@ -1,4 +1,4 @@
-package org.obd.graphs.ui.common
+package org.obd.graphs.ui.recycler
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
@@ -6,6 +6,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ApplicationContext
+import org.obd.graphs.ui.common.*
+import org.obd.graphs.ui.common.DragManageAdapter
+import org.obd.graphs.ui.common.MetricsObserver
+import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.preferences.*
 import org.obd.metrics.ObdMetric
@@ -29,11 +33,11 @@ class RecyclerViewSetup {
         metricsSerializerPref: String
     ) {
 
-        val viewSerializer = RecycleViewPreferences(metricsSerializerPref)
+        val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
         val metricsIds = Prefs.getLongSet(metricsIdsPref)
-        val metrics =  MetricsProvider().findMetrics(metricsIds, getSortOrderMap(viewSerializer))
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
+        val metrics =  MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
 
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
         recyclerView.adapter = adapter(requireContext(),metrics,adapterContext.layoutId,adapterContext.height).apply {
             setHasStableIds(true)
             notifyDataSetChanged()
@@ -44,7 +48,7 @@ class RecyclerViewSetup {
             enableDragManager = enableDragManager,
             recyclerView = recyclerView,
             metricsIdsPref =  metricsIdsPref,
-            viewSerializer = viewSerializer)
+            viewPreferences = viewPreferences)
 
         attachOnTouchListener(enableOnTouchListener, recyclerView)
         adapter(recyclerView).notifyDataSetChanged()
@@ -52,11 +56,6 @@ class RecyclerViewSetup {
 
         MetricsObserver().observe(metricsIds,viewLifecycleOwner,adapter(recyclerView), metrics)
     }
-
-    private fun getSortOrderMap(viewSerializer: RecycleViewPreferences): Map<Long, Int>? =
-        viewSerializer.load()?.associate {
-            it.id to it.position
-        }
 
     private fun requireContext(): Context = ApplicationContext.get()!!
 
@@ -111,10 +110,10 @@ class RecyclerViewSetup {
         enableSwipeToDelete: Boolean = false,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewSerializer: RecycleViewPreferences
+        viewPreferences: RecycleViewPreferences
     ) {
         if (enableDragManager) {
-            val swappableAdapter = createSwappableAdapter(recyclerView,metricsIdsPref,viewSerializer)
+            val swappableAdapter = createSwappableAdapter(recyclerView,metricsIdsPref,viewPreferences)
 
             val callback = if (enableSwipeToDelete)
                 DragManageAdapter(

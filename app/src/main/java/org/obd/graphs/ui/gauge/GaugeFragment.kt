@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.isTablet
-import org.obd.graphs.ui.common.RecyclerViewSetup
+import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getLongSet
 import org.obd.metrics.ObdMetric
@@ -81,5 +81,4 @@ class GaugeFragment : Fragment() {
             }
         }
     }
-
 }

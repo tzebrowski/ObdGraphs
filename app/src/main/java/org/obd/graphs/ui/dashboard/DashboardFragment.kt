@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.ui.common.RecyclerViewSetup
+import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.gauge.GaugeAdapter
 import org.obd.graphs.ui.preferences.Prefs
@@ -105,6 +105,7 @@ class DashboardFragment : Fragment() {
                     calculateSpanCount(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
                 )
             ),
+            enableDragManager = true,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
@@ -128,6 +129,7 @@ class DashboardFragment : Fragment() {
                 spanCount = spanCount,
                 height = Resources.getSystem().displayMetrics.heightPixels / 3
             ),
+            enableDragManager = true,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,

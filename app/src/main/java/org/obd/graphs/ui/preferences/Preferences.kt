@@ -1,8 +1,16 @@
 package org.obd.graphs.ui.preferences
 
 import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
+import org.obd.graphs.ApplicationContext
+import org.obd.graphs.R
 
-lateinit var Prefs: SharedPreferences
+val Prefs: SharedPreferences by lazy {
+    PreferenceManager.setDefaultValues(ApplicationContext.get()!!, R.xml.preferences, false)
+    PreferenceManager.getDefaultSharedPreferences(
+        ApplicationContext.get()!!
+    )
+}
 
 private const val ECU_SUPPORTED_PIDS = "datalogger.supported.pids"
 

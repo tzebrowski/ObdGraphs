@@ -1,4 +1,4 @@
-package org.obd.graphs.ui.common
+package org.obd.graphs.ui.recycler
 
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView

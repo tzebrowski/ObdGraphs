@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
         )
 
         setContentView(R.layout.activity_main)
-        setupPreferences()
         setupProgressBar()
         setupWindowManager()
         setupNavigationBar()
@@ -94,10 +93,5 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         return navHostFragment.navController
-    }
-
-    private fun setupPreferences() {
-        Prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 }
