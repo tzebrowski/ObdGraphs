@@ -1,6 +1,9 @@
 package org.obd.graphs.ui.gauge
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,9 +21,17 @@ import kotlin.math.roundToInt
 
 private const val GAUGE_SELECTED_METRICS_PREF = "pref.gauge.pids.selected"
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
+private const val ENABLE_SWIPE_TO_DELETE_PREF = "pref.gauge.swipe_to_delete"
+private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.gauge_id"
 
 class GaugeFragment : Fragment() {
     private lateinit var root: View
+
+    private var configurationChangedReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            configureView(false)
+        }
+    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -37,8 +48,21 @@ class GaugeFragment : Fragment() {
         return root
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.registerReceiver(configurationChangedReceiver, IntentFilter().apply {
+            addAction(CONFIGURE_CHANGE_EVENT_GAUGE)
+        })
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        activity?.unregisterReceiver(configurationChangedReceiver)
+    }
+
     private fun configureView(enableOnTouchListener: Boolean) {
         RecyclerViewSetup().configureView(
+            configureChangeEventId = CONFIGURE_CHANGE_EVENT_GAUGE,
             viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView,
             metricsIdsPref = GAUGE_SELECTED_METRICS_PREF,
@@ -49,7 +73,8 @@ class GaugeFragment : Fragment() {
                     Prefs.getLongSet(GAUGE_SELECTED_METRICS_PREF).size
                 )
             ),
-            enableSwipeToDelete = Prefs.getBoolean(ENABLE_DRAG_AND_DROP_PREF, false),
+
+            enableSwipeToDelete = Prefs.getBoolean(ENABLE_SWIPE_TO_DELETE_PREF, false),
             enableDragManager = Prefs.getBoolean(ENABLE_DRAG_AND_DROP_PREF, false),
             enableOnTouchListener = enableOnTouchListener,
             adapter = { context: Context,

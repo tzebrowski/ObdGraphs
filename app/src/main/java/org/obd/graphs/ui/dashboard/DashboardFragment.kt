@@ -1,6 +1,9 @@
 package org.obd.graphs.ui.dashboard
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
@@ -18,13 +21,36 @@ import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getLongSet
 import org.obd.metrics.ObdMetric
 
+
+private const val CONFIGURATION_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.dash_gauge_id"
+private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
+
 class DashboardFragment : Fragment() {
     lateinit var root: View
+
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
+    private var configurationChangedReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+          configureView(false)
+        }
+    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         configureView(false)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.registerReceiver(configurationChangedReceiver, IntentFilter().apply {
+            addAction(CONFIGURATION_CHANGE_EVENT_DASH)
+            addAction(CONFIGURATION_CHANGE_EVENT_GAUGE)
+        })
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        activity?.unregisterReceiver(configurationChangedReceiver)
     }
 
     override fun onCreateView(
@@ -94,6 +120,7 @@ class DashboardFragment : Fragment() {
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
 
         RecyclerViewSetup().configureView(
+            configureChangeEventId = CONFIGURATION_CHANGE_EVENT_DASH,
             viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.dashboard_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
@@ -121,8 +148,9 @@ class DashboardFragment : Fragment() {
     private fun setupGaugeRecyclerView(spanCount: Int, enableOnTouchListener: Boolean) {
 
         RecyclerViewSetup().configureView(
-            viewLifecycleOwner,
-            root.findViewById(R.id.gauge_recycler_view) as RecyclerView,
+            configureChangeEventId = CONFIGURATION_CHANGE_EVENT_GAUGE,
+            viewLifecycleOwner = viewLifecycleOwner,
+            recyclerView = root.findViewById(R.id.gauge_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.gaugeSelectedMetrics.first,
             adapterContext = AdapterContext(
                 layoutId = R.layout.dashboard_gauge_item,

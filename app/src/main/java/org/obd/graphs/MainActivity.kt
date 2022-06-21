@@ -15,14 +15,13 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.preference.PreferenceManager
-import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.profile.installProfiles
 import java.lang.ref.WeakReference
 
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
+
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             receive(intent)
@@ -89,9 +88,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun navController(): NavController {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        return navHostFragment.navController
-    }
+    fun navController(): NavController =
+        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
 }

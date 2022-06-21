@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ApplicationContext
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.MetricsObserver
@@ -17,6 +18,7 @@ import org.obd.metrics.ObdMetric
 class RecyclerViewSetup {
 
     fun configureView(
+        configureChangeEventId: String,
         viewLifecycleOwner: LifecycleOwner,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
@@ -44,6 +46,7 @@ class RecyclerViewSetup {
         }
 
         attachDragManager(
+            configureChangeEventId = configureChangeEventId,
             enableSwipeToDelete = enableSwipeToDelete,
             enableDragManager = enableDragManager,
             recyclerView = recyclerView,
@@ -60,6 +63,7 @@ class RecyclerViewSetup {
     private fun requireContext(): Context = ApplicationContext.get()!!
 
     private fun createSwappableAdapter(
+        configureChangeEventId: String,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
         viewSerializer: RecycleViewPreferences
@@ -86,11 +90,9 @@ class RecyclerViewSetup {
                 metricsIdsPref,
                 data.map { obdMetric -> obdMetric.command.pid.id }.toList()
             )
-            adapter(recyclerView).notifyItemChanged(fromPosition)
-            adapter(recyclerView).notifyDataSetChanged()
+            sendBroadcastEvent(configureChangeEventId)
         }
     }
-
 
     private fun attachOnTouchListener(
         enableOnTouchListener: Boolean,
@@ -106,6 +108,7 @@ class RecyclerViewSetup {
     }
 
     private fun attachDragManager(
+        configureChangeEventId: String,
         enableDragManager: Boolean = true,
         enableSwipeToDelete: Boolean = false,
         recyclerView: RecyclerView,
@@ -113,7 +116,7 @@ class RecyclerViewSetup {
         viewPreferences: RecycleViewPreferences
     ) {
         if (enableDragManager) {
-            val swappableAdapter = createSwappableAdapter(recyclerView,metricsIdsPref,viewPreferences)
+            val swappableAdapter = createSwappableAdapter(configureChangeEventId, recyclerView,metricsIdsPref,viewPreferences)
 
             val callback = if (enableSwipeToDelete)
                 DragManageAdapter(

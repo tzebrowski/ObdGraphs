@@ -15,12 +15,12 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
         mapper.registerModule(KotlinModule())
     }
 
-    fun getItemsSortOrder(): Map<Long, Int>? =
+    internal fun getItemsSortOrder(): Map<Long, Int>? =
         load()?.associate {
             it.id to it.position
         }
 
-    fun store(
+    internal fun store(
         data: MutableList<ObdMetric>
     ) {
 
@@ -36,7 +36,7 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
         }
     }
 
-    fun load(): List<ItemPreference>? {
+    private fun load(): List<ItemPreference>? {
         val it = Prefs.getString(prefName, "")
         val listType: CollectionType =
             mapper.typeFactory.constructCollectionType(
