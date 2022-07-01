@@ -61,7 +61,7 @@ class GaugeAdapter(
                 view.background = null
             }
 
-            if (isTablet(context)) {
+            if (isTablet()) {
                 rescaleTextSize(this, calculateScaleMultiplier(itemView))
             } else {
                 rescaleTextSize(this, calculateScaleMultiplier(itemView) * 0.29f)
@@ -219,7 +219,7 @@ class GaugeAdapter(
 
     private fun updateHeight(parent: ViewGroup) {
         if (height == null) {
-            if (isTablet(context)) {
+            if (isTablet()) {
                 view.layoutParams.height =
                     Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
             } else {

@@ -68,10 +68,7 @@ class GaugeFragment : Fragment() {
             metricsIdsPref = GAUGE_SELECTED_METRICS_PREF,
             adapterContext = AdapterContext(
                 layoutId = R.layout.gauge_item,
-                spanCount = calculateSpan(
-                    requireContext(),
-                    Prefs.getLongSet(GAUGE_SELECTED_METRICS_PREF).size
-                )
+                spanCount = calculateSpan()
             ),
 
             enableSwipeToDelete = Prefs.getBoolean(ENABLE_SWIPE_TO_DELETE_PREF, false),
@@ -87,17 +84,17 @@ class GaugeFragment : Fragment() {
         )
     }
 
-    private fun calculateSpan(context: Context, numberOfItems: Int): Int {
-        return when (isTablet(context)) {
+    private fun calculateSpan(): Int {
+        return when (isTablet()) {
             false -> {
-                return if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                return if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     3
                 } else {
                     2
                 }
             }
             else -> {
-                when (numberOfItems) {
+                when (val numberOfItems =  Prefs.getLongSet(GAUGE_SELECTED_METRICS_PREF).size) {
                     0 -> 1
                     2 -> 2
                     1 -> 1

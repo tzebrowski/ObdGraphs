@@ -21,7 +21,6 @@ import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getLongSet
 import org.obd.metrics.ObdMetric
 
-
 private const val CONFIGURATION_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.dash_gauge_id"
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 
@@ -118,7 +117,6 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
-
         RecyclerViewSetup().configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_DASH,
             viewLifecycleOwner = viewLifecycleOwner,
@@ -126,11 +124,8 @@ class DashboardFragment : Fragment() {
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext = AdapterContext(
                 layoutId = R.layout.dashboard_item,
-                spanCount = calculateSpanCount(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
-                height = calculateHeight(
-                    Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size,
-                    calculateSpanCount(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
-                )
+                spanCount = calculateSpanCount(),
+                height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
             ),
             enableDragManager = dashboardPreferences.dragAndDropEnabled,
             enableOnTouchListener = enableOnTouchListener,
@@ -144,6 +139,7 @@ class DashboardFragment : Fragment() {
             metricsSerializerPref = "prefs.dash.pids.settings"
         )
     }
+
 
     private fun setupGaugeRecyclerView(spanCount: Int, enableOnTouchListener: Boolean) {
 
@@ -170,13 +166,15 @@ class DashboardFragment : Fragment() {
         )
     }
 
-    private fun calculateHeight(numberOfItems: Int, spanCount: Int): Int {
+    private fun calculateHeight(numberOfItems: Int): Int {
+        val spanCount = calculateSpanCount()
         val heightPixels = Resources.getSystem().displayMetrics.heightPixels
         val size = if (numberOfItems == 0) 1 else numberOfItems
         return heightPixels / size * spanCount
     }
 
-    private fun calculateSpanCount(numberOfItems: Int): Int {
+    private fun calculateSpanCount(): Int {
+        val numberOfItems =  Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size
         return if (numberOfItems <= 3) {
             1
         } else {

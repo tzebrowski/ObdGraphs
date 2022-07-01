@@ -137,6 +137,20 @@
                     android:key="pref.init"
                     android:title="@string/pref.settings">
 
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:dialogTitle="@string/pref.adapter_init.fetchDeviceProperties"
+                        android:key="pref.adapter.init.fetchDeviceProperties"
+                        android:title="@string/pref.adapter_init.fetchDeviceProperties"/>
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:dialogTitle="@string/pref.adapter_init.fetchSupportedPids"
+                        android:key="pref.adapter.init.fetchSupportedPids"
+                        android:title="@string/pref.adapter_init.fetchSupportedPids"/>
+
                     <ListPreference
                         android:defaultValue="500"
                         android:entries="@array/pref.init_delay"

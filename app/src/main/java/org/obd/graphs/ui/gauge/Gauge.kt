@@ -121,7 +121,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     internal fun init() {
 
         val rescaleValue = calculateRescaleValue()
-        val decorLineOffset = if (isTablet(context)) 12 * rescaleValue else 20 * rescaleValue
+        val decorLineOffset = if (isTablet()) 12 * rescaleValue else 20 * rescaleValue
 
         paint = Paint()
         paint.color = strokeColor
@@ -262,7 +262,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         1f,
         3f
     ).apply {
-        if (!isTablet(context)) {
+        if (!isTablet()) {
             return this * 0.85f
         }
     }

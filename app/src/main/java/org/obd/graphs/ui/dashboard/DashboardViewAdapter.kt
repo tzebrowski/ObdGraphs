@@ -214,7 +214,7 @@ class DashboardViewAdapter(
                 barData.barWidth = pid.max.toFloat() / this.segments.numOfSegments / 1.05f
                 chart.data = barData
 
-                if (isTablet(context)) {
+                if (isTablet()) {
                     when (data.size) {
                         1 -> value.textSize *= 1.6f
                         2 -> value.textSize *= 1.5f

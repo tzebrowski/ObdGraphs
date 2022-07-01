@@ -6,7 +6,6 @@ import org.obd.graphs.bl.datalogger.MetricsAggregator
 import org.obd.metrics.ObdMetric
 
 internal class MetricsObserver {
-
     fun observe(
         metrics: Set<Long>,
         lifecycleOwner: LifecycleOwner,

@@ -57,6 +57,10 @@
     <string name="pref.adapter_init_header_new">Add header</string>
     <string name="pref.adapter_init_header_settings">CAN header settings</string>
 
+    <string name="pref.adapter_init.fetchSupportedPids">Fetch supported PID\'s during init</string>
+    <string name="pref.adapter_init.fetchDeviceProperties">Fetch adapter properties during init</string>
+
+
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>

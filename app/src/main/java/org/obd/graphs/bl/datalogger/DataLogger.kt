@@ -193,6 +193,8 @@ class DataLogger internal constructor() {
         .headers(getModesAndHeaders().map { entry ->
             Init.Header.builder().mode(entry.key).header(entry.value).build()
         }.toMutableList())
+        .fetchDeviceProperties(preferences.fetchDeviceProperties)
+        .fetchSupportedPids(preferences.fetchSupportedPids)
         .protocol(Init.Protocol.valueOf(preferences.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 

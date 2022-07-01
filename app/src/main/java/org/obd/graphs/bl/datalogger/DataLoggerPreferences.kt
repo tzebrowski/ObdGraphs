@@ -33,7 +33,9 @@ data class DataLoggerPreferences(
     var initProtocol: String,
     var hardReset: Boolean,
     var maxReconnectRetry: Int,
-    var resources: Set<String>
+    var resources: Set<String>,
+    var fetchDeviceProperties: Boolean,
+    var fetchSupportedPids: Boolean
 ) {
     companion object {
         private lateinit var strongReference: SharedPreferenceChangeListener
@@ -94,6 +96,13 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 
             "pref.adapter.init.protocol" -> dataLoggerPreferences.initProtocol =
                 Prefs.getString(key, "AUTO").toString()
+
+            "pref.adapter.init.fetchDeviceProperties" -> dataLoggerPreferences.fetchDeviceProperties =
+                Prefs.getBoolean(key, true)
+
+            "pref.adapter.init.fetchSupportedPids" -> dataLoggerPreferences.fetchSupportedPids =
+                Prefs.getBoolean(key, true)
+
             "pref.pids.registry.list" -> dataLoggerPreferences.resources =
                 resources()
         }
@@ -124,6 +133,10 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
     val maxReconnectRetry =
         Prefs.getString("pref.adapter.reconnect.max_retry", "0")!!.toInt()
 
+    val fetchDeviceProperties = Prefs.getBoolean("pref.adapter.init.fetchDeviceProperties", true)
+
+    val fetchSupportedPids = Prefs.getBoolean("pref.adapter.init.fetchSupportedPids" , true)
+
     val dataLoggerPreferences = DataLoggerPreferences(
         pids = getPidList(),
         connectionType = connectionType,
@@ -141,7 +154,9 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         initProtocol = initProtocol,
         hardReset = hardReset,
         maxReconnectRetry = maxReconnectRetry,
-        resources = resources()
+        resources = resources(),
+        fetchDeviceProperties = fetchDeviceProperties,
+        fetchSupportedPids = fetchSupportedPids
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")
