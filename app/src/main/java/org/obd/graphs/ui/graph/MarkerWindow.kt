@@ -8,7 +8,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.graphs.R

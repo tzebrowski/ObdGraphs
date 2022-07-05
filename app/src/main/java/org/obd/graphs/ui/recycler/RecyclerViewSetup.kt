@@ -1,5 +1,6 @@
 package org.obd.graphs.ui.recycler
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,10 +14,11 @@ import org.obd.graphs.ui.common.MetricsObserver
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.preferences.*
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 
 class RecyclerViewSetup {
 
+    @SuppressLint("NotifyDataSetChanged")
     fun configureView(
         configureChangeEventId: String,
         viewLifecycleOwner: LifecycleOwner,

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.setText
 

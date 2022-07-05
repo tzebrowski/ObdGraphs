@@ -20,7 +20,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
 import org.obd.graphs.R
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.ui.common.highLightText

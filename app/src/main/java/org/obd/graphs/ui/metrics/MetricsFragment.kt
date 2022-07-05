@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.MetricsAggregator
 
@@ -24,7 +24,7 @@ class MetricsFragment : Fragment() {
         val data: MutableList<ObdMetric> = arrayListOf()
         val adapter = MetricsViewAdapter(root.context, data)
 
-        MetricsAggregator.metrics.observe(viewLifecycleOwner, Observer {
+        MetricsAggregator.metrics.observe(viewLifecycleOwner) {
             it?.let {
                 val indexOf = data.indexOf(it)
                 if (indexOf == -1) {
@@ -35,7 +35,7 @@ class MetricsFragment : Fragment() {
                     adapter.notifyItemChanged(indexOf, it)
                 }
             }
-        })
+        }
 
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)

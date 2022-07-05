@@ -3,7 +3,7 @@ package org.obd.graphs.ui.common
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.bl.datalogger.MetricsAggregator
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 
 internal class MetricsObserver {
     fun observe(

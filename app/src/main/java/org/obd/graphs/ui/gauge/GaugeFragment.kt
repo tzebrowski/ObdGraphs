@@ -16,7 +16,7 @@ import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getLongSet
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.roundToInt
 
 private const val GAUGE_SELECTED_METRICS_PREF = "pref.gauge.pids.selected"

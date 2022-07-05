@@ -1,5 +1,6 @@
 package org.obd.graphs.ui.graph
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.graphics.Color
 import android.os.Bundle
@@ -25,7 +26,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.Cache
 import org.obd.graphs.bl.datalogger.*
@@ -193,6 +194,7 @@ class GraphFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
             val trip = tripRecorder.getCurrentTrip()

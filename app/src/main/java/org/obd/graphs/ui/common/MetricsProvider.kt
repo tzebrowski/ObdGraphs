@@ -2,7 +2,7 @@ package org.obd.graphs.ui.common
 
 import org.obd.graphs.bl.datalogger.DataLogger
 
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 

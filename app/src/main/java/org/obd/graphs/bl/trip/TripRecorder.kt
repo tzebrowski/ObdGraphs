@@ -5,7 +5,7 @@ import android.util.Log
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.mikephil.charting.data.Entry
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.graphs.ApplicationContext
 import org.obd.graphs.Cache
 import org.obd.graphs.bl.datalogger.DataLogger

@@ -22,7 +22,7 @@ import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.dashboard.round
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
 import kotlin.math.roundToInt

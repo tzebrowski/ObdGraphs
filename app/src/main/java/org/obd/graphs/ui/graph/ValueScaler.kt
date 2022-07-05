@@ -1,7 +1,7 @@
 package org.obd.graphs.ui.graph
 
 
-import org.obd.metrics.ObdMetric
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
 
