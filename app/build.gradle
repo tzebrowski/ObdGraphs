@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "org.obd.graphs.app"
         minSdkVersion 24
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
