@@ -5,12 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.api.model.ObdMetric
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.MetricsAggregator
+import org.obd.metrics.api.model.ObdMetric
 
 
 class MetricsFragment : Fragment() {

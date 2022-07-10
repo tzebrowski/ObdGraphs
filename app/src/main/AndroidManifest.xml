@@ -53,7 +53,7 @@
         </receiver>
 
         <activity
-            android:name="org.obd.graphs.MainActivity"
+            android:name="org.obd.graphs.activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true">
             <intent-filter>

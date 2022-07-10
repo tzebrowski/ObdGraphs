@@ -1,4 +1,4 @@
-package org.obd.graphs
+package org.obd.graphs.activity
 
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import org.obd.graphs.AdminReceiver
 
 internal fun MainActivity.lockScreen() {
     val pm = getSystemService(AppCompatActivity.POWER_SERVICE) as PowerManager

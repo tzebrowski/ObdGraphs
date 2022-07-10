@@ -5,11 +5,11 @@ import android.util.AttributeSet
 import androidx.preference.CheckBoxPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.bl.datalogger.ACCESS_EXTERNAL_STORAGE_ENABLED
 import org.obd.graphs.bl.datalogger.RESOURCE_LIST_CHANGED_EVENT
 import org.obd.graphs.bl.datalogger.defaultPidFiles
 import org.obd.graphs.bl.datalogger.getExternalPidResources
-import org.obd.graphs.navigateToPreferencesScreen
 import org.obd.graphs.sendBroadcastEvent
 
 

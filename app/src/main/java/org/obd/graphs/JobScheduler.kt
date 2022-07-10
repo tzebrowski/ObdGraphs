@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
 private val dataLoggerTask = Runnable {
-    Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
+    Log.i(LOGGER_TAG, "Start data logging")
     DataLoggerService.start()
 }
 
@@ -16,7 +16,7 @@ fun scheduleDataLogger() {
     val powerPreferences: PowerPreferences = getPowerPreferences()
 
     Log.i(
-        ACTIVITY_LOGGER_TAG,
+        LOGGER_TAG,
         "Schedule connect task WITH delay: ${powerPreferences.startDataLoggingAfter}"
     )
     scheduleService.schedule(

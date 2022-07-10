@@ -1,4 +1,4 @@
-package org.obd.graphs
+package org.obd.graphs.activity
 
 
 import android.content.BroadcastReceiver
@@ -15,6 +15,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import org.obd.graphs.ApplicationContext
+import org.obd.graphs.Cache
+import org.obd.graphs.ExceptionHandler
+import org.obd.graphs.R
 import org.obd.graphs.ui.preferences.profile.installProfiles
 import java.lang.ref.WeakReference
 

@@ -1,4 +1,4 @@
-package org.obd.graphs
+package org.obd.graphs.activity
 
 import android.util.Log
 import org.obd.graphs.ui.preferences.Prefs

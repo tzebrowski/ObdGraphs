@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import org.obd.graphs.navigateToPreferencesScreen
+import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.updateToolbar
 

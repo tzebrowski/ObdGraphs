@@ -1,4 +1,4 @@
-package org.obd.graphs
+package org.obd.graphs.activity
 
 import android.content.Intent
 import android.content.IntentFilter
@@ -13,6 +13,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.obd.graphs.PowerBroadcastReceiver
+import org.obd.graphs.R
+import org.obd.graphs.SCREEN_OFF_EVENT
+import org.obd.graphs.SCREEN_ON_EVENT
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripRecorderBroadcastReceiver
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION

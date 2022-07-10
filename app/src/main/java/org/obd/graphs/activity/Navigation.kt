@@ -1,4 +1,4 @@
-package org.obd.graphs
+package org.obd.graphs.activity
 
 import android.util.Log
 import android.view.MenuItem
@@ -9,6 +9,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.obd.graphs.ApplicationContext
+import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.ui.preferences.PREFERENCE_SCREEN_KEY
 

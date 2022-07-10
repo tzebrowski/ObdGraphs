@@ -142,7 +142,7 @@ class TripRecorder private constructor() {
         } else {
             val file = File(context.cacheDir, tripName)
             try {
-                val trip: Trip = jacksonObjectMapper().readValue<Trip>(file, Trip::class.java)
+                val trip: Trip = jacksonObjectMapper().readValue(file, Trip::class.java)
                 Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache.")
                 Cache[CACHE_TRIP_PROPERTY_NAME] = trip
             } catch (e: FileNotFoundException) {

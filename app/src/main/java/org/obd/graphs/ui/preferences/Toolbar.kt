@@ -3,6 +3,7 @@ package org.obd.graphs.ui.preferences
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import org.obd.graphs.*
+import org.obd.graphs.activity.*
 
 const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 

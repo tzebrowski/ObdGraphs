@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
@@ -26,16 +25,14 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
-import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.Cache
-import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.datalogger.MetricsAggregator
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripRecorder
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.preferences.Prefs
-import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import java.text.SimpleDateFormat
 import java.util.*

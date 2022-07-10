@@ -25,7 +25,7 @@ private const val CONFIGURATION_CHANGE_EVENT_GAUGE = "recycler.view.change.confi
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 
 class DashboardFragment : Fragment() {
-    lateinit var root: View
+    private lateinit var root: View
 
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
     private var configurationChangedReceiver = object : BroadcastReceiver() {
