@@ -29,7 +29,9 @@ fun installProfiles() {
         Log.e(LOG_KEY, "Installing profiles")
 
         Prefs.edit().let { editor ->
-            arrayOf("default.properties", "giulietta.properties").forEach { fileName ->
+            arrayOf("default.properties", "giulietta.properties", "giulia_2_0_gme.properties").forEach { fileName ->
+                Log.i(LOG_KEY, "Loading profile file='$fileName'")
+
                 val prop = Properties()
                 prop.load(ApplicationContext.get()!!.assets.open(fileName))
                 prop.forEach { t, u ->
@@ -86,7 +88,7 @@ internal fun saveCurrentProfile() {
             .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
             .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
             .forEach { (pref, value) ->
-                Log.v(LOG_KEY, "'$profileName.$pref'=$value")
+                Log.d(LOG_KEY, "'$profileName.$pref'=$value")
                 it.updatePreference("$profileName.$pref", value)
             }
         it.apply()
