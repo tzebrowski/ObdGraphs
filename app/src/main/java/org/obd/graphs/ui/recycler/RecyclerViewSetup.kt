@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ApplicationContext
+import org.obd.graphs.bl.datalogger.getPidsToQuery
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.common.DragManageAdapter
@@ -38,7 +39,9 @@ class RecyclerViewSetup {
     ) {
 
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
-        val metricsIds = Prefs.getLongSet(metricsIdsPref)
+        val query  = getPidsToQuery()
+        val metricsIds = Prefs.getLongSet(metricsIdsPref).filter {  query.contains(it)}.toSet()
+
         val metrics =  MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
