@@ -29,6 +29,7 @@ import java.io.File
 
 const val WORKFLOW_RELOAD_EVENT = "data.logger.workflow.reload.event"
 const val RESOURCE_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
+const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
 const val DATA_LOGGER_ADAPTER_NOT_SET_EVENT = "data.logger.adapter.not_set"
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
@@ -49,6 +50,10 @@ class DataLogger internal constructor() {
 
     private inner class EventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
+            if (intent.action === PROFILE_CHANGED_EVENT) {
+                workflow = workflow()
+            }
+
             if (intent.action === RESOURCE_LIST_CHANGED_EVENT) {
                 workflow = workflow()
                 sendBroadcastEvent(WORKFLOW_RELOAD_EVENT)
@@ -120,6 +125,7 @@ class DataLogger internal constructor() {
         ApplicationContext.get()?.let {
             it.registerReceiver(broadcastReceiver, IntentFilter().apply {
                 addAction(RESOURCE_LIST_CHANGED_EVENT)
+                addAction(PROFILE_CHANGED_EVENT)
             })
         }
     }

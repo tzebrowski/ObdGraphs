@@ -8,6 +8,9 @@ import org.obd.graphs.ui.preferences.mode.PREF_ADAPTER_MODE_ID_EDITOR
 import org.obd.graphs.ui.preferences.mode.PREF_CAN_HEADER_EDITOR
 import org.obd.graphs.ui.preferences.mode.getAvailableModes
 import org.obd.graphs.ApplicationContext
+import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
+import org.obd.graphs.bl.datalogger.RESOURCE_LIST_CHANGED_EVENT
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getString
 import org.obd.graphs.ui.preferences.updateToolbar
@@ -116,6 +119,7 @@ fun loadProfile(profileName: String) {
     }
 
     updateCurrentProfileValue(profileName)
+    sendBroadcastEvent(PROFILE_CHANGED_EVENT)
 }
 
 private fun resetCurrentProfile() {
