@@ -2,7 +2,6 @@ package org.obd.graphs.ui.preferences
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.preference.MultiSelectListPreference
 import org.obd.graphs.bl.datalogger.DataLogger
 import java.util.*

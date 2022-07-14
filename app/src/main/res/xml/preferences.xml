@@ -73,8 +73,6 @@
                 android:dialogTitle="@string/pref.pids_supported"
                 android:key="pref.pids.supported"
                 android:title="@string/pref.pids_supported" />
-
-
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -314,13 +312,18 @@
             app:key="pref.gauge">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
-                    android:defaultValue="@array/pref.empty_array"
-                    android:dialogTitle="@string/pref.displayed_parameter_ids"
-                    android:key="pref.gauge.pids.selected"
-                    android:title="@string/pref.displayed_parameter_ids" />
+                <PreferenceScreen
+                    android:summary="@string/pref.displayed_parameter_ids_summary"
+                    android:title="@string/pref.displayed_parameter_ids"
+                    android:key="pref.gauge.displayed_parameter_ids">
+                        <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                            app:useSimpleSummaryProvider="true"
+                            android:defaultValue="@array/pref.empty_array"
+                            android:dialogTitle="@string/pref.displayed_parameter_ids"
+                            android:key="pref.gauge.pids.selected"
+                            android:title="@string/pref.displayed_parameter_ids" />
+                </PreferenceScreen>
             </PreferenceCategory>
-
             <PreferenceCategory android:title="@string/pref.theme">
                 <CheckBoxPreference
                     android:defaultValue="true"
@@ -379,11 +382,17 @@
             app:key="pref.graph">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
-                    android:defaultValue="@array/pref.empty_array"
-                    android:dialogTitle="@string/pref.displayed_parameter_ids"
-                    android:key="pref.graph.pids.selected"
-                    android:title="@string/pref.displayed_parameter_ids" />
+                <PreferenceScreen
+                    android:summary="@string/pref.displayed_parameter_ids_summary"
+                    android:title="@string/pref.displayed_parameter_ids"
+                    android:key="pref.graph.displayed_parameter_ids">
+                    <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="@array/pref.empty_array"
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.graph.pids.selected"
+                        android:title="@string/pref.displayed_parameter_ids" />
+                </PreferenceScreen>
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.general_settings">
@@ -444,6 +453,7 @@
                 android:defaultValue="true"
                 android:key="pref.dash.view.enabled"
                 android:title="@string/pref.enable_view" />
+
 
             <PreferenceCategory android:title="@string/navigation.title_gauge">
                 <CheckBoxPreference

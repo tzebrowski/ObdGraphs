@@ -28,10 +28,14 @@
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
     <string name="context_menu.parameters_id_to_query">Parameter IDs to query</string>
+    <string name="context_menu.parameters_id_to_display">Parameter IDs to display</string>
+
     <string name="context_menu.view_configuration">Quick settings</string>
     <string name="context_menu.profiles">Profiles</string>
 
     <string name="pref.displayed_parameter_ids">Displayed Parameter IDs</string>
+    <string name="pref.displayed_parameter_ids_summary">Select Parameter IDs you would like to see on the screen</string>
+
     <string name="pref.pids_generic_high">High priority Parameter IDs</string>
     <string name="pref.pids_generic_low">Low priority Parameter IDs</string>
     <string name="pref.pids_supported">Parameter IDs supported by ECU\n(fetched after first successful connection to the ECU)</string>

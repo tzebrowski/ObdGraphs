@@ -64,6 +64,17 @@ internal fun MainActivity.setupNavigationBarButtons() {
 
         pm.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.ctx_menu_pids_to_display -> {
+                    val screenId = when (getCurrentScreenId()) {
+                        R.id.navigation_gauge -> "pref.gauge.displayed_parameter_ids"
+                        R.id.navigation_graph -> "pref.graph.displayed_parameter_ids"
+                        else -> null
+                    }
+                    screenId?.let {
+                        navigateToPreferencesScreen(it)
+                    }
+                }
+
                 R.id.ctx_menu_pids_to_query -> {
                     navigateToPreferencesScreen("pref.registry")
                 }
@@ -73,13 +84,8 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 }
                 R.id.ctx_menu_view_configuration -> {
 
-                    val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
-                    val selectedItemId: Int = bottomNavigationView.selectedItemId
-                    val currentView: MenuItem =
-                        bottomNavigationView.menu.findItem(selectedItemId)
-
                     navigateToPreferencesScreen(
-                        when (currentView.itemId) {
+                        when (getCurrentScreenId()) {
                             R.id.navigation_dashboard -> "pref.dashboard"
                             R.id.navigation_gauge -> "pref.gauge"
                             R.id.navigation_graph -> "pref.graph"
@@ -93,6 +99,14 @@ internal fun MainActivity.setupNavigationBarButtons() {
         }
         pm.show()
     }
+}
+
+private fun MainActivity.getCurrentScreenId(): Int {
+    val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
+    val selectedItemId: Int = bottomNavigationView.selectedItemId
+    val currentView: MenuItem =
+        bottomNavigationView.menu.findItem(selectedItemId)
+    return currentView.itemId
 }
 
 fun navigateToPreferencesScreen(prefKey: String) {
