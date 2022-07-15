@@ -9,7 +9,6 @@ import org.obd.graphs.ui.preferences.mode.PREF_CAN_HEADER_EDITOR
 import org.obd.graphs.ui.preferences.mode.getAvailableModes
 import org.obd.graphs.ApplicationContext
 import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
-import org.obd.graphs.bl.datalogger.RESOURCE_LIST_CHANGED_EVENT
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getString
@@ -32,7 +31,7 @@ fun installProfiles() {
         Log.e(LOG_KEY, "Installing profiles")
 
         Prefs.edit().let { editor ->
-            arrayOf("default.properties", "giulietta.properties", "giulia_2_0_gme.properties").forEach { fileName ->
+            arrayOf("default.properties", "giulietta_qv.properties", "giulia_2_0_gme.properties").forEach { fileName ->
                 Log.i(LOG_KEY, "Loading profile file='$fileName'")
 
                 val prop = Properties()
