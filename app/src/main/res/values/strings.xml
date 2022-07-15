@@ -97,6 +97,7 @@
     <string name="pref.enable_view">Enable view</string>
     <string name="pref.trips_recordings_display_info">Display Trip Info</string>
     <string name="pref.graph_trips_selected">Load trip</string>
+    <string name="pref.graph_trips_selected_summary">Load trip recorded in the past</string>
     <string name="pref.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
     <string name="pref.graph_x_axis_start_moving_after_time">X-Axis start moving after</string>
     <string name="pref.graph_x_axis_minimum_shift_time">X-Axis moving time</string>
@@ -108,6 +109,7 @@
     <string name="pref.dash_swipe_to_delete">Swipe to delete metric</string>
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
+    <string name="pref.trips_recodrings">Saved trips</string>
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Init</string>
