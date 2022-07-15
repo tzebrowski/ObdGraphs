@@ -27,18 +27,18 @@
     <string name="pid.value_avg">Avg</string>
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
-    <string name="context_menu.parameters_id_to_query">Parameter IDs to query</string>
-    <string name="context_menu.parameters_id_to_display">Parameter IDs to display</string>
+    <string name="context_menu.parameters_id_to_query">Manage PIDs/Sensors</string>
+    <string name="context_menu.parameters_id_to_display">Displayed PIDs/Sensors</string>
 
-    <string name="context_menu.view_configuration">Quick settings</string>
-    <string name="context_menu.profiles">Profiles</string>
+    <string name="context_menu.view_configuration">Quick Settings</string>
+    <string name="context_menu.profiles">Vehicle Profiles</string>
 
-    <string name="pref.displayed_parameter_ids">Displayed Parameter IDs</string>
-    <string name="pref.displayed_parameter_ids_summary">Select Parameter IDs you would like to see on the screen</string>
+    <string name="pref.displayed_parameter_ids">Displayed PIDs/Sensors</string>
+    <string name="pref.displayed_parameter_ids_summary">Select PIDs/Sensors you would like to see on the screen</string>
 
-    <string name="pref.pids_generic_high">High priority Parameter IDs</string>
-    <string name="pref.pids_generic_low">Low priority Parameter IDs</string>
-    <string name="pref.pids_supported">Parameter IDs supported by ECU\n(fetched after first successful connection to the ECU)</string>
+    <string name="pref.pids_generic_high">High priority PIDs/Sensors</string>
+    <string name="pref.pids_generic_low">Low priority PIDs/Sensors</string>
+    <string name="pref.pids_supported">PIDs/Sensors supported by ECU\n(fetched after first successful connection to the ECU)</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
     <string name="pref.adapter_cache_result_enabled">Result cache enabled</string>
     <string name="pref.adapter_adaptive_enabled">Adaptive timeout enabled</string>
@@ -127,17 +127,17 @@
 
 
     <string name="pref.settings">Settings</string>
-    <string name="pref.profile.max_profiles">Max profiles</string>
-    <string name="pref.profile.update_name">Profile name</string>
-    <string name="pref.profile.category">Profiles</string>
-    <string name="pref.profile.available_list">Available profiles</string>
-    <string name="pref.profile.save_user_settings">Save current profile preferences</string>
+    <string name="pref.profile.max_profiles">Max vehicle profiles available</string>
+    <string name="pref.profile.update_name">Vehicle profile name</string>
+    <string name="pref.profile.category">Vehicle Profiles</string>
+    <string name="pref.profile.available_list">Available vehicle profiles</string>
+    <string name="pref.profile.save_user_settings">Save current vehicle profile preferences</string>
     <string name="pref.profile.save_user_settings_summary">This operation saves all user selections into the currently selected profile</string>
     <string name="pref.dash.background_color_1">Start color 1</string>
     <string name="pref.dash.background_color_2">End color 2</string>
     <string name="pref.pids.registry.resource_list">Resources list</string>
-    <string name="pref.pids.registry.resource.list_summary">PID definition resources files. Application also read it form the external storage.</string>
-    <string name="pref.pids.registry.resource.external_storage">Access PID resources files from the external storage</string>
+    <string name="pref.pids.registry.resource.list_summary">PIDs definition resources files. Application also read it form the external storage.</string>
+    <string name="pref.pids.registry.resource.external_storage">Access PIDs resources files from the external storage</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>
