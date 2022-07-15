@@ -25,6 +25,7 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.mode.getModesAndHeaders
 import org.obd.graphs.ui.preferences.updatePIDSupportedByECU
+import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import java.io.File
 
 const val WORKFLOW_RELOAD_EVENT = "data.logger.workflow.reload.event"
@@ -227,7 +228,8 @@ class DataLogger internal constructor() {
                 .build()
         ).build()
 
-    private fun workflow() = Workflow.instance().equationEngine("rhino")
+    private fun workflow() = Workflow.instance()
+        .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine("rhino").build())
         .pids(
             Pids.builder().resources(
                 preferences.resources.map {
