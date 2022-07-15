@@ -1,6 +1,7 @@
 package org.obd.graphs.ui.preferences.pid
 
 import android.content.Context
+import android.text.Html
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.bl.datalogger.DataLogger
@@ -13,7 +14,6 @@ class SupportedPidsPreferences(
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {
-
 
     init {
 
@@ -28,11 +28,11 @@ class SupportedPidsPreferences(
             pidList.firstOrNull { f -> f.pid == it }?.let { pid ->
                 entries.add(pid.description)
                 entriesValues.add(pid.description)
-                summary += "- ${pid.description}\n"
+                summary +=  "- ${pid.description}<br><br>"
             }
         }
 
-        setSummary(summary)
+        setSummary(Html.fromHtml(summary))
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
     }

@@ -9,6 +9,7 @@ import androidx.preference.MultiSelectListPreference
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
+import org.obd.graphs.ui.preferences.displayString
 import java.util.*
 
 
@@ -69,9 +70,9 @@ class PidListPreferences(
 
         getPidList()
             .filter { p -> predicate.invoke(p) }
-            .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " + pidDefinition.description }
+            .sortedBy { p -> p.displayString() .toString()}
             .forEach { p ->
-                entries.add("[" + p.mode + "] " + p.description)
+                entries.add(p.displayString())
                 entriesValues.add(p.id.toString())
             }
 

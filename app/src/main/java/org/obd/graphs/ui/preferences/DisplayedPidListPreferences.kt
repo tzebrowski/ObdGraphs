@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.metrics.pid.PidDefinition
 import java.util.*
 
 
@@ -35,9 +36,9 @@ class DisplayedPidListPreferences(
         DataLogger.instance.pidDefinitionRegistry().findAll()
             .filter { pidDefinition -> pidDefinition.priority < 4 }
             .filter { pidDefinition -> query.contains(pidDefinition.id.toString()) }
-            .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " + pidDefinition.description }
+            .sortedBy { p -> p.displayString().toString() }
             .forEach { p ->
-                entries.add("[" + p.mode + "] " + p.description)
+                entries.add(p.displayString())
                 entriesValues.add(p.id.toString())
             }
     }
@@ -49,11 +50,11 @@ class DisplayedPidListPreferences(
         val query = Prefs.getStringSet("pref.pids.generic.low")
 
         DataLogger.instance.pidDefinitionRegistry().findAll()
-            .filter { pidDefinition -> pidDefinition.priority > 4 }
-            .filter { pidDefinition -> query.contains(pidDefinition.id.toString()) }
-            .sortedBy { pidDefinition -> "[" + pidDefinition.mode + "] " + pidDefinition.description }
+            .filter { p -> p.priority > 4 }
+            .filter { p -> query.contains(p.id.toString()) }
+            .sortedBy { p -> p.displayString().toString() }
             .forEach { p ->
-                entries.add("[" + p.mode + "] " + p.description)
+                entries.add(p.displayString())
                 entriesValues.add(p.id.toString())
             }
     }
