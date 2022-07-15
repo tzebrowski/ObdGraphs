@@ -59,14 +59,14 @@
                 android:key="pref.pids.generic.high"
                 android:title="@string/pref.pids_generic_high"
                 app:priority="high"
-                app:useSimpleSummaryProvider="true" />
+                android:summary="@string/pref.pids_generic_high_summary" />
 
             <org.obd.graphs.ui.preferences.pid.PidListPreferences
                 android:dialogTitle="@string/pref.pids_generic_low"
                 android:key="pref.pids.generic.low"
                 android:title="@string/pref.pids_generic_low"
                 app:priority="low"
-                app:useSimpleSummaryProvider="true" />
+                android:summary="@string/pref.pids_generic_low_summary" />
 
             <org.obd.graphs.ui.preferences.pid.SupportedPidsPreferences
                 app:singleLineTitle="false"
@@ -316,14 +316,18 @@
                     android:summary="@string/pref.displayed_parameter_ids_summary"
                     android:title="@string/pref.displayed_parameter_ids"
                     android:key="pref.gauge.displayed_parameter_ids">
+                    <PreferenceCategory android:title="@string/pref.pids_category">
                         <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
                             app:useSimpleSummaryProvider="true"
                             android:defaultValue="@array/pref.empty_array"
                             android:dialogTitle="@string/pref.displayed_parameter_ids"
                             android:key="pref.gauge.pids.selected"
+                            android:summary="@string/pref.displayed_parameter_ids_summary"
                             android:title="@string/pref.displayed_parameter_ids" />
+                    </PreferenceCategory>
                 </PreferenceScreen>
             </PreferenceCategory>
+
             <PreferenceCategory android:title="@string/pref.theme">
                 <CheckBoxPreference
                     android:defaultValue="true"
@@ -386,14 +390,17 @@
                     android:summary="@string/pref.displayed_parameter_ids_summary"
                     android:title="@string/pref.displayed_parameter_ids"
                     android:key="pref.graph.displayed_parameter_ids">
-                    <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
-                        app:useSimpleSummaryProvider="true"
-                        android:defaultValue="@array/pref.empty_array"
-                        android:dialogTitle="@string/pref.displayed_parameter_ids"
-                        android:key="pref.graph.pids.selected"
-                        android:title="@string/pref.displayed_parameter_ids" />
+                    <PreferenceCategory android:title="@string/pref.pids_category">
+                        <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                            app:useSimpleSummaryProvider="true"
+                            android:defaultValue="@array/pref.empty_array"
+                            android:dialogTitle="@string/pref.displayed_parameter_ids"
+                            android:key="pref.graph.pids.selected"
+                            android:title="@string/pref.displayed_parameter_ids" />
+                    </PreferenceCategory>
                 </PreferenceScreen>
             </PreferenceCategory>
+
 
             <PreferenceCategory android:title="@string/pref.trips_recodrings">
                 <org.obd.graphs.ui.preferences.TripsListPreferences

@@ -27,18 +27,21 @@
     <string name="pid.value_avg">Avg</string>
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
-    <string name="context_menu.parameters_id_to_query">Manage PIDs/Sensors</string>
-    <string name="context_menu.parameters_id_to_display">Displayed PIDs/Sensors</string>
+    <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs/Sensors</string>
+    <string name="context_menu.parameters_id_to_display">Displayed OBD2 PIDs/Sensors</string>
 
     <string name="context_menu.view_configuration">Quick Settings</string>
     <string name="context_menu.profiles">Vehicle Profiles</string>
 
-    <string name="pref.displayed_parameter_ids">Displayed PIDs/Sensors</string>
-    <string name="pref.displayed_parameter_ids_summary">Select PIDs/Sensors you would like to see on the screen</string>
+    <string name="pref.displayed_parameter_ids">Displayed OBD2 PIDs/Sensors</string>
+    <string name="pref.displayed_parameter_ids_summary">Select OBD2 PIDs/Sensors you would like to see on the screen</string>
 
-    <string name="pref.pids_generic_high">High priority PIDs/Sensors</string>
-    <string name="pref.pids_generic_low">Low priority PIDs/Sensors</string>
-    <string name="pref.pids_supported">PIDs/Sensors supported by ECU\n(fetched after first successful connection to the ECU)</string>
+    <string name="pref.pids_generic_high">High priority OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_generic_high_summary">Select High priority OBD2 PIDs/Sensors you would like to query from ECU</string>
+    <string name="pref.pids_generic_low">Low priority OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_generic_low_summary">Select Low priority OBD2 PIDs/Sensors you would like to query from ECU</string>
+
+    <string name="pref.pids_supported">OBD2 PIDs/Sensors supported by ECU\n(fetched after first successful connection to the ECU)</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
     <string name="pref.adapter_cache_result_enabled">Result cache enabled</string>
     <string name="pref.adapter_adaptive_enabled">Adaptive timeout enabled</string>
@@ -72,7 +75,7 @@
 
     <string name="pref.registry.category">PID Registry</string>
 
-    <string name="pref.pids_category">Parameter IDs</string>
+    <string name="pref.pids_category">OBD2 PIDs/Sensors</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
