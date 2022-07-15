@@ -16,12 +16,12 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.9"
             android:gravity="start"
             android:text="@string/pid.mode"
             android:textColor="#FFFF00"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <TextView
             android:layout_width="0dp"
@@ -30,8 +30,8 @@
             android:text="@string/pid.metric_name"
             android:textAllCaps="false"
             android:textColor="#FFFF00"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <TextView
             android:layout_width="0dp"
@@ -40,8 +40,8 @@
 
             android:text="@string/pid.value_min"
             android:textColor="#FFFF00"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
 
         <TextView
@@ -50,8 +50,8 @@
             android:gravity="end"
             android:text="@string/pid.value_max"
             android:textColor="#FFFF00"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <TextView
             android:layout_width="0dp"
@@ -59,8 +59,8 @@
             android:gravity="end"
             android:text="@string/pid.value_avg"
             android:textColor="#FFFF00"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <TextView
             android:layout_width="0dp"
@@ -70,8 +70,8 @@
             android:paddingEnd="6dp"
             android:text="@string/pid.value"
             android:textColor="#FFFF00"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"
+            android:textStyle="normal" />
     </TableRow>
 
     <androidx.recyclerview.widget.RecyclerView
