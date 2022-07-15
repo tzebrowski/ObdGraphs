@@ -1,10 +1,11 @@
-package org.obd.graphs.ui.preferences
+package org.obd.graphs.ui.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
 import org.obd.graphs.bl.datalogger.DataLogger
-import org.obd.metrics.pid.PidDefinition
+import org.obd.graphs.ui.preferences.Prefs
+import org.obd.graphs.ui.preferences.getStringSet
 import java.util.*
 
 

@@ -317,7 +317,7 @@
                     android:title="@string/pref.displayed_parameter_ids"
                     android:key="pref.gauge.displayed_parameter_ids">
                     <PreferenceCategory android:title="@string/pref.pids_category">
-                        <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                        <org.obd.graphs.ui.preferences.pid.DisplayedPidListPreferences
                             app:useSimpleSummaryProvider="true"
                             android:defaultValue="@array/pref.empty_array"
                             android:dialogTitle="@string/pref.displayed_parameter_ids"
@@ -391,7 +391,7 @@
                     android:title="@string/pref.displayed_parameter_ids"
                     android:key="pref.graph.displayed_parameter_ids">
                     <PreferenceCategory android:title="@string/pref.pids_category">
-                        <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                        <org.obd.graphs.ui.preferences.pid.DisplayedPidListPreferences
                             app:useSimpleSummaryProvider="true"
                             android:defaultValue="@array/pref.empty_array"
                             android:dialogTitle="@string/pref.displayed_parameter_ids"
@@ -471,7 +471,7 @@
                     android:key="pref.dash.gauge.view.visible"
                     android:title="@string/pref.enable_view" />
 
-                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                <org.obd.graphs.ui.preferences.pid.DisplayedPidListPreferences
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
                     android:key="pref.dash.gauge_pids.selected"
                     android:title="@string/pref.displayed_parameter_ids" />
@@ -482,7 +482,7 @@
                     android:key="pref.dash.dash.view.visible"
                     android:title="@string/pref.enable_view" />
 
-                <org.obd.graphs.ui.preferences.DisplayedPidListPreferences
+                <org.obd.graphs.ui.preferences.pid.DisplayedPidListPreferences
                     android:dialogTitle="@string/pref.displayed_parameter_ids"
                     android:key="pref.dash.pids.selected"
                     android:title="@string/pref.displayed_parameter_ids" />

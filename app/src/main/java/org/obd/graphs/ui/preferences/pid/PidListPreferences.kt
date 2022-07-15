@@ -9,7 +9,6 @@ import androidx.preference.MultiSelectListPreference
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
-import org.obd.graphs.ui.preferences.displayString
 import java.util.*
 
 
