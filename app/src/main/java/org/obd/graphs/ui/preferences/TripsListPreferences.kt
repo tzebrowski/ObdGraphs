@@ -23,11 +23,9 @@ class TripsListPreferences(
         entries.add("")
         entriesValues.add("")
 
-        TripRecorder.instance.findAllTripsBy()?.forEach {
-             it.displayString().let { label ->
-                 entries.add(label)
-                 entriesValues.add(label)
-             }
+        TripRecorder.instance.findAllTripsBy()?.forEach { tripDesc ->
+            entries.add(tripDesc.displayString())
+            entriesValues.add(tripDesc.fileName)
         }
 
         setEntries(entries.toTypedArray())

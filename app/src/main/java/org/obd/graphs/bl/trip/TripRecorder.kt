@@ -30,7 +30,9 @@ private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
-data class TripDesc (val profileLabel:String, val startTime: String, val tripTimeSec: String){
+private val labelColor = Color.parseColor("#C22636")
+
+data class TripDesc (val fileName:String, val profileId:String, val profileLabel:String, val startTime: String, val tripTimeSec: String){
 
     fun displayString(): Spanned {
         val text = "[profile: ${profileLabel}] $startTime (${tripTimeSec}s)"
@@ -41,7 +43,7 @@ data class TripDesc (val profileLabel:String, val startTime: String, val tripTim
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             setSpan(
-                ForegroundColorSpan(Color.parseColor("#C22636")),
+                ForegroundColorSpan(labelColor),
                 text.indexOf("("),
                 text.indexOf(")") + 1,
                 0
@@ -158,18 +160,23 @@ class TripRecorder private constructor() {
 
         val result = context.cacheDir.list()?.filter { it.startsWith("trip_") || it.contains("") }
             ?.sortedByDescending { it }
-            ?.map { it ->
+            ?.map { fileName ->
 
-                val p = it.substring(0, it.length - 5).split("-")
+                val p = fileName.substring(0, fileName.length - 5).split("-")
 
                 if (p.size < 3) {
                     return null
                 }
 
-                val profile = profiles[p[1]]
-                val startTime = p[2]
-                val tripTimeSec = p[3]
-                TripDesc(profile!!, startTime, tripTimeSec)
+                val profileId = p[1]
+                val profileLabel = profiles[profileId]!!
+
+
+                TripDesc(fileName = fileName,
+                    profileId = profileId,
+                    profileLabel =  profileLabel,
+                    startTime = p[2],
+                    tripTimeSec = p[3])
             }
             ?.toMutableList()
 
@@ -179,13 +186,15 @@ class TripRecorder private constructor() {
     }
 
     fun setCurrentTrip(tripName: String) {
+        Log.i(LOGGER_KEY, "Loading '$tripName' from disk.")
+
         if (tripName.isEmpty()) {
             updateCache(System.currentTimeMillis())
         } else {
             val file = File(context.cacheDir, tripName)
             try {
                 val trip: Trip = jacksonObjectMapper().readValue(file, Trip::class.java)
-                Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the cache.")
+                Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the disk.")
                 Cache[CACHE_TRIP_PROPERTY_NAME] = trip
             } catch (e: FileNotFoundException) {
                 Log.e(LOGGER_KEY, "Did not find trip '$tripName'.", e)
