@@ -283,7 +283,7 @@ class GraphFragment : Fragment() {
                 isEnabled = true
                 form = Legend.LegendForm.LINE
                 textColor = Color.WHITE
-                textSize = 20f
+                textSize = 16f
                 verticalAlignment = Legend.LegendVerticalAlignment.TOP
                 horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
                 orientation = Legend.LegendOrientation.HORIZONTAL
