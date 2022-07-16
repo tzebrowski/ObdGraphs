@@ -8,7 +8,7 @@
         android:id="@+id/graph_view_table_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/metric_window_background"
+        android:background="@drawable/transparent_window_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

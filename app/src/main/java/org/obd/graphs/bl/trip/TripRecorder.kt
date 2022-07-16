@@ -31,46 +31,11 @@ private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
-private val labelColor = Color.parseColor("#E57373")
-
-private val profileColors = mutableMapOf<String,Int>().apply {
-    val colors = Colors().generate()
-    getProfileList().forEach { (s, _) ->
-        put(s,colors.nextInt())
-    }
-}
-
-data class TripDesc (val fileName:String, val profileId:String, val profileLabel:String, val startTime: String, val tripTimeSec: String){
-
-    fun displayString(): Spanned {
-
-        val seconds: Int = tripTimeSec.toInt() % 60
-        var hours: Int = tripTimeSec.toInt() / 60
-        val minutes = hours % 60
-        hours /= 60
-
-        val text = "[${profileLabel}] $startTime (${hours}:${minutes}:${seconds}s)"
-
-        return SpannableString(text).apply {
-            setSpan(
-                RelativeSizeSpan(0.5f), 0, text.indexOf("]") + 1,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            setSpan(
-                ForegroundColorSpan(profileColors[profileId]!!),
-                0, text.indexOf("]") + 1,0
-            )
-
-            setSpan(
-                ForegroundColorSpan(labelColor),
-                text.indexOf("("),
-                text.indexOf(")") + 1,
-                0
-            )
-        }
-    }
-}
+data class TripDesc (val fileName:String,
+                     val profileId:String,
+                     val profileLabel:String,
+                     val startTime: String,
+                     val tripTimeSec: String){}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TripEntry(
@@ -173,7 +138,7 @@ class TripRecorder private constructor() {
         }
     }
 
-    fun findAllTripsBy(query: String = ".json"): MutableList<TripDesc>? {
+    fun findAllTripsBy(query: String = ".json"): MutableCollection<TripDesc> {
         Log.i(LOGGER_KEY, "Find all trips with query: $query")
 
         val profiles = getProfileList()
@@ -185,20 +150,18 @@ class TripRecorder private constructor() {
                 val p = fileName.substring(0, fileName.length - 5).split("-")
 
                 if (p.size < 3) {
-                    return null
+
                 }
 
                 val profileId = p[1]
                 val profileLabel = profiles[profileId]!!
-
 
                 TripDesc(fileName = fileName,
                     profileId = profileId,
                     profileLabel =  profileLabel,
                     startTime = p[2],
                     tripTimeSec = p[3])
-            }
-            ?.toMutableList()
+            }?.toMutableList()!!
 
         Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: ${result?.size}")
 

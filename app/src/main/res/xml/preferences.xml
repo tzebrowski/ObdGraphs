@@ -403,11 +403,14 @@
 
 
             <PreferenceCategory android:title="@string/pref.trips_recodrings">
-                <org.obd.graphs.ui.preferences.TripsListPreferences
+                <org.obd.graphs.ui.preferences.trips.TripsListPreferences
                     android:defaultValue="@array/pref.empty_array"
                     android:key="pref.graph.trips.selected"
                     android:summary="@string/pref.graph_trips_selected_summary"
-                    android:title="@string/pref.graph_trips_selected" />
+                    android:title="@string/pref.graph_trips_selected"
+
+
+                    />
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.general_settings">

@@ -14,6 +14,8 @@ import androidx.preference.PreferenceScreen
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerPreferences
 import org.obd.graphs.ui.common.onDoubleClickListener
+import org.obd.graphs.ui.preferences.trips.TripsPreferenceDialog
+import org.obd.graphs.ui.preferences.trips.TripsListPreferences
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 
@@ -25,6 +27,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         }
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
+
+    override fun onDisplayPreferenceDialog(preference: Preference?) {
+        if (preference is TripsListPreferences) {         // rounded language dialog
+            TripsPreferenceDialog().show(parentFragmentManager, null)
+        } else {
+            super.onDisplayPreferenceDialog(preference)
+        }
+    }
 
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
         super.onNavigateToScreen(preferenceScreen)

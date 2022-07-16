@@ -41,11 +41,13 @@ import java.util.*
 
 private const val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
 
+const val LOADED_TRIP_PREFERENCE_ID = "pref.graph.trips.selected"
+
 class GraphFragment : Fragment() {
 
     private var prefsChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == "pref.graph.trips.selected") {
+            if (key == LOADED_TRIP_PREFERENCE_ID) {
                 sharedPreferences!!.getString(key, null)?.let {
                     if (!isDataCollectingProcessWorking()) {
                         context?.run {
