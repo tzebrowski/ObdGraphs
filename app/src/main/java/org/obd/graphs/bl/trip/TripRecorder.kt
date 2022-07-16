@@ -1,6 +1,12 @@
 package org.obd.graphs.bl.trip
 
 import android.content.Context
+import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -24,7 +30,25 @@ private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
-data class TripDesc (val profileLabel:String, val startTime: String, val tripTimeSec: String)
+data class TripDesc (val profileLabel:String, val startTime: String, val tripTimeSec: String){
+
+    fun displayString(): Spanned {
+        val text = "[profile: ${profileLabel}] $startTime (${tripTimeSec}s)"
+
+        return SpannableString(text).apply {
+            setSpan(
+                RelativeSizeSpan(0.5f), 0, text.indexOf("]") + 1,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#C22636")),
+                text.indexOf("("),
+                text.indexOf(")") + 1,
+                0
+            )
+        }
+    }
+}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TripEntry(
