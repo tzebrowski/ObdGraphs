@@ -32,9 +32,9 @@ class MarkerWindowViewAdapter internal constructor(
     ) {
 
         data.elementAt(position).run {
-            holder.metricName.setText(command.label, Color.GRAY, 1.0f)
-            holder.metricMode.setText(command.pid.mode, Color.parseColor("#01804F"), 0.9f)
-            holder.metricValue.setText(valueToString(), Color.parseColor("#01804F"), 1.1f)
+            holder.metricName.setText(command.label,Color.parseColor("#FFFFFF"), 1.0f)
+            holder.metricMode.setText(command.pid.mode, Color.parseColor("#FFFFFF"), 0.9f)
+            holder.metricValue.setText(valueToString(), Color.parseColor("#FFFFFF"), 1.1f)
         }
 
         holder.metricMaxValue.visibility = View.GONE
