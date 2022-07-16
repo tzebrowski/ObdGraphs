@@ -31,7 +31,7 @@ private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
-private val labelColor = Color.parseColor("#C22636")
+private val labelColor = Color.parseColor("#E57373")
 
 private val profileColors = mutableMapOf<String,Int>().apply {
     val colors = Colors().generate()
@@ -43,7 +43,13 @@ private val profileColors = mutableMapOf<String,Int>().apply {
 data class TripDesc (val fileName:String, val profileId:String, val profileLabel:String, val startTime: String, val tripTimeSec: String){
 
     fun displayString(): Spanned {
-        val text = "[${profileLabel}] $startTime (${tripTimeSec}s)"
+
+        val seconds: Int = tripTimeSec.toInt() % 60
+        var hours: Int = tripTimeSec.toInt() / 60
+        val minutes = hours % 60
+        hours /= 60
+
+        val text = "[${profileLabel}] $startTime (${hours}:${minutes}:${seconds}s)"
 
         return SpannableString(text).apply {
             setSpan(
