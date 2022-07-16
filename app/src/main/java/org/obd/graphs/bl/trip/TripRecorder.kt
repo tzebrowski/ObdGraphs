@@ -11,15 +11,16 @@ import android.util.Log
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.mikephil.charting.data.Entry
-import org.obd.metrics.api.model.ObdMetric
 import org.obd.graphs.ApplicationContext
 import org.obd.graphs.Cache
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.isEnabled
 import org.obd.graphs.ui.preferences.profile.getCurrentProfile
 import org.obd.graphs.ui.preferences.profile.getProfileList
+import org.obd.metrics.api.model.ObdMetric
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -32,16 +33,29 @@ private const val MIN_TRIP_LENGTH = 5
 
 private val labelColor = Color.parseColor("#C22636")
 
+private val profileColors = mutableMapOf<String,Int>().apply {
+    val colors = Colors().generate()
+    getProfileList().forEach { (s, _) ->
+        put(s,colors.nextInt())
+    }
+}
+
 data class TripDesc (val fileName:String, val profileId:String, val profileLabel:String, val startTime: String, val tripTimeSec: String){
 
     fun displayString(): Spanned {
-        val text = "[profile: ${profileLabel}] $startTime (${tripTimeSec}s)"
+        val text = "[${profileLabel}] $startTime (${tripTimeSec}s)"
 
         return SpannableString(text).apply {
             setSpan(
                 RelativeSizeSpan(0.5f), 0, text.indexOf("]") + 1,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
+
+            setSpan(
+                ForegroundColorSpan(profileColors[profileId]!!),
+                0, text.indexOf("]") + 1,0
+            )
+
             setSpan(
                 ForegroundColorSpan(labelColor),
                 text.indexOf("("),
@@ -185,7 +199,7 @@ class TripRecorder private constructor() {
         return result
     }
 
-    fun setCurrentTrip(tripName: String) {
+    fun loadTrip(tripName: String) {
         Log.i(LOGGER_KEY, "Loading '$tripName' from disk.")
 
         if (tripName.isEmpty()) {

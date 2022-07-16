@@ -49,7 +49,7 @@ class GraphFragment : Fragment() {
                 sharedPreferences!!.getString(key, null)?.let {
                     if (!isDataCollectingProcessWorking()) {
                         context?.run {
-                            tripRecorder.setCurrentTrip(it)
+                            tripRecorder.loadTrip(it)
                         }
                     }
                 }
