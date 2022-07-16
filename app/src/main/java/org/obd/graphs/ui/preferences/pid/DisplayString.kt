@@ -8,7 +8,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import org.obd.metrics.pid.PidDefinition
 
-
 internal fun PidDefinition.displayString(): Spanned {
     val text = "[mode: $mode] $description " +  (if (stable) "" else "(Experimental)")
     return SpannableString(text).apply {
@@ -22,7 +21,7 @@ internal fun PidDefinition.displayString(): Spanned {
            setSpan(
                 ForegroundColorSpan(Color.parseColor("#C22636")),
                 text.indexOf("("),
-                text.indexOf(")"),
+                text.indexOf(")") + 1,
                 0
             )
         }

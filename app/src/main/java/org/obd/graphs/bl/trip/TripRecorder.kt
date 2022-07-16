@@ -12,6 +12,8 @@ import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.isEnabled
+import org.obd.graphs.ui.preferences.profile.getCurrentProfile
+import org.obd.graphs.ui.preferences.profile.getProfileList
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -21,6 +23,8 @@ import java.util.*
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
+
+data class TripDesc (val profileLabel:String, val startTime: String, val tripTimeSec: String)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TripEntry(
@@ -49,7 +53,7 @@ class TripRecorder private constructor() {
     private val valueScaler = ValueScaler()
     private val context: Context by lazy { ApplicationContext.get()!! }
     private val dateFormat: SimpleDateFormat =
-        SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
+        SimpleDateFormat("dd.MM HH:mm:ss", Locale.getDefault())
 
     fun addTripEntry(metric: ObdMetric) {
         try {
@@ -110,10 +114,9 @@ class TripRecorder private constructor() {
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val startString = dateFormat.format(Date(trip.startTs))
-                val endString = dateFormat.format(endDate)
 
                 val content: String = jacksonObjectMapper().writeValueAsString(trip)
-                val fileName = "trip_$startString - $endString.json"
+                val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
                 Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
                 writeFile(context, fileName, content)
 
@@ -124,14 +127,29 @@ class TripRecorder private constructor() {
         }
     }
 
-    fun findAllTripsBy(query: String = ".json"): MutableList<String>? {
+    fun findAllTripsBy(query: String = ".json"): MutableList<TripDesc>? {
         Log.i(LOGGER_KEY, "Find all trips with query: $query")
+
+        val profiles = getProfileList()
 
         val result = context.cacheDir.list()?.filter { it.startsWith("trip_") || it.contains("") }
             ?.sortedByDescending { it }
+            ?.map { it ->
+
+                val p = it.substring(0, it.length - 5).split("-")
+
+                if (p.size < 3) {
+                    return null
+                }
+
+                val profile = profiles[p[1]]
+                val startTime = p[2]
+                val tripTimeSec = p[3]
+                TripDesc(profile!!, startTime, tripTimeSec)
+            }
             ?.toMutableList()
 
-        Log.i(LOGGER_KEY, "Find all trips with query: $query . Result size: ${result?.size}")
+        Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: ${result?.size}")
 
         return result
     }

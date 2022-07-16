@@ -24,6 +24,16 @@ internal const val DEFAULT_PROFILE_TO_LOAD = "profile_2"
 internal const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
 internal const val PROFILE_NAME_PREFIX = "pref.profile.names"
 internal const val LOG_KEY = "Profile"
+private const val DEFAULT_MAX_PROFILES = "5"
+
+fun getProfileList() =
+    (1..Prefs.getString(MAX_PROFILES_PREF, DEFAULT_MAX_PROFILES)!!.toInt())
+        .associate {
+            "profile_$it" to Prefs.getString(
+                "$PROFILE_NAME_PREFIX.profile_$it",
+                "Profile $it"
+            )
+        }
 
 fun installProfiles() {
 
@@ -74,8 +84,6 @@ fun installProfiles() {
         updateToolbar()
     }
 }
-
-
 
 internal fun getCurrentProfile(): String = Prefs.getString(PROFILE_ID_PREF)!!
 
