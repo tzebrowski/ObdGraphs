@@ -1,12 +1,6 @@
 package org.obd.graphs.bl.trip
 
 import android.content.Context
-import android.graphics.Color
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -14,7 +8,6 @@ import com.github.mikephil.charting.data.Entry
 import org.obd.graphs.ApplicationContext
 import org.obd.graphs.Cache
 import org.obd.graphs.bl.datalogger.DataLogger
-import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.isEnabled
@@ -31,11 +24,13 @@ private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
-data class TripDesc (val fileName:String,
-                     val profileId:String,
-                     val profileLabel:String,
-                     val startTime: String,
-                     val tripTimeSec: String){}
+data class TripFileDesc(
+    val fileName: String,
+    val profileId: String,
+    val profileLabel: String,
+    val startTime: String,
+    val tripTimeSec: String
+)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TripEntry(
@@ -138,34 +133,42 @@ class TripRecorder private constructor() {
         }
     }
 
-    fun findAllTripsBy(query: String = ".json"): MutableCollection<TripDesc> {
+    fun findAllTripsBy(query: String = ".json"): MutableCollection<TripFileDesc> {
         Log.i(LOGGER_KEY, "Find all trips with query: $query")
 
         val profiles = getProfileList()
+        val files = context.cacheDir.list()
+        if (files == null) {
+            Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: 0")
+            return mutableListOf()
+        } else {
+            val result = files
+                .filter { it.startsWith("trip_") || it.contains("") }
+                .filter { it.substring(0, it.length - 5).split("-").size > 3 }
+                .sortedByDescending { it }
+                .mapNotNull { fileName ->
+                    val p = fileName.substring(0, fileName.length - 5).split("-")
+                    val profileId = p[1]
+                    val profileLabel = profiles[profileId]!!
 
-        val result = context.cacheDir.list()?.filter { it.startsWith("trip_") || it.contains("") }
-            ?.sortedByDescending { it }
-            ?.map { fileName ->
+                    TripFileDesc(
+                        fileName = fileName,
+                        profileId = profileId,
+                        profileLabel = profileLabel,
+                        startTime = p[2],
+                        tripTimeSec = p[3]
+                    )
+                }.toMutableList()
+            Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: ${result.size}")
+            return result
+        }
+    }
 
-                val p = fileName.substring(0, fileName.length - 5).split("-")
-
-                if (p.size < 3) {
-
-                }
-
-                val profileId = p[1]
-                val profileLabel = profiles[profileId]!!
-
-                TripDesc(fileName = fileName,
-                    profileId = profileId,
-                    profileLabel =  profileLabel,
-                    startTime = p[2],
-                    tripTimeSec = p[3])
-            }?.toMutableList()!!
-
-        Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: ${result?.size}")
-
-        return result
+    fun deleteTrip(trip: TripFileDesc) {
+        Log.i(LOGGER_KEY, "Deleting '${trip.fileName}' from the storage.")
+        val file = File(context.cacheDir, trip.fileName)
+        file.delete()
+        Log.i(LOGGER_KEY, "Tri[ '${trip.fileName}' has been deleted from the storage.")
     }
 
     fun loadTrip(tripName: String) {

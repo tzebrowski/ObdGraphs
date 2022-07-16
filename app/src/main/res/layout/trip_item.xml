@@ -43,14 +43,25 @@
             android:textColor="#FFFF00"
             android:textSize="15sp" />
 
-        <Button
-            android:id="@+id/trip_load"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1.5"
             android:gravity="center"
 
-            android:text="Load"
-            android:textSize="10sp" />
+            android:orientation="vertical" >
+            <Button
+                android:id="@+id/trip_load"
+                android:gravity="center"
+                android:text="Load"
+                android:textSize="10sp"  android:layout_height="fill_parent" android:layout_width="fill_parent"/>
+
+            <Button
+                android:id="@+id/trip_delete"
+                android:gravity="center"
+                android:text="Delete"
+                android:textSize="10sp"  android:layout_height="fill_parent" android:layout_width="fill_parent"/>
+
+        </LinearLayout>
 
     </TableRow>
 </androidx.constraintlayout.widget.ConstraintLayout>

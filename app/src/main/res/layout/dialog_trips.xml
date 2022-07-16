@@ -20,8 +20,8 @@
             android:paddingStart="2dp"
             android:paddingEnd="0dp"
             android:text="@string/trip_vehicle_profile"
-            android:textColor="#F0FFF0"
-            android:textSize="15sp"
+            android:textColor="#FFFF00"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:gravity="start"
             android:text="@string/trip_start_date"
             android:textAllCaps="false"
-            android:textColor="#F0FFF0"
+            android:textColor="#FFFF00"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -40,8 +40,8 @@
             android:gravity="center"
             android:paddingStart="0dp"
             android:text="@string/trip_time"
-            android:textColor="#F0FFF0"
-            android:textSize="15sp"
+            android:textColor="#FFFF00"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -50,8 +50,8 @@
             android:gravity="center"
             android:paddingStart="0dp"
             android:text="Action"
-            android:textColor="#F0FFF0"
-            android:textSize="15sp"
+            android:textColor="#FFFF00"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
     </TableRow>
@@ -60,6 +60,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="26dp" />
+        android:layout_marginTop="26dp"
+        android:paddingTop="10sp" />
 </RelativeLayout>
 

@@ -7,5 +7,5 @@ import androidx.preference.DialogPreference
 class TripsListPreferences(
     context: Context?,
     attrs: AttributeSet?
-) : DialogPreference(context, attrs) {}
+) : DialogPreference(context, attrs)
 

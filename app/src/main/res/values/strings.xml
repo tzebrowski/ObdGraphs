@@ -99,8 +99,8 @@
 
     <string name="pref.enable_view">Enable view</string>
     <string name="pref.trips_recordings_display_info">Display Trip Info</string>
-    <string name="pref.graph_trips_selected">List of recorded Trips</string>
-    <string name="pref.graph_trips_selected_summary">Select trip you would like to see on the view</string>
+    <string name="pref.graph_trips_selected">Manage recorded Trips</string>
+    <string name="pref.graph_trips_selected_summary">Manage recorded Trips.\nYou are allowed to load or delete existing trip</string>
     <string name="pref.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
     <string name="pref.graph_x_axis_start_moving_after_time">X-Axis start moving after</string>
     <string name="pref.graph_x_axis_minimum_shift_time">X-Axis moving time</string>

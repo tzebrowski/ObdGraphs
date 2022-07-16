@@ -28,7 +28,7 @@ class TripsPreferenceDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.dialogpreference_trips, container, false)
+        val root = inflater.inflate(R.layout.dialog_trips, container, false)
         val adapter = TripsViewAdapter(context, TripRecorder.instance.findAllTripsBy())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
