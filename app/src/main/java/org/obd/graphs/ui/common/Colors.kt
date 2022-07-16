@@ -1,10 +1,29 @@
-package org.obd.graphs.ui.graph
+package org.obd.graphs.ui.common
 
+import android.graphics.Color
 import java.util.*
 
 class Colors {
+
     private val recycle: Stack<Int> = Stack()
     private val colors: Stack<Int> = Stack()
+    private val base: List<Int> =  mutableListOf<Int>().apply {
+        add(Color.parseColor("#F44336"))
+        add(Color.parseColor("#4A148C"))
+        add(Color.parseColor("#FF9800"))
+        add(Color.parseColor("#FFFF00"))
+        add(Color.parseColor("#42A5F5"))
+        add(Color.parseColor("#4DB6AC"))
+        add(Color.parseColor("#3F51B5"))
+        add(Color.parseColor("#C0CA33"))
+        add(Color.parseColor("#E8F5E9"))
+        add(Color.parseColor("#FF6F00"))
+        add(Color.parseColor("#757575"))
+        add(Color.parseColor("#FFCCBC"))
+        add(Color.parseColor("#00C853"))
+        add(Color.parseColor("#66BB6A"))
+    }
+
     val color: Int
         get() {
             if (colors.size == 0) {
@@ -32,8 +51,8 @@ class Colors {
 
         val colorScheme = mutableListOf<Int>()
         val randomColors = Colors()
+        colorScheme.addAll(base)
         repeat((0 until 30).count()) { colorScheme.add(randomColors.color) }
-
         return colorScheme.toIntArray().iterator()
     }
 }

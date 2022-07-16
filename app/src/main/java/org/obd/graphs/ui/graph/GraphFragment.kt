@@ -29,6 +29,7 @@ import org.obd.graphs.Cache
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripRecorder
+import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
