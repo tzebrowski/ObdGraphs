@@ -145,6 +145,9 @@
     <string name="trip_start_date">Start date</string>
     <string name="trip_vehicle_profile">Profile</string>
     <string name="context_menu.custom_action_1">Custom</string>
+    <string name="trip_action">Action</string>
+    <string name="trip_action_delete">Del</string>
+    <string name="trip_action_load">Load</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

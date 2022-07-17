@@ -72,7 +72,7 @@ android {
     }
 
     lintOptions {
-        disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor'
+        disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor', 'IconLauncherShape'
     }
 }
 

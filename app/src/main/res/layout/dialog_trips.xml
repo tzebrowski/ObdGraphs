@@ -2,10 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_height="wrap_content">
 
-    <TableLayout
+    <TableLayout android:background="@color/white"
         android:id="@+id/tablelayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -44,6 +43,7 @@
                 android:layout_weight="1.5"
                 android:gravity="start"
                 android:paddingStart="5dp"
+                android:paddingEnd="0dp"
                 android:text="@string/trip_time"
                 android:textColor="@color/gray_dark"
                 android:textSize="15sp"
@@ -55,7 +55,7 @@
                 android:gravity="center"
                 android:paddingStart="0dp"
                 android:paddingEnd="1dp"
-                android:text="Action"
+                android:text="@string/trip_action"
                 android:textColor="@color/gray_dark"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -76,9 +76,9 @@
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/tablelayout"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="46dp" />
+        android:layout_height="match_parent" />
 </RelativeLayout>
 
