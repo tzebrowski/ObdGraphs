@@ -27,7 +27,7 @@
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
                 android:text="@string/trip_vehicle_profile"
-                android:textColor="#FFFF00"
+                android:textColor="@color/gray_light"
                 android:textSize="15sp" />
 
             <TextView
@@ -37,7 +37,7 @@
                 android:gravity="start"
                 android:text="@string/trip_start_date"
                 android:textAllCaps="false"
-                android:textColor="#FFFF00"
+                android:textColor="@color/gray_light"
                 android:textSize="15sp" />
 
             <TextView
@@ -45,8 +45,9 @@
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:gravity="start"
+                android:paddingStart="5dp"
                 android:text="@string/trip_time"
-                android:textColor="#FFFF00"
+                android:textColor="@color/gray_light"
                 android:textSize="15sp" />
 
             <LinearLayout
@@ -86,6 +87,5 @@
                 android:background="#FF909090"
                 android:padding="2dip" />
         </TableRow>
-
     </TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package org.obd.graphs.ui.preferences.trips
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,7 @@ class TripsViewAdapter internal constructor(
     context: Context?,
     private var data: MutableCollection<TripFileDesc>
 ) : RecyclerView.Adapter<TripsViewAdapter.ViewHolder>() {
+
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val profileColors = mutableMapOf<String,Int>().apply {
         val colors = Colors().generate()
@@ -44,17 +46,17 @@ class TripsViewAdapter internal constructor(
     ) {
 
         data.elementAt(position).run {
-            holder.vehicleProfile.setText(profileLabel, profileColors[profileId]!!, 0.6f)
-            holder.tripStartDate.setText(startTime, Color.parseColor("#FFFFFF"), 0.9f)
+            holder.vehicleProfile.setText(profileLabel, profileColors[profileId]!!,Typeface.NORMAL, 0.6f)
+            holder.tripStartDate.setText(startTime, Color.GRAY,Typeface.NORMAL, 0.9f)
 
             holder.tripTime.let {
                 val seconds: Int = tripTimeSec.toInt() % 60
                 var hours: Int = tripTimeSec.toInt() / 60
                 val minutes = hours % 60
                 hours /= 60
-                val text = "${hours}:${minutes}:${seconds}s"
+                val text = "${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}s"
 
-                it.setText(text, Color.parseColor("#FFFFFF"), 0.9f)
+                it.setText(text, Color.GRAY,Typeface.BOLD, 0.9f)
             }
         }
     }

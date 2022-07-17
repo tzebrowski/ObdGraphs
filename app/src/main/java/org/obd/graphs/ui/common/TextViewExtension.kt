@@ -8,7 +8,7 @@ import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.widget.TextView
 
-fun TextView.setText(it: String?, color: Int, size: Float) {
+fun TextView.setText(it: String?, color: Int,typeface: Int, size: Float) {
 
     var valText: String? = it
     if (valText == null) {
@@ -17,7 +17,7 @@ fun TextView.setText(it: String?, color: Int, size: Float) {
 
     val valSpanString = SpannableString(valText)
     valSpanString.setSpan(RelativeSizeSpan(size), 0, valSpanString.length, 0) // set size
-    valSpanString.setSpan(StyleSpan(Typeface.BOLD), 0, valSpanString.length, 0)
+    valSpanString.setSpan(StyleSpan(typeface), 0, valSpanString.length, 0)
     valSpanString.setSpan(
         ForegroundColorSpan(color),
         0,
@@ -25,6 +25,10 @@ fun TextView.setText(it: String?, color: Int, size: Float) {
         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
     text = valSpanString
+}
+
+fun TextView.setText(it: String?, color: Int, size: Float) {
+    setText(it,color,Typeface.BOLD,size)
 }
 
 fun TextView.highLightText(textToHighlight: String, size: Float, color: Int) {
