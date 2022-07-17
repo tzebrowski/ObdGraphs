@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val cache: MutableMap<String, Any> = mutableMapOf()
+    internal var currentNavTabName:String = ""
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -91,7 +92,4 @@ class MainActivity : AppCompatActivity() {
             visibility = View.GONE
         }
     }
-
-    fun navController(): NavController =
-        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
 }

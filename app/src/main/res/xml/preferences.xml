@@ -401,18 +401,21 @@
                 </PreferenceScreen>
             </PreferenceCategory>
 
-
-            <PreferenceCategory android:title="@string/pref.trips_recodrings">
-                <org.obd.graphs.ui.preferences.trips.TripsListPreferences
-                    android:defaultValue="@array/pref.empty_array"
-                    android:key="pref.graph.trips.selected"
-                    android:summary="@string/pref.graph_trips_selected_summary"
-                    android:title="@string/pref.graph_trips_selected"
-
-
-                    />
+            <PreferenceCategory android:title="@string/pref.trips_recordings">
+                <PreferenceScreen
+                    android:summary="@string/pref.trips_recordings"
+                    android:title="@string/pref.trips_recordings"
+                    app:key="pref.gauge.recordings">
+                    <PreferenceCategory android:title="@string/pref.trips_recordings">
+                        <org.obd.graphs.ui.preferences.trips.TripsListPreferences
+                            android:defaultValue="@array/pref.empty_array"
+                            android:key="pref.graph.trips.selected"
+                            android:summary="@string/pref.graph_trips_selected_summary"
+                            android:title="@string/pref.graph_trips_selected"
+                            />
+                    </PreferenceCategory>
+                </PreferenceScreen>
             </PreferenceCategory>
-
             <PreferenceCategory android:title="@string/pref.general_settings">
                 <CheckBoxPreference
                     android:defaultValue="true"

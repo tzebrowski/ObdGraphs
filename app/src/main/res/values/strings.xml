@@ -98,8 +98,8 @@
     <string name="pref.toolbar_hide_connected">Hide toolbar when connected</string>
 
     <string name="pref.enable_view">Enable view</string>
-    <string name="pref.trips_recordings_display_info">Display Trip Info</string>
-    <string name="pref.graph_trips_selected">Manage recorded Trips</string>
+    <string name="pref.trips_recordings_display_info">Display trip info</string>
+    <string name="pref.graph_trips_selected">Manage recorded trips</string>
     <string name="pref.graph_trips_selected_summary">Manage recorded Trips.\nYou are allowed to load or delete existing trip</string>
     <string name="pref.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
     <string name="pref.graph_x_axis_start_moving_after_time">X-Axis start moving after</string>
@@ -112,7 +112,7 @@
     <string name="pref.dash_swipe_to_delete">Swipe to delete metric</string>
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
-    <string name="pref.trips_recodrings">Recorded Trips</string>
+    <string name="pref.trips_recordings">Recorded trips</string>
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Init</string>
@@ -144,6 +144,7 @@
     <string name="trip_time">Time</string>
     <string name="trip_start_date">Start date</string>
     <string name="trip_vehicle_profile">Profile</string>
+    <string name="context_menu.custom_action_1">Custom</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

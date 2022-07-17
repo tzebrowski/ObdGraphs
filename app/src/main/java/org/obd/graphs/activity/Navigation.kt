@@ -4,6 +4,8 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -13,6 +15,15 @@ import org.obd.graphs.ApplicationContext
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.ui.preferences.PREFERENCE_SCREEN_KEY
+
+
+fun navigateToPreferencesScreen(prefKey: String) {
+    (ApplicationContext.get() as MainActivity).navController()
+        .navigate(
+            R.id.navigation_preferences,
+            bundleOf(PREFERENCE_SCREEN_KEY to prefKey)
+        )
+}
 
 internal fun MainActivity.setupNavigationBar() {
     val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -47,6 +58,10 @@ internal fun MainActivity.setupNavigationBar() {
     }
 
     navView.selectedItemId = R.id.navigation_gauge
+
+    navController.addOnDestinationChangedListener { _, destination, _ ->
+        currentNavTabName = destination.label.toString()
+    }
 }
 
 internal fun MainActivity.setupNavigationBarButtons() {
@@ -59,11 +74,32 @@ internal fun MainActivity.setupNavigationBarButtons() {
 
     val menuButton: FloatingActionButton = findViewById(R.id.menu_btn)
     menuButton.setOnClickListener {
-        val pm = PopupMenu(this, menuButton)
-        pm.menuInflater.inflate(R.menu.context_menu, pm.menu)
+        val popupMenu = PopupMenu(this, menuButton)
+        popupMenu.menuInflater.inflate(R.menu.context_menu, popupMenu.menu)
 
-        pm.setOnMenuItemClickListener { item ->
+        when (currentNavTabName) {
+            resources.getString(R.string.navigation_title_graph) -> {
+                popupMenu.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
+                popupMenu.menu.findItem(R.id.ctx_menu_view_custom_action_1).title = resources.getString(R.string.pref_graph_trips_selected)
+            }
+            else -> {
+                popupMenu.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
+            }
+        }
+
+        popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+
+                R.id.ctx_menu_view_custom_action_1 -> {
+                    val screenId = when (getCurrentScreenId()) {
+                        R.id.navigation_graph -> "pref.gauge.recordings"
+                        else -> null
+                    }
+                    screenId?.let {
+                        navigateToPreferencesScreen(it)
+                    }
+                }
+
                 R.id.ctx_menu_pids_to_display -> {
                     val screenId = when (getCurrentScreenId()) {
                         R.id.navigation_gauge -> "pref.gauge.displayed_parameter_ids"
@@ -97,9 +133,12 @@ internal fun MainActivity.setupNavigationBarButtons() {
             }
             true
         }
-        pm.show()
+        popupMenu.show()
     }
 }
+
+private fun MainActivity.navController(): NavController =
+    (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
 
 private fun MainActivity.getCurrentScreenId(): Int {
     val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -107,12 +146,4 @@ private fun MainActivity.getCurrentScreenId(): Int {
     val currentView: MenuItem =
         bottomNavigationView.menu.findItem(selectedItemId)
     return currentView.itemId
-}
-
-fun navigateToPreferencesScreen(prefKey: String) {
-    (ApplicationContext.get() as MainActivity).navController()
-        .navigate(
-            R.id.navigation_preferences,
-            bundleOf(PREFERENCE_SCREEN_KEY to prefKey)
-        )
 }
