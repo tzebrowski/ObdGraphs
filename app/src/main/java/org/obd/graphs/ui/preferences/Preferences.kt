@@ -16,7 +16,7 @@ fun SharedPreferences.getECUSupportedPids(): MutableSet<String> {
     return getStringSet(ECU_SUPPORTED_PIDS, emptySet())!!
 }
 
-fun SharedPreferences.updateString(key:String, value: String) {
+fun SharedPreferences.updateString(key:String, value: String?) {
     edit().putString(key, value).apply()
 }
 

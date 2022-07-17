@@ -13,12 +13,17 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.TripRecorder
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
-import org.obd.graphs.ui.graph.LOADED_TRIP_PREFERENCE_ID
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.profile.getProfileList
 import org.obd.graphs.ui.preferences.updateString
+
+const val SELECTED_TRIP_PREF = "pref.graph.trips.selected"
+const val LOAD_TRIP_EVENT = "load.trip.event"
+
+private const val LOGGER_KEY = "TripsViewAdapter"
 
 class TripsViewAdapter internal constructor(
     context: Context?,
@@ -76,13 +81,15 @@ class TripsViewAdapter internal constructor(
 
             loadTrip.setOnClickListener {
                 val trip = data.elementAt(adapterPosition)
-                Log.i("TripsViewAdapter", "Trip selected to load: $trip")
-                Prefs.updateString(LOADED_TRIP_PREFERENCE_ID, trip.fileName)
+                Log.i(LOGGER_KEY, "Trip selected to load: $trip")
+                Prefs.updateString(SELECTED_TRIP_PREF, null)
+                Prefs.updateString(SELECTED_TRIP_PREF, trip.fileName)
+                sendBroadcastEvent(LOAD_TRIP_EVENT)
             }
 
             deleteTrip.setOnClickListener {
                 val trip = data.elementAt(adapterPosition)
-                Log.i("TripsViewAdapter", "Trip selected to delete: $trip")
+                Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
                 data.remove(trip)
                 notifyItemChanged(adapterPosition)
                 TripRecorder.instance.deleteTrip(trip)
