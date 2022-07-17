@@ -143,7 +143,7 @@
     <string name="pref.pids.registry.resource.external_storage">Access PIDs resources files from the external storage</string>
     <string name="trip_time">Trip time</string>
     <string name="trip_start_date">Start date</string>
-    <string name="trip_vehicle_profile">Vehicle Profile</string>
+    <string name="trip_vehicle_profile">Profile</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

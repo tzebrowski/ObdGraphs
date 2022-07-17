@@ -4,64 +4,89 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TableRow
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:paddingRight="8dp"
+    <TableLayout
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/tablelayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="2dip">
 
-        <TextView
-            android:id="@+id/vehicle_profile"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="0dp"
-            android:text="@string/trip_vehicle_profile"
-            android:textColor="#FFFF00"
-            android:textSize="15sp" />
+        <TableRow
 
-        <TextView
-            android:id="@+id/trip_start_date"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="start"
-            android:text="@string/trip_start_date"
-            android:textAllCaps="false"
-            android:textColor="#FFFF00"
-            android:textSize="15sp" />
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingRight="8dp">
 
-        <TextView
-            android:id="@+id/trip_time"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="center"
-            android:text="@string/trip_time"
-            android:textColor="#FFFF00"
-            android:textSize="15sp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="center"
-
-            android:orientation="vertical" >
-            <Button
-                android:id="@+id/trip_load"
+            <TextView
+                android:id="@+id/vehicle_profile"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:gravity="center"
-                android:text="Load"
-                android:textSize="10sp"  android:layout_height="fill_parent" android:layout_width="fill_parent"/>
+                android:paddingStart="10dp"
+                android:paddingEnd="0dp"
+                android:text="@string/trip_vehicle_profile"
+                android:textColor="#FFFF00"
+                android:textSize="15sp" />
 
-            <Button
-                android:id="@+id/trip_delete"
+            <TextView
+                android:id="@+id/trip_start_date"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:gravity="center"
-                android:text="Delete"
-                android:textSize="10sp"  android:layout_height="fill_parent" android:layout_width="fill_parent"/>
+                android:text="@string/trip_start_date"
+                android:textAllCaps="false"
+                android:textColor="#FFFF00"
+                android:textSize="15sp" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/trip_time"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:text="@string/trip_time"
+                android:textColor="#FFFF00"
+                android:textSize="15sp" />
 
-    </TableRow>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1.3"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/trip_load"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="Load"
+                    android:textSize="8sp" />
+
+                <Button
+                    android:backgroundTint="@color/purple_200"
+                    android:id="@+id/trip_delete"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="Delete"
+                    android:textSize="8sp" />
+
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+             <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_weight="1"
+                android:background="#FF909090"
+                android:padding="2dip" />
+        </TableRow>
+
+    </TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

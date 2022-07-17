@@ -5,62 +5,80 @@
     android:layout_height="wrap_content"
     android:background="@drawable/transparent_window_background">
 
-    <TableRow
+    <TableLayout
+        android:id="@+id/tablelayout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="2dip"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:paddingStart="2dp"
-            android:paddingEnd="0dp"
-            android:text="@string/trip_vehicle_profile"
-            android:textColor="#FFFF00"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="start"
-            android:text="@string/trip_start_date"
-            android:textAllCaps="false"
-            android:textColor="#FFFF00"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:paddingStart="2dp"
+                android:paddingEnd="0dp"
+                android:text="@string/trip_vehicle_profile"
+                android:textColor="#FFFF00"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="center"
-            android:paddingStart="0dp"
-            android:text="@string/trip_time"
-            android:textColor="#FFFF00"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="start"
+                android:text="@string/trip_start_date"
+                android:textAllCaps="false"
+                android:textColor="#FFFF00"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="center"
-            android:paddingStart="0dp"
-            android:text="Action"
-            android:textColor="#FFFF00"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:paddingStart="0dp"
+                android:text="@string/trip_time"
+                android:textColor="#FFFF00"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-    </TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:paddingStart="0dp"
+                android:text="Action"
+                android:textColor="#FFFF00"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+         q    <View
+                android:layout_width="match_parent"
+                android:layout_height="2dip"
+                android:layout_weight="2"
+                android:background="#FF909090"
+                android:padding="2dip" />
+        </TableRow>
+
+    </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="26dp"
-        android:paddingTop="10sp" />
+        android:layout_marginTop="46dp" />
 </RelativeLayout>
 
