@@ -141,7 +141,7 @@
     <string name="pref.pids.registry.resource_list">Resources list</string>
     <string name="pref.pids.registry.resource.list_summary">PIDs definition resources files. Application also read it form the external storage.</string>
     <string name="pref.pids.registry.resource.external_storage">Access PIDs resources files from the external storage</string>
-    <string name="trip_time">Trip time</string>
+    <string name="trip_time">Time</string>
     <string name="trip_start_date">Start date</string>
     <string name="trip_vehicle_profile">Profile</string>
 
