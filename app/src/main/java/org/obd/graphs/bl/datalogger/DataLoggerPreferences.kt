@@ -9,8 +9,6 @@ import org.obd.graphs.ui.preferences.isEnabled
 
 const val GENERIC_MODE = "Generic mode"
 
-
-
 data class DataLoggerPreferences(
     var pids: MutableSet<Long>,
     var connectionType: String,
@@ -101,7 +99,7 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
             "pref.pids.registry.list" -> dataLoggerPreferences.resources =
                 resources()
         }
-        Log.i(LOGGER_KEY, "Update data logger preferences $dataLoggerPreferences")
+        Log.d(LOGGER_KEY, "Update data logger preferences $dataLoggerPreferences")
     }
 }
 

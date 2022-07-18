@@ -5,20 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.AttributeSet
-import android.util.Log
 import androidx.preference.MultiSelectListPreference
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import java.util.*
 
-
 class PidListPreferences(
     context: Context?,
     attrs: AttributeSet?
-) :
-    MultiSelectListPreference(context, attrs) {
-
+): MultiSelectListPreference(context, attrs) {
 
     private val priority = getPriority(attrs)
     private val broadcastReceiver = object : BroadcastReceiver() {
