@@ -14,13 +14,22 @@ jobs:
           echo "${TMP_KEYSTORE_FILE_PATH}"
       - name: Checkout the code
         uses: actions/checkout@v2
-      - name: Build the app
+
+      - name: Run Lint
+        run: ./gradlew lint
+        uses: yutailang0119/action-android-lint@v3
+        with:
+          report-path: build/reports/*.xml
+          continue-on-error: false
+
+      - name: Build the bundle
         env:
           ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
         run: sh ./gradlew app:bundleRelease
+
       - name: Upload artifcats
         uses: actions/upload-artifact@v3
         with:
