@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Decode Keystore
+      - name: Decode keystore
         env:
           ENCODED_STRING: ${{ secrets.SIGNING_KEYSTORE }}
         run: |
@@ -25,7 +25,7 @@ jobs:
           ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
         run: sh ./gradlew lint
 
-      - name: Generate Annotation from the Lint report
+      - name: Generate annotation from the Lint report
         uses: yutailang0119/action-android-lint@v3
         with:
           report-path: build/reports/*.xml
