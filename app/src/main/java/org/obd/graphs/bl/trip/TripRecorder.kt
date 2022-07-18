@@ -168,7 +168,7 @@ class TripRecorder private constructor() {
         Log.i(LOGGER_KEY, "Deleting '${trip.fileName}' from the storage.")
         val file = File(context.cacheDir, trip.fileName)
         file.delete()
-        Log.i(LOGGER_KEY, "Tri[ '${trip.fileName}' has been deleted from the storage.")
+        Log.i(LOGGER_KEY, "Trip '${trip.fileName}' has been deleted from the storage.")
     }
 
     fun loadTrip(tripName: String) {
@@ -180,7 +180,7 @@ class TripRecorder private constructor() {
             val file = File(context.cacheDir, tripName)
             try {
                 val trip: Trip = jacksonObjectMapper().readValue(file, Trip::class.java)
-                Log.i(LOGGER_KEY, "Trip '$tripName' was loaded from the disk.")
+                Log.i(LOGGER_KEY, "Trip '${file.absolutePath}' was loaded from the disk.")
                 Cache[CACHE_TRIP_PROPERTY_NAME] = trip
             } catch (e: FileNotFoundException) {
                 Log.e(LOGGER_KEY, "Did not find trip '$tripName'.", e)
