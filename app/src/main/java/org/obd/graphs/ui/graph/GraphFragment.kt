@@ -43,6 +43,8 @@ private const val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting
 
 const val LOADED_TRIP_PREFERENCE_ID = "pref.graph.trips.selected"
 
+private const val LOGGER_TAG = "GraphFragment"
+
 class GraphFragment : Fragment() {
 
     private var prefsChangeListener =
@@ -183,7 +185,7 @@ class GraphFragment : Fragment() {
         chart = buildChart(root).apply {
 
             val pidRegistry: PidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
-            val metrics =  preferences.selectedPids.mapNotNull {
+            val metrics = preferences.selectedPids.mapNotNull {
                 pidRegistry.findBy(it)
             }.toMutableList()
 
@@ -201,22 +203,29 @@ class GraphFragment : Fragment() {
             val registry = DataLogger.instance.pidDefinitionRegistry()
             tripStartTs = trip.startTs
 
+
             tripViewAdapter.mData.addAll(trip.entries.values)
             tripViewAdapter.notifyDataSetChanged()
 
             trip.entries.let { cache ->
                 chart.run {
                     cache.forEach { (id, entry) ->
-                        val pid = registry.findBy(id)
-                        data.getDataSetByLabel(pid.description, true)?.let { lineData ->
-                            entry.entries.forEach {
-                                lineData.addEntry(it)
+                        registry.findBy(id)?.let { pid ->
+                            data.getDataSetByLabel(pid.description, true)?.let { lineData ->
+                                lineData.clear()
+                                entry.entries.sortBy { entry -> entry.x }
+                                entry.entries.forEach {
+                                    Log.d(LOGGER_TAG, " ${pid.description} =  ${it.x} =  ${it.y}")
+                                    lineData.addEntry(it)
+                                }
+
+                                data.notifyDataChanged()
                             }
-                            data.notifyDataChanged()
                         }
                     }
 
-                    Log.i(LOGGER_KEY, "Set scale minima of XAxis to 7f")
+
+                    Log.i(LOGGER_TAG, "Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
                     setScaleMinima(7f, 0.1f)
                     moveViewToX(xAxis.axisMaximum - 5000f)
@@ -229,7 +238,7 @@ class GraphFragment : Fragment() {
 
     private fun LineChart.debug(label: String) {
         Log.i(
-            "LineChart",
+            LOGGER_TAG,
             "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
         )
     }
