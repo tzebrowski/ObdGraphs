@@ -1,4 +1,4 @@
-package org.openobd2.core.logger
+package org.obd.graphs.logger
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

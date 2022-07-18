@@ -1,4 +1,4 @@
-package org.openobd2.core.logger
+package org.obd.graphs
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
