@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.AttributeSet
+import android.util.Log
 import androidx.preference.MultiSelectListPreference
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
@@ -49,13 +50,11 @@ class PidListPreferences(
 
     private fun initialize() {
         setDefaultValue(hashSetOf<String>())
-
         when (priority) {
             "low" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority > 4 }
             "high" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority < 4 }
             else -> Pair(mutableListOf(), mutableListOf())
         }.let {
-            values = emptySet()
             entries = it.first.toTypedArray()
             entryValues = it.second.toTypedArray()
         }
