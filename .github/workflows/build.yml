@@ -16,10 +16,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run Lint
-        run: ./gradlew lint
+        run: sh ./gradlew lint
 
       - name: Generate Annotation from the Lint report
-      - uses: yutailang0119/action-android-lint@v3
+        uses: yutailang0119/action-android-lint@v3
         with:
           report-path: build/reports/*.xml
           continue-on-error: false
