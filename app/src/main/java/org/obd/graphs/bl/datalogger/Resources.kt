@@ -5,6 +5,15 @@ import android.util.Log
 import org.obd.graphs.ui.preferences.Prefs
 import java.io.File
 
+
+val defaultPidFiles = mapOf(
+    "alfa.json" to "Giulietta QV",
+    "giulia_2.0_gme.json" to "Giulia 2.0 GME",
+    "mode01.json" to "Mode 01",
+    "mode01_3.json" to "Mode 01.3",
+    "extra.json" to "Extra",
+)
+
 private const val STORAGE_FILE_CODING_KEY = "storage:"
 private const val LOG_TAG = "PidResourceListPreferences"
 const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
