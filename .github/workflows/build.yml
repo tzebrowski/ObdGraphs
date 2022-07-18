@@ -17,7 +17,9 @@ jobs:
 
       - name: Run Lint
         run: ./gradlew lint
-        uses: yutailang0119/action-android-lint@v3
+
+      - name: Generate Annotation from the Lint report
+      - uses: yutailang0119/action-android-lint@v3
         with:
           report-path: build/reports/*.xml
           continue-on-error: false
