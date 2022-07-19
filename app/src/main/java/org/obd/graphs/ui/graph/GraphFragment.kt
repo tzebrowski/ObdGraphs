@@ -27,7 +27,9 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.Cache
 import org.obd.graphs.R
+import org.obd.graphs.activity.DATA_LOGGER_PROCESS_IS_RUNNING
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.trip.TripEntry
 import org.obd.graphs.bl.trip.TripRecorder
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
@@ -39,7 +41,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-private const val METRIC_COLLECTING_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
 
 const val LOADED_TRIP_PREFERENCE_ID = "pref.graph.trips.selected"
 
@@ -64,11 +65,11 @@ class GraphFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = true
+                    Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = true
                     initializeChart(root)
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] = false
+                    Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
                 }
             }
         }
@@ -203,7 +204,6 @@ class GraphFragment : Fragment() {
             val registry = DataLogger.instance.pidDefinitionRegistry()
             tripStartTs = trip.startTs
 
-
             tripViewAdapter.mData.addAll(trip.entries.values)
             tripViewAdapter.notifyDataSetChanged()
 
@@ -213,9 +213,8 @@ class GraphFragment : Fragment() {
                         registry.findBy(id)?.let { pid ->
                             data.getDataSetByLabel(pid.description, true)?.let { lineData ->
                                 lineData.clear()
-                                entry.entries.sortBy { entry -> entry.x }
-                                entry.entries.forEach {
-                                    Log.d(LOGGER_TAG, " ${pid.description} =  ${it.x} =  ${it.y}")
+
+                                getEntries(entry).forEach {
                                     lineData.addEntry(it)
                                 }
 
@@ -223,7 +222,6 @@ class GraphFragment : Fragment() {
                             }
                         }
                     }
-
 
                     Log.i(LOGGER_TAG, "Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
@@ -236,6 +234,15 @@ class GraphFragment : Fragment() {
         }
     }
 
+    private fun getEntries(entry: TripEntry): MutableList<Entry> = if (isDataCollectingProcessWorking()) {
+            mutableListOf<Entry>().apply {
+                addAll(entry.entries)
+                sortBy { entry -> entry.x }
+            }
+        } else {
+            entry.entries
+        }
+
     private fun LineChart.debug(label: String) {
         Log.i(
             LOGGER_TAG,
@@ -244,7 +251,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun isDataCollectingProcessWorking() =
-        (Cache[METRIC_COLLECTING_PROCESS_IS_RUNNING] as Boolean?) ?: false
+        (Cache[DATA_LOGGER_PROCESS_IS_RUNNING] as Boolean?) ?: false
 
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {

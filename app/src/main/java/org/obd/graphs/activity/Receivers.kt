@@ -13,10 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.obd.graphs.PowerBroadcastReceiver
-import org.obd.graphs.R
-import org.obd.graphs.SCREEN_OFF_EVENT
-import org.obd.graphs.SCREEN_ON_EVENT
+import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripRecorderBroadcastReceiver
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
@@ -34,6 +31,8 @@ const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
 const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
 const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
+const val DATA_LOGGER_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
+
 
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
@@ -92,6 +91,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 DataLoggerService.stop()
             }
             btn.refreshDrawableState()
+            Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = true
         }
 
         DATA_LOGGER_NO_NETWORK_EVENT -> {
@@ -117,6 +117,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         DATA_LOGGER_STOPPED_EVENT -> {
             toast(R.string.main_activity_toast_connection_stopped)
             handleStop()
+            Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
         }
 
         DATA_LOGGER_ERROR_EVENT -> {
