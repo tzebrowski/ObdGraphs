@@ -3,6 +3,15 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.mikephil.charting.data.Entry
 import org.obd.graphs.ApplicationContext
@@ -17,12 +26,32 @@ import org.obd.metrics.api.model.ObdMetric
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
+
+class BytesToStringSerializer : StdSerializer<ByteArray> {
+    constructor() : super(ByteArray::class.java)
+
+    @Throws(IOException::class)
+    override fun serialize(value: ByteArray, gen: JsonGenerator, provider: SerializerProvider) {
+        gen.writeString( String(value, StandardCharsets.UTF_8))
+    }
+}
+
+class StringToByteArraySerializer : StdDeserializer<ByteArray> {
+    constructor() : super(String::class.java)
+
+    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ByteArray {
+        return "".toByteArray()
+    }
+}
 
 data class TripFileDesc(
     val fileName: String,
@@ -32,10 +61,17 @@ data class TripFileDesc(
     val tripTimeSec: String
 )
 
+data class TripData (
+    val entry: Entry,
+    val ts: Long,
+    @JsonSerialize(using = BytesToStringSerializer::class)
+    @JsonDeserialize(using = StringToByteArraySerializer::class)
+    val rawAnswer: ByteArray)
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TripEntry(
     val id: Long,
-    val entries: MutableList<Entry>,
+    val entries: MutableList<TripData>,
     var min: Number = 0,
     var max: Number = 0,
     var mean: Number = 0
@@ -71,9 +107,9 @@ class TripRecorder private constructor() {
 
                 if (trip.entries.containsKey(key)) {
                     val tripEntry = trip.entries[key]!!
-                    tripEntry.entries.add(newRecord)
+                    tripEntry.entries.add(TripData(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes))
                 } else {
-                    trip.entries[key] = TripEntry(id = key, entries = mutableListOf(newRecord))
+                    trip.entries[key] = TripEntry(id = key, entries = mutableListOf(TripData(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes)))
                 }
             }
         } catch (e: Throwable) {
@@ -121,7 +157,12 @@ class TripRecorder private constructor() {
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val startString = dateFormat.format(Date(trip.startTs))
 
-                val content: String = jacksonObjectMapper().writeValueAsString(trip)
+                val jackson = jacksonObjectMapper()
+                val module = SimpleModule()
+                module.addSerializer(ByteArray::class.java, BytesToStringSerializer())
+                jackson.registerModule(module)
+
+                val content: String = jackson.writeValueAsString(trip)
                 val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
                 Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
                 writeFile(context, fileName, content)
@@ -137,7 +178,7 @@ class TripRecorder private constructor() {
         Log.i(LOGGER_KEY, "Find all trips with query: $query")
 
         val profiles = getProfileList()
-        val files = context.cacheDir.list()
+        val files = File(getTripsDirectory(context)).list()
         if (files == null) {
             Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: 0")
             return mutableListOf()
@@ -166,7 +207,7 @@ class TripRecorder private constructor() {
 
     fun deleteTrip(trip: TripFileDesc) {
         Log.i(LOGGER_KEY, "Deleting '${trip.fileName}' from the storage.")
-        val file = File(context.cacheDir, trip.fileName)
+        val file = File(getTripsDirectory(context), trip.fileName)
         file.delete()
         Log.i(LOGGER_KEY, "Trip '${trip.fileName}' has been deleted from the storage.")
     }
@@ -177,9 +218,16 @@ class TripRecorder private constructor() {
         if (tripName.isEmpty()) {
             updateCache(System.currentTimeMillis())
         } else {
-            val file = File(context.cacheDir, tripName)
+            val file = File(getTripsDirectory(context), tripName)
             try {
-                val trip: Trip = jacksonObjectMapper().readValue(file, Trip::class.java)
+
+                val jackson = jacksonObjectMapper()
+                val module = SimpleModule()
+                module.addSerializer(ByteArray::class.java, BytesToStringSerializer())
+                module.addDeserializer(ByteArray::class.java, StringToByteArraySerializer())
+                jackson.registerModule(module)
+
+                val trip: Trip = jackson.readValue(file, Trip::class.java)
                 Log.i(LOGGER_KEY, "Trip '${file.absolutePath}' was loaded from the disk.")
                 Cache[CACHE_TRIP_PROPERTY_NAME] = trip
             } catch (e: FileNotFoundException) {
@@ -196,7 +244,9 @@ class TripRecorder private constructor() {
     ) {
         var fd: FileOutputStream? = null
         try {
-            val file = File(context.cacheDir, fileName)
+
+            val directory = getTripsDirectory(context)
+            val file = File(directory, fileName)
             fd = FileOutputStream(file).apply {
                 write(content.toByteArray())
             }
@@ -208,6 +258,9 @@ class TripRecorder private constructor() {
             }
         }
     }
+
+    private fun getTripsDirectory(context: Context) =
+        "${context.getExternalFilesDir("trips")?.absolutePath}"
 
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs, entries = mutableMapOf())

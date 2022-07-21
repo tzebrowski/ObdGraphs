@@ -234,14 +234,11 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private fun getEntries(entry: TripEntry): MutableList<Entry> = if (isDataCollectingProcessWorking()) {
+    private fun getEntries(entry: TripEntry): MutableList<Entry> =
             mutableListOf<Entry>().apply {
-                addAll(entry.entries)
+                entry.entries.forEach { add(it.entry) }
                 sortBy { entry -> entry.x }
             }
-        } else {
-            entry.entries
-        }
 
     private fun LineChart.debug(label: String) {
         Log.i(
@@ -267,6 +264,7 @@ class GraphFragment : Fragment() {
                 val ts = (System.currentTimeMillis() - tripStartTs).toFloat()
                 val entry =
                     Entry(ts, valueScaler.scaleToNewRange(obdMetric), obdMetric.command.pid.id)
+
                 it.addEntry(entry)
                 data.notifyDataChanged()
                 notifyDataSetChanged()
