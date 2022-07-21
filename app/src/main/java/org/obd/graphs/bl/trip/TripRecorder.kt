@@ -24,6 +24,7 @@ import org.obd.graphs.ui.preferences.isEnabled
 import org.obd.graphs.ui.preferences.profile.getCurrentProfile
 import org.obd.graphs.ui.preferences.profile.getProfileList
 import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.raw.RawMessage
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -36,22 +37,22 @@ import java.util.*
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
-private val EMPTY = byteArrayOf()
+private val EMPTY = RawMessage.wrap(byteArrayOf())
 
-private class BytesToStringSerializer : StdSerializer<ByteArray> {
-    constructor() : super(ByteArray::class.java)
+private class RawMessageToStringSerializer : StdSerializer<RawMessage> {
+    constructor() : super(RawMessage::class.java)
 
     @Throws(IOException::class)
-    override fun serialize(value: ByteArray, gen: JsonGenerator, provider: SerializerProvider) {
-        gen.writeString( String(value, StandardCharsets.UTF_8))
+    override fun serialize(value: RawMessage, gen: JsonGenerator, provider: SerializerProvider) {
+        gen.writeString( String(value.bytes, StandardCharsets.UTF_8))
     }
 }
 
 
-private class StringToByteArraySerializer : StdDeserializer<ByteArray> {
+private class StringToRawMessageDeserializer : StdDeserializer<RawMessage> {
     constructor() : super(String::class.java)
 
-    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ByteArray {
+    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): RawMessage {
         return EMPTY
     }
 }
@@ -67,9 +68,9 @@ data class TripFileDesc(
 data class Metric (
     val entry: Entry,
     val ts: Long,
-    @JsonSerialize(using = BytesToStringSerializer::class)
-    @JsonDeserialize(using = StringToByteArraySerializer::class)
-    val rawAnswer: ByteArray)
+    @JsonSerialize(using = RawMessageToStringSerializer::class)
+    @JsonDeserialize(using = StringToRawMessageDeserializer::class)
+    val rawAnswer: RawMessage)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SensorData(
@@ -104,8 +105,8 @@ class TripRecorder private constructor() {
     private val jackson:ObjectMapper  by lazy  {
         jacksonObjectMapper().apply {
             val module = SimpleModule()
-            module.addSerializer(ByteArray::class.java, BytesToStringSerializer())
-            module.addDeserializer(ByteArray::class.java, StringToByteArraySerializer())
+            module.addSerializer(RawMessage::class.java, RawMessageToStringSerializer())
+            module.addDeserializer(RawMessage::class.java, StringToRawMessageDeserializer())
             registerModule(module)
         }
     }
@@ -120,9 +121,9 @@ class TripRecorder private constructor() {
 
                 if (trip.entries.containsKey(key)) {
                     val tripEntry = trip.entries[key]!!
-                    tripEntry.metrics.add(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes))
+                    tripEntry.metrics.add(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw))
                 } else {
-                    trip.entries[key] = SensorData(id = key, metrics = mutableListOf(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes)))
+                    trip.entries[key] = SensorData(id = key, metrics = mutableListOf(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw)))
                 }
             }
         } catch (e: Throwable) {
