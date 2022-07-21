@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
-import org.obd.graphs.bl.trip.TripEntry
+import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.setText
 
@@ -18,10 +18,10 @@ private const val ITEM_COLOR = "#01804F"
 
 class TripViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<TripEntry>
+    data: MutableCollection<SensorData>
 ) :
     RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
-    var mData: MutableCollection<TripEntry> = data
+    var mData: MutableCollection<SensorData> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(

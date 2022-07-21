@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -35,8 +36,9 @@ import java.util.*
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
+private val EMPTY = byteArrayOf()
 
-class BytesToStringSerializer : StdSerializer<ByteArray> {
+private class BytesToStringSerializer : StdSerializer<ByteArray> {
     constructor() : super(ByteArray::class.java)
 
     @Throws(IOException::class)
@@ -45,11 +47,12 @@ class BytesToStringSerializer : StdSerializer<ByteArray> {
     }
 }
 
-class StringToByteArraySerializer : StdDeserializer<ByteArray> {
+
+private class StringToByteArraySerializer : StdDeserializer<ByteArray> {
     constructor() : super(String::class.java)
 
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ByteArray {
-        return "".toByteArray()
+        return EMPTY
     }
 }
 
@@ -61,7 +64,7 @@ data class TripFileDesc(
     val tripTimeSec: String
 )
 
-data class TripData (
+data class Metric (
     val entry: Entry,
     val ts: Long,
     @JsonSerialize(using = BytesToStringSerializer::class)
@@ -69,16 +72,16 @@ data class TripData (
     val rawAnswer: ByteArray)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class TripEntry(
+data class SensorData(
     val id: Long,
-    val entries: MutableList<TripData>,
+    val metrics: MutableList<Metric>,
     var min: Number = 0,
     var max: Number = 0,
     var mean: Number = 0
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val startTs: Long, val entries: MutableMap<Long, TripEntry>)
+data class Trip(val startTs: Long, val entries: MutableMap<Long, SensorData>)
 
 class TripRecorder private constructor() {
 
@@ -97,6 +100,16 @@ class TripRecorder private constructor() {
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("dd.MM HH:mm:ss", Locale.getDefault())
 
+
+    private val jackson:ObjectMapper  by lazy  {
+        jacksonObjectMapper().apply {
+            val module = SimpleModule()
+            module.addSerializer(ByteArray::class.java, BytesToStringSerializer())
+            module.addDeserializer(ByteArray::class.java, StringToByteArraySerializer())
+            registerModule(module)
+        }
+    }
+
     fun addTripEntry(metric: ObdMetric) {
         try {
             getTripFromCache()?.let { trip ->
@@ -107,9 +120,9 @@ class TripRecorder private constructor() {
 
                 if (trip.entries.containsKey(key)) {
                     val tripEntry = trip.entries[key]!!
-                    tripEntry.entries.add(TripData(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes))
+                    tripEntry.metrics.add(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes))
                 } else {
-                    trip.entries[key] = TripEntry(id = key, entries = mutableListOf(TripData(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes)))
+                    trip.entries[key] = SensorData(id = key, metrics = mutableListOf(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw.bytes)))
                 }
             }
         } catch (e: Throwable) {
@@ -156,11 +169,6 @@ class TripRecorder private constructor() {
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val startString = dateFormat.format(Date(trip.startTs))
-
-                val jackson = jacksonObjectMapper()
-                val module = SimpleModule()
-                module.addSerializer(ByteArray::class.java, BytesToStringSerializer())
-                jackson.registerModule(module)
 
                 val content: String = jackson.writeValueAsString(trip)
                 val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
@@ -221,12 +229,6 @@ class TripRecorder private constructor() {
             val file = File(getTripsDirectory(context), tripName)
             try {
 
-                val jackson = jacksonObjectMapper()
-                val module = SimpleModule()
-                module.addSerializer(ByteArray::class.java, BytesToStringSerializer())
-                module.addDeserializer(ByteArray::class.java, StringToByteArraySerializer())
-                jackson.registerModule(module)
-
                 val trip: Trip = jackson.readValue(file, Trip::class.java)
                 Log.i(LOGGER_KEY, "Trip '${file.absolutePath}' was loaded from the disk.")
                 Cache[CACHE_TRIP_PROPERTY_NAME] = trip
@@ -236,6 +238,8 @@ class TripRecorder private constructor() {
             }
         }
     }
+
+
 
     private fun writeFile(
         context: Context,

@@ -29,7 +29,7 @@ import org.obd.graphs.Cache
 import org.obd.graphs.R
 import org.obd.graphs.activity.DATA_LOGGER_PROCESS_IS_RUNNING
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.trip.TripEntry
+import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.TripRecorder
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
@@ -234,9 +234,9 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private fun getEntries(entry: TripEntry): MutableList<Entry> =
+    private fun getEntries(entry: SensorData): MutableList<Entry> =
             mutableListOf<Entry>().apply {
-                entry.entries.forEach { add(it.entry) }
+                entry.metrics.forEach { add(it.entry) }
                 sortBy { entry -> entry.x }
             }
 
