@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.defaultPidFiles
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.highLightText
@@ -46,7 +47,7 @@ class GaugeAdapter(
         val minValue: TextView = itemView.findViewById(R.id.min_value)
         val maxValue: TextView = itemView.findViewById(R.id.max_value)
         var commandRate: TextView? = itemView.findViewById(R.id.command_rate)
-        var pidMode: TextView? = itemView.findViewById(R.id.pid_mode)
+        var resourceFile: TextView? = itemView.findViewById(R.id.resource_file)
         var gauge: Gauge? = itemView.findViewById(R.id.gauge_view)
         var init: Boolean = false
 
@@ -105,13 +106,15 @@ class GaugeAdapter(
         val metric = data.elementAt(position)
         if (!holder.init) {
             holder.label.text = metric.command.pid.description
-            holder.pidMode?.run {
-                val txt = "mode ${metric.command.pid.mode}"
-                text = txt
+            holder.resourceFile?.run {
+                val resourceFile = defaultPidFiles[metric.command.pid.resourceFile]
+                    ?: metric.command.pid.resourceFile
+                text = resourceFile
                 highLightText(
-                    "mode", 0.4f,
-                    Color.parseColor(LABEL_COLOR)
+                    resourceFile, 0.55f,
+                    Color.WHITE
                 )
+
             }
             holder.init = true
         }
