@@ -265,6 +265,5 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         if (!isTablet()) {
             return this * 0.85f
         }
-    }
-            )
+    })
 }

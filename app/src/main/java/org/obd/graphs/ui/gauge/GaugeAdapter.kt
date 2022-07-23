@@ -7,10 +7,10 @@ import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
@@ -69,8 +69,7 @@ class GaugeAdapter(
         }
 
         private fun updateDrawable() {
-            gauge?.background?.let {
-                val drawable = it as GradientDrawable
+            itemView.findViewById<ImageView>(R.id.gauge_background).run {
                 val filter: ColorFilter =
                     PorterDuffColorFilter(
                         Prefs.getInt("pref.gauge_background_color", -1),

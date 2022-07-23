@@ -5,11 +5,16 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="2sp"
-
     tools:context="org.obd.graphs.ui.gauge.GaugeFragment">
 
+    <ImageView
+        android:id="@+id/gauge_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/gauge_item_background" />
+
     <org.obd.graphs.ui.gauge.Gauge
-        android:background="@drawable/gauge_item_background"
         android:id="@+id/gauge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
