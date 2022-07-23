@@ -48,7 +48,6 @@ private class RawMessageToStringSerializer : StdSerializer<RawMessage> {
     }
 }
 
-
 private class StringToRawMessageDeserializer : StdDeserializer<RawMessage> {
     constructor() : super(String::class.java)
 

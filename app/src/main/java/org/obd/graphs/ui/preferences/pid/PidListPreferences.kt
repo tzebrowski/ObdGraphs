@@ -27,12 +27,17 @@ class PidListPreferences(
 
     init {
         initialize()
-        registerReceiver(context)
+
     }
 
     override fun onDetached() {
         super.onDetached()
         context?.unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onAttached() {
+        super.onAttached()
+        registerReceiver(context)
     }
 
     private fun registerReceiver(context: Context?) {
