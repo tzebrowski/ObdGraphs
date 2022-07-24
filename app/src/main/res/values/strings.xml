@@ -148,6 +148,8 @@
     <string name="trip_action">Action</string>
     <string name="trip_action_delete">Del</string>
     <string name="trip_action_load">Load</string>
+    <string name="connection_status">Status</string>
+    <string name="vehicle_profile">Vehicle profile</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

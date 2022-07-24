@@ -1,12 +1,13 @@
 package org.obd.graphs.ui.preferences.pid
 
-import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.defaultPidFiles
+import org.obd.graphs.ui.common.color
 import org.obd.metrics.pid.PidDefinition
 
 internal fun PidDefinition.displayString(): Spanned {
@@ -19,7 +20,7 @@ internal fun PidDefinition.displayString(): Spanned {
         )
 
         setSpan(
-            ForegroundColorSpan(Color.parseColor("#01804F")), 0, endIndexOf,
+            ForegroundColorSpan(color(R.color.philippine_green)), 0, endIndexOf,
             0
         )
 
@@ -32,7 +33,7 @@ internal fun PidDefinition.displayString(): Spanned {
             )
 
             setSpan(
-                ForegroundColorSpan(Color.parseColor("#C22636")),
+                ForegroundColorSpan(color(R.color.cardinal)),
                 startIndexOf,
                 endIndexOf,
                 0
@@ -40,4 +41,6 @@ internal fun PidDefinition.displayString(): Spanned {
         }
     }
 }
+
+
 

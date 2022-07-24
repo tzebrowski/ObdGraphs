@@ -71,7 +71,7 @@
                     tools:ignore="SmallSp" />
 
                 <Button
-                    android:backgroundTint="@color/purple_200"
+                    android:backgroundTint="@color/cardinal"
                     android:id="@+id/trip_delete"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"

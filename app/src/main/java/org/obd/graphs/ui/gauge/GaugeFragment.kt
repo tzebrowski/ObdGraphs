@@ -12,6 +12,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.preferences.Prefs
@@ -52,6 +55,9 @@ class GaugeFragment : Fragment() {
         super.onAttach(context)
         activity?.registerReceiver(configurationChangedReceiver, IntentFilter().apply {
             addAction(CONFIGURE_CHANGE_EVENT_GAUGE)
+            addAction(TOGGLE_TOOLBAR_ACTION)
+            addAction(DATA_LOGGER_CONNECTED_EVENT)
+            addAction(DATA_LOGGER_STOPPED_EVENT)
         })
     }
 
