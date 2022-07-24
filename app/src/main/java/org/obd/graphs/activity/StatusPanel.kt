@@ -3,23 +3,25 @@ package org.obd.graphs.activity
 import android.graphics.Color
 import android.widget.TextView
 import org.obd.graphs.R
-import org.obd.graphs.ui.common.color
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.ui.preferences.profile.getCurrentProfile
 
 private fun MainActivity.updateTextField(
-    id: Int,
-    t1: String,
-    t2: String,
-    t2_color: Int,
-    t2_size: Float
+    viewId: Int,
+    text1: String,
+    text2: String,
+    color: Int,
+    text2Size: Float
 ) {
-    (findViewById<TextView>(id)).let {
-        it.text = "$t1 $t2"
-        it.highLightText(t1, 0.7f, Color.WHITE)
-        it.highLightText(t2, t2_size, color(t2_color))
+    (findViewById<TextView>(viewId)).let {
+        it.text = "$text1 $text2"
+        it.highLightText(text1, 0.7f, Color.WHITE)
+        it.highLightText(text2, text2Size, color)
     }
 }
 
@@ -28,17 +30,17 @@ internal fun MainActivity.connectionStatusConnected() {
         R.id.connection_status,
         resources.getString(R.string.connection_status),
         "Connected",
-        R.color.philippine_green,
+       COLOR_PHILIPPINE_GREEN,
         1.1f
     )
 }
 
-internal fun MainActivity.connectionStatusDiconnected() {
+internal fun MainActivity.connectionStatusDisconnected() {
     updateTextField(
         R.id.connection_status,
         resources.getString(R.string.connection_status),
         "Disconnected",
-        R.color.cardinal,
+        COLOR_CARDINAL,
         1.1f
     )
 }
@@ -49,7 +51,7 @@ internal fun MainActivity.initiateStatusPanel() {
         R.id.connection_status,
         resources.getString(R.string.connection_status),
         "Disconnected",
-        R.color.cardinal,
+        COLOR_CARDINAL,
         1.1f
     )
     updateVehicleProfile()
@@ -60,7 +62,7 @@ internal fun MainActivity.updateVehicleProfile() {
         R.id.vehicle_profile,
         resources.getString(R.string.vehicle_profile),
         Prefs.getString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")!!,
-        R.color.rainbow_indigo,
+        COLOR_RAINBOW_INDIGO,
         1.2f
     )
 }

@@ -2,7 +2,6 @@ package org.obd.graphs.activity
 
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.Log
@@ -18,9 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripRecorderBroadcastReceiver
-import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
-import org.obd.graphs.ui.common.color
-import org.obd.graphs.ui.common.toast
+import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.preferences.Prefs
 
 internal val tripRecorderBroadcastReceiver = TripRecorderBroadcastReceiver()
@@ -92,7 +89,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             val progressBar: ProgressBar = findViewById(R.id.p_bar)
             progressBar.visibility = View.VISIBLE
             progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                color(R.color.cardinal),
+                COLOR_CARDINAL,
                 PorterDuff.Mode.SRC_IN
             )
 
@@ -117,13 +114,12 @@ internal fun MainActivity.receive(intent: Intent?) {
 
             val progressBar: ProgressBar = findViewById(R.id.p_bar)
             progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                Color.parseColor("#01804F"),
+                COLOR_PHILIPPINE_GREEN,
                 PorterDuff.Mode.SRC_IN
             )
 
             if (getMainActivityPreferences().hideToolbarConnected) {
-                val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
-                layout.isVisible = false
+               findViewById<CoordinatorLayout>(R.id.coordinator_Layout).isVisible = false
             }
 
             connectionStatusConnected()
@@ -173,7 +169,7 @@ private fun MainActivity.handleStop() {
         param.weight = 7.0f
     }
 
-    connectionStatusDiconnected()
+    connectionStatusDisconnected()
 }
 
 internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {

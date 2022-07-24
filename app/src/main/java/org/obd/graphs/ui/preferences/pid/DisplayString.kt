@@ -5,9 +5,9 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.defaultPidFiles
-import org.obd.graphs.ui.common.color
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.metrics.pid.PidDefinition
 
 internal fun PidDefinition.displayString(): Spanned {
@@ -20,7 +20,7 @@ internal fun PidDefinition.displayString(): Spanned {
         )
 
         setSpan(
-            ForegroundColorSpan(color(R.color.philippine_green)), 0, endIndexOf,
+            ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, endIndexOf,
             0
         )
 
@@ -33,7 +33,7 @@ internal fun PidDefinition.displayString(): Spanned {
             )
 
             setSpan(
-                ForegroundColorSpan(color(R.color.cardinal)),
+                ForegroundColorSpan(COLOR_CARDINAL),
                 startIndexOf,
                 endIndexOf,
                 0

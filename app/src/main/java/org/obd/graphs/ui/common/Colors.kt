@@ -3,6 +3,8 @@ package org.obd.graphs.ui.common
 import android.graphics.Color
 import androidx.core.content.ContextCompat
 import org.obd.graphs.ApplicationContext
+import org.obd.graphs.R
+import org.obd.graphs.R.*
 import java.util.*
 
 class Colors {
@@ -10,8 +12,8 @@ class Colors {
     private val recycle: Stack<Int> = Stack()
     private val colors: Stack<Int> = Stack()
     private val base: List<Int> =  mutableListOf<Int>().apply {
-        add(Color.parseColor("#C22636"))
-        add(Color.parseColor("#01804F"))
+        add(COLOR_CARDINAL)
+        add(COLOR_PHILIPPINE_GREEN)
         add(Color.parseColor("#1C3D72"))
         add(Color.parseColor("#BBBBBB"))
 
@@ -64,5 +66,9 @@ class Colors {
     }
 }
 
+val COLOR_CARDINAL: Int = color(color.cardinal)
+val COLOR_PHILIPPINE_GREEN: Int = color(color.philippine_green)
+val COLOR_RAINBOW_INDIGO: Int = color(color.rainbow_indigo)
+val COLOR_LIGHT_SHADE_GRAY: Int = color(color.light_shade_gray)
 
 fun color(id: Int) = ContextCompat.getColor(ApplicationContext.get()!!, id)
