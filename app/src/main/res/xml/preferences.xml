@@ -22,7 +22,9 @@
                 android:title="@string/pref.profile.update_name"
                 app:useSimpleSummaryProvider="true" />
 
-            <EditTextPreference
+            <ListPreference
+                android:entries="@array/pref.numbers_1_10"
+                android:entryValues="@array/pref.numbers_1_10"
                 android:defaultValue="5"
                 android:dialogTitle="@string/pref.profile.max_profiles"
                 android:inputType="number"

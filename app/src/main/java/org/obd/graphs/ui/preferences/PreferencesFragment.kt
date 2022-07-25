@@ -12,10 +12,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import org.obd.graphs.R
+import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.bl.datalogger.DataLoggerPreferences
 import org.obd.graphs.ui.common.onDoubleClickListener
-import org.obd.graphs.ui.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.ui.preferences.trips.TripsListPreferences
+import org.obd.graphs.ui.preferences.trips.TripsPreferenceDialog
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 
@@ -82,6 +83,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun registerListeners() {
         registerConnectionTypeListener()
         registerViewsPreferenceChangeListeners()
+
+        findPreference<ListPreference>("pref.profile.max_profiles")?.let {
+            it.setOnPreferenceChangeListener { _, _ ->
+                navigateToPreferencesScreen("pref.profiles")
+                true
+            }
+        }
     }
 
     private fun registerConnectionTypeListener() {
