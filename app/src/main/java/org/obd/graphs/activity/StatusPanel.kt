@@ -31,7 +31,7 @@ internal fun MainActivity.connectionStatusDisconnected() {
     )
 }
 
-internal fun MainActivity.initiateStatusPanel() {
+internal fun MainActivity.setupStatusPanel() {
     updateTextField(
         R.id.connection_status,
         resources.getString(R.string.connection_status),
@@ -40,6 +40,12 @@ internal fun MainActivity.initiateStatusPanel() {
         1.1f
     )
     updateVehicleProfile()
+
+    (findViewById<TextView>(R.id.vehicle_profile)).let {
+        it.setOnClickListener {
+            navigateToPreferencesScreen("pref.profiles")
+        }
+    }
 }
 
 internal fun MainActivity.updateVehicleProfile() {

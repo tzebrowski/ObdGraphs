@@ -14,8 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import org.obd.graphs.*
 import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.profile.installProfiles
-import org.obd.graphs.ui.preferences.updateLongSet
+import org.obd.graphs.ui.preferences.profile.setupProfiles
 import org.obd.graphs.ui.preferences.updateString
 import java.lang.ref.WeakReference
 
@@ -57,13 +56,11 @@ class MainActivity : AppCompatActivity() {
         setupNavigationBarButtons()
         registerReceiver()
 
-        registerExceptionHandler()
-        installProfiles()
-        initiateStatusPanel()
+        setupExceptionHandler()
+        setupProfiles()
+        setupStatusPanel()
         setupPreferences()
     }
-
-
 
     override fun onResume() {
         super.onResume()
@@ -89,7 +86,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerExceptionHandler() {
+    private fun setupExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
 

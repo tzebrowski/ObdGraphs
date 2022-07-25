@@ -35,7 +35,7 @@ fun getProfileList() =
             )
         }
 
-fun installProfiles() {
+fun setupProfiles() {
 
     if (!Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)) {
         Log.e(LOG_KEY, "Installing profiles")
