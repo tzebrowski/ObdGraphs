@@ -10,8 +10,6 @@
 
     <LinearLayout
         android:layout_height="20dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
@@ -26,11 +24,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="start"
+            android:paddingEnd="0dp"
             android:paddingStart="6dp"
             android:paddingTop="4sp"
             android:text="@string/connection_status"
             android:textColor="@color/white"
-            android:textSize="10dp" />
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/vehicle_profile"
@@ -41,8 +40,7 @@
             android:paddingTop="4sp"
             android:text="@string/vehicle_profile"
             android:textColor="@color/white"
-            android:textSize="10dp" />
-
+            android:textSize="11sp" />
     </LinearLayout>
 
     <ProgressBar
@@ -54,8 +52,6 @@
         android:indeterminate="true"
         android:max="100"
         android:progress="0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -67,32 +63,25 @@
         android:layout_marginStart="1dp"
         android:layout_marginTop="34dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/coordinator_Layout"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:navGraph="@navigation/mobile_navigation"></fragment>
+        app:layout_constraintBottom_toTopOf="@id/coordinator_Layout"
+        app:layout_constraintTop_toBottomOf="@id/p_bar"
+        app:navGraph="@navigation/mobile_navigation"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_Layout"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_gravity="bottom"
-            app:backgroundTint="@color/gray"
+            android:backgroundTint="@color/gray"
             app:contentInsetStart="0dp"
             app:fabAlignmentMode="center"
             app:menu="@menu/context_menu">
@@ -102,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginEnd="0dp"
                 android:background="@color/gray"
                 app:labelVisibilityMode="labeled"
@@ -110,6 +99,7 @@
         </com.google.android.material.bottomappbar.BottomAppBar>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:contentDescription="@string/activity.btn_start"
             android:id="@+id/connect_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
