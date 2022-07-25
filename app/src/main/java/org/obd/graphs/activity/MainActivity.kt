@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val cache: MutableMap<String, Any> = mutableMapOf()
-    internal var currentNavTabName:String = ""
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)

@@ -55,7 +55,7 @@
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="fill_parent"
-        android:layout_weight="7.3"
+        android:layout_weight="7"
         android:layout_height="0dp"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@id/coordinator_Layout"
@@ -66,53 +66,38 @@
         android:id="@+id/coordinator_Layout"
         android:layout_width="fill_parent"
         android:layout_weight="2"
-        android:layout_height="0dp">
+        android:layout_height="80dp">
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
+            app:fabCradleVerticalOffset="6dp"
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="122dp"
             android:layout_gravity="bottom"
             app:backgroundTint="@color/gray"
             app:contentInsetStart="0dp"
-            app:fabAlignmentMode="center">
+            app:fabAlignmentMode="center" app:menu="@menu/context_menu">
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/nav_view"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="22dp"
                 android:background="@color/gray"
                 app:labelVisibilityMode="labeled"
                 app:menu="@menu/bottom_nav_menu" />
         </com.google.android.material.bottomappbar.BottomAppBar>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/connect_btn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_anchor="@id/bottomAppBar">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/connect_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/activity.btn_start"
-                android:src="@android:drawable/ic_lock_idle_charging"
-                app:backgroundTint="@color/philippine_green"
-                app:fabSize="normal" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/menu_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:contentDescription="@string/activity.btn_menu"
-                android:src="@android:drawable/ic_dialog_dialer"
-                app:backgroundTint="@color/gray"
-                app:fabSize="normal" />
-        </LinearLayout>
+            android:contentDescription="@string/activity.btn_start"
+            android:src="@android:drawable/ic_lock_idle_charging"
+            app:backgroundTint="@color/philippine_green"
+            app:fabSize="mini"
+            app:layout_anchor="@id/bottomAppBar"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

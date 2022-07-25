@@ -11,20 +11,6 @@ import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.ui.preferences.profile.getCurrentProfile
 
-private fun MainActivity.updateTextField(
-    viewId: Int,
-    text1: String,
-    text2: String,
-    color: Int,
-    text2Size: Float
-) {
-    (findViewById<TextView>(viewId)).let {
-        it.text = "$text1 $text2"
-        it.highLightText(text1, 0.7f, Color.WHITE)
-        it.highLightText(text2, text2Size, color)
-    }
-}
-
 internal fun MainActivity.connectionStatusConnected() {
     updateTextField(
         R.id.connection_status,
@@ -45,7 +31,6 @@ internal fun MainActivity.connectionStatusDisconnected() {
     )
 }
 
-
 internal fun MainActivity.initiateStatusPanel() {
     updateTextField(
         R.id.connection_status,
@@ -65,4 +50,18 @@ internal fun MainActivity.updateVehicleProfile() {
         COLOR_RAINBOW_INDIGO,
         1.2f
     )
+}
+
+private fun MainActivity.updateTextField(
+    viewId: Int,
+    text1: String,
+    text2: String,
+    color: Int,
+    text2Size: Float
+) {
+    (findViewById<TextView>(viewId)).let {
+        it.text = "$text1 $text2"
+        it.highLightText(text1, 0.7f, Color.WHITE)
+        it.highLightText(text2, text2Size, color)
+    }
 }
