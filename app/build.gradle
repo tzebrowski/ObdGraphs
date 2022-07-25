@@ -11,7 +11,7 @@ android {
         applicationId "org.obd.graphs.app"
         minSdkVersion 24
         targetSdkVersion 31
-        versionCode 6
+        versionCode 7
         versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testFunctionalTest false

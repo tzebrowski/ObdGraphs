@@ -2,7 +2,6 @@ package org.obd.graphs.activity
 
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.Log
@@ -16,8 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripRecorderBroadcastReceiver
-import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
-import org.obd.graphs.ui.common.toast
+import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.preferences.Prefs
 
 internal val tripRecorderBroadcastReceiver = TripRecorderBroadcastReceiver()
@@ -33,14 +31,17 @@ const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
 const val DATA_LOGGER_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
 
-
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
         TOGGLE_TOOLBAR_ACTION -> {
             if (getMainActivityPreferences().hideToolbarDoubleClick) {
-                val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
-                layout.isVisible = !layout.isVisible
+                findViewById<CoordinatorLayout>(R.id.coordinator_Layout).let {
+                    it.isVisible = !it.isVisible
+                }
             }
+        }
+        PROFILE_CHANGED_EVENT -> {
+            updateVehicleProfile()
         }
         SCREEN_OFF_EVENT -> {
             lockScreen()
@@ -79,13 +80,13 @@ internal fun MainActivity.receive(intent: Intent?) {
             val progressBar: ProgressBar = findViewById(R.id.p_bar)
             progressBar.visibility = View.VISIBLE
             progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                Color.parseColor("#C22636"),
+                COLOR_CARDINAL,
                 PorterDuff.Mode.SRC_IN
             )
 
             val btn: FloatingActionButton = findViewById(R.id.connect_btn)
             btn.backgroundTintList =
-                ContextCompat.getColorStateList(applicationContext, R.color.purple_200)
+                ContextCompat.getColorStateList(applicationContext, R.color.cardinal)
             btn.setOnClickListener {
                 Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
                 DataLoggerService.stop()
@@ -104,20 +105,21 @@ internal fun MainActivity.receive(intent: Intent?) {
 
             val progressBar: ProgressBar = findViewById(R.id.p_bar)
             progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                Color.parseColor("#01804F"),
+                COLOR_PHILIPPINE_GREEN,
                 PorterDuff.Mode.SRC_IN
             )
 
             if (getMainActivityPreferences().hideToolbarConnected) {
-                val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
-                layout.isVisible = false
+               findViewById<CoordinatorLayout>(R.id.coordinator_Layout).isVisible = false
             }
+
+            connectionStatusConnected()
         }
 
         DATA_LOGGER_STOPPED_EVENT -> {
             toast(R.string.main_activity_toast_connection_stopped)
             handleStop()
-            Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
+
         }
 
         DATA_LOGGER_ERROR_EVENT -> {
@@ -127,22 +129,26 @@ internal fun MainActivity.receive(intent: Intent?) {
     }
 }
 
+
+
 private fun MainActivity.handleStop() {
     val progressBar: ProgressBar = findViewById(R.id.p_bar)
     progressBar.visibility = View.GONE
 
     val btn: FloatingActionButton = findViewById(R.id.connect_btn)
     btn.backgroundTintList =
-        ContextCompat.getColorStateList(applicationContext, R.color.purple_500)
+        ContextCompat.getColorStateList(applicationContext, R.color.philippine_green)
     btn.setOnClickListener {
         Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
         DataLoggerService.start()
     }
 
     if (getMainActivityPreferences().hideToolbarConnected) {
-        val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
-        layout.isVisible = true
+        findViewById<CoordinatorLayout>(R.id.coordinator_Layout).isVisible = true
     }
+
+    Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
+    connectionStatusDisconnected()
 }
 
 internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
@@ -176,6 +182,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(TOGGLE_TOOLBAR_ACTION)
         addAction(SCREEN_OFF_EVENT)
         addAction(SCREEN_ON_EVENT)
+        addAction(PROFILE_CHANGED_EVENT)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {

@@ -10,11 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.trip.SensorData
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.setText
 
-
-private const val ITEM_COLOR = "#01804F"
 
 class TripViewAdapter internal constructor(
     context: Context?,
@@ -40,21 +39,21 @@ class TripViewAdapter internal constructor(
         val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
         val pid = pidDefinitionRegistry.findBy(metric.id)
         holder.metricName.setText(pid.description, Color.GRAY, 1.0f)
-        holder.metricMode.setText(pid.mode, Color.parseColor(ITEM_COLOR), 1.0f)
+        holder.metricMode.setText(pid.mode, COLOR_PHILIPPINE_GREEN, 1.0f)
         metric.run {
             holder.metricMaxValue.setText(
                 "${convert(pid, max)}",
-                Color.parseColor(ITEM_COLOR),
+                COLOR_PHILIPPINE_GREEN,
                 1.0f
             )
             holder.metricMinValue.setText(
                 "${convert(pid, min)}",
-                Color.parseColor(ITEM_COLOR),
+                COLOR_PHILIPPINE_GREEN,
                 1.0f
             )
             holder.metricMeanValue.setText(
                 "${convert(pid, mean)}",
-                Color.parseColor(ITEM_COLOR),
+                COLOR_PHILIPPINE_GREEN,
                 1.0f
             )
         }

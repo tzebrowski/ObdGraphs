@@ -11,6 +11,7 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.setText
 
@@ -41,26 +42,26 @@ class MetricsViewAdapter internal constructor(
         }
 
         holder.metricName.setText(metric.command.label, Color.GRAY, 1.2f)
-        holder.metricMode.setText(metric.command.pid.mode, Color.parseColor("#01804F"), 1.2f)
+        holder.metricMode.setText(metric.command.pid.mode, COLOR_PHILIPPINE_GREEN, 1.2f)
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.metricMaxValue.setText(
                 metric.convert(max).toString(),
-                Color.parseColor("#01804F"),
+                COLOR_PHILIPPINE_GREEN,
                 1.2f
             )
             holder.metricMinValue.setText(
                 metric.convert(min).toString(),
-                Color.parseColor("#01804F"),
+                COLOR_PHILIPPINE_GREEN,
                 1.2f
             )
             holder.metricMeanValue.setText(
                 metric.convert(mean).toString(),
-                Color.parseColor("#01804F"),
+                COLOR_PHILIPPINE_GREEN,
                 1.2f
             )
         }
-        holder.metricValue.setText(valueTxt, Color.parseColor("#01804F"), 1.3f)
+        holder.metricValue.setText(valueTxt, COLOR_PHILIPPINE_GREEN, 1.3f)
     }
 
     override fun getItemCount(): Int {
