@@ -6,12 +6,10 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentContainerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
@@ -37,15 +35,8 @@ internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
         TOGGLE_TOOLBAR_ACTION -> {
             if (getMainActivityPreferences().hideToolbarDoubleClick) {
-                val coordinatorLayout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
-                coordinatorLayout.isVisible = !coordinatorLayout.isVisible
-                findViewById<FragmentContainerView>(R.id.nav_host_fragment).let {
-                    val param = it.layoutParams as LinearLayout.LayoutParams
-                    if (coordinatorLayout.isVisible) {
-                        param.weight = 7.2f
-                    } else {
-                        param.weight = 9.0f
-                    }
+                findViewById<CoordinatorLayout>(R.id.coordinator_Layout).let {
+                    it.isVisible = !it.isVisible
                 }
             }
         }
@@ -123,18 +114,11 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
 
             connectionStatusConnected()
-
-            findViewById<FragmentContainerView>(R.id.nav_host_fragment).let {
-                val param = it.layoutParams as LinearLayout.LayoutParams
-                param.weight = 9.0f
-            }
         }
 
         DATA_LOGGER_STOPPED_EVENT -> {
             toast(R.string.main_activity_toast_connection_stopped)
             handleStop()
-            Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
-
 
         }
 
@@ -160,15 +144,10 @@ private fun MainActivity.handleStop() {
     }
 
     if (getMainActivityPreferences().hideToolbarConnected) {
-        val layout: CoordinatorLayout = findViewById(R.id.coordinator_Layout)
-        layout.isVisible = true
+        findViewById<CoordinatorLayout>(R.id.coordinator_Layout).isVisible = true
     }
 
-    findViewById<FragmentContainerView>(R.id.nav_host_fragment).let {
-        val param = it.layoutParams as LinearLayout.LayoutParams
-        param.weight = 7.0f
-    }
-
+    Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
     connectionStatusDisconnected()
 }
 
