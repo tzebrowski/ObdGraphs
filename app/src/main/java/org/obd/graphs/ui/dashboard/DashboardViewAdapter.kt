@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
 import org.obd.graphs.R
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
@@ -119,7 +120,7 @@ class DashboardViewAdapter(
         val units = (metric.command as ObdCommand).pid.units
         val value = metric.valueToString() + " " + units
         holder.value.text = value
-        holder.value.highLightText(units, 0.3f, Color.parseColor("#01804F"))
+        holder.value.highLightText(units, 0.3f, COLOR_PHILIPPINE_GREEN)
     }
 
     override fun getItemCount(): Int {

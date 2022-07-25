@@ -1,6 +1,5 @@
 package org.obd.graphs.activity
 
-
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,8 +12,6 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import org.obd.graphs.ApplicationContext
 import org.obd.graphs.Cache
 import org.obd.graphs.ExceptionHandler
@@ -33,7 +30,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val cache: MutableMap<String, Any> = mutableMapOf()
-    internal var currentNavTabName:String = ""
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -63,10 +59,7 @@ class MainActivity : AppCompatActivity() {
 
         registerExceptionHandler()
         installProfiles()
-    }
-
-    private fun registerExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
+        initiateStatusPanel()
     }
 
     override fun onResume() {
@@ -91,5 +84,9 @@ class MainActivity : AppCompatActivity() {
         (findViewById<ProgressBar>(R.id.p_bar)).run {
             visibility = View.GONE
         }
+    }
+
+    private fun registerExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
 }

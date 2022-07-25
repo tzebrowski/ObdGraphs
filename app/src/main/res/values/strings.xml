@@ -117,7 +117,6 @@
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Init</string>
 
-    <string name="activity.btn_menu">Menu</string>
     <string name="activity.btn_start">Start/Stop</string>
 
     <string-array name="pref.empty_array" />
@@ -148,6 +147,8 @@
     <string name="trip_action">Action</string>
     <string name="trip_action_delete">Del</string>
     <string name="trip_action_load">Load</string>
+    <string name="connection_status">Status</string>
+    <string name="vehicle_profile">Vehicle profile</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

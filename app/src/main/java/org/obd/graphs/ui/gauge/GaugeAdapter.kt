@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.defaultPidFiles
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.highLightText
@@ -27,8 +28,6 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
 import kotlin.math.roundToInt
-
-private const val LABEL_COLOR = "#01804F"
 
 class GaugeAdapter(
     context: Context,
@@ -126,7 +125,7 @@ class GaugeAdapter(
 
             highLightText(
                 units, 0.3f,
-                Color.parseColor(LABEL_COLOR)
+                COLOR_PHILIPPINE_GREEN
             )
         }
 
@@ -136,7 +135,7 @@ class GaugeAdapter(
                 text = txt
                 highLightText(
                     "min", 0.5f,
-                    Color.parseColor(LABEL_COLOR)
+                    COLOR_PHILIPPINE_GREEN
                 )
             }
 
@@ -145,7 +144,7 @@ class GaugeAdapter(
                 text = txt
                 highLightText(
                     "max", 0.5f,
-                    Color.parseColor(LABEL_COLOR)
+                    COLOR_PHILIPPINE_GREEN
                 )
             }
 
@@ -154,7 +153,7 @@ class GaugeAdapter(
                 text = txt
                 highLightText(
                     "avg", 0.5f,
-                    Color.parseColor(LABEL_COLOR)
+                    COLOR_PHILIPPINE_GREEN
                 )
             }
         }
@@ -167,7 +166,7 @@ class GaugeAdapter(
                 text = txt
                 highLightText(
                     "rate", 0.4f,
-                    Color.parseColor(LABEL_COLOR)
+                    COLOR_PHILIPPINE_GREEN
                 )
             } else {
                 this.visibility = View.INVISIBLE
