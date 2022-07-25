@@ -61,15 +61,15 @@ internal fun MainActivity.setupNavigationBar() {
     navView.selectedItemId = R.id.navigation_gauge
 
     navController.addOnDestinationChangedListener { _, destination, _ ->
+        val bottomAppBar =  findViewById<BottomAppBar>(R.id.bottomAppBar)
         when (destination.label.toString()) {
 
             resources.getString(R.string.navigation_title_graph) -> {
-                val bottomAppBar =  findViewById<BottomAppBar>(R.id.bottomAppBar)
                 bottomAppBar.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
                 bottomAppBar.menu.findItem(R.id.ctx_menu_view_custom_action_1).title = resources.getString(R.string.pref_graph_trips_selected)
             }
             else -> {
-                findViewById<BottomAppBar>(R.id.bottomAppBar).menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
+                bottomAppBar.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
             }
         }
     }
@@ -105,6 +105,10 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 screenId?.let {
                     navigateToPreferencesScreen(it)
                 }
+            }
+
+            R.id.ctx_menu_about -> {
+                navigateToPreferencesScreen("pref.about")
             }
 
             R.id.ctx_menu_pids_to_query -> {

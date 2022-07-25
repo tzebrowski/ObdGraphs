@@ -12,11 +12,11 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
-import org.obd.graphs.ApplicationContext
-import org.obd.graphs.Cache
-import org.obd.graphs.ExceptionHandler
-import org.obd.graphs.R
+import org.obd.graphs.*
+import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.profile.installProfiles
+import org.obd.graphs.ui.preferences.updateLongSet
+import org.obd.graphs.ui.preferences.updateString
 import java.lang.ref.WeakReference
 
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
@@ -60,7 +60,10 @@ class MainActivity : AppCompatActivity() {
         registerExceptionHandler()
         installProfiles()
         initiateStatusPanel()
+        setupPreferences()
     }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -88,5 +91,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun registerExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
+    }
+
+    private fun setupPreferences() {
+        Prefs.updateString("pref.about.build_version", BuildConfig.VERSION_NAME)
     }
 }

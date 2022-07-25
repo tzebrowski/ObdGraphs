@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/ctx_menu_pids_to_query"
-        android:title="@string/context_menu.parameters_id_to_query" />
+    <item android:title="@string/context_menu.obd2_pids_sensors">
+        <menu>
+            <item
+                android:id="@+id/ctx_menu_pids_to_query"
+                android:title="@string/context_menu.parameters_id_to_query" />
 
-    <item
-        android:id="@+id/ctx_menu_pids_to_display"
-        android:title="@string/context_menu.parameters_id_to_display" />
+            <item
+                android:id="@+id/ctx_menu_pids_to_display"
+                android:title="@string/context_menu.parameters_id_to_display" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/ctx_menu_view_configuration"
@@ -14,6 +18,11 @@
     <item
         android:id="@+id/ctx_menu_view_profiles"
         android:title="@string/context_menu.profiles" />
+
+    <item
+        android:id="@+id/ctx_menu_about"
+        android:title="@string/context_menu.about" />
+
     <item
         android:id="@+id/ctx_menu_view_custom_action_1"
         android:title="@string/context_menu.custom_action_1" />

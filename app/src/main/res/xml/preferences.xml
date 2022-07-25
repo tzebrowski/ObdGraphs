@@ -531,7 +531,7 @@
         </PreferenceScreen>
 
         <PreferenceCategory
-            android:title="Debug"
+            android:title="@string/pref.debug_category"
             app:isPreferenceVisible="@bool/DEBUG_BUILD">
             <CheckBoxPreference
                 android:defaultValue="false"
@@ -539,4 +539,16 @@
                 android:title="@string/pref.debug_generator_enabled" />
         </PreferenceCategory>
     </PreferenceCategory>
+
+    <PreferenceScreen app:key="pref.about">
+        <PreferenceCategory
+            android:title="@string/pref.about_category">
+           <Preference app:title="@string/pref.about_title"/>
+           <EditTextPreference app:enabled="false"
+               app:title="@string/pref.about_build_version"
+               android:key="pref.about.build_version"
+               app:useSimpleSummaryProvider="true"/>
+
+        </PreferenceCategory>
+    </PreferenceScreen>
 </PreferenceScreen>
