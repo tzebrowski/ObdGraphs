@@ -16,7 +16,7 @@
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_gauge">Gauge</string>
     <string name="navigation.title_metrics">Metrics</string>
-    <string name="navigation.title_preferences">Preferences</string>
+    <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>
     <string name="navigation.title_graph">Graph</string>
 
