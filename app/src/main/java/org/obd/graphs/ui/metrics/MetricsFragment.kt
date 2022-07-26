@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.MetricsAggregator
+import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 import org.obd.metrics.api.model.ObdMetric
-
 
 class MetricsFragment : Fragment() {
 
@@ -39,6 +39,11 @@ class MetricsFragment : Fragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
+        recyclerView.addOnItemTouchListener(
+            ToggleToolbarDoubleClickListener(
+                requireContext()
+            )
+        )
         return root
     }
 }

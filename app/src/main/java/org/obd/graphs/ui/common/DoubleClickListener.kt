@@ -17,11 +17,9 @@ private class DoubleClickGestureListener(val context: Context) :
     }
 }
 
-
 open class ToggleToolbarDoubleClickListener(
     context: Context?
 ) : RecyclerView.OnItemTouchListener {
-
 
     private var gestureDetector: GestureDetector = GestureDetector(
         context,
