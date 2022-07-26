@@ -2,6 +2,7 @@ package org.obd.graphs.ui.metrics
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,27 +42,29 @@ class MetricsViewAdapter internal constructor(
             valueTxt += " " + (metric.command as ObdCommand).pid.units
         }
 
-        holder.metricName.setText(metric.command.label, Color.GRAY, 1.2f)
-        holder.metricMode.setText(metric.command.pid.mode, COLOR_PHILIPPINE_GREEN, 1.2f)
+        holder.metricName.setText(metric.command.label, COLOR_PHILIPPINE_GREEN,Typeface.NORMAL, 1.0f)
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.metricMaxValue.setText(
                 metric.convert(max).toString(),
-                COLOR_PHILIPPINE_GREEN,
-                1.2f
+                Color.GRAY,
+                Typeface.NORMAL,
+                1.0f
             )
             holder.metricMinValue.setText(
                 metric.convert(min).toString(),
-                COLOR_PHILIPPINE_GREEN,
-                1.2f
+                Color.GRAY,
+                Typeface.NORMAL,
+                1.0f
             )
             holder.metricMeanValue.setText(
                 metric.convert(mean).toString(),
-                COLOR_PHILIPPINE_GREEN,
-                1.2f
+                Color.GRAY,
+                Typeface.NORMAL,
+                1.0f
             )
         }
-        holder.metricValue.setText(valueTxt, COLOR_PHILIPPINE_GREEN, 1.3f)
+        holder.metricValue.setText(valueTxt, Color.GRAY, 1.0f)
     }
 
     override fun getItemCount(): Int {
@@ -82,6 +85,7 @@ class MetricsViewAdapter internal constructor(
 
         init {
             itemView.setOnClickListener(this)
+            metricMode.visibility = View.GONE
         }
     }
 }
