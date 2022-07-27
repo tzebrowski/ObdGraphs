@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.COLOR_LIGHT_SHADE_GRAY
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText
 
 class MarkerWindowViewAdapter internal constructor(
@@ -32,8 +33,8 @@ class MarkerWindowViewAdapter internal constructor(
     ) {
 
         data.elementAt(position).run {
-            holder.metricName.setText(command.label, COLOR_LIGHT_SHADE_GRAY, 1.0f)
-            holder.metricValue.setText(valueToString(), COLOR_LIGHT_SHADE_GRAY, 1.1f)
+            holder.metricName.setText(command.label, COLOR_PHILIPPINE_GREEN, 1.0f)
+            holder.metricValue.setText(valueToString(), COLOR_LIGHT_SHADE_GRAY, 1.0f)
         }
     }
 

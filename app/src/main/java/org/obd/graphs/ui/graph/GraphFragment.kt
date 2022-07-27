@@ -119,7 +119,6 @@ class GraphFragment : Fragment() {
     private lateinit var preferences: GraphPreferences
     private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
     private lateinit var root: View
-    private lateinit var tripViewAdapter: TripDetailsViewAdapter
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -174,12 +173,35 @@ class GraphFragment : Fragment() {
     }
 
     private fun initializeTripDetails() {
-        tripViewAdapter = TripDetailsViewAdapter(root.context, mutableListOf())
+        val data: MutableList<SensorData> = arrayListOf()
+        val adapter = TripDetailsViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = GridLayoutManager(root.context, 1)
-        recyclerView.adapter = tripViewAdapter
-    }
 
+        recyclerView.layoutManager = GridLayoutManager(root.context, 1)
+        recyclerView.adapter = adapter
+
+        val diagnostics = DataLogger.instance.diagnostics()
+
+        MetricsAggregator.metrics.observe(viewLifecycleOwner) {
+            it?.let {
+               diagnostics.histogram().findBy(it.command.pid)?.let{ hist ->
+                   val sensorData = SensorData(id = it.command.pid.id,
+                       metrics = mutableListOf(),
+                       min = hist.min,
+                       max = hist.max,
+                       mean = hist.mean)
+                   val indexOf = data.indexOf(sensorData)
+                   if (indexOf == -1) {
+                       data.add(sensorData)
+                       adapter.notifyItemInserted(data.indexOf(sensorData))
+                   } else {
+                       data[indexOf] = sensorData
+                       adapter.notifyItemChanged(indexOf, sensorData)
+                   }
+               }
+            }
+        }
+    }
 
     private fun initializeChart(root: View) {
 
@@ -204,8 +226,10 @@ class GraphFragment : Fragment() {
             val registry = DataLogger.instance.pidDefinitionRegistry()
             tripStartTs = trip.startTs
 
-            tripViewAdapter.mData.addAll(trip.entries.values)
-            tripViewAdapter.notifyDataSetChanged()
+            val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
+            val adapter = recyclerView.adapter as TripDetailsViewAdapter
+            adapter.mData.addAll(trip.entries.values)
+            adapter.notifyDataSetChanged()
 
             trip.entries.let { cache ->
                 chart.run {

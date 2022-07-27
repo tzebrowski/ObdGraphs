@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.trip.SensorData
@@ -35,27 +36,28 @@ class TripDetailsViewAdapter internal constructor(
         position: Int
     ) {
 
-        val metric = mData.elementAt(position)
-        val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
-        val pid = pidDefinitionRegistry.findBy(metric.id)
-        holder.metricName.setText(pid.description, COLOR_PHILIPPINE_GREEN, 1.0f)
-        metric.run {
-            holder.metricMaxValue.setText(
-                "${convert(pid, max)}",
-                Color.GRAY,
-                1.0f
-            )
-            holder.metricMinValue.setText(
-                "${convert(pid, min)}",
-                Color.GRAY,
-                1.0f
-            )
-            holder.metricMeanValue.setText(
-                "${convert(pid, mean)}",
-                Color.GRAY,
-                1.0f
-            )
+        mData.elementAt(position).let { metric ->
+            val pid = DataLogger.instance.pidDefinitionRegistry().findBy(metric.id)
+            holder.metricName.setText(pid.description, COLOR_PHILIPPINE_GREEN, 1.0f)
+            metric.run {
+                holder.metricMaxValue.setText(
+                    "${convert(pid, max)}",
+                    Color.GRAY,
+                    1.0f
+                )
+                holder.metricMinValue.setText(
+                    "${convert(pid, min)}",
+                    Color.GRAY,
+                    1.0f
+                )
+                holder.metricMeanValue.setText(
+                    "${convert(pid, mean)}",
+                    Color.GRAY,
+                    1.0f
+                )
+            }
         }
+
 
     }
 

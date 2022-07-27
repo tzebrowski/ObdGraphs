@@ -1,71 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context="org.obd.graphs.ui.graph.GraphFragment">
 
     <com.github.mikephil.charting.charts.LineChart
-        android:background="@color/black"
         android:id="@+id/graph_view_chart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5" />
+        android:layout_weight="5"
+        android:background="@color/black" />
 
-    <TableRow
-        android:id="@+id/graph_view_table_layout"
-        android:layout_width="fill_parent"
-        android:layout_marginTop="4dp"
-        android:layout_height="0dp"
+    <TableLayout
         android:layout_weight="0.2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="0dp"
+        android:paddingEnd="2dip">
 
-        <TextView
-            android:paddingEnd="0dp"
-            android:paddingStart="4dp"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="start"
-            android:text="@string/pid.metric_name"
-            android:textAllCaps="false"
-            android:textColor="@color/cardinal"
-            android:textSize="16sp"
-            android:textStyle="normal" />
+        <TableRow
+            android:id="@+id/graph_view_table_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/pid.value_min"
-            android:textColor="@color/cardinal"
-            android:textSize="16sp"
-            android:textStyle="normal" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/pid.value_max"
-            android:textColor="@color/cardinal"
-            android:textSize="16sp"
-            android:textStyle="normal" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pid.metric_name"
+                android:textAllCaps="false"
+                android:textColor="@color/cardinal"
+                android:textSize="16sp"
+                android:textStyle="normal" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/pid.value_avg"
-            android:textColor="@color/cardinal"
-            android:textSize="16sp"
-            android:textStyle="normal" />
-    </TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/pid.value_min"
+                android:textColor="@color/cardinal"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/pid.value_max"
+                android:textColor="@color/cardinal"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:paddingStart="0dp"
+                android:paddingEnd="6dp"
+                android:text="@string/pid.value_avg"
+                android:textColor="@color/cardinal"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+          <View
+                android:layout_width="match_parent"
+                android:layout_height="2dip"
+                android:layout_weight="2"
+                android:background="#FF909090"
+                android:padding="2dip" />
+        </TableRow>
+    </TableLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
