@@ -24,17 +24,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/metric_mode"
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:paddingStart="2dp"
-                android:paddingEnd="0dp"
-                android:text="@string/pid.mode"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-            <TextView
                 android:id="@+id/metric_name"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"

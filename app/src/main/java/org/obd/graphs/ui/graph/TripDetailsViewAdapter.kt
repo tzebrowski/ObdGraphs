@@ -15,11 +15,11 @@ import org.obd.graphs.ui.common.convert
 import org.obd.graphs.ui.common.setText
 
 
-class TripViewAdapter internal constructor(
+class TripDetailsViewAdapter internal constructor(
     context: Context?,
     data: MutableCollection<SensorData>
 ) :
-    RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
+    RecyclerView.Adapter<TripDetailsViewAdapter.ViewHolder>() {
     var mData: MutableCollection<SensorData> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -38,26 +38,25 @@ class TripViewAdapter internal constructor(
         val metric = mData.elementAt(position)
         val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
         val pid = pidDefinitionRegistry.findBy(metric.id)
-        holder.metricName.setText(pid.description, Color.GRAY, 1.0f)
-        holder.metricMode.setText(pid.mode, COLOR_PHILIPPINE_GREEN, 1.0f)
+        holder.metricName.setText(pid.description, COLOR_PHILIPPINE_GREEN, 1.0f)
         metric.run {
             holder.metricMaxValue.setText(
                 "${convert(pid, max)}",
-                COLOR_PHILIPPINE_GREEN,
+                Color.GRAY,
                 1.0f
             )
             holder.metricMinValue.setText(
                 "${convert(pid, min)}",
-                COLOR_PHILIPPINE_GREEN,
+                Color.GRAY,
                 1.0f
             )
             holder.metricMeanValue.setText(
                 "${convert(pid, mean)}",
-                COLOR_PHILIPPINE_GREEN,
+                Color.GRAY,
                 1.0f
             )
         }
-        holder.metricValue.visibility = View.GONE
+
     }
 
     override fun getItemCount(): Int {
@@ -66,18 +65,20 @@ class TripViewAdapter internal constructor(
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        var metricName: TextView = itemView.findViewById(R.id.metric_name)
-        var metricValue: TextView = itemView.findViewById(R.id.metric_value)
-        var metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
-        var metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
-        var metricMode: TextView = itemView.findViewById(R.id.metric_mode)
-        var metricMeanValue: TextView = itemView.findViewById(R.id.metric_avg_value)
+        val metricName: TextView = itemView.findViewById(R.id.metric_name)
+
+        val metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
+        val metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
+        val metricMeanValue: TextView = itemView.findViewById(R.id.metric_avg_value)
 
         override fun onClick(view: View?) {
         }
 
         init {
             itemView.setOnClickListener(this)
+            itemView.findViewById<TextView>(R.id.metric_value).apply {
+                visibility = View.GONE
+            }
         }
     }
 }

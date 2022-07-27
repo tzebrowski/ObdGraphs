@@ -73,19 +73,17 @@ class MetricsViewAdapter internal constructor(
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        var metricName: TextView = itemView.findViewById(R.id.metric_name)
-        var metricValue: TextView = itemView.findViewById(R.id.metric_value)
-        var metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
-        var metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
-        var metricMode: TextView = itemView.findViewById(R.id.metric_mode)
-        var metricMeanValue: TextView = itemView.findViewById(R.id.metric_avg_value)
+        val metricName: TextView = itemView.findViewById(R.id.metric_name)
+        val metricValue: TextView = itemView.findViewById(R.id.metric_value)
+        val metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
+        val metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
+        val metricMeanValue: TextView = itemView.findViewById(R.id.metric_avg_value)
 
         override fun onClick(view: View?) {
         }
 
         init {
             itemView.setOnClickListener(this)
-            metricMode.visibility = View.GONE
         }
     }
 }

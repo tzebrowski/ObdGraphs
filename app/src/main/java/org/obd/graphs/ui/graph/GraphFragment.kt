@@ -119,7 +119,7 @@ class GraphFragment : Fragment() {
     private lateinit var preferences: GraphPreferences
     private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
     private lateinit var root: View
-    private lateinit var tripViewAdapter: TripViewAdapter
+    private lateinit var tripViewAdapter: TripDetailsViewAdapter
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -174,7 +174,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun initializeTripDetails() {
-        tripViewAdapter = TripViewAdapter(root.context, mutableListOf())
+        tripViewAdapter = TripDetailsViewAdapter(root.context, mutableListOf())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = tripViewAdapter

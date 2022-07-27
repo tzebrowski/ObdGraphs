@@ -1,7 +1,6 @@
 package org.obd.graphs.ui.graph
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,13 +33,8 @@ class MarkerWindowViewAdapter internal constructor(
 
         data.elementAt(position).run {
             holder.metricName.setText(command.label, COLOR_LIGHT_SHADE_GRAY, 1.0f)
-            holder.metricMode.setText(command.pid.mode, COLOR_LIGHT_SHADE_GRAY, 0.9f)
             holder.metricValue.setText(valueToString(), COLOR_LIGHT_SHADE_GRAY, 1.1f)
         }
-
-        holder.metricMaxValue.visibility = View.GONE
-        holder.metricMinValue.visibility = View.GONE
-        holder.metricMeanValue.visibility = View.GONE
     }
 
     override fun getItemCount(): Int {
@@ -49,18 +43,25 @@ class MarkerWindowViewAdapter internal constructor(
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        var metricName: TextView = itemView.findViewById(R.id.metric_name)
-        var metricValue: TextView = itemView.findViewById(R.id.metric_value)
-        var metricMaxValue: TextView = itemView.findViewById(R.id.metric_max_value)
-        var metricMode: TextView = itemView.findViewById(R.id.metric_mode)
-        var metricMinValue: TextView = itemView.findViewById(R.id.metric_min_value)
-        var metricMeanValue: TextView = itemView.findViewById(R.id.metric_avg_value)
+        val metricName: TextView = itemView.findViewById(R.id.metric_name)
+        val metricValue: TextView = itemView.findViewById(R.id.metric_value)
 
         override fun onClick(view: View?) {
         }
 
         init {
             itemView.setOnClickListener(this)
-        }
+            itemView.findViewById<TextView>(R.id.metric_max_value).apply {
+                visibility = View.GONE
+            }
+
+            itemView.findViewById<TextView>(R.id.metric_min_value).apply {
+                visibility = View.GONE
+            }
+
+            itemView.findViewById<TextView>(R.id.metric_avg_value).apply {
+                visibility = View.GONE
+            }
+       }
     }
 }
