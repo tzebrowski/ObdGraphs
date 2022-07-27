@@ -1,76 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-
-
-    <TableRow
-        android:id="@+id/graph_view_table_layout"
+    <TableLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content"
+        android:paddingEnd="2dip"
+        android:paddingStart="0dp">
 
-        <TextView
-            android:paddingEnd="0dp"
-            android:paddingStart="4dp"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:gravity="start"
-            android:text="@string/pid.metric_name"
-            android:textAllCaps="false"
-            android:textColor="@color/cardinal"
-            android:textSize="18sp"
-            android:textStyle="normal" />
+        <TableRow
+            android:id="@+id/graph_view_table_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/pid.value_min"
-            android:textColor="@color/cardinal"
-            android:textSize="18sp"
-            android:textStyle="normal" />
+            <TextView
+                android:paddingEnd="0dp"
+                android:paddingStart="4dp"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="start"
+                android:text="@string/pid.metric_name"
+                android:textAllCaps="false"
+                android:textColor="@color/cardinal"
+                android:textSize="18sp"
+                android:textStyle="normal" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/pid.value_max"
-            android:textColor="@color/cardinal"
-            android:textSize="18sp"
-            android:textStyle="normal" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/pid.value_min"
+                android:textColor="@color/cardinal"
+                android:textSize="18sp"
+                android:textStyle="normal" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/pid.value_avg"
-            android:textColor="@color/cardinal"
-            android:textSize="18sp"
-            android:textStyle="normal" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/pid.value_max"
+                android:textColor="@color/cardinal"
+                android:textSize="18sp"
+                android:textStyle="normal" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:paddingStart="0dp"
-            android:paddingEnd="6dp"
-            android:text="@string/pid.value"
-            android:textColor="@color/cardinal"
-            android:textSize="18sp"
-            android:textStyle="normal" />
-    </TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="@string/pid.value_avg"
+                android:textColor="@color/cardinal"
+                android:textSize="18sp"
+                android:textStyle="normal" />
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:paddingStart="0dp"
+                android:paddingEnd="6dp"
+                android:text="@string/pid.value"
+                android:textColor="@color/cardinal"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dip"
+                android:layout_weight="2"
+                android:background="#FF909090"
+                android:padding="2dip" />
+        </TableRow>
+    </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="26dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
