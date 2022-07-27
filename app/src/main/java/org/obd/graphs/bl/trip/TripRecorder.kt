@@ -39,8 +39,7 @@ private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 private val EMPTY = RawMessage.wrap(byteArrayOf())
 
-private class RawMessageToStringSerializer : StdSerializer<RawMessage> {
-    constructor() : super(RawMessage::class.java)
+private class RawMessageToStringSerializer() : StdSerializer<RawMessage>(RawMessage::class.java) {
 
     @Throws(IOException::class)
     override fun serialize(value: RawMessage, gen: JsonGenerator, provider: SerializerProvider) {
@@ -48,8 +47,7 @@ private class RawMessageToStringSerializer : StdSerializer<RawMessage> {
     }
 }
 
-private class StringToRawMessageDeserializer : StdDeserializer<RawMessage> {
-    constructor() : super(String::class.java)
+private class StringToRawMessageDeserializer() : StdDeserializer<RawMessage>(String::class.java) {
 
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): RawMessage {
         return EMPTY
@@ -91,7 +89,7 @@ class TripRecorder private constructor() {
         val instance: TripRecorder = TripRecorder().apply {
             val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())
             Cache[CACHE_TRIP_PROPERTY_NAME] = trip
-            Log.i(LOGGER_KEY, "Init Trip with stamp: $${trip.startTs}")
+            Log.i(LOGGER_KEY, "Init Trip with stamp: ${trip.startTs}")
         }
     }
 
