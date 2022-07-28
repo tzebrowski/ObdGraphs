@@ -267,56 +267,64 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:key="power"
         android:title="@string/pref.power_category">
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:dialogTitle="@string/pref.adapter_power_connect_adapter"
-            android:key="pref.adapter.power.connect_adapter"
-            android:title="@string/pref.adapter_power_connect_adapter" />
 
-        <CheckBoxPreference
-            app:singleLineTitle="false"
-            android:defaultValue="false"
-            android:dialogTitle="@string/pref.adapter_power_screen_off"
-            android:key="pref.adapter.power.screen_off"
-            android:title="@string/pref.adapter_power_screen_off" />
+        <PreferenceScreen
+            android:key="pref.power"
+            android:title="@string/pref.settings">
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:dialogTitle="@string/pref.adapter_power_bt_off"
-            android:key="pref.adapter.power.switch_network_on_off"
-            android:summary="@string/pref.experimental_switch_network_enabled"
-            android:title="@string/pref.adapter_power_bt_off"
-            app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="@string/pref.adapter_power_connect_adapter"
+                android:key="pref.adapter.power.connect_adapter"
+                android:title="@string/pref.adapter_power_connect_adapter" />
 
-        <EditTextPreference
-            android:defaultValue="10"
-            android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
-            android:inputType="number"
-            android:key="pref.adapter.power.start_data_logging.after"
-            android:title="@string/pref.adapter_power_start_data_logging_after"
-            app:useSimpleSummaryProvider="true" />
+            <CheckBoxPreference
+                app:singleLineTitle="false"
+                android:defaultValue="false"
+                android:dialogTitle="@string/pref.adapter_power_screen_off"
+                android:key="pref.adapter.power.screen_off"
+                android:title="@string/pref.adapter_power_screen_off" />
 
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dialogTitle="@string/pref.adapter_power_bt_off"
+                android:key="pref.adapter.power.switch_network_on_off"
+                android:summary="@string/pref.experimental_switch_network_enabled"
+                android:title="@string/pref.adapter_power_bt_off"
+                app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED" />
+
+            <EditTextPreference
+                android:defaultValue="10"
+                android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
+                android:inputType="number"
+                android:key="pref.adapter.power.start_data_logging.after"
+                android:title="@string/pref.adapter_power_start_data_logging_after"
+                app:useSimpleSummaryProvider="true" />
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref.toolbar_category">
-        <CheckBoxPreference
-            app:singleLineTitle="false"
-            android:defaultValue="false"
-            android:key="pref.toolbar.hide.landscape"
-            android:title="@string/pref.toolbar_hide_landscape" />
-        <CheckBoxPreference
-            app:singleLineTitle="false"
-            android:defaultValue="true"
-            android:key="pref.toolbar.hide.doubleclick"
-            android:title="@string/pref.toolbar_hide_doubleclick" />
-        <CheckBoxPreference
-            app:singleLineTitle="false"
-            android:defaultValue="true"
-            android:key="pref.toolbar.hide.connected"
-            android:title="@string/pref.toolbar_hide_connected" />
+        <PreferenceScreen
+            android:key="pref.toolbar"
+            android:title="@string/pref.settings">
 
+            <CheckBoxPreference
+                app:singleLineTitle="false"
+                android:defaultValue="false"
+                android:key="pref.toolbar.hide.landscape"
+                android:title="@string/pref.toolbar_hide_landscape" />
+            <CheckBoxPreference
+                app:singleLineTitle="false"
+                android:defaultValue="true"
+                android:key="pref.toolbar.hide.doubleclick"
+                android:title="@string/pref.toolbar_hide_doubleclick" />
+            <CheckBoxPreference
+                app:singleLineTitle="false"
+                android:defaultValue="true"
+                android:key="pref.toolbar.hide.connected"
+                android:title="@string/pref.toolbar_hide_connected" />
+        </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref.view_category">

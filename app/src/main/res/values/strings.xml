@@ -92,7 +92,7 @@
     <string name="pref.adapter_command_freq">Command frequency</string>
     <string name="pref.adapter_power_connect_adapter">Connect adapter on power</string>
     <string name="pref.adapter_power_screen_off">Screen off when disconnected</string>
-    <string name="pref.adapter_power_bt_off">Switch Network Off/On</string>
+    <string name="pref.adapter_power_bt_off">Switch network Off/On</string>
     <string name="pref.adapter_power_start_data_logging_after">Start data logging after specified period of time (in seconds)</string>
 
     <string name="pref.power_category">Power</string>
