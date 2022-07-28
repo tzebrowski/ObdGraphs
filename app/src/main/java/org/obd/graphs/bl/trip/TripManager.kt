@@ -207,6 +207,7 @@ class TripManager private constructor() {
             val result = files
                 .filter { it.startsWith("trip_") || it.contains("") }
                 .filter { it.substring(0, it.length - 5).split("-").size > 3 }
+                .filter { it.contains(getCurrentProfile()) }
                 .sortedByDescending { it }
                 .mapNotNull { fileName ->
                     val p = fileName.substring(0, fileName.length - 5).split("-")
