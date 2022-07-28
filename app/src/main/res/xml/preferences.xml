@@ -216,6 +216,12 @@
 
                 <CheckBoxPreference
                     android:defaultValue="false"
+                    android:dialogTitle="@string/pref.adapter_response_length_enabled"
+                    android:key="pref.adapter.responseLength.enabled"
+                    android:title="@string/pref.adapter_response_length_enabled" />
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_adaptive_enabled"
                     android:key="pref.adapter.adaptive.enabled"
                     android:title="@string/pref.adapter_adaptive_enabled" />

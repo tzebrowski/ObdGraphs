@@ -40,6 +40,9 @@ fun SharedPreferences.isEnabled(key: String): Boolean {
     return getBoolean(key, false)
 }
 
+fun SharedPreferences.getS(name: String?, default: String): String {
+    return getString(name, default)!!
+}
 fun SharedPreferences.getString(name: String): String? {
     return getString(name, null)
 }

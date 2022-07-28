@@ -2,10 +2,7 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.SharedPreferences
 import android.util.Log
-import org.obd.graphs.ui.preferences.PREFERENCE_CONNECTION_TYPE
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.getStringSet
-import org.obd.graphs.ui.preferences.isEnabled
+import org.obd.graphs.ui.preferences.*
 
 const val GENERIC_MODE = "Generic mode"
 
@@ -28,8 +25,10 @@ data class DataLoggerPreferences(
     var maxReconnectRetry: Int,
     var resources: Set<String>,
     var fetchDeviceProperties: Boolean,
-    var fetchSupportedPids: Boolean
-) {
+    var fetchSupportedPids: Boolean,
+    var responseLengthEnabled: Boolean
+
+    ) {
     companion object {
         private lateinit var strongReference: SharedPreferenceChangeListener
         val instance: DataLoggerPreferences by lazy {
@@ -54,19 +53,23 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
             "pref.pids.generic.high" -> dataLoggerPreferences.pids =
                 getPidsToQuery()
             "pref.mode" -> dataLoggerPreferences.mode =
-                Prefs.getString(key, GENERIC_MODE)!!
+                Prefs.getS(key, GENERIC_MODE)
             "pref.debug.generator.enabled" -> dataLoggerPreferences.generatorEnabled =
                 Prefs.isEnabled(key)
             "pref.adapter.adaptive.enabled" -> dataLoggerPreferences.adaptiveConnectionEnabled =
                 Prefs.isEnabled(key)
             PREFERENCE_CONNECTION_TYPE -> dataLoggerPreferences.connectionType =
-                Prefs.getString(key, "wifi")!!
+                Prefs.getS(key, "wifi")
             "pref.adapter.connection.tcp.host" -> dataLoggerPreferences.tcpHost =
-                Prefs.getString(key,"192.168.0.10")!!
+                Prefs.getS(key,"192.168.0.10")
             "pref.adapter.connection.tcp.port" -> dataLoggerPreferences.tcpPort =
-                Prefs.getString(key,"35000")!!.toInt()
+                Prefs.getS(key,"35000").toInt()
+
             "pref.adapter.batch.enabled" -> dataLoggerPreferences.batchEnabled =
                 Prefs.getBoolean(key, true)
+
+            "pref.adapter.responseLength.enabled" -> dataLoggerPreferences.responseLengthEnabled =
+                Prefs.getBoolean(key, false)
 
             "pref.adapter.cache.result.enabled" -> dataLoggerPreferences.resultsCacheEnabled =
                 Prefs.getBoolean(key, true)
@@ -77,18 +80,18 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 Prefs.getBoolean(key, true)
 
             "pref.adapter.reconnect.max_retry" -> dataLoggerPreferences.maxReconnectRetry =
-                Prefs.getString(key, "0")!!.toInt()
+                Prefs.getS(key, "0").toInt()
 
             "pref.adapter.id" -> dataLoggerPreferences.adapterId =
-                Prefs.getString(key, "OBDII")!!
+                Prefs.getS(key, "OBDII")
             "pref.adapter.command.freq" -> dataLoggerPreferences.commandFrequency =
-                Prefs.getString(key, "6").toString().toLong()
+                Prefs.getS(key, "6").toLong()
 
             "pref.adapter.init.delay" -> dataLoggerPreferences.initDelay =
-                Prefs.getString(key, "500").toString().toLong()
+                Prefs.getS(key, "500").toLong()
 
             "pref.adapter.init.protocol" -> dataLoggerPreferences.initProtocol =
-                Prefs.getString(key, "AUTO").toString()
+                Prefs.getS(key, "AUTO")
 
             "pref.adapter.init.fetchDeviceProperties" -> dataLoggerPreferences.fetchDeviceProperties =
                 Prefs.getBoolean(key, true)
@@ -104,31 +107,33 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 }
 
 private fun getDataLoggerPreferences(): DataLoggerPreferences {
-    val connectionType = Prefs.getString(PREFERENCE_CONNECTION_TYPE, "bluetooth")!!
-    val tcpHost = Prefs.getString("pref.adapter.connection.tcp.host", "192.168.0.10")!!
-    val tcpPort = Prefs.getString("pref.adapter.connection.tcp.port", "35000")!!.toInt()
+    val connectionType = Prefs.getS(PREFERENCE_CONNECTION_TYPE, "bluetooth")
+    val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
+    val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
     val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
     val reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
-    val adapterId = Prefs.getString("pref.adapter.id", "OBDII")!!
-    val commandFrequency = Prefs.getString("pref.adapter.command.freq", "6").toString().toLong()
-    val initDelay = Prefs.getString("pref.adapter.init.delay", "500").toString().toLong()
+    val adapterId = Prefs.getS("pref.adapter.id", "OBDII")
+    val commandFrequency = Prefs.getS("pref.adapter.command.freq", "6").toLong()
+    val initDelay = Prefs.getS("pref.adapter.init.delay", "500").toLong()
 
-    val mode = Prefs.getString("pref.mode", GENERIC_MODE)!!
+    val mode = Prefs.getS("pref.mode", GENERIC_MODE)
     val generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
     val adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
     val resultsCacheEnabled = Prefs.isEnabled("pref.adapter.cache.result.enabled")
 
-    val initProtocol = Prefs.getString("pref.adapter.init.protocol", "AUTO")!!
+    val initProtocol = Prefs.getS("pref.adapter.init.protocol", "AUTO")
 
     val hardReset =
         Prefs.getBoolean("pref.adapter.reconnect.hard_reset", false)
 
     val maxReconnectRetry =
-        Prefs.getString("pref.adapter.reconnect.max_retry", "0")!!.toInt()
+        Prefs.getS("pref.adapter.reconnect.max_retry", "0").toInt()
 
     val fetchDeviceProperties = Prefs.getBoolean("pref.adapter.init.fetchDeviceProperties", true)
 
     val fetchSupportedPids = Prefs.getBoolean("pref.adapter.init.fetchSupportedPids" , true)
+
+    val responseLength = Prefs.getBoolean( "pref.adapter.responseLength.enabled" , false)
 
     val dataLoggerPreferences = DataLoggerPreferences(
         pids = getPidsToQuery(),
@@ -149,7 +154,8 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         maxReconnectRetry = maxReconnectRetry,
         resources = resources(),
         fetchDeviceProperties = fetchDeviceProperties,
-        fetchSupportedPids = fetchSupportedPids
+        fetchSupportedPids = fetchSupportedPids,
+        responseLengthEnabled = responseLength
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")

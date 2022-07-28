@@ -207,6 +207,7 @@ class DataLogger internal constructor() {
 
     private fun adjustments() = Adjustments.builder()
         .batchEnabled(preferences.batchEnabled)
+        .responseLengthEnabled(preferences.responseLengthEnabled)
         .cacheConfig(
             CacheConfig.builder()
                 .resultCacheFilePath(File(context.cacheDir, "formula_cache.json").absolutePath)
