@@ -26,7 +26,8 @@ data class DataLoggerPreferences(
     var resources: Set<String>,
     var fetchDeviceProperties: Boolean,
     var fetchSupportedPids: Boolean,
-    var responseLengthEnabled: Boolean
+    var responseLengthEnabled: Boolean,
+    var gracefulStop: Boolean
 
     ) {
     companion object {
@@ -40,7 +41,7 @@ data class DataLoggerPreferences(
     }
 }
 
-const val LOGGER_KEY = "PREFS"
+private const val LOGGER_KEY = "PREFS"
 
 private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLoggerPreferences) :
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -70,6 +71,9 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 
             "pref.adapter.responseLength.enabled" -> dataLoggerPreferences.responseLengthEnabled =
                 Prefs.getBoolean(key, false)
+
+            "pref.adapter.graceful_stop.enabled" -> dataLoggerPreferences.gracefulStop =
+                Prefs.getBoolean(key, true)
 
             "pref.adapter.cache.result.enabled" -> dataLoggerPreferences.resultsCacheEnabled =
                 Prefs.getBoolean(key, true)
@@ -135,6 +139,9 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
     val responseLength = Prefs.getBoolean( "pref.adapter.responseLength.enabled" , false)
 
+    val gracefulStop = Prefs.getBoolean("pref.adapter.graceful_stop.enabled" , true)
+
+
     val dataLoggerPreferences = DataLoggerPreferences(
         pids = getPidsToQuery(),
         connectionType = connectionType,
@@ -155,7 +162,8 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         resources = resources(),
         fetchDeviceProperties = fetchDeviceProperties,
         fetchSupportedPids = fetchSupportedPids,
-        responseLengthEnabled = responseLength
+        responseLengthEnabled = responseLength,
+        gracefulStop = gracefulStop
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")

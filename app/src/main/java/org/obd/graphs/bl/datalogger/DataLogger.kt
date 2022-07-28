@@ -142,7 +142,8 @@ class DataLogger internal constructor() {
     }
 
     fun stop() {
-        workflow.stop()
+        Log.i(LOGGER_TAG, "Sending STOP to workflow with graceful.stop parameter = ${preferences.gracefulStop}")
+        workflow.stop(preferences.gracefulStop)
     }
 
     fun start() {

@@ -221,6 +221,12 @@
                     android:title="@string/pref.adapter_response_length_enabled" />
 
                 <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.adapter_graceful_stop_enabled"
+                    android:key="pref.adapter.graceful_stop.enabled"
+                    android:title="@string/pref.adapter_graceful_stop_enabled" />
+
+                <CheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_adaptive_enabled"
                     android:key="pref.adapter.adaptive.enabled"
