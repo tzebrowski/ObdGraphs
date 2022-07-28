@@ -9,17 +9,17 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 
 private const val LOGGER_KEY = "TripRecorderBroadcastReceiver"
 
-class TripRecorderBroadcastReceiver : BroadcastReceiver() {
+class TripManagerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
             DATA_LOGGER_CONNECTED_EVENT -> {
                 Log.i(LOGGER_KEY, "Received event: DATA_LOGGER_CONNECTED_EVENT")
-                TripRecorder.instance.startNewTrip(System.currentTimeMillis())
+                TripManager.INSTANCE.startNewTrip(System.currentTimeMillis())
             }
             DATA_LOGGER_STOPPED_EVENT -> {
                 Log.i(LOGGER_KEY, "Received event: DATA_LOGGER_STOPPED_EVENT")
-                TripRecorder.instance.saveCurrentTrip()
+                TripManager.INSTANCE.saveCurrentTrip()
             }
         }
     }

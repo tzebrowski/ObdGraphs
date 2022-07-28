@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.trip.TripFileDesc
-import org.obd.graphs.bl.trip.TripRecorder
+import org.obd.graphs.bl.trip.TripManager
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
@@ -92,7 +92,7 @@ class TripsViewAdapter internal constructor(
                 Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
                 data.remove(trip)
                 notifyItemChanged(adapterPosition)
-                TripRecorder.instance.deleteTrip(trip)
+                TripManager.INSTANCE.deleteTrip(trip)
             }
 
         }

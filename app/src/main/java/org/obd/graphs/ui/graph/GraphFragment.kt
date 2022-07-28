@@ -30,7 +30,7 @@ import org.obd.graphs.R
 import org.obd.graphs.activity.DATA_LOGGER_PROCESS_IS_RUNNING
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
-import org.obd.graphs.bl.trip.TripRecorder
+import org.obd.graphs.bl.trip.TripManager
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.preferences.Prefs
@@ -54,7 +54,7 @@ class GraphFragment : Fragment() {
                 sharedPreferences!!.getString(key, null)?.let {
                     if (!isDataCollectingProcessWorking()) {
                         context?.run {
-                            tripRecorder.loadTrip(it)
+                            tripManager.loadTrip(it)
                         }
                     }
                 }
@@ -117,7 +117,7 @@ class GraphFragment : Fragment() {
     private val valueScaler = ValueScaler()
     private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
-    private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
+    private val tripManager: TripManager by lazy { TripManager.INSTANCE }
     private lateinit var root: View
 
     override fun onDestroyView() {
@@ -222,7 +222,7 @@ class GraphFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
-            val trip = tripRecorder.getCurrentTrip()
+            val trip = tripManager.getCurrentTrip()
             val registry = DataLogger.instance.pidDefinitionRegistry()
             tripStartTs = trip.startTs
 

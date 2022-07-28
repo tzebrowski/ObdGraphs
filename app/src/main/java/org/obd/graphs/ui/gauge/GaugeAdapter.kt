@@ -110,7 +110,7 @@ class GaugeAdapter(
                     ?: metric.command.pid.resourceFile
                 text = resourceFile
                 highLightText(
-                    resourceFile, 0.55f,
+                    resourceFile, 0.5f,
                     Color.WHITE
                 )
 

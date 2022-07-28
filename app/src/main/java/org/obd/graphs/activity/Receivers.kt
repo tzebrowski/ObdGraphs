@@ -14,11 +14,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.trip.TripRecorderBroadcastReceiver
+import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.preferences.Prefs
 
-internal val tripRecorderBroadcastReceiver = TripRecorderBroadcastReceiver()
+internal val tripRecorderBroadcastReceiver = TripManagerBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()
 
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"

@@ -5,7 +5,7 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
 import org.obd.metrics.command.obd.SupportedPidsCommand
-import org.obd.graphs.bl.trip.TripRecorder
+import org.obd.graphs.bl.trip.TripManager
 
 internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
 
@@ -15,7 +15,7 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
         }
     }
 
-    private val tripRecorder: TripRecorder by lazy { TripRecorder.instance }
+    private val tripManager: TripManager by lazy { TripManager.INSTANCE }
 
     fun reset() {
         metrics.postValue(null)
@@ -25,7 +25,7 @@ internal class MetricsAggregator : ReplyObserver<Reply<*>>() {
         if (reply is ObdMetric && reply.command !is SupportedPidsCommand) {
             reply.command.pid?.let {
                 metrics.postValue(reply)
-                tripRecorder.addTripEntry(reply)
+                tripManager.addTripEntry(reply)
             }
         }
     }

@@ -96,12 +96,12 @@ data class SensorData(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Trip(val startTs: Long, val entries: MutableMap<Long, SensorData>)
 
-class TripRecorder private constructor() {
+class TripManager private constructor() {
 
     companion object {
 
         @JvmStatic
-        val instance: TripRecorder = TripRecorder().apply {
+        val INSTANCE: TripManager = TripManager().apply {
             val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())
             Cache[CACHE_TRIP_PROPERTY_NAME] = trip
             Log.i(LOGGER_KEY, "Init Trip with stamp: ${trip.startTs}")
