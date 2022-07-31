@@ -1,12 +1,16 @@
 package org.obd.graphs.ui.preferences.pid
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import java.util.*
 
@@ -16,8 +20,39 @@ class ECUSupportedPIDsPreferences(
 ) :
     ListPreference(context, attrs) {
 
-    init {
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            if (intent.action === WORKFLOW_RELOAD_EVENT) {
+                initialize()
+            }
+        }
+    }
 
+    init {
+        initialize()
+    }
+
+
+    override fun onDetached() {
+        super.onDetached()
+        context?.unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onAttached() {
+        super.onAttached()
+        registerReceiver(context)
+    }
+
+    private fun registerReceiver(context: Context?) {
+        context?.registerReceiver(
+            broadcastReceiver,
+            IntentFilter().apply {
+                addAction(WORKFLOW_RELOAD_EVENT)
+            }
+        )
+    }
+
+    private fun initialize() {
         val entries: MutableList<CharSequence> =
             LinkedList()
         val entriesValues: MutableList<CharSequence> =
@@ -40,8 +75,8 @@ class ECUSupportedPIDsPreferences(
 
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
-
     }
+
     private fun notSupportedByApp(p: String): SpannableString  =
         SpannableString("PID: ${p.uppercase()} (not supported by application)").apply {
 
