@@ -11,7 +11,6 @@ val defaultPidFiles = mapOf(
     "giulia_2.0_gme.json" to "Giulia 2.0 GME",
     "mode01.json" to "Mode 01",
     "mode01_2.json" to "Mode 01.2",
-    "mode01_3.json" to "Mode 01.3",
     "extra.json" to "Extra",
 )
 
