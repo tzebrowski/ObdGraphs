@@ -8,6 +8,8 @@ import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
 import java.util.*
 
+private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
+private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
 
 class DisplayedPIDsListPreferences(
     context: Context?,
@@ -33,7 +35,7 @@ class DisplayedPIDsListPreferences(
         entries: MutableList<CharSequence>,
         entriesValues: MutableList<CharSequence>
     ) {
-        val query = Prefs.getStringSet("pref.pids.generic.high")
+        val query = Prefs.getStringSet(HIGH_PRIO_PID_PREF)
         DataLogger.instance.pidDefinitionRegistry().findAll()
             .filter { pidDefinition -> pidDefinition.priority < 4 }
             .filter { pidDefinition -> query.contains(pidDefinition.id.toString()) }
@@ -48,7 +50,7 @@ class DisplayedPIDsListPreferences(
         entries: MutableList<CharSequence>,
         entriesValues: MutableList<CharSequence>
     ) {
-        val query = Prefs.getStringSet("pref.pids.generic.low")
+        val query = Prefs.getStringSet(LOW_PRIO_PID_PREF)
 
         DataLogger.instance.pidDefinitionRegistry().findAll()
             .filter { p -> p.priority > 4 }
