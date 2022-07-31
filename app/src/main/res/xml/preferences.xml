@@ -41,6 +41,13 @@
 
             <PreferenceCategory android:title="@string/pref.registry.category">
 
+                <org.obd.graphs.ui.preferences.pid.ECUSupportedPIDsPreferences
+                    app:singleLineTitle="false"
+                    android:dialogTitle="@string/pref.pids_supported"
+                    android:key="pref.pids.supported"
+                    android:summary="@string/pref.pids_supported_summary"
+                    android:title="@string/pref.pids_supported" />
+
                 <org.obd.graphs.ui.preferences.pid.PIDsResourceListPreferences
                     android:dialogTitle="@string/pref.pids.registry.resource_list"
                     android:key="pref.pids.registry.list"
@@ -72,11 +79,7 @@
                     app:priority="low"
                     android:summary="@string/pref.pids_generic_low_summary" />
 
-                <org.obd.graphs.ui.preferences.pid.ECUSupportedPIDsPreferences
-                    app:singleLineTitle="false"
-                    android:dialogTitle="@string/pref.pids_supported"
-                    android:key="pref.pids.supported"
-                    android:title="@string/pref.pids_supported" />
+
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>

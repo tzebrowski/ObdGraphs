@@ -27,7 +27,6 @@ class PIDsListPreferences(
 
     init {
         initialize()
-
     }
 
     override fun onDetached() {

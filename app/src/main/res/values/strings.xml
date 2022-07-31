@@ -141,8 +141,8 @@
     <string name="pref.dash.background_color_1">Start color 1</string>
     <string name="pref.dash.background_color_2">End color 2</string>
     <string name="pref.pids.registry.resource_list">Resources list</string>
-    <string name="pref.pids.registry.resource.list_summary">PIDs definition resources files. Application also read it form the external storage.</string>
-    <string name="pref.pids.registry.resource.external_storage">Access PIDs resources files from the external storage</string>
+    <string name="pref.pids.registry.resource.list_summary">OBD2 PIDs/Sensor definition resources files.\nApplication also read it form the external storage.</string>
+    <string name="pref.pids.registry.resource.external_storage">Access OBD2 PIDs/Sensor resources files from the external storage</string>
     <string name="trip_time">Time</string>
     <string name="trip_start_date">Start date</string>
     <string name="trip_vehicle_profile">Profile</string>
@@ -158,6 +158,7 @@
     <string name="pref.about_build_version">Build version</string>
     <string name="pref.adapter_response_length_enabled">Response length enabled</string>
     <string name="pref.adapter_graceful_stop_enabled">Graceful stop</string>
+    <string name="pref.pids_supported_summary">This list contains OBD2 PIDs/Sensors which are supported by ECU and can be read by the application.</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>
