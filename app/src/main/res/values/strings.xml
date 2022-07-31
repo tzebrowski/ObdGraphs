@@ -159,6 +159,8 @@
     <string name="pref.adapter_response_length_enabled">Response length enabled</string>
     <string name="pref.adapter_graceful_stop_enabled">Graceful stop</string>
     <string name="pref.pids_supported_summary">This list contains OBD2 PIDs/Sensors which are supported by ECU and can be read by the application.</string>
+    <string name="pref_pids_display_only_ecu_supported">Display just these OBD2 PIDs/Sensors which are supported by ECU</string>
+    <string name="pref_pids_display_only_ecu_supported_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which are supported by ECU.\nAll others will not be visible.</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

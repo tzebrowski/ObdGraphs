@@ -9,6 +9,7 @@ import androidx.preference.MultiSelectListPreference
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
+import org.obd.graphs.ui.preferences.Prefs
 import java.util.*
 
 class PIDsListPreferences(
@@ -66,8 +67,12 @@ class PIDsListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
+        val ecuSupportedPIDs = getECUSupportedPIDs()
+        val ecuSupportedPIDsEnabled =  Prefs.getBoolean("pref.pids.registry.filter_pids_ecu_supported",false)
+
         getPidList()
             .filter { p -> predicate.invoke(p) }
+            .filter { p-> if (ecuSupportedPIDsEnabled && p.mode == "01")  ecuSupportedPIDs.contains(p.pid.lowercase()) else true }
             .sortedBy { p -> p.displayString() .toString()}
             .forEach { p ->
                 entries.add(p.displayString())
