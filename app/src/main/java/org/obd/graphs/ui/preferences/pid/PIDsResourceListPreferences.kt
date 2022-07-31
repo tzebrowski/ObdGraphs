@@ -13,7 +13,7 @@ import org.obd.graphs.bl.datalogger.getExternalPidResources
 import org.obd.graphs.sendBroadcastEvent
 
 
-class PidResourceListPreferences(
+class PIDsResourceListPreferences(
     context: Context?,
     attrs: AttributeSet?
 ) :

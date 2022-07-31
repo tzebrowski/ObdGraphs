@@ -11,7 +11,7 @@ import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import java.util.*
 
-class PidListPreferences(
+class PIDsListPreferences(
     context: Context?,
     attrs: AttributeSet?
 ): MultiSelectListPreference(context, attrs) {

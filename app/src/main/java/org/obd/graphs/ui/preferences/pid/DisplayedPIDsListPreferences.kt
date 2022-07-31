@@ -9,7 +9,7 @@ import org.obd.graphs.ui.preferences.getStringSet
 import java.util.*
 
 
-class DisplayedPidListPreferences(
+class DisplayedPIDsListPreferences(
     context: Context?,
     attrs: AttributeSet?
 ) :
