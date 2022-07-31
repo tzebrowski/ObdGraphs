@@ -1,9 +1,6 @@
 package org.obd.graphs.bl.datalogger
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.util.Log
 import org.obd.metrics.api.model.DeviceProperties
 import org.obd.metrics.api.model.Lifecycle
@@ -22,11 +19,11 @@ import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import org.obd.graphs.ApplicationContext
 import org.obd.graphs.sendBroadcastEvent
-import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.mode.getModesAndHeaders
-import org.obd.graphs.ui.preferences.updatePIDSupportedByECU
+import org.obd.graphs.ui.preferences.pid.updateSupportedPIDsPreference
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import java.io.File
+
 
 const val WORKFLOW_RELOAD_EVENT = "data.logger.workflow.reload.event"
 const val RESOURCE_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
@@ -75,10 +72,11 @@ class DataLogger internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
+
         override fun onRunning(deviceProperties: DeviceProperties) {
             Log.i(LOGGER_TAG, "We are connected to the device: $deviceProperties")
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
-            Prefs.updatePIDSupportedByECU(deviceProperties.capabilities)
+            updateSupportedPIDsPreference(deviceProperties.capabilities)
         }
 
         override fun onError(msg: String, tr: Throwable?) {

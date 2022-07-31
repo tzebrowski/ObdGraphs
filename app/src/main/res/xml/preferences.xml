@@ -70,7 +70,7 @@
                 app:priority="low"
                 android:summary="@string/pref.pids_generic_low_summary" />
 
-            <org.obd.graphs.ui.preferences.pid.SupportedPidsPreferences
+            <org.obd.graphs.ui.preferences.pid.ECUSupportedPIDsPreferences
                 app:singleLineTitle="false"
                 android:dialogTitle="@string/pref.pids_supported"
                 android:key="pref.pids.supported"

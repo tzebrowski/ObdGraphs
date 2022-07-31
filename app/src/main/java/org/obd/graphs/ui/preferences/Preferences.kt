@@ -10,18 +10,8 @@ val Prefs: SharedPreferences by lazy {
     )
 }
 
-private const val ECU_SUPPORTED_PIDS = "datalogger.supported.pids"
-
-fun SharedPreferences.getECUSupportedPids(): MutableSet<String> {
-    return getStringSet(ECU_SUPPORTED_PIDS, emptySet())!!
-}
-
 fun SharedPreferences.updateString(key:String, value: String?) {
     edit().putString(key, value).apply()
-}
-
-fun SharedPreferences.updatePIDSupportedByECU(list: Set<String>) {
-    edit().putStringSet(ECU_SUPPORTED_PIDS, list).apply()
 }
 
 fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
