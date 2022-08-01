@@ -9,14 +9,14 @@
     android:background="@color/black">
 
     <LinearLayout
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_marginStart="1sp"
         android:layout_marginEnd="1sp"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="3">
 
         <TextView
             android:id="@+id/connection_status"
@@ -35,12 +35,23 @@
             android:id="@+id/vehicle_profile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:gravity="start"
             android:paddingTop="4sp"
             android:text="@string/vehicle_profile"
             android:textColor="@color/white"
             android:textSize="11sp" />
+
+        <ImageView
+            android:id="@+id/toggle_fullscreen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="0.5"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="?attr/actionModeCopyDrawable" />
     </LinearLayout>
 
     <ProgressBar
@@ -74,7 +85,8 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
@@ -99,10 +111,10 @@
         </com.google.android.material.bottomappbar.BottomAppBar>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:contentDescription="@string/activity.btn_start"
             android:id="@+id/connect_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/activity.btn_start"
             android:src="@android:drawable/ic_lock_idle_charging"
             app:backgroundTint="#01804F"
             app:fabSize="mini"

@@ -1,12 +1,11 @@
 package org.obd.graphs.activity
 
 import android.graphics.Color
+import android.widget.ImageView
 import android.widget.TextView
 import org.obd.graphs.R
-import org.obd.graphs.ui.common.COLOR_CARDINAL
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
-import org.obd.graphs.ui.common.highLightText
+import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.ui.preferences.profile.getCurrentProfile
@@ -44,6 +43,12 @@ internal fun MainActivity.setupStatusPanel() {
     (findViewById<TextView>(R.id.vehicle_profile)).let {
         it.setOnClickListener {
             navigateToPreferencesScreen("pref.profiles")
+        }
+    }
+
+    (findViewById<ImageView>(R.id.toggle_fullscreen)).let {
+        it.setOnClickListener {
+           sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
         }
     }
 }

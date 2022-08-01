@@ -150,7 +150,7 @@
     <string name="trip_action_delete">Del</string>
     <string name="trip_action_load">Load</string>
     <string name="connection_status">Status</string>
-    <string name="vehicle_profile">Vehicle profile</string>
+    <string name="vehicle_profile">Profile</string>
     <string name="pref.debug_category">Debug</string>
     <string name="pref.about_category">About</string>
     <string name="pref.about_title">ObdGraphs is an application with graphical interface intended to collect and display vehicle related telemetry data in real-time.
