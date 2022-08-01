@@ -99,52 +99,56 @@
             android:title="@string/pref.settings">
 
             <PreferenceCategory android:title="@string/pref.selected_connection_category">
+                <PreferenceScreen
+                    android:key="pref.adapter.connection"
+                    android:title="@string/pref.settings">
 
-                <ListPreference
-                    android:defaultValue="bluetooth"
-                    android:dialogTitle="@string/pref.selected_connection_type"
-                    android:entries="@array/pref.connection_type_array"
-                    android:entryValues="@array/pref.connection_type_array"
-                    android:key="pref.adapter.connection.type"
-                    android:title="@string/pref.selected_connection_type"
-                    app:useSimpleSummaryProvider="true" />
-
-                <PreferenceCategory
-                    android:key="pref.adapter.connection.type.bluetooth"
-                    android:title="@string/pref.bluetooth_category">
-
-                    <org.obd.graphs.ui.preferences.AdaptersListPreferences
-                        android:defaultValue="@array/pref.empty_array"
-                        android:dialogTitle="@string/pref.adapter_id"
-                        android:key="pref.adapter.id"
-                        android:title="@string/pref.adapter_id"
-                        app:useSimpleSummaryProvider="true" />
-                </PreferenceCategory>
-
-                <PreferenceCategory
-                    android:key="pref.adapter.connection.type.wifi"
-                    android:title="@string/pref.wifi_category">
-
-                    <EditTextPreference
-                        android:dialogTitle="@string/pref.adapter_connection_tcp_ssid"
-                        android:key="pref.adapter.connection.tcp.wifi.ssid"
-                        android:title="@string/pref.adapter_connection_tcp_ssid"
+                    <ListPreference
+                        android:defaultValue="bluetooth"
+                        android:dialogTitle="@string/pref.selected_connection_type"
+                        android:entries="@array/pref.connection_type_array"
+                        android:entryValues="@array/pref.connection_type_array"
+                        android:key="pref.adapter.connection.type"
+                        android:title="@string/pref.selected_connection_type"
                         app:useSimpleSummaryProvider="true" />
 
-                    <EditTextPreference
-                        android:defaultValue="192.168.0.10"
-                        android:dialogTitle="@string/pref.adapter_connection_tcp_host"
-                        android:key="pref.adapter.connection.tcp.host"
-                        android:title="@string/pref.adapter_connection_tcp_host"
-                        app:useSimpleSummaryProvider="true" />
+                    <PreferenceCategory
+                        android:key="pref.adapter.connection.type.bluetooth"
+                        android:title="@string/pref.bluetooth_category">
 
-                    <EditTextPreference
-                        android:defaultValue="35000"
-                        android:dialogTitle="Port"
-                        android:key="pref.adapter_connection_tcp_port"
-                        android:title="@string/pref.adapter_connection_tcp_port"
-                        app:useSimpleSummaryProvider="true" />
-                </PreferenceCategory>
+                        <org.obd.graphs.ui.preferences.AdaptersListPreferences
+                            android:defaultValue="@array/pref.empty_array"
+                            android:dialogTitle="@string/pref.adapter_id"
+                            android:key="pref.adapter.id"
+                            android:title="@string/pref.adapter_id"
+                            app:useSimpleSummaryProvider="true" />
+                    </PreferenceCategory>
+
+                    <PreferenceCategory
+                        android:key="pref.adapter.connection.type.wifi"
+                        android:title="@string/pref.wifi_category">
+
+                        <EditTextPreference
+                            android:dialogTitle="@string/pref.adapter_connection_tcp_ssid"
+                            android:key="pref.adapter.connection.tcp.wifi.ssid"
+                            android:title="@string/pref.adapter_connection_tcp_ssid"
+                            app:useSimpleSummaryProvider="true" />
+
+                        <EditTextPreference
+                            android:defaultValue="192.168.0.10"
+                            android:dialogTitle="@string/pref.adapter_connection_tcp_host"
+                            android:key="pref.adapter.connection.tcp.host"
+                            android:title="@string/pref.adapter_connection_tcp_host"
+                            app:useSimpleSummaryProvider="true" />
+
+                        <EditTextPreference
+                            android:defaultValue="35000"
+                            android:dialogTitle="Port"
+                            android:key="pref.adapter_connection_tcp_port"
+                            android:title="@string/pref.adapter_connection_tcp_port"
+                            app:useSimpleSummaryProvider="true" />
+                    </PreferenceCategory>
+                </PreferenceScreen>
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.init_category">
                 <PreferenceScreen
@@ -215,7 +219,9 @@
 
 
             <PreferenceCategory android:title="@string/pref.adapter_error_handling">
-                <PreferenceScreen android:title="@string/pref.settings"  android:key="pref.adapter.reconnect">
+                <PreferenceScreen android:title="@string/pref.settings"
+                    android:key="pref.adapter.errors">
+
                     <CheckBoxPreference
                         app:singleLineTitle="false"
                         android:defaultValue="true"

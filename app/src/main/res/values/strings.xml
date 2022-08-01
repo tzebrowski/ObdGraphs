@@ -52,7 +52,7 @@
     <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts when errors occur</string>
     <string name="pref.adapter.reconnect.hard_reset">Enable hard reset during reconnect attempt</string>
 
-    <string name="pref.selected_connection_category">Connection settings</string>
+    <string name="pref.selected_connection_category">Connection</string>
     <string name="pref.selected_connection_type">Type of connection</string>
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge_display_command_rate">Display commands frequency</string>
