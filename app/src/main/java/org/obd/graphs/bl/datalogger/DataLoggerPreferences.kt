@@ -87,7 +87,7 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
                 Prefs.getS(key, "0").toInt()
 
             "pref.adapter.id" -> dataLoggerPreferences.adapterId =
-                Prefs.getS(key, "OBDII")
+                Prefs.getS(key, "")
             "pref.adapter.command.freq" -> dataLoggerPreferences.commandFrequency =
                 Prefs.getS(key, "6").toLong()
 

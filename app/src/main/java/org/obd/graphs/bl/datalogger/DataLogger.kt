@@ -18,6 +18,7 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import org.obd.graphs.ApplicationContext
+import org.obd.graphs.findBTAdapterByName
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.preferences.mode.getModesAndHeaders
 import org.obd.graphs.ui.preferences.pid.updateSupportedPIDsPreference
@@ -166,6 +167,7 @@ class DataLogger internal constructor() {
         bluetoothConnection()
     }
 
+
     private fun bluetoothConnection(): AdapterConnection? = try {
         val deviceName = preferences.adapterId
         Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
@@ -174,7 +176,13 @@ class DataLogger internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             null
         } else {
-            BluetoothConnection(deviceName)
+            if (findBTAdapterByName(deviceName) == null) {
+                Log.e(LOGGER_TAG, "Did not find Bluetooth Adapter: $deviceName")
+                sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+                null
+            } else {
+                BluetoothConnection(deviceName)
+            }
         }
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")

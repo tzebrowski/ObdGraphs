@@ -55,7 +55,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
-            navigateToPreferencesScreen("pref.adapter")
+            navigateToPreferencesScreen("pref.adapter.connection")
             toast(R.string.main_activity_toast_adapter_is_not_selected)
         }
 
