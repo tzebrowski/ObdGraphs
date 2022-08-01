@@ -213,7 +213,40 @@
                 </PreferenceScreen>
             </PreferenceCategory>
 
+
+            <PreferenceCategory android:title="@string/pref.adapter_error_handling">
+                <PreferenceScreen android:title="@string/pref.settings"  android:key="pref.adapter.reconnect">
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:dialogTitle="@string/pref.adapter_reconnect"
+                        android:key="pref.adapter.reconnect"
+                        android:title="@string/pref.adapter_reconnect" />
+
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="6"
+                        android:entries="@array/pref.numbers_1_10"
+                        android:entryValues="@array/pref.numbers_1_10"
+                        android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
+                        android:inputType="number"
+                        android:key="pref.adapter.reconnect.max_retry"
+                        android:title="@string/pref.adapter_reconnect_max_retry"
+                        app:useSimpleSummaryProvider="true" />
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="false"
+                        android:dialogTitle="@string/pref.adapter.reconnect.hard_reset"
+                        android:key="pref.adapter.reconnect.hard_reset"
+                        android:title="@string/pref.adapter.reconnect.hard_reset"
+                        app:useSimpleSummaryProvider="true" />
+
+                </PreferenceScreen>
+            </PreferenceCategory>
+
+
             <PreferenceCategory android:title="@string/pref.adapter.general_settings">
+
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_cache_result_enabled"
@@ -223,15 +256,19 @@
                     app:enabled="@bool/FF_RESULT_CACHE_ENABLED" />
 
                 <CheckBoxPreference
+                    app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.adapter_batch_enabled"
                     android:key="pref.adapter.batch.enabled"
+                    android:summary="@string/pref.adapter_batch_enabled_summary"
                     android:title="@string/pref.adapter_batch_enabled" />
 
                 <CheckBoxPreference
+                    app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_response_length_enabled"
                     android:key="pref.adapter.responseLength.enabled"
+                    android:summary="@string/pref.adapter_response_length_enabled_summary"
                     android:title="@string/pref.adapter_response_length_enabled" />
 
                 <CheckBoxPreference
@@ -246,29 +283,9 @@
                     android:key="pref.adapter.adaptive.enabled"
                     android:title="@string/pref.adapter_adaptive_enabled" />
 
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="true"
-                    android:dialogTitle="@string/pref.adapter_reconnect"
-                    android:key="pref.adapter.reconnect"
-                    android:title="@string/pref.adapter_reconnect" />
-
-                <EditTextPreference
-                    android:defaultValue="0"
-                    android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
-                    android:inputType="number"
-                    android:key="pref.adapter.reconnect.max_retry"
-                    android:title="@string/pref.adapter_reconnect_max_retry"
-                    app:useSimpleSummaryProvider="true" />
-
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.adapter_reconnect"
-                    android:key="pref.adapter.reconnect.hard_reset"
-                    android:title="@string/pref.adapter.reconnect.hard_reset"
-                    app:useSimpleSummaryProvider="true" />
 
                 <ListPreference
+                    app:singleLineTitle="false"
                     android:defaultValue="6"
                     android:entries="@array/pref.numbers_1_10"
                     android:entryValues="@array/pref.numbers_1_10"
