@@ -11,7 +11,7 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.metrics.pid.PidDefinition
 
 internal fun PidDefinition.displayString(): Spanned {
-    val text = "[${defaultPidFiles[resourceFile]?: resourceFile}] $description " +  (if (stable) "" else "(Experimental)")
+    val text = "[${defaultPidFiles[resourceFile]?: resourceFile}] ${longDescription?:description} " +  (if (stable) "" else "(Experimental)")
     return SpannableString(text).apply {
         var endIndexOf = text.indexOf("]") + 1
         setSpan(
