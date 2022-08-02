@@ -10,7 +10,10 @@ import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import org.obd.graphs.ui.preferences.Prefs
+import org.obd.metrics.command.group.DefaultCommandGroup
 import java.util.*
+
+private val supportedPIDsIds = DefaultCommandGroup.SUPPORTED_PIDS.commands.map { c -> c.pid.id }.toSet()
 
 class PIDsListPreferences(
     context: Context?,
@@ -71,8 +74,10 @@ class PIDsListPreferences(
         val ecuSupportedPIDsEnabled =  Prefs.getBoolean("pref.pids.registry.filter_pids_ecu_supported",false)
 
         getPidList()
+            .filter { p -> !supportedPIDsIds.contains(p.id)}
             .filter { p -> predicate.invoke(p) }
-            .filter { p-> if (ecuSupportedPIDsEnabled && p.mode == "01")  ecuSupportedPIDs.contains(p.pid.lowercase()) else true }
+            .filter { p-> if (ecuSupportedPIDsEnabled && p.mode == "01")
+                ecuSupportedPIDs.contains(p.pid.lowercase()) else true }
             .sortedBy { p -> p.displayString() .toString()}
             .forEach { p ->
                 entries.add(p.displayString())
