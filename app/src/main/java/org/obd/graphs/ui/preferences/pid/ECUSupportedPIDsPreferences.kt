@@ -66,11 +66,13 @@ class ECUSupportedPIDsPreferences(
             val pid = pidList.first { it.pid == p.uppercase() }
             val text = pid.displayString()
             entries.add(text)
+            entriesValues.add(text)
         }
 
         groupBy["not supported"]?.forEach { p ->
             val text = notSupportedByApp(p)
             entries.add(text)
+            entriesValues.add(text)
         }
 
         setEntries(entries.toTypedArray())
