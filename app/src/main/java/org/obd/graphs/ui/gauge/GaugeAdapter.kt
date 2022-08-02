@@ -104,7 +104,7 @@ class GaugeAdapter(
     ) {
         val metric = data.elementAt(position)
         if (!holder.init) {
-            holder.label.text = metric.command.pid.description
+            holder.label.text = metric.command.pid.longDescription ?: metric.command.pid.description
             holder.resourceFile?.run {
                 val resourceFile = defaultPidFiles[metric.command.pid.resourceFile]
                     ?: metric.command.pid.resourceFile
