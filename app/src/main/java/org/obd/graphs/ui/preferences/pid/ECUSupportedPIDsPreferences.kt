@@ -32,7 +32,6 @@ class ECUSupportedPIDsPreferences(
         initialize()
     }
 
-
     override fun onDetached() {
         super.onDetached()
         context?.unregisterReceiver(broadcastReceiver)

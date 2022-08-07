@@ -39,7 +39,8 @@
         android:layout_marginStart="1sp"
         android:layout_marginEnd="1sp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="10sp">
 
         <TextView
             android:id="@+id/value"

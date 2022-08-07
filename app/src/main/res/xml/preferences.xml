@@ -56,6 +56,14 @@
                     android:title="@string/pref_pids_display_only_ecu_supported"
                     android:summary="@string/pref_pids_display_only_ecu_supported_summary"/>
 
+                <org.obd.graphs.ui.preferences.pid.FilterByStablePIDsAction
+                    app:singleLineTitle="false"
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref_pids_display_only_ecu_supported"
+                    android:key="pref.pids.registry.filter_pids_stable"
+                    android:title="@string/pref_pids_display_only_stable_pids"
+                    android:summary="@string/pref_pids_display_only_stable_pids_summary"/>
+
                 <org.obd.graphs.ui.preferences.pid.PIDsResourceListPreferences
                     android:dialogTitle="@string/pref.pids.registry.resource_list"
                     android:key="pref.pids.registry.list"

@@ -165,6 +165,9 @@
     <string name="pref.adapter_batch_enabled_summary">This feature allows to fetch up to 6 PIDs/Sensors in single ECU query.\nWhen feature is enabled it increase performance.</string>
     <string name="pref.adapter_error_handling">Errors handling</string>
 
+    <string name="pref_pids_display_only_stable_pids">Enable just stable OBD2 PIDs/Sensors</string>
+    <string name="pref_pids_display_only_stable_pids_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which have stable formula calculation.\nExperimental one will not be visible.</string>
+
     <string-array name="pref.numbers_1_10">
         <item name="0">0</item>
         <item name="1">1</item>

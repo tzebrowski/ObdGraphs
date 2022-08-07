@@ -210,7 +210,7 @@ class GaugeAdapter(
 
     private fun rescaleTextSize(holder: ViewHolder, multiplier: Float) {
         holder.label.textSize *= multiplier * 0.60f
-        holder.value.textSize *= multiplier * 0.65f
+        holder.value.textSize *= multiplier * 0.60f
         holder.maxValue.textSize *= multiplier * 0.45f
         holder.minValue.textSize *= multiplier * 0.45f
         holder.avgValue?.let {

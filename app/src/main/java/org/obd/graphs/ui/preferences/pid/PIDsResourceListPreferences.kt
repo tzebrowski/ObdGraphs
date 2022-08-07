@@ -3,6 +3,7 @@ package org.obd.graphs.ui.preferences.pid
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen

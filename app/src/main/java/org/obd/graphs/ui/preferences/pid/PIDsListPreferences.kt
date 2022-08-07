@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.AttributeSet
+import android.util.Log
 import androidx.preference.MultiSelectListPreference
 import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
@@ -14,6 +15,9 @@ import org.obd.metrics.command.group.DefaultCommandGroup
 import java.util.*
 
 private val supportedPIDsIds = DefaultCommandGroup.SUPPORTED_PIDS.commands.map { c -> c.pid.id }.toSet()
+
+private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
+private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 
 class PIDsListPreferences(
     context: Context?,
@@ -71,14 +75,18 @@ class PIDsListPreferences(
             LinkedList()
 
         val ecuSupportedPIDs = getECUSupportedPIDs()
-        val ecuSupportedPIDsEnabled =  Prefs.getBoolean("pref.pids.registry.filter_pids_ecu_supported",false)
+        val ecuSupportedPIDsEnabled =  Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF,false)
+        val stablePIDsEnabled =  Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF,true)
 
         getPidList()
+            .asSequence()
             .filter { p -> !supportedPIDsIds.contains(p.id)}
+            .filter { p -> if (stablePIDsEnabled)  p.stable!! else true }
             .filter { p -> predicate.invoke(p) }
             .filter { p-> if (ecuSupportedPIDsEnabled && p.mode == "01")
                 ecuSupportedPIDs.contains(p.pid.lowercase()) else true }
             .sortedBy { p -> p.displayString() .toString()}
+            .toList()
             .forEach { p ->
                 entries.add(p.displayString())
                 entriesValues.add(p.id.toString())
