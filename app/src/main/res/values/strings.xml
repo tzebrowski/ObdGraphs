@@ -140,8 +140,8 @@
     <string name="pref.profile.save_user_settings_summary">This operation saves all user selections into the currently selected profile</string>
     <string name="pref.dash.background_color_1">Start color 1</string>
     <string name="pref.dash.background_color_2">End color 2</string>
-    <string name="pref.pids.registry.resource_list">Resources list</string>
-    <string name="pref.pids.registry.resource.list_summary">OBD2 PIDs/Sensor definition resources files.\nApplication also read it form the external storage.</string>
+    <string name="pref.pids.registry.resource_list">OBD2 PIDs/Sensor resource files</string>
+    <string name="pref.pids.registry.resource.list_summary">This preference allows to load additional OBD2 PIDs/Sensor resources files.\nResource files contains OBD2 PIDs/Sensor definitions.</string>
     <string name="pref.pids.registry.resource.external_storage">Access OBD2 PIDs/Sensor resources files from the external storage</string>
     <string name="trip_time">Time</string>
     <string name="trip_start_date">Start date</string>
