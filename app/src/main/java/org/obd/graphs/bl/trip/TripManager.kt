@@ -208,7 +208,6 @@ class TripManager private constructor() {
                 .filter { it.startsWith("trip_") || it.contains("") }
                 .filter { it.substring(0, it.length - 5).split("-").size > 3 }
                 .filter { it.contains(getCurrentProfile()) }
-                .sortedByDescending { it }
                 .mapNotNull { fileName ->
                     val p = fileName.substring(0, fileName.length - 5).split("-")
                     val profileId = p[1]
@@ -221,7 +220,9 @@ class TripManager private constructor() {
                         startTime = p[2],
                         tripTimeSec = p[3]
                     )
-                }.toMutableList()
+                }
+                .sortedByDescending { dateFormat.parse(it.startTime) }
+                .toMutableList()
             Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: ${result.size}")
             return result
         }
@@ -252,8 +253,6 @@ class TripManager private constructor() {
             }
         }
     }
-
-
 
     private fun writeFile(
         context: Context,
