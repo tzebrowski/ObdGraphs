@@ -37,7 +37,7 @@ class DisplayedPIDsListPreferences(
     ) {
         val query = Prefs.getStringSet(HIGH_PRIO_PID_PREF)
         DataLogger.instance.pidDefinitionRegistry().findAll()
-            .filter { pidDefinition -> pidDefinition.priority < 4 }
+            .filter { pidDefinition -> pidDefinition.priority == 0 }
             .filter { pidDefinition -> query.contains(pidDefinition.id.toString()) }
             .sortedBy { p -> p.displayString().toString() }
             .forEach { p ->
@@ -53,7 +53,7 @@ class DisplayedPIDsListPreferences(
         val query = Prefs.getStringSet(LOW_PRIO_PID_PREF)
 
         DataLogger.instance.pidDefinitionRegistry().findAll()
-            .filter { p -> p.priority > 4 }
+            .filter { p -> p.priority > 0 }
             .filter { p -> query.contains(p.id.toString()) }
             .sortedBy { p -> p.displayString().toString() }
             .forEach { p ->
