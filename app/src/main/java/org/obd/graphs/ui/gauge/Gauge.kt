@@ -62,14 +62,12 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         set(newValue) {
             field = newValue
             pointAngle = abs(sweepAngle).toDouble() / (endValue - startValue)
-            invalidate()
         }
 
     var value: Float = 0.0f
         set(newValue) {
             field = newValue
             point = (startAngle + (value - startValue) * pointAngle).toInt()
-            invalidate()
         }
 
     init {
@@ -116,6 +114,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         )
         gaugeDrawScale = styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawScale, false)
         styledAttributes.recycle()
+
     }
 
     internal fun init() {
@@ -135,9 +134,6 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
 
         paint.style = Paint.Style.STROKE
-
-        value = startValue
-        point = startAngle
 
         numbersPaint.color = resources.getColor(R.color.md_grey_500, null)
         strokeWidth *= rescaleValue
@@ -193,24 +189,30 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         paint.strokeWidth = strokeWidth
         paint.color = pointStartColor
         paint.shader = linearGradient
-        if (pointSize > 0) { //if size of pointer is defined
+        if (pointSize > 0) {
+
             if (point > startAngle + pointSize / 2) {
                 canvas.drawArc(
                     progressRect, (point - pointSize / 2).toFloat(), pointSize.toFloat(), false,
                     paint
                 )
-            } else { //to avoid exceeding start/zero point
+            } else {
                 canvas.drawArc(progressRect, point.toFloat(), pointSize.toFloat(), false, paint)
             }
-        } else { //draw from start point to value point (long pointer)
-            if (value == startValue) //use non-zero default value for start point (to avoid lack of pointer for start/zero value)
+        } else {
+            if (value == startValue) {
                 canvas.drawArc(
                     progressRect, startAngle.toFloat(), DEFAULT_LONG_POINTER_SIZE.toFloat(), false,
                     paint
-                ) else canvas.drawArc(
-                progressRect, startAngle.toFloat(), (point - startAngle).toFloat(), false,
-                paint
-            )
+                )
+            } else {
+                canvas.drawArc(
+
+                    progressRect, startAngle.toFloat(), (point - startAngle).toFloat(), false,
+                    paint
+                )
+            }
+
         }
         if (dividerSize > 0) {
             drawDivider(canvas)

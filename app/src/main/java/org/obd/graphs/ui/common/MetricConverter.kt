@@ -1,11 +1,10 @@
 package org.obd.graphs.ui.common
 
+import org.obd.graphs.ui.dashboard.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
-import org.obd.graphs.ui.dashboard.round
 
-
-fun convert(pid: PidDefinition, input: Number): Number {
+fun toNumber(pid: PidDefinition, input: Number): Number {
 
     if (input == null) {
         return Double.NaN
@@ -26,6 +25,22 @@ fun convert(pid: PidDefinition, input: Number): Number {
         }
 }
 
-fun ObdMetric.convert(value: Double): Number {
-    return convert(command.pid, value)
+fun ObdMetric.toNumber(value: Double): Number {
+    return toNumber(command.pid, value)
 }
+
+fun ObdMetric.valueToStringExt(): String {
+    return if (value == null) {
+        "No data"
+    } else {
+        return toNumber(valueToDouble()).toString()
+    }
+}
+
+fun ObdMetric.toFloat(): Float {
+    return if (value == null) {
+        command.pid.min.toFloat()
+    } else {
+        valueToDouble().toFloat()
+    }
+ }

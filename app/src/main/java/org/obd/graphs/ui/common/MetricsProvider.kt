@@ -9,7 +9,7 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 internal class MetricsProvider {
 
     fun findMetrics(ids: Set<Long>, order: Map<Long, Int>?): MutableList<ObdMetric> {
-        val metrics = buildEmptyMetrics(ids)
+        val metrics = buildMetrics(ids)
         order?.let { sortOrder ->
             metrics.sortWith { m1: ObdMetric, m2: ObdMetric ->
                 if (sortOrder.containsKey(m1.command.pid.id) && sortOrder.containsKey(
@@ -27,11 +27,15 @@ internal class MetricsProvider {
         return metrics
     }
 
-    private fun buildEmptyMetrics(ids: Set<Long>): MutableList<ObdMetric> {
-        val pidRegistry: PidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
+    private fun buildMetrics(ids: Set<Long>): MutableList<ObdMetric> {
+        val dataLogger = DataLogger.instance
+        val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
+        val histogramSupplier = dataLogger.diagnostics().histogram()
+
         return ids.mapNotNull {
             pidRegistry.findBy(it)?.let { pid ->
-                ObdMetric.builder().command(ObdCommand(pid)).value(null).build()
+                val histogram = histogramSupplier.findBy(pid)
+                ObdMetric.builder().command(ObdCommand(pid)).value(histogram?.latestValue).build()
             }
         }.toMutableList()
     }

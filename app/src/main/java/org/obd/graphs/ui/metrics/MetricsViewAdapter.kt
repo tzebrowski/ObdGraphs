@@ -13,7 +13,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.convert
+import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.common.setText
 
 
@@ -46,19 +46,19 @@ class MetricsViewAdapter internal constructor(
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.metricMaxValue.setText(
-                metric.convert(max).toString(),
+                metric.toNumber(max).toString(),
                 Color.GRAY,
                 Typeface.NORMAL,
                 1.0f
             )
             holder.metricMinValue.setText(
-                metric.convert(min).toString(),
+                metric.toNumber(min).toString(),
                 Color.GRAY,
                 Typeface.NORMAL,
                 1.0f
             )
             holder.metricMeanValue.setText(
-                metric.convert(mean).toString(),
+                metric.toNumber(mean).toString(),
                 Color.GRAY,
                 Typeface.NORMAL,
                 1.0f

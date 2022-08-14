@@ -7,12 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.convert
+import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.common.setText
 
 
@@ -41,17 +40,17 @@ class TripDetailsViewAdapter internal constructor(
             holder.metricName.setText(pid.description, COLOR_PHILIPPINE_GREEN, 1.0f)
             metric.run {
                 holder.metricMaxValue.setText(
-                    "${convert(pid, max)}",
+                    "${toNumber(pid, max)}",
                     Color.GRAY,
                     1.0f
                 )
                 holder.metricMinValue.setText(
-                    "${convert(pid, min)}",
+                    "${toNumber(pid, min)}",
                     Color.GRAY,
                     1.0f
                 )
                 holder.metricMeanValue.setText(
-                    "${convert(pid, mean)}",
+                    "${toNumber(pid, mean)}",
                     Color.GRAY,
                     1.0f
                 )

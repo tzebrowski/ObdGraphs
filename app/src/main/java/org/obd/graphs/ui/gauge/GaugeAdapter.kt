@@ -16,11 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.defaultPidFiles
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.graphs.ui.common.convert
-import org.obd.graphs.ui.common.highLightText
-import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.dashboard.round
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
@@ -120,7 +117,7 @@ class GaugeAdapter(
 
         holder.value.run {
             val units = (metric.command as ObdCommand).pid.units
-            val txt = "${valueToString(metric)} $units"
+            val txt = "${metric.valueToStringExt()} $units"
             text = txt
 
             highLightText(
@@ -131,7 +128,7 @@ class GaugeAdapter(
 
         DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
-                val txt = "min\n ${metric.convert(min)}"
+                val txt = "min\n ${metric.toNumber(min)}"
                 text = txt
                 highLightText(
                     "min", 0.5f,
@@ -140,7 +137,7 @@ class GaugeAdapter(
             }
 
             holder.maxValue.run {
-                val txt = "max\n  ${metric.convert(max)} "
+                val txt = "max\n  ${metric.toNumber(max)} "
                 text = txt
                 highLightText(
                     "max", 0.5f,
@@ -149,7 +146,7 @@ class GaugeAdapter(
             }
 
             holder.avgValue?.run {
-                val txt = "avg\n ${metric.convert(mean)}"
+                val txt = "avg\n ${metric.toNumber(mean)}"
                 text = txt
                 highLightText(
                     "avg", 0.5f,
@@ -180,7 +177,8 @@ class GaugeAdapter(
         holder.gauge?.apply {
             startValue = (metric.command as ObdCommand).pid.min.toFloat()
             endValue = (metric.command as ObdCommand).pid.max.toFloat()
-            value = metric.valueToLong().toFloat()
+            value = metric.toFloat()
+            invalidate()
         }
     }
 
@@ -230,14 +228,6 @@ class GaugeAdapter(
             }
         } else {
             view.layoutParams.height = height
-        }
-    }
-
-    private fun valueToString(metric: ObdMetric): String {
-        return if (metric.value == null) {
-            "No data"
-        } else {
-            return metric.convert(metric.valueToDouble()).toString()
         }
     }
 }

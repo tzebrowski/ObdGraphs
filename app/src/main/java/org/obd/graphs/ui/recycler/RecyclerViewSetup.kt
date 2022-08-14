@@ -59,10 +59,13 @@ class RecyclerViewSetup {
             viewPreferences = viewPreferences)
 
         attachOnTouchListener(enableOnTouchListener, recyclerView)
-        adapter(recyclerView).notifyDataSetChanged()
-        recyclerView.refreshDrawableState()
 
-        MetricsObserver().observe(metricsIds,viewLifecycleOwner,adapter(recyclerView), metrics)
+        MetricsObserver().observe(metricsIds,viewLifecycleOwner, adapter(recyclerView), metrics)
+
+        metrics.forEach {
+            val simpleAdapter = adapter(recyclerView)
+            simpleAdapter.notifyItemInserted(simpleAdapter.data.indexOf(it))
+        }
     }
 
     private fun requireContext(): Context = ApplicationContext.get()!!
