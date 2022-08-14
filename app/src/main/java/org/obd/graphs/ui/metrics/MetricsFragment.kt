@@ -1,5 +1,9 @@
 package org.obd.graphs.ui.metrics
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,19 +12,33 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.MetricsAggregator
+import org.obd.graphs.bl.datalogger.getPidsToQuery
+import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
-import org.obd.metrics.api.model.ObdMetric
 
 class MetricsFragment : Fragment() {
+    private lateinit var root: View
+
+    private var receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            configureView()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_metrics, container, false)
-        val data: MutableList<ObdMetric> = arrayListOf()
+        root = inflater.inflate(R.layout.fragment_metrics, container, false)
+        configureView()
+        return root
+    }
+
+    private fun configureView() {
+        val data = MetricsProvider().findMetrics(getPidsToQuery(), emptyMap())
         val adapter = MetricsViewAdapter(root.context, data)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner) {
@@ -44,6 +62,18 @@ class MetricsFragment : Fragment() {
                 requireContext()
             )
         )
-        return root
+    }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.registerReceiver(receiver, IntentFilter().apply {
+            addAction(DATA_LOGGER_CONNECTING_EVENT)
+        })
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        activity?.unregisterReceiver(receiver)
     }
 }
