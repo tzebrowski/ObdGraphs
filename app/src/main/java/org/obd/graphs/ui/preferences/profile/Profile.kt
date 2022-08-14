@@ -19,8 +19,7 @@ private const val PROFILE_ID_PREF = "pref.profile.id"
 internal const val PROFILES_PREF = "pref.profiles"
 internal const val MAX_PROFILES_PREF = "pref.profile.max_profiles"
 internal const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
-
-internal const val DEFAULT_PROFILE_TO_LOAD = "profile_2"
+internal const val DEFAULT_PROFILE_TO_LOAD = "profile_1"
 internal const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
 internal const val PROFILE_NAME_PREFIX = "pref.profile.names"
 internal const val LOG_KEY = "Profile"
@@ -41,7 +40,7 @@ fun setupProfiles() {
         Log.e(LOG_KEY, "Installing profiles")
 
         Prefs.edit().let { editor ->
-            arrayOf("default.properties", "giulietta_qv.properties", "giulia_2_0_gme.properties").forEach { fileName ->
+            arrayOf("default.properties", "alfa_175_tbi.properties", "alfa_2_0_gme.properties").forEach { fileName ->
                 Log.i(LOG_KEY, "Loading profile file='$fileName'")
 
                 val prop = Properties()

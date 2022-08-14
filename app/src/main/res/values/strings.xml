@@ -182,6 +182,18 @@
         <item name="10">10</item>
     </string-array>
 
+
+    <string-array name="pref.numbers_3_10">
+        <item name="3">3</item>
+        <item name="4">4</item>
+        <item name="5">5</item>
+        <item name="6">6</item>
+        <item name="7">7</item>
+        <item name="8">8</item>
+        <item name="9">9</item>
+        <item name="10">10</item>
+    </string-array>
+
     <string-array name="pref.init_delay">
         <item name="500">500</item>
         <item name="1000">1000</item>

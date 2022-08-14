@@ -18,7 +18,9 @@ class ProfileListPreference(
             .let {
                 entries = it.values.toTypedArray()
                 entryValues = it.keys.toTypedArray()
-                setDefaultValue(it.keys.first())
+                if (it.keys.isNotEmpty()) {
+                    setDefaultValue(it.keys.first())
+                }
             }
 
         onPreferenceChangeListener =
