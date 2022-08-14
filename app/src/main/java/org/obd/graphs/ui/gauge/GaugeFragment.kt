@@ -1,5 +1,6 @@
 package org.obd.graphs.ui.gauge
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,11 +14,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getLongSet
+import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.roundToInt
 
@@ -25,13 +26,30 @@ private const val GAUGE_SELECTED_METRICS_PREF = "pref.gauge.pids.selected"
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
 private const val ENABLE_SWIPE_TO_DELETE_PREF = "pref.gauge.swipe_to_delete"
 private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.gauge_id"
+private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : Fragment() {
     private lateinit var root: View
 
+    @SuppressLint("NotifyDataSetChanged")
     private var configurationChangedReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            configureView(false)
+            when (intent?.action) {
+                CONFIGURE_CHANGE_EVENT_GAUGE -> {
+                    configureView(false)
+                }
+                DATA_LOGGER_CONNECTING_EVENT ->{
+                    val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
+                    val adapter = recyclerView.adapter as SimpleAdapter
+                    val metrics = RecyclerViewSetup().prepareMetrics(
+                        metricsIdsPref = GAUGE_SELECTED_METRICS_PREF,
+                        metricsSerializerPref = GAUGE_PIDS_SETTINGS
+                    )
+                    adapter.data.clear()
+                    adapter.data.addAll(metrics)
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 
@@ -83,7 +101,7 @@ class GaugeFragment : Fragment() {
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)
             },
-            metricsSerializerPref = "prefs.gauge.pids.settings"
+            metricsSerializerPref = GAUGE_PIDS_SETTINGS
         )
     }
 

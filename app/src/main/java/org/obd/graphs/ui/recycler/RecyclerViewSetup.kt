@@ -19,6 +19,16 @@ import org.obd.metrics.api.model.ObdMetric
 
 class RecyclerViewSetup {
 
+    fun prepareMetrics(
+         metricsIdsPref: String,
+        metricsSerializerPref: String
+    ) : MutableList<ObdMetric> {
+        val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
+        val query  = getPidsToQuery()
+        val metricsIds = Prefs.getLongSet(metricsIdsPref).filter {  query.contains(it)}.toSet()
+        return MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun configureView(
         configureChangeEventId: String,
@@ -41,7 +51,6 @@ class RecyclerViewSetup {
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
         val query  = getPidsToQuery()
         val metricsIds = Prefs.getLongSet(metricsIdsPref).filter {  query.contains(it)}.toSet()
-
         val metrics =  MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
@@ -59,13 +68,9 @@ class RecyclerViewSetup {
             viewPreferences = viewPreferences)
 
         attachOnTouchListener(enableOnTouchListener, recyclerView)
-
+        adapter(recyclerView).notifyDataSetChanged()
+        recyclerView.refreshDrawableState()
         MetricsObserver().observe(metricsIds,viewLifecycleOwner, adapter(recyclerView), metrics)
-
-        metrics.forEach {
-            val simpleAdapter = adapter(recyclerView)
-            simpleAdapter.notifyItemInserted(simpleAdapter.data.indexOf(it))
-        }
     }
 
     private fun requireContext(): Context = ApplicationContext.get()!!

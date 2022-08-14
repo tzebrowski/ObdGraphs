@@ -1,5 +1,6 @@
 package org.obd.graphs.ui.metrics
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -19,11 +20,16 @@ import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 
 class MetricsFragment : Fragment() {
-    private lateinit var root: View
+    lateinit var adapter: MetricsViewAdapter
 
+    @SuppressLint("NotifyDataSetChanged")
     private var receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            configureView()
+            adapter.let {
+                it.data.clear()
+                it.data.addAll(MetricsProvider().findMetrics(getPidsToQuery(), emptyMap()))
+                it.notifyDataSetChanged()
+            }
         }
     }
 
@@ -32,14 +38,9 @@ class MetricsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        root = inflater.inflate(R.layout.fragment_metrics, container, false)
-        configureView()
-        return root
-    }
-
-    private fun configureView() {
+        val root = inflater.inflate(R.layout.fragment_metrics, container, false)
         val data = MetricsProvider().findMetrics(getPidsToQuery(), emptyMap())
-        val adapter = MetricsViewAdapter(root.context, data)
+        adapter = MetricsViewAdapter(root.context, data)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner) {
             it?.let {
@@ -62,7 +63,9 @@ class MetricsFragment : Fragment() {
                 requireContext()
             )
         )
+        return root
     }
+
 
 
     override fun onAttach(context: Context) {

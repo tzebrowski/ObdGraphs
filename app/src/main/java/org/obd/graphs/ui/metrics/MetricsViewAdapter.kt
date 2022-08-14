@@ -19,7 +19,7 @@ import org.obd.graphs.ui.common.setText
 
 class MetricsViewAdapter internal constructor(
     context: Context?,
-    private var data: MutableCollection<ObdMetric>
+    var data: MutableCollection<ObdMetric>
 ) :
     RecyclerView.Adapter<MetricsViewAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)

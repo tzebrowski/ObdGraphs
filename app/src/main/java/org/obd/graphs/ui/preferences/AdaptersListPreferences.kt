@@ -1,11 +1,13 @@
 package org.obd.graphs.ui.preferences
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import java.util.*
 
+@SuppressLint("MissingPermission")
 class AdaptersListPreferences(
     context: Context?,
     attrs: AttributeSet?
@@ -18,10 +20,13 @@ class AdaptersListPreferences(
             LinkedList()
 
         val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        for (currentDevice in mBluetoothAdapter.bondedDevices) {
-            entries.add(currentDevice.name)
-            entriesValues.add(currentDevice.name)
+        mBluetoothAdapter?.run {
+            for (currentDevice in bondedDevices) {
+                entries.add(currentDevice.name)
+                entriesValues.add(currentDevice.name)
+            }
         }
+
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
     }
