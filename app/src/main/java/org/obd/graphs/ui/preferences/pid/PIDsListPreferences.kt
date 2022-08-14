@@ -59,8 +59,8 @@ class PIDsListPreferences(
     private fun initialize() {
         setDefaultValue(hashSetOf<String>())
         when (priority) {
-            "low" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority > 4 }
-            "high" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority < 4 }
+            "low" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority > 1 }
+            "high" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority <= 1 }
             else -> Pair(mutableListOf(), mutableListOf())
         }.let {
             entries = it.first.toTypedArray()
