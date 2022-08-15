@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "org.obd.graphs.app"
-        minSdkVersion 24
+        minSdkVersion 29
         targetSdkVersion 31
         versionCode 16
         versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
@@ -77,6 +77,7 @@ android {
 }
 
 dependencies {
+    implementation "androidx.car.app:app:1.2.0-rc01"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'

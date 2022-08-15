@@ -3,6 +3,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.obd.graphs">
 
+
+    <!-- For PlaceListMapTemplate -->
+    <uses-permission android:name="androidx.car.app.MAP_TEMPLATES"/>
+    <!-- For the navigation demos. -->
+    <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES"/>
+    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE"/>
+    <!-- For Access to Car Hardware. -->
+    <uses-permission android:name="android.car.permission.CAR_MILEAGE"/>
+    <uses-permission android:name="android.car.permission.CAR_SPEED"/>
+    <uses-permission android:name="android.car.permission.CAR_INFO"/>
+    <uses-permission android:name="android.car.permission.CAR_ENERGY"/>
+    <uses-permission android:name="android.car.permission.READ_CAR_DISPLAY_UNITS"/>
+    <uses-permission android:name="android.car.permission.CAR_ENERGY_PORTS"/>
+    <!-- Various required feature settings for an automotive app. -->
+    <uses-feature
+        android:name="android.hardware.type.automotive"
+        android:required="true" />
+    <uses-feature
+        android:name="android.software.car.templates_host"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.portrait"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.landscape"
+        android:required="false" />
+
+
+
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,7 +47,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29" />
+        android:maxSdkVersion="24" />
 
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -38,6 +70,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DefaultTheme">
 
+        <meta-data android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
+        <meta-data android:name="androidx.car.app.minCarApiLevel"
+            android:value="1"
+            tools:ignore="MetadataTagInsideApplicationTag" />
+
         <service
             android:name="org.obd.graphs.bl.datalogger.DataLoggerService"
             android:exported="false" />
@@ -55,6 +94,14 @@
             </intent-filter>
         </receiver>
 
+
+        <service
+            android:name=".android.car.CarService"
+            android:exported="true">
+            <intent-filter>
+                    <action android:name="androidx.car.app.CarAppService" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name="org.obd.graphs.activity.SplashActivity"

@@ -1,4 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="car_hardware_info">Car Hardware Information</string>
+    <string name="refresh_action_title">Refresh</string>
+    <!-- RequestPermissionScreen -->
+    <string name="package_not_found_error_msg">Package Not found.</string>
+    <string name="permissions_granted_msg">All permissions have been granted. Please revoke permissions from Settings.</string>
+    <string name="needs_access_msg_prefix">The app needs access to the following permissions:\n</string>
+    <string name="phone_screen_permission_msg">Grant Permission on the phone screen</string>
+    <string name="enable_location_permission_on_device_msg">Enable Location Permissions on device</string>
+    <string name="enable_location_permission_on_phone_msg">Enable location on the phone screen</string>
+    <string name="required_permissions_title">Required Permissions</string>
+    <string name="request_permissions_title">Request Permission Demo</string>
+    <string name="grant_access_action_title">Grant Access</string>
+    <string name="close_action_title">Close</string>
+    <string name="enable_location_action_title">Enable Location</string>
+    <string name="not_started_for_result_msg">This app was not started for result</string>
+    <string name="result_demo_title">Result demo</string>
+    <string name="started_for_result_msg">This app was called for result from %s. Please select the result to send back to the caller</string>
+    <string name="cancel_action_title">Cancel</string>
+
+
     <!-- FEATURE FLAGS -->
     <string name="pref.experimental_switch_network_enabled">This feature is in the experimental phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
     <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
