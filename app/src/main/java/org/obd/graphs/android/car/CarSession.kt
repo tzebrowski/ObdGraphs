@@ -16,7 +16,6 @@ class CarSession : Session(), DefaultLifecycleObserver {
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-        val lifecycle = lifecycle
         lifecycle.addObserver(this)
         if (carContext.callingComponent != null) {
             carContext
