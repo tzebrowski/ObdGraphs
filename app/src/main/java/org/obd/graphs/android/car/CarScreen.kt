@@ -7,12 +7,13 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.lifecycle.DefaultLifecycleObserver
+import org.obd.graphs.CarApplicationContext
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.MetricsAggregator
 import org.obd.graphs.bl.datalogger.slowPIDs
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.MetricsProvider
+import java.lang.ref.WeakReference
 
 class CarScreen(carContext: CarContext) : Screen(carContext),
     DefaultLifecycleObserver {
@@ -98,7 +99,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
 
     init {
-
+        CarApplicationContext = WeakReference(carContext)
         lifecycle.addObserver(this)
         val data = MetricsProvider().findMetrics(slowPIDs())
         MetricsAggregator.metrics.observe(this) {

@@ -1,13 +1,22 @@
 package org.obd.graphs.ui.preferences
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.preference.PreferenceManager
 import org.obd.graphs.ApplicationContext
+import org.obd.graphs.CarApplicationContext
+import java.lang.Exception
 
 val Prefs: SharedPreferences by lazy {
-    PreferenceManager.getDefaultSharedPreferences(
-        ApplicationContext.get()!!
-    )
+    try {
+        PreferenceManager.getDefaultSharedPreferences(
+            ApplicationContext.get()!!
+        )
+    }catch (e: Exception){
+        PreferenceManager.getDefaultSharedPreferences(
+            CarApplicationContext.get()!!
+        )
+    }
 }
 
 fun SharedPreferences.updateString(key:String, value: String?) {
