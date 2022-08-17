@@ -6,9 +6,6 @@
     <uses-permission android:name="androidx.car.app.ACCESS_SURFACE"/>
 
     <uses-feature
-        android:name="android.hardware.type.automotive"
-        android:required="true" />
-    <uses-feature
         android:name="android.software.car.templates_host"
         android:required="true" />
 
