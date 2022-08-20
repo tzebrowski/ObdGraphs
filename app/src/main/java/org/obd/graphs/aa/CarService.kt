@@ -1,4 +1,4 @@
-package org.obd.graphs.android.car
+package org.obd.graphs.aa
 
 import android.content.pm.ApplicationInfo
 import androidx.car.app.CarAppService

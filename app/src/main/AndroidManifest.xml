@@ -81,7 +81,7 @@
         </receiver>
 
         <service
-            android:name=".android.car.CarService"
+            android:name=".aa.CarService"
             android:exported="true">
             <intent-filter>
                     <action android:name="androidx.car.app.CarAppService" />

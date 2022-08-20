@@ -1,11 +1,11 @@
-package org.obd.graphs.android.car
+package org.obd.graphs.aa
 
 import android.text.Spannable
 import android.text.SpannableString
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.ForegroundCarColorSpan
 
-fun colorize(info: StringBuilder): SpannableString = SpannableString(info).apply {
+internal fun colorize(info: StringBuilder): SpannableString = SpannableString(info).apply {
     var txt = "value="
     var i = indexOf(txt)
 

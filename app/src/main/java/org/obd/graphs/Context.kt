@@ -6,15 +6,15 @@ import android.util.Log
 import androidx.car.app.CarContext
 import java.lang.ref.WeakReference
 
-private lateinit var ApplicationContext: WeakReference<ContextWrapper>
-private lateinit var CarApplicationContext: WeakReference<ContextWrapper>
+private lateinit var activityContext: WeakReference<ContextWrapper>
+private lateinit var carContext: WeakReference<ContextWrapper>
 
 fun setActivityContext(activity: Activity) {
-    ApplicationContext = WeakReference(activity)
+    activityContext = WeakReference(activity)
 }
 
 fun setCarContext(carContext: CarContext) {
-    CarApplicationContext = WeakReference(carContext)
+    org.obd.graphs.carContext = WeakReference(carContext)
 }
 
 private const val LOG_KEY = "Context"
@@ -22,13 +22,13 @@ private const val LOG_KEY = "Context"
 fun getContext(): ContextWrapper? =
     when {
         //Application context has priority over Car context
-        ::ApplicationContext.isInitialized -> {
+        ::activityContext.isInitialized -> {
             Log.v(LOG_KEY,"Application context is initialized")
-            ApplicationContext.get()
+            activityContext.get()
         }
-        ::CarApplicationContext.isInitialized -> {
+        ::carContext.isInitialized -> {
             Log.v(LOG_KEY,"Car context is initialized")
-            CarApplicationContext.get()
+            carContext.get()
         }
         else -> {
             null

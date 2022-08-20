@@ -1,4 +1,4 @@
-package org.obd.graphs.android.car
+package org.obd.graphs.aa
 
 import android.content.Intent
 import androidx.car.app.Screen

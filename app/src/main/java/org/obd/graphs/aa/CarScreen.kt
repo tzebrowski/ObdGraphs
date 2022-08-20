@@ -1,4 +1,4 @@
-package org.obd.graphs.android.car
+package org.obd.graphs.aa
 
 import android.util.Log
 import androidx.car.app.CarContext
@@ -12,7 +12,6 @@ import org.obd.graphs.setCarContext
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
-import java.lang.ref.WeakReference
 
 private const val LOG_KEY = "CarScreen"
 
