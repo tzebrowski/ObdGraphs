@@ -10,6 +10,7 @@ import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.MetricsAggregator
 import org.obd.graphs.setCarContext
 import org.obd.graphs.ui.common.MetricsProvider
+import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
 
@@ -23,7 +24,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
         if (data.size == 0 ) {
             return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getString(R.string.car_hardware_info))
+                .setTitle(carContext.getString(R.string.pref_aa_car_no_pids_selected))
                 .build()
         } else {
             try {
@@ -39,9 +40,9 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
                     }
 
                     histogram.findBy(it.command.pid).let{ hist ->
-                        info.append("min=${hist.min}")
-                        info.append(" max=${hist.max}")
-                        info.append(" avg=${hist.mean} \n")
+                        info.append("min=${it.toNumber(hist.min)}")
+                        info.append(" max=${it.toNumber(hist.max)}")
+                        info.append(" avg=${it.toNumber(hist.mean)} \n")
                     }
                     val spannableString = colorize(info)
 
@@ -51,14 +52,14 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
                 return PaneTemplate.Builder(paneBuilder.build())
                     .setHeaderAction(Action.BACK)
-                    .setTitle(carContext.getString(R.string.car_hardware_info))
+                    .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
                     .build()
 
             }catch (e: Exception) {
                 Log.e(LOG_KEY,"Failed to build Template",e)
                 return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                     .setHeaderAction(Action.BACK)
-                    .setTitle(carContext.getString(R.string.car_hardware_info))
+                    .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
                     .build()
             }
         }
