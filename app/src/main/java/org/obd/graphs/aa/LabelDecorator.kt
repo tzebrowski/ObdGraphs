@@ -6,40 +6,18 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.ForegroundCarColorSpan
 
 internal fun colorize(info: StringBuilder): SpannableString = SpannableString(info).apply {
-    var txt = "value="
-    var i = indexOf(txt)
+    setSpan("value=",CarColor.GREEN)
+    setSpan("min=",CarColor.GREEN)
+    setSpan("max=",CarColor.GREEN)
+    setSpan("avg=",CarColor.GREEN)
+}
 
-    setSpan(
-        ForegroundCarColorSpan.create(CarColor.GREEN)
-        , i, i + txt.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
+private fun SpannableString.setSpan(txt: String,color: CarColor){
 
-    txt = "min="
-    i = indexOf(txt)
-
-    if (i > 0) {
-   setSpan(
-            ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-    }
-
-    txt = "max="
-    i = indexOf(txt)
-    if (i > 0) {
+    val i1 = indexOf(txt)
+    if (i1 >= 0) {
         setSpan(
-            ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-    }
-
-
-    txt = "avg="
-    i = indexOf(txt)
-    if (i > 0) {
-        setSpan(
-            ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
+            ForegroundCarColorSpan.create(color), i1, i1 + txt.length,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
     }

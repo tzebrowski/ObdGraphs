@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
+import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.datalogger.MetricsAggregator
 import org.obd.graphs.setCarContext
 import org.obd.graphs.ui.common.MetricsProvider
@@ -51,14 +53,13 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
                             .addText(colorize(info))
                             .build()
                     )
-
                 }
 
                 return ListTemplate.Builder()
                     .setSingleList(listBuilder.build())
                     .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
                     .setHeaderAction(Action.BACK)
-
+                    .setActionStrip(actions())
                     .build()
 
             } catch (e: Exception) {
@@ -70,6 +71,34 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
             }
         }
     }
+
+    private fun actions(): ActionStrip = ActionStrip.Builder()
+        .addAction(Action.Builder()
+            .setIcon(
+                CarIcon.Builder(
+                    IconCompat.createWithResource(
+                        carContext,
+                        R.drawable.actions_connect
+                    )
+                ).build()
+            )
+            .setOnClickListener {
+                DataLoggerService.start()
+            }.build())
+        .addAction(Action.Builder()
+            .setIcon(
+                CarIcon.Builder(
+                    IconCompat.createWithResource(
+                        carContext,
+                        R.drawable.action_disconnect
+                    )
+                ).build()
+            )
+            .setOnClickListener {
+                DataLoggerService.stop()
+
+            }.build())
+        .build()
 
     private fun aaPIDs() =
         Prefs.getStringSet("pref.aa.pids.selected").map { s -> s.toLong() }.toSet()
