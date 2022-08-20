@@ -442,20 +442,13 @@
             app:key="pref.aa">
 
             <PreferenceCategory android:title="@string/pref.pids_category">
-                <PreferenceScreen
+                <org.obd.graphs.ui.preferences.pid.DisplayedPIDsListPreferences
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="@array/pref.empty_array"
+                    android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.aa.pids.selected"
                     android:summary="@string/pref.displayed_parameter_ids_summary"
-                    android:title="@string/pref.displayed_parameter_ids"
-                    android:key="pref.aa.displayed_parameter_ids">
-                    <PreferenceCategory android:title="@string/pref.pids_category">
-                        <org.obd.graphs.ui.preferences.pid.DisplayedPIDsListPreferences
-                            app:useSimpleSummaryProvider="true"
-                            android:defaultValue="@array/pref.empty_array"
-                            android:dialogTitle="@string/pref.displayed_parameter_ids"
-                            android:key="pref.aa.pids.selected"
-                            android:summary="@string/pref.displayed_parameter_ids_summary"
-                            android:title="@string/pref.displayed_parameter_ids" />
-                    </PreferenceCategory>
-                </PreferenceScreen>
+                    android:title="@string/pref.displayed_parameter_ids" />
             </PreferenceCategory>
         </PreferenceScreen>
 
