@@ -34,7 +34,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
                 data.forEach {
                     val info = StringBuilder().apply {
-                        append("value=${it.valueToString()} ")
+                        append("value=${it.valueToString()}\n")
                     }
                     histogram.findBy(it.command.pid).let { hist ->
                         info.append("min=${it.toNumber(hist.min)}")
