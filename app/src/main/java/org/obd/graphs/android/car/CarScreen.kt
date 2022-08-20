@@ -9,8 +9,9 @@ import org.obd.graphs.CarApplicationContext
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.MetricsAggregator
-import org.obd.graphs.bl.datalogger.slowPIDs
 import org.obd.graphs.ui.common.MetricsProvider
+import org.obd.graphs.ui.preferences.Prefs
+import org.obd.graphs.ui.preferences.getStringSet
 import java.lang.ref.WeakReference
 
 private const val LOG_KEY = "CarScreen"
@@ -19,7 +20,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
     DefaultLifecycleObserver {
 
     override fun onGetTemplate(): Template {
-        val data = MetricsProvider().findMetrics(slowPIDs())
+        val data = MetricsProvider().findMetrics(aaPIDs())
         if (data.size == 0 ) {
             return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
@@ -61,13 +62,17 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
         }
     }
 
-
+    private fun aaPIDs() = Prefs.getStringSet("pref.aa.pids.selected").map { s -> s.toLong() }.toSet()
 
 
     init {
         CarApplicationContext = WeakReference(carContext)
         lifecycle.addObserver(this)
-        val data = MetricsProvider().findMetrics(slowPIDs())
+        val aaPIDs = aaPIDs()
+
+        Log.i(LOG_KEY,"Selected PIDs = $aaPIDs")
+
+        val data = MetricsProvider().findMetrics(aaPIDs)
         MetricsAggregator.metrics.observe(this) {
             it?.let {
                 data.find { c -> c.command.pid.id ==  it.command.pid.id }?.let {

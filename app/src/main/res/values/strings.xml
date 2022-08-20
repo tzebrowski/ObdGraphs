@@ -102,6 +102,8 @@
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
+    <string name="pref.aa_category">Android Auto view configuration</string>
+
     <string name="pref.metrics_category">Metrics view configuration</string>
     <string name="pref.adapter_category">Adapter</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
