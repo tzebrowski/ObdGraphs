@@ -1,20 +1,22 @@
 package org.obd.graphs.aa
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
+import androidx.car.app.CarContext
+import androidx.core.content.ContextCompat
+import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.toNumber
 import kotlin.math.min
 
+
 private const val ROW_SPACING = 12
 private const val LEFT_MARGIN = 15
 private const val MAX_FONT_SIZE = 30
-private const val MAX_ITEM_IN_ROW = 5
+private const val MAX_ITEMS_IN_ROW = 5
 
-class Renderer() {
+class Renderer {
     private val paint = Paint()
 
     fun renderFrame(
@@ -30,6 +32,8 @@ class Renderer() {
             val updatedSize = height - ROW_SPACING
             paint.textSize = updatedSize.toFloat()
             canvas.drawRect(area, paint)
+            canvas.drawColor(ContextCompat.getColor(getContext()!!, R.color.white));
+
             val fm = paint.fontMetrics
             var verticalPos = area.top - fm.ascent
             var verticalPosCpy = verticalPos
@@ -37,10 +41,12 @@ class Renderer() {
             val data = MetricsProvider().findMetrics(aaPIDs())
             val histogram = DataLogger.instance.diagnostics().histogram()
             var margin = LEFT_MARGIN
-            val infoDiv = 1.5f
+            val infoDiv = 1.4f
 
-            data.chunked(MAX_ITEM_IN_ROW).forEach { chunk ->
+            data.chunked(MAX_ITEMS_IN_ROW).forEach { chunk ->
                 chunk.forEach {
+                    paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD);
+
                     canvas.drawText(it.command.pid.description.replace("\n", " "), margin.toFloat(), verticalPos, paint)
                     verticalPos += height.toFloat() / infoDiv
 
@@ -56,11 +62,12 @@ class Renderer() {
                         }
                     }
 
+                    paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
                     canvas.drawText(info.toString(), margin.toFloat(), verticalPos, paint)
                     verticalPos += height.toFloat()
                     paint.textSize =  originalSize
                 }
-                margin += canvas.width/2
+                margin += canvas.width / 2
                 verticalPos = verticalPosCpy
             }
 
@@ -70,6 +77,6 @@ class Renderer() {
     init {
         paint.color = Color.BLACK
         paint.isAntiAlias = true
-        paint.style = Paint.Style.STROKE
+        paint.style = Paint.Style.FILL
     }
 }
