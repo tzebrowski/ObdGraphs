@@ -33,16 +33,16 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
                 data.forEach {
                     val sensorRow: Row.Builder =
-                        Row.Builder().setTitle(CarText.Builder(it.command.pid.description).build())
+                        Row.Builder().setTitle(CarText.Builder(it.command.pid.description.replace("\n"," ")).build())
 
                     val info = StringBuilder().apply {
-                        append("value=${it.valueToString()}\n")
+                        append("value=${it.valueToString()} ")
                     }
 
                     histogram.findBy(it.command.pid).let{ hist ->
                         info.append("min=${it.toNumber(hist.min)}")
                         info.append(" max=${it.toNumber(hist.max)}")
-                        info.append(" avg=${it.toNumber(hist.mean)} \n")
+                        info.append(" avg=${it.toNumber(hist.mean)}")
                     }
                     val spannableString = colorize(info)
 

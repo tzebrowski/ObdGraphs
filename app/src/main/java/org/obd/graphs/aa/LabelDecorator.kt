@@ -18,25 +18,29 @@ internal fun colorize(info: StringBuilder): SpannableString = SpannableString(in
     txt = "min="
     i = indexOf(txt)
 
-    setSpan(
-        ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
-
+    if (i > 0) {
+   setSpan(
+            ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
 
     txt = "max="
     i = indexOf(txt)
+    if (i > 0) {
+        setSpan(
+            ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
 
-    setSpan(
-        ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
 
     txt = "avg="
     i = indexOf(txt)
-
-    setSpan(
-        ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
+    if (i > 0) {
+        setSpan(
+            ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
 }
