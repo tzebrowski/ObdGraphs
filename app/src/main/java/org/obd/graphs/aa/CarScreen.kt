@@ -14,14 +14,11 @@ import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
 
-private const val LOG_KEY = "CarScreen"
-
 class CarScreen(carContext: CarContext,surfaceController: SurfaceController) : Screen(carContext),
     DefaultLifecycleObserver {
 
     override fun onGetTemplate(): Template {
-        val data = MetricsProvider().findMetrics(aaPIDs())
-        if (data.size == 0) {
+        if (MetricsProvider().findMetrics(aaPIDs()).size == 0) {
             return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
                 .setTitle(carContext.getString(R.string.pref_aa_car_no_pids_selected))
@@ -34,10 +31,10 @@ class CarScreen(carContext: CarContext,surfaceController: SurfaceController) : S
                     .build()
 
             } catch (e: Exception) {
-                Log.e(LOG_KEY, "Failed to build Template", e)
+                Log.e(LOG_KEY, "Failed to build yemplate", e)
                 PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                     .setHeaderAction(Action.BACK)
-                    .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
+                    .setTitle(carContext.getString(R.string.pref_aa_car_error))
                     .build()
             }
         }
@@ -69,9 +66,6 @@ class CarScreen(carContext: CarContext,surfaceController: SurfaceController) : S
                 DataLoggerService.stop()
             }.build())
         .build()
-
-    private fun aaPIDs() =
-        Prefs.getStringSet("pref.aa.pids.selected").map { s -> s.toLong() }.toSet()
 
 
     init {

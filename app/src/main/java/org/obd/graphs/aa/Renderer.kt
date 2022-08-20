@@ -7,8 +7,6 @@ import android.graphics.Rect
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.toNumber
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.getStringSet
 import kotlin.math.min
 
 private const val ROW_SPACING = 12
@@ -54,10 +52,6 @@ class Renderer {
             }
         }
     }
-
-
-    private fun aaPIDs() =
-        Prefs.getStringSet("pref.aa.pids.selected").map { s -> s.toLong() }.toSet()
 
     init {
         paint.color = Color.BLACK
