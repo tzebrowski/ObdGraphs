@@ -1,7 +1,6 @@
 package org.obd.graphs.ui.preferences
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.preference.PreferenceManager
 import org.obd.graphs.ApplicationContext
 import org.obd.graphs.CarApplicationContext

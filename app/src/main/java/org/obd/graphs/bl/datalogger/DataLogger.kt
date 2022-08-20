@@ -146,18 +146,16 @@ class DataLogger internal constructor() {
     }
 
     fun start() {
-        ApplicationContext.get()?.runOnUiThread {
-            connection()?.run {
+        connection()?.run {
 
-                val query = query()
-                Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
+            val query = query()
+            Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
 
-                workflow.start(
-                    this, query, init(),
-                    adjustments()
-                )
-                Log.i(LOGGER_TAG, "Start collecting process")
-            }
+            workflow.start(
+                this, query, init(),
+                adjustments()
+            )
+            Log.i(LOGGER_TAG, "Start collecting process")
         }
     }
 

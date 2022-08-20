@@ -1,11 +1,10 @@
 package org.obd.graphs
 
-import android.app.Activity
-import androidx.car.app.CarContext
+import android.content.ContextWrapper
 import java.lang.ref.WeakReference
 
 lateinit var Cache: MutableMap<String, Any>
-lateinit var ApplicationContext: WeakReference<Activity>
-lateinit var CarApplicationContext: WeakReference<CarContext>
+lateinit var ApplicationContext: WeakReference<ContextWrapper>
+lateinit var CarApplicationContext: WeakReference<ContextWrapper>
 
 

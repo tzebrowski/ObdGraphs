@@ -36,13 +36,8 @@ fun wifi(enable: Boolean) {
     Log.i(LOG_LEVEL, "Changing status of WIFI, enable: $enable")
 
     ApplicationContext.get()?.let { it ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-            it.startActivityForResult(panelIntent, 0)
-        } else {
-            (it.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
-                isWifiEnabled = enable
-            }
+        (it.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+            isWifiEnabled = enable
         }
     }
 }

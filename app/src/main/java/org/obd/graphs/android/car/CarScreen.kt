@@ -1,7 +1,5 @@
 package org.obd.graphs.android.car
 
-import android.text.Spannable
-import android.text.SpannableString
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -14,6 +12,8 @@ import org.obd.graphs.bl.datalogger.MetricsAggregator
 import org.obd.graphs.bl.datalogger.slowPIDs
 import org.obd.graphs.ui.common.MetricsProvider
 import java.lang.ref.WeakReference
+
+private const val LOG_KEY = "CarScreen"
 
 class CarScreen(carContext: CarContext) : Screen(carContext),
     DefaultLifecycleObserver {
@@ -52,7 +52,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
                     .build()
 
             }catch (e: Exception) {
-                Log.e("CarScreen","Failed to build Template",e)
+                Log.e(LOG_KEY,"Failed to build Template",e)
                 return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                     .setHeaderAction(Action.BACK)
                     .setTitle(carContext.getString(R.string.car_hardware_info))
@@ -61,41 +61,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
         }
     }
 
-    private fun colorize(info: StringBuilder): SpannableString = SpannableString(info).apply {
-            var txt = "value="
-            var i = indexOf(txt)
 
-            setSpan(
-                ForegroundCarColorSpan.create(CarColor.GREEN)
-                , i, i + txt.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            txt = "min="
-            i = indexOf(txt)
-
-            setSpan(
-                ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-
-            txt = "max="
-            i = indexOf(txt)
-
-            setSpan(
-                ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            txt = "avg="
-            i = indexOf(txt)
-
-            setSpan(
-                ForegroundCarColorSpan.create(CarColor.GREEN), i, i + txt.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
 
 
     init {
