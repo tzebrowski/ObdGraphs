@@ -12,8 +12,9 @@ import kotlin.math.min
 private const val ROW_SPACING = 12
 private const val LEFT_MARGIN = 15
 private const val MAX_FONT_SIZE = 30
+private const val MAX_ITEM_IN_ROW = 5
 
-class Renderer {
+class Renderer() {
     private val paint = Paint()
 
     fun renderFrame(
@@ -31,25 +32,38 @@ class Renderer {
             canvas.drawRect(area, paint)
             val fm = paint.fontMetrics
             var verticalPos = area.top - fm.ascent
+            var verticalPosCpy = verticalPos
 
             val data = MetricsProvider().findMetrics(aaPIDs())
             val histogram = DataLogger.instance.diagnostics().histogram()
+            var margin = LEFT_MARGIN
+            val infoDiv = 1.5f
 
-            data.forEach {
-                val info = StringBuilder().apply {
-                    append(it.command.pid.description.replace("\n", " "))
-                    append("  value=${it.valueToString()}\n")
+            data.chunked(MAX_ITEM_IN_ROW).forEach { chunk ->
+                chunk.forEach {
+                    canvas.drawText(it.command.pid.description.replace("\n", " "), margin.toFloat(), verticalPos, paint)
+                    verticalPos += height.toFloat() / infoDiv
+
+                    val originalSize = updatedSize.toFloat()
+                    paint.textSize =  originalSize / infoDiv
+
+                    val info = StringBuffer().apply {
+                        histogram.findBy(it.command.pid).let { hist ->
+                            append(" value=${it.valueToString()}\n")
+                            append("min=${it.toNumber(hist.min)}")
+                            append(" max=${it.toNumber(hist.max)}")
+                            append(" avg=${it.toNumber(hist.mean)}")
+                        }
+                    }
+
+                    canvas.drawText(info.toString(), margin.toFloat(), verticalPos, paint)
+                    verticalPos += height.toFloat()
+                    paint.textSize =  originalSize
                 }
-
-                histogram.findBy(it.command.pid).let { hist ->
-                    info.append("min=${it.toNumber(hist.min)}")
-                    info.append(" max=${it.toNumber(hist.max)}")
-                    info.append(" avg=${it.toNumber(hist.mean)}")
-                }
-
-                canvas.drawText(info.toString(), LEFT_MARGIN.toFloat(), verticalPos, paint)
-                verticalPos += height.toFloat()
+                margin += canvas.width/2
+                verticalPos = verticalPosCpy
             }
+
         }
     }
 
