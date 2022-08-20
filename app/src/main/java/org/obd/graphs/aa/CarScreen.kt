@@ -4,22 +4,19 @@ import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
-import androidx.core.content.ContextCompat
+import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.datalogger.MetricsAggregator
-import org.obd.graphs.setCarContext
 import org.obd.graphs.ui.common.MetricsProvider
-import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
 
 private const val LOG_KEY = "CarScreen"
 
-class CarScreen(carContext: CarContext) : Screen(carContext),
+class CarScreen(carContext: CarContext,surfaceController: SurfaceController) : Screen(carContext),
     DefaultLifecycleObserver {
 
     override fun onGetTemplate(): Template {
@@ -30,41 +27,15 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
                 .setTitle(carContext.getString(R.string.pref_aa_car_no_pids_selected))
                 .build()
         } else {
-            try {
-                val histogram = DataLogger.instance.diagnostics().histogram()
-                val listBuilder = ItemList.Builder()
+            return try {
 
-                data.forEach {
-                    val info = StringBuilder().apply {
-                        append("value=${it.valueToString()}\n")
-                    }
-                    histogram.findBy(it.command.pid).let { hist ->
-                        info.append("min=${it.toNumber(hist.min)}")
-                        info.append(" max=${it.toNumber(hist.max)}")
-                        info.append(" avg=${it.toNumber(hist.mean)}")
-                    }
-
-                    listBuilder.addItem(
-                        Row.Builder()
-                            .setTitle(
-                                CarText.Builder(it.command.pid.description.replace("\n", " "))
-                                    .build()
-                            )
-                            .addText(colorize(info))
-                            .build()
-                    )
-                }
-
-                return ListTemplate.Builder()
-                    .setSingleList(listBuilder.build())
-                    .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
-                    .setHeaderAction(Action.BACK)
+                NavigationTemplate.Builder()
                     .setActionStrip(actions())
                     .build()
 
             } catch (e: Exception) {
                 Log.e(LOG_KEY, "Failed to build Template", e)
-                return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
+                PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                     .setHeaderAction(Action.BACK)
                     .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
                     .build()
@@ -105,8 +76,6 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
     init {
 
-        setCarContext(carContext)
-
         lifecycle.addObserver(this)
         val aaPIDs = aaPIDs()
 
@@ -116,7 +85,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
         MetricsAggregator.metrics.observe(this) {
             it?.let {
                 data.find { c -> c.command.pid.id == it.command.pid.id }?.let {
-                    invalidate()
+                    surfaceController.render()
                 }
             }
         }

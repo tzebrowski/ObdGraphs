@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.obd.graphs">
 
-    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE"/>
-
     <uses-feature
         android:name="android.software.car.templates_host"
         android:required="true" />
@@ -20,6 +18,9 @@
     <uses-feature
         android:name="android.hardware.screen.landscape"
         android:required="false" />
+
+    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE"/>
+    <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES"/>
 
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.GET_TASKS" />
