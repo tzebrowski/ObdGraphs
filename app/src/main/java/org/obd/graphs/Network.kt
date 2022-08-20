@@ -19,7 +19,7 @@ fun findBTAdapterByName(deviceName: String) =
 fun bluetooth(enable: Boolean) {
     Log.i(LOG_LEVEL, "Changing status of Bluetooth, enable: $enable")
 
-    ApplicationContext.get()?.let {
+    getContext()?.let {
         if (enable) {
             BluetoothAdapter.getDefaultAdapter().run {
                 enable()
@@ -35,7 +35,7 @@ fun bluetooth(enable: Boolean) {
 fun wifi(enable: Boolean) {
     Log.i(LOG_LEVEL, "Changing status of WIFI, enable: $enable")
 
-    ApplicationContext.get()?.let { it ->
+    getContext()?.let { it ->
         (it.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
             isWifiEnabled = enable
         }

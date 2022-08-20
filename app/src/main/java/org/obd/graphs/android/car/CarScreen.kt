@@ -5,10 +5,10 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.lifecycle.DefaultLifecycleObserver
-import org.obd.graphs.CarApplicationContext
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.MetricsAggregator
+import org.obd.graphs.setCarContext
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
@@ -34,13 +34,16 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
                 data.forEach {
                     val sensorRow: Row.Builder =
                         Row.Builder().setTitle(CarText.Builder(it.command.pid.description).build())
-                    val histogram = histogram.findBy(it.command.pid)
-                    val info = StringBuilder()
-                    info.append("value=${it.valueToString()}\n")
-                    info.append("min=${histogram.min}")
-                    info.append(" max=${histogram.max}")
-                    info.append(" avg=${histogram.mean} \n")
 
+                    val info = StringBuilder().apply {
+                        append("value=${it.valueToString()}\n")
+                    }
+
+                    histogram.findBy(it.command.pid).let{ hist ->
+                        info.append("min=${hist.min}")
+                        info.append(" max=${hist.max}")
+                        info.append(" avg=${hist.mean} \n")
+                    }
                     val spannableString = colorize(info)
 
                     sensorRow.addText(spannableString)
@@ -66,7 +69,9 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
 
     init {
-        CarApplicationContext = WeakReference(carContext)
+
+        setCarContext(carContext)
+
         lifecycle.addObserver(this)
         val aaPIDs = aaPIDs()
 

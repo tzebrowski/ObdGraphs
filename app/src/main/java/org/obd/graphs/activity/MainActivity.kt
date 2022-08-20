@@ -16,7 +16,6 @@ import org.obd.graphs.*
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.profile.setupProfiles
 import org.obd.graphs.ui.preferences.updateString
-import java.lang.ref.WeakReference
 
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
 
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ApplicationContext = WeakReference(this)
+        setActivityContext(this)
         Cache = cache
 
         StrictMode.setThreadPolicy(

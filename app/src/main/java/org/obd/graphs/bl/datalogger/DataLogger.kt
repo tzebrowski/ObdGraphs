@@ -17,8 +17,8 @@ import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
-import org.obd.graphs.ApplicationContext
 import org.obd.graphs.findBTAdapterByName
+import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.preferences.mode.getModesAndHeaders
 import org.obd.graphs.ui.preferences.pid.updateSupportedPIDsPreference
@@ -60,7 +60,7 @@ class DataLogger internal constructor() {
         }
     }
 
-    private val context: Context by lazy { ApplicationContext.get()!! }
+    private val context: Context by lazy { getContext()!! }
     private val preferences by lazy { DataLoggerPreferences.instance }
 
     private var metricsAggregator = MetricsAggregator()
@@ -122,7 +122,7 @@ class DataLogger internal constructor() {
     private var workflow: Workflow = workflow()
 
     init {
-        ApplicationContext.get()?.let {
+        getContext()?.let {
             it.registerReceiver(broadcastReceiver, IntentFilter().apply {
                 addAction(RESOURCE_LIST_CHANGED_EVENT)
                 addAction(PROFILE_CHANGED_EVENT)

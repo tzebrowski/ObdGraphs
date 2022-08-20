@@ -15,9 +15,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.mikephil.charting.data.Entry
-import org.obd.graphs.ApplicationContext
 import org.obd.graphs.Cache
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.getContext
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.isEnabled
@@ -109,7 +109,7 @@ class TripManager private constructor() {
     }
 
     private val valueScaler = ValueScaler()
-    private val context: Context by lazy { ApplicationContext.get()!! }
+    private val context: Context by lazy { getContext()!! }
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("dd.MM HH:mm:ss", Locale.getDefault())
 
