@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import org.obd.graphs.R
@@ -15,7 +16,6 @@ import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
-
 
 private const val LOG_KEY = "CarScreen"
 
@@ -80,7 +80,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
                         carContext,
                         R.drawable.actions_connect
                     )
-                ).build()
+                ).setTint(CarColor.GREEN).build()
             )
             .setOnClickListener {
                 DataLoggerService.start()
@@ -92,11 +92,10 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
                         carContext,
                         R.drawable.action_disconnect
                     )
-                ).build()
+                ).setTint(CarColor.RED).build()
             )
             .setOnClickListener {
                 DataLoggerService.stop()
-
             }.build())
         .build()
 
