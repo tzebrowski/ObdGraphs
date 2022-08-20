@@ -14,6 +14,7 @@ import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
 
+
 private const val LOG_KEY = "CarScreen"
 
 class CarScreen(carContext: CarContext) : Screen(carContext),
@@ -21,42 +22,47 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
     override fun onGetTemplate(): Template {
         val data = MetricsProvider().findMetrics(aaPIDs())
-        if (data.size == 0 ) {
+        if (data.size == 0) {
             return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
                 .setTitle(carContext.getString(R.string.pref_aa_car_no_pids_selected))
                 .build()
         } else {
             try {
-                val paneBuilder = Pane.Builder()
                 val histogram = DataLogger.instance.diagnostics().histogram()
+                val listBuilder = ItemList.Builder()
 
                 data.forEach {
-                    val sensorRow: Row.Builder =
-                        Row.Builder().setTitle(CarText.Builder(it.command.pid.description.replace("\n"," ")).build())
-
                     val info = StringBuilder().apply {
                         append("value=${it.valueToString()} ")
                     }
-
-                    histogram.findBy(it.command.pid).let{ hist ->
+                    histogram.findBy(it.command.pid).let { hist ->
                         info.append("min=${it.toNumber(hist.min)}")
                         info.append(" max=${it.toNumber(hist.max)}")
                         info.append(" avg=${it.toNumber(hist.mean)}")
                     }
-                    val spannableString = colorize(info)
 
-                    sensorRow.addText(spannableString)
-                    paneBuilder.addRow(sensorRow.build())
+                    listBuilder.addItem(
+                        Row.Builder()
+                            .setTitle(
+                                CarText.Builder(it.command.pid.description.replace("\n", " "))
+                                    .build()
+                            )
+                            .addText(colorize(info))
+                            .build()
+                    )
+
                 }
 
-                return PaneTemplate.Builder(paneBuilder.build())
-                    .setHeaderAction(Action.BACK)
+                return ListTemplate.Builder()
+                    .setSingleList(listBuilder.build())
                     .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
+                    .setHeaderAction(Action.BACK)
+
                     .build()
 
-            }catch (e: Exception) {
-                Log.e(LOG_KEY,"Failed to build Template",e)
+            } catch (e: Exception) {
+                Log.e(LOG_KEY, "Failed to build Template", e)
                 return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                     .setHeaderAction(Action.BACK)
                     .setTitle(carContext.getString(R.string.pref_aa_car_hardware_info))
@@ -65,7 +71,8 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
         }
     }
 
-    private fun aaPIDs() = Prefs.getStringSet("pref.aa.pids.selected").map { s -> s.toLong() }.toSet()
+    private fun aaPIDs() =
+        Prefs.getStringSet("pref.aa.pids.selected").map { s -> s.toLong() }.toSet()
 
 
     init {
@@ -75,12 +82,12 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
         lifecycle.addObserver(this)
         val aaPIDs = aaPIDs()
 
-        Log.i(LOG_KEY,"Selected PIDs = $aaPIDs")
+        Log.i(LOG_KEY, "Selected PIDs = $aaPIDs")
 
         val data = MetricsProvider().findMetrics(aaPIDs)
         MetricsAggregator.metrics.observe(this) {
             it?.let {
-                data.find { c -> c.command.pid.id ==  it.command.pid.id }?.let {
+                data.find { c -> c.command.pid.id == it.command.pid.id }?.let {
                     invalidate()
                 }
             }
