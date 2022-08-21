@@ -1,5 +1,9 @@
 package org.obd.graphs.aa
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -7,15 +11,70 @@ import androidx.car.app.model.*
 import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLoggerService
-import org.obd.graphs.bl.datalogger.MetricsAggregator
+import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.ui.common.MetricsProvider
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.getStringSet
 
 class CarScreen(carContext: CarContext) : Screen(carContext),
     DefaultLifecycleObserver {
+
+    internal var broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                DATA_LOGGER_CONNECTING_EVENT -> {
+                    carToast(getCarContext(),R.string.main_activity_toast_connection_connecting)
+                }
+
+                DATA_LOGGER_NO_NETWORK_EVENT -> {
+                    carToast(getCarContext(),R.string.main_activity_toast_connection_no_network)
+                }
+
+                DATA_LOGGER_ERROR_EVENT -> {
+                    carToast(getCarContext(),R.string.main_activity_toast_connection_error)
+                }
+
+
+                DATA_LOGGER_STOPPED_EVENT -> {
+                    carToast(getCarContext(),R.string.main_activity_toast_connection_stopped)
+                }
+
+                DATA_LOGGER_CONNECTED_EVENT -> {
+                    carToast(getCarContext(),R.string.main_activity_toast_connection_established)
+                }
+
+                DATA_LOGGER_ERROR_CONNECT_EVENT -> {
+                    carToast(getCarContext(),R.string.main_activity_toast_connection_connect_error)
+                }
+
+                DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
+                    carToast(getCarContext(),R.string.main_activity_toast_adapter_is_not_selected)
+                }
+            }
+        }
+    }
+
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+
+        carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
+            addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+            addAction(DATA_LOGGER_CONNECTING_EVENT)
+            addAction(DATA_LOGGER_STOPPED_EVENT)
+            addAction(DATA_LOGGER_STOPPING_EVENT)
+            addAction(DATA_LOGGER_ERROR_EVENT)
+            addAction(DATA_LOGGER_CONNECTED_EVENT)
+            addAction(DATA_LOGGER_NO_NETWORK_EVENT)
+            addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
+
+        })
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+
+        carContext.unregisterReceiver(broadcastReceiver)
+    }
 
     override fun onGetTemplate(): Template {
         return if (MetricsProvider().findMetrics(aaPIDs()).isEmpty()) {

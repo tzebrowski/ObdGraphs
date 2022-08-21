@@ -31,7 +31,7 @@ class CarScreenRenderer {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
             val data = MetricsProvider().findMetrics(aaPIDs())
-            val baseFontSize = fontSize(data)
+            val baseFontSize = calculateFontSize(data)
 
             val height = min(area.height() / 8, baseFontSize)
             val updatedSize = height - ROW_SPACING
@@ -86,7 +86,7 @@ class CarScreenRenderer {
         }
     }
 
-    private fun fontSize(data: MutableList<ObdMetric>): Int  =
+    private fun calculateFontSize(data: MutableList<ObdMetric>): Int  =
         when (data.size) {
             1 -> {
                 (MAX_FONT_SIZE * 3)
