@@ -12,7 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.datalogger.MetricsAggregator
 
 
-class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle, carScreen: CarScreen) :
+class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
     DefaultLifecycleObserver {
 
     private val renderer: CarScreenRenderer = CarScreenRenderer()
@@ -55,7 +55,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
         render()
     }
 
-    private fun render() {
+    fun render() {
         surface?.let {
             if (it.isValid) {
                 val canvas = it.lockCanvas(null)
@@ -67,8 +67,5 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
     init {
         lifecycle.addObserver(this)
-        MetricsAggregator.metrics.observe(carScreen) {
-            render()
-        }
     }
 }

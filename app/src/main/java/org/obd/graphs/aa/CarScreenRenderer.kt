@@ -7,13 +7,16 @@ import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.toNumber
+import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.min
 
 
 private const val ROW_SPACING = 12
-private const val LEFT_MARGIN = 15
+private const val MARGIN_START = 15
+private const val MARGIN_END = 30
+
 private const val DEFAULT_ITEMS_IN_COLUMN = 6
 private const val DEFAULT_FONT_SIZE= 34
 
@@ -21,6 +24,9 @@ class CarScreenRenderer {
     private val paint = Paint()
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
     private val philippineGreen by lazy { ContextCompat.getColor(getContext()!!, R.color.philippine_green) }
+    private val rainbowIndigo by lazy { ContextCompat.getColor(getContext()!!, R.color.rainbow_indigo) }
+
+    private val valueScaler: ValueScaler = ValueScaler()
 
     fun render(
         canvas: Canvas,
@@ -47,7 +53,7 @@ class CarScreenRenderer {
             val verticalPosCpy = verticalPos
 
             val histogram = DataLogger.instance.diagnostics().histogram()
-            var margin = LEFT_MARGIN
+            var margin = MARGIN_START
             val infoDiv = 1.3f
 
             data.chunked(maxItemsInColumn).forEach { chunk ->
@@ -65,22 +71,23 @@ class CarScreenRenderer {
                     val valueTextSize = updatedSize.toFloat() / infoDiv
                     val labelTextSize = updatedSize.toFloat() / infoDiv / 1.3f
 
-
-                    drawDivider(horizontalPos,verticalPos,canvas,(area.width()/2).toFloat(), paint)
-
                     horizontalPos = drawText("current",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
                     horizontalPos = drawText(it.valueToString(),canvas, horizontalPos, verticalPos, philippineGreen,Typeface.BOLD,valueTextSize)
 
                     horizontalPos = drawText("min",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(it.toNumber(hist.min).toString(),canvas, horizontalPos, verticalPos, cardinal,Typeface.BOLD,valueTextSize)
+                    horizontalPos = drawText(it.toNumber(hist.min).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
                     horizontalPos = drawText("max",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(it.toNumber(hist.max).toString(),canvas, horizontalPos, verticalPos, cardinal,Typeface.BOLD,valueTextSize)
+                    horizontalPos = drawText(it.toNumber(hist.max).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
                     horizontalPos = drawText("avg",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    drawText(it.toNumber(hist.mean).toString(),canvas, horizontalPos, verticalPos, cardinal,Typeface.BOLD,valueTextSize)
+                    drawText(it.toNumber(hist.mean).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
-                    verticalPos += textHeight.toFloat()
+                    drawDivider(canvas, margin.toFloat(),verticalPos,(area.width() / 2).toFloat())
+                    verticalPos += 1
+                    drawProgressBar(canvas, margin.toFloat(),(area.width() / 2).toFloat(), verticalPos, it)
+
+                    verticalPos += textHeight.toFloat() + 2
                     paint.textSize =  originalSize
                     paint.color = Color.BLACK
                 }
@@ -89,6 +96,8 @@ class CarScreenRenderer {
             }
         }
     }
+
+
 
     private fun calculateFontSize(data: MutableList<ObdMetric>): Int {
         val maxFontSize =
@@ -140,12 +149,36 @@ class CarScreenRenderer {
     }
 
 
-    private fun drawDivider(horizontalPos: Float,
-                            verticalPos: Float,
-                            canvas: Canvas, w: Float, paint: Paint) {
+    private fun drawDivider(
+        canvas: Canvas,
+        start: Float,
+        verticalPos: Float,
+        width: Float
+    ) {
 
         paint.color = Color.LTGRAY
-        canvas.drawLine(horizontalPos - 6, verticalPos + 6, horizontalPos + w - 12, verticalPos  + 6 , paint)
+        paint.strokeWidth = 2f
+        canvas.drawLine(start - 6, verticalPos + 4, start + width - MARGIN_END, verticalPos  + 4 , paint)
+    }
+
+    private fun drawProgressBar(
+        canvas: Canvas,
+        start: Float,
+        width: Float,
+        verticalPos: Float,
+        it: ObdMetric
+    ) {
+        paint.color = cardinal
+        val progress = valueScaler.scaleToNewRange(it.valueToDouble().toFloat(),
+            it.command.pid.min.toFloat(),it.command.pid.max.toFloat(),start,start + width - MARGIN_END)
+
+        canvas.drawRect(
+            start - 6,
+            verticalPos + 4,
+            progress,
+            verticalPos + 12,
+            paint
+        )
     }
 
     init {

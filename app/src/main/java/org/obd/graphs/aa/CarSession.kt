@@ -13,9 +13,8 @@ class CarSession : Session(), DefaultLifecycleObserver {
     override fun onCreateScreen(intent: Intent): Screen {
         lifecycle.addObserver(this)
         setCarContext(carContext)
-        val carScreen = CarScreen(carContext)
-        surfaceController =  SurfaceController(carContext, lifecycle,carScreen)
-        return carScreen
+        surfaceController =  SurfaceController(carContext, lifecycle)
+        return CarScreen(carContext,surfaceController)
     }
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {

@@ -16,7 +16,7 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.ui.common.MetricsProvider
 
-class CarScreen(carContext: CarContext) : Screen(carContext),
+class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : Screen(carContext),
     DefaultLifecycleObserver {
 
     internal var broadcastReceiver = object : BroadcastReceiver() {
@@ -24,6 +24,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
+                    surfaceController.render()
                     carToast(getCarContext(),R.string.main_activity_toast_connection_connecting)
                 }
 
@@ -128,5 +129,8 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
     init {
         lifecycle.addObserver(this)
+        MetricsAggregator.metrics.observe(this) {
+            surfaceController.render()
+        }
     }
 }
