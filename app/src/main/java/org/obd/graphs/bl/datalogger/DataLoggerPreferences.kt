@@ -50,9 +50,9 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
 
         when (key) {
             "pref.pids.generic.low" -> dataLoggerPreferences.pids =
-                getPidsToQuery()
+                getPIDsToQuery()
             "pref.pids.generic.high" -> dataLoggerPreferences.pids =
-                getPidsToQuery()
+                getPIDsToQuery()
             "pref.mode" -> dataLoggerPreferences.mode =
                 Prefs.getS(key, GENERIC_MODE)
             "pref.debug.generator.enabled" -> dataLoggerPreferences.generatorEnabled =
@@ -143,7 +143,7 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
 
     val dataLoggerPreferences = DataLoggerPreferences(
-        pids = getPidsToQuery(),
+        pids = getPIDsToQuery(),
         connectionType = connectionType,
         tcpHost = tcpHost,
         tcpPort = tcpPort,
@@ -173,6 +173,9 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
 private fun resources(): MutableSet<String> =
     Prefs.getStringSet("pref.pids.registry.list", defaultPidFiles.keys)!!
 
-fun getPidsToQuery() =
-    (Prefs.getStringSet("pref.pids.generic.high").map { s -> s.toLong() }
-            + Prefs.getStringSet("pref.pids.generic.low").map { s -> s.toLong() }).toMutableSet()
+fun getPIDsToQuery() =
+    (fastPIDs()
+            + slowPIDs()).toMutableSet()
+
+private fun fastPIDs() = Prefs.getStringSet("pref.pids.generic.high").map { s -> s.toLong() }
+fun slowPIDs() = Prefs.getStringSet("pref.pids.generic.low").map { s -> s.toLong() }.toSet()

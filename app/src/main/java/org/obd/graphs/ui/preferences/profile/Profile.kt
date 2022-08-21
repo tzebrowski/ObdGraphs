@@ -7,8 +7,8 @@ import org.obd.graphs.ui.preferences.mode.MODE_NAME_PREFIX
 import org.obd.graphs.ui.preferences.mode.PREF_ADAPTER_MODE_ID_EDITOR
 import org.obd.graphs.ui.preferences.mode.PREF_CAN_HEADER_EDITOR
 import org.obd.graphs.ui.preferences.mode.getAvailableModes
-import org.obd.graphs.ApplicationContext
 import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
+import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getString
@@ -44,7 +44,7 @@ fun setupProfiles() {
                 Log.i(LOG_KEY, "Loading profile file='$fileName'")
 
                 val prop = Properties()
-                prop.load(ApplicationContext.get()!!.assets.open(fileName))
+                prop.load(getContext()!!.assets.open(fileName))
                 prop.forEach { t, u ->
                     val value = u.toString()
                     val key = t.toString()

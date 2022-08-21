@@ -15,12 +15,14 @@ Application is available in google play https://play.google.com/store/apps/detai
 
 ## Features
 
-* Native support for the Alfa Romeo engines like 1.75TBI (Giulietta, 159) and 2.0 GME (Giulia, Stelvio).
+* Native support for the Alfa Romeo engines
+** `1.75 TBI` (Giulietta, 159)
+** `2.0 GME` (Giulia, Stelvio)
+  
 * Supports WIFI and Bluetooth ELM327 compatible adapters 
 * Recordings -  The application saves all user trips on the storage. At any time user can open it and check telemetry collected in the past.
 * Configurable views -  The application offers few different kind of gauges which can visualize telemetry in the real-time, e.g: Boost, MAF, OIL temp 
-* Vehicle Profiles - The application allows to create configurable vehicle profiles which can contains vehicle specific type settings.
-  At this moment application brings following profiles which works out-of-box for: Giulia 2.0 GME and Giulietta 1.75 TBI engines. 
+* Vehicle profiles - The application allows to create configurable vehicle profiles which can contains vehicle specific type settings.
 
 
 ## Views

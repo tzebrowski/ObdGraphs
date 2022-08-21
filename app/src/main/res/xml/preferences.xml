@@ -433,9 +433,25 @@
                     android:defaultValue="true"
                     android:key="pref.gauge_display_scale"
                     android:title="@string/pref.gauge_display_scale" />
-
             </PreferenceCategory>
         </PreferenceScreen>
+
+        <PreferenceScreen
+            android:summary="@string/pref.aa_category"
+            android:title="@string/pref.aa_category"
+            app:key="pref.aa">
+
+            <PreferenceCategory android:title="@string/pref.pids_category">
+                <org.obd.graphs.ui.preferences.pid.DisplayedPIDsListPreferences
+                    app:useSimpleSummaryProvider="true"
+                    android:defaultValue="@array/pref.empty_array"
+                    android:dialogTitle="@string/pref.displayed_parameter_ids"
+                    android:key="pref.aa.pids.selected"
+                    android:summary="@string/pref.displayed_parameter_ids_summary"
+                    android:title="@string/pref.displayed_parameter_ids" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+
         <PreferenceScreen
             android:summary="@string/pref.metrics_category"
             android:title="@string/pref.metrics_category"

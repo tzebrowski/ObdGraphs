@@ -47,7 +47,7 @@ class ExceptionHandler : Thread.UncaughtExceptionHandler {
     }
 
     private fun writeReport(report: String) {
-        ApplicationContext.get()?.let {
+        getContext()?.let {
             try {
                 val date = dateFormat.format(Date(System.currentTimeMillis()))
                 val directory = "${it.getExternalFilesDir("crashes")?.absolutePath}"

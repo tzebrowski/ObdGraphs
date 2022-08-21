@@ -12,14 +12,14 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.obd.graphs.ApplicationContext
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerService
+import org.obd.graphs.getContext
 import org.obd.graphs.ui.preferences.PREFERENCE_SCREEN_KEY
 
 
 fun navigateToPreferencesScreen(prefKey: String) {
-    (ApplicationContext.get() as MainActivity).navController()
+    (getContext() as MainActivity).navController()
         .navigate(
             R.id.navigation_preferences,
             bundleOf(PREFERENCE_SCREEN_KEY to prefKey)

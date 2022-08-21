@@ -6,8 +6,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.ApplicationContext
-import org.obd.graphs.bl.datalogger.getPidsToQuery
+import org.obd.graphs.bl.datalogger.getPIDsToQuery
+import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.common.DragManageAdapter
@@ -24,7 +24,7 @@ class RecyclerViewSetup {
         metricsSerializerPref: String
     ) : MutableList<ObdMetric> {
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
-        val query  = getPidsToQuery()
+        val query  = getPIDsToQuery()
         val metricsIds = Prefs.getLongSet(metricsIdsPref).filter {  query.contains(it)}.toSet()
         return MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
     }
@@ -49,7 +49,7 @@ class RecyclerViewSetup {
     ) {
 
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
-        val query  = getPidsToQuery()
+        val query  = getPIDsToQuery()
         val metricsIds = Prefs.getLongSet(metricsIdsPref).filter {  query.contains(it)}.toSet()
         val metrics =  MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
 
@@ -73,7 +73,7 @@ class RecyclerViewSetup {
         MetricsObserver().observe(metricsIds,viewLifecycleOwner, adapter(recyclerView), metrics)
     }
 
-    private fun requireContext(): Context = ApplicationContext.get()!!
+    private fun requireContext(): Context = getContext()!!
 
     private fun createSwappableAdapter(
         configureChangeEventId: String,

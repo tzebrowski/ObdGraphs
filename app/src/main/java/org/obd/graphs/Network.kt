@@ -19,7 +19,7 @@ fun findBTAdapterByName(deviceName: String) =
 fun bluetooth(enable: Boolean) {
     Log.i(LOG_LEVEL, "Changing status of Bluetooth, enable: $enable")
 
-    ApplicationContext.get()?.let {
+    getContext()?.let {
         if (enable) {
             BluetoothAdapter.getDefaultAdapter().run {
                 enable()
@@ -35,14 +35,9 @@ fun bluetooth(enable: Boolean) {
 fun wifi(enable: Boolean) {
     Log.i(LOG_LEVEL, "Changing status of WIFI, enable: $enable")
 
-    ApplicationContext.get()?.let { it ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val panelIntent = Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)
-            it.startActivityForResult(panelIntent, 0)
-        } else {
-            (it.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
-                isWifiEnabled = enable
-            }
+    getContext()?.let { it ->
+        (it.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
+            isWifiEnabled = enable
         }
     }
 }

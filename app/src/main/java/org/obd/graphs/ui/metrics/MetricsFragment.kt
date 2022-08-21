@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.MetricsAggregator
-import org.obd.graphs.bl.datalogger.getPidsToQuery
+import org.obd.graphs.bl.datalogger.getPIDsToQuery
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 
@@ -27,7 +27,7 @@ class MetricsFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             adapter.let {
                 it.data.clear()
-                it.data.addAll(MetricsProvider().findMetrics(getPidsToQuery(), emptyMap()))
+                it.data.addAll(MetricsProvider().findMetrics(getPIDsToQuery(), emptyMap()))
                 it.notifyDataSetChanged()
             }
         }
@@ -39,7 +39,7 @@ class MetricsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_metrics, container, false)
-        val data = MetricsProvider().findMetrics(getPidsToQuery(), emptyMap())
+        val data = MetricsProvider().findMetrics(getPIDsToQuery(), emptyMap())
         adapter = MetricsViewAdapter(root.context, data)
 
         MetricsAggregator.metrics.observe(viewLifecycleOwner) {

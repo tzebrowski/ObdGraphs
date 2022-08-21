@@ -2,15 +2,15 @@ package org.obd.graphs.ui.preferences
 
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import org.obd.graphs.ApplicationContext
+import org.obd.graphs.getContext
 
 val Prefs: SharedPreferences by lazy {
-    PreferenceManager.getDefaultSharedPreferences(
-        ApplicationContext.get()!!
+   PreferenceManager.getDefaultSharedPreferences(
+       getContext()!!
     )
 }
 
-fun SharedPreferences.updateString(key:String, value: String?) {
+fun SharedPreferences.updateString(key: String, value: String?) {
     edit().putString(key, value).apply()
 }
 
@@ -33,6 +33,7 @@ fun SharedPreferences.isEnabled(key: String): Boolean {
 fun SharedPreferences.getS(name: String?, default: String): String {
     return getString(name, default)!!
 }
+
 fun SharedPreferences.getString(name: String): String? {
     return getString(name, null)
 }

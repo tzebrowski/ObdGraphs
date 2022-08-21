@@ -4,10 +4,10 @@ import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
 import android.view.Gravity
 import android.widget.Toast
-import org.obd.graphs.ApplicationContext
+import org.obd.graphs.getContext
 
 fun toast(id: Int) {
-    ApplicationContext.get()?.let {
+    getContext()?.let {
         val text = it.resources.getString(id)
         val biggerText = SpannableStringBuilder(text)
         biggerText.setSpan(RelativeSizeSpan(1.25f), 0, text.length, 0)

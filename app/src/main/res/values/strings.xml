@@ -1,5 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- FEATURE FLAGS -->
+    <string name="pref.aa.car_hardware_info">Vehicle Hardware Information</string>
+    <string name="pref.aa.car_no_pids_selected">No OBD2 PIDs/Sensors sensor are selected</string>
+    <string name="pref.aa.car_error">An error occurred during OBD2 PIDs/Sensors loading</string>
+
     <string name="pref.experimental_switch_network_enabled">This feature is in the experimental phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
     <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
     <string name="pref.experimental_read_external_storage_enabled">This feature is in the experimental phase.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
@@ -82,6 +85,8 @@
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
+    <string name="pref.aa_category">Android Auto view configuration</string>
+
     <string name="pref.metrics_category">Metrics view configuration</string>
     <string name="pref.adapter_category">Adapter</string>
     <string name="pref.bluetooth_category">Bluetooth</string>

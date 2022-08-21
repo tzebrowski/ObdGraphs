@@ -8,6 +8,8 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 
 internal class MetricsProvider {
 
+    fun findMetrics(ids: Set<Long>) = findMetrics(ids, emptyMap())
+
     fun findMetrics(ids: Set<Long>, order: Map<Long, Int>?): MutableList<ObdMetric> {
         val metrics = buildMetrics(ids)
         order?.let { sortOrder ->
