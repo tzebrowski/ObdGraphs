@@ -21,6 +21,7 @@ class CarScreen(carContext: CarContext) : Screen(carContext),
 
     internal var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     carToast(getCarContext(),R.string.main_activity_toast_connection_connecting)

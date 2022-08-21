@@ -51,11 +51,15 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
          carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
     }
 
-    fun render() {
+    fun onCarConfigurationChanged() {
+        render()
+    }
+
+    private fun render() {
         surface?.let {
             if (it.isValid) {
                 val canvas = it.lockCanvas(null)
-                renderer.render(canvas = canvas, stableArea = stableArea)
+                renderer.render(canvas = canvas, stableArea = stableArea,visibleArea = visibleArea)
                 it.unlockCanvasAndPost(canvas)
             }
         }

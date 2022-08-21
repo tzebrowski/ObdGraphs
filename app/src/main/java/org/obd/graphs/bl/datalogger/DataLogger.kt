@@ -24,7 +24,7 @@ import org.obd.graphs.ui.preferences.mode.getModesAndHeaders
 import org.obd.graphs.ui.preferences.pid.updateSupportedPIDsPreference
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import java.io.File
-
+import java.lang.IllegalArgumentException
 
 const val WORKFLOW_RELOAD_EVENT = "data.logger.workflow.reload.event"
 const val RESOURCE_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
@@ -60,7 +60,7 @@ class DataLogger internal constructor() {
         }
     }
 
-    private val context: Context by lazy { getContext()!! }
+
     private val preferences by lazy { DataLoggerPreferences.instance }
 
     private var metricsAggregator = MetricsAggregator()
@@ -123,10 +123,14 @@ class DataLogger internal constructor() {
 
     init {
         getContext()?.let {
-            it.registerReceiver(broadcastReceiver, IntentFilter().apply {
-                addAction(RESOURCE_LIST_CHANGED_EVENT)
-                addAction(PROFILE_CHANGED_EVENT)
-            })
+            try {
+                it.registerReceiver(broadcastReceiver, IntentFilter().apply {
+                    addAction(RESOURCE_LIST_CHANGED_EVENT)
+                    addAction(PROFILE_CHANGED_EVENT)
+                })
+            }catch (il : IllegalArgumentException){
+                Log.e(LOGGER_TAG, "Failed to register receiver",il)
+            }
         }
     }
 
@@ -134,7 +138,6 @@ class DataLogger internal constructor() {
     fun diagnostics(): Diagnostics {
         return workflow.diagnostics
     }
-
 
     fun pidDefinitionRegistry(): PidDefinitionRegistry {
         return workflow.pidRegistry
@@ -164,7 +167,6 @@ class DataLogger internal constructor() {
     } else {
         bluetoothConnection()
     }
-
 
     private fun bluetoothConnection(): AdapterConnection? = try {
         val deviceName = preferences.adapterId
@@ -215,7 +217,7 @@ class DataLogger internal constructor() {
         .responseLengthEnabled(preferences.responseLengthEnabled)
         .cacheConfig(
             CacheConfig.builder()
-                .resultCacheFilePath(File(context.cacheDir, "formula_cache.json").absolutePath)
+                .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
                 .resultCacheEnabled(preferences.resultsCacheEnabled).build()
         )
         .generator(

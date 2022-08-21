@@ -7,13 +7,14 @@ import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.toNumber
+import org.obd.graphs.ui.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.min
 
 
 private const val ROW_SPACING = 12
 private const val LEFT_MARGIN = 15
-private const val MAX_FONT_SIZE = 28
+private const val MAX_FONT_SIZE = 34
 private const val MAX_ITEMS_IN_ROW = 6
 
 class CarScreenRenderer {
@@ -23,35 +24,38 @@ class CarScreenRenderer {
 
     fun render(
         canvas: Canvas,
-        stableArea: Rect?
+        stableArea: Rect?,
+        visibleArea: Rect?
     ) {
 
-        stableArea?.let { area ->
+        val maxItemsInColumn = Integer.valueOf(Prefs.getString("pref.aa.max_pids_in_column", "$MAX_ITEMS_IN_ROW"))
+
+        visibleArea?.let { area ->
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
             val data = MetricsProvider().findMetrics(aaPIDs())
             val baseFontSize = calculateFontSize(data)
 
-            val height = min(area.height() / 8, baseFontSize)
-            val updatedSize = height - ROW_SPACING
+            val textHeight = min(area.height() / 8, baseFontSize)
+            val updatedSize = textHeight - ROW_SPACING
             paint.textSize = updatedSize.toFloat()
             canvas.drawRect(area, paint)
             canvas.drawColor(Color.WHITE)
 
-            var verticalPos = area.top - paint.fontMetrics.ascent
+            var verticalPos = area.top - paint.fontMetrics.ascent - 4
             val verticalPosCpy = verticalPos
 
             val histogram = DataLogger.instance.diagnostics().histogram()
             var margin = LEFT_MARGIN
             val infoDiv = 1.3f
 
-            data.chunked(MAX_ITEMS_IN_ROW).forEach { chunk ->
+            data.chunked(maxItemsInColumn).forEach { chunk ->
                 chunk.forEach {
                     paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
 
                     canvas.drawText(it.command.pid.description.replace("\n", " "), margin.toFloat(), verticalPos, paint)
-                    verticalPos += height.toFloat() / infoDiv
+                    verticalPos += textHeight.toFloat() / infoDiv
 
                     val originalSize = updatedSize.toFloat()
 
@@ -76,7 +80,7 @@ class CarScreenRenderer {
                     horizontalPos = drawText("avg",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
                     drawText(it.toNumber(hist.mean).toString(),canvas, horizontalPos, verticalPos, cardinal,Typeface.BOLD,valueTextSize)
 
-                    verticalPos += height.toFloat()
+                    verticalPos += textHeight.toFloat()
                     paint.textSize =  originalSize
                     paint.color = Color.BLACK
                 }
