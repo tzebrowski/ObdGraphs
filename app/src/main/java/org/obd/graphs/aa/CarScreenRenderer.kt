@@ -135,7 +135,7 @@ class CarScreenRenderer {
                             verticalPos: Float,
                             canvas: Canvas, w: Float, paint: Paint) {
 
-
+        paint.color = Color.LTGRAY
         canvas.drawLine(horizontalPos - 6, verticalPos + 6, horizontalPos + w - 12, verticalPos  + 6 , paint)
     }
 
