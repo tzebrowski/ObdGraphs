@@ -13,8 +13,8 @@ import kotlin.math.min
 
 private const val ROW_SPACING = 12
 private const val LEFT_MARGIN = 15
-private const val MAX_FONT_SIZE = 30
-private const val MAX_ITEMS_IN_ROW = 5
+private const val MAX_FONT_SIZE = 28
+private const val MAX_ITEMS_IN_ROW = 6
 
 class CarScreenRenderer {
     private val paint = Paint()
@@ -103,6 +103,7 @@ class CarScreenRenderer {
             5 -> {
                 MAX_FONT_SIZE
             }
+
            else -> MAX_FONT_SIZE
         }
 
