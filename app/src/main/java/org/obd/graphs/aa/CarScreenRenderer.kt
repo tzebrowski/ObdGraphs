@@ -1,7 +1,6 @@
 package org.obd.graphs.aa
 
 import android.graphics.*
-import androidx.car.app.CarContext
 import androidx.core.content.ContextCompat
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
@@ -16,10 +15,10 @@ private const val LEFT_MARGIN = 15
 private const val MAX_FONT_SIZE = 30
 private const val MAX_ITEMS_IN_ROW = 5
 
-class Renderer {
+class CarScreenRenderer {
     private val paint = Paint()
 
-    fun renderFrame(
+    fun render(
         canvas: Canvas,
         stableArea: Rect?
     ) {
@@ -41,7 +40,7 @@ class Renderer {
             val data = MetricsProvider().findMetrics(aaPIDs())
             val histogram = DataLogger.instance.diagnostics().histogram()
             var margin = LEFT_MARGIN
-            val infoDiv = 1.4f
+            val infoDiv = 1.3f
 
             data.chunked(MAX_ITEMS_IN_ROW).forEach { chunk ->
                 chunk.forEach {
@@ -51,27 +50,52 @@ class Renderer {
                     verticalPos += height.toFloat() / infoDiv
 
                     val originalSize = updatedSize.toFloat()
-                    paint.textSize =  originalSize / infoDiv
 
-                    val info = StringBuffer().apply {
-                        histogram.findBy(it.command.pid).let { hist ->
-                            append(" value=${it.valueToString()}\n")
-                            append("min=${it.toNumber(hist.min)}")
-                            append(" max=${it.toNumber(hist.max)}")
-                            append(" avg=${it.toNumber(hist.mean)}")
-                        }
-                    }
+                    val hist = histogram.findBy(it.command.pid)
 
-                    paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL);
-                    canvas.drawText(info.toString(), margin.toFloat(), verticalPos, paint)
+                    var horizontalPos = margin.toFloat()
+                    val valueTextSize = updatedSize.toFloat() / infoDiv
+                    val labelTextSize = updatedSize.toFloat() / infoDiv / 1.3f
+
+                    horizontalPos = drawText("current",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,40,labelTextSize)
+                    horizontalPos = drawText(it.valueToString(),canvas, horizontalPos, verticalPos, Color.RED,Typeface.BOLD,50,valueTextSize)
+
+                    horizontalPos = drawText("min",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,30,labelTextSize)
+                    horizontalPos = drawText(it.toNumber(hist.min).toString(),canvas, horizontalPos, verticalPos, Color.RED,Typeface.BOLD,35,valueTextSize)
+
+                    horizontalPos = drawText("max",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,30,labelTextSize)
+                    horizontalPos = drawText(it.toNumber(hist.max).toString(),canvas, horizontalPos, verticalPos, Color.RED,Typeface.BOLD,35,valueTextSize)
+
+                    horizontalPos = drawText("avg",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,30,labelTextSize)
+                    drawText(it.toNumber(hist.mean).toString(),canvas, horizontalPos, verticalPos, Color.RED,Typeface.BOLD,35,valueTextSize)
+
                     verticalPos += height.toFloat()
                     paint.textSize =  originalSize
+                    paint.color = Color.BLACK
                 }
                 margin += canvas.width / 2
                 verticalPos = verticalPosCpy
             }
-
         }
+    }
+
+    private fun drawText(
+        txt: String,
+        canvas: Canvas,
+        horizontalPos: Float,
+        verticalPos: Float,
+        color: Int,
+        font: Int,
+        inc: Int,
+        textSize: Float
+    ): Float {
+
+        paint.typeface = Typeface.create(Typeface.DEFAULT, font);
+        paint.color = color
+        paint.textSize =  textSize
+
+        canvas.drawText(txt, horizontalPos, verticalPos, paint)
+        return (horizontalPos + inc)
     }
 
     init {

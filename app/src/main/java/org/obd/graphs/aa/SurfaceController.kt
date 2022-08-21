@@ -1,6 +1,5 @@
 package org.obd.graphs.aa
 
-import android.graphics.Color
 import android.graphics.Rect
 import android.view.Surface
 import androidx.car.app.AppManager
@@ -10,12 +9,13 @@ import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.bl.datalogger.MetricsAggregator
 
 
-class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
+class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle, carScreen: CarScreen) :
     DefaultLifecycleObserver {
 
-    private val renderer: Renderer = Renderer()
+    private val renderer: CarScreenRenderer = CarScreenRenderer()
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var stableArea: Rect? = null
@@ -55,8 +55,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
         surface?.let {
             if (it.isValid) {
                 val canvas = it.lockCanvas(null)
-                canvas.drawColor(if (carContext.isDarkMode) Color.DKGRAY else Color.LTGRAY)
-                renderer.renderFrame(canvas = canvas, stableArea = stableArea)
+                renderer.render(canvas = canvas, stableArea = stableArea)
                 it.unlockCanvasAndPost(canvas)
             }
         }
@@ -64,5 +63,8 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
     init {
         lifecycle.addObserver(this)
+        MetricsAggregator.metrics.observe(carScreen) {
+            render()
+        }
     }
 }

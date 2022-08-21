@@ -14,24 +14,22 @@ import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.graphs.ui.preferences.getStringSet
 
-class CarScreen(carContext: CarContext,surfaceController: SurfaceController) : Screen(carContext),
+class CarScreen(carContext: CarContext) : Screen(carContext),
     DefaultLifecycleObserver {
 
     override fun onGetTemplate(): Template {
-        if (MetricsProvider().findMetrics(aaPIDs()).size == 0) {
-            return PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
+        return if (MetricsProvider().findMetrics(aaPIDs()).isEmpty()) {
+            PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
                 .setTitle(carContext.getString(R.string.pref_aa_car_no_pids_selected))
                 .build()
         } else {
             return try {
-
                 NavigationTemplate.Builder()
                     .setActionStrip(actions())
                     .build()
-
             } catch (e: Exception) {
-                Log.e(LOG_KEY, "Failed to build yemplate", e)
+                Log.e(LOG_KEY, "Failed to build template", e)
                 PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                     .setHeaderAction(Action.BACK)
                     .setTitle(carContext.getString(R.string.pref_aa_car_error))
@@ -69,19 +67,6 @@ class CarScreen(carContext: CarContext,surfaceController: SurfaceController) : S
 
 
     init {
-
         lifecycle.addObserver(this)
-        val aaPIDs = aaPIDs()
-
-        Log.i(LOG_KEY, "Selected PIDs = $aaPIDs")
-
-        val data = MetricsProvider().findMetrics(aaPIDs)
-        MetricsAggregator.metrics.observe(this) {
-            it?.let {
-                data.find { c -> c.command.pid.id == it.command.pid.id }?.let {
-                    surfaceController.render()
-                }
-            }
-        }
     }
 }
