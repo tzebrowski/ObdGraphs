@@ -14,8 +14,8 @@ import kotlin.math.min
 
 private const val ROW_SPACING = 12
 private const val LEFT_MARGIN = 15
-private const val MAX_FONT_SIZE = 34
-private const val MAX_ITEMS_IN_ROW = 6
+private const val DEFAULT_ITEMS_IN_COLUMN = 6
+private const val DEFAULT_FONT_SIZE= 34
 
 class CarScreenRenderer {
     private val paint = Paint()
@@ -28,7 +28,7 @@ class CarScreenRenderer {
         visibleArea: Rect?
     ) {
 
-        val maxItemsInColumn = Integer.valueOf(Prefs.getString("pref.aa.max_pids_in_column", "$MAX_ITEMS_IN_ROW"))
+        val maxItemsInColumn = Integer.valueOf(Prefs.getString("pref.aa.max_pids_in_column", "$DEFAULT_ITEMS_IN_COLUMN"))
 
         visibleArea?.let { area ->
             if (area.isEmpty) {
@@ -90,26 +90,30 @@ class CarScreenRenderer {
         }
     }
 
-    private fun calculateFontSize(data: MutableList<ObdMetric>): Int  =
-        when (data.size) {
+    private fun calculateFontSize(data: MutableList<ObdMetric>): Int {
+        val maxFontSize =
+            Integer.valueOf(Prefs.getString("pref.aa.screen_font_size", "$DEFAULT_FONT_SIZE"))
+
+        return when (data.size) {
             1 -> {
-                (MAX_FONT_SIZE * 3)
+                (maxFontSize * 3)
             }
             2 -> {
-                (MAX_FONT_SIZE * 1.6).toInt()
+                (maxFontSize * 1.6).toInt()
             }
             3 -> {
-               (MAX_FONT_SIZE * 1.5).toInt()
+                (maxFontSize * 1.5).toInt()
             }
             4 -> {
-                (MAX_FONT_SIZE * 1.1).toInt()
+                (maxFontSize * 1.1).toInt()
             }
             5 -> {
-                MAX_FONT_SIZE
+                maxFontSize
             }
 
-           else -> MAX_FONT_SIZE
+            else -> maxFontSize
         }
+    }
 
     private fun drawText(
         text: String,

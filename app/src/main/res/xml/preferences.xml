@@ -461,6 +461,19 @@
                 android:key="pref.aa.max_pids_in_column"
                 android:title="@string/pref.aa.number_of_items_in_column"
                 app:useSimpleSummaryProvider="true" />
+
+
+            <ListPreference
+                app:singleLineTitle="false"
+                android:entries="@array/pref.numbers_28_34"
+                android:entryValues="@array/pref.numbers_28_34"
+                android:defaultValue="34"
+                android:dialogTitle="@string/pref.aa.font_size"
+                android:inputType="number"
+                android:key="pref.aa.screen_font_size"
+                android:title="@string/pref.aa.font_size"
+                app:useSimpleSummaryProvider="true" />
+
         </PreferenceScreen>
 
         <PreferenceScreen
