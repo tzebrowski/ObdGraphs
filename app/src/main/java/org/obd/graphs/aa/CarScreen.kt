@@ -130,7 +130,7 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
     init {
         lifecycle.addObserver(this)
         MetricsAggregator.metrics.observe(this) {
-            surfaceController.render()
+            surfaceController.render(it)
         }
     }
 }

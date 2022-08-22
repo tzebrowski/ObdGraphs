@@ -20,6 +20,9 @@ private const val MARGIN_END = 30
 private const val DEFAULT_ITEMS_IN_COLUMN = 6
 private const val DEFAULT_FONT_SIZE= 34
 
+private const val PREF_MAX_PIDS_IN_COLUMN = "pref.aa.max_pids_in_column"
+private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
+
 class CarScreenRenderer {
     private val paint = Paint()
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
@@ -31,17 +34,19 @@ class CarScreenRenderer {
     fun render(
         canvas: Canvas,
         stableArea: Rect?,
-        visibleArea: Rect?
+        visibleArea: Rect?,
+        obdMetric: ObdMetric?
     ) {
 
-        val maxItemsInColumn = Integer.valueOf(Prefs.getString("pref.aa.max_pids_in_column", "$DEFAULT_ITEMS_IN_COLUMN"))
+        val maxItemsInColumn = Integer.valueOf(Prefs.getString(PREF_MAX_PIDS_IN_COLUMN, "$DEFAULT_ITEMS_IN_COLUMN"))
 
         visibleArea?.let { area ->
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
-            val data = MetricsProvider().findMetrics(aaPIDs())
-            val baseFontSize = calculateFontSize(data)
+
+            val metrics = getMetrics(obdMetric)
+            val baseFontSize = calculateFontSize(metrics)
 
             val textHeight = min(area.height() / 8, baseFontSize)
             val updatedSize = textHeight - ROW_SPACING
@@ -56,36 +61,36 @@ class CarScreenRenderer {
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            data.chunked(maxItemsInColumn).forEach { chunk ->
-                chunk.forEach {
+            metrics.chunked(maxItemsInColumn).forEach { chunk ->
+                chunk.forEach { metric ->
                     paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
 
-                    canvas.drawText(it.command.pid.description.replace("\n", " "), margin.toFloat(), verticalPos, paint)
+                    canvas.drawText(metric.command.pid.description.replace("\n", " "), margin.toFloat(), verticalPos, paint)
                     verticalPos += textHeight.toFloat() / infoDiv
 
                     val originalSize = updatedSize.toFloat()
 
-                    val hist = histogram.findBy(it.command.pid)
+                    val hist = histogram.findBy(metric.command.pid)
 
                     var horizontalPos = margin.toFloat()
                     val valueTextSize = updatedSize.toFloat() / infoDiv
                     val labelTextSize = updatedSize.toFloat() / infoDiv / 1.3f
 
                     horizontalPos = drawText("current",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(it.valueToString(),canvas, horizontalPos, verticalPos, philippineGreen,Typeface.BOLD,valueTextSize)
+                    horizontalPos = drawText(metric.valueToString(),canvas, horizontalPos, verticalPos, philippineGreen,Typeface.BOLD,valueTextSize)
 
                     horizontalPos = drawText("min",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(it.toNumber(hist.min).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
+                    horizontalPos = drawText(metric.toNumber(hist.min).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
                     horizontalPos = drawText("max",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(it.toNumber(hist.max).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
+                    horizontalPos = drawText(metric.toNumber(hist.max).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
                     horizontalPos = drawText("avg",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    drawText(it.toNumber(hist.mean).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
+                    drawText(metric.toNumber(hist.mean).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
                     drawDivider(canvas, margin.toFloat(),verticalPos,(area.width() / 2).toFloat())
                     verticalPos += 1
-                    drawProgressBar(canvas, margin.toFloat(),(area.width() / 2).toFloat(), verticalPos, it)
+                    drawProgressBar(canvas, margin.toFloat(),(area.width() / 2).toFloat(), verticalPos,metric)
 
                     verticalPos += textHeight.toFloat() + 2
                     paint.textSize =  originalSize
@@ -97,11 +102,21 @@ class CarScreenRenderer {
         }
     }
 
+    private fun getMetrics(obdMetric: ObdMetric?): MutableCollection<ObdMetric> {
+        var metrics =
+            MetricsProvider().findMetrics(aaPIDs()).associateBy { it.command.pid.id }.toMutableMap()
 
+        obdMetric?.let { metric ->
+            metrics[metric.command.pid.id]?.let {
+                metrics[it.command.pid.id] = it
+            }
+        }
+        return  metrics.values
+    }
 
-    private fun calculateFontSize(data: MutableList<ObdMetric>): Int {
+    private fun calculateFontSize(data: MutableCollection<ObdMetric>): Int {
         val maxFontSize =
-            Integer.valueOf(Prefs.getString("pref.aa.screen_font_size", "$DEFAULT_FONT_SIZE"))
+            Integer.valueOf(Prefs.getString(PREF_SCREEN_FONT_SIZE, "$DEFAULT_FONT_SIZE"))
 
         return when (data.size) {
             1 -> {
