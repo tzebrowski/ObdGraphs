@@ -21,5 +21,4 @@ class CarSession : Session(), DefaultLifecycleObserver {
         super.onCarConfigurationChanged(newConfiguration)
         surfaceController.onCarConfigurationChanged()
     }
-
 }

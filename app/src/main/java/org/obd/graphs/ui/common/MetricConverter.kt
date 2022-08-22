@@ -4,7 +4,7 @@ import org.obd.graphs.ui.dashboard.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
-fun toNumber(pid: PidDefinition, input: Number): Number {
+fun toNumber(pid: PidDefinition, input: Number?): Number {
 
     if (input == null) {
         return Double.NaN
@@ -25,7 +25,7 @@ fun toNumber(pid: PidDefinition, input: Number): Number {
         }
 }
 
-fun ObdMetric.toNumber(value: Double): Number {
+fun ObdMetric.toNumber(value: Double?): Number {
     return toNumber(command.pid, value)
 }
 

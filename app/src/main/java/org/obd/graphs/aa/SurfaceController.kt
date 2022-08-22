@@ -1,6 +1,7 @@
 package org.obd.graphs.aa
 
 import android.graphics.Rect
+import android.util.Log
 import android.view.Surface
 import androidx.car.app.AppManager
 import androidx.car.app.CarContext
@@ -24,6 +25,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
                 surface = surfaceContainer.surface
+                renderer.configure()
                 render()
             }
         }
@@ -55,14 +57,16 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
         render()
     }
 
+    fun configure() {
+        renderer.configure()
+    }
+
     fun render(metric: ObdMetric? = null) {
         surface?.let {
             if (it.isValid) {
                 val canvas = it.lockCanvas(null)
                 renderer.render(
                     canvas = canvas,
-                    stableArea =
-                    stableArea,
                     visibleArea = visibleArea,
                     obdMetric = metric)
 

@@ -23,8 +23,12 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
         override fun onReceive(context: Context?, intent: Intent?) {
 
             when (intent?.action) {
+                PROFILE_CHANGED_EVENT -> {
+                    surfaceController.configure()
+                }
+
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    surfaceController.render()
+                    surfaceController.configure()
                     carToast(getCarContext(),R.string.main_activity_toast_connection_connecting)
                 }
 
@@ -68,7 +72,7 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
             addAction(DATA_LOGGER_CONNECTED_EVENT)
             addAction(DATA_LOGGER_NO_NETWORK_EVENT)
             addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
-
+            addAction(PROFILE_CHANGED_EVENT)
         })
     }
 
