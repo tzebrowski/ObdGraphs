@@ -1,12 +1,11 @@
 package org.obd.graphs.aa
 
 import android.graphics.*
-import android.util.Log
+import android.graphics.drawable.Drawable
+import androidx.car.app.CarContext
 import androidx.core.content.ContextCompat
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.getContext
-import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.graph.ValueScaler
 import org.obd.graphs.ui.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
@@ -22,22 +21,19 @@ private const val DEFAULT_FONT_SIZE= 34
 private const val PREF_MAX_PIDS_IN_COLUMN = "pref.aa.max_pids_in_column"
 private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
 
-class CarScreenRenderer {
+class CarScreenRenderer(carContext: CarContext) {
 
-    private val paint = Paint()
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
     private val philippineGreen by lazy { ContextCompat.getColor(getContext()!!, R.color.philippine_green) }
     private val rainbowIndigo by lazy { ContextCompat.getColor(getContext()!!, R.color.rainbow_indigo) }
+
+    private val paint = Paint()
     private val valueScaler: ValueScaler = ValueScaler()
-    private var metrics: MutableMap<Long,CarMetric> = mutableMapOf()
-    private val histogram by lazy {  DataLogger.instance.diagnostics().histogram() }
+    private val background: Drawable?  = carContext.getDrawable(R.drawable.aa_background)
+    private val metricsManager = CarMetricsManager()
 
     fun configure(){
-        metrics = MetricsProvider().findMetrics(aaPIDs()).associate {
-            it.command.pid.id to CarMetric(it.command.pid, null,0.0,0.0,0.0)
-        }.toMutableMap()
-
-        Log.i(LOG_KEY,"Rebuilding metrics configuration: $metrics")
+        metricsManager.configure()
     }
 
     fun render(
@@ -53,6 +49,8 @@ class CarScreenRenderer {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
+            metricsManager.updateMetric(obdMetric)
+            val metrics = metricsManager.metrics()
             val baseFontSize = calculateFontSize(metrics)
 
             val textHeight = min(area.height() / 8, baseFontSize)
@@ -61,30 +59,27 @@ class CarScreenRenderer {
             canvas.drawRect(area, paint)
             canvas.drawColor(Color.WHITE)
 
-            var verticalPos = area.top - paint.fontMetrics.ascent - 4
-            val verticalPosCpy = verticalPos
+//            background?.bounds = area
+//            background?.draw(canvas)
 
-            updateMetric(obdMetric)
+            var verticalPos = area.top - paint.fontMetrics.ascent + 4
+            val verticalPosCpy = verticalPos
 
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            metrics.values.chunked(maxItemsInColumn).forEach { chunk ->
+            metrics.chunked(maxItemsInColumn).forEach { chunk ->
                 chunk.forEach { metric ->
-                    paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-
-                    canvas.drawText(metric.pid.description.replace("\n", " "), margin.toFloat(), verticalPos, paint)
-                    verticalPos += textHeight.toFloat() / infoDiv
-
                     val originalSize = updatedSize.toFloat()
-                    var horizontalPos = margin.toFloat()
                     val valueTextSize = updatedSize.toFloat() / infoDiv
                     val labelTextSize = updatedSize.toFloat() / infoDiv / 1.3f
 
-                    horizontalPos = drawText("current",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(metric.valueToString(),canvas, horizontalPos, verticalPos, philippineGreen,Typeface.BOLD,valueTextSize)
+                    var horizontalPos = margin.toFloat()
+                    horizontalPos = drawTitle(canvas, metric, horizontalPos, verticalPos)
+                    drawText(metric.valueToString(),canvas, horizontalPos, verticalPos, philippineGreen,Typeface.BOLD,updatedSize.toFloat())
+                    verticalPos += textHeight.toFloat() / infoDiv
 
-                    horizontalPos = drawText("min",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
+                    horizontalPos = drawText("min",canvas, margin.toFloat(), verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
                     horizontalPos = drawText(metric.toNumber(metric.min).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
                     horizontalPos = drawText("max",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
@@ -97,7 +92,7 @@ class CarScreenRenderer {
                     verticalPos += 1
                     drawProgressBar(canvas, margin.toFloat(),(area.width() / 2).toFloat(), verticalPos,metric)
 
-                    verticalPos += textHeight.toFloat() + 2
+                    verticalPos += textHeight.toFloat() + 10
                     paint.textSize =  originalSize
                     paint.color = Color.BLACK
                 }
@@ -107,29 +102,28 @@ class CarScreenRenderer {
         }
     }
 
-    private fun updateMetric(obdMetric: ObdMetric?) {
-        obdMetric?.let { metric ->
-            metrics[metric.command.pid.id]?.let {
-                it.value = obdMetric.valueToDouble()
-                val hist = histogram.findBy(metric.command.pid)
+    private fun drawTitle(
+        canvas: Canvas,
+        metric: CarMetric,
+        horizontalPos: Float,
+        verticalPos: Float
+    ) : Float{
 
-                hist.mean?.let { mean ->
-                    it.avg = mean
-                }
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint.color = Color.BLACK
+        val text = metric.pid.description.replace("\n", " ")
+        canvas.drawText(
+           text,
+            horizontalPos,
+            verticalPos,
+            paint
+        )
 
-                hist.max?.let { max ->
-                    it.max = max
-                }
-
-                hist.min?.let { min ->
-                    it.min = min
-                }
-            }
-
-        }
+       return (horizontalPos + getTextWidth(text,paint) * 1.05f)
     }
 
-    private fun calculateFontSize(data: MutableMap<Long,CarMetric>): Int {
+
+    private fun calculateFontSize(data: MutableCollection<CarMetric>): Int {
         val maxFontSize =
             Integer.valueOf(Prefs.getString(PREF_SCREEN_FONT_SIZE, "$DEFAULT_FONT_SIZE"))
 
@@ -168,7 +162,7 @@ class CarScreenRenderer {
         paint.textSize =  textSize
 
         canvas.drawText(text, horizontalPos, verticalPos, paint)
-        return (horizontalPos + getTextWidth(text,paint) * 1.30f)
+        return (horizontalPos + getTextWidth(text,paint) * 1.25f)
     }
 
     private fun getTextWidth(text: String, paint: Paint): Int {
@@ -204,7 +198,7 @@ class CarScreenRenderer {
             start - 6,
             verticalPos + 4,
             progress,
-            verticalPos + 12,
+            verticalPos + 11,
             paint
         )
     }

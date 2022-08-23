@@ -16,7 +16,7 @@ import org.obd.metrics.api.model.ObdMetric
 class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
     DefaultLifecycleObserver {
 
-    private val renderer: CarScreenRenderer = CarScreenRenderer()
+    private val renderer: CarScreenRenderer = CarScreenRenderer(carContext)
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var stableArea: Rect? = null

@@ -7,7 +7,7 @@
         android:width="1dp"
         android:color="#ff207d94" />
     <gradient
-        android:centerColor="@android:color/holo_red_light"
+        android:centerColor="@color/cardinal"
         android:centerY="0.5"
         android:gradientRadius="40%"
         android:type="radial"
