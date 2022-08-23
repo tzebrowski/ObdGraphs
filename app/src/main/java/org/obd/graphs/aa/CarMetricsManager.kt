@@ -12,7 +12,8 @@ class CarMetricsManager {
 
     fun metrics() = metrics.values
 
-    fun configure(){
+    fun configure() {
+
         metrics = MetricsProvider().findMetrics(aaPIDs()).associate {
             it.command.pid.id to CarMetric(it.command.pid, null,0.0,0.0,0.0)
         }.toMutableMap()
@@ -38,8 +39,6 @@ class CarMetricsManager {
                     it.min = min
                 }
             }
-
         }
     }
-
 }

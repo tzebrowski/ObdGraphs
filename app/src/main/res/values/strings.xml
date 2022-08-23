@@ -4,6 +4,7 @@
     <string name="pref.aa.car_error">An error occurred during OBD2 PIDs/Sensors loading</string>
     <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>
     <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>
+    <string name="pref.aa.action_exit">Ext</string>
 
     <string name="pref.experimental_switch_network_enabled">This feature is in the experimental phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
     <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>

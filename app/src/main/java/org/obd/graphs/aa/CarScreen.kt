@@ -116,6 +116,7 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
             .setOnClickListener {
                 DataLoggerService.start()
             }.build())
+
         .addAction(Action.Builder()
             .setIcon(
                 CarIcon.Builder(
@@ -128,8 +129,13 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
             .setOnClickListener {
                 DataLoggerService.stop()
             }.build())
+        .addAction(Action.Builder()
+            .setTitle(carContext.getString(R.string.pref_aa_action_exit))
+            .setOnClickListener {
+                carContext.finishCarApp()
+            }
+            .build())
         .build()
-
 
     init {
         lifecycle.addObserver(this)
