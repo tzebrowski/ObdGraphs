@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.obd.graphs">
 
-    <uses-feature
-        android:name="android.software.car.templates_host"
-        android:required="false" />
-
     <uses-permission android:name="androidx.car.app.ACCESS_SURFACE"  android:required="false"/>
     <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES"  android:required="false"/>
 
