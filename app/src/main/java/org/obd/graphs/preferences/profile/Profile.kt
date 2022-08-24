@@ -2,11 +2,11 @@ package org.obd.graphs.preferences.profile
 
 import android.content.SharedPreferences
 import android.util.Log
-import org.obd.graphs.preferences.mode.MODE_HEADER_PREFIX
-import org.obd.graphs.preferences.mode.MODE_NAME_PREFIX
-import org.obd.graphs.preferences.mode.PREF_ADAPTER_MODE_ID_EDITOR
-import org.obd.graphs.preferences.mode.PREF_CAN_HEADER_EDITOR
-import org.obd.graphs.preferences.mode.getAvailableModes
+import org.obd.graphs.MODE_HEADER_PREFIX
+import org.obd.graphs.MODE_NAME_PREFIX
+import org.obd.graphs.PREF_ADAPTER_MODE_ID_EDITOR
+import org.obd.graphs.PREF_CAN_HEADER_EDITOR
+import org.obd.graphs.getAvailableModes
 import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
 import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent

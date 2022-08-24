@@ -12,6 +12,7 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.graphs.R
+import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.DataLogger
 
 private const val SEARCH_SCOPE = 300

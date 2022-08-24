@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.obd.graphs.R
+import org.obd.graphs.ValueScaler
 import org.obd.graphs.ui.common.isTablet
-import org.obd.graphs.ui.graph.ValueScaler
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 import kotlin.math.cos
@@ -85,16 +85,16 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         pointSize = styledAttributes.getInt(R.styleable.Gauge_gaugePointSize, 0)
         pointStartColor = styledAttributes.getColor(
             R.styleable.Gauge_gaugePointStartColor,
-            ContextCompat.getColor(context, R.color.white)
+            ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white)
         )
         pointEndColor = styledAttributes.getColor(
             R.styleable.Gauge_gaugePointEndColor,
-            ContextCompat.getColor(context, R.color.white)
+            ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white)
         )
         val dividerSize = styledAttributes.getInt(R.styleable.Gauge_gaugeDividerSize, 0)
         dividerColor = styledAttributes.getColor(
             R.styleable.Gauge_gaugeDividerColor,
-            ContextCompat.getColor(context, R.color.white)
+            ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white)
         )
         val dividerStep = styledAttributes.getInt(R.styleable.Gauge_gaugeDividerStep, 0)
         isDividerDrawFirst =

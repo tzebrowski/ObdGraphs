@@ -27,6 +27,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.Cache
 import org.obd.graphs.R
+import org.obd.graphs.ValueScaler
 import org.obd.graphs.activity.DATA_LOGGER_PROCESS_IS_RUNNING
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
@@ -41,10 +42,22 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-
 const val LOADED_TRIP_PREFERENCE_ID = "pref.graph.trips.selected"
 
 private const val LOGGER_TAG = "GraphFragment"
+
+fun ValueScaler.scaleToPidRange(
+    pid: PidDefinition,
+    value: Float
+): Float {
+    return scaleToNewRange(
+        value,
+        org.obd.graphs.NEW_RANGE_MIN_VAL,
+        org.obd.graphs.NEW_RANGE_MAX_VAL,
+        pid.min.toFloat(),
+        pid.max.toFloat()
+    )
+}
 
 class GraphFragment : Fragment() {
 

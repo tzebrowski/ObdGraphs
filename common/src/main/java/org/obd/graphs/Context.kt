@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference
 
 private lateinit var activityContext: WeakReference<ContextWrapper>
 private lateinit var carContext: WeakReference<ContextWrapper>
+private const val LOG_KEY = "Context"
 
 fun setActivityContext(activity: ContextWrapper) {
     activityContext = WeakReference(activity)
@@ -14,8 +15,6 @@ fun setActivityContext(activity: ContextWrapper) {
 fun setCarContext(carContext: ContextWrapper) {
     org.obd.graphs.carContext = WeakReference(carContext)
 }
-
-private const val LOG_KEY = "Context"
 
 fun getContext(): ContextWrapper? =
     when {

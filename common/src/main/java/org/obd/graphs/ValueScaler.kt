@@ -1,28 +1,11 @@
 package org.obd.graphs
 
-
 import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.pid.PidDefinition
 
-
-private const val NEW_RANGE_MIN_VAL = 0f
-private const val NEW_RANGE_MAX_VAL = 3500f
+const val NEW_RANGE_MIN_VAL = 0f
+const val NEW_RANGE_MAX_VAL = 3500f
 
 class ValueScaler {
-
-    fun scaleToPidRange(
-        pid: PidDefinition,
-        value: Float
-    ): Float {
-        return scaleToNewRange(
-            value,
-            NEW_RANGE_MIN_VAL,
-            NEW_RANGE_MAX_VAL,
-            pid.min.toFloat(),
-            pid.max.toFloat()
-        )
-    }
-
     fun scaleToNewRange(
         obdMetric: ObdMetric
     ): Float {

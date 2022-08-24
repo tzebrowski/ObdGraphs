@@ -5,7 +5,11 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.CAN_HEADER_COUNTER_PREF
+import org.obd.graphs.MODE_HEADER_PREFIX
+import org.obd.graphs.PREFERENCE_PAGE
 import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.getCurrentMode
 import org.obd.graphs.preferences.Prefs
 
 class HeaderListPreferences(
@@ -15,7 +19,7 @@ class HeaderListPreferences(
     ListPreference(context, attrs) {
 
     private val preferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
-        Log.i(LOG_KEY, "Updating mode name: ${getCurrentMode()}=$newValue")
+        Log.i(MODE_LOG_KEY, "Updating mode name: ${getCurrentMode()}=$newValue")
         Prefs.edit()
             .putString("$MODE_HEADER_PREFIX.${getCurrentMode()}", newValue.toString())
             .apply()
@@ -33,7 +37,7 @@ class HeaderListPreferences(
             "7DF" to "7DF"
         ).apply {
             Prefs.getInt(CAN_HEADER_COUNTER_PREF, 0).let { it ->
-                Log.d(LOG_KEY, "Number of custom CAN headers available: $it")
+                Log.d(MODE_LOG_KEY, "Number of custom CAN headers available: $it")
                 if (it > 0) {
                     (1..it).forEach {
                         Prefs.getString("pref.adapter.init.header.$it", "")?.let { header ->

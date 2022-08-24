@@ -5,6 +5,8 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.CAN_HEADER_COUNTER_PREF
+import org.obd.graphs.PREFERENCE_PAGE
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.Prefs
 
@@ -16,7 +18,7 @@ class HeaderNamePreference(
     EditTextPreference(context, attrs) {
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
-            Log.i(LOG_KEY, "Adding new CAN header=$newValue")
+            Log.i(MODE_LOG_KEY, "Adding new CAN header=$newValue")
             var numberOfHeaders = Prefs.getInt(CAN_HEADER_COUNTER_PREF, 0)
             numberOfHeaders++
 

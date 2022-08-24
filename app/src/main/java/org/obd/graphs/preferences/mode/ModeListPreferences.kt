@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.Prefs
 
@@ -18,7 +19,7 @@ class ModeListPreferences(
         val modeId = Prefs.getString("$MODE_NAME_PREFIX.$newValue", "")
         val modeHeader = Prefs.getString("$MODE_HEADER_PREFIX.$newValue", "")
 
-        Log.i(LOG_KEY, "Updating mode $modeId=$modeHeader")
+        Log.i(MODE_LOG_KEY, "Updating mode $modeId=$modeHeader")
 
         Prefs.edit().run {
             putString(PREF_ADAPTER_MODE_ID_EDITOR, modeId)
