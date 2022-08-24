@@ -13,9 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import org.obd.graphs.*
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.profile.setupProfiles
-import org.obd.graphs.ui.preferences.updateString
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.profile.setupProfiles
+import org.obd.graphs.preferences.updateString
 
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
 

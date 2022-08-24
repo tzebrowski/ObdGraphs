@@ -1,7 +1,7 @@
 package org.obd.graphs
 
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.isEnabled
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.isEnabled
 
 data class PowerPreferences(
     val connectOnPower: Boolean,

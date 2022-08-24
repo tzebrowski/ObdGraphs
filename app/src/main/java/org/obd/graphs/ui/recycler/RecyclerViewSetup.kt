@@ -14,7 +14,7 @@ import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.MetricsObserver
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.gauge.AdapterContext
-import org.obd.graphs.ui.preferences.*
+import org.obd.graphs.preferences.*
 import org.obd.metrics.api.model.ObdMetric
 
 class RecyclerViewSetup {

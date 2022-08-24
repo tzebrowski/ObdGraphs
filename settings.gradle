@@ -1,2 +1,6 @@
-include ':app'
 rootProject.name = "AlfaDataLogger"
+include ':common'
+include ':app'
+include ':automotive'
+
+

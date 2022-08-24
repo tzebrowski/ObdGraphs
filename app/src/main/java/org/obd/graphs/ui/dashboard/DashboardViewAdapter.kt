@@ -27,7 +27,7 @@ import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.graphs.ui.preferences.Prefs
+import org.obd.graphs.preferences.Prefs
 import java.util.*
 
 

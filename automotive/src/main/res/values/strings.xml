@@ -1,0 +1,6 @@
+<resources>
+    <string name="pref.aa.car_hardware_info">Vehicle Hardware Information</string>
+    <string name="pref.aa.car_error">An error occurred during OBD2 PIDs/Sensors loading</string>
+    <string name="pref.aa.action_exit">Exit</string>
+    <string name="pref.aa.car_no_pids_selected">No OBD2 PIDs/Sensors sensor are selected</string>
+</resources>

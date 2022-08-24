@@ -2,7 +2,6 @@ package org.obd.graphs.activity
 
 import android.util.Log
 import android.view.MenuItem
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -15,7 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.getContext
-import org.obd.graphs.ui.preferences.PREFERENCE_SCREEN_KEY
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
 
 
 fun navigateToPreferencesScreen(prefKey: String) {

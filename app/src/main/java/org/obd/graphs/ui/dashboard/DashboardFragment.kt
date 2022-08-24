@@ -17,8 +17,8 @@ import org.obd.graphs.R
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.gauge.GaugeAdapter
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.getLongSet
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 import org.obd.metrics.api.model.ObdMetric
 
 private const val CONFIGURATION_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.dash_gauge_id"

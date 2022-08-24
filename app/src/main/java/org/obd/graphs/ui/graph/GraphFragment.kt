@@ -33,7 +33,7 @@ import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.TripManager
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
-import org.obd.graphs.ui.preferences.Prefs
+import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry

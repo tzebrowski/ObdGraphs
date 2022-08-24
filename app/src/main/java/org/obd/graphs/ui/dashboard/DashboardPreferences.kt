@@ -1,8 +1,8 @@
 package org.obd.graphs.ui.dashboard
 
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.getLongSet
-import org.obd.graphs.ui.preferences.isEnabled
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.preferences.isEnabled
 
 
 data class DashboardPreferences(
