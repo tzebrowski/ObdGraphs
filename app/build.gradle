@@ -108,5 +108,5 @@ dependencies {
     debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
 
     implementation project(":common")
-    implementation project(":automotive")
+    debugImplementation project(":automotive")
 }

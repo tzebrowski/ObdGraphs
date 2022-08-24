@@ -14,50 +14,7 @@ android {
         testHandleProfiling false
     }
 
-    sourceSets {
-        debug.setRoot('build-types/debug')
-        release.setRoot('build-types/release')
-    }
-
-    signingConfigs {
-        debug {
-            storeFile file(System.getenv("ANDROID_RELEASE_KEYSTORE"))
-            storePassword System.getenv("ANDROID_RELEASE_STORE_PASSWORD")
-            keyAlias System.getenv("ANDROID_RELEASE_KEY_ALIAS")
-            keyPassword System.getenv("ANDROID_RELEASE_KEY_PASSWORD")
-        }
-        release {
-            storeFile file(System.getenv("ANDROID_RELEASE_KEYSTORE"))
-            storePassword System.getenv("ANDROID_RELEASE_STORE_PASSWORD")
-            keyAlias System.getenv("ANDROID_RELEASE_KEY_ALIAS")
-            keyPassword System.getenv("ANDROID_RELEASE_KEY_PASSWORD")
-        }
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            debuggable false
-            jniDebuggable false
-            renderscriptDebuggable false
-            zipAlignEnabled true
-            signingConfig signingConfigs.release
-
-            resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "false"
-            resValue "bool", "FF_RESULT_CACHE_ENABLED", "false"
-            resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "false"
-            resValue "bool", "DEBUG_BUILD", "false"
-        }
-
-        debug {
-            resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "true"
-            resValue "bool", "FF_RESULT_CACHE_ENABLED", "true"
-            resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "true"
-            resValue "bool", "DEBUG_BUILD", "true"
-        }
-    }
-    compileOptions {
+   compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -99,7 +56,4 @@ dependencies {
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
     implementation('io.github.tzebrowski:obd-metrics:6.16.0-SNAPSHOT') { changing = true }
-    implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
-    implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
-    debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
 }
