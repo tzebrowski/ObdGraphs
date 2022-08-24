@@ -13,6 +13,18 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+
+    buildTypes {
+        release {
+        }
+
+        play {
+        }
+
+        debug {
+        }
+    }
+
     sourceSets {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')

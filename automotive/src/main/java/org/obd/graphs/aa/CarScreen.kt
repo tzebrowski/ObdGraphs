@@ -12,7 +12,6 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.*
 
 class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : Screen(carContext),

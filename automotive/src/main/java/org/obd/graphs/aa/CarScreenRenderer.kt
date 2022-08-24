@@ -3,7 +3,6 @@ package org.obd.graphs.aa
 import android.graphics.*
 import androidx.car.app.CarContext
 import androidx.core.content.ContextCompat
-import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
