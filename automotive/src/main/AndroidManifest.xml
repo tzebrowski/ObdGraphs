@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.obd.graphs">
+
+    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE"  android:required="false"/>
+    <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES"  android:required="false"/>
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true">
+
+        <meta-data android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
+        <meta-data android:name="androidx.car.app.minCarApiLevel"
+            android:value="1"
+            tools:ignore="MetadataTagInsideApplicationTag" />
+
+        <service
+            android:name=".aa.CarService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.car.app.CarAppService" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

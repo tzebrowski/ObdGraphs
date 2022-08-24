@@ -11,7 +11,7 @@ android {
         applicationId "org.obd.graphs.app"
         minSdkVersion 24
         targetSdkVersion 31
-        versionCode 27
+        versionCode 34
         versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testFunctionalTest false
@@ -77,8 +77,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.car.app:app:1.2.0-rc01"
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -108,4 +106,7 @@ dependencies {
     implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
     debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
+
+    implementation project(":common")
+    implementation project(":automotive")
 }

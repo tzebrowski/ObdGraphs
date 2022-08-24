@@ -1,8 +1,8 @@
 package org.obd.graphs.activity
 
 import android.util.Log
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.isEnabled
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.isEnabled
 
 data class MainActivityPreferences(
     val hideToolbarDoubleClick: Boolean,

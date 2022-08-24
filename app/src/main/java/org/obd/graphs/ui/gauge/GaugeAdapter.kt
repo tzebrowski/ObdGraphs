@@ -20,7 +20,7 @@ import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.graphs.ui.dashboard.round
 import org.obd.graphs.ui.graph.ValueScaler
-import org.obd.graphs.ui.preferences.Prefs
+import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType

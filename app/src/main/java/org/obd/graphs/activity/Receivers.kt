@@ -16,7 +16,7 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.preferences.Prefs
+import org.obd.graphs.preferences.Prefs
 
 internal val tripRecorderBroadcastReceiver = TripManagerBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()

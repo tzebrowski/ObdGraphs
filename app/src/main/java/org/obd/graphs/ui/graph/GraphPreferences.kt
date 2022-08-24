@@ -1,8 +1,8 @@
 package org.obd.graphs.ui.graph
 
 import android.util.Log
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.getLongSet
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 
 data class GraphPreferences(
     val xAxisStartMovingAfter: Float,

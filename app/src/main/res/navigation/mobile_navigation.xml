@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/navigation_preferences"
-        android:name="org.obd.graphs.ui.preferences.PreferencesFragment"
+        android:name="org.obd.graphs.preferences.PreferencesFragment"
         android:label="@string/navigation.title_preferences"
         tools:layout="@layout/fragment_preferences" />
 

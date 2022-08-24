@@ -6,9 +6,9 @@ import android.widget.TextView
 import org.obd.graphs.R
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.preferences.Prefs
-import org.obd.graphs.ui.preferences.profile.PROFILE_NAME_PREFIX
-import org.obd.graphs.ui.preferences.profile.getCurrentProfile
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.profile.PROFILE_NAME_PREFIX
+import org.obd.graphs.preferences.profile.getCurrentProfile
 
 internal fun MainActivity.connectionStatusConnected() {
     updateTextField(
