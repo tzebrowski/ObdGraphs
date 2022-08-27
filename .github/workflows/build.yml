@@ -31,13 +31,21 @@ jobs:
           report-path: build/reports/*.xml
           continue-on-error: false
 
-      - name: Build the bundle
+      - name: Build Giulia flavour
         env:
           ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
-        run: sh ./gradlew app:bundleRelease
+        run: sh ./gradlew app:bundleGiulia
+
+      - name: Build ObdGraph flavour
+        env:
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
+        run: sh ./gradlew app:bundleObdGraphs
 
       - name: Upload artifcats
         uses: actions/upload-artifact@v3

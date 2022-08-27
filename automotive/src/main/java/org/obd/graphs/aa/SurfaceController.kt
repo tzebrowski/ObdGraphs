@@ -1,7 +1,6 @@
 package org.obd.graphs.aa
 
 import android.graphics.Rect
-import android.util.Log
 import android.view.Surface
 import androidx.car.app.AppManager
 import androidx.car.app.CarContext
@@ -16,10 +15,9 @@ import org.obd.metrics.api.model.ObdMetric
 class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
     DefaultLifecycleObserver {
 
-    private val renderer: CarScreenRenderer = CarScreenRenderer(carContext)
+    private val renderer: CarScreenRenderer = CarScreenRenderer()
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
-    private var stableArea: Rect? = null
 
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
@@ -39,7 +37,6 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
         override fun onStableAreaChanged(stableArea: Rect) {
             synchronized(this@SurfaceController) {
-                this@SurfaceController.stableArea = stableArea
                 render()
             }
         }

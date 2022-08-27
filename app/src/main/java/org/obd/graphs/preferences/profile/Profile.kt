@@ -2,28 +2,23 @@ package org.obd.graphs.preferences.profile
 
 import android.content.SharedPreferences
 import android.util.Log
-import org.obd.graphs.MODE_HEADER_PREFIX
-import org.obd.graphs.MODE_NAME_PREFIX
-import org.obd.graphs.PREF_ADAPTER_MODE_ID_EDITOR
-import org.obd.graphs.PREF_CAN_HEADER_EDITOR
-import org.obd.graphs.getAvailableModes
+import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
-import org.obd.graphs.getContext
-import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getString
 import org.obd.graphs.preferences.updateToolbar
 import java.util.Properties
 
+const val PROFILE_NAME_PREFIX = "pref.profile.names"
+const val LOG_KEY = "Profile"
+const val PROFILES_PREF = "pref.profiles"
+
 private const val PROFILE_ID_PREF = "pref.profile.id"
-internal const val PROFILES_PREF = "pref.profiles"
-internal const val MAX_PROFILES_PREF = "pref.profile.max_profiles"
-internal const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
-internal const val DEFAULT_PROFILE_TO_LOAD = "profile_1"
-internal const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
-internal const val PROFILE_NAME_PREFIX = "pref.profile.names"
-internal const val LOG_KEY = "Profile"
+private const val MAX_PROFILES_PREF = "pref.profile.max_profiles"
+private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
+private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
 private const val DEFAULT_MAX_PROFILES = "5"
+private const val DEFAULT_PROFILE = "profile_1"
 
 fun getProfileList() =
     (1..Prefs.getString(MAX_PROFILES_PREF, DEFAULT_MAX_PROFILES)!!.toInt())
@@ -74,15 +69,17 @@ fun setupProfiles() {
                     }
                 }
             }
-            editor.putString(PROFILE_ID_PREF, DEFAULT_PROFILE_TO_LOAD)
+            editor.putString(PROFILE_ID_PREF, getDefaultProfile())
             editor.putBoolean(PROFILE_INSTALLATION_KEY, true)
             editor.apply()
         }
 
-        loadProfile(DEFAULT_PROFILE_TO_LOAD)
+        loadProfile( getDefaultProfile())
         updateToolbar()
     }
 }
+
+private fun getDefaultProfile(): String = getContext()?.resources?.getString(R.string.DEFAULT_PROFILE) ?: DEFAULT_PROFILE
 
 internal fun getCurrentProfile(): String = Prefs.getString(PROFILE_ID_PREF)!!
 

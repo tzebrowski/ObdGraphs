@@ -16,8 +16,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testFunctionalTest false
         testHandleProfiling false
-
         setProperty("archivesBaseName", "ObdGraphs_" + versionName)
+
+        resValue "string", "DEFAULT_PROFILE", "profile_1"
     }
 
     sourceSets {
@@ -46,6 +47,25 @@ android {
             storePassword System.getenv("ANDROID_RELEASE_STORE_PASSWORD")
             keyAlias System.getenv("ANDROID_RELEASE_KEY_ALIAS")
             keyPassword System.getenv("ANDROID_RELEASE_KEY_PASSWORD")
+        }
+    }
+
+    flavorDimensions 'default'
+    productFlavors {
+        giulia {
+            resValue "string", "DEFAULT_PROFILE", "profile_3"
+            applicationId "org.obd.graphs.my.giulia"
+            versionCode 1
+            versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
+            setProperty("archivesBaseName", "MyGiulia_" + versionName)
+        }
+
+        obdGraphs {
+            resValue "string", "DEFAULT_PROFILE", "profile_1"
+            applicationId "org.obd.graphs.app"
+            versionCode 1
+            versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
+            setProperty("archivesBaseName", "ObdGraphs_" + versionName)
         }
     }
 
@@ -86,6 +106,7 @@ android {
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "true"
             resValue "bool", "DEBUG_BUILD", "true"
         }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

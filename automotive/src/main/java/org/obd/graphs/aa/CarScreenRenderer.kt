@@ -19,7 +19,7 @@ private const val DEFAULT_FONT_SIZE= 34
 private const val PREF_MAX_PIDS_IN_COLUMN = "pref.aa.max_pids_in_column"
 private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
 
-class CarScreenRenderer(carContext: CarContext) {
+class CarScreenRenderer() {
 
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
     private val philippineGreen by lazy { ContextCompat.getColor(getContext()!!, R.color.philippine_green) }
@@ -55,9 +55,6 @@ class CarScreenRenderer(carContext: CarContext) {
             paint.textSize = updatedSize.toFloat()
             canvas.drawRect(area, paint)
             canvas.drawColor(Color.WHITE)
-
-//            background?.bounds = area
-//            background?.draw(canvas)
 
             var verticalPos = area.top - paint.fontMetrics.ascent + 4
             val verticalPosCpy = verticalPos

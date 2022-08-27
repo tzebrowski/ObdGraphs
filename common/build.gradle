@@ -17,14 +17,11 @@ android {
     buildTypes {
         release {
         }
-
         play {
         }
-
         debug {
         }
     }
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
