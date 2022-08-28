@@ -79,6 +79,7 @@ android {
             zipAlignEnabled true
             signingConfig signingConfigs.release
 
+            resValue "bool", "MODULE_ANDROID_AUTO_ENABLED", "true"
             resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "false"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "false"
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "false"
@@ -94,6 +95,7 @@ android {
             zipAlignEnabled true
             signingConfig signingConfigs.release
 
+            resValue "bool", "MODULE_ANDROID_AUTO_ENABLED", "false"
             resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "false"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "false"
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "false"
@@ -101,6 +103,7 @@ android {
         }
 
         debug {
+            resValue "bool", "MODULE_ANDROID_AUTO_ENABLED", "true"
             resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "true"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "true"
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "true"

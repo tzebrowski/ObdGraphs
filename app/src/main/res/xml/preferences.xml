@@ -437,6 +437,7 @@
         </PreferenceScreen>
 
         <PreferenceScreen
+            app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
             android:summary="@string/pref.aa_category"
             android:title="@string/pref.aa_category"
             app:key="pref.aa">
