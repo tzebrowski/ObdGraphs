@@ -1,4 +1,4 @@
-rootProject.name = "AlfaDataLogger"
+rootProject.name = "ObdGraphs"
 include ':common'
 include ':app'
 include ':automotive'
