@@ -2,15 +2,8 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.*
 import android.util.Log
-import org.obd.metrics.api.model.DeviceProperties
-import org.obd.metrics.api.model.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import org.obd.metrics.api.Workflow
-import org.obd.metrics.api.model.Init
-import org.obd.metrics.api.model.AdaptiveTimeoutPolicy
-import org.obd.metrics.api.model.Adjustments
-import org.obd.metrics.api.model.CacheConfig
-import org.obd.metrics.api.model.Pids
-import org.obd.metrics.api.model.Query
 import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
@@ -22,6 +15,7 @@ import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.getModesAndHeaders
 import org.obd.graphs.preferences.updateSupportedPIDsPreference
+import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -63,7 +57,7 @@ class DataLogger internal constructor() {
 
     private val preferences by lazy { DataLoggerPreferences.instance }
 
-    private var metricsAggregator = MetricsAggregator()
+    private var metricsAggregator = MetricsCollector()
     private var reconnectAttemptCount = 0
     private val broadcastReceiver = EventsReceiver()
 
@@ -134,6 +128,13 @@ class DataLogger internal constructor() {
         }
     }
 
+    fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
+        metricsAggregator.metrics.observe(lifecycleOwner){
+            it?.let {
+                observer(it)
+            }
+        }
+    }
 
     fun diagnostics(): Diagnostics {
         return workflow.diagnostics

@@ -7,13 +7,9 @@ import org.obd.metrics.api.model.ReplyObserver
 import org.obd.metrics.command.obd.SupportedPidsCommand
 import org.obd.graphs.bl.trip.TripManager
 
-class MetricsAggregator : ReplyObserver<Reply<*>>() {
+internal class MetricsCollector : ReplyObserver<Reply<*>>() {
 
-    companion object {
-        @JvmStatic
-        val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>().apply {
-        }
-    }
+    val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
 
     private val tripManager: TripManager by lazy { TripManager.INSTANCE }
 

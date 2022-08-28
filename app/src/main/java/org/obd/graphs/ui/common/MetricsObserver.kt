@@ -2,7 +2,7 @@ package org.obd.graphs.ui.common
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.bl.datalogger.MetricsAggregator
+import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.metrics.api.model.ObdMetric
 
 internal class MetricsObserver {
@@ -11,7 +11,7 @@ internal class MetricsObserver {
         lifecycleOwner: LifecycleOwner,
         adapter: RecyclerView.Adapter<*>,
         data: MutableList<ObdMetric>
-    ) = MetricsAggregator.metrics.observe(lifecycleOwner) {
+    ) = DataLogger.instance.observe(lifecycleOwner) {
         it?.run {
             if (metrics.contains(command.pid.id)) {
                 val indexOf = data.indexOf(this)

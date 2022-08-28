@@ -176,13 +176,11 @@ class GraphFragment : Fragment() {
     }
 
     private fun registerMetricsObserver() {
-        MetricsAggregator.metrics.observe(viewLifecycleOwner) {
-            it?.let {
-                if (preferences.selectedPids.contains(it.command.pid.id)) {
-                    addEntry(it)
-                }
+        DataLogger.instance.observe(viewLifecycleOwner) {
+            if (preferences.selectedPids.contains(it.command.pid.id)) {
+                addEntry(it)
             }
-        }
+       }
     }
 
     private fun initializeTripDetails() {
@@ -195,24 +193,22 @@ class GraphFragment : Fragment() {
 
         val diagnostics = DataLogger.instance.diagnostics()
 
-        MetricsAggregator.metrics.observe(viewLifecycleOwner) {
-            it?.let {
-               diagnostics.histogram().findBy(it.command.pid)?.let{ hist ->
-                   val sensorData = SensorData(id = it.command.pid.id,
-                       metrics = mutableListOf(),
-                       min = hist.min,
-                       max = hist.max,
-                       mean = hist.mean)
-                   val indexOf = data.indexOf(sensorData)
-                   if (indexOf == -1) {
-                       data.add(sensorData)
-                       adapter.notifyItemInserted(data.indexOf(sensorData))
-                   } else {
-                       data[indexOf] = sensorData
-                       adapter.notifyItemChanged(indexOf, sensorData)
-                   }
+        DataLogger.instance.observe(viewLifecycleOwner) {
+           diagnostics.histogram().findBy(it.command.pid)?.let{ hist ->
+               val sensorData = SensorData(id = it.command.pid.id,
+                   metrics = mutableListOf(),
+                   min = hist.min,
+                   max = hist.max,
+                   mean = hist.mean)
+               val indexOf = data.indexOf(sensorData)
+               if (indexOf == -1) {
+                   data.add(sensorData)
+                   adapter.notifyItemInserted(data.indexOf(sensorData))
+               } else {
+                   data[indexOf] = sensorData
+                   adapter.notifyItemChanged(indexOf, sensorData)
                }
-            }
+           }
         }
     }
 

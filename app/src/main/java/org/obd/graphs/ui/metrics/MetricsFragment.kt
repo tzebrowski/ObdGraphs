@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.bl.datalogger.MetricsAggregator
+import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.getPIDsToQuery
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
@@ -42,16 +42,14 @@ class MetricsFragment : Fragment() {
         val data = MetricsProvider().findMetrics(getPIDsToQuery(), emptyMap())
         adapter = MetricsViewAdapter(root.context, data)
 
-        MetricsAggregator.metrics.observe(viewLifecycleOwner) {
-            it?.let {
-                val indexOf = data.indexOf(it)
-                if (indexOf == -1) {
-                    data.add(it)
-                    adapter.notifyItemInserted(data.indexOf(it))
-                } else {
-                    data[indexOf] = it
-                    adapter.notifyItemChanged(indexOf, it)
-                }
+        DataLogger.instance.observe(this){
+            val indexOf = data.indexOf(it)
+            if (indexOf == -1) {
+                data.add(it)
+                adapter.notifyItemInserted(data.indexOf(it))
+            } else {
+                data[indexOf] = it
+                adapter.notifyItemChanged(indexOf, it)
             }
         }
 

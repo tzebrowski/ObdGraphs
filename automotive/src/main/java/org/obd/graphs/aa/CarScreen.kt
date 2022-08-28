@@ -17,7 +17,7 @@ import org.obd.graphs.bl.datalogger.*
 class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : Screen(carContext),
     DefaultLifecycleObserver {
 
-    internal var broadcastReceiver = object : BroadcastReceiver() {
+    private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
             when (intent?.action) {
@@ -137,7 +137,7 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
 
     init {
         lifecycle.addObserver(this)
-        MetricsAggregator.metrics.observe(this) {
+        DataLogger.instance.observe(this){
             surfaceController.render(it)
         }
     }
