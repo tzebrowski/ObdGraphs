@@ -25,36 +25,28 @@ Application offers integration with `Android Auto` and it is available in google
 
 Application offers few configurable screens which visualize vehicle telemetry data.
 
-### Android Auto support View
+### Android Auto
 
 |      |      |
 | ---- | ---- |
 |   ![Alt text](./res/aa_screenshot.png?raw=true "Android Auto")   |  |
 
 
-### Graph View
+
+### Mobile
 
 |      |      |
 | ---- | ---- |
-|   ![Alt text](./res/Screenshot_2.png?raw=true "Graph view")   | ![Alt text](./res/Screenshot_6.png?raw=true "Graph view") |
+|   ![Alt text](./res/Screenshot_phone_2.png?raw=true "Gauge")   | ![Alt text](./res/Screenshot_phone_1.png?raw=true "Metrics") |
+|   ![Alt text](./res/Screenshot_phone_3.png?raw=true "Graph")   | ![Alt text](./res/Screenshot_phone_4.png?raw=true "Graph") |
 
-### Gauge View
+### Tablet
 
-|      |      |
-| ---- | ---- |
-|    ![Alt text](./res/Screenshot_3.png?raw=true "Gauge view")  | ![Alt text](./res/Screenshot_5.png?raw=true "Gauge view") |
-
-### Tiles View
 
 |      |      |
 | ---- | ---- |
-|     ![Alt text](./res/Screenshot_1.png?raw=true "Dashboard view") |![Alt text](./res/Screenshot_7.png?raw=true "Tiles view") |
+|   ![Alt text](./res/Screenshot_3.png?raw=true "Gauge")   | ![Alt text](./res/Screenshot_6.png?raw=true "Graph") |
 
-### Raw Data View
-
-|      |      |
-| ---- | ---- |
-|    ![Alt text](./res/Screenshot_4.png?raw=true "Gauge view")  | |
 
 ## Road map
 * Performance optimization
