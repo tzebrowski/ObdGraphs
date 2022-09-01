@@ -15,7 +15,6 @@ fun toast(id: Int) {
             it, biggerText,
             Toast.LENGTH_LONG
         ).run {
-            setGravity(Gravity.CENTER, 0, 0)
             show()
         }
     }

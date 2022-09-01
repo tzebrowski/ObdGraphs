@@ -3,6 +3,8 @@ package org.obd.graphs.bl.datalogger
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.util.Log
+import org.obd.graphs.REQUEST_PERMISSIONS_BT
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
@@ -60,36 +62,40 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
     }
 
     private fun connectToDevice(btDeviceName: String?) {
-        Log.i(
-            LOGGER_TAG,
-            "Found bounded connections, size: ${mBluetoothAdapter.bondedDevices.size}"
-        )
-        for (currentDevice in mBluetoothAdapter.bondedDevices) {
-            Log.i(LOGGER_TAG, "Checking bounded connection: ${currentDevice.name} ")
+        try {
+            Log.i(
+                LOGGER_TAG,
+                "Found bounded connections, size: ${mBluetoothAdapter.bondedDevices.size}"
+            )
+            for (currentDevice in mBluetoothAdapter.bondedDevices) {
+                Log.i(LOGGER_TAG, "Checking bounded connection: ${currentDevice.name} ")
 
-            if (currentDevice.name == btDeviceName) {
-                Log.i(
-                    LOGGER_TAG,
-                    "Bounded connection matches. Opening the device: ${currentDevice.name}"
-                )
-                socket =
-                    currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
-                socket.connect()
-                Log.i(LOGGER_TAG, "Doing socket connect for: ${currentDevice.name}")
-                if (socket.isConnected) {
+                if (currentDevice.name == btDeviceName) {
                     Log.i(
                         LOGGER_TAG,
-                        "Successfully established connection for: ${currentDevice.name}"
+                        "Bounded connection matches. Opening the device: ${currentDevice.name}"
                     )
-                    input = socket.inputStream
-                    output = socket.outputStream
-                    Log.i(
-                        LOGGER_TAG,
-                        "Successfully opened  the sockets to device: ${currentDevice.name}"
-                    )
-                    break
+                    socket =
+                        currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
+                    socket.connect()
+                    Log.i(LOGGER_TAG, "Doing socket connect for: ${currentDevice.name}")
+                    if (socket.isConnected) {
+                        Log.i(
+                            LOGGER_TAG,
+                            "Successfully established connection for: ${currentDevice.name}"
+                        )
+                        input = socket.inputStream
+                        output = socket.outputStream
+                        Log.i(
+                            LOGGER_TAG,
+                            "Successfully opened  the sockets to device: ${currentDevice.name}"
+                        )
+                        break
+                    }
                 }
             }
+        }catch (e: SecurityException){
+            sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
         }
     }
 }

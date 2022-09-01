@@ -1,5 +1,6 @@
 package org.obd.graphs.activity
 
+import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
@@ -15,8 +16,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
-import org.obd.graphs.ui.common.*
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
+import org.obd.graphs.ui.common.toast
+import pub.devrel.easypermissions.EasyPermissions
 
 internal val tripRecorderBroadcastReceiver = TripManagerBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()
@@ -31,8 +36,25 @@ const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
 const val DATA_LOGGER_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
 
+
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
+        REQUEST_PERMISSIONS_BT -> {
+
+            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH_ADMIN ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH_ADMIN)}")
+            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH)}")
+            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH_CONNECT ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH_CONNECT)}")
+            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH_SCAN ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH_SCAN)}")
+
+            EasyPermissions.requestPermissions(this,
+                resources.getString(R.string.permissions_missing_bt_msg),
+                1,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH)
+        }
+
         TOGGLE_TOOLBAR_ACTION -> {
             if (getMainActivityPreferences().hideToolbarDoubleClick) {
                 findViewById<CoordinatorLayout>(R.id.coordinator_Layout).let {
@@ -129,8 +151,6 @@ internal fun MainActivity.receive(intent: Intent?) {
     }
 }
 
-
-
 private fun MainActivity.handleStop() {
     val progressBar: ProgressBar = findViewById(R.id.p_bar)
     progressBar.visibility = View.GONE
@@ -183,6 +203,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(SCREEN_OFF_EVENT)
         addAction(SCREEN_ON_EVENT)
         addAction(PROFILE_CHANGED_EVENT)
+        addAction(REQUEST_PERMISSIONS_BT)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {

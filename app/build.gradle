@@ -55,7 +55,7 @@ android {
         giulia {
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 1
+            versionCode 3
             versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
             setProperty("archivesBaseName", "MyGiulia_" + versionName)
         }
@@ -154,6 +154,7 @@ dependencies {
     implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
     debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
+    implementation 'pub.devrel:easypermissions:3.0.0'
 
     implementation project(":common")
     debugImplementation project(":automotive")

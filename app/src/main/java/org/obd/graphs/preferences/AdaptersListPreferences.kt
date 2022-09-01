@@ -1,13 +1,14 @@
 package org.obd.graphs.preferences
 
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
+import org.obd.graphs.REQUEST_PERMISSIONS_BT
+import org.obd.graphs.sendBroadcastEvent
 import java.util.*
 
-@SuppressLint("MissingPermission")
+
 class AdaptersListPreferences(
     context: Context?,
     attrs: AttributeSet?
@@ -19,12 +20,16 @@ class AdaptersListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        mBluetoothAdapter?.run {
-            for (currentDevice in bondedDevices) {
-                entries.add(currentDevice.name)
-                entriesValues.add(currentDevice.name)
+        try {
+            val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+            mBluetoothAdapter?.run {
+                bondedDevices.forEach { currentDevice ->
+                    entries.add(currentDevice.name)
+                    entriesValues.add(currentDevice.name)
+                }
             }
+        }catch (e: SecurityException){
+            sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
         }
 
         setEntries(entries.toTypedArray())

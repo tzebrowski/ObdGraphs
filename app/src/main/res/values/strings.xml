@@ -6,6 +6,8 @@
     <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
     <string name="pref.experimental_read_external_storage_enabled">This feature is in the experimental phase.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
 
+    <string name="permissions.missing.bt_msg">In order to connect to the Adapter, Bluetooth permissions must be granted.</string>
+
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_gauge">Gauge</string>
     <string name="navigation.title_metrics">Metrics</string>

@@ -4,8 +4,8 @@ import android.app.IntentService
 import android.content.Intent
 import org.obd.graphs.getContext
 
-private const val ACTION_START = "org.openobd2.core.logger.ui.action.START"
-private const val ACTION_STOP = "org.openobd2.core.logger.ui.action.STOP"
+private const val ACTION_START = "org.obd.graphs.logger.START"
+private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 
 class DataLoggerService : IntentService("DataLoggerService") {
 
