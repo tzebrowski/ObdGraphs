@@ -8,6 +8,7 @@
     tools:context="org.obd.graphs.ui.gauge.GaugeFragment">
 
     <ImageView
+        android:contentDescription="@string/gauge_item_bg_content_description"
         android:id="@+id/gauge_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -15,6 +15,14 @@
     <string name="navigation.title_dashboard">Dashboard</string>
     <string name="navigation.title_graph">Graph</string>
 
+
+    <string name="navigation.tooltip_gauge">Gauge view</string>
+    <string name="navigation.tooltip_metrics">Metrics view</string>
+    <string name="navigation.tooltip_preferences">Preferences view</string>
+    <string name="navigation.tooltip_dashboard">Dashboard view</string>
+    <string name="navigation.tooltip_graph">Graph view</string>
+
+
     <string name="pid.metric_name">Metric</string>
     <string name="pid.value">Value</string>
     <string name="pid.value_no_data">No data</string>
@@ -117,7 +125,8 @@
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Init</string>
 
-    <string name="activity.btn_start">Start/Stop</string>
+    <string name="main_activity.toggle_toolbar">Toggle toolbar</string>
+    <string name="main_activity.btn_start">Start/Stop session with the vehicile</string>
 
     <string-array name="pref.empty_array" />
     <string name="pref.theme">Theme</string>
@@ -164,6 +173,7 @@
 
     <string name="pref_pids_display_only_stable_pids">Disable experimental OBD2 PIDs/Sensors</string>
     <string name="pref_pids_display_only_stable_pids_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which have stable formula calculation.\nExperimental one will not be visible.</string>
+    <string name="gauge_item_bg_content_description">Gauge background</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="0">0</item>

@@ -43,6 +43,8 @@
             android:textSize="12sp" />
 
         <ImageView
+            android:tooltipText="@string/main_activity.toggle_toolbar"
+            android:contentDescription="@string/main_activity.toggle_toolbar"
             android:id="@+id/toggle_fullscreen"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -111,10 +113,11 @@
         </com.google.android.material.bottomappbar.BottomAppBar>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:tooltipText="@string/main_activity.btn_start"
             android:id="@+id/connect_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/activity.btn_start"
+            android:contentDescription="@string/main_activity.btn_start"
             android:src="@android:drawable/ic_lock_idle_charging"
             app:backgroundTint="#01804F"
             app:fabSize="mini"
