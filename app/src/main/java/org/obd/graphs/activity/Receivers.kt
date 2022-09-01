@@ -1,6 +1,5 @@
 package org.obd.graphs.activity
 
-import android.Manifest
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
@@ -21,7 +20,6 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.toast
-import pub.devrel.easypermissions.EasyPermissions
 
 internal val tripRecorderBroadcastReceiver = TripManagerBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()
@@ -40,19 +38,7 @@ const val DATA_LOGGER_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_ru
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
         REQUEST_PERMISSIONS_BT -> {
-
-            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH_ADMIN ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH_ADMIN)}")
-            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH)}")
-            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH_CONNECT ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH_CONNECT)}")
-            Log.d(ACTIVITY_LOGGER_TAG,"Has permission to BLUETOOTH_SCAN ${EasyPermissions.hasPermissions(this,Manifest.permission.BLUETOOTH_SCAN)}")
-
-            EasyPermissions.requestPermissions(this,
-                resources.getString(R.string.permissions_missing_bt_msg),
-                1,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH)
+            requestBluetoothPermissions()
         }
 
         TOGGLE_TOOLBAR_ACTION -> {
@@ -150,7 +136,6 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
     }
 }
-
 private fun MainActivity.handleStop() {
     val progressBar: ProgressBar = findViewById(R.id.p_bar)
     progressBar.visibility = View.GONE
