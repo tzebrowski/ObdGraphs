@@ -1,9 +1,10 @@
 package org.obd.graphs.bl.datalogger
 
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
 import android.util.Log
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
+import org.obd.graphs.bluetoothAdapter
+import org.obd.graphs.findBluetoothAdapterByName
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
@@ -21,13 +22,11 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
     private var output: OutputStream? = null
     private lateinit var socket: BluetoothSocket
     private var device: String? = btDeviceName
-    private val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
     init {
         Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $btDeviceName")
-        if (!mBluetoothAdapter.isEnabled) throw IllegalStateException("Bluetooth stack is disabled")
     }
 
     override fun reconnect() {
@@ -65,32 +64,30 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
         try {
             Log.i(
                 LOGGER_TAG,
-                "Found bounded connections, size: ${mBluetoothAdapter.bondedDevices.size}"
+                "Found bounded connections, size: ${bluetoothAdapter().bondedDevices.size}"
             )
-            for (currentDevice in mBluetoothAdapter.bondedDevices) {
-                Log.i(LOGGER_TAG, "Checking bounded connection: ${currentDevice.name} ")
-
-                if (currentDevice.name == btDeviceName) {
+            btDeviceName?.let {
+                findBluetoothAdapterByName(it)?.let { adapter ->
                     Log.i(
                         LOGGER_TAG,
-                        "Bounded connection matches. Opening the device: ${currentDevice.name}"
+                        "Opening connection to bounded device: ${adapter.name}"
                     )
                     socket =
-                        currentDevice.createRfcommSocketToServiceRecord(RFCOMM_UUID)
+                        adapter.createRfcommSocketToServiceRecord(RFCOMM_UUID)
                     socket.connect()
-                    Log.i(LOGGER_TAG, "Doing socket connect for: ${currentDevice.name}")
+                    Log.i(LOGGER_TAG, "Doing socket connect for: ${adapter.name}")
+
                     if (socket.isConnected) {
                         Log.i(
                             LOGGER_TAG,
-                            "Successfully established connection for: ${currentDevice.name}"
+                            "Successfully established connection for: ${adapter.name}"
                         )
                         input = socket.inputStream
                         output = socket.outputStream
                         Log.i(
                             LOGGER_TAG,
-                            "Successfully opened  the sockets to device: ${currentDevice.name}"
+                            "Successfully opened  the sockets to device: ${adapter.name}"
                         )
-                        break
                     }
                 }
             }

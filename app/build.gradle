@@ -17,7 +17,6 @@ android {
         testFunctionalTest false
         testHandleProfiling false
         setProperty("archivesBaseName", "ObdGraphs_" + versionName)
-
         resValue "string", "DEFAULT_PROFILE", "profile_1"
     }
 
@@ -50,22 +49,25 @@ android {
         }
     }
 
-    flavorDimensions 'default'
+    flavorDimensions "version"
     productFlavors {
-        giulia {
-            resValue "string", "DEFAULT_PROFILE", "profile_3"
-            applicationId "org.obd.graphs.my.giulia"
-            versionCode 3
-            versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
-            setProperty("archivesBaseName", "MyGiulia_" + versionName)
-        }
 
         obdGraphs {
+            dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_1"
             applicationId "org.obd.graphs.app"
             versionCode 1
             versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
             setProperty("archivesBaseName", "ObdGraphs_" + versionName)
+        }
+
+        giulia {
+            dimension "version"
+            resValue "string", "DEFAULT_PROFILE", "profile_3"
+            applicationId "org.obd.graphs.my.giulia"
+            versionCode 5
+            versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
+            setProperty("archivesBaseName", "MyGiulia_" + versionName)
         }
     }
 
@@ -109,7 +111,6 @@ android {
             resValue "bool", "FF_SWITCH_NETWORK_ENABLED", "true"
             resValue "bool", "DEBUG_BUILD", "true"
         }
-
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

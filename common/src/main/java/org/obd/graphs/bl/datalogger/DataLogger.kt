@@ -10,7 +10,7 @@ import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
-import org.obd.graphs.findBTAdapterByName
+import org.obd.graphs.findBluetoothAdapterByName
 import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.getModesAndHeaders
@@ -177,7 +177,7 @@ class DataLogger internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             null
         } else {
-            if (findBTAdapterByName(deviceName) == null) {
+            if (findBluetoothAdapterByName(deviceName) == null) {
                 Log.e(LOGGER_TAG, "Did not find Bluetooth Adapter: $deviceName")
                 sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                 null

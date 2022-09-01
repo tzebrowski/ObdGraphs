@@ -1,13 +1,12 @@
 package org.obd.graphs.preferences
 
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
+import org.obd.graphs.bluetoothAdapter
 import org.obd.graphs.sendBroadcastEvent
 import java.util.*
-
 
 class AdaptersListPreferences(
     context: Context?,
@@ -21,8 +20,7 @@ class AdaptersListPreferences(
             LinkedList()
 
         try {
-            val mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-            mBluetoothAdapter?.run {
+            bluetoothAdapter().run {
                 bondedDevices.forEach { currentDevice ->
                     entries.add(currentDevice.name)
                     entriesValues.add(currentDevice.name)

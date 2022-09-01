@@ -2,6 +2,7 @@ package org.obd.graphs
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
@@ -9,9 +10,12 @@ import android.util.Log
 private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
 
-fun findBTAdapterByName(deviceName: String): BluetoothDevice? {
+fun bluetoothAdapter(): BluetoothAdapter =
+    (getContext()?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+
+fun findBluetoothAdapterByName(deviceName: String): BluetoothDevice? {
     return try  {
-        BluetoothAdapter.getDefaultAdapter().bondedDevices.find { it.name == deviceName }
+        bluetoothAdapter().bondedDevices.find { it.name == deviceName }
     } catch(e: SecurityException) {
         sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
         return null
@@ -21,20 +25,16 @@ fun findBTAdapterByName(deviceName: String): BluetoothDevice? {
 fun bluetooth(enable: Boolean) {
     Log.i(LOG_LEVEL, "Changing status of Bluetooth, enable: $enable")
 
-    getContext()?.let {
-        try {
+    try {
+        bluetoothAdapter().let {
             if (enable) {
-                BluetoothAdapter.getDefaultAdapter().run {
-                    enable()
-                }
+                it.enable()
             } else {
-                BluetoothAdapter.getDefaultAdapter().run {
-                    disable()
-                }
+                it.disable()
             }
-        } catch (e: SecurityException) {
-            sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
         }
+    } catch (e: SecurityException) {
+        sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
     }
 }
 
