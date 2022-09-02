@@ -20,15 +20,14 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
 import org.obd.graphs.R
+import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.command.obd.ObdCommand
-import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.graphs.preferences.Prefs
-import java.util.*
+import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.pid.PidDefinition
 
 
 class DashboardViewAdapter(

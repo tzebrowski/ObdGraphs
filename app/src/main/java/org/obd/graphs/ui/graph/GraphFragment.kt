@@ -29,12 +29,15 @@ import org.obd.graphs.Cache
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.activity.DATA_LOGGER_PROCESS_IS_RUNNING
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.TripManager
+import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
-import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry

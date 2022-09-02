@@ -2,7 +2,10 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.SharedPreferences
 import android.util.Log
-import org.obd.graphs.preferences.*
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.isEnabled
 
 const val GENERIC_MODE = "Generic mode"
 const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"

@@ -2,7 +2,6 @@ package org.obd.graphs.ui.common
 
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
-import android.view.Gravity
 import android.widget.Toast
 import org.obd.graphs.getContext
 

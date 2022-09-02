@@ -8,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.command.obd.ObdCommand
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.common.setText
+import org.obd.graphs.ui.common.toNumber
+import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.command.obd.ObdCommand
 
 
 class MetricsViewAdapter internal constructor(

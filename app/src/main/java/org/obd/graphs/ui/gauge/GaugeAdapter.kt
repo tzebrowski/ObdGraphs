@@ -17,10 +17,10 @@ import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.defaultPidFiles
-import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.graphs.ui.dashboard.round
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.ui.common.*
+import org.obd.graphs.ui.dashboard.round
+import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType

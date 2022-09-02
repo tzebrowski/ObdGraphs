@@ -2,7 +2,7 @@ package org.obd.graphs.ui.common
 
 import android.graphics.Color
 import androidx.core.content.ContextCompat
-import org.obd.graphs.R.*
+import org.obd.graphs.R.color
 import org.obd.graphs.getContext
 import java.util.*
 

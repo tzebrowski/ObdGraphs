@@ -6,12 +6,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
-import org.obd.metrics.pid.PidDefinition
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getECUSupportedPIDs
 import org.obd.metrics.command.group.DefaultCommandGroup
+import org.obd.metrics.pid.PidDefinition
 import java.util.*
 
 private val supportedPIDsIds = DefaultCommandGroup.SUPPORTED_PIDS.commands.map { c -> c.pid.id }.toSet()

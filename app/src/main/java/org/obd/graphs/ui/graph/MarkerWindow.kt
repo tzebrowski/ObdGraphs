@@ -8,12 +8,12 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
-import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.command.obd.ObdCommand
-import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.pid.PidDefinitionRegistry
 
 private const val SEARCH_SCOPE = 300
 private const val LOG_KEY = "MarkerWindow"

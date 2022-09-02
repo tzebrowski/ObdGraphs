@@ -1,24 +1,26 @@
 package org.obd.graphs.bl.datalogger
 
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.findBluetoothAdapterByName
+import org.obd.graphs.getContext
+import org.obd.graphs.getModesAndHeaders
+import org.obd.graphs.preferences.updateSupportedPIDsPreference
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.Workflow
+import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorSpec
+import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
-import org.obd.graphs.findBluetoothAdapterByName
-import org.obd.graphs.getContext
-import org.obd.graphs.sendBroadcastEvent
-import org.obd.graphs.getModesAndHeaders
-import org.obd.graphs.preferences.updateSupportedPIDsPreference
-import org.obd.metrics.api.model.*
-import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import java.io.File
-import java.lang.IllegalArgumentException
 
 const val WORKFLOW_RELOAD_EVENT = "data.logger.workflow.reload.event"
 const val RESOURCE_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"

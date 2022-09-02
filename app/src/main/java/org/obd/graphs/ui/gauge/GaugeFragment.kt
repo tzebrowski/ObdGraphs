@@ -14,10 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.ui.common.isTablet
-import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.ui.common.isTablet
+import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.roundToInt

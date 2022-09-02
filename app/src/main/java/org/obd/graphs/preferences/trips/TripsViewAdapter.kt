@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.TripManager
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.updateString
+import org.obd.graphs.profile.getProfileList
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.profile.getProfileList
-import org.obd.graphs.preferences.updateString
 
 const val SELECTED_TRIP_PREF = "pref.graph.trips.selected"
 const val LOAD_TRIP_EVENT = "load.trip.event"

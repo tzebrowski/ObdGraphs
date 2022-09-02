@@ -1,11 +1,11 @@
 package org.obd.graphs.bl.datalogger
 
 import androidx.lifecycle.MutableLiveData
+import org.obd.graphs.bl.trip.TripManager
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
 import org.obd.metrics.command.obd.SupportedPidsCommand
-import org.obd.graphs.bl.trip.TripManager
 
 internal class MetricsCollector : ReplyObserver<Reply<*>>() {
 

@@ -8,13 +8,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.bl.datalogger.getPIDsToQuery
 import org.obd.graphs.getContext
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.preferences.updateLongSet
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.common.DragManageAdapter
-import org.obd.graphs.ui.common.MetricsObserver
-import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.gauge.AdapterContext
-import org.obd.graphs.preferences.*
 import org.obd.metrics.api.model.ObdMetric
 
 class RecyclerViewSetup {

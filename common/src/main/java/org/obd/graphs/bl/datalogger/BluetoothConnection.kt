@@ -2,7 +2,9 @@ package org.obd.graphs.bl.datalogger
 
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import org.obd.graphs.*
+import org.obd.graphs.bluetoothAdapter
+import org.obd.graphs.findBluetoothAdapterByName
+import org.obd.graphs.requestBluetoothPermissions
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream

@@ -11,8 +11,8 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.toNumber
 import org.obd.graphs.ui.common.setText
+import org.obd.graphs.ui.common.toNumber
 
 
 class TripDetailsViewAdapter internal constructor(
