@@ -2,10 +2,7 @@ package org.obd.graphs.bl.datalogger
 
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import org.obd.graphs.REQUEST_PERMISSIONS_BT
-import org.obd.graphs.bluetoothAdapter
-import org.obd.graphs.findBluetoothAdapterByName
-import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.*
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
@@ -64,7 +61,7 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
         try {
             Log.i(
                 LOGGER_TAG,
-                "Found bounded connections, size: ${bluetoothAdapter().bondedDevices.size}"
+                "Found bounded connections, size: ${bluetoothAdapter()?.bondedDevices?.size}"
             )
             btDeviceName?.let {
                 findBluetoothAdapterByName(it)?.let { adapter ->
@@ -92,7 +89,7 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
                 }
             }
         }catch (e: SecurityException){
-            sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
+            requestBluetoothPermissions()
         }
     }
 }

@@ -3,9 +3,8 @@ package org.obd.graphs.preferences
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
-import org.obd.graphs.REQUEST_PERMISSIONS_BT
 import org.obd.graphs.bluetoothAdapter
-import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.requestBluetoothPermissions
 import java.util.*
 
 class AdaptersListPreferences(
@@ -20,14 +19,14 @@ class AdaptersListPreferences(
             LinkedList()
 
         try {
-            bluetoothAdapter().run {
+            bluetoothAdapter()?.run {
                 bondedDevices.forEach { currentDevice ->
                     entries.add(currentDevice.name)
                     entriesValues.add(currentDevice.name)
                 }
             }
         }catch (e: SecurityException){
-            sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
+           requestBluetoothPermissions()
         }
 
         setEntries(entries.toTypedArray())

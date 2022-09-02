@@ -10,14 +10,14 @@ import android.util.Log
 private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
 
-fun bluetoothAdapter(): BluetoothAdapter =
+fun bluetoothAdapter(): BluetoothAdapter? =
     (getContext()?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
 
 fun findBluetoothAdapterByName(deviceName: String): BluetoothDevice? {
     return try  {
-        bluetoothAdapter().bondedDevices.find { it.name == deviceName }
+        bluetoothAdapter()?.bondedDevices?.find { it.name == deviceName }
     } catch(e: SecurityException) {
-        sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
+        requestBluetoothPermissions()
         return null
     }
 }
@@ -26,7 +26,7 @@ fun bluetooth(enable: Boolean) {
     Log.i(LOG_LEVEL, "Changing status of Bluetooth, enable: $enable")
 
     try {
-        bluetoothAdapter().let {
+        bluetoothAdapter()?.let {
             if (enable) {
                 it.enable()
             } else {
@@ -34,8 +34,12 @@ fun bluetooth(enable: Boolean) {
             }
         }
     } catch (e: SecurityException) {
-        sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
+        requestBluetoothPermissions()
     }
+}
+
+fun requestBluetoothPermissions() {
+    sendBroadcastEvent(REQUEST_PERMISSIONS_BT)
 }
 
 fun wifi(enable: Boolean) {
