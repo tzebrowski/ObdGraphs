@@ -73,6 +73,8 @@
     <string name="pref.adapter_init.fetchSupportedPids">Read supported OBD2 PIDs/Sensors during init</string>
     <string name="pref.adapter_init.fetchDeviceProperties">Read adapter properties during init</string>
 
+    <string name="pref.vehicle.properties">Vehicle Metadata</string>
+    <string name="pref.vehicle.properties.summary">This preference contains Vehicle and Adapter metadata.It might contain properties like: VIN, ECU type, Adapter type.</string>
 
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>

@@ -106,6 +106,10 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 }
             }
 
+            R.id.ctx_menu_vehicle_properties -> {
+                navigateToPreferencesScreen("pref.vehicle.properties")
+            }
+
             R.id.ctx_menu_about -> {
                 navigateToPreferencesScreen("pref.about")
             }

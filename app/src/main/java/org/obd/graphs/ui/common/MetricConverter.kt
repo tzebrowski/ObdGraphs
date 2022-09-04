@@ -3,6 +3,7 @@ package org.obd.graphs.ui.common
 import org.obd.graphs.ui.dashboard.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.ValueType
 
 fun toNumber(pid: PidDefinition, input: Number?): Number {
 
@@ -17,9 +18,9 @@ fun toNumber(pid: PidDefinition, input: Number?): Number {
     return if (pid.type == null) value.round(2) else
         pid.type.let {
             return when (pid.type) {
-                PidDefinition.ValueType.DOUBLE -> value.round(2)
-                PidDefinition.ValueType.INT -> value.toInt()
-                PidDefinition.ValueType.SHORT -> value.toInt()
+                ValueType.DOUBLE -> value.round(2)
+                ValueType.INT -> value.toInt()
+                ValueType.SHORT -> value.toInt()
                 else -> value.round(1)
             }
         }

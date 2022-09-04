@@ -20,6 +20,10 @@
         android:title="@string/context_menu.profiles" />
 
     <item
+        android:id="@+id/ctx_menu_vehicle_properties"
+        android:title="@string/pref.vehicle.properties" />
+
+    <item
         android:id="@+id/ctx_menu_about"
         android:title="@string/context_menu.about" />
 
