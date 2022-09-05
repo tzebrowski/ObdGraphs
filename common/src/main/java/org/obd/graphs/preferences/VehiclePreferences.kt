@@ -3,31 +3,43 @@ package org.obd.graphs.preferences
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.obd.metrics.api.model.DeviceProperties
-
-private const val ECU_SUPPORTED_PIDS = "pref.datalogger.supported.pids"
-private const val VEHICLE_PROPERTIES = "pref.datalogger.vehicle.properties"
-
-private var mapper = ObjectMapper().apply {
-    registerModule(KotlinModule())
-}
+import org.obd.metrics.api.model.VehicleCapabilities
 
 class VehicleProperty(var name: String, var value: String)
 
-internal fun updateVehiclePreferences(deviceProperties: DeviceProperties) {
-    Prefs.edit().putStringSet(ECU_SUPPORTED_PIDS, deviceProperties.capabilities).apply()
-    Prefs.edit().putString(VEHICLE_PROPERTIES, mapper.writeValueAsString(deviceProperties.properties)).apply()
-}
+private const val VEHICLE_CAPABILITIES = "pref.datalogger.supported.pids"
+private const val VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 
-fun getECUSupportedPIDs(): MutableSet<String> {
-    return Prefs.getStringSet(ECU_SUPPORTED_PIDS, emptySet())!!
-}
+class VehicleCapabilitiesManager {
 
-fun getVehicleProperties(): List<VehicleProperty> {
-    val it = Prefs.getString(VEHICLE_PROPERTIES, "")!!
-    return if (it.isEmpty()) listOf() else {
-        val map: Map<String,String> = mapper.readValue(it)
-        return map.map { (k,v) -> VehicleProperty(k,v) }
+    private var mapper = ObjectMapper().apply {
+        registerModule(KotlinModule())
+    }
+
+    internal fun updateCapabilities(vehicleCapabilities: VehicleCapabilities) {
+        Prefs.edit().apply {
+            putStringSet(VEHICLE_CAPABILITIES, vehicleCapabilities.capabilities)
+            putString(VEHICLE_METADATA, mapper.writeValueAsString(vehicleCapabilities.metadata))
+            apply()
+        }
+    }
+
+    fun getCapabilities(): MutableSet<String> {
+        return Prefs.getStringSet(VEHICLE_CAPABILITIES, emptySet())!!
+    }
+
+    fun getVehicleProperties(): List<VehicleProperty> {
+        val it = Prefs.getString(VEHICLE_METADATA, "")!!
+        return if (it.isEmpty()) listOf() else {
+            val map: Map<String,String> = mapper.readValue(it)
+            return map.map { (k,v) -> VehicleProperty(k,v) }
+        }
     }
 }
+
+val vehicleCapabilitiesManager =  VehicleCapabilitiesManager()
+
+
+
+
 

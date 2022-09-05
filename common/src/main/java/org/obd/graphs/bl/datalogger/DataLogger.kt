@@ -9,7 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.findBluetoothAdapterByName
 import org.obd.graphs.getContext
 import org.obd.graphs.getModesAndHeaders
-import org.obd.graphs.preferences.updateVehiclePreferences
+import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
@@ -69,10 +69,9 @@ class DataLogger internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
-
-        override fun onRunning(deviceProperties: DeviceProperties) {
-            Log.i(LOGGER_TAG, "We are connected to the vehicle: $deviceProperties")
-            updateVehiclePreferences(deviceProperties)
+        override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
+            Log.i(LOGGER_TAG, "We are connected to the vehicle: $vehicleCapabilities")
+            vehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
         }
 

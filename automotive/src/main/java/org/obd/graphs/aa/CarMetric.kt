@@ -1,6 +1,7 @@
 package org.obd.graphs.aa
 
 import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.ValueType
 
 fun Double.round(decimals: Int): Double {
     var multiplier = 1.0
@@ -37,9 +38,9 @@ data class CarMetric (
         return if (pid.type == null) value.round(2) else
             pid.type.let {
                 return when (pid.type) {
-                    PidDefinition.ValueType.DOUBLE -> value.round(2)
-                    PidDefinition.ValueType.INT -> value.toInt()
-                    PidDefinition.ValueType.SHORT -> value.toInt()
+                    ValueType.DOUBLE -> value.round(2)
+                    ValueType.INT -> value.toInt()
+                    ValueType.SHORT -> value.toInt()
                     else -> value.round(1)
                 }
             }

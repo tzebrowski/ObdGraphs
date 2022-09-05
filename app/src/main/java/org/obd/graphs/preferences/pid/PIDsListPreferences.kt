@@ -9,7 +9,7 @@ import androidx.preference.MultiSelectListPreference
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getECUSupportedPIDs
+import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
@@ -74,7 +74,7 @@ class PIDsListPreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        val ecuSupportedPIDs = getECUSupportedPIDs()
+        val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
         val ecuSupportedPIDsEnabled =  Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF,false)
         val stablePIDsEnabled =  Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF,true)
 

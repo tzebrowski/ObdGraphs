@@ -9,7 +9,7 @@ import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.preferences.VehicleProperty
-import org.obd.graphs.preferences.getVehicleProperties
+import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import java.util.*
 
@@ -29,7 +29,7 @@ class VehiclePreferences(
         val entriesValues: MutableList<CharSequence> =
             LinkedList()
 
-        getVehicleProperties().forEach { p ->
+        vehicleCapabilitiesManager.getVehicleProperties().forEach { p ->
             val text = p.displayString()
             entries.add(text)
             entriesValues.add(text)

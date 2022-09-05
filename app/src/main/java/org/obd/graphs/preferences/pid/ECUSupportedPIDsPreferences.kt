@@ -11,7 +11,7 @@ import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
-import org.obd.graphs.preferences.getECUSupportedPIDs
+import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import java.util.*
 
@@ -60,7 +60,7 @@ class ECUSupportedPIDsPreferences(
         val pidList = DataLogger.instance.pidDefinitionRegistry().findAll()
 
         val groupBy =
-            getECUSupportedPIDs().groupBy { p -> if (pidList.firstOrNull { it.pid == p.uppercase() } == null) "not supported" else "supported" }
+            vehicleCapabilitiesManager.getCapabilities().groupBy { p -> if (pidList.firstOrNull { it.pid == p.uppercase() } == null) "not supported" else "supported" }
 
         groupBy["supported"]?.forEach { p ->
             val pid = pidList.first { it.pid == p.uppercase() }
