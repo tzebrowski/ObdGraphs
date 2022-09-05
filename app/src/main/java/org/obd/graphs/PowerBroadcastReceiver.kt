@@ -13,7 +13,7 @@ const val SCREEN_OFF_EVENT = "power.screen.off"
 const val SCREEN_ON_EVENT = "power.screen.on"
 const val LOGGER_TAG = "PowerBroadcastReceiver"
 
-class PowerBroadcastReceiver : BroadcastReceiver() {
+internal class PowerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent) {
         val powerPreferences: PowerPreferences = getPowerPreferences()
@@ -27,7 +27,7 @@ class PowerBroadcastReceiver : BroadcastReceiver() {
                 true.run {
                     bluetooth(this)
                     wifi(this)
-                    scheduleDataLogger()
+                    jobScheduler.scheduleDataLogger()
                 }
             } else {
                 if (powerPreferences.connectOnPower) {

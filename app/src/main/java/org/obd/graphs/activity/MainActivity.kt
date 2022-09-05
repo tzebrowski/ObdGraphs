@@ -19,7 +19,6 @@ import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
-
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {

@@ -196,5 +196,4 @@ class VehicleProfile {
 
 }
 
-
 val vehicleProfile = VehicleProfile()
