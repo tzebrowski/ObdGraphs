@@ -37,7 +37,7 @@
     <PreferenceCategory android:title="@string/pref.vehicle.properties">
         <PreferenceScreen
             android:key="pref.vehicle.properties"
-            android:title="@string/pref.vehicle.properties">
+            android:title="@string/pref.settings">
             <PreferenceCategory android:title="@string/pref.vehicle.properties">
                 <org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
                     app:singleLineTitle="false"

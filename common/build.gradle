@@ -63,5 +63,5 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
-    implementation('io.github.tzebrowski:obd-metrics:7.2.0-SNAPSHOT') { changing = true }
+    implementation('io.github.tzebrowski:obd-metrics:7.3.0-SNAPSHOT') { changing = true }
 }
