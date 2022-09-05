@@ -14,7 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import org.obd.graphs.*
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.profile.setupProfiles
+import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         registerReceiver()
 
         setupExceptionHandler()
-        setupProfiles()
+        vehicleProfile.setupProfiles()
         setupStatusPanel()
         setupPreferences()
     }

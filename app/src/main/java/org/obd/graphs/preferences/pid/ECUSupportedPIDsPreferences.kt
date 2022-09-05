@@ -18,8 +18,7 @@ import java.util.*
 class ECUSupportedPIDsPreferences(
     context: Context?,
     attrs: AttributeSet?
-) :
-    ListPreference(context, attrs) {
+):ListPreference(context, attrs) {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {

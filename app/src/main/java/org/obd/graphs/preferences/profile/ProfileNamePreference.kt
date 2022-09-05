@@ -16,10 +16,10 @@ class ProfileNamePreference(
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
 
-            Log.d(LOG_KEY, "Updating profile value: ${getCurrentProfile()}=$newValue")
+            Log.d(LOG_KEY, "Updating profile value: ${vehicleProfile.getCurrentProfile()}=$newValue")
 
             Prefs.edit()
-                .putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newValue.toString())
+                .putString("$PROFILE_NAME_PREFIX.${vehicleProfile.getCurrentProfile()}", newValue.toString())
                 .apply()
             navigateToPreferencesScreen(PROFILES_PREF)
             true

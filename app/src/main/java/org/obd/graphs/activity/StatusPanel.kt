@@ -6,7 +6,7 @@ import android.widget.TextView
 import org.obd.graphs.R
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.profile.PROFILE_NAME_PREFIX
-import org.obd.graphs.preferences.profile.getCurrentProfile
+import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
 
@@ -57,7 +57,7 @@ internal fun MainActivity.updateVehicleProfile() {
     updateTextField(
         R.id.vehicle_profile,
         resources.getString(R.string.vehicle_profile),
-        Prefs.getString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")!!,
+        Prefs.getString("$PROFILE_NAME_PREFIX.${vehicleProfile.getCurrentProfile()}", "")!!,
         COLOR_RAINBOW_INDIGO,
         1.2f
     )

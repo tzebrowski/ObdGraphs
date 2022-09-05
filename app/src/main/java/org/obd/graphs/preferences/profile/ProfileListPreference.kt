@@ -14,7 +14,7 @@ class ProfileListPreference(
 
     init {
 
-        getProfileList()
+        vehicleProfile.getProfileList()
             .let {
                 entries = it.values.toTypedArray()
                 entryValues = it.keys.toTypedArray()
@@ -25,7 +25,7 @@ class ProfileListPreference(
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, newValue ->
-                loadProfile(newValue.toString())
+                vehicleProfile.loadProfile(newValue.toString())
                 updateToolbar()
                 navigateToPreferencesScreen(PROFILES_PREF)
                 true

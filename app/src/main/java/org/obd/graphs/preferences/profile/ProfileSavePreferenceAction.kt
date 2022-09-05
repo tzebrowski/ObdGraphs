@@ -11,7 +11,7 @@ class ProfileSavePreferenceAction(
 
     init {
         setOnPreferenceClickListener {
-            saveCurrentProfile()
+            vehicleProfile.saveCurrentProfile()
             true
         }
     }
