@@ -39,17 +39,15 @@
             android:key="pref.vehicle.properties"
             android:title="@string/pref.vehicle.properties">
             <PreferenceCategory android:title="@string/pref.vehicle.properties">
-                <org.obd.graphs.preferences.pid.VehiclePreferences
+                <org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
                     app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.vehicle.properties"
                     android:key="pref.vehicle.properties.list"
                     android:summary="@string/pref.vehicle.properties.summary"
-                    android:title="@string/pref.vehicle.properties"
-                    />
+                    android:title="@string/pref.vehicle.properties"/>
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
-
 
     <PreferenceCategory android:title="@string/pref.registry.category">
         <PreferenceScreen
@@ -112,11 +110,9 @@
                     app:priority="low"
                     android:summary="@string/pref.pids_generic_low_summary" />
 
-
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
-
 
     <PreferenceCategory android:title="@string/pref.adapter_category">
         <PreferenceScreen

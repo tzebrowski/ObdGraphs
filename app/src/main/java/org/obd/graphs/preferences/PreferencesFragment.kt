@@ -14,6 +14,8 @@ import androidx.preference.PreferenceScreen
 import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.bl.datalogger.DataLoggerPreferences
+import org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
+import org.obd.graphs.preferences.metadata.VehicleCapabilitiesPreferenceDialog
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.ui.common.onDoubleClickListener
@@ -30,10 +32,16 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
     override fun onDisplayPreferenceDialog(preference: Preference?) {
-        if (preference is TripsListPreferences) {         // rounded language dialog
-            TripsPreferenceDialog().show(parentFragmentManager, null)
-        } else {
-            super.onDisplayPreferenceDialog(preference)
+        when (preference) {
+            is TripsListPreferences -> {
+                TripsPreferenceDialog().show(parentFragmentManager, null)
+            }
+            is VehicleCapabilitiesListPreferences -> {
+                VehicleCapabilitiesPreferenceDialog().show(parentFragmentManager, null)
+            }
+            else -> {
+                super.onDisplayPreferenceDialog(preference)
+            }
         }
     }
 

@@ -28,11 +28,11 @@ class VehicleCapabilitiesManager {
         return Prefs.getStringSet(VEHICLE_CAPABILITIES, emptySet())!!
     }
 
-    fun getVehicleProperties(): List<VehicleProperty> {
+    fun getVehicleCapabilities(): MutableList<VehicleProperty> {
         val it = Prefs.getString(VEHICLE_METADATA, "")!!
-        return if (it.isEmpty()) listOf() else {
+        return if (it.isEmpty()) mutableListOf() else {
             val map: Map<String,String> = mapper.readValue(it)
-            return map.map { (k,v) -> VehicleProperty(k,v) }
+            return map.map { (k,v) -> VehicleProperty(k,v) }.toMutableList()
         }
     }
 }
