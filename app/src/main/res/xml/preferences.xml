@@ -4,6 +4,8 @@
 
     <PreferenceCategory android:title="@string/pref.profile.category">
         <PreferenceScreen
+            app:singleLineTitle="false"
+            android:summary="@string/pref_vehicle_profile_settings_summary"
             android:key="pref.profiles"
             android:title="@string/pref.settings">
             <org.obd.graphs.preferences.profile.ProfileListPreference
@@ -36,6 +38,8 @@
 
     <PreferenceCategory android:title="@string/pref.vehicle.properties">
         <PreferenceScreen
+            android:summary="@string/pref_metadata_settings_summary"
+            app:singleLineTitle="false"
             android:key="pref.vehicle.properties"
             android:title="@string/pref.settings">
             <PreferenceCategory android:title="@string/pref.vehicle.properties">
@@ -51,6 +55,8 @@
 
     <PreferenceCategory android:title="@string/pref.registry.category">
         <PreferenceScreen
+            app:singleLineTitle="false"
+            android:summary="@string/pref_pid_registry_settings_summary"
             android:key="pref.registry"
             android:title="@string/pref.settings">
 
@@ -116,7 +122,9 @@
 
     <PreferenceCategory android:title="@string/pref.adapter_category">
         <PreferenceScreen
+            app:singleLineTitle="false"
             android:key="pref.adapter"
+            android:summary="@string/pref_adapter_settings_summary"
             android:title="@string/pref.settings">
 
             <PreferenceCategory android:title="@string/pref.selected_connection_category">
@@ -328,6 +336,8 @@
         android:title="@string/pref.power_category">
 
         <PreferenceScreen
+            app:singleLineTitle="false"
+            android:summary="@string/pref_power_settings_summary"
             android:key="pref.power"
             android:title="@string/pref.settings">
 
