@@ -16,6 +16,8 @@ import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.bl.datalogger.DataLoggerPreferences
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesPreferenceDialog
+import org.obd.graphs.preferences.pid.supported.SupportedPIDsListPreferences
+import org.obd.graphs.preferences.pid.supported.SupportedPIDsPreferenceDialog
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.ui.common.onDoubleClickListener
@@ -39,6 +41,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             is VehicleCapabilitiesListPreferences -> {
                 VehicleCapabilitiesPreferenceDialog().show(parentFragmentManager, null)
             }
+
+            is SupportedPIDsListPreferences -> {
+                SupportedPIDsPreferenceDialog().show(parentFragmentManager, null)
+            }
+
             else -> {
                 super.onDisplayPreferenceDialog(preference)
             }

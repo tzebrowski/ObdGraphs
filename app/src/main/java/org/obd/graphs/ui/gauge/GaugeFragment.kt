@@ -88,7 +88,7 @@ class GaugeFragment : Fragment() {
             recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView,
             metricsIdsPref = GAUGE_SELECTED_METRICS_PREF,
             adapterContext = AdapterContext(
-                layoutId = R.layout.gauge_item,
+                layoutId = R.layout.item_gauge,
                 spanCount = calculateSpan()
             ),
 

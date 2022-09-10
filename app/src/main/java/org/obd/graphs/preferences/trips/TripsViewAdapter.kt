@@ -42,7 +42,7 @@ class TripsViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.trip_item, parent, false))
+        return ViewHolder(mInflater.inflate(R.layout.item_trip, parent, false))
     }
 
     override fun onBindViewHolder(

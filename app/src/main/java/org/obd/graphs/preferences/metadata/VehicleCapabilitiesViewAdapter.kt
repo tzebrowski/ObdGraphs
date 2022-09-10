@@ -24,7 +24,7 @@ class VehicleCapabilitiesViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.vehicle_capability_item, parent, false))
+        return ViewHolder(mInflater.inflate(R.layout.item_vehicle_capability, parent, false))
     }
 
     override fun onBindViewHolder(

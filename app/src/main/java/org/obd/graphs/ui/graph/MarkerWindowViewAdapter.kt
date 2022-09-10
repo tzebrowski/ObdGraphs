@@ -23,7 +23,7 @@ class MarkerWindowViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        val view: View = mInflater.inflate(R.layout.metric_item, parent, false)
+        val view: View = mInflater.inflate(R.layout.item_metric, parent, false)
         return ViewHolder(view)
     }
 

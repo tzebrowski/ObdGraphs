@@ -27,7 +27,7 @@ class TripDetailsViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.metric_item, parent, false))
+        return ViewHolder(mInflater.inflate(R.layout.item_metric, parent, false))
     }
 
     override fun onBindViewHolder(

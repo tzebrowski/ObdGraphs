@@ -62,7 +62,7 @@
 
             <PreferenceCategory android:title="@string/pref.registry.category">
 
-                <org.obd.graphs.preferences.pid.ECUSupportedPIDsPreferences
+                <org.obd.graphs.preferences.pid.supported.SupportedPIDsListPreferences
                     app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.pids_supported"
                     android:key="pref.pids.supported"

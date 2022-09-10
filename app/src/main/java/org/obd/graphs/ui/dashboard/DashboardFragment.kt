@@ -123,7 +123,7 @@ class DashboardFragment : Fragment() {
             recyclerView = root.findViewById(R.id.dashboard_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext = AdapterContext(
-                layoutId = R.layout.dashboard_item,
+                layoutId = R.layout.item_dashboard,
                 spanCount = calculateSpanCount(),
                 height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
             ),

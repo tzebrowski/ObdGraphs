@@ -3,6 +3,7 @@ package org.obd.graphs.preferences
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.metrics.api.model.VehicleCapabilities
 
 class VehicleProperty(var name: String, var value: String)
@@ -24,8 +25,10 @@ class VehicleCapabilitiesManager {
         }
     }
 
-    fun getCapabilities(): MutableSet<String> {
-        return Prefs.getStringSet(VEHICLE_CAPABILITIES, emptySet())!!
+    fun getCapabilities(): MutableList<String> {
+        val pidList = DataLogger.instance.pidDefinitionRegistry().findAll()
+        return Prefs.getStringSet(VEHICLE_CAPABILITIES, emptySet())!!.toMutableList()
+            .sortedWith(compareBy{t -> pidList.firstOrNull { a -> a.pid == t.uppercase() } }).toMutableList()
     }
 
     fun getVehicleCapabilities(): MutableList<VehicleProperty> {

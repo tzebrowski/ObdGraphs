@@ -28,7 +28,7 @@ class MetricsViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(inflater.inflate(R.layout.metric_item, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.item_metric, parent, false))
     }
 
     override fun onBindViewHolder(

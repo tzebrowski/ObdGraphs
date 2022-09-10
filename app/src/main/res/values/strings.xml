@@ -183,6 +183,9 @@
     <string name="pref_metadata_settings_summary">Under this section you can find Vehicle metadata fetched from the ECU like VIN,ECU type,hardware serial number,etc</string>
     <string name="pref_vehicle_profile_settings_summary">Under this section you can find preferences related to Vehicle Profiles. You would be able to change here vehicle profile to the other one.</string>
     <string name="pref_power_settings_summary">Under this section you can find Power related preferences. You would be able to define here how Application should behave when charger is connected/disconnected</string>
+    <string name="supported_pids_status">Status</string>
+    <string name="supported_pids_name">Name</string>
+    <string name="supported_pids_file">File</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="0">0</item>
