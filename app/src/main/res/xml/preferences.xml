@@ -127,8 +127,11 @@
             android:summary="@string/pref_adapter_settings_summary"
             android:title="@string/pref.settings">
 
-            <PreferenceCategory android:title="@string/pref.selected_connection_category">
+            <PreferenceCategory android:title="@string/pref.connection.category">
                 <PreferenceScreen
+                    app:singleLineTitle="false"
+                    android:summary="@string/pref.connection.category.summary"
+                    app:title="@string/pref.connection.category"
                     android:key="pref.adapter.connection"
                     android:title="@string/pref.settings">
 
@@ -181,6 +184,8 @@
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.init_category">
                 <PreferenceScreen
+                    app:singleLineTitle="false"
+                    android:summary="@string/pref.init_category_summary"
                     android:key="pref.init"
                     android:title="@string/pref.settings">
 
