@@ -17,7 +17,7 @@ class AdaptersListPreferences(
     ListPreference(context, attrs) {
 
     init {
-        setOnPreferenceClickListener {
+        setOnPreferenceChangeListener{ _,_ ->
             navigateToPreferencesScreen("pref.adapter.connection")
             true
         }
