@@ -247,8 +247,10 @@
             </PreferenceCategory>
 
 
-            <PreferenceCategory android:title="@string/pref.adapter_error_handling">
+            <PreferenceCategory
+                android:title="@string/pref.adapter_error_handling">
                 <PreferenceScreen android:title="@string/pref.settings"
+                    android:summary="@string/pref.adapter_error_handling_summary"
                     android:key="pref.adapter.errors">
 
                     <CheckBoxPreference

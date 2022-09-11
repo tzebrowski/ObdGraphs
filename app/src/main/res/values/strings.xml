@@ -176,11 +176,12 @@
     <string name="pref_pids_display_only_ecu_supported_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which are supported by ECU.\nAll others will not be visible.</string>
     <string name="pref.adapter_batch_enabled_summary">This feature allows to fetch up to 6 PIDs/Sensors in single ECU query.\nWhen feature is enabled it increase performance.</string>
     <string name="pref.adapter_error_handling">Errors handling</string>
+    <string name="pref.adapter_error_handling_summary">Under this category you can find settings related to the error handling, like re-connect strategy</string>
 
     <string name="pref_pids_display_only_stable_pids">Disable experimental OBD2 PIDs/Sensors</string>
     <string name="pref_pids_display_only_stable_pids_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which have stable formula calculation.\nExperimental one will not be visible.</string>
     <string name="gauge_item_bg_content_description">Gauge background</string>
-    <string name="pref_adapter_settings_summary">Under this section you can find all Adapter related preferences,like connection type settings((BT,Wifi)) or settings for CAN headers</string>
+    <string name="pref_adapter_settings_summary">Under this section you can find all Adapter related preferences,like connection type settings(BT,Wifi), CAN headers settings or error handling</string>
     <string name="pref_pid_registry_settings_summary">Under this section you can find preferences related to OBD2 PIDs/Sensors configuration. You would be able to set here OBD2 PIDs/Sensors you would like to fetch from the Adapter</string>
     <string name="pref_metadata_settings_summary">Under this section you can find Vehicle metadata fetched from the ECU like VIN,ECU type,hardware serial number,etc</string>
     <string name="pref_vehicle_profile_settings_summary">Under this section you can find preferences related to Vehicle Profiles. You would be able to change here vehicle profile to the other one.</string>
