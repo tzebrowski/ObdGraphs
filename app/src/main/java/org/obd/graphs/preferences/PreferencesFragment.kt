@@ -13,7 +13,6 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.bl.datalogger.DataLoggerPreferences
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesPreferenceDialog
 import org.obd.graphs.preferences.pid.supported.SupportedPIDsListPreferences
@@ -30,8 +29,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             Log.v("Prefs", "Preference $key changed")
         }
-
-    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
 
     override fun onDisplayPreferenceDialog(preference: Preference?) {
         when (preference) {

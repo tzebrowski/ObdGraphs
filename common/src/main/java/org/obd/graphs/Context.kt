@@ -20,11 +20,10 @@ fun getContext(): ContextWrapper? =
     when {
         //Application context has priority over Car context
         ::activityContext.isInitialized -> {
-            Log.v(LOG_KEY,"Application context is initialized")
+            Log.v(LOG_KEY,"Application context is not initialized yet")
             activityContext.get()
         }
         ::carContext.isInitialized -> {
-            Log.v(LOG_KEY,"Car context is initialized")
             carContext.get()
         }
         else -> {

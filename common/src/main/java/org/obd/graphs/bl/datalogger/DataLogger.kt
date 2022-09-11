@@ -57,7 +57,6 @@ class DataLogger internal constructor() {
     }
 
 
-    private val preferences by lazy { DataLoggerPreferences.instance }
 
     private var metricsAggregator = MetricsCollector()
     private var reconnectAttemptCount = 0
@@ -84,9 +83,9 @@ class DataLogger internal constructor() {
                 "An error occurred during interaction with the device. Msg: $msg"
             )
 
-            if (preferences.reconnectWhenError && reconnectAttemptCount < preferences.maxReconnectRetry) {
+            if (dataLoggerPreferences.instance.reconnectWhenError && reconnectAttemptCount < dataLoggerPreferences.instance.maxReconnectRetry) {
 
-                if (preferences.reconnectSilent) {
+                if (dataLoggerPreferences.instance.reconnectSilent) {
                     reconnecting = true
                 }
 
@@ -159,8 +158,8 @@ class DataLogger internal constructor() {
     }
 
     fun stop() {
-        Log.i(LOGGER_TAG, "Sending STOP to workflow with 'graceful.stop' parameter = ${preferences.gracefulStop}")
-        workflow.stop(preferences.gracefulStop)
+        Log.i(LOGGER_TAG, "Sending STOP to workflow with 'graceful.stop' parameter = ${dataLoggerPreferences.instance.gracefulStop}")
+        workflow.stop(dataLoggerPreferences.instance.gracefulStop)
     }
 
     fun start() {
@@ -177,14 +176,14 @@ class DataLogger internal constructor() {
         }
     }
 
-    private fun connection() = if (preferences.connectionType == "wifi") {
+    private fun connection() = if (dataLoggerPreferences.instance.connectionType == "wifi") {
         wifiConnection()
     } else {
         bluetoothConnection()
     }
 
     private fun bluetoothConnection(): AdapterConnection? = try {
-        val deviceName = preferences.adapterId
+        val deviceName = dataLoggerPreferences.instance.adapterId
         Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
 
         if (deviceName.isEmpty()) {
@@ -208,9 +207,9 @@ class DataLogger internal constructor() {
     private fun wifiConnection() = try {
         Log.i(
             LOGGER_TAG,
-            "Creating TCP connection: ${preferences.tcpHost}:${preferences.tcpPort}."
+            "Creating TCP connection: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
         )
-        WifiConnection.of(preferences.tcpHost, preferences.tcpPort)
+        WifiConnection.of(dataLoggerPreferences.instance.tcpHost, dataLoggerPreferences.instance.tcpPort)
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
         sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
@@ -218,35 +217,35 @@ class DataLogger internal constructor() {
     }
 
     private fun init() = Init.builder()
-        .delay(preferences.initDelay)
+        .delay(dataLoggerPreferences.instance.initDelay)
         .headers(getModesAndHeaders().map { entry ->
             Init.Header.builder().mode(entry.key).header(entry.value).build()
         }.toMutableList())
-        .fetchDeviceProperties(preferences.fetchDeviceProperties)
-        .fetchSupportedPids(preferences.fetchSupportedPids)
-        .protocol(Init.Protocol.valueOf(preferences.initProtocol))
+        .fetchDeviceProperties(dataLoggerPreferences.instance.fetchDeviceProperties)
+        .fetchSupportedPids(dataLoggerPreferences.instance.fetchSupportedPids)
+        .protocol(Init.Protocol.valueOf(dataLoggerPreferences.instance.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
     private fun adjustments() = Adjustments.builder()
-        .batchEnabled(preferences.batchEnabled)
-        .responseLengthEnabled(preferences.responseLengthEnabled)
+        .batchEnabled(dataLoggerPreferences.instance.batchEnabled)
+        .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
         .cacheConfig(
             CacheConfig.builder()
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
-                .resultCacheEnabled(preferences.resultsCacheEnabled).build()
+                .resultCacheEnabled(dataLoggerPreferences.instance.resultsCacheEnabled).build()
         )
         .generator(
             GeneratorSpec
                 .builder()
                 .smart(true)
-                .enabled(preferences.generatorEnabled)
+                .enabled(dataLoggerPreferences.instance.generatorEnabled)
                 .increment(0.5).build()
         ).adaptiveTiming(
             AdaptiveTimeoutPolicy
                 .builder()
-                .enabled(preferences.adaptiveConnectionEnabled)
+                .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
                 .checkInterval(5000) //10s
-                .commandFrequency(preferences.commandFrequency)
+                .commandFrequency(dataLoggerPreferences.instance.commandFrequency)
                 .minimumTimeout(100)
                 .build()
         ).build()
@@ -255,7 +254,7 @@ class DataLogger internal constructor() {
         .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine("rhino").build())
         .pids(
             Pids.builder().resources(
-                preferences.resources.map {
+                dataLoggerPreferences.instance.resources.map {
                     if (isExternalStorageResource(it)) {
                         externalResourceToURL(it)
                     } else {
@@ -268,5 +267,5 @@ class DataLogger internal constructor() {
         .lifecycle(lifecycle)
         .initialize()
 
-    private fun query() = Query.builder().pids(preferences.pids).build()
+    private fun query() = Query.builder().pids(dataLoggerPreferences.instance.pids).build()
 }

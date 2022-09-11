@@ -22,15 +22,13 @@ internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
     private lateinit var socket: BluetoothSocket
     private var device: String? = btDeviceName
 
-    val preferences: DataLoggerPreferences by lazy { DataLoggerPreferences.instance }
-
     init {
         Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $btDeviceName")
     }
 
     override fun reconnect() {
         Log.i(LOGGER_TAG, "Reconnecting to the device: $device")
-        if (preferences.reconnectWhenError && preferences.hardReset) {
+        if (dataLoggerPreferences.instance .reconnectWhenError && dataLoggerPreferences.instance .hardReset) {
             throw IOException("Doing hard reset")
         }
         input?.close()
