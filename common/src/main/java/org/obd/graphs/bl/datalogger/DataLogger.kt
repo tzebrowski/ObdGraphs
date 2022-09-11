@@ -62,11 +62,14 @@ class DataLogger internal constructor() {
     private var metricsAggregator = MetricsCollector()
     private var reconnectAttemptCount = 0
     private val broadcastReceiver = EventsReceiver()
+    private var reconnecting = false
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
             Log.i(LOGGER_TAG, "Start collecting process")
-            sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
+            if (!reconnecting) {
+                sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
+            }
         }
 
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
@@ -81,17 +84,24 @@ class DataLogger internal constructor() {
                 "An error occurred during interaction with the device. Msg: $msg"
             )
 
-            stop()
-
             if (preferences.reconnectWhenError && reconnectAttemptCount < preferences.maxReconnectRetry) {
+
+                if (preferences.reconnectSilent) {
+                    reconnecting = true
+                }
+
                 Log.e(
                     LOGGER_TAG,
                     "Flag to reconnect automatically when errors occurs is turn on." +
                             " Re-establishing new connection. Reconnect attempt count=$reconnectAttemptCount"
                 )
+
+                stop()
                 start()
                 reconnectAttemptCount++
             } else {
+                reconnecting = false
+                stop()
                 reconnectAttemptCount = 0
                 sendBroadcastEvent(DATA_LOGGER_ERROR_EVENT)
             }
@@ -104,13 +114,16 @@ class DataLogger internal constructor() {
             )
 
             metricsAggregator.reset()
-
-            sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
+            if (!reconnecting) {
+                sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
+            }
         }
 
         override fun onStopping() {
             Log.i(LOGGER_TAG, "Stopping collecting process...")
-            sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
+            if (!reconnecting) {
+                sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
+            }
         }
     }
 
@@ -146,7 +159,7 @@ class DataLogger internal constructor() {
     }
 
     fun stop() {
-        Log.i(LOGGER_TAG, "Sending STOP to workflow with graceful.stop parameter = ${preferences.gracefulStop}")
+        Log.i(LOGGER_TAG, "Sending STOP to workflow with 'graceful.stop' parameter = ${preferences.gracefulStop}")
         workflow.stop(preferences.gracefulStop)
     }
 

@@ -16,6 +16,7 @@ data class DataLoggerPreferences(
     var tcpHost: String,
     var tcpPort: Int,
     var batchEnabled: Boolean,
+    var reconnectSilent: Boolean,
     var reconnectWhenError: Boolean,
     var adapterId: String,
     var commandFrequency: Long,
@@ -107,6 +108,9 @@ private class SharedPreferenceChangeListener(val dataLoggerPreferences: DataLogg
             "pref.adapter.init.fetchSupportedPids" -> dataLoggerPreferences.fetchSupportedPids =
                 Prefs.getBoolean(key, true)
 
+            "pref.adapter.reconnect.silent" -> dataLoggerPreferences.reconnectSilent =
+                Prefs.getBoolean(key, true)
+
             "pref.pids.registry.list" -> dataLoggerPreferences.resources =
                 resources()
         }
@@ -145,6 +149,7 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
 
     val gracefulStop = Prefs.getBoolean("pref.adapter.graceful_stop.enabled" , true)
 
+    val reconnectSilent =  Prefs.getBoolean("pref.adapter.reconnect.silent" , true)
 
     val dataLoggerPreferences = DataLoggerPreferences(
         pids = getPIDsToQuery(),
@@ -167,7 +172,8 @@ private fun getDataLoggerPreferences(): DataLoggerPreferences {
         fetchDeviceProperties = fetchDeviceProperties,
         fetchSupportedPids = fetchSupportedPids,
         responseLengthEnabled = responseLength,
-        gracefulStop = gracefulStop
+        gracefulStop = gracefulStop,
+        reconnectSilent = reconnectSilent
     )
 
     Log.i(LOGGER_KEY, "Loaded data logger preferences: $dataLoggerPreferences")

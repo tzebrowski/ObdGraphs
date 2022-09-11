@@ -258,6 +258,13 @@
                         android:key="pref.adapter.reconnect"
                         android:title="@string/pref.adapter_reconnect" />
 
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:dialogTitle="@string/pref.adapter_reconnect_silent"
+                        android:key="pref.adapter.reconnect.silent"
+                        android:title="@string/pref.adapter_reconnect_silent" />
+
                     <ListPreference
                         app:singleLineTitle="false"
                         android:defaultValue="6"
