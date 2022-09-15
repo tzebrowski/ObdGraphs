@@ -11,14 +11,14 @@
 
             <PreferenceCategory android:title="@string/pref.registry.category">
 
-                <org.obd.graphs.preferences.pid.supported.SupportedPIDsListPreferences
+                <org.obd.graphs.preferences.metadata.SupportedPIDsListPreferences
                     app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.pids_supported"
                     android:key="pref.pids.supported"
                     android:summary="@string/pref.pids_supported_summary"
                     android:title="@string/pref.pids_supported" />
 
-                <org.obd.graphs.preferences.pid.FilterBySupportedPIDsAction
+                <org.obd.graphs.preferences.metadata.FilterBySupportedPIDsAction
                     app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref_pids_display_only_ecu_supported"
@@ -26,7 +26,7 @@
                     android:title="@string/pref_pids_display_only_ecu_supported"
                     android:summary="@string/pref_pids_display_only_ecu_supported_summary"/>
 
-                <org.obd.graphs.preferences.pid.FilterByStablePIDsAction
+                <org.obd.graphs.preferences.metadata.FilterByStablePIDsAction
                     app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref_pids_display_only_ecu_supported"

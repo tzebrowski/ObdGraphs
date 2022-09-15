@@ -1,4 +1,4 @@
-package org.obd.graphs.preferences.pid.supported
+package org.obd.graphs.preferences.metadata
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -12,9 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.preferences.vehicleCapabilitiesManager
-import org.obd.metrics.pid.PidDefinition
 
 
 class SupportedPIDsPreferenceDialog : DialogFragment() {

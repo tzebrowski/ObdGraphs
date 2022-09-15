@@ -15,8 +15,8 @@ import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesPreferenceDialog
-import org.obd.graphs.preferences.pid.supported.SupportedPIDsListPreferences
-import org.obd.graphs.preferences.pid.supported.SupportedPIDsPreferenceDialog
+import org.obd.graphs.preferences.metadata.SupportedPIDsListPreferences
+import org.obd.graphs.preferences.metadata.SupportedPIDsPreferenceDialog
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.ui.common.onDoubleClickListener

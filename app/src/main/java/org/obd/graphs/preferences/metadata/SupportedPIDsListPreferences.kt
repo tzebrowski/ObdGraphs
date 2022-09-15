@@ -1,4 +1,4 @@
-package org.obd.graphs.preferences.pid.supported
+package org.obd.graphs.preferences.metadata
 
 import android.content.Context
 import android.util.AttributeSet
