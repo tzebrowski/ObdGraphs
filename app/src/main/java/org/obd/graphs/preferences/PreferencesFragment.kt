@@ -42,7 +42,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             is SupportedPIDsListPreferences -> {
                 SupportedPIDsPreferenceDialog().show(parentFragmentManager, null)
             }
-
             else -> {
                 super.onDisplayPreferenceDialog(preference)
             }

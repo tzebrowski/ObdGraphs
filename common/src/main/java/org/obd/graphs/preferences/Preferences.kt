@@ -10,6 +10,11 @@ val Prefs: SharedPreferences by lazy {
     )
 }
 
+
+fun SharedPreferences.updateBoolean(key: String, value: Boolean) {
+    edit().putBoolean(key, value).apply()
+}
+
 fun SharedPreferences.updateString(key: String, value: String?) {
     edit().putString(key, value).apply()
 }

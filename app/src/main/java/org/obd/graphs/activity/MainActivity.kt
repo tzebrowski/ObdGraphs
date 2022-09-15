@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import org.obd.graphs.*
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.profile.vehicleProfile
+import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -110,5 +111,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     private fun setupPreferences() {
         Prefs.updateString("pref.about.build_version", BuildConfig.VERSION_NAME)
+        Prefs.updateBoolean("pref.debug.logging.enabled", false)
     }
 }

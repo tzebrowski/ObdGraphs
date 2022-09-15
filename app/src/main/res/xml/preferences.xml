@@ -2,57 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:key="pref.root">
 
-    <PreferenceCategory android:title="@string/pref.profile.category">
-        <PreferenceScreen
-            app:singleLineTitle="false"
-            android:summary="@string/pref_vehicle_profile_settings_summary"
-            android:key="pref.profiles"
-            android:title="@string/pref.settings">
-            <org.obd.graphs.preferences.profile.ProfileListPreference
-                android:key="pref.profile.id"
-                android:title="@string/pref.profile.available_list"
-                app:useSimpleSummaryProvider="true" />
-
-            <org.obd.graphs.preferences.profile.ProfileSavePreferenceAction
-                android:key="pref.profile.save_current"
-                android:summary="@string/pref.profile.save_user_settings_summary"
-                android:title="@string/pref.profile.save_user_settings" />
-
-            <org.obd.graphs.preferences.profile.ProfileNamePreference
-                android:dialogTitle="@string/pref.profile.update_name"
-                android:key="pref.profile.current_name"
-                android:title="@string/pref.profile.update_name"
-                app:useSimpleSummaryProvider="true" />
-
-            <ListPreference
-                android:entries="@array/pref.numbers_3_10"
-                android:entryValues="@array/pref.numbers_3_10"
-                android:defaultValue="5"
-                android:dialogTitle="@string/pref.profile.max_profiles"
-                android:inputType="number"
-                android:key="pref.profile.max_profiles"
-                android:title="@string/pref.profile.max_profiles"
-                app:useSimpleSummaryProvider="true" />
-        </PreferenceScreen>
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/pref.vehicle.properties">
-        <PreferenceScreen
-            android:summary="@string/pref_metadata_settings_summary"
-            app:singleLineTitle="false"
-            android:key="pref.vehicle.properties"
-            android:title="@string/pref.settings">
-            <PreferenceCategory android:title="@string/pref.vehicle.properties">
-                <org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
-                    app:singleLineTitle="false"
-                    android:dialogTitle="@string/pref.vehicle.properties"
-                    android:key="pref.vehicle.properties.list"
-                    android:summary="@string/pref.vehicle.properties.summary"
-                    android:title="@string/pref.vehicle.properties"/>
-            </PreferenceCategory>
-        </PreferenceScreen>
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/pref.registry.category">
         <PreferenceScreen
             app:singleLineTitle="false"
@@ -342,6 +291,57 @@
                     android:key="pref.adapter.command.freq"
                     android:title="@string/pref.adapter_command_freq"
                     app:useSimpleSummaryProvider="true" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref.profile.category">
+        <PreferenceScreen
+            app:singleLineTitle="false"
+            android:summary="@string/pref_vehicle_profile_settings_summary"
+            android:key="pref.profiles"
+            android:title="@string/pref.settings">
+            <org.obd.graphs.preferences.profile.ProfileListPreference
+                android:key="pref.profile.id"
+                android:title="@string/pref.profile.available_list"
+                app:useSimpleSummaryProvider="true" />
+
+            <org.obd.graphs.preferences.profile.ProfileSavePreferenceAction
+                android:key="pref.profile.save_current"
+                android:summary="@string/pref.profile.save_user_settings_summary"
+                android:title="@string/pref.profile.save_user_settings" />
+
+            <org.obd.graphs.preferences.profile.ProfileNamePreference
+                android:dialogTitle="@string/pref.profile.update_name"
+                android:key="pref.profile.current_name"
+                android:title="@string/pref.profile.update_name"
+                app:useSimpleSummaryProvider="true" />
+
+            <ListPreference
+                android:entries="@array/pref.numbers_3_10"
+                android:entryValues="@array/pref.numbers_3_10"
+                android:defaultValue="5"
+                android:dialogTitle="@string/pref.profile.max_profiles"
+                android:inputType="number"
+                android:key="pref.profile.max_profiles"
+                android:title="@string/pref.profile.max_profiles"
+                app:useSimpleSummaryProvider="true" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref.vehicle.properties">
+        <PreferenceScreen
+            android:summary="@string/pref_metadata_settings_summary"
+            app:singleLineTitle="false"
+            android:key="pref.vehicle.properties"
+            android:title="@string/pref.settings">
+            <PreferenceCategory android:title="@string/pref.vehicle.properties">
+                <org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
+                    app:singleLineTitle="false"
+                    android:dialogTitle="@string/pref.vehicle.properties"
+                    android:key="pref.vehicle.properties.list"
+                    android:summary="@string/pref.vehicle.properties.summary"
+                    android:title="@string/pref.vehicle.properties"/>
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -678,10 +678,16 @@
         <PreferenceCategory
             android:title="@string/pref.debug_category"
             app:isPreferenceVisible="@bool/DEBUG_BUILD">
+            <org.obd.graphs.preferences.pid.ToggleDebugLogging
+                android:defaultValue="false"
+                android:key="pref.debug.logging.enabled"
+                android:title="@string/pref.debug_logging_enabled" />
+
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
                 android:title="@string/pref.debug_generator_enabled" />
+
         </PreferenceCategory>
     </PreferenceCategory>
 

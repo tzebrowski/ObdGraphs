@@ -12,7 +12,7 @@
         <appender-ref ref="logcat" />
     </logger>
 
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="logcat" />
     </root>
 </configuration>
