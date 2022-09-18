@@ -13,6 +13,8 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
+import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
 import org.obd.graphs.preferences.metadata.VehicleCapabilitiesPreferenceDialog
 import org.obd.graphs.preferences.metadata.SupportedPIDsListPreferences
@@ -42,6 +44,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             is SupportedPIDsListPreferences -> {
                 SupportedPIDsPreferenceDialog().show(parentFragmentManager, null)
             }
+
+            is DiagnosticTroubleCodeListPreferences -> {
+                DiagnosticTroubleCodePreferenceDialog().show(parentFragmentManager, null)
+            }
+
             else -> {
                 super.onDisplayPreferenceDialog(preference)
             }

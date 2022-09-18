@@ -11,7 +11,7 @@ import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.metrics.pid.PidDefinition
-import org.obd.metrics.pid.PidGroup
+import org.obd.metrics.pid.PIDsGroup
 import java.util.*
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
@@ -78,7 +78,7 @@ class PIDsListPreferences(
 
         getPidList()
             .asSequence()
-            .filter { p -> p.group == PidGroup.LIVEDATA}
+            .filter { p -> p.group == PIDsGroup.LIVEDATA}
             .filter { p -> if (stablePIDsEnabled)  p.stable!! else true }
             .filter { p -> predicate.invoke(p) }
             .filter { p-> if (ecuSupportedPIDsEnabled && p.mode == "01")

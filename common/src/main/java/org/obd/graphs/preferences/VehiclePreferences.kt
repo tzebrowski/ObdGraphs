@@ -8,8 +8,9 @@ import org.obd.metrics.api.model.VehicleCapabilities
 
 class VehicleProperty(var name: String, var value: String)
 
-private const val VEHICLE_CAPABILITIES = "pref.datalogger.supported.pids"
-private const val VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
+private const val PREF_VEHICLE_CAPABILITIES = "pref.datalogger.supported.pids"
+private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
+private const val PREF_DTC = "pref.datalogger.dtc"
 
 class VehicleCapabilitiesManager {
 
@@ -19,20 +20,25 @@ class VehicleCapabilitiesManager {
 
     internal fun updateCapabilities(vehicleCapabilities: VehicleCapabilities) {
         Prefs.edit().apply {
-            putStringSet(VEHICLE_CAPABILITIES, vehicleCapabilities.capabilities)
-            putString(VEHICLE_METADATA, mapper.writeValueAsString(vehicleCapabilities.metadata))
+            putStringSet(PREF_VEHICLE_CAPABILITIES, vehicleCapabilities.capabilities)
+            putString(PREF_VEHICLE_METADATA, mapper.writeValueAsString(vehicleCapabilities.metadata))
+            putStringSet(PREF_DTC, vehicleCapabilities.dtc.codes)
             apply()
         }
     }
 
     fun getCapabilities(): MutableList<String> {
         val pidList = DataLogger.instance.pidDefinitionRegistry().findAll()
-        return Prefs.getStringSet(VEHICLE_CAPABILITIES, emptySet())!!.toMutableList()
+        return Prefs.getStringSet(PREF_VEHICLE_CAPABILITIES, emptySet())!!.toMutableList()
             .sortedWith(compareBy{t -> pidList.firstOrNull { a -> a.pid == t.uppercase() } }).toMutableList()
     }
 
+    fun getDTC(): MutableList<String> {
+        return Prefs.getStringSet(PREF_DTC, emptySet())!!.toMutableList()
+    }
+
     fun getVehicleCapabilities(): MutableList<VehicleProperty> {
-        val it = Prefs.getString(VEHICLE_METADATA, "")!!
+        val it = Prefs.getString(PREF_VEHICLE_METADATA, "")!!
         return if (it.isEmpty()) mutableListOf() else {
             val map: Map<String,String> = mapper.readValue(it)
             return map.map { (k,v) -> VehicleProperty(k,v) }.toMutableList()

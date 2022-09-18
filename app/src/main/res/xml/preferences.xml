@@ -86,7 +86,6 @@
                     android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
                     android:key="pref.adapter.init.fetchDTC"
                     android:title="@string/pref.pids.group.enableDTCReadings"/>
-
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -339,7 +338,7 @@
 
     <PreferenceCategory android:title="@string/pref.vehicle.properties">
         <PreferenceScreen
-            android:summary="@string/pref_metadata_settings_summary"
+            android:summary="@string/pref_vehicle_properties_summary"
             app:singleLineTitle="false"
             android:key="pref.vehicle.properties"
             android:title="@string/pref.settings">
@@ -348,11 +347,29 @@
                     app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.vehicle.properties"
                     android:key="pref.vehicle.properties.list"
-                    android:summary="@string/pref.vehicle.properties.summary"
+                    android:summary="@string/pref_vehicle_properties_summary"
                     android:title="@string/pref.vehicle.properties"/>
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref.dtc.title">
+        <PreferenceScreen
+            android:summary="@string/pref_dtc_settings_summary"
+            app:singleLineTitle="false"
+            android:key="pref.dtc"
+            android:title="@string/pref.settings">
+            <PreferenceCategory android:title="@string/pref.dtc.title">
+                <org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
+                    app:singleLineTitle="false"
+                    android:dialogTitle="@string/pref.dtc.title"
+                    android:key="pref.dtc.list"
+                    android:summary="@string/pref_dtc_settings_summary"
+                    android:title="@string/pref.dtc.title"/>
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
 
     <PreferenceCategory
         android:title="@string/pref.power_category">

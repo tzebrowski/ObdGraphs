@@ -121,6 +121,11 @@ internal fun MainActivity.setupNavigationBarButtons() {
             R.id.ctx_menu_view_profiles -> {
                 navigateToPreferencesScreen("pref.profiles")
             }
+
+            R.id.ctx_menu_dtc -> {
+                navigateToPreferencesScreen("pref.dtc")
+            }
+
             R.id.ctx_menu_view_configuration -> {
 
                 navigateToPreferencesScreen(

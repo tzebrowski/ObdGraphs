@@ -20,22 +20,22 @@
             android:paddingEnd="8dp">
 
             <TextView
-                android:id="@+id/capability_name"
+                android:id="@+id/dtc_code"
                 android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:text="@string/pref.vehicle.capability.name"
+                android:text="@string/pref.dtc.code"
                 android:textColor="@color/gray_light"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/dtc_code"
+                android:id="@+id/dtc_description"
                 android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
-                android:text="@string/pref.vehicle.capability.value"
+                android:text="@string/pref.dtc.description"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_light"
                 android:textSize="16sp" />

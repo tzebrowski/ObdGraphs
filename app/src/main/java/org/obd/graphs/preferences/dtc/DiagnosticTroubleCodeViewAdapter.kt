@@ -1,4 +1,4 @@
-package org.obd.graphs.preferences.metadata
+package org.obd.graphs.preferences.dtc
 
 import android.content.Context
 import android.graphics.Color
@@ -9,14 +9,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.preferences.VehicleProperty
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText
 
-class VehicleCapabilitiesViewAdapter internal constructor(
+class DiagnosticTroubleCodeViewAdapter internal constructor(
     context: Context?,
-    private var data: MutableCollection<VehicleProperty>
-) : RecyclerView.Adapter<VehicleCapabilitiesViewAdapter.ViewHolder>() {
+    private var data: MutableCollection<String>
+) : RecyclerView.Adapter<DiagnosticTroubleCodeViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -24,7 +22,7 @@ class VehicleCapabilitiesViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.item_vehicle_capability, parent, false))
+        return ViewHolder(mInflater.inflate(R.layout.item_dtc, parent, false))
     }
 
     override fun onBindViewHolder(
@@ -32,8 +30,7 @@ class VehicleCapabilitiesViewAdapter internal constructor(
         position: Int
     ) {
         data.elementAt(position).run {
-            holder.name.setText(name, COLOR_PHILIPPINE_GREEN,Typeface.NORMAL, 0.8f)
-            holder.value.setText(value, Color.GRAY,Typeface.NORMAL, 1f)
+            holder.code.setText(this, Color.GRAY,Typeface.NORMAL, 1f)
         }
     }
 
@@ -42,7 +39,7 @@ class VehicleCapabilitiesViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var name: TextView = itemView.findViewById(R.id.capability_name)
-        var value: TextView = itemView.findViewById(R.id.dtc_code)
+        var code: TextView = itemView.findViewById(R.id.dtc_code)
+        var description: TextView = itemView.findViewById(R.id.dtc_description)
     }
 }
