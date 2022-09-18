@@ -39,7 +39,7 @@ class DiagnosticTroubleCodeViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var code: TextView = itemView.findViewById(R.id.dtc_code)
+        var code: TextView = itemView.findViewById(R.id.metadata_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
     }
 }

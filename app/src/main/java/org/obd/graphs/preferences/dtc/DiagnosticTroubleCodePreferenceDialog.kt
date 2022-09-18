@@ -29,7 +29,13 @@ class DiagnosticTroubleCodePreferenceDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
-        val adapter = DiagnosticTroubleCodeViewAdapter(context, vehicleCapabilitiesManager.getDTC())
+        val dtc = vehicleCapabilitiesManager.getDTC()
+
+        if (dtc.isEmpty()){
+            dtc.add(resources.getString(R.string.pref_dtc_no_dtc_found))
+        }
+
+        val adapter = DiagnosticTroubleCodeViewAdapter(context, dtc)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter

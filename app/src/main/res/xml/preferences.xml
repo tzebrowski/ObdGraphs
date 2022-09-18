@@ -10,15 +10,21 @@
             android:title="@string/pref.settings">
 
             <PreferenceCategory android:title="@string/pref.registry.category">
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.pids.group.enableCapabilitiesReadings"
+                    android:key="pref.adapter.init.fetchSupportedPids"
+                    android:title="@string/pref.pids.group.enableCapabilitiesReadings"/>
 
-                <org.obd.graphs.preferences.metadata.SupportedPIDsListPreferences
+                <org.obd.graphs.preferences.supported_pids.SupportedPIDsListPreferences
                     app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.pids_supported"
                     android:key="pref.pids.supported"
                     android:summary="@string/pref.pids_supported_summary"
                     android:title="@string/pref.pids_supported" />
 
-                <org.obd.graphs.preferences.metadata.FilterBySupportedPIDsAction
+                <org.obd.graphs.preferences.supported_pids.FilterBySupportedPIDsAction
                     app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref_pids_display_only_ecu_supported"
@@ -26,7 +32,7 @@
                     android:title="@string/pref_pids_display_only_ecu_supported"
                     android:summary="@string/pref_pids_display_only_ecu_supported_summary"/>
 
-                <org.obd.graphs.preferences.metadata.FilterByStablePIDsAction
+                <org.obd.graphs.preferences.supported_pids.FilterByStablePIDsAction
                     app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref_pids_display_only_ecu_supported"
@@ -66,26 +72,7 @@
                     android:summary="@string/pref.pids_generic_low_summary" />
 
 
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="true"
-                    android:dialogTitle="@string/pref.pids.group.enableMetadataReadings"
-                    android:key="pref.adapter.init.fetchDeviceProperties"
-                    android:title="@string/pref.pids.group.enableMetadataReadings"/>
 
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="true"
-                    android:dialogTitle="@string/pref.pids.group.enableCapabilitiesReadings"
-                    android:key="pref.adapter.init.fetchSupportedPids"
-                    android:title="@string/pref.pids.group.enableCapabilitiesReadings"/>
-
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
-                    android:key="pref.adapter.init.fetchDTC"
-                    android:title="@string/pref.pids.group.enableDTCReadings"/>
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -287,8 +274,6 @@
                     android:dialogTitle="@string/pref.adapter_adaptive_enabled"
                     android:key="pref.adapter.adaptive.enabled"
                     android:title="@string/pref.adapter_adaptive_enabled" />
-
-
                 <ListPreference
                     app:singleLineTitle="false"
                     android:defaultValue="6"
@@ -343,12 +328,20 @@
             android:key="pref.vehicle.properties"
             android:title="@string/pref.settings">
             <PreferenceCategory android:title="@string/pref.vehicle.properties">
-                <org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
+                <org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
                     app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.vehicle.properties"
                     android:key="pref.vehicle.properties.list"
                     android:summary="@string/pref_vehicle_properties_summary"
                     android:title="@string/pref.vehicle.properties"/>
+
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.pids.group.enableMetadataReadings"
+                    android:key="pref.adapter.init.fetchDeviceProperties"
+                    android:title="@string/pref.pids.group.enableMetadataReadings"/>
+
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -366,14 +359,20 @@
                     android:key="pref.dtc.list"
                     android:summary="@string/pref_dtc_settings_summary"
                     android:title="@string/pref.dtc.title"/>
+
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
+                    android:key="pref.adapter.init.fetchDTC"
+                    android:title="@string/pref.pids.group.enableDTCReadings"/>
+
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
 
-
     <PreferenceCategory
         android:title="@string/pref.power_category">
-
         <PreferenceScreen
             app:singleLineTitle="false"
             android:summary="@string/pref_power_settings_summary"

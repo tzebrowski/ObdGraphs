@@ -15,10 +15,10 @@ import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
-import org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
-import org.obd.graphs.preferences.metadata.VehicleCapabilitiesPreferenceDialog
-import org.obd.graphs.preferences.metadata.SupportedPIDsListPreferences
-import org.obd.graphs.preferences.metadata.SupportedPIDsPreferenceDialog
+import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
+import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialog
+import org.obd.graphs.preferences.supported_pids.SupportedPIDsListPreferences
+import org.obd.graphs.preferences.supported_pids.SupportedPIDsPreferenceDialog
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.ui.common.onDoubleClickListener
@@ -37,8 +37,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             is TripsListPreferences -> {
                 TripsPreferenceDialog().show(parentFragmentManager, null)
             }
-            is VehicleCapabilitiesListPreferences -> {
-                VehicleCapabilitiesPreferenceDialog().show(parentFragmentManager, null)
+            is VehicleMetadataListPreferences -> {
+                VehicleMetadataPreferenceDialog().show(parentFragmentManager, null)
             }
 
             is SupportedPIDsListPreferences -> {

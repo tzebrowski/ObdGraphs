@@ -81,7 +81,7 @@
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
     <string name="pref.dtc.code">Code</string>
     <string name="pref.dtc.description">Description</string>
-
+    <string name="pref.dtc.no_dtc_found">No Diagnosis Trouble Code (DTC) found.</string>
 
     <string name="pref.vehicle.properties">Vehicle Metadata</string>
     <string name="pref.vehicle.capability.name">Name</string>

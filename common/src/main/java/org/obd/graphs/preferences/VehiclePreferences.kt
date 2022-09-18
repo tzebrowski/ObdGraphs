@@ -6,13 +6,13 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.metrics.api.model.VehicleCapabilities
 
-class VehicleProperty(var name: String, var value: String)
+class VehicleMetadata(var name: String, var value: String)
 
 private const val PREF_VEHICLE_CAPABILITIES = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_DTC = "pref.datalogger.dtc"
 
-class VehicleCapabilitiesManager {
+class PIDsGroupManager {
 
     private var mapper = ObjectMapper().apply {
         registerModule(KotlinModule())
@@ -22,7 +22,7 @@ class VehicleCapabilitiesManager {
         Prefs.edit().apply {
             putStringSet(PREF_VEHICLE_CAPABILITIES, vehicleCapabilities.capabilities)
             putString(PREF_VEHICLE_METADATA, mapper.writeValueAsString(vehicleCapabilities.metadata))
-            putStringSet(PREF_DTC, vehicleCapabilities.dtc.codes)
+            putStringSet(PREF_DTC, vehicleCapabilities.dtc.map { it.code }.toHashSet())
             apply()
         }
     }
@@ -37,16 +37,16 @@ class VehicleCapabilitiesManager {
         return Prefs.getStringSet(PREF_DTC, emptySet())!!.toMutableList()
     }
 
-    fun getVehicleCapabilities(): MutableList<VehicleProperty> {
+    fun getVehicleCapabilities(): MutableList<VehicleMetadata> {
         val it = Prefs.getString(PREF_VEHICLE_METADATA, "")!!
         return if (it.isEmpty()) mutableListOf() else {
             val map: Map<String,String> = mapper.readValue(it)
-            return map.map { (k,v) -> VehicleProperty(k,v) }.toMutableList()
+            return map.map { (k,v) -> VehicleMetadata(k,v) }.toMutableList()
         }
     }
 }
 
-val vehicleCapabilitiesManager =  VehicleCapabilitiesManager()
+val vehicleCapabilitiesManager =  PIDsGroupManager()
 
 
 

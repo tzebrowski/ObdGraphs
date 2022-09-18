@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.preferences.vehicleCapabilitiesManager
 
-class VehicleCapabilitiesPreferenceDialog : DialogFragment() {
+class VehicleMetadataPreferenceDialog : DialogFragment() {
     override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
         dialog?.let {
             it.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -28,8 +28,8 @@ class VehicleCapabilitiesPreferenceDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.dialog_vehicle_capabilities, container, false)
-        val adapter = VehicleCapabilitiesViewAdapter(context, vehicleCapabilitiesManager.getVehicleCapabilities())
+        val root = inflater.inflate(R.layout.dialog_vehicle_metadata, container, false)
+        val adapter = VehicleMetadataViewAdapter(context, vehicleCapabilitiesManager.getVehicleCapabilities())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter

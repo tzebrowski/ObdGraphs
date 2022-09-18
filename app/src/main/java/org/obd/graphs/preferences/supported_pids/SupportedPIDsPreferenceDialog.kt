@@ -1,4 +1,4 @@
-package org.obd.graphs.preferences.metadata
+package org.obd.graphs.preferences.supported_pids
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

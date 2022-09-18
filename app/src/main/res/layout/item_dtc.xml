@@ -20,7 +20,7 @@
             android:paddingEnd="8dp">
 
             <TextView
-                android:id="@+id/dtc_code"
+                android:id="@+id/metadata_value"
                 android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
