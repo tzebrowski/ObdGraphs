@@ -321,19 +321,19 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref.vehicle.properties">
+    <PreferenceCategory android:title="@string/pref.vehicle.metadata_title">
         <PreferenceScreen
-            android:summary="@string/pref_vehicle_properties_summary"
+            android:summary="@string/pref_vehicle_metadata_summary"
             app:singleLineTitle="false"
             android:key="pref.vehicle.properties"
             android:title="@string/pref.settings">
-            <PreferenceCategory android:title="@string/pref.vehicle.properties">
+            <PreferenceCategory android:title="@string/pref.vehicle.metadata_title">
                 <org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
                     app:singleLineTitle="false"
-                    android:dialogTitle="@string/pref.vehicle.properties"
+                    android:dialogTitle="@string/pref.vehicle.metadata_title"
                     android:key="pref.vehicle.properties.list"
-                    android:summary="@string/pref_vehicle_properties_summary"
-                    android:title="@string/pref.vehicle.properties"/>
+                    android:summary="@string/pref_vehicle_metadata_summary"
+                    android:title="@string/pref.vehicle.metadata_title"/>
 
                 <CheckBoxPreference
                     app:singleLineTitle="false"
