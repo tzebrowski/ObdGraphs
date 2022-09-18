@@ -74,8 +74,9 @@
     <string name="pref.adapter_init_header_new">Add header</string>
     <string name="pref.adapter_init_header_settings">CAN header settings</string>
 
-    <string name="pref.adapter_init.fetchSupportedPids">Enable Vehicle supported OBD2 PIDs/Sensors readings during init</string>
-    <string name="pref.adapter_init.fetchDeviceProperties">Enable Vehicle metadata readings during init</string>
+    <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
+    <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
+    <string name="pref.pids.group.enableDTCReadings">Enable Vehicle DTC readings</string>
 
     <string name="pref.vehicle.properties">Vehicle Metadata</string>
     <string name="pref.vehicle.properties.summary">This preference contains Vehicle and Adapter metadata.It might contain properties like: VIN, ECU type, Adapter type.</string>

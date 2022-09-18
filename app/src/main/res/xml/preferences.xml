@@ -65,6 +65,28 @@
                     app:priority="low"
                     android:summary="@string/pref.pids_generic_low_summary" />
 
+
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.pids.group.enableMetadataReadings"
+                    android:key="pref.adapter.init.fetchDeviceProperties"
+                    android:title="@string/pref.pids.group.enableMetadataReadings"/>
+
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.pids.group.enableCapabilitiesReadings"
+                    android:key="pref.adapter.init.fetchSupportedPids"
+                    android:title="@string/pref.pids.group.enableCapabilitiesReadings"/>
+
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
+                    android:key="pref.adapter.init.fetchDTC"
+                    android:title="@string/pref.pids.group.enableDTCReadings"/>
+
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -137,20 +159,6 @@
                     android:summary="@string/pref.init_category_summary"
                     android:key="pref.init"
                     android:title="@string/pref.settings">
-
-                    <CheckBoxPreference
-                        app:singleLineTitle="false"
-                        android:defaultValue="true"
-                        android:dialogTitle="@string/pref.adapter_init.fetchDeviceProperties"
-                        android:key="pref.adapter.init.fetchDeviceProperties"
-                        android:title="@string/pref.adapter_init.fetchDeviceProperties"/>
-
-                    <CheckBoxPreference
-                        app:singleLineTitle="false"
-                        android:defaultValue="true"
-                        android:dialogTitle="@string/pref.adapter_init.fetchSupportedPids"
-                        android:key="pref.adapter.init.fetchSupportedPids"
-                        android:title="@string/pref.adapter_init.fetchSupportedPids"/>
 
                     <ListPreference
                         android:defaultValue="500"
@@ -594,7 +602,6 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.trips.recordings.display_info"
-
                     android:title="@string/pref.trips_recordings_display_info" />
 
                 <CheckBoxPreference
@@ -614,7 +621,6 @@
                 android:defaultValue="true"
                 android:key="pref.dash.view.enabled"
                 android:title="@string/pref.enable_view" />
-
 
             <PreferenceCategory android:title="@string/navigation.title_gauge">
                 <CheckBoxPreference
@@ -648,7 +654,6 @@
                         android:defaultValue="@android:color/holo_green_light"
                         android:key="pref.dash.background_color_2"
                         android:title="@string/pref.dash.background_color_2" />
-
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.general_settings">
@@ -687,7 +692,6 @@
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
                 android:title="@string/pref.debug_generator_enabled" />
-
         </PreferenceCategory>
     </PreferenceCategory>
 
@@ -699,7 +703,6 @@
                app:title="@string/pref.about_build_version"
                android:key="pref.about.build_version"
                app:useSimpleSummaryProvider="true"/>
-
         </PreferenceCategory>
     </PreferenceScreen>
 </PreferenceScreen>

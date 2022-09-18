@@ -5,7 +5,6 @@ import org.obd.graphs.bl.trip.TripManager
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
-import org.obd.metrics.command.obd.SupportedPidsCommand
 
 internal class MetricsCollector : ReplyObserver<Reply<*>>() {
 
@@ -18,7 +17,7 @@ internal class MetricsCollector : ReplyObserver<Reply<*>>() {
     }
 
     override fun onNext(reply: Reply<*>) {
-        if (reply is ObdMetric && reply.command !is SupportedPidsCommand) {
+        if (reply is ObdMetric) {
             reply.command.pid?.let {
                 metrics.postValue(reply)
                 tripManager.addTripEntry(reply)

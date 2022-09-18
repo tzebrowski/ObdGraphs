@@ -33,8 +33,9 @@ data class DataLoggerPreferences(
     var hardReset: Boolean,
     var maxReconnectRetry: Int,
     var resources: Set<String>,
-    var fetchDeviceProperties: Boolean,
-    var fetchSupportedPids: Boolean,
+    var vehicleMetadataReadingEnabled: Boolean,
+    var vehicleCapabilitiesReadingEnabled: Boolean,
+    var vehicleDTCReadingEnabled: Boolean,
     var responseLengthEnabled: Boolean,
     var gracefulStop: Boolean
     )
@@ -81,10 +82,11 @@ class DataLoggerPreferencesManager {
         val maxReconnectRetry =
             Prefs.getS("pref.adapter.reconnect.max_retry", "0").toInt()
 
-        val fetchDeviceProperties =
+        val vehicleMetadataReadingEnabled =
             Prefs.getBoolean("pref.adapter.init.fetchDeviceProperties", true)
 
-        val fetchSupportedPids = Prefs.getBoolean("pref.adapter.init.fetchSupportedPids", true)
+        val vehicleCapabilitiesReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchSupportedPids", true)
+        val vehicleDTCReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchDTC", false)
 
         val responseLength = Prefs.getBoolean("pref.adapter.responseLength.enabled", false)
 
@@ -110,8 +112,9 @@ class DataLoggerPreferencesManager {
             hardReset = hardReset,
             maxReconnectRetry = maxReconnectRetry,
             resources = resources(),
-            fetchDeviceProperties = fetchDeviceProperties,
-            fetchSupportedPids = fetchSupportedPids,
+            vehicleMetadataReadingEnabled = vehicleMetadataReadingEnabled,
+            vehicleCapabilitiesReadingEnabled = vehicleCapabilitiesReadingEnabled,
+            vehicleDTCReadingEnabled = vehicleDTCReadingEnabled,
             responseLengthEnabled = responseLength,
             gracefulStop = gracefulStop,
             reconnectSilent = reconnectSilent
