@@ -11,6 +11,7 @@
 
             <PreferenceCategory android:title="@string/pref.registry.category">
                 <CheckBoxPreference
+                    android:summary="@string/pref.pids.group.enableCapabilitiesReadings_summary"
                     app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.pids.group.enableCapabilitiesReadings"
@@ -336,6 +337,7 @@
                     android:title="@string/pref.vehicle.metadata_title"/>
 
                 <CheckBoxPreference
+                    android:summary="@string/pref.pids.group.enableMetadataReadings_summary"
                     app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.pids.group.enableMetadataReadings"
@@ -361,6 +363,7 @@
                     android:title="@string/pref.dtc.title"/>
 
                 <CheckBoxPreference
+                    android:summary="@string/pref.pids.group.enableDTCReadings_summary"
                     app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
