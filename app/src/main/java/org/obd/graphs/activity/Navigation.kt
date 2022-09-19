@@ -12,8 +12,8 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.DataLoggerService
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
 
@@ -62,6 +62,7 @@ internal fun MainActivity.setupNavigationBar() {
 
     navController.addOnDestinationChangedListener { _, destination, _ ->
         val bottomAppBar =  findViewById<BottomAppBar>(R.id.bottomAppBar)
+        bottomAppBar.menu.findItem(R.id.ctx_menu_dtc).isVisible = DataLogger.instance.isDTCEnabled()
         when (destination.label.toString()) {
             resources.getString(R.string.navigation_title_graph) -> {
                 bottomAppBar.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true

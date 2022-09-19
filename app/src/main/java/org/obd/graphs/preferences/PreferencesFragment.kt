@@ -7,12 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceScreen
+import androidx.preference.*
 import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
@@ -95,7 +93,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
+        hidePreferences()
         return root
+    }
+
+    private fun hidePreferences() {
+        findPreference<PreferenceCategory>("pref.dtc.category")?.isVisible =
+            DataLogger.instance.isDTCEnabled()
     }
 
     private fun registerListeners() {

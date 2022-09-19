@@ -348,7 +348,7 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref.dtc.title">
+    <PreferenceCategory android:title="@string/pref.dtc.title" android:key="pref.dtc.category">
         <PreferenceScreen
             android:summary="@string/pref_dtc_settings_summary"
             app:singleLineTitle="false"

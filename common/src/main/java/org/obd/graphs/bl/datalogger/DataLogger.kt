@@ -17,6 +17,7 @@ import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
+import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
@@ -175,6 +176,8 @@ class DataLogger internal constructor() {
             Log.i(LOGGER_TAG, "Start collecting process")
         }
     }
+
+    fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC).isNotEmpty()
 
     private fun connection() = if (dataLoggerPreferences.instance.connectionType == "wifi") {
         wifiConnection()
