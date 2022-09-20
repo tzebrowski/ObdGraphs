@@ -74,13 +74,21 @@
     <string name="pref.adapter_init_header_new">Add header</string>
     <string name="pref.adapter_init_header_settings">CAN header settings</string>
 
-    <string name="pref.adapter_init.fetchSupportedPids">Enable Vehicle supported OBD2 PIDs/Sensors readings during init</string>
-    <string name="pref.adapter_init.fetchDeviceProperties">Enable Vehicle metadata readings during init</string>
+    <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
+    <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
+    <string name="pref.pids.group.enableDTCReadings">Enable Vehicle DTC readings</string>
+    <string name="pref.pids.group.enableDTCReadings_summary">Enabling this parameter cause DTC codes will be read during the session with ECU</string>
+    <string name="pref.pids.group.enableMetadataReadings_summary">Enabling this parameter cause Vehicle metadata will be read during the session with ECU</string>
+    <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this parameter cause OBD2 PIDs/Sensors will be read during the session with ECU</string>
 
-    <string name="pref.vehicle.properties">Vehicle Metadata</string>
-    <string name="pref.vehicle.properties.summary">This preference contains Vehicle and Adapter metadata.It might contain properties like: VIN, ECU type, Adapter type.</string>
-    <string name="pref.vehicle.capability.name">Name</string>
-    <string name="pref.vehicle.capability.value">Value</string>
+    <string name="pref.dtc.title">Diagnostic Trouble Code</string>
+    <string name="pref.dtc.code">Code</string>
+    <string name="pref.dtc.description">Description</string>
+    <string name="pref.dtc.no_dtc_found">No Diagnosis Trouble Code (DTC) found.</string>
+
+    <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
+    <string name="pref.vehicle.metadata.name">Name</string>
+    <string name="pref.vehicle.metadata.value">Value</string>
 
     <string name="pref.adapter_init_delay">Init delay</string>
     <string name="pref.adapter_init_protocol">Protocol</string>
@@ -187,9 +195,11 @@
     <string name="gauge_item_bg_content_description">Gauge background</string>
     <string name="pref_adapter_settings_summary">Under this section you can find all Adapter related preferences,like connection type settings(BT,Wifi), CAN headers settings or error handling</string>
     <string name="pref_pid_registry_settings_summary">Under this section you can find preferences related to OBD2 PIDs/Sensors configuration. You would be able to set here OBD2 PIDs/Sensors you would like to fetch from the Adapter</string>
-    <string name="pref_metadata_settings_summary">Under this section you can find Vehicle metadata fetched from the ECU like VIN,ECU type,hardware serial number,etc</string>
+    <string name="pref_vehicle_metadata_summary">Under this section you can find Vehicle metadata fetched from the ECU like VIN,ECU type,hardware serial number,etc</string>
     <string name="pref_vehicle_profile_settings_summary">Under this section you can find preferences related to Vehicle Profiles. You would be able to change here vehicle profile to the other one.</string>
     <string name="pref_power_settings_summary">Under this section you can find Power related preferences. You would be able to define here how Application should behave when charger is connected/disconnected</string>
+    <string name="pref_dtc_settings_summary">Under this section you can find Diagnostics Trouble Codes read from ECU.</string>
+
     <string name="supported_pids_status">Status</string>
     <string name="supported_pids_name">Name</string>
     <string name="supported_pids_file">File</string>

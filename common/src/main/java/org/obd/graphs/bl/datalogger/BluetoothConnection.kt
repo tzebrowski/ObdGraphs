@@ -15,20 +15,20 @@ import java.util.concurrent.TimeUnit
 private const val LOGGER_TAG = "BluetoothConnection"
 private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-internal class BluetoothConnection(btDeviceName: String) : AdapterConnection {
+internal class BluetoothConnection(deviceName: String) : AdapterConnection {
 
     private var input: InputStream? = null
     private var output: OutputStream? = null
     private lateinit var socket: BluetoothSocket
-    private var device: String? = btDeviceName
+    private var device: String? = deviceName
 
     init {
-        Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $btDeviceName")
+        Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $deviceName")
     }
 
     override fun reconnect() {
         Log.i(LOGGER_TAG, "Reconnecting to the device: $device")
-        if (dataLoggerPreferences.instance .reconnectWhenError && dataLoggerPreferences.instance .hardReset) {
+        if (dataLoggerPreferences.instance.reconnectWhenError && dataLoggerPreferences.instance .hardReset) {
             throw IOException("Doing hard reset")
         }
         input?.close()

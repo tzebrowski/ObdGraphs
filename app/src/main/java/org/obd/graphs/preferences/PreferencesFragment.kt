@@ -7,16 +7,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceScreen
+import androidx.preference.*
 import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.preferences.metadata.VehicleCapabilitiesListPreferences
-import org.obd.graphs.preferences.metadata.VehicleCapabilitiesPreferenceDialog
-import org.obd.graphs.preferences.pid.supported.SupportedPIDsListPreferences
-import org.obd.graphs.preferences.pid.supported.SupportedPIDsPreferenceDialog
+import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
+import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
+import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
+import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialog
+import org.obd.graphs.preferences.supported_pids.SupportedPIDsListPreferences
+import org.obd.graphs.preferences.supported_pids.SupportedPIDsPreferenceDialog
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.ui.common.onDoubleClickListener
@@ -35,13 +35,18 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             is TripsListPreferences -> {
                 TripsPreferenceDialog().show(parentFragmentManager, null)
             }
-            is VehicleCapabilitiesListPreferences -> {
-                VehicleCapabilitiesPreferenceDialog().show(parentFragmentManager, null)
+            is VehicleMetadataListPreferences -> {
+                VehicleMetadataPreferenceDialog().show(parentFragmentManager, null)
             }
 
             is SupportedPIDsListPreferences -> {
                 SupportedPIDsPreferenceDialog().show(parentFragmentManager, null)
             }
+
+            is DiagnosticTroubleCodeListPreferences -> {
+                DiagnosticTroubleCodePreferenceDialog().show(parentFragmentManager, null)
+            }
+
             else -> {
                 super.onDisplayPreferenceDialog(preference)
             }
@@ -88,7 +93,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)
         listView.setOnTouchListener(onDoubleClickListener(requireContext()))
+        hidePreferences()
         return root
+    }
+
+    private fun hidePreferences() {
+        findPreference<PreferenceCategory>("pref.dtc.category")?.isVisible =
+            DataLogger.instance.isDTCEnabled()
     }
 
     private fun registerListeners() {

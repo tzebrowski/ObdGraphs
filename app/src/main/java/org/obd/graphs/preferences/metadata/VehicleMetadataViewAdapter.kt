@@ -9,14 +9,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.preferences.VehicleProperty
+import org.obd.graphs.preferences.VehicleMetadata
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText
 
-class VehicleCapabilitiesViewAdapter internal constructor(
+class VehicleMetadataViewAdapter internal constructor(
     context: Context?,
-    private var data: MutableCollection<VehicleProperty>
-) : RecyclerView.Adapter<VehicleCapabilitiesViewAdapter.ViewHolder>() {
+    private var data: MutableCollection<VehicleMetadata>
+) : RecyclerView.Adapter<VehicleMetadataViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -24,7 +24,7 @@ class VehicleCapabilitiesViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.item_vehicle_capability, parent, false))
+        return ViewHolder(mInflater.inflate(R.layout.item_vehicle_metadata, parent, false))
     }
 
     override fun onBindViewHolder(
@@ -42,7 +42,7 @@ class VehicleCapabilitiesViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var name: TextView = itemView.findViewById(R.id.capability_name)
-        var value: TextView = itemView.findViewById(R.id.capability_value)
+        var name: TextView = itemView.findViewById(R.id.metadata_name)
+        var value: TextView = itemView.findViewById(R.id.metadata_value)
     }
 }

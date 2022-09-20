@@ -17,6 +17,7 @@ import org.obd.metrics.codec.GeneratorSpec
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
+import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
@@ -176,6 +177,8 @@ class DataLogger internal constructor() {
         }
     }
 
+    fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC).isNotEmpty()
+
     private fun connection() = if (dataLoggerPreferences.instance.connectionType == "wifi") {
         wifiConnection()
     } else {
@@ -221,14 +224,15 @@ class DataLogger internal constructor() {
         .headers(getModesAndHeaders().map { entry ->
             Init.Header.builder().mode(entry.key).header(entry.value).build()
         }.toMutableList())
-        .fetchDeviceProperties(dataLoggerPreferences.instance.fetchDeviceProperties)
-        .fetchSupportedPids(dataLoggerPreferences.instance.fetchSupportedPids)
         .protocol(Init.Protocol.valueOf(dataLoggerPreferences.instance.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
     private fun adjustments() = Adjustments.builder()
         .batchEnabled(dataLoggerPreferences.instance.batchEnabled)
         .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
+        .vehicleMetadataReadingEnabled(dataLoggerPreferences.instance.vehicleMetadataReadingEnabled)
+        .vehicleCapabilitiesReadingEnabled(dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled)
+        .vehicleDtcReadingEnabled(dataLoggerPreferences.instance.vehicleDTCReadingEnabled)
         .cacheConfig(
             CacheConfig.builder()
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
