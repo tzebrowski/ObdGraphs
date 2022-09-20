@@ -33,7 +33,7 @@
 
     <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs/Sensors</string>
     <string name="context_menu.parameters_id_to_display">Displayed OBD2 PIDs/Sensors</string>
-    <string name="context_menu.view_configuration">Quick Settings</string>
+    <string name="context_menu.view_configuration">View Settings</string>
     <string name="context_menu.profiles">Vehicle Profiles</string>
     <string name="context_menu.about">About</string>
     <string name="context_menu.obd2_pids_sensors">OBD2 PIDs/Sensors</string>
