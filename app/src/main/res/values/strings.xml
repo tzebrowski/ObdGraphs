@@ -76,7 +76,11 @@
 
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
-    <string name="pref.pids.group.enableDTCReadings">Enable Vehicle DTC readings</string>
+    <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section.</string>
+    <string name="pref.pids.group.enableDTCReadings">Enable DTC readings</string>
+    <string name="pref.pids.group.show_notification">Enable DTC notifications</string>
+    <string name="pref.pids.group.show_notification_summary">Enabling this option cause you will receive notification when DTC available.</string>
+
     <string name="pref.pids.group.enableDTCReadings_summary">Enabling this parameter cause DTC codes will be read during the session with ECU</string>
     <string name="pref.pids.group.enableMetadataReadings_summary">Enabling this parameter cause Vehicle metadata will be read during the session with ECU</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this parameter cause OBD2 PIDs/Sensors will be read during the session with ECU</string>

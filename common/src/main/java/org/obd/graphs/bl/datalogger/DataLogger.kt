@@ -29,6 +29,7 @@ const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
 const val DATA_LOGGER_ADAPTER_NOT_SET_EVENT = "data.logger.adapter.not_set"
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
+const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
 const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
 const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
@@ -57,8 +58,6 @@ class DataLogger internal constructor() {
         }
     }
 
-
-
     private var metricsAggregator = MetricsCollector()
     private var reconnectAttemptCount = 0
     private val broadcastReceiver = EventsReceiver()
@@ -76,6 +75,11 @@ class DataLogger internal constructor() {
             Log.i(LOGGER_TAG, "We are connected to the vehicle: $vehicleCapabilities")
             vehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
+
+            // notify about DTC
+            if (vehicleCapabilities.dtc.isNotEmpty()){
+                sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
+            }
         }
 
         override fun onError(msg: String, tr: Throwable?) {

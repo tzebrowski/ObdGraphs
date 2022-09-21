@@ -16,6 +16,7 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
@@ -37,6 +38,12 @@ const val DATA_LOGGER_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_ru
 
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
+        DATA_LOGGER_DTC_AVAILABLE -> {
+            if (Prefs.isEnabled("pref.dtc.show_notification")) {
+                toast(R.string.pref_pids_group_dtc_available_message)
+            }
+        }
+
         REQUEST_PERMISSIONS_BT -> {
             requestBluetoothPermissions()
         }
@@ -178,6 +185,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(DATA_LOGGER_ERROR_EVENT)
         addAction(DATA_LOGGER_CONNECTED_EVENT)
         addAction(DATA_LOGGER_NO_NETWORK_EVENT)
+        addAction(DATA_LOGGER_DTC_AVAILABLE)
         addAction(Intent.ACTION_BATTERY_CHANGED)
         addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
         addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)

@@ -370,6 +370,14 @@
                     android:key="pref.adapter.init.fetchDTC"
                     android:title="@string/pref.pids.group.enableDTCReadings"/>
 
+                <CheckBoxPreference
+                    android:summary="@string/pref.pids.group.show_notification_summary"
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.pids.group.show_notification"
+                    android:key="pref.dtc.show_notification"
+                    android:title="@string/pref.pids.group.show_notification"/>
+
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
