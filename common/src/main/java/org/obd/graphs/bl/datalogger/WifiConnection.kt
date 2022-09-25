@@ -1,6 +1,7 @@
 package org.obd.graphs.bl.datalogger
 
 
+import android.util.Log
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
@@ -17,7 +18,7 @@ class WifiConnection(private val inetSocketAddress: InetSocketAddress) : Adapter
     @Throws(IOException::class)
     override fun connect() {
         socket = Socket()
-        socket.connect(inetSocketAddress)
+        socket.connect(inetSocketAddress,dataLoggerPreferences.instance.connectionTimeout)
     }
 
     @Throws(IOException::class)
@@ -57,8 +58,8 @@ class WifiConnection(private val inetSocketAddress: InetSocketAddress) : Adapter
     }
 
     companion object {
-        fun of(host: String?, port: Int): WifiConnection {
-            return WifiConnection(InetSocketAddress(host, port))
+        fun of(): WifiConnection {
+            return WifiConnection(InetSocketAddress(dataLoggerPreferences.instance.tcpHost, dataLoggerPreferences.instance.tcpPort))
         }
     }
 }

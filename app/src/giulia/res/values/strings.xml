@@ -1,5 +1,5 @@
 <resources >
     <string name="app_name">My Giulia</string>
     <string name="pref.about_title">My Giulia is an application intended to display car telemetry  using ELM327 compatible adapters.
-        It has native support for the Alfa Romeo engines like 2.0 GME which can be found in Giulia and Stelvio cars.</string>
+        It has native support for the Alfa Romeo engines like 2.0 GME which can be found in Alfa Rome cars like Giulia and Stelvio.</string>
 </resources>

@@ -94,12 +94,21 @@
                     android:title="@string/pref.settings">
 
                     <ListPreference
+                        android:defaultValue="1000"
+                        android:dialogTitle="@string/pref.connection.connection_type"
+                        android:entries="@array/pref.numbers_500_6000"
+                        android:entryValues="@array/pref.numbers_500_6000"
+                        android:key="pref.adapter.connection.timeout"
+                        android:title="@string/pref.connection.connection_type"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <ListPreference
                         android:defaultValue="bluetooth"
-                        android:dialogTitle="@string/pref.selected_connection_type"
+                        android:dialogTitle="@string/pref.connection.connection_type"
                         android:entries="@array/pref.connection_type_array"
                         android:entryValues="@array/pref.connection_type_array"
                         android:key="pref.adapter.connection.type"
-                        android:title="@string/pref.selected_connection_type"
+                        android:title="@string/pref.connection.connection_type"
                         app:useSimpleSummaryProvider="true" />
 
                     <PreferenceCategory
@@ -149,8 +158,8 @@
 
                     <ListPreference
                         android:defaultValue="500"
-                        android:entries="@array/pref.init_delay"
-                        android:entryValues="@array/pref.init_delay"
+                        android:entries="@array/pref.numbers_500_6000"
+                        android:entryValues="@array/pref.numbers_500_6000"
                         android:inputType="number"
                         android:key="pref.adapter.init.delay"
                         android:title="@string/pref.adapter_init_delay"

@@ -216,7 +216,7 @@ class DataLogger internal constructor() {
             LOGGER_TAG,
             "Creating TCP connection: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
         )
-        WifiConnection.of(dataLoggerPreferences.instance.tcpHost, dataLoggerPreferences.instance.tcpPort)
+        WifiConnection.of()
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
         sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)

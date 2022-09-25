@@ -19,6 +19,7 @@ data class DataLoggerPreferences(
     var connectionType: String,
     var tcpHost: String,
     var tcpPort: Int,
+    var connectionTimeout: Int,
     var batchEnabled: Boolean,
     var reconnectSilent: Boolean,
     var reconnectWhenError: Boolean,
@@ -61,6 +62,8 @@ class DataLoggerPreferencesManager {
 
     private fun loadPreferences(): DataLoggerPreferences {
         val connectionType = Prefs.getS(PREFERENCE_CONNECTION_TYPE, "bluetooth")
+        val timeout = Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
+
         val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
         val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
@@ -117,7 +120,8 @@ class DataLoggerPreferencesManager {
             vehicleDTCReadingEnabled = vehicleDTCReadingEnabled,
             responseLengthEnabled = responseLength,
             gracefulStop = gracefulStop,
-            reconnectSilent = reconnectSilent
+            reconnectSilent = reconnectSilent,
+            connectionTimeout = timeout
         )
 
         Log.d(LOGGER_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
