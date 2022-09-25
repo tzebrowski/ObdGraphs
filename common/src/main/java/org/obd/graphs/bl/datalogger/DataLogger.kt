@@ -13,7 +13,7 @@ import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
-import org.obd.metrics.codec.GeneratorSpec
+import org.obd.metrics.codec.GeneratorPolicy
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
@@ -238,12 +238,12 @@ class DataLogger internal constructor() {
         .vehicleCapabilitiesReadingEnabled(dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled)
         .vehicleDtcReadingEnabled(dataLoggerPreferences.instance.vehicleDTCReadingEnabled)
         .cacheConfig(
-            CacheConfig.builder()
+            CachePolicy.builder()
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
                 .resultCacheEnabled(dataLoggerPreferences.instance.resultsCacheEnabled).build()
         )
         .generator(
-            GeneratorSpec
+            GeneratorPolicy
                 .builder()
                 .smart(true)
                 .enabled(dataLoggerPreferences.instance.generatorEnabled)
