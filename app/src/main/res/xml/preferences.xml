@@ -246,8 +246,14 @@
                 </PreferenceScreen>
             </PreferenceCategory>
 
-
             <PreferenceCategory android:title="@string/pref.adapter.general_settings">
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.adapter_stn_enabled"
+                    android:key="pref.adapter.stn.enabled"
+                    android:summary="@string/pref.adapter_stn_enabled_summary"
+                    android:title="@string/pref.adapter_stn_enabled" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"

@@ -20,6 +20,7 @@ data class DataLoggerPreferences(
     var tcpHost: String,
     var tcpPort: Int,
     var connectionTimeout: Int,
+    var stnExtensionsEnabled: Boolean,
     var batchEnabled: Boolean,
     var reconnectSilent: Boolean,
     var reconnectWhenError: Boolean,
@@ -63,6 +64,7 @@ class DataLoggerPreferencesManager {
     private fun loadPreferences(): DataLoggerPreferences {
         val connectionType = Prefs.getS(PREFERENCE_CONNECTION_TYPE, "bluetooth")
         val timeout = Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
+        val stnEnabled = Prefs.getBoolean("pref.adapter.stn.enabled", false)
 
         val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
@@ -98,6 +100,7 @@ class DataLoggerPreferencesManager {
         val reconnectSilent = Prefs.getBoolean("pref.adapter.reconnect.silent", true)
 
         val dataLoggerPreferences = DataLoggerPreferences(
+            stnExtensionsEnabled = stnEnabled,
             pids = getPIDsToQuery(),
             connectionType = connectionType,
             tcpHost = tcpHost,

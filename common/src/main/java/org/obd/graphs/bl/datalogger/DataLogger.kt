@@ -233,6 +233,7 @@ class DataLogger internal constructor() {
 
     private fun adjustments() = Adjustments.builder()
         .batchEnabled(dataLoggerPreferences.instance.batchEnabled)
+        .stnExtensionsEnabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
         .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
         .vehicleMetadataReadingEnabled(dataLoggerPreferences.instance.vehicleMetadataReadingEnabled)
         .vehicleCapabilitiesReadingEnabled(dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled)

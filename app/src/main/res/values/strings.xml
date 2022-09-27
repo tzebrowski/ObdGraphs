@@ -49,8 +49,10 @@
 
     <string name="pref.pids_supported">OBD2 PIDs/Sensors supported by ECU\n(fetched after first successful connection to the ECU)</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
-    <string name="pref.adapter_cache_result_enabled">Result cache enabled</string>
-    <string name="pref.adapter_adaptive_enabled">Adaptive timeout enabled</string>
+    <string name="pref.adapter_stn_enabled">Enable STN extensions</string>
+    <string name="pref.adapter_stn_enabled_summary">Enabling this option cause that STX specific commands are used during session with ECU which might increase performance. This option should be turned on only when STNxx based adapter is in use, otherwise it will cause errors. </string>
+    <string name="pref.adapter_cache_result_enabled">Enable result cache</string>
+    <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
     <string name="pref.adapter_reconnect">Enable automatically reconnect when errors occur</string>
     <string name="pref.adapter_reconnect_silent">Enable reconnect silent mode</string>
 
