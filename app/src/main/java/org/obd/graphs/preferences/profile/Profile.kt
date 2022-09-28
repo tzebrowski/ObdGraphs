@@ -37,7 +37,7 @@ class VehicleProfile {
             }
 
     fun setupProfiles() {
-
+        Log.i(LOG_KEY, "Setup profiles enabled='${Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)}'")
         if (!Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)) {
             Log.e(LOG_KEY, "Installing profiles")
 
