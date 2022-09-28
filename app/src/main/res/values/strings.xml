@@ -148,7 +148,7 @@
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Initialization&amp;Protocols</string>
-    <string name="pref.init_category_summary">Under this settings you can find preferences related to the Adapter initialization process like: Protocol, CAN settings</string>
+    <string name="pref.init_category_summary">Under this section you can find preferences related to the Adapter initialization process, e.g: CAN protocol, CAN headers</string>
 
     <string name="main_activity.toggle_toolbar">Toggle toolbar</string>
     <string name="main_activity.btn_start">Start/Stop session with the vehicle</string>
@@ -200,11 +200,11 @@
     <string name="pref_pids_display_only_stable_pids">Disable experimental OBD2 PIDs/Sensors</string>
     <string name="pref_pids_display_only_stable_pids_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which have stable formula calculation.\nExperimental one will not be visible.</string>
     <string name="gauge_item_bg_content_description">Gauge background</string>
-    <string name="pref_adapter_settings_summary">Under this section you can find all Adapter related preferences,like connection type settings(BT,Wifi), CAN headers settings or error handling</string>
-    <string name="pref_pid_registry_settings_summary">Under this section you can find preferences related to OBD2 PIDs/Sensors configuration. You would be able to set here OBD2 PIDs/Sensors you would like to fetch from the Adapter</string>
+    <string name="pref_adapter_settings_summary">Under this section you can find all Adapter related preferences.You can set here connection type Bluetooth or Wifi, CAN preferences or adjust error handling</string>
+    <string name="pref_pid_registry_settings_summary">Under this section you can find preferences related to OBD2 PIDs/Sensors configuration. You can set here OBD2 PIDs/Sensors which should be fetched from the ECU</string>
     <string name="pref_vehicle_metadata_summary">Under this section you can find Vehicle metadata fetched from the ECU like VIN,ECU type,hardware serial number,etc</string>
-    <string name="pref_vehicle_profile_settings_summary">Under this section you can find preferences related to Vehicle Profiles. You would be able to change here vehicle profile to the other one.</string>
-    <string name="pref_power_settings_summary">Under this section you can find Power related preferences. You would be able to define here how Application should behave when charger is connected/disconnected</string>
+    <string name="pref_vehicle_profile_settings_summary">Under this section you can find preferences related to Vehicle Profiles. You can change here vehicle profile.</string>
+    <string name="pref_power_settings_summary">Under this section you can find Power related preferences. You can configure here how Application should behave when charger is connected/disconnected</string>
     <string name="pref_dtc_settings_summary">Under this section you can find Diagnostics Trouble Codes read from ECU.</string>
 
     <string name="supported_pids_status">Status</string>
