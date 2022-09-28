@@ -280,6 +280,8 @@
                     android:title="@string/pref.adapter_response_length_enabled" />
 
                 <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:summary="@string/pref.adapter_graceful_stop_enabled_summary"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.adapter_graceful_stop_enabled"
                     android:key="pref.adapter.graceful_stop.enabled"
@@ -290,7 +292,9 @@
                     android:dialogTitle="@string/pref.adapter_adaptive_enabled"
                     android:key="pref.adapter.adaptive.enabled"
                     android:title="@string/pref.adapter_adaptive_enabled" />
+
                 <ListPreference
+                    android:summary="@string/pref.adapter_command_freq_summary"
                     app:singleLineTitle="false"
                     android:defaultValue="6"
                     android:entries="@array/pref.numbers_1_10"
