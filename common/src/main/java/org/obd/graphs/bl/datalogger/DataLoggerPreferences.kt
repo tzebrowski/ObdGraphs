@@ -42,7 +42,6 @@ data class DataLoggerPreferences(
     var gracefulStop: Boolean
     )
 
-
 class DataLoggerPreferencesManager {
 
     private inner class SharedPreferenceChangeListener :
