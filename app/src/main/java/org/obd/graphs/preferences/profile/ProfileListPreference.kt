@@ -1,11 +1,19 @@
 package org.obd.graphs.preferences.profile
 
 import android.content.Context
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.updateToolbar
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.colorize
 
 class ProfileListPreference(
     context: Context?,
@@ -30,5 +38,9 @@ class ProfileListPreference(
                 navigateToPreferencesScreen(PROFILES_PREF)
                 true
             }
+    }
+
+    override fun getSummary(): CharSequence {
+        return super.getSummary().toString().colorize(COLOR_PHILIPPINE_GREEN, Typeface.BOLD, 1.0f)
     }
 }

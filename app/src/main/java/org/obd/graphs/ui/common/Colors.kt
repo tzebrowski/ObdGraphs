@@ -1,10 +1,34 @@
 package org.obd.graphs.ui.common
 
 import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import androidx.core.content.ContextCompat
 import org.obd.graphs.R.color
 import org.obd.graphs.getContext
 import java.util.*
+
+fun String.colorize(color: Int, typeface: Int, size: Float) : SpannableString {
+
+    var valText: String? = this
+    if (valText == null) {
+        valText = ""
+    }
+
+    val valSpanString = SpannableString(valText)
+    valSpanString.setSpan(RelativeSizeSpan(size), 0, valSpanString.length, 0) // set size
+    valSpanString.setSpan(StyleSpan(typeface), 0, valSpanString.length, 0)
+    valSpanString.setSpan(
+        ForegroundColorSpan(color),
+        0,
+        valSpanString.length,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+    return valSpanString
+}
 
 class Colors {
 
