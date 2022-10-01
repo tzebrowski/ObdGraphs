@@ -24,7 +24,8 @@ class VehicleProfile {
     private val BUILT_IN_PROFILES = arrayOf(
         "default.properties",
         "alfa_175_tbi.properties",
-        "alfa_2_0_gme.properties"
+        "alfa_2_0_gme.properties",
+        "alfa_2_0_gme_stn.properties"
     )
 
     fun getProfileList() =
