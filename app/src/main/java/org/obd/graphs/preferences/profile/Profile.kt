@@ -80,7 +80,8 @@ class VehicleProfile {
                 editor.putBoolean(PROFILE_INSTALLATION_KEY, true)
                 editor.apply()
             }
-
+            val defaultProfile = getDefaultProfile()
+            Log.i(LOG_KEY,"Setting default profile to: $defaultProfile")
             loadProfile(getDefaultProfile())
             updateToolbar()
         }
