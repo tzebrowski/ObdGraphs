@@ -488,6 +488,7 @@
 
             <PreferenceCategory android:title="@string/pref.theme">
                 <CheckBoxPreference
+                    app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:key="pref.gauge_display_background"
                     android:title="@string/pref.gauge_display_background" />

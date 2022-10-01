@@ -31,26 +31,26 @@
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
 
-    <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs/Sensors</string>
-    <string name="context_menu.parameters_id_to_display">Displayed OBD2 PIDs/Sensors</string>
+    <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs preferences</string>
+    <string name="context_menu.parameters_id_to_display">Select displayed OBD2 PIDs</string>
     <string name="context_menu.view_configuration">View Settings</string>
     <string name="context_menu.profiles">Vehicle Profiles</string>
     <string name="context_menu.about">About</string>
     <string name="context_menu.obd2_pids_sensors">OBD2 PIDs/Sensors</string>
     <string name="context_menu.custom_action_1">Custom</string>
 
-    <string name="pref.displayed_parameter_ids">Displayed OBD2 PIDs/Sensors</string>
-    <string name="pref.displayed_parameter_ids_summary">Select OBD2 PIDs/Sensors you would like to see on the screen</string>
+    <string name="pref.displayed_parameter_ids">Select displayed OBD2 PIDs</string>
+    <string name="pref.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors you would like to see on the screen</string>
 
     <string name="pref.pids_generic_high">High priority OBD2 PIDs/Sensors</string>
-    <string name="pref.pids_generic_high_summary">Select High priority OBD2 PIDs/Sensors you would like to query from ECU</string>
+    <string name="pref.pids_generic_high_summary">Choose High priority OBD2 PIDs/Sensors you would like to query from ECU</string>
     <string name="pref.pids_generic_low">Low priority OBD2 PIDs/Sensors</string>
-    <string name="pref.pids_generic_low_summary">Select Low priority OBD2 PIDs/Sensors you would like to query from ECU</string>
+    <string name="pref.pids_generic_low_summary">Choose Low priority OBD2 PIDs/Sensors you would like to query from ECU</string>
 
     <string name="pref.pids_supported">OBD2 PIDs/Sensors supported by ECU\n(fetched after first successful connection to the ECU)</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
     <string name="pref.adapter_stn_enabled">Enable STN extensions</string>
-    <string name="pref.adapter_stn_enabled_summary">Enabling this option cause that STX specific commands are used during session with ECU which might increase performance. This option should be turned on only when STNxx based adapter is in use, otherwise it will cause errors. </string>
+    <string name="pref.adapter_stn_enabled_summary">Enabling this option cause that STNxx chip specific commands are used during session with ECU which might increase performance. This option should be turned on only when STNxx based adapter is in use, otherwise it will cause errors. </string>
     <string name="pref.adapter_cache_result_enabled">Enable result cache</string>
     <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
     <string name="pref.adapter_reconnect">Enable automatically reconnect when errors occur</string>
@@ -68,7 +68,7 @@
     <string name="pref.gauge_display_command_rate">Enable displaying OBD2 PIDs/Sensors frequency</string>
     <string name="pref.gauge_enable_drag_and_drop">Enable drag and drop</string>
     <string name="pref.gauge_display_scale">Enable displaying OBD2 PIDs/Sensors scale</string>
-    <string name="pref.gauge_display_background">Display background</string>
+    <string name="pref.gauge_display_background">Enable custom background color</string>
     <string name="pref.gauge_background_color">Background color</string>
 
     <string name="pref.adapter_init_mode_selected">Select PID Mode</string>
