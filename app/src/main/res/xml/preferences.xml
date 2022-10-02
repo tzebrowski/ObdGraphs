@@ -72,8 +72,6 @@
                     app:priority="low"
                     android:summary="@string/pref.pids_generic_low_summary" />
 
-
-
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -338,6 +336,12 @@
                 android:key="pref.profile.max_profiles"
                 android:title="@string/pref.profile.max_profiles"
                 app:useSimpleSummaryProvider="true" />
+
+            <EditTextPreference
+                android:title="@string/pref.profile.about_title"
+                android:key="pref.profile.about"
+                app:enabled="false"
+                app:useSimpleSummaryProvider="true"/>
         </PreferenceScreen>
     </PreferenceCategory>
 
