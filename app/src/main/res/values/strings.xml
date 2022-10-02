@@ -32,14 +32,14 @@
     <string name="pid.mode">Mode</string>
 
     <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs preferences</string>
-    <string name="context_menu.parameters_id_to_display">Select displayed OBD2 PIDs</string>
+    <string name="context_menu.parameters_id_to_display">Edit displayed OBD2 PIDs</string>
     <string name="context_menu.view_configuration">View Settings</string>
     <string name="context_menu.profiles">Vehicle Profiles</string>
     <string name="context_menu.about">About</string>
     <string name="context_menu.obd2_pids_sensors">OBD2 PIDs/Sensors</string>
     <string name="context_menu.custom_action_1">Custom</string>
 
-    <string name="pref.displayed_parameter_ids">Select displayed OBD2 PIDs</string>
+    <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors you would like to see on the screen</string>
 
     <string name="pref.pids_generic_high">High priority OBD2 PIDs/Sensors</string>
@@ -71,7 +71,7 @@
     <string name="pref.gauge_display_background">Enable custom background color</string>
     <string name="pref.gauge_background_color">Background color</string>
 
-    <string name="pref.adapter_init_mode_selected">Select PID Mode</string>
+    <string name="pref.adapter_init_mode_selected">Edit PID Mode</string>
     <string name="pref.adapter_init_mode_header_selected">Set CAN Header for the current PID Mode</string>
     <string name="pref.adapter_init_mode_set_mode_id">Update PID Mode</string>
     <string name="pref.adapter_init_header_new">Add header</string>
