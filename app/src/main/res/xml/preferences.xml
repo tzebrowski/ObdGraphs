@@ -444,6 +444,277 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref.view_category">
+        <PreferenceScreen  android:key="pref.views"
+            android:title="@string/pref.settings">
+            <PreferenceScreen
+                android:summary="@string/pref.gauge_category"
+                android:title="@string/pref.gauge_category"
+                app:key="pref.gauge">
+
+                <PreferenceCategory android:title="@string/pref.pids_category">
+                    <PreferenceScreen
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids"
+                        android:key="pref.gauge.displayed_parameter_ids">
+                        <PreferenceCategory android:title="@string/pref.pids_category">
+                            <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                                app:useSimpleSummaryProvider="true"
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.gauge.pids.selected"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.displayed_parameter_ids" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.theme">
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.gauge_display_background"
+                        android:title="@string/pref.gauge_display_background" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="@android:color/holo_red_light"
+                        android:key="pref.gauge_background_color"
+                        android:title="@string/pref.gauge_background_color" />
+                </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.general_settings">
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.gauge.view.enabled"
+                        android:title="@string/pref.enable_view" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.gauge_enable_drag_and_drop"
+                        android:title="@string/pref.gauge_enable_drag_and_drop" />
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="false"
+                        android:key="pref.gauge.swipe_to_delete"
+                        android:title="@string/pref.dash_swipe_to_delete" />
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="false"
+                        android:key="pref.gauge_display_command_rate"
+                        android:title="@string/pref.gauge_display_refresh_rate" />
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.gauge_display_scale"
+                        android:title="@string/pref.gauge_display_scale" />
+                </PreferenceCategory>
+            </PreferenceScreen>
+
+            <PreferenceScreen
+                app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
+                android:summary="@string/pref.aa_category"
+                android:title="@string/pref.aa_category"
+                app:key="pref.aa">
+
+                <PreferenceCategory android:title="@string/pref.pids_category">
+                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="@array/pref.empty_array"
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.aa.pids.selected"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids" />
+                </PreferenceCategory>
+
+                <ListPreference
+                    app:singleLineTitle="false"
+                    android:entries="@array/pref.numbers_3_10"
+                    android:entryValues="@array/pref.numbers_3_10"
+                    android:defaultValue="5"
+                    android:dialogTitle="@string/pref.aa.number_of_items_in_column"
+                    android:inputType="number"
+                    android:key="pref.aa.max_pids_in_column"
+                    android:title="@string/pref.aa.number_of_items_in_column"
+                    app:useSimpleSummaryProvider="true" />
+
+
+                <ListPreference
+                    app:singleLineTitle="false"
+                    android:entries="@array/pref.numbers_28_34"
+                    android:entryValues="@array/pref.numbers_28_34"
+                    android:defaultValue="34"
+                    android:dialogTitle="@string/pref.aa.font_size"
+                    android:inputType="number"
+                    android:key="pref.aa.screen_font_size"
+                    android:title="@string/pref.aa.font_size"
+                    app:useSimpleSummaryProvider="true" />
+
+            </PreferenceScreen>
+
+            <PreferenceScreen
+                android:summary="@string/pref.metrics_category"
+                android:title="@string/pref.metrics_category"
+                app:key="pref.metrics">
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.metrics.view.enabled"
+                    android:title="@string/pref.enable_view" />
+            </PreferenceScreen>
+
+            <PreferenceScreen
+                android:summary="@string/pref.graph_category"
+                android:title="@string/pref.graph_category"
+                app:key="pref.graph">
+
+                <PreferenceCategory android:title="@string/pref.pids_category">
+                    <PreferenceScreen
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids"
+                        android:key="pref.graph.displayed_parameter_ids">
+                        <PreferenceCategory android:title="@string/pref.pids_category">
+                            <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                                app:useSimpleSummaryProvider="true"
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.graph.pids.selected"
+                                android:title="@string/pref.displayed_parameter_ids" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.trips_recordings">
+                    <PreferenceScreen
+                        android:summary="@string/pref.trips_recordings"
+                        android:title="@string/pref.trips_recordings"
+                        app:key="pref.gauge.recordings">
+                        <PreferenceCategory android:title="@string/pref.trips_recordings">
+                            <org.obd.graphs.preferences.trips.TripsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:key="pref.graph.trips.selected"
+                                android:summary="@string/pref.graph_trips_selected_summary"
+                                android:title="@string/pref.graph_trips_selected"
+                                />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+                <PreferenceCategory android:title="@string/pref.general_settings">
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.graph.view.enabled"
+                        android:title="@string/pref.enable_view" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.graph.cache.enabled"
+                        android:title="@string/pref.graph_cache_enabled" />
+
+                    <EditTextPreference
+                        android:defaultValue="20"
+                        android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
+                        android:inputType="number"
+                        android:key="pref.graph.x-axis.minimum-shift.time"
+                        android:title="@string/pref.graph_x_axis_minimum_shift_time"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <EditTextPreference
+                        android:defaultValue="20000"
+                        android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
+                        android:inputType="number"
+                        android:key="pref.graph.x-axis.start-moving-after.time"
+                        android:title="@string/pref.graph_x_axis_start_moving_after_time"
+                        app:useSimpleSummaryProvider="true" />
+                </PreferenceCategory>
+
+
+                <PreferenceCategory android:title="@string/pref.trips_category">
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.trips.recordings.display_info"
+                        android:title="@string/pref.trips_recordings_display_info" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.trips.recordings.save.short.trip"
+                        app:singleLineTitle="false"
+                        android:title="@string/pref.trips_recordings_save_short_trip" />
+                </PreferenceCategory>
+            </PreferenceScreen>
+
+            <PreferenceScreen
+                android:summary="@string/pref.dashboard_category"
+                android:title="@string/pref.dashboard_category"
+                app:key="pref.dashboard">
+
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.dash.view.enabled"
+                    android:title="@string/pref.enable_view" />
+
+                <PreferenceCategory android:title="@string/navigation.title_gauge">
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.gauge.view.visible"
+                        android:title="@string/pref.enable_view" />
+
+                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.dash.gauge_pids.selected"
+                        android:title="@string/pref.displayed_parameter_ids" />
+                </PreferenceCategory>
+                <PreferenceCategory  android:title="@string/navigation.title_dashboard">
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.dash.dash.view.visible"
+                        android:title="@string/pref.enable_view" />
+
+                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.dash.pids.selected"
+                        android:title="@string/pref.displayed_parameter_ids" />
+
+                    <PreferenceCategory android:title="@string/pref.theme">
+                        <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                            android:defaultValue="@android:color/holo_green_light"
+                            android:key="pref.dash.background_color_1"
+                            android:title="@string/pref.dash.background_color_1" />
+
+                        <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                            android:defaultValue="@android:color/holo_green_light"
+                            android:key="pref.dash.background_color_2"
+                            android:title="@string/pref.dash.background_color_2" />
+                    </PreferenceCategory>
+
+                    <PreferenceCategory android:title="@string/pref.general_settings">
+                        <CheckBoxPreference
+                            android:defaultValue="false"
+                            android:key="pref.dash.top.values.blink"
+                            android:title="@string/pref.dash_top_values_blink" />
+
+                        <CheckBoxPreference
+                            android:defaultValue="false"
+                            android:key="pref.dash.enable_drag"
+                            android:title="@string/pref.dash_enable_drag_and_drop" />
+
+                        <CheckBoxPreference
+                            android:defaultValue="false"
+                            android:key="pref.dash.swipe.to.delete"
+                            android:title="@string/pref.dash_swipe_to_delete" />
+
+                        <CheckBoxPreference
+                            android:defaultValue="false"
+                            android:key="pref.dash.top.values.red.color"
+                            android:title="@string/pref.dash_top_values_red_color" />
+                    </PreferenceCategory>
+                </PreferenceCategory>
+            </PreferenceScreen>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref.toolbar_category">
         <PreferenceScreen
             android:key="pref.toolbar"
@@ -467,276 +738,13 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref.view_category">
+    <PreferenceCategory
+        android:title="@string/pref.debug_category"
+        app:isPreferenceVisible="@bool/DEBUG_BUILD">
         <PreferenceScreen
-            android:summary="@string/pref.gauge_category"
-            android:title="@string/pref.gauge_category"
-            app:key="pref.gauge">
+            android:key="pref.debug"
+            android:title="@string/pref.settings">
 
-            <PreferenceCategory android:title="@string/pref.pids_category">
-                <PreferenceScreen
-                    android:summary="@string/pref.displayed_parameter_ids_summary"
-                    android:title="@string/pref.displayed_parameter_ids"
-                    android:key="pref.gauge.displayed_parameter_ids">
-                    <PreferenceCategory android:title="@string/pref.pids_category">
-                        <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
-                            app:useSimpleSummaryProvider="true"
-                            android:defaultValue="@array/pref.empty_array"
-                            android:dialogTitle="@string/pref.displayed_parameter_ids"
-                            android:key="pref.gauge.pids.selected"
-                            android:summary="@string/pref.displayed_parameter_ids_summary"
-                            android:title="@string/pref.displayed_parameter_ids" />
-                    </PreferenceCategory>
-                </PreferenceScreen>
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/pref.theme">
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="true"
-                    android:key="pref.gauge_display_background"
-                    android:title="@string/pref.gauge_display_background" />
-
-                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                    android:defaultValue="@android:color/holo_red_light"
-                    android:key="pref.gauge_background_color"
-                    android:title="@string/pref.gauge_background_color" />
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/pref.general_settings">
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="true"
-                    android:key="pref.gauge.view.enabled"
-                    android:title="@string/pref.enable_view" />
-
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.gauge_enable_drag_and_drop"
-                    android:title="@string/pref.gauge_enable_drag_and_drop" />
-
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="false"
-                    android:key="pref.gauge.swipe_to_delete"
-                    android:title="@string/pref.dash_swipe_to_delete" />
-
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="false"
-                    android:key="pref.gauge_display_command_rate"
-                    android:title="@string/pref.gauge_display_command_rate" />
-
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="true"
-                    android:key="pref.gauge_display_scale"
-                    android:title="@string/pref.gauge_display_scale" />
-            </PreferenceCategory>
-        </PreferenceScreen>
-
-        <PreferenceScreen
-            app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
-            android:summary="@string/pref.aa_category"
-            android:title="@string/pref.aa_category"
-            app:key="pref.aa">
-
-            <PreferenceCategory android:title="@string/pref.pids_category">
-                <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
-                    app:useSimpleSummaryProvider="true"
-                    android:defaultValue="@array/pref.empty_array"
-                    android:dialogTitle="@string/pref.displayed_parameter_ids"
-                    android:key="pref.aa.pids.selected"
-                    android:summary="@string/pref.displayed_parameter_ids_summary"
-                    android:title="@string/pref.displayed_parameter_ids" />
-            </PreferenceCategory>
-
-            <ListPreference
-                app:singleLineTitle="false"
-                android:entries="@array/pref.numbers_3_10"
-                android:entryValues="@array/pref.numbers_3_10"
-                android:defaultValue="5"
-                android:dialogTitle="@string/pref.aa.number_of_items_in_column"
-                android:inputType="number"
-                android:key="pref.aa.max_pids_in_column"
-                android:title="@string/pref.aa.number_of_items_in_column"
-                app:useSimpleSummaryProvider="true" />
-
-
-            <ListPreference
-                app:singleLineTitle="false"
-                android:entries="@array/pref.numbers_28_34"
-                android:entryValues="@array/pref.numbers_28_34"
-                android:defaultValue="34"
-                android:dialogTitle="@string/pref.aa.font_size"
-                android:inputType="number"
-                android:key="pref.aa.screen_font_size"
-                android:title="@string/pref.aa.font_size"
-                app:useSimpleSummaryProvider="true" />
-
-        </PreferenceScreen>
-
-        <PreferenceScreen
-            android:summary="@string/pref.metrics_category"
-            android:title="@string/pref.metrics_category"
-            app:key="pref.metrics">
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.metrics.view.enabled"
-                android:title="@string/pref.enable_view" />
-        </PreferenceScreen>
-
-        <PreferenceScreen
-            android:summary="@string/pref.graph_category"
-            android:title="@string/pref.graph_category"
-            app:key="pref.graph">
-
-            <PreferenceCategory android:title="@string/pref.pids_category">
-                <PreferenceScreen
-                    android:summary="@string/pref.displayed_parameter_ids_summary"
-                    android:title="@string/pref.displayed_parameter_ids"
-                    android:key="pref.graph.displayed_parameter_ids">
-                    <PreferenceCategory android:title="@string/pref.pids_category">
-                        <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
-                            app:useSimpleSummaryProvider="true"
-                            android:defaultValue="@array/pref.empty_array"
-                            android:dialogTitle="@string/pref.displayed_parameter_ids"
-                            android:key="pref.graph.pids.selected"
-                            android:title="@string/pref.displayed_parameter_ids" />
-                    </PreferenceCategory>
-                </PreferenceScreen>
-            </PreferenceCategory>
-
-            <PreferenceCategory android:title="@string/pref.trips_recordings">
-                <PreferenceScreen
-                    android:summary="@string/pref.trips_recordings"
-                    android:title="@string/pref.trips_recordings"
-                    app:key="pref.gauge.recordings">
-                    <PreferenceCategory android:title="@string/pref.trips_recordings">
-                        <org.obd.graphs.preferences.trips.TripsListPreferences
-                            android:defaultValue="@array/pref.empty_array"
-                            android:key="pref.graph.trips.selected"
-                            android:summary="@string/pref.graph_trips_selected_summary"
-                            android:title="@string/pref.graph_trips_selected"
-                            />
-                    </PreferenceCategory>
-                </PreferenceScreen>
-            </PreferenceCategory>
-            <PreferenceCategory android:title="@string/pref.general_settings">
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref.graph.view.enabled"
-                    android:title="@string/pref.enable_view" />
-
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref.graph.cache.enabled"
-                    android:title="@string/pref.graph_cache_enabled" />
-
-                <EditTextPreference
-                    android:defaultValue="20"
-                    android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
-                    android:inputType="number"
-                    android:key="pref.graph.x-axis.minimum-shift.time"
-                    android:title="@string/pref.graph_x_axis_minimum_shift_time"
-                    app:useSimpleSummaryProvider="true" />
-
-                <EditTextPreference
-                    android:defaultValue="20000"
-                    android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
-                    android:inputType="number"
-                    android:key="pref.graph.x-axis.start-moving-after.time"
-                    android:title="@string/pref.graph_x_axis_start_moving_after_time"
-                    app:useSimpleSummaryProvider="true" />
-            </PreferenceCategory>
-
-
-            <PreferenceCategory android:title="@string/pref.trips_category">
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.trips.recordings.display_info"
-                    android:title="@string/pref.trips_recordings_display_info" />
-
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.trips.recordings.save.short.trip"
-                    app:singleLineTitle="false"
-                    android:title="@string/pref.trips_recordings_save_short_trip" />
-            </PreferenceCategory>
-        </PreferenceScreen>
-
-        <PreferenceScreen
-            android:summary="@string/pref.dashboard_category"
-            android:title="@string/pref.dashboard_category"
-            app:key="pref.dashboard">
-
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref.dash.view.enabled"
-                android:title="@string/pref.enable_view" />
-
-            <PreferenceCategory android:title="@string/navigation.title_gauge">
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.dash.gauge.view.visible"
-                    android:title="@string/pref.enable_view" />
-
-                <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
-                    android:dialogTitle="@string/pref.displayed_parameter_ids"
-                    android:key="pref.dash.gauge_pids.selected"
-                    android:title="@string/pref.displayed_parameter_ids" />
-            </PreferenceCategory>
-            <PreferenceCategory  android:title="@string/navigation.title_dashboard">
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref.dash.dash.view.visible"
-                    android:title="@string/pref.enable_view" />
-
-                <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
-                    android:dialogTitle="@string/pref.displayed_parameter_ids"
-                    android:key="pref.dash.pids.selected"
-                    android:title="@string/pref.displayed_parameter_ids" />
-
-                <PreferenceCategory android:title="@string/pref.theme">
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="@android:color/holo_green_light"
-                        android:key="pref.dash.background_color_1"
-                        android:title="@string/pref.dash.background_color_1" />
-
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="@android:color/holo_green_light"
-                        android:key="pref.dash.background_color_2"
-                        android:title="@string/pref.dash.background_color_2" />
-                </PreferenceCategory>
-
-                <PreferenceCategory android:title="@string/pref.general_settings">
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.dash.top.values.blink"
-                        android:title="@string/pref.dash_top_values_blink" />
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.dash.enable_drag"
-                        android:title="@string/pref.dash_enable_drag_and_drop" />
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.dash.swipe.to.delete"
-                        android:title="@string/pref.dash_swipe_to_delete" />
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.dash.top.values.red.color"
-                        android:title="@string/pref.dash_top_values_red_color" />
-                </PreferenceCategory>
-            </PreferenceCategory>
-        </PreferenceScreen>
-
-        <PreferenceCategory
-            android:title="@string/pref.debug_category"
-            app:isPreferenceVisible="@bool/DEBUG_BUILD">
             <org.obd.graphs.preferences.pid.ToggleDebugLogging
                 android:defaultValue="false"
                 android:key="pref.debug.logging.enabled"
@@ -746,10 +754,10 @@
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
                 android:title="@string/pref.debug_generator_enabled" />
-        </PreferenceCategory>
+        </PreferenceScreen>
     </PreferenceCategory>
 
-    <PreferenceScreen app:key="pref.about">
+   <PreferenceScreen app:key="pref.about">
         <PreferenceCategory
             android:title="@string/pref.about_category">
            <Preference app:title="@string/pref.about_title"/>
