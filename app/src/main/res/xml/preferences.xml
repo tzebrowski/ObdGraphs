@@ -450,7 +450,7 @@
             android:title="@string/pref.settings">
             <PreferenceScreen
                 android:summary="@string/pref.gauge_category"
-                android:title="@string/pref.gauge_category"
+                android:title="@string/navigation.title_gauge"
                 app:key="pref.gauge">
 
                 <PreferenceCategory android:title="@string/pref.pids_category">
@@ -518,7 +518,7 @@
             <PreferenceScreen
                 app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
                 android:summary="@string/pref.aa_category"
-                android:title="@string/pref.aa_category"
+                android:title="@string/navigation.title_aa"
                 app:key="pref.aa">
 
                 <PreferenceCategory android:title="@string/pref.pids_category">
@@ -558,7 +558,7 @@
 
             <PreferenceScreen
                 android:summary="@string/pref.metrics_category"
-                android:title="@string/pref.metrics_category"
+                android:title="@string/navigation.title_metrics"
                 app:key="pref.metrics">
 
                 <CheckBoxPreference
@@ -569,7 +569,7 @@
 
             <PreferenceScreen
                 android:summary="@string/pref.graph_category"
-                android:title="@string/pref.graph_category"
+                android:title="@string/navigation.title_graph"
                 app:key="pref.graph">
 
                 <PreferenceCategory android:title="@string/pref.pids_category">
@@ -648,7 +648,7 @@
 
             <PreferenceScreen
                 android:summary="@string/pref.dashboard_category"
-                android:title="@string/pref.dashboard_category"
+                android:title="@string/navigation.title_dashboard"
                 app:key="pref.dashboard">
 
                 <CheckBoxPreference
