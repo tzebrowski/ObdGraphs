@@ -146,6 +146,7 @@
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
     <string name="pref.trips_recordings">Recorded trips</string>
+    <string name="pref.view_category_summary">Under this section you can find preferences related to the Gauge, Graph, Metrics views</string>
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Initialization&amp;Protocols</string>
