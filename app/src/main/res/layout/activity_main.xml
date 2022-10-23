@@ -27,7 +27,7 @@
             android:paddingEnd="0dp"
             android:paddingStart="6dp"
             android:paddingTop="4sp"
-            android:text="@string/connection_status"
+            android:text="@string/adapter_connection_type"
             android:textColor="@color/white"
             android:textSize="12sp" />
 

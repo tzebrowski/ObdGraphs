@@ -19,9 +19,11 @@ import org.obd.graphs.preferences.supported_pids.SupportedPIDsListPreferences
 import org.obd.graphs.preferences.supported_pids.SupportedPIDsPreferenceDialog
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
+const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
@@ -117,7 +119,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun registerConnectionTypeListener() {
         val bluetooth = "bluetooth"
 
-        val prefMode = findPreference<ListPreference>(PREFERENCE_CONNECTION_TYPE)
+        val connectionType = findPreference<ListPreference>(PREFERENCE_CONNECTION_TYPE)
         val p1 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.$bluetooth")
         val p2 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.wifi")
 
@@ -132,8 +134,9 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
         }
 
-        prefMode?.onPreferenceChangeListener =
+        connectionType?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
+                sendBroadcastEvent(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
                 when (newValue) {
                     bluetooth -> {
                         p1?.isVisible = true

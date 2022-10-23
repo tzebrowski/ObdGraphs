@@ -4,41 +4,33 @@ import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
 
-internal fun MainActivity.connectionStatusConnected() {
-    updateTextField(
-        R.id.connection_status,
-        resources.getString(R.string.connection_status),
-        "Connected",
-       COLOR_PHILIPPINE_GREEN,
-        1.1f
-    )
-}
 
-internal fun MainActivity.connectionStatusDisconnected() {
+internal fun MainActivity.updateAdapterConnectionType() {
     updateTextField(
         R.id.connection_status,
-        resources.getString(R.string.connection_status),
-        "Disconnected",
-        COLOR_CARDINAL,
+        resources.getString(R.string.adapter_connection_type),
+        dataLoggerPreferences.instance.connectionType,
+        COLOR_PHILIPPINE_GREEN,
         1.1f
     )
 }
 
 internal fun MainActivity.setupStatusPanel() {
-    updateTextField(
-        R.id.connection_status,
-        resources.getString(R.string.connection_status),
-        "Disconnected",
-        COLOR_CARDINAL,
-        1.1f
-    )
+    updateAdapterConnectionType()
     updateVehicleProfile()
+
+    (findViewById<TextView>(R.id.connection_status)).let {
+        it.setOnClickListener {
+            navigateToPreferencesScreen("pref.adapter.connection")
+        }
+    }
 
     (findViewById<TextView>(R.id.vehicle_profile)).let {
         it.setOnClickListener {

@@ -15,6 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
+import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.ui.common.COLOR_CARDINAL
@@ -57,6 +58,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
         PROFILE_CHANGED_EVENT -> {
             updateVehicleProfile()
+            updateAdapterConnectionType()
         }
         SCREEN_OFF_EVENT -> {
             lockScreen()
@@ -110,6 +112,10 @@ internal fun MainActivity.receive(intent: Intent?) {
             Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = true
         }
 
+        PREFS_CONNECTION_TYPE_CHANGED_EVENT -> {
+            updateAdapterConnectionType()
+        }
+
         DATA_LOGGER_NO_NETWORK_EVENT -> {
             toast(R.string.main_activity_toast_connection_no_network)
             handleStop()
@@ -128,13 +134,12 @@ internal fun MainActivity.receive(intent: Intent?) {
                findViewById<CoordinatorLayout>(R.id.coordinator_Layout).isVisible = false
             }
 
-            connectionStatusConnected()
+            updateAdapterConnectionType()
         }
 
         DATA_LOGGER_STOPPED_EVENT -> {
             toast(R.string.main_activity_toast_connection_stopped)
             handleStop()
-
         }
 
         DATA_LOGGER_ERROR_EVENT -> {
@@ -160,7 +165,6 @@ private fun MainActivity.handleStop() {
     }
 
     Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
-    connectionStatusDisconnected()
 }
 
 internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
@@ -174,6 +178,7 @@ internal fun MainActivity.unregisterReceiver() {
     unregisterReceiver(tripRecorderBroadcastReceiver)
     unregisterReceiver(powerReceiver)
 }
+
 
 internal fun MainActivity.registerReceiver() {
 
@@ -197,6 +202,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(SCREEN_ON_EVENT)
         addAction(PROFILE_CHANGED_EVENT)
         addAction(REQUEST_PERMISSIONS_BT)
+        addAction(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {
