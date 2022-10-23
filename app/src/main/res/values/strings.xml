@@ -66,6 +66,8 @@
 
     <string name="pref.connection.timeout">Connection timeout</string>
     <string name="pref.connection.connection_type">Type of connection</string>
+    <string name="pref.connection.connection_timeout">Connection timeout</string>
+
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge_display_refresh_rate">Display refresh rate (PIDs/second)</string>
     <string name="pref.gauge_enable_drag_and_drop">Enable drag and drop</string>

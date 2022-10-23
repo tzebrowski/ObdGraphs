@@ -93,11 +93,11 @@
 
                     <ListPreference
                         android:defaultValue="1000"
-                        android:dialogTitle="@string/pref.connection.connection_type"
+                        android:dialogTitle="@string/pref.connection.connection_timeout"
                         android:entries="@array/pref.numbers_500_6000"
                         android:entryValues="@array/pref.numbers_500_6000"
                         android:key="pref.adapter.connection.timeout"
-                        android:title="@string/pref.connection.connection_type"
+                        android:title="@string/pref.connection.connection_timeout"
                         app:useSimpleSummaryProvider="true" />
 
                     <ListPreference
