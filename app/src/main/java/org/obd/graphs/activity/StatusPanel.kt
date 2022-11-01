@@ -18,7 +18,7 @@ internal fun MainActivity.updateAdapterConnectionType() {
         resources.getString(R.string.adapter_connection_type),
         dataLoggerPreferences.instance.connectionType,
         COLOR_PHILIPPINE_GREEN,
-        1.1f
+        1.0f
     )
 }
 
@@ -51,7 +51,7 @@ internal fun MainActivity.updateVehicleProfile() {
         resources.getString(R.string.vehicle_profile),
         Prefs.getString("$PROFILE_NAME_PREFIX.${vehicleProfile.getCurrentProfile()}", "")!!,
         COLOR_RAINBOW_INDIGO,
-        1.2f
+        1.0f
     )
 }
 

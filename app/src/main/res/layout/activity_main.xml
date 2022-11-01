@@ -22,7 +22,7 @@
             android:id="@+id/connection_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.2"
+            android:layout_weight="1.1"
             android:gravity="start"
             android:paddingEnd="0dp"
             android:paddingStart="6dp"
@@ -43,6 +43,7 @@
             android:textSize="12sp" />
 
         <Chronometer
+            android:textSize="12sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
@@ -56,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_weight="0.5"
+            android:layout_weight="0.4"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
