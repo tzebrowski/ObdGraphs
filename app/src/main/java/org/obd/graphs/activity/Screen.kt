@@ -68,6 +68,7 @@ internal fun MainActivity.hideSystemUI() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
 }
 
+
 internal fun MainActivity.setupWindowManager() {
     //keeps screen on
     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
