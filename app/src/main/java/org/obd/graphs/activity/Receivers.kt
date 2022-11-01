@@ -97,6 +97,7 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         DATA_LOGGER_CONNECTING_EVENT -> {
             toast(R.string.main_activity_toast_connection_connecting)
+
             progressBar {
                 it.visibility = View.VISIBLE
                 it.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
@@ -105,14 +106,16 @@ internal fun MainActivity.receive(intent: Intent?) {
                 )
             }
 
-            val btn: FloatingActionButton = findViewById(R.id.connect_btn)
-            btn.backgroundTintList =
-                ContextCompat.getColorStateList(applicationContext, R.color.cardinal)
-            btn.setOnClickListener {
-                Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
-                DataLoggerService.stop()
+            floatingActionButton {
+                it.backgroundTintList =
+                    ContextCompat.getColorStateList(applicationContext, R.color.cardinal)
+                it.setOnClickListener {
+                    Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
+                    DataLoggerService.stop()
+                }
+                it.refreshDrawableState()
             }
-            btn.refreshDrawableState()
+
             Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = true
         }
 
@@ -162,30 +165,19 @@ internal fun MainActivity.receive(intent: Intent?) {
     }
 }
 
-private fun MainActivity.toolbar(func: (p: CoordinatorLayout) -> Unit) {
-    func(findViewById<CoordinatorLayout>(R.id.coordinator_Layout) as CoordinatorLayout)
-}
-
-private fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {
-    func(findViewById<ProgressBar>(R.id.p_bar) as ProgressBar)
-}
-
-private fun MainActivity.timer(func: (p: Chronometer) -> Unit) {
-    func(findViewById<Chronometer>(R.id.timer) as Chronometer)
-}
-
 private fun MainActivity.handleStop() {
 
     progressBar {
         it.visibility = View.GONE
     }
 
-    val btn: FloatingActionButton = findViewById(R.id.connect_btn)
-    btn.backgroundTintList =
-        ContextCompat.getColorStateList(applicationContext, R.color.philippine_green)
-    btn.setOnClickListener {
-        Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
-        DataLoggerService.start()
+    floatingActionButton {
+        it.backgroundTintList =
+            ContextCompat.getColorStateList(applicationContext, R.color.philippine_green)
+        it.setOnClickListener {
+            Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
+            DataLoggerService.start()
+        }
     }
 
     toolbar {
@@ -212,7 +204,6 @@ internal fun MainActivity.unregisterReceiver() {
     unregisterReceiver(tripRecorderBroadcastReceiver)
     unregisterReceiver(powerReceiver)
 }
-
 
 internal fun MainActivity.registerReceiver() {
 
@@ -248,4 +239,20 @@ internal fun MainActivity.registerReceiver() {
         addAction("android.intent.action.ACTION_POWER_CONNECTED")
         addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
     })
+}
+
+private fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
+    func(findViewById<FloatingActionButton>(R.id.connect_btn) as FloatingActionButton)
+}
+
+private fun MainActivity.toolbar(func: (p: CoordinatorLayout) -> Unit) {
+    func(findViewById<CoordinatorLayout>(R.id.coordinator_Layout) as CoordinatorLayout)
+}
+
+private fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {
+    func(findViewById<ProgressBar>(R.id.p_bar) as ProgressBar)
+}
+
+private fun MainActivity.timer(func: (p: Chronometer) -> Unit) {
+    func(findViewById<Chronometer>(R.id.timer) as Chronometer)
 }
