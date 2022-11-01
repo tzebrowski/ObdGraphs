@@ -7,13 +7,9 @@ import android.graphics.PorterDuffColorFilter
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
-import android.widget.Chronometer
-import android.widget.ProgressBar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
@@ -239,20 +235,4 @@ internal fun MainActivity.registerReceiver() {
         addAction("android.intent.action.ACTION_POWER_CONNECTED")
         addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
     })
-}
-
-private fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
-    func(findViewById<FloatingActionButton>(R.id.connect_btn) as FloatingActionButton)
-}
-
-private fun MainActivity.toolbar(func: (p: CoordinatorLayout) -> Unit) {
-    func(findViewById<CoordinatorLayout>(R.id.coordinator_Layout) as CoordinatorLayout)
-}
-
-private fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {
-    func(findViewById<ProgressBar>(R.id.p_bar) as ProgressBar)
-}
-
-private fun MainActivity.timer(func: (p: Chronometer) -> Unit) {
-    func(findViewById<Chronometer>(R.id.timer) as Chronometer)
 }

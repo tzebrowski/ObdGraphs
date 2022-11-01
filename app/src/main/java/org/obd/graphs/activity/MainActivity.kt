@@ -54,9 +54,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        if (getMainActivityPreferences().hideToolbarLandscape) {
-            val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
-            layout.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+        toolbar {
+            if (getMainActivityPreferences().hideToolbarLandscape) {
+                it.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+            }
         }
     }
 
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         )
 
         setContentView(R.layout.activity_main)
-        setupProgressBar()
+
         setupWindowManager()
         setupNavigationBar()
         setupNavigationBarButtons()
@@ -81,6 +82,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         vehicleProfile.setupProfiles()
         setupStatusPanel()
         setupPreferences()
+
+        progressBar {
+            it.visibility = View.GONE
+        }
     }
 
     override fun onResume() {
@@ -99,12 +104,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver()
-    }
-
-    private fun setupProgressBar() {
-        (findViewById<ProgressBar>(R.id.p_bar)).run {
-            visibility = View.GONE
-        }
     }
 
     private fun setupExceptionHandler() {
