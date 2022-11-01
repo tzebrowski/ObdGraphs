@@ -16,13 +16,13 @@
         android:layout_marginStart="1sp"
         android:layout_marginEnd="1sp"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="4">
 
         <TextView
             android:id="@+id/connection_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="1.2"
             android:gravity="start"
             android:paddingEnd="0dp"
             android:paddingStart="6dp"
@@ -35,12 +35,19 @@
             android:id="@+id/vehicle_profile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5"
+            android:layout_weight="1.8"
             android:gravity="start"
             android:paddingTop="4sp"
             android:text="@string/vehicle_profile"
             android:textColor="@color/white"
             android:textSize="12sp" />
+
+        <Chronometer
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:textColor="@color/white"
+            android:id="@+id/timer" />
 
         <ImageView
             android:tooltipText="@string/main_activity.toggle_toolbar"

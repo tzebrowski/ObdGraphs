@@ -4,8 +4,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
+import android.widget.Chronometer
 import android.widget.ProgressBar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -50,12 +52,13 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         TOGGLE_TOOLBAR_ACTION -> {
-            if (getMainActivityPreferences().hideToolbarDoubleClick) {
-                findViewById<CoordinatorLayout>(R.id.coordinator_Layout).let {
+            toolbar {
+                if (getMainActivityPreferences().hideToolbarDoubleClick) {
                     it.isVisible = !it.isVisible
                 }
             }
         }
+
         PROFILE_CHANGED_EVENT -> {
             updateVehicleProfile()
             updateAdapterConnectionType()
@@ -94,12 +97,13 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         DATA_LOGGER_CONNECTING_EVENT -> {
             toast(R.string.main_activity_toast_connection_connecting)
-            val progressBar: ProgressBar = findViewById(R.id.p_bar)
-            progressBar.visibility = View.VISIBLE
-            progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                COLOR_CARDINAL,
-                PorterDuff.Mode.SRC_IN
-            )
+            progressBar {
+                it.visibility = View.VISIBLE
+                it.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
+                    COLOR_CARDINAL,
+                    PorterDuff.Mode.SRC_IN
+                )
+            }
 
             val btn: FloatingActionButton = findViewById(R.id.connect_btn)
             btn.backgroundTintList =
@@ -124,14 +128,23 @@ internal fun MainActivity.receive(intent: Intent?) {
         DATA_LOGGER_CONNECTED_EVENT -> {
             toast(R.string.main_activity_toast_connection_established)
 
-            val progressBar: ProgressBar = findViewById(R.id.p_bar)
-            progressBar.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                COLOR_PHILIPPINE_GREEN,
-                PorterDuff.Mode.SRC_IN
-            )
+            progressBar {
+                it.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
+                    COLOR_PHILIPPINE_GREEN,
+                    PorterDuff.Mode.SRC_IN
+                )
+            }
 
-            if (getMainActivityPreferences().hideToolbarConnected) {
-               findViewById<CoordinatorLayout>(R.id.coordinator_Layout).isVisible = false
+            timer {
+                it.isCountDown = false
+                it.base = SystemClock.elapsedRealtime()
+                it.start()
+            }
+
+            toolbar {
+                if (getMainActivityPreferences().hideToolbarConnected) {
+                    it.isVisible = false
+                }
             }
 
             updateAdapterConnectionType()
@@ -148,9 +161,24 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
     }
 }
+
+private fun MainActivity.toolbar(func: (p: CoordinatorLayout) -> Unit) {
+    func(findViewById<CoordinatorLayout>(R.id.coordinator_Layout) as CoordinatorLayout)
+}
+
+private fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {
+    func(findViewById<ProgressBar>(R.id.p_bar) as ProgressBar)
+}
+
+private fun MainActivity.timer(func: (p: Chronometer) -> Unit) {
+    func(findViewById<Chronometer>(R.id.timer) as Chronometer)
+}
+
 private fun MainActivity.handleStop() {
-    val progressBar: ProgressBar = findViewById(R.id.p_bar)
-    progressBar.visibility = View.GONE
+
+    progressBar {
+        it.visibility = View.GONE
+    }
 
     val btn: FloatingActionButton = findViewById(R.id.connect_btn)
     btn.backgroundTintList =
@@ -160,8 +188,14 @@ private fun MainActivity.handleStop() {
         DataLoggerService.start()
     }
 
-    if (getMainActivityPreferences().hideToolbarConnected) {
-        findViewById<CoordinatorLayout>(R.id.coordinator_Layout).isVisible = true
+    toolbar {
+        if (getMainActivityPreferences().hideToolbarConnected) {
+            it.isVisible = true
+        }
+    }
+
+    timer {
+        it.stop()
     }
 
     Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
