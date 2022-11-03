@@ -27,25 +27,25 @@ Application offers few configurable screens which visualize vehicle telemetry da
 
 ### Android Auto
 
-|      |      |
-| ---- | ---- |
-|   ![Alt text](./res/aa_screenshot.png?raw=true "Android Auto")   |  | |
+|      |      |      |
+| ---- | ---- | ---- |
+|   ![Alt text](./res/aa_screenshot.png?raw=true "Android Auto")   | 
 
 
 
 ### Mobile
 
-|      |      | |
-| ---- | ---- | | 
+|      |      |      |
+| ---- | ---- | ---- | 
 |   ![Alt text](./res/Screenshot_phone_2.png?raw=true "Gauge")   | ![Alt text](./res/Screenshot_phone_1.png?raw=true "Metrics") | ![Alt text](./res/Screenshot_8.png?raw=true "Metadata") |
-|   ![Alt text](./res/Screenshot_phone_3.png?raw=true "Graph")   | ![Alt text](./res/Screenshot_phone_4.png?raw=true "Graph") |  ![Alt text](./res/Screenshot_10.png?raw=true "Vehicle Profiles") |
+|   ![Alt text](./res/Screenshot_phone_3.png?raw=true "Graph")   | ![Alt text](./res/Screenshot_phone_4.png?raw=true "Graph")   | ![Alt text](./res/Screenshot_10.png?raw=true "Vehicle Profiles") |
 
 ### Tablet
 
 
-|      |      | |
-| ---- | ---- | |
-|   ![Alt text](./res/Screenshot_3.png?raw=true "Gauge")   | ![Alt text](./res/Screenshot_6.png?raw=true "Graph") | |
+|      |      |
+| ---- | ---- |
+|   ![Alt text](./res/Screenshot_3.png?raw=true "Gauge")   | ![Alt text](./res/Screenshot_6.png?raw=true "Graph") | 
 
 
 ## Road map
