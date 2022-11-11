@@ -233,6 +233,7 @@ class DataLogger internal constructor() {
 
     private fun adjustments() = Adjustments.builder()
         .batchEnabled(dataLoggerPreferences.instance.batchEnabled)
+        .collectRawConnectorResponseEnabled(dataLoggerPreferences.instance.dumpRawConnectorResponse)
         .stNxx(STNxxExtensions.builder()
             .promoteSlowGroupsEnabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
             .enabled(dataLoggerPreferences.instance.stnExtensionsEnabled)

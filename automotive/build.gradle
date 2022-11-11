@@ -45,7 +45,6 @@ android {
 
 dependencies {
     implementation project(":common")
-
     implementation "androidx.car.app:app:1.2.0-rc01"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -73,7 +72,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
-    implementation('io.github.tzebrowski:obd-metrics:9.2.0-SNAPSHOT') { changing = true }
+    implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
     implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
     debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'

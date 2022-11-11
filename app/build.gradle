@@ -65,7 +65,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 19
+            versionCode 24
             versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
             setProperty("archivesBaseName", "MyGiulia_" + versionName)
         }
@@ -126,6 +126,7 @@ android {
 }
 
 dependencies {
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -151,7 +152,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
-    implementation('io.github.tzebrowski:obd-metrics:9.2.0-SNAPSHOT') { changing = true }
+    implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
     implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
     debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'

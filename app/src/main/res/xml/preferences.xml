@@ -746,6 +746,11 @@
             android:key="pref.debug"
             android:title="@string/pref.settings">
 
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.debug.trip.save.connector_response"
+                android:title="@string/pref.debug_trip_save_connector_response" />
+
             <org.obd.graphs.preferences.pid.ToggleDebugLogging
                 android:defaultValue="false"
                 android:key="pref.debug.logging.enabled"

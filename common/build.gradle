@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -63,5 +64,5 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
-    implementation('io.github.tzebrowski:obd-metrics:9.2.0-SNAPSHOT') { changing = true }
+    implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
 }

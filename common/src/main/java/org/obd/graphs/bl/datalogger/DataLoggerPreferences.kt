@@ -39,7 +39,8 @@ data class DataLoggerPreferences(
     var vehicleCapabilitiesReadingEnabled: Boolean,
     var vehicleDTCReadingEnabled: Boolean,
     var responseLengthEnabled: Boolean,
-    var gracefulStop: Boolean
+    var gracefulStop: Boolean,
+    var dumpRawConnectorResponse: Boolean
     )
 
 class DataLoggerPreferencesManager {
@@ -98,6 +99,8 @@ class DataLoggerPreferencesManager {
 
         val reconnectSilent = Prefs.getBoolean("pref.adapter.reconnect.silent", true)
 
+        val dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
+
         val dataLoggerPreferences = DataLoggerPreferences(
             stnExtensionsEnabled = stnEnabled,
             pids = getPIDsToQuery(),
@@ -123,7 +126,8 @@ class DataLoggerPreferencesManager {
             responseLengthEnabled = responseLength,
             gracefulStop = gracefulStop,
             reconnectSilent = reconnectSilent,
-            connectionTimeout = timeout
+            connectionTimeout = timeout,
+            dumpRawConnectorResponse = dumpRawConnectorResponse
         )
 
         Log.d(LOGGER_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
