@@ -29,7 +29,6 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 
-
 class DashboardViewAdapter(
     context: Context,
     data: MutableList<ObdMetric>,
@@ -65,7 +64,7 @@ class DashboardViewAdapter(
         val obdCommand = metric.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        val segmentNum: Int = holder.segments.indexOf(metric.valueToDouble())
+        val segmentNum: Int = holder.segments.indexOf(if (metric.value == null) 0.0 else metric.valueToDouble())
         (segmentNum > 0).apply {
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->

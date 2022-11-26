@@ -250,14 +250,13 @@ class DataLogger internal constructor() {
         .generator(
             GeneratorPolicy
                 .builder()
-                .smart(true)
                 .enabled(dataLoggerPreferences.instance.generatorEnabled)
                 .increment(0.5).build()
         ).adaptiveTiming(
             AdaptiveTimeoutPolicy
                 .builder()
                 .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
-                .checkInterval(5000) //10s
+                .checkInterval(5000)
                 .commandFrequency(dataLoggerPreferences.instance.commandFrequency)
                 .minimumTimeout(100)
                 .build()
