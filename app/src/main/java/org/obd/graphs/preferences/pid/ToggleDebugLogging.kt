@@ -15,7 +15,7 @@ class ToggleDebugLogging(
     attrs: AttributeSet?
 ) : CheckBoxPreference(context, attrs) {
 
-    private val loggers =  setOf("org.obd.metrics.transport.DefaultConnector")
+    private val loggers =  setOf("org.obd.metrics.transport.StreamConnector")
 
     init {
         setOnPreferenceChangeListener { _, value ->
