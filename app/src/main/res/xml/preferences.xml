@@ -386,6 +386,14 @@
                     android:title="@string/pref.dtc.title"/>
 
                 <CheckBoxPreference
+                    android:summary="@string/pref.pids.group.enableDTCCleanup_summary"
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.pids.group.enableDTCCleanup"
+                    android:key="pref.adapter.init.cleanDTC"
+                    android:title="@string/pref.pids.group.enableDTCCleanup"/>
+
+                <CheckBoxPreference
                     android:summary="@string/pref.pids.group.enableDTCReadings_summary"
                     app:singleLineTitle="false"
                     android:defaultValue="false"

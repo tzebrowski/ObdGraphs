@@ -38,6 +38,7 @@ data class DataLoggerPreferences(
     var vehicleMetadataReadingEnabled: Boolean,
     var vehicleCapabilitiesReadingEnabled: Boolean,
     var vehicleDTCReadingEnabled: Boolean,
+    var vehicleDTCCleaningEnabled: Boolean,
     var responseLengthEnabled: Boolean,
     var gracefulStop: Boolean,
     var dumpRawConnectorResponse: Boolean
@@ -92,6 +93,7 @@ class DataLoggerPreferencesManager {
 
         val vehicleCapabilitiesReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchSupportedPids", true)
         val vehicleDTCReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchDTC", false)
+        val vehicleDTCCleaningEnabled = Prefs.getBoolean("pref.adapter.init.cleanDTC", false)
 
         val responseLength = Prefs.getBoolean("pref.adapter.responseLength.enabled", false)
 
@@ -123,6 +125,7 @@ class DataLoggerPreferencesManager {
             vehicleMetadataReadingEnabled = vehicleMetadataReadingEnabled,
             vehicleCapabilitiesReadingEnabled = vehicleCapabilitiesReadingEnabled,
             vehicleDTCReadingEnabled = vehicleDTCReadingEnabled,
+            vehicleDTCCleaningEnabled = vehicleDTCCleaningEnabled,
             responseLengthEnabled = responseLength,
             gracefulStop = gracefulStop,
             reconnectSilent = reconnectSilent,

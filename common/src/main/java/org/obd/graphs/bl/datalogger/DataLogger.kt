@@ -181,7 +181,7 @@ class DataLogger internal constructor() {
         }
     }
 
-    fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC).isNotEmpty()
+    fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
     private fun connection() = if (dataLoggerPreferences.instance.connectionType == "wifi") {
         wifiConnection()
@@ -242,6 +242,7 @@ class DataLogger internal constructor() {
         .vehicleMetadataReadingEnabled(dataLoggerPreferences.instance.vehicleMetadataReadingEnabled)
         .vehicleCapabilitiesReadingEnabled(dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled)
         .vehicleDtcReadingEnabled(dataLoggerPreferences.instance.vehicleDTCReadingEnabled)
+        .vehicleDtcCleaningEnabled(dataLoggerPreferences.instance.vehicleDTCCleaningEnabled)
         .cacheConfig(
             CachePolicy.builder()
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
