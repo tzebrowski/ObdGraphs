@@ -12,6 +12,7 @@ import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
+import org.obd.graphs.preferences.PREF_GAUGE_RECORDINGS
 
 
 fun navigateToPreferencesScreen(prefKey: String) {
@@ -90,11 +91,11 @@ internal fun MainActivity.setupNavigationBarButtons() {
 
                 R.id.ctx_menu_view_custom_action_1 -> {
                     val screenId = when (getCurrentScreenId()) {
-                        R.id.navigation_graph -> "pref.gauge.recordings"
+                        R.id.navigation_graph -> PREF_GAUGE_RECORDINGS
                         else -> null
                     }
-                    screenId?.let {
-                        navigateToPreferencesScreen(it)
+                    screenId?.let { screenId ->
+                        navigateToPreferencesScreen(screenId)
                     }
                 }
 
@@ -104,8 +105,8 @@ internal fun MainActivity.setupNavigationBarButtons() {
                         R.id.navigation_graph -> "pref.graph.displayed_parameter_ids"
                         else -> null
                     }
-                    screenId?.let {
-                        navigateToPreferencesScreen(it)
+                    screenId?.let { screenId ->
+                        navigateToPreferencesScreen(screenId)
                     }
                 }
 

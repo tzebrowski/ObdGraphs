@@ -25,6 +25,8 @@ import org.obd.graphs.ui.common.onDoubleClickListener
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
+const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
+
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     private val onSharedPreferenceChangeListener =
@@ -64,7 +66,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
+
         } else {
+            val prefScreenId = requireArguments().get(PREFERENCE_SCREEN_KEY)
+            Log.i("Prefs", "Loading Pref Screen: $prefScreenId")
+            when (prefScreenId) {
+                PREF_GAUGE_RECORDINGS ->  TripsPreferenceDialog().show(parentFragmentManager, null)
+            }
+
             setPreferencesFromResource(
                 R.xml.preferences,
                 requireArguments().get(PREFERENCE_SCREEN_KEY) as String
