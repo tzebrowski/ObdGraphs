@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.preference.*
 import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
@@ -26,12 +27,18 @@ const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
 const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
+const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_ids"
+const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
+
+private const val PREF_GRAPH_DIALOG = "pref.graph.pids.selected"
+private const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
+private const val LOG_KEY = "Prefs"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     private val onSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            Log.v("Prefs", "Preference $key changed")
+            Log.v(LOG_KEY, "Preference $key changed")
         }
 
     override fun onDisplayPreferenceDialog(preference: Preference?) {
@@ -66,20 +73,21 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
-
         } else {
-            val prefScreenId = requireArguments().get(PREFERENCE_SCREEN_KEY)
-            Log.i("Prefs", "Loading Pref Screen: $prefScreenId")
-            when (prefScreenId) {
-                PREF_GAUGE_RECORDINGS ->  TripsPreferenceDialog().show(parentFragmentManager, null)
-            }
+
+            val preferenceKey = requireArguments().get(PREFERENCE_SCREEN_KEY) as String
+
+            Log.d(LOG_KEY, "Loading Pref Screen for key=$preferenceKey")
 
             setPreferencesFromResource(
                 R.xml.preferences,
-                requireArguments().get(PREFERENCE_SCREEN_KEY) as String
+                preferenceKey
             )
+
+            openPreferenceDialogFor(preferenceKey)
         }
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -158,5 +166,29 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 }
                 true
             }
+    }
+
+    private fun openPreferenceDialogFor(preferenceKey: String) {
+        when (preferenceKey) {
+            PREF_GAUGE_RECORDINGS -> TripsPreferenceDialog().show(parentFragmentManager, null)
+
+            PREF_GAUGE_DISPLAYED_PARAMETERS_IDS -> {
+                showMultiSelectListDialog(
+                    preferenceKey = PREF_GAUGE_DIALOG,
+                    targetFragment = this
+                ) {
+                    navigateToScreen(R.id.navigation_gauge)
+                }
+            }
+
+            PREF_GRAPH_DISPLAYED_PARAMETERS_IDS -> {
+                showMultiSelectListDialog(
+                    preferenceKey = PREF_GRAPH_DIALOG,
+                    targetFragment = this
+                ) {
+                    navigateToScreen(R.id.navigation_graph)
+                }
+            }
+        }
     }
 }
