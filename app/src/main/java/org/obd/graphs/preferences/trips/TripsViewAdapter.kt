@@ -91,8 +91,8 @@ class TripsViewAdapter internal constructor(
                 val trip = data.elementAt(adapterPosition)
                 Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
                 data.remove(trip)
-                notifyItemChanged(adapterPosition)
                 TripManager.INSTANCE.deleteTrip(trip)
+                notifyDataSetChanged()
             }
 
         }
