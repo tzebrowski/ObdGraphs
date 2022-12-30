@@ -94,7 +94,6 @@ class TripsViewAdapter internal constructor(
                 TripManager.INSTANCE.deleteTrip(trip)
                 notifyDataSetChanged()
             }
-
         }
     }
 }

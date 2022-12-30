@@ -20,6 +20,12 @@ fun navigateToPreferencesScreen(prefKey: String) {
     }
 }
 
+fun navigateToScreen(id: Int) {
+    (getContext() as MainActivity).navController {
+        it.navigate(id, null)
+    }
+}
+
 internal fun MainActivity.setupNavigationBar() {
     navController { navController ->
         val appBarConfiguration = AppBarConfiguration(

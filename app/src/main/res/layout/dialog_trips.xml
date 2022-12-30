@@ -76,9 +76,20 @@
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/tablelayout"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/tablelayout" />
+
+    <Button
+        android:id="@+id/trip_close_window"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:backgroundTint="@color/rainbow_indigo"
+        android:layout_alignParentBottom="true"
+        android:text="@string/trip_dialog_close_window"
+        android:textSize="12dp" />
+
 </RelativeLayout>
 

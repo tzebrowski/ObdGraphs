@@ -191,6 +191,8 @@
     <string name="trip_vehicle_profile">Profile</string>
     <string name="trip_action">Action</string>
     <string name="trip_action_delete">Del</string>
+    <string name="trip_dialog_close_window">Close window</string>
+
     <string name="trip_action_load">Load</string>
     <string name="adapter_connection_type">Adapter</string>
     <string name="vehicle_profile">Profile</string>
