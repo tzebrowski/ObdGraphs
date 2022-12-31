@@ -11,17 +11,14 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.TRIP_LOAD_EVENT
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.TripManager
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.updateString
 import org.obd.graphs.profile.getProfileList
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
 
-const val SELECTED_TRIP_PREF = "pref.graph.trips.selected"
-const val LOAD_TRIP_EVENT = "load.trip.event"
 
 private const val LOGGER_KEY = "TripsViewAdapter"
 
@@ -31,10 +28,10 @@ class TripsViewAdapter internal constructor(
 ) : RecyclerView.Adapter<TripsViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
-    private val profileColors = mutableMapOf<String,Int>().apply {
+    private val profileColors = mutableMapOf<String, Int>().apply {
         val colors = Colors().generate()
         getProfileList().forEach { (s, _) ->
-            put(s,colors.nextInt())
+            put(s, colors.nextInt())
         }
     }
 
@@ -51,17 +48,24 @@ class TripsViewAdapter internal constructor(
     ) {
 
         data.elementAt(position).run {
-            holder.vehicleProfile.setText(profileLabel, profileColors[profileId]!!,Typeface.NORMAL, 0.6f)
-            holder.tripStartDate.setText(startTime, Color.GRAY,Typeface.NORMAL, 0.9f)
+            holder.vehicleProfile.setText(
+                profileLabel,
+                profileColors[profileId]!!,
+                Typeface.NORMAL,
+                0.6f
+            )
+            holder.tripStartDate.setText(startTime, Color.GRAY, Typeface.NORMAL, 0.9f)
 
             holder.tripTime.let {
                 val seconds: Int = tripTimeSec.toInt() % 60
                 var hours: Int = tripTimeSec.toInt() / 60
                 val minutes = hours % 60
                 hours /= 60
-                val text = "${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}s"
+                val text = "${hours.toString().padStart(2, '0')}:${
+                    minutes.toString().padStart(2, '0')
+                }:${seconds.toString().padStart(2, '0')}s"
 
-                it.setText(text, Color.GRAY,Typeface.BOLD, 0.9f)
+                it.setText(text, Color.GRAY, Typeface.BOLD, 0.9f)
             }
         }
     }
@@ -70,7 +74,8 @@ class TripsViewAdapter internal constructor(
         return data.size
     }
 
-    inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder internal constructor(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
         var vehicleProfile: TextView = itemView.findViewById(R.id.vehicle_profile)
         var tripStartDate: TextView = itemView.findViewById(R.id.trip_start_date)
         var tripTime: TextView = itemView.findViewById(R.id.trip_time)
@@ -80,11 +85,7 @@ class TripsViewAdapter internal constructor(
         init {
 
             loadTrip.setOnClickListener {
-                val trip = data.elementAt(adapterPosition)
-                Log.i(LOGGER_KEY, "Trip selected to load: $trip")
-                Prefs.updateString(SELECTED_TRIP_PREF, null)
-                Prefs.updateString(SELECTED_TRIP_PREF, trip.fileName)
-                sendBroadcastEvent(LOAD_TRIP_EVENT)
+                sendBroadcastEvent(TRIP_LOAD_EVENT, extra =  data.elementAt(adapterPosition).fileName)
             }
 
             deleteTrip.setOnClickListener {

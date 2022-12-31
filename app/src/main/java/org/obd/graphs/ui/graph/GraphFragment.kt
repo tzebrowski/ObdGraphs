@@ -26,9 +26,9 @@ import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.Cache
+import org.obd.graphs.DATA_LOGGER_PROCESS_IS_RUNNING
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.activity.DATA_LOGGER_PROCESS_IS_RUNNING
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
@@ -44,11 +44,6 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-const val LOADED_TRIP_PREFERENCE_ID = "pref.graph.trips.selected"
-
-private const val LOGGER_TAG = "GraphFragment"
-
 fun ValueScaler.scaleToPidRange(
     pid: PidDefinition,
     value: Float
@@ -62,20 +57,8 @@ fun ValueScaler.scaleToPidRange(
     )
 }
 
+private const val LOGGER_TAG = "GraphFragment"
 class GraphFragment : Fragment() {
-
-    private var prefsChangeListener =
-        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == LOADED_TRIP_PREFERENCE_ID) {
-                sharedPreferences!!.getString(key, null)?.let {
-                    if (!isDataCollectingProcessWorking()) {
-                        context?.run {
-                            tripManager.loadTrip(it)
-                        }
-                    }
-                }
-            }
-        }
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -93,6 +76,7 @@ class GraphFragment : Fragment() {
 
     private class ReverseValueFormatter(val pid: PidDefinition, val valueScaler: ValueScaler) :
         ValueFormatter() {
+
         override fun getFormattedValue(value: Float): String {
             return valueScaler.scaleToPidRange(pid, value).toString()
         }
@@ -148,8 +132,6 @@ class GraphFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
-
-        Prefs.registerOnSharedPreferenceChangeListener(prefsChangeListener)
 
         colors = Colors().generate()
         preferences = getGraphPreferences()
@@ -283,8 +265,7 @@ class GraphFragment : Fragment() {
         )
     }
 
-    private fun isDataCollectingProcessWorking() =
-        (Cache[DATA_LOGGER_PROCESS_IS_RUNNING] as Boolean?) ?: false
+
 
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {

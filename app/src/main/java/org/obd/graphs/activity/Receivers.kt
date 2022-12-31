@@ -1,5 +1,6 @@
 package org.obd.graphs.activity
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
@@ -21,6 +22,7 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.toast
 
+
 internal val tripRecorderBroadcastReceiver = TripManagerBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()
 
@@ -32,11 +34,20 @@ const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
 const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
 const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
-const val DATA_LOGGER_PROCESS_IS_RUNNING = "cache.graph.collecting_process_is_running"
 
 
 internal fun MainActivity.receive(intent: Intent?) {
+
     when (intent?.action) {
+
+        SCREEN_LOCK_PROGRESS_EVENT -> {
+            progressDialog = ProgressDialog.show(this, "", "Please wait...", true)
+        }
+
+        SCREEN_UNLOCK_PROGRESS_EVENT -> {
+            progressDialog.dismiss()
+        }
+
         DATA_LOGGER_DTC_AVAILABLE -> {
             if (Prefs.isEnabled("pref.dtc.show_notification")) {
                 toast(R.string.pref_pids_group_dtc_available_message)
@@ -224,11 +235,17 @@ internal fun MainActivity.registerReceiver() {
         addAction(PROFILE_CHANGED_EVENT)
         addAction(REQUEST_PERMISSIONS_BT)
         addAction(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
+
+        addAction(SCREEN_LOCK_PROGRESS_EVENT)
+        addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
+
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {
         addAction(DATA_LOGGER_CONNECTED_EVENT)
         addAction(DATA_LOGGER_STOPPED_EVENT)
+        addAction(DATA_LOGGER_CONNECTING_EVENT)
+        addAction(TRIP_LOAD_EVENT)
     })
 
     registerReceiver(powerReceiver, IntentFilter().apply {

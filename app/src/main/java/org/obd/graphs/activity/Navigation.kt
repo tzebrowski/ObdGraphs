@@ -16,7 +16,6 @@ import org.obd.graphs.preferences.PREF_GAUGE_DISPLAYED_PARAMETERS_IDS
 import org.obd.graphs.preferences.PREF_GAUGE_RECORDINGS
 import org.obd.graphs.preferences.PREF_GRAPH_DISPLAYED_PARAMETERS_IDS
 
-
 fun navigateToPreferencesScreen(prefKey: String) {
     (getContext() as MainActivity).navController {
         it.navigate(R.id.navigation_preferences, bundleOf(PREFERENCE_SCREEN_KEY to prefKey))

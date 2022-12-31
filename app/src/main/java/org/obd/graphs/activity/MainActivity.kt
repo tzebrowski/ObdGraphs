@@ -1,5 +1,6 @@
 package org.obd.graphs.activity
 
+import android.app.ProgressDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,7 @@ import pub.devrel.easypermissions.EasyPermissions
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
+    lateinit var progressDialog: ProgressDialog
 
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
