@@ -33,8 +33,8 @@
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
 
-    <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs preferences</string>
-    <string name="context_menu.parameters_id_to_display">Edit displayed OBD2 PIDs</string>
+    <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs settings</string>
+    <string name="context_menu.parameters_id_to_display">Select displayed OBD2 PIDs</string>
     <string name="context_menu.view_configuration">View Settings</string>
     <string name="context_menu.profiles">Vehicle Profiles</string>
     <string name="context_menu.about">About</string>
