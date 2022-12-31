@@ -7,7 +7,7 @@ import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getString
 import org.obd.graphs.preferences.updateToolbar
-import java.util.Properties
+import java.util.*
 
 const val PROFILE_NAME_PREFIX = "pref.profile.names"
 const val LOG_KEY = "Profile"

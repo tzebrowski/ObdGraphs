@@ -2,11 +2,6 @@ package org.obd.graphs.preferences.profile
 
 import android.content.Context
 import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener

@@ -9,7 +9,6 @@ import android.text.style.StyleSpan
 import androidx.core.content.ContextCompat
 import org.obd.graphs.R.color
 import org.obd.graphs.getContext
-import java.util.*
 
 fun String.colorize(color: Int, typeface: Int, size: Float) : SpannableString {
 

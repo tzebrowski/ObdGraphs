@@ -9,7 +9,10 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.sendBroadcastEvent
-import org.obd.graphs.ui.common.*
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
+import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
+import org.obd.graphs.ui.common.highLightText
 
 
 internal fun MainActivity.updateAdapterConnectionType() {

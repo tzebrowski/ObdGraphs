@@ -10,8 +10,8 @@ import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.vehicleCapabilitiesManager
-import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PIDsGroup
+import org.obd.metrics.pid.PidDefinition
 import java.util.*
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"

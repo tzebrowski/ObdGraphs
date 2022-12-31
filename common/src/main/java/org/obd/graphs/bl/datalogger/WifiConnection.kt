@@ -1,7 +1,6 @@
 package org.obd.graphs.bl.datalogger
 
 
-import android.util.Log
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
