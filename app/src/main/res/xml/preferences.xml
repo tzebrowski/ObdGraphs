@@ -10,6 +10,22 @@
             android:title="@string/pref.settings">
 
             <PreferenceCategory android:title="@string/pref.registry.category">
+
+                <org.obd.graphs.preferences.pid.PIDsListPreferences
+                    app:singleLineTitle="false"
+                    android:dialogTitle="@string/pref.pids_generic_high"
+                    android:key="pref.pids.generic.high"
+                    android:title="@string/pref.pids_generic_high"
+                    app:priority="high"
+                    android:summary="@string/pref.pids_generic_high_summary" />
+
+                <org.obd.graphs.preferences.pid.PIDsListPreferences
+                    android:dialogTitle="@string/pref.pids_generic_low"
+                    android:key="pref.pids.generic.low"
+                    android:title="@string/pref.pids_generic_low"
+                    app:priority="low"
+                    android:summary="@string/pref.pids_generic_low_summary" />
+
                 <CheckBoxPreference
                     android:summary="@string/pref.pids.group.enableCapabilitiesReadings_summary"
                     app:singleLineTitle="false"
@@ -57,20 +73,7 @@
                     android:title="@string/pref.pids.registry.resource.external_storage"
                     app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED" />
 
-                <org.obd.graphs.preferences.pid.PIDsListPreferences
-                    app:singleLineTitle="false"
-                    android:dialogTitle="@string/pref.pids_generic_high"
-                    android:key="pref.pids.generic.high"
-                    android:title="@string/pref.pids_generic_high"
-                    app:priority="high"
-                    android:summary="@string/pref.pids_generic_high_summary" />
 
-                <org.obd.graphs.preferences.pid.PIDsListPreferences
-                    android:dialogTitle="@string/pref.pids_generic_low"
-                    android:key="pref.pids.generic.low"
-                    android:title="@string/pref.pids_generic_low"
-                    app:priority="low"
-                    android:summary="@string/pref.pids_generic_low_summary" />
 
             </PreferenceCategory>
         </PreferenceScreen>
