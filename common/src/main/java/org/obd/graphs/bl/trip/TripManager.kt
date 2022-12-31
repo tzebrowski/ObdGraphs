@@ -32,7 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
-private const val LOGGER_KEY = "TripRecorder"
+private const val LOGGER_TAG = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 private val EMPTY_CONNECTOR_RESPONSE = ConnectorResponseFactory.wrap(byteArrayOf())
 
@@ -107,7 +107,7 @@ class TripManager private constructor() {
         val INSTANCE: TripManager = TripManager().apply {
             val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())
             Cache[CACHE_TRIP_PROPERTY_NAME] = trip
-            Log.i(LOGGER_KEY, "Init Trip with stamp: ${trip.startTs}")
+            Log.i(LOGGER_TAG, "Init Trip with stamp: ${trip.startTs}")
         }
     }
 
@@ -132,7 +132,7 @@ class TripManager private constructor() {
                 }
             }
         } catch (e: Throwable) {
-            Log.e(LOGGER_KEY, "Failed to add cache entry", e)
+            Log.e(LOGGER_TAG, "Failed to add cache entry", e)
         }
     }
 
@@ -142,25 +142,29 @@ class TripManager private constructor() {
         }
 
         val trip = getTripFromCache()!!
-        Log.i(LOGGER_KEY, "Get current trip ts: '${dateFormat.format(Date(trip.startTs))}'")
+        Log.i(LOGGER_TAG, "Get current trip ts: '${dateFormat.format(Date(trip.startTs))}'")
         return trip
     }
 
     fun startNewTrip(newTs: Long) {
-        Log.i(LOGGER_KEY, "Starting new trip, time stamp: '${dateFormat.format(Date(newTs))}'")
+        Log.i(LOGGER_TAG, "Starting new trip, time stamp: '${dateFormat.format(Date(newTs))}'")
         updateCache(newTs)
     }
 
     fun saveCurrentTrip() {
         getTripFromCache()?.let { trip ->
+
             val histogram = DataLogger.instance.diagnostics().histogram()
             val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
 
             trip.entries.forEach { (t, u) ->
-                val histogramSupplier = histogram.findBy(pidDefinitionRegistry.findBy(t))
-                u.max = histogramSupplier.max
-                u.min = histogramSupplier.min
-                u.mean = histogramSupplier.mean
+                val p = pidDefinitionRegistry.findBy(t)
+                p?.let {
+                    val histogramSupplier = histogram.findBy(it)
+                    u.max = histogramSupplier.max
+                    u.min = histogramSupplier.min
+                    u.mean = histogramSupplier.mean
+                }
             }
 
             val endDate = Date()
@@ -170,54 +174,67 @@ class TripManager private constructor() {
                 (endDate.time - trip.startTs) / 1000
             }
 
-            Log.i(LOGGER_KEY, "Recorded trip, length: ${tripLength}s")
+            Log.i(LOGGER_TAG, "Recorded trip, length: ${tripLength}s")
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val startString = dateFormat.format(Date(trip.startTs))
 
-                val jackson:ObjectMapper  by lazy  {
-                    jacksonObjectMapper().apply {
-                        val module = SimpleModule()
-                        val serializeConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response",false)
-                        if (serializeConnectorResponse) {
-                            module.addSerializer(
-                                ConnectorResponse::class.java,
-                                ConnectorResponseSerializer()
-                            )
-                        } else {
-                            module.addSerializer(
-                                ConnectorResponse::class.java,
-                                NopeConnectorResponseSerializer()
-                            )
-                        }
-
-                        module.addDeserializer(ConnectorResponse::class.java, ConnectorResponseDeserializer())
-                        registerModule(module)
-                    }
-                }
-
-                val content: String = jackson.writeValueAsString(trip)
                 val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
-                Log.i(LOGGER_KEY, "Saving the trip to the file: $fileName")
-                writeFile(context, fileName, content)
 
-                Log.i(LOGGER_KEY, "Trip was written to the file: $fileName")
+                val duplicateFilter = "trip-${getCurrentProfile()}-${startString}"
+                val duplicates = findAllTripsBy(duplicateFilter)
+
+                if (duplicates.isNotEmpty()){
+                    Log.e(LOGGER_TAG,"It seems that Trip which start same date='${duplicateFilter}' is already saved.")
+                }else {
+                    val jackson: ObjectMapper by lazy {
+                        jacksonObjectMapper().apply {
+                            val module = SimpleModule()
+                            val serializeConnectorResponse =
+                                Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
+                            if (serializeConnectorResponse) {
+                                module.addSerializer(
+                                    ConnectorResponse::class.java,
+                                    ConnectorResponseSerializer()
+                                )
+                            } else {
+                                module.addSerializer(
+                                    ConnectorResponse::class.java,
+                                    NopeConnectorResponseSerializer()
+                                )
+                            }
+
+                            module.addDeserializer(
+                                ConnectorResponse::class.java,
+                                ConnectorResponseDeserializer()
+                            )
+                            registerModule(module)
+                        }
+                    }
+
+                    val content: String = jackson.writeValueAsString(trip)
+                    Log.i(LOGGER_TAG, "Saving the trip to the file: $fileName")
+                    writeFile(context, fileName, content)
+
+                    Log.i(LOGGER_TAG, "Trip was written to the file: $fileName")
+                }
             } else {
-                Log.i(LOGGER_KEY, "Trip was no saved. Trip time is less than ${trip.startTs}s")
+                Log.i(LOGGER_TAG, "Trip was no saved. Trip time is less than ${trip.startTs}s")
             }
         }
     }
 
-    fun findAllTripsBy(query: String = ".json"): MutableCollection<TripFileDesc> {
-        Log.i(LOGGER_KEY, "Find all trips with query: $query")
+    fun findAllTripsBy(filter: String = ""): MutableCollection<TripFileDesc> {
+        Log.i(LOGGER_TAG, "Find all trips with filter: '$filter'")
 
         val profiles = getProfileList()
         val files = File(getTripsDirectory(context)).list()
         if (files == null) {
-            Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: 0")
+            Log.i(LOGGER_TAG, "Find all trips by filter: '${filter}'. Result size: 0")
             return mutableListOf()
         } else {
             val result = files
+                .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
                 .filter { it.startsWith("trip_") || it.contains("") }
                 .filter { it.substring(0, it.length - 5).split("-").size > 3 }
                 .filter { it.contains(getCurrentProfile()) }
@@ -236,20 +253,20 @@ class TripManager private constructor() {
                 }
                 .sortedByDescending { dateFormat.parse(it.startTime) }
                 .toMutableList()
-            Log.i(LOGGER_KEY, "Find all trips with query: ${query}. Result size: ${result.size}")
+            Log.i(LOGGER_TAG, "Find all trips with filter: '${filter}'. Result size: ${result.size}")
             return result
         }
     }
 
     fun deleteTrip(trip: TripFileDesc) {
-        Log.i(LOGGER_KEY, "Deleting '${trip.fileName}' from the storage.")
+        Log.i(LOGGER_TAG, "Deleting '${trip.fileName}' from the storage.")
         val file = File(getTripsDirectory(context), trip.fileName)
         file.delete()
-        Log.i(LOGGER_KEY, "Trip '${trip.fileName}' has been deleted from the storage.")
+        Log.i(LOGGER_TAG, "Trip '${trip.fileName}' has been deleted from the storage.")
     }
 
     fun loadTrip(tripName: String) {
-        Log.i(LOGGER_KEY, "Loading '$tripName' from disk.")
+        Log.i(LOGGER_TAG, "Loading '$tripName' from disk.")
 
         if (tripName.isEmpty()) {
             updateCache(System.currentTimeMillis())
@@ -267,10 +284,10 @@ class TripManager private constructor() {
                 }
 
                 val trip: Trip = jackson.readValue(file, Trip::class.java)
-                Log.i(LOGGER_KEY, "Trip '${file.absolutePath}' was loaded from the disk.")
+                Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the disk.")
                 Cache[CACHE_TRIP_PROPERTY_NAME] = trip
             } catch (e: FileNotFoundException) {
-                Log.e(LOGGER_KEY, "Did not find trip '$tripName'.", e)
+                Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)
                 updateCache(System.currentTimeMillis())
             }
         }
@@ -283,9 +300,7 @@ class TripManager private constructor() {
     ) {
         var fd: FileOutputStream? = null
         try {
-
-            val directory = getTripsDirectory(context)
-            val file = File(directory, fileName)
+            val file = getTripFileRef(context, fileName)
             fd = FileOutputStream(file).apply {
                 write(content.toByteArray())
             }
@@ -298,13 +313,17 @@ class TripManager private constructor() {
         }
     }
 
+    private fun getTripFileRef(context: Context, fileName: String): File  =
+        File( getTripsDirectory(context), fileName)
+
+
     private fun getTripsDirectory(context: Context) =
         "${context.getExternalFilesDir("trips")?.absolutePath}"
 
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs, entries = mutableMapOf())
         Cache[CACHE_TRIP_PROPERTY_NAME] = trip
-        Log.i(LOGGER_KEY, "Init new Trip with stamp: $${trip.startTs}")
+        Log.i(LOGGER_TAG, "Init new Trip with stamp: $${trip.startTs}")
     }
 
     private fun getTripFromCache(): Trip? = Cache[CACHE_TRIP_PROPERTY_NAME] as Trip?
