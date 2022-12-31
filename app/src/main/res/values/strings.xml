@@ -1,4 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
+
     <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>
     <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>
 
@@ -15,9 +18,6 @@
     <string name="navigation.title_dashboard">Dashboard</string>
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>
-
-
-
     <string name="navigation.tooltip_gauge">Gauge view</string>
     <string name="navigation.tooltip_metrics">Metrics view</string>
     <string name="navigation.tooltip_preferences">Preferences view</string>

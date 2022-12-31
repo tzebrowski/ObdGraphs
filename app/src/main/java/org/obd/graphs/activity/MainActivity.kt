@@ -1,6 +1,5 @@
 package org.obd.graphs.activity
 
-import android.app.ProgressDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,6 +8,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import org.obd.graphs.*
@@ -19,10 +19,11 @@ import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
+
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
-    lateinit var progressDialog: ProgressDialog
+    lateinit var progressDialog: AlertDialog
 
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -83,6 +84,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         progressBar {
             it.visibility = View.GONE
+        }
+
+        AlertDialog.Builder(this).run {
+            setCancelable(false)
+            setView(R.layout.dialog_screen_lock)
+            progressDialog = create()
         }
     }
 

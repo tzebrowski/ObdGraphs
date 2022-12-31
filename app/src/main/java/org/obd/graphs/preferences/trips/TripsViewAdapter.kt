@@ -19,7 +19,6 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
 
-
 private const val LOGGER_KEY = "TripsViewAdapter"
 
 class TripsViewAdapter internal constructor(

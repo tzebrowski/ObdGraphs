@@ -34,7 +34,7 @@ import java.util.*
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_KEY = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
-private val EMPTY = ConnectorResponseFactory.wrap(byteArrayOf())
+private val EMPTY_CONNECTOR_RESPONSE = ConnectorResponseFactory.wrap(byteArrayOf())
 
 private class ConnectorResponseSerializer() : StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
 
@@ -55,7 +55,7 @@ private class NopeConnectorResponseSerializer() : StdSerializer<ConnectorRespons
 private class ConnectorResponseDeserializer() : StdDeserializer<ConnectorResponse>(String::class.java) {
 
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ConnectorResponse {
-        return EMPTY
+        return EMPTY_CONNECTOR_RESPONSE
     }
 }
 
@@ -116,7 +116,6 @@ class TripManager private constructor() {
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("dd.MM HH:mm:ss", Locale.getDefault())
 
-
     fun addTripEntry(metric: ObdMetric) {
         try {
             getTripFromCache()?.let { trip ->
@@ -151,7 +150,6 @@ class TripManager private constructor() {
         Log.i(LOGGER_KEY, "Starting new trip, time stamp: '${dateFormat.format(Date(newTs))}'")
         updateCache(newTs)
     }
-
 
     fun saveCurrentTrip() {
         getTripFromCache()?.let { trip ->

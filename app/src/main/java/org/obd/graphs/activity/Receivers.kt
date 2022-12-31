@@ -1,6 +1,5 @@
 package org.obd.graphs.activity
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
@@ -41,7 +40,7 @@ internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
 
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            progressDialog = ProgressDialog.show(this, "", "Please wait...", true)
+            progressDialog.show()
         }
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> {
