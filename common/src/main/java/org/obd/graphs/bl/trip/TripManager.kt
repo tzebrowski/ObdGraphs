@@ -2,18 +2,9 @@ package org.obd.graphs.bl.trip
 
 import android.content.Context
 import android.util.Log
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.mikephil.charting.data.Entry
 import org.obd.graphs.Cache
+import org.obd.graphs.DoAsync
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.getContext
@@ -22,94 +13,15 @@ import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.profile.getCurrentProfile
 import org.obd.graphs.profile.getProfileList
 import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.transport.message.ConnectorResponse
-import org.obd.metrics.transport.message.ConnectorResponseFactory
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_TAG = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
-private val EMPTY_CONNECTOR_RESPONSE = ConnectorResponseFactory.wrap(byteArrayOf())
-
-private class ConnectorResponseSerializer() :
-    StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
-
-    @Throws(IOException::class)
-    override fun serialize(
-        value: ConnectorResponse,
-        gen: JsonGenerator,
-        provider: SerializerProvider
-    ) {
-        gen.writeString(value.message)
-    }
-}
-
-private class NopeConnectorResponseSerializer() :
-    StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
-
-    @Throws(IOException::class)
-    override fun serialize(
-        value: ConnectorResponse,
-        gen: JsonGenerator,
-        provider: SerializerProvider
-    ) {
-        gen.writeString("")
-    }
-}
-
-private class ConnectorResponseDeserializer() :
-    StdDeserializer<ConnectorResponse>(String::class.java) {
-
-    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ConnectorResponse {
-        return EMPTY_CONNECTOR_RESPONSE
-    }
-}
-
-data class TripFileDesc(
-    val fileName: String,
-    val profileId: String,
-    val profileLabel: String,
-    val startTime: String,
-    val tripTimeSec: String
-)
-
-data class Metric(
-    val entry: Entry,
-    val ts: Long,
-    val rawAnswer: ConnectorResponse
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class SensorData(
-    val id: Long,
-    val metrics: MutableList<Metric>,
-    var min: Number = 0,
-    var max: Number = 0,
-    var mean: Number = 0
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as SensorData
-
-        if (id != other.id) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class Trip(val startTs: Long, val entries: MutableMap<Long, SensorData>)
 
 class TripManager private constructor() {
 
@@ -127,6 +39,8 @@ class TripManager private constructor() {
     private val context: Context by lazy { getContext()!! }
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("dd.MM HH:mm:ss", Locale.getDefault())
+
+    private val tripModelSerializer = TripModelSerializer()
 
     fun addTripEntry(metric: ObdMetric) {
         try {
@@ -212,7 +126,7 @@ class TripManager private constructor() {
                         "It seems that Trip which start same date='${filter}' is already saved."
                     )
                 } else {
-                    val content: String = objectMapper().writeValueAsString(trip)
+                    val content: String = tripModelSerializer.serializer.writeValueAsString(trip)
 
                     val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
                     Log.i(
@@ -280,23 +194,7 @@ class TripManager private constructor() {
         } else {
             val file = File(getTripsDirectory(context), tripName)
             try {
-
-                val jackson: ObjectMapper by lazy {
-                    jacksonObjectMapper().apply {
-                        val module = SimpleModule()
-                        module.addSerializer(
-                            ConnectorResponse::class.java,
-                            ConnectorResponseSerializer()
-                        )
-                        module.addDeserializer(
-                            ConnectorResponse::class.java,
-                            ConnectorResponseDeserializer()
-                        )
-                        registerModule(module)
-                    }
-                }
-
-                val trip: Trip = jackson.readValue(file, Trip::class.java)
+                val trip: Trip = tripModelSerializer.deserializer.readValue(file, Trip::class.java)
                 Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the disk.")
                 Cache[CACHE_TRIP_PROPERTY_NAME] = trip
             } catch (e: FileNotFoundException) {
@@ -306,57 +204,30 @@ class TripManager private constructor() {
         }
     }
 
-    private fun objectMapper(): ObjectMapper {
-        val jackson: ObjectMapper by lazy {
-            jacksonObjectMapper().apply {
-                val module = SimpleModule()
-                val serializeConnectorResponse =
-                    Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
-                if (serializeConnectorResponse) {
-                    module.addSerializer(
-                        ConnectorResponse::class.java,
-                        ConnectorResponseSerializer()
-                    )
-                } else {
-                    module.addSerializer(
-                        ConnectorResponse::class.java,
-                        NopeConnectorResponseSerializer()
-                    )
-                }
-
-                module.addDeserializer(
-                    ConnectorResponse::class.java,
-                    ConnectorResponseDeserializer()
-                )
-                registerModule(module)
-            }
-        }
-        return jackson
-    }
-
     private fun writeFile(
         context: Context,
         fileName: String,
         content: String
     ) {
-        var fd: FileOutputStream? = null
-        try {
-            val file = getTripFileRef(context, fileName)
-            fd = FileOutputStream(file).apply {
-                write(content.toByteArray())
-            }
+        DoAsync {
+            var fd: FileOutputStream? = null
+            try {
+                val file = getTripFileRef(context, fileName)
+                fd = FileOutputStream(file).apply {
+                    write(content.toByteArray())
+                }
 
-        } finally {
-            fd?.run {
-                flush()
-                close()
+            } finally {
+                fd?.run {
+                    flush()
+                    close()
+                }
             }
-        }
+        }.execute()
     }
 
     private fun getTripFileRef(context: Context, fileName: String): File =
         File(getTripsDirectory(context), fileName)
-
 
     private fun getTripsDirectory(context: Context) =
         "${context.getExternalFilesDir("trips")?.absolutePath}"
