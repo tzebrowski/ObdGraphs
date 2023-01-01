@@ -40,7 +40,7 @@ internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
         SCREEN_LOCK_PROGRESS_EVENT -> {
             lockScreenDialogShow { dialogTitle ->
-                var msg = (intent.extras?.get("extra") as String)
+                var msg = intent.getExtraParam()
                 if (msg.isEmpty()){
                     msg = getText(R.string.dialog_screen_lock_message) as String
                 }

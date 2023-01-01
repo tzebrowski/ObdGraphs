@@ -43,11 +43,12 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
                 }.execute()
             }
             TRIP_LOAD_EVENT -> {
-                val tripName = intent.extras?.get("extra") as String
+
                 if (!isDataCollectingProcessWorking()) {
                     context?.run {
                         DoAsync {
                             try {
+                                val tripName = intent.getExtraParam()
                                 Log.i(LOGGER_KEY, "Loading trip: '$tripName' ...................")
                                 sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
                                 TripManager.INSTANCE.loadTrip(tripName)
