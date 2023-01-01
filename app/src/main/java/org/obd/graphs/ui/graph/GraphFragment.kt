@@ -116,7 +116,7 @@ class GraphFragment : Fragment() {
 
     private val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     private lateinit var chart: LineChart
-    private var colors: IntIterator = Colors().generate()
+    private lateinit var colors: IntIterator
     private val valueScaler = ValueScaler()
     private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
@@ -126,6 +126,11 @@ class GraphFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         requireContext().unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        colors = Colors().generate()
     }
 
     override fun onCreateView(
