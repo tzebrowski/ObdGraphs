@@ -174,7 +174,7 @@ class TripManager private constructor() {
     }
 
     fun startNewTrip(newTs: Long) {
-        Log.i(LOGGER_TAG, "Starting new trip, time stamp: '${dateFormat.format(Date(newTs))}'")
+        Log.i(LOGGER_TAG, "Starting new trip, timestamp: '${dateFormat.format(Date(newTs))}'")
         updateCache(newTs)
     }
 
@@ -364,7 +364,8 @@ class TripManager private constructor() {
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs, entries = mutableMapOf())
         Cache[CACHE_TRIP_PROPERTY_NAME] = trip
-        Log.i(LOGGER_TAG, "Init new Trip with stamp: $${trip.startTs}")
+
+        Log.i(LOGGER_TAG, "Init new Trip with timestamp: '${dateFormat.format(Date(newTs))}'")
     }
 
     private fun getTripFromCache(): Trip? = Cache[CACHE_TRIP_PROPERTY_NAME] as Trip?
