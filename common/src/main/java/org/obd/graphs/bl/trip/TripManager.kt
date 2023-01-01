@@ -132,9 +132,9 @@ class TripManager private constructor() {
                         "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
                     )
                     writeFile(context, fileName, content)
-                    Log.i(
+                    Log.w(
                         LOGGER_TAG,
-                        "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
+                        "Trip was written to the file: '$fileName'. Length: ${MIN_TRIP_LENGTH}s"
                     )
                 }
             } else {
@@ -144,7 +144,7 @@ class TripManager private constructor() {
     }
 
     fun findAllTripsBy(filter: String = ""): MutableCollection<TripFileDesc> {
-        Log.i(LOGGER_TAG, "Find all trips with filter: '$filter'")
+        Log.i(LOGGER_TAG, "Find all trips by filter: '$filter'")
 
         val profiles = getProfileList()
         val files = File(getTripsDirectory(context)).list()
