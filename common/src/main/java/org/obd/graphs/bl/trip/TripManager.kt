@@ -3,7 +3,6 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import com.github.mikephil.charting.data.Entry
-import org.obd.graphs.Cache
 import org.obd.graphs.DoAsync
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.DataLogger
@@ -19,7 +18,6 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 private const val LOGGER_TAG = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
@@ -30,7 +28,7 @@ class TripManager private constructor() {
         @JvmStatic
         val INSTANCE: TripManager = TripManager().apply {
             val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())
-            Cache[CACHE_TRIP_PROPERTY_NAME] = trip
+            tripCache.updateTrip(trip)
             Log.i(LOGGER_TAG, "Init Trip with stamp: ${trip.startTs}")
         }
     }
@@ -41,10 +39,11 @@ class TripManager private constructor() {
         SimpleDateFormat("dd.MM HH:mm:ss", Locale.getDefault())
 
     private val tripModelSerializer = TripModelSerializer()
+    private val tripCache = TripCache()
 
     fun addTripEntry(metric: ObdMetric) {
         try {
-            getTripFromCache()?.let { trip ->
+            tripCache.getTrip { trip ->
                 val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
                 val key = metric.command.pid.id
                 val newRecord =
@@ -78,11 +77,11 @@ class TripManager private constructor() {
     }
 
     fun getCurrentTrip(): Trip {
-        if (null == getTripFromCache()) {
+        if (null == tripCache.getTrip()) {
             startNewTrip(System.currentTimeMillis())
         }
 
-        val trip = getTripFromCache()!!
+        val trip = tripCache.getTrip()!!
         Log.i(LOGGER_TAG, "Get current trip ts: '${dateFormat.format(Date(trip.startTs))}'")
         return trip
     }
@@ -93,7 +92,7 @@ class TripManager private constructor() {
     }
 
     fun saveCurrentTrip() {
-        getTripFromCache()?.let { trip ->
+        tripCache.getTrip { trip ->
 
             val histogram = DataLogger.instance.diagnostics().histogram()
             val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
@@ -140,7 +139,7 @@ class TripManager private constructor() {
                     )
                 }
             } else {
-                Log.i(LOGGER_TAG, "Trip was no saved. Trip time is less than ${tripLength}s")
+                Log.i(LOGGER_TAG, "Trip was not saved. Trip time is less than ${tripLength}s")
             }
         }
     }
@@ -196,7 +195,7 @@ class TripManager private constructor() {
             try {
                 val trip: Trip = tripModelSerializer.deserializer.readValue(file, Trip::class.java)
                 Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the disk.")
-                Cache[CACHE_TRIP_PROPERTY_NAME] = trip
+                tripCache.updateTrip(trip)
             } catch (e: FileNotFoundException) {
                 Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)
                 updateCache(System.currentTimeMillis())
@@ -234,12 +233,9 @@ class TripManager private constructor() {
 
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs, entries = mutableMapOf())
-        Cache[CACHE_TRIP_PROPERTY_NAME] = trip
-
+        tripCache.updateTrip(trip)
         Log.i(LOGGER_TAG, "Init new Trip with timestamp: '${dateFormat.format(Date(newTs))}'")
     }
-
-    private fun getTripFromCache(): Trip? = Cache[CACHE_TRIP_PROPERTY_NAME] as Trip?
 
     private fun getTripLength(trip: Trip): Long = if (trip.startTs == 0L) 0 else {
         (Date().time - trip.startTs) / 1000
