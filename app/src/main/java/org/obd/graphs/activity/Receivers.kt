@@ -38,13 +38,18 @@ const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
 internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
-
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            progressDialog.show()
+            lockScreenDialogShow { dialogTitle ->
+                var msg = (intent.extras?.get("extra") as String)
+                if (msg.isEmpty()){
+                    msg = getText(R.string.dialog_screen_lock_message) as String
+                }
+                dialogTitle.text = msg
+            }
         }
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> {
-            progressDialog.dismiss()
+            lockScreenDialog.dismiss()
         }
 
         DATA_LOGGER_DTC_AVAILABLE -> {

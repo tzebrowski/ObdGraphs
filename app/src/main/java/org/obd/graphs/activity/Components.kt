@@ -1,7 +1,10 @@
 package org.obd.graphs.activity
 
+import android.view.View
 import android.widget.Chronometer
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -31,4 +34,18 @@ fun MainActivity.bottomAppBar(func: (p: BottomAppBar) -> Unit) {
 
 fun MainActivity.navController(func: (p: NavController) -> Unit) {
     func((supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController)
+}
+
+
+fun MainActivity.lockScreenDialogShow(func: (dialogTitle: TextView) -> Unit) {
+
+    AlertDialog.Builder(this).run {
+        setCancelable(false)
+        val dialogView: View = layoutInflater.inflate(R.layout.dialog_screen_lock, null)
+        val dialogTitle = dialogView.findViewById<TextView>(R.id.dialog_screen_lock_message_id)
+        func(dialogTitle)
+        setView(dialogView)
+        lockScreenDialog = create()
+        lockScreenDialog.show()
+    }
 }

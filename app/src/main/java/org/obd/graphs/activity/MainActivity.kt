@@ -23,7 +23,7 @@ import pub.devrel.easypermissions.EasyPermissions
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
-    lateinit var progressDialog: AlertDialog
+    lateinit var lockScreenDialog: AlertDialog
 
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -88,8 +88,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         AlertDialog.Builder(this).run {
             setCancelable(false)
-            setView(R.layout.dialog_screen_lock)
-            progressDialog = create()
+            val dialogView: View = this@MainActivity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
+            setView(dialogView)
+            lockScreenDialog = create()
         }
     }
 

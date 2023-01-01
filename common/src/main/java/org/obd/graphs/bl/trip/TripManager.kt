@@ -3,7 +3,6 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import com.github.mikephil.charting.data.Entry
-import org.obd.graphs.DoAsync
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.getContext
@@ -208,21 +207,21 @@ class TripManager private constructor() {
         fileName: String,
         content: String
     ) {
-        DoAsync {
-            var fd: FileOutputStream? = null
-            try {
-                val file = getTripFileRef(context, fileName)
-                fd = FileOutputStream(file).apply {
-                    write(content.toByteArray())
-                }
 
-            } finally {
-                fd?.run {
-                    flush()
-                    close()
-                }
+        var fd: FileOutputStream? = null
+        try {
+            val file = getTripFileRef(context, fileName)
+            fd = FileOutputStream(file).apply {
+                write(content.toByteArray())
             }
-        }.execute()
+
+        } finally {
+            fd?.run {
+                flush()
+                close()
+            }
+        }
+
     }
 
     private fun getTripFileRef(context: Context, fileName: String): File =

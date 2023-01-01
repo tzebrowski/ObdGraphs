@@ -9,6 +9,7 @@
         android:layout_weight="1" />
 
     <TextView
+        android:id="@+id/dialog_screen_lock_message_id"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4"

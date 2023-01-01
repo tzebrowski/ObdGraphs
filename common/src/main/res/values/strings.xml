@@ -1,4 +1,5 @@
 <resources>
+    <string name="dialog.screen.lock.saving.trip.message">Trip is now saving. This may take a while....</string>
     <string name="main_activity.toast.connection.error">Error occurred during connection. Please try to connect again. If this does not help please check your connection settings.</string>
     <string name="main_activity.toast.connection.stopped">Connection with the device has been stopped.</string>
     <string name="main_activity.toast.connection.established">Connection to the device has been established.\n Start collecting data from ECU.</string>
