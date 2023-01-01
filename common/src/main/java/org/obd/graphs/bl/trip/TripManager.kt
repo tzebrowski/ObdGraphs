@@ -36,23 +36,34 @@ private const val LOGGER_TAG = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 private val EMPTY_CONNECTOR_RESPONSE = ConnectorResponseFactory.wrap(byteArrayOf())
 
-private class ConnectorResponseSerializer() : StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
+private class ConnectorResponseSerializer() :
+    StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
 
     @Throws(IOException::class)
-    override fun serialize(value: ConnectorResponse, gen: JsonGenerator, provider: SerializerProvider) {
+    override fun serialize(
+        value: ConnectorResponse,
+        gen: JsonGenerator,
+        provider: SerializerProvider
+    ) {
         gen.writeString(value.message)
     }
 }
 
-private class NopeConnectorResponseSerializer() : StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
+private class NopeConnectorResponseSerializer() :
+    StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
 
     @Throws(IOException::class)
-    override fun serialize(value: ConnectorResponse, gen: JsonGenerator, provider: SerializerProvider) {
+    override fun serialize(
+        value: ConnectorResponse,
+        gen: JsonGenerator,
+        provider: SerializerProvider
+    ) {
         gen.writeString("")
     }
 }
 
-private class ConnectorResponseDeserializer() : StdDeserializer<ConnectorResponse>(String::class.java) {
+private class ConnectorResponseDeserializer() :
+    StdDeserializer<ConnectorResponse>(String::class.java) {
 
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): ConnectorResponse {
         return EMPTY_CONNECTOR_RESPONSE
@@ -67,10 +78,11 @@ data class TripFileDesc(
     val tripTimeSec: String
 )
 
-data class Metric (
+data class Metric(
     val entry: Entry,
     val ts: Long,
-    val rawAnswer: ConnectorResponse)
+    val rawAnswer: ConnectorResponse
+)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SensorData(
@@ -126,9 +138,24 @@ class TripManager private constructor() {
 
                 if (trip.entries.containsKey(key)) {
                     val tripEntry = trip.entries[key]!!
-                    tripEntry.metrics.add(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw))
+                    tripEntry.metrics.add(
+                        Metric(
+                            entry = newRecord,
+                            ts = metric.timestamp,
+                            rawAnswer = metric.raw
+                        )
+                    )
                 } else {
-                    trip.entries[key] = SensorData(id = key, metrics = mutableListOf(Metric(entry =  newRecord, ts = metric.timestamp,rawAnswer = metric.raw)))
+                    trip.entries[key] = SensorData(
+                        id = key,
+                        metrics = mutableListOf(
+                            Metric(
+                                entry = newRecord,
+                                ts = metric.timestamp,
+                                rawAnswer = metric.raw
+                            )
+                        )
+                    )
                 }
             }
         } catch (e: Throwable) {
@@ -167,59 +194,39 @@ class TripManager private constructor() {
                 }
             }
 
-            val endDate = Date()
             val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
 
-            val tripLength = if (trip.startTs == 0L) 0 else {
-                (endDate.time - trip.startTs) / 1000
-            }
+            val tripLength = getTripLength(trip)
 
             Log.i(LOGGER_TAG, "Recorded trip, length: ${tripLength}s")
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val startString = dateFormat.format(Date(trip.startTs))
 
-                val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
+                val filter = "trip-${getCurrentProfile()}-${startString}"
+                val alreadySaved = findAllTripsBy(filter)
 
-                val duplicateFilter = "trip-${getCurrentProfile()}-${startString}"
-                val duplicates = findAllTripsBy(duplicateFilter)
+                if (alreadySaved.isNotEmpty()) {
+                    Log.e(
+                        LOGGER_TAG,
+                        "It seems that Trip which start same date='${filter}' is already saved."
+                    )
+                } else {
+                    val content: String = objectMapper().writeValueAsString(trip)
 
-                if (duplicates.isNotEmpty()){
-                    Log.e(LOGGER_TAG,"It seems that Trip which start same date='${duplicateFilter}' is already saved.")
-                }else {
-                    val jackson: ObjectMapper by lazy {
-                        jacksonObjectMapper().apply {
-                            val module = SimpleModule()
-                            val serializeConnectorResponse =
-                                Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
-                            if (serializeConnectorResponse) {
-                                module.addSerializer(
-                                    ConnectorResponse::class.java,
-                                    ConnectorResponseSerializer()
-                                )
-                            } else {
-                                module.addSerializer(
-                                    ConnectorResponse::class.java,
-                                    NopeConnectorResponseSerializer()
-                                )
-                            }
-
-                            module.addDeserializer(
-                                ConnectorResponse::class.java,
-                                ConnectorResponseDeserializer()
-                            )
-                            registerModule(module)
-                        }
-                    }
-
-                    val content: String = jackson.writeValueAsString(trip)
-                    Log.i(LOGGER_TAG, "Saving the trip to the file: $fileName")
+                    val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
+                    Log.i(
+                        LOGGER_TAG,
+                        "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
+                    )
                     writeFile(context, fileName, content)
-
-                    Log.i(LOGGER_TAG, "Trip was written to the file: $fileName")
+                    Log.i(
+                        LOGGER_TAG,
+                        "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
+                    )
                 }
             } else {
-                Log.i(LOGGER_TAG, "Trip was no saved. Trip time is less than ${trip.startTs}s")
+                Log.i(LOGGER_TAG, "Trip was no saved. Trip time is less than ${tripLength}s")
             }
         }
     }
@@ -253,7 +260,7 @@ class TripManager private constructor() {
                 }
                 .sortedByDescending { dateFormat.parse(it.startTime) }
                 .toMutableList()
-            Log.i(LOGGER_TAG, "Find all trips with filter: '${filter}'. Result size: ${result.size}")
+            Log.i(LOGGER_TAG, "Find all trips by filter: '${filter}'. Result size: ${result.size}")
             return result
         }
     }
@@ -274,11 +281,17 @@ class TripManager private constructor() {
             val file = File(getTripsDirectory(context), tripName)
             try {
 
-                val jackson:ObjectMapper  by lazy  {
+                val jackson: ObjectMapper by lazy {
                     jacksonObjectMapper().apply {
                         val module = SimpleModule()
-                        module.addSerializer(ConnectorResponse::class.java, ConnectorResponseSerializer())
-                        module.addDeserializer(ConnectorResponse::class.java, ConnectorResponseDeserializer())
+                        module.addSerializer(
+                            ConnectorResponse::class.java,
+                            ConnectorResponseSerializer()
+                        )
+                        module.addDeserializer(
+                            ConnectorResponse::class.java,
+                            ConnectorResponseDeserializer()
+                        )
                         registerModule(module)
                     }
                 }
@@ -291,6 +304,34 @@ class TripManager private constructor() {
                 updateCache(System.currentTimeMillis())
             }
         }
+    }
+
+    private fun objectMapper(): ObjectMapper {
+        val jackson: ObjectMapper by lazy {
+            jacksonObjectMapper().apply {
+                val module = SimpleModule()
+                val serializeConnectorResponse =
+                    Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
+                if (serializeConnectorResponse) {
+                    module.addSerializer(
+                        ConnectorResponse::class.java,
+                        ConnectorResponseSerializer()
+                    )
+                } else {
+                    module.addSerializer(
+                        ConnectorResponse::class.java,
+                        NopeConnectorResponseSerializer()
+                    )
+                }
+
+                module.addDeserializer(
+                    ConnectorResponse::class.java,
+                    ConnectorResponseDeserializer()
+                )
+                registerModule(module)
+            }
+        }
+        return jackson
     }
 
     private fun writeFile(
@@ -313,8 +354,8 @@ class TripManager private constructor() {
         }
     }
 
-    private fun getTripFileRef(context: Context, fileName: String): File  =
-        File( getTripsDirectory(context), fileName)
+    private fun getTripFileRef(context: Context, fileName: String): File =
+        File(getTripsDirectory(context), fileName)
 
 
     private fun getTripsDirectory(context: Context) =
@@ -327,4 +368,8 @@ class TripManager private constructor() {
     }
 
     private fun getTripFromCache(): Trip? = Cache[CACHE_TRIP_PROPERTY_NAME] as Trip?
+
+    private fun getTripLength(trip: Trip): Long = if (trip.startTs == 0L) 0 else {
+        (Date().time - trip.startTs) / 1000
+    }
 }
