@@ -3,7 +3,6 @@ package org.obd.graphs.bl.datalogger
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.findBluetoothAdapterByName
@@ -39,15 +38,17 @@ const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 private const val LOGGER_TAG = "DataLogger"
 
 class DataLogger internal constructor() {
+
     companion object {
         @JvmStatic
         var instance: DataLogger =
             DataLogger()
     }
 
-    private inner class EventsReceiver : BroadcastReceiver() {
+    inner class EventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             if (intent.action === PROFILE_CHANGED_EVENT) {
+                Log.i(LOGGER_TAG,"Received profile changed event")
                 workflow = workflow()
             }
 
@@ -58,9 +59,9 @@ class DataLogger internal constructor() {
         }
     }
 
+    val eventsReceiver = EventsReceiver()
     private var metricsAggregator = MetricsCollector()
     private var reconnectAttemptCount = 0
-    private val broadcastReceiver = EventsReceiver()
     private var reconnecting = false
 
     private var lifecycle = object : Lifecycle {
@@ -132,19 +133,6 @@ class DataLogger internal constructor() {
     }
 
     private var workflow: Workflow = workflow()
-
-    init {
-        getContext()?.let {
-            try {
-                it.registerReceiver(broadcastReceiver, IntentFilter().apply {
-                    addAction(RESOURCE_LIST_CHANGED_EVENT)
-                    addAction(PROFILE_CHANGED_EVENT)
-                })
-            }catch (il : IllegalArgumentException){
-                Log.e(LOGGER_TAG, "Failed to register receiver",il)
-            }
-        }
-    }
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
         metricsAggregator.metrics.observe(lifecycleOwner){

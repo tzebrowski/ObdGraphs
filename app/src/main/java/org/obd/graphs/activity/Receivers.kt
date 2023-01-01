@@ -214,6 +214,7 @@ internal fun MainActivity.unregisterReceiver() {
     unregisterReceiver(activityBroadcastReceiver)
     unregisterReceiver(tripRecorderBroadcastReceiver)
     unregisterReceiver(powerReceiver)
+    unregisterReceiver(DataLogger.instance.eventsReceiver)
 }
 
 internal fun MainActivity.registerReceiver() {
@@ -255,5 +256,11 @@ internal fun MainActivity.registerReceiver() {
     registerReceiver(powerReceiver, IntentFilter().apply {
         addAction("android.intent.action.ACTION_POWER_CONNECTED")
         addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
+    })
+
+
+    registerReceiver(DataLogger.instance.eventsReceiver, IntentFilter().apply {
+        addAction(RESOURCE_LIST_CHANGED_EVENT)
+        addAction(PROFILE_CHANGED_EVENT)
     })
 }
