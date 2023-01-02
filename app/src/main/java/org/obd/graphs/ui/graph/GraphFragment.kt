@@ -128,11 +128,6 @@ class GraphFragment : Fragment() {
         requireContext().unregisterReceiver(broadcastReceiver)
     }
 
-    override fun onResume() {
-        super.onResume()
-        colors = Colors().generate()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -141,7 +136,6 @@ class GraphFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
 
-        colors = Colors().generate()
         preferences = getGraphPreferences()
 
         initializeChart(root)
@@ -206,7 +200,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun initializeChart(root: View) {
-
+        colors = Colors().generate()
         chart = buildChart(root).apply {
 
             val pidRegistry: PidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
