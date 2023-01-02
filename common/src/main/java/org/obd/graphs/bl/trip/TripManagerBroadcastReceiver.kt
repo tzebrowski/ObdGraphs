@@ -30,7 +30,7 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
             }
 
             DATA_LOGGER_STOPPED_EVENT -> {
-                DoAsync {
+                runAsync {
                     try {
                         val msg = context?.getText(R.string.dialog_screen_lock_saving_trip_message) as String
                         sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, msg)
@@ -40,13 +40,13 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
                     } finally {
                         sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                     }
-                }.execute()
+                }
             }
             TRIP_LOAD_EVENT -> {
 
                 if (!isDataCollectingProcessWorking()) {
                     context?.run {
-                        DoAsync {
+                        runAsync {
                             try {
                                 val tripName = intent.getExtraParam()
                                 Log.i(LOGGER_KEY, "Loading trip: '$tripName' ...................")
@@ -56,7 +56,7 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
                             } finally {
                                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                             }
-                        }.execute()
+                        }
                     }
                 }
             }
