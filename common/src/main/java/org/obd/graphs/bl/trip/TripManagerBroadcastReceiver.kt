@@ -15,13 +15,13 @@ private const val LOGGER_KEY = "TripRecorderBroadcastReceiver"
 
 class TripManagerBroadcastReceiver : BroadcastReceiver() {
     private fun isDataCollectingProcessWorking() =
-        (Cache[DATA_LOGGER_PROCESS_IS_RUNNING] as Boolean?) ?: false
+        (cacheManager.findEntry(DATA_LOGGER_PROCESS_IS_RUNNING) as Boolean?) ?: false
 
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
 
             DATA_LOGGER_CONNECTING_EVENT -> {
-                Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = true
+                cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
             }
 
             DATA_LOGGER_CONNECTED_EVENT -> {
@@ -34,9 +34,9 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
                     try {
                         val msg = context?.getText(R.string.dialog_screen_lock_saving_trip_message) as String
                         sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, msg)
-                        Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
                         Log.i(LOGGER_KEY, "Received event: DATA_LOGGER_STOPPED_EVENT")
                         TripManager.INSTANCE.saveCurrentTrip()
+                        cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
                     } finally {
                         sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                     }

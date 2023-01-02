@@ -28,10 +28,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
-import org.obd.graphs.Cache
-import org.obd.graphs.DATA_LOGGER_PROCESS_IS_RUNNING
-import org.obd.graphs.R
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
@@ -53,8 +50,8 @@ fun ValueScaler.scaleToPidRange(
 ): Float {
     return scaleToNewRange(
         value,
-        org.obd.graphs.NEW_RANGE_MIN_VAL,
-        org.obd.graphs.NEW_RANGE_MAX_VAL,
+        NEW_RANGE_MIN_VAL,
+        NEW_RANGE_MAX_VAL,
         pid.min.toFloat(),
         pid.max.toFloat()
     )
@@ -67,11 +64,11 @@ class GraphFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = true
+                    cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
                     initializeChart(root)
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
+                    cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
                 }
             }
         }

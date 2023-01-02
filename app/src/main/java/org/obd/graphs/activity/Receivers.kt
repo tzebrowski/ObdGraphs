@@ -126,8 +126,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 }
                 it.refreshDrawableState()
             }
-
-            Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = true
+            cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
         }
 
         PREFS_CONNECTION_TYPE_CHANGED_EVENT -> {
@@ -201,7 +200,7 @@ private fun MainActivity.handleStop() {
         it.stop()
     }
 
-    Cache[DATA_LOGGER_PROCESS_IS_RUNNING] = false
+    cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
 }
 
 internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {

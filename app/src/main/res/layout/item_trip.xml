@@ -67,7 +67,9 @@
                     android:gravity="center"
                     android:text="@string/trip_action_load"
                     android:textSize="10sp"
-                    tools:ignore="SmallSp" />
+                    tools:ignore="SmallSp"
+                    style="?android:attr/buttonBarButtonStyle"
+                    />
 
                 <Button
                     android:backgroundTint="@color/cardinal"
@@ -77,7 +79,9 @@
                     android:gravity="center"
                     android:text="@string/trip_action_delete"
                     android:textSize="10sp"
-                    tools:ignore="SmallSp" />
+                    tools:ignore="SmallSp"
+                    style="?android:attr/buttonBarButtonStyle"
+                    />
 
             </LinearLayout>
         </TableRow>

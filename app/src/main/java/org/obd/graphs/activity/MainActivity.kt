@@ -63,8 +63,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setActivityContext(this)
-        Cache = cache
-
+        initCache()
         StrictMode.setThreadPolicy(
             ThreadPolicy.Builder()
                 .permitAll().build()
@@ -119,5 +118,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private fun setupPreferences() {
         Prefs.updateString("pref.about.build_version", BuildConfig.VERSION_NAME)
         Prefs.updateBoolean("pref.debug.logging.enabled", false)
+    }
+
+    private fun initCache() {
+        cacheManager.initCache(cache)
     }
 }
