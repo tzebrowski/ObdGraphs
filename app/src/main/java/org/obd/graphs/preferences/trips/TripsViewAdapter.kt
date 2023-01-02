@@ -23,7 +23,7 @@ private const val LOGGER_KEY = "TripsViewAdapter"
 
 class TripsViewAdapter internal constructor(
     context: Context?,
-    private var data: MutableCollection<TripFileDesc>
+    var data: MutableCollection<TripFileDesc>
 ) : RecyclerView.Adapter<TripsViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)

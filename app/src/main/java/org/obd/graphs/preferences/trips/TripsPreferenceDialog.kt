@@ -3,6 +3,7 @@ package org.obd.graphs.preferences.trips
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ import androidx.annotation.Nullable
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.R
+import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripManager
 
@@ -40,6 +41,22 @@ class TripsPreferenceDialog : DialogFragment() {
             setOnClickListener {
                 navigateToScreen(R.id.navigation_graph)
                 dialog?.dismiss()
+            }
+        }
+
+        root.findViewById<Button>(R.id.trip_delete_all).apply {
+            setOnClickListener {
+                try {
+                    sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                    adapter.data.forEach {
+                        TripManager.INSTANCE.deleteTrip(it)
+                    }
+                    adapter.data.clear()
+                    adapter.notifyDataSetChanged()
+
+                } finally {
+                    sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+                }
             }
         }
 

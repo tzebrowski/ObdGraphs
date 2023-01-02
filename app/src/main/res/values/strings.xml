@@ -192,6 +192,7 @@
     <string name="trip_action">Action</string>
     <string name="trip_action_delete">Del</string>
     <string name="trip_dialog_close_window">Close window</string>
+    <string name="trip_dialog_delete_all_trips">Delete all</string>
 
     <string name="trip_action_load">Load</string>
     <string name="adapter_connection_type">Adapter</string>

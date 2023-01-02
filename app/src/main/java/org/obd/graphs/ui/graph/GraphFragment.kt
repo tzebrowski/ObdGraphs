@@ -128,6 +128,12 @@ class GraphFragment : Fragment() {
         requireContext().unregisterReceiver(broadcastReceiver)
     }
 
+    override fun onResume() {
+        super.onResume()
+
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
