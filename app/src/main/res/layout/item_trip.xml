@@ -42,13 +42,13 @@
                 android:textSize="15sp" />
 
             <TextView
-                android:id="@+id/trip_time"
+                android:id="@+id/trip_length"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:gravity="start"
                 android:paddingEnd="0dp"
                 android:paddingStart="5dp"
-                android:text="@string/trip_time"
+                android:text="@string/trip_length"
                 android:textColor="@color/gray_light"
                 android:textSize="15sp" />
 

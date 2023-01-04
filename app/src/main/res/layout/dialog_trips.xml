@@ -44,7 +44,7 @@
                 android:gravity="start"
                 android:paddingStart="5dp"
                 android:paddingEnd="0dp"
-                android:text="@string/trip_time"
+                android:text="@string/trip_length"
                 android:textColor="@color/gray_dark"
                 android:textSize="15sp"
                 android:textStyle="bold" />

@@ -87,7 +87,7 @@ class TripsViewAdapter internal constructor(
         RecyclerView.ViewHolder(itemView) {
         var vehicleProfile: TextView = itemView.findViewById(R.id.vehicle_profile)
         var tripStartDate: TextView = itemView.findViewById(R.id.trip_start_date)
-        var tripTime: TextView = itemView.findViewById(R.id.trip_time)
+        var tripTime: TextView = itemView.findViewById(R.id.trip_length)
         private var loadTrip: Button = itemView.findViewById(R.id.trip_load)
         private var deleteTrip: Button = itemView.findViewById(R.id.trip_delete)
 

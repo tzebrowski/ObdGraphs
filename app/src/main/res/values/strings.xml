@@ -186,7 +186,7 @@
     <string name="pref.pids.registry.resource_list">OBD2 PIDs/Sensor resource files</string>
     <string name="pref.pids.registry.resource.list_summary">This preference allows to load additional OBD2 PIDs/Sensor resources files.\nResource files contains OBD2 PIDs/Sensor definitions.</string>
     <string name="pref.pids.registry.resource.external_storage">Access OBD2 PIDs/Sensor resources files from the external storage</string>
-    <string name="trip_time">Time</string>
+    <string name="trip_length">Length</string>
     <string name="trip_start_date">Start date</string>
     <string name="trip_vehicle_profile">Profile</string>
     <string name="trip_action">Action</string>
