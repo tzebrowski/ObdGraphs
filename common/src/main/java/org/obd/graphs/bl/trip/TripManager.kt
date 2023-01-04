@@ -20,6 +20,8 @@ import java.util.*
 private const val LOGGER_TAG = "TripRecorder"
 private const val MIN_TRIP_LENGTH = 5
 
+private const val TRIP_DIRECTORY = "trips"
+
 class TripManager private constructor() {
 
     companion object {
@@ -35,7 +37,7 @@ class TripManager private constructor() {
     private val valueScaler = ValueScaler()
     private val context: Context by lazy { getContext()!! }
     private val dateFormat: SimpleDateFormat =
-        SimpleDateFormat("dd.MM HH:mm:ss", Locale.getDefault())
+        SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
 
     private val tripModelSerializer = TripModelSerializer()
     private val tripCache = TripCache()
@@ -81,12 +83,12 @@ class TripManager private constructor() {
         }
 
         val trip = tripCache.getTrip()!!
-        Log.i(LOGGER_TAG, "Get current trip ts: '${dateFormat.format(Date(trip.startTs))}'")
+        Log.i(LOGGER_TAG, "Get current trip ts: '${formatTimestamp(trip.startTs)}'")
         return trip
     }
 
     fun startNewTrip(newTs: Long) {
-        Log.i(LOGGER_TAG, "Starting new trip, timestamp: '${dateFormat.format(Date(newTs))}'")
+        Log.i(LOGGER_TAG, "Starting new trip, timestamp: '${formatTimestamp(newTs)}'")
         updateCache(newTs)
     }
 
@@ -113,9 +115,9 @@ class TripManager private constructor() {
             Log.i(LOGGER_TAG, "Recorded trip, length: ${tripLength}s")
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
-                val startString = dateFormat.format(Date(trip.startTs))
+                val tripStartTs = trip.startTs
 
-                val filter = "trip-${getCurrentProfile()}-${startString}"
+                val filter = "trip-${getCurrentProfile()}-${tripStartTs}"
                 val alreadySaved = findAllTripsBy(filter)
 
                 if (alreadySaved.isNotEmpty()) {
@@ -126,7 +128,7 @@ class TripManager private constructor() {
                 } else {
                     val content: String = tripModelSerializer.serializer.writeValueAsString(trip)
 
-                    val fileName = "trip-${getCurrentProfile()}-${startString}-${tripLength}.json"
+                    val fileName = "trip-${getCurrentProfile()}-${tripStartTs}-${tripLength}.json"
                     Log.i(
                         LOGGER_TAG,
                         "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
@@ -170,7 +172,7 @@ class TripManager private constructor() {
                         tripTimeSec = p[3]
                     )
                 }
-                .sortedByDescending { dateFormat.parse(it.startTime) }
+                .sortedByDescending { it.startTime.toLongOrNull() }
                 .toMutableList()
             Log.i(LOGGER_TAG, "Find all trips by filter: '${filter}'. Result size: ${result.size}")
             return result
@@ -210,7 +212,7 @@ class TripManager private constructor() {
 
         var fd: FileOutputStream? = null
         try {
-            val file = getTripFileRef(context, fileName)
+            val file = getTripFile(context, fileName)
             fd = FileOutputStream(file).apply {
                 write(content.toByteArray())
             }
@@ -221,22 +223,24 @@ class TripManager private constructor() {
                 close()
             }
         }
-
     }
 
-    private fun getTripFileRef(context: Context, fileName: String): File =
+    private fun getTripFile(context: Context, fileName: String): File =
         File(getTripsDirectory(context), fileName)
 
     private fun getTripsDirectory(context: Context) =
-        "${context.getExternalFilesDir("trips")?.absolutePath}"
+        "${context.getExternalFilesDir(TRIP_DIRECTORY)?.absolutePath}"
 
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs, entries = mutableMapOf())
         tripCache.updateTrip(trip)
-        Log.i(LOGGER_TAG, "Init new Trip with timestamp: '${dateFormat.format(Date(newTs))}'")
+        Log.i(LOGGER_TAG, "Init new Trip with timestamp: '${formatTimestamp(newTs)}'")
     }
 
     private fun getTripLength(trip: Trip): Long = if (trip.startTs == 0L) 0 else {
         (Date().time - trip.startTs) / 1000
     }
+
+    private fun formatTimestamp(ts: Long) =
+        dateFormat.format(Date(ts))
 }

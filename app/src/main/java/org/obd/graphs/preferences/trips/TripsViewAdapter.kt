@@ -18,6 +18,8 @@ import org.obd.graphs.profile.getProfileList
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val LOGGER_KEY = "TripsViewAdapter"
 
@@ -27,6 +29,9 @@ class TripsViewAdapter internal constructor(
 ) : RecyclerView.Adapter<TripsViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
+    private val dateFormat: SimpleDateFormat =
+        SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault())
+
     private val profileColors = mutableMapOf<String, Int>().apply {
         val colors = Colors().generate()
         getProfileList().forEach { (s, _) ->
@@ -53,7 +58,12 @@ class TripsViewAdapter internal constructor(
                 Typeface.NORMAL,
                 0.6f
             )
-            holder.tripStartDate.setText(startTime, Color.GRAY, Typeface.NORMAL, 0.9f)
+            var startTs = startTime
+            startTime.toLongOrNull()?.let {
+                startTs = dateFormat.format(Date(it))
+            }
+
+            holder.tripStartDate.setText(startTs, Color.GRAY, Typeface.NORMAL, 0.9f)
 
             holder.tripTime.let {
                 val seconds: Int = tripTimeSec.toInt() % 60
