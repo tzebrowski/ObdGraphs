@@ -99,6 +99,7 @@ class TripsViewAdapter internal constructor(
 
             deleteTrip.setOnClickListener {
                 val trip = data.elementAt(adapterPosition)
+
                 Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
                 data.remove(trip)
                 tripManager.deleteTrip(trip)

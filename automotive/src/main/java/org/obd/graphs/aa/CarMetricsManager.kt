@@ -1,14 +1,14 @@
 package org.obd.graphs.aa
 
 import android.util.Log
-import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.MetricsProvider
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.metrics.api.model.ObdMetric
 
 class CarMetricsManager {
 
     private var metrics: MutableMap<Long,CarMetric> = mutableMapOf()
-    private val histogram by lazy {  DataLogger.instance.diagnostics().histogram() }
+    private val histogram by lazy {  dataLogger.diagnostics().histogram() }
 
     fun metrics() = metrics.values
 

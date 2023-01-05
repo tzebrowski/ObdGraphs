@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.github.mikephil.charting.data.Entry
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -87,8 +87,8 @@ class TripManager {
     fun saveCurrentTrip() {
         tripCache.getTrip { trip ->
 
-            val histogram = DataLogger.instance.diagnostics().histogram()
-            val pidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
+            val histogram = dataLogger.diagnostics().histogram()
+            val pidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
 
             trip.entries.forEach { (t, u) ->
                 val p = pidDefinitionRegistry.findBy(t)

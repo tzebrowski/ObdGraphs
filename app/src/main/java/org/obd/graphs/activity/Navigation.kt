@@ -8,8 +8,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.DataLoggerService
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
 import org.obd.graphs.preferences.PREF_GAUGE_DISPLAYED_PARAMETERS_IDS
@@ -63,7 +63,7 @@ internal fun MainActivity.setupNavigationBar() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBar {
-                it.menu.findItem(R.id.ctx_menu_dtc).isVisible = DataLogger.instance.isDTCEnabled()
+                it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
                 when (destination.label.toString()) {
                     resources.getString(R.string.navigation_title_graph) -> {
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true

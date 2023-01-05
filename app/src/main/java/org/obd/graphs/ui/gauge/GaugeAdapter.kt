@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.defaultPidFiles
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.*
@@ -126,7 +127,7 @@ class GaugeAdapter(
             )
         }
 
-        DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
+        dataLogger.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.minValue.run {
                 val txt = "min\n ${metric.toNumber(min)}"
                 text = txt
@@ -157,7 +158,7 @@ class GaugeAdapter(
         holder.commandRate?.run {
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
-                val rate = DataLogger.instance.diagnostics().rate()
+                val rate = dataLogger.diagnostics().rate()
                     .findBy(RateType.MEAN, metric.command.pid)
                 val txt = "rate ${rate.get().value.round(2)}"
                 text = txt

@@ -3,7 +3,7 @@ package org.obd.graphs.preferences.pid
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
-import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import java.util.*
@@ -36,7 +36,7 @@ class DisplayedPIDsListPreferences(
         entriesValues: MutableList<CharSequence>
     ) {
         val query = Prefs.getStringSet(HIGH_PRIO_PID_PREF)
-        DataLogger.instance.pidDefinitionRegistry().findAll()
+        dataLogger.pidDefinitionRegistry().findAll()
             .filter { pidDefinition -> pidDefinition.priority == 0 }
             .filter { pidDefinition -> query.contains(pidDefinition.id.toString()) }
             .sortedBy { p -> p.displayString().toString() }
@@ -52,7 +52,7 @@ class DisplayedPIDsListPreferences(
     ) {
         val query = Prefs.getStringSet(LOW_PRIO_PID_PREF)
 
-        DataLogger.instance.pidDefinitionRegistry().findAll()
+        dataLogger.pidDefinitionRegistry().findAll()
             .filter { p -> p.priority > 0 }
             .filter { p -> query.contains(p.id.toString()) }
             .sortedBy { p -> p.displayString().toString() }

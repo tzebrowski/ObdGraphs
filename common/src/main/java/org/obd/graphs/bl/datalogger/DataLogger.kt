@@ -37,13 +37,12 @@ const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
 private const val LOGGER_TAG = "DataLogger"
 
-class DataLogger internal constructor() {
+var dataLogger: DataLogger = DataLogger()
 
-    companion object {
-        @JvmStatic
-        var instance: DataLogger =
-            DataLogger()
-    }
+/**
+ * That's the wrapper interface on Workflow API.
+ */
+class DataLogger internal constructor() {
 
     inner class EventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {

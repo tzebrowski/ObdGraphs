@@ -1,6 +1,6 @@
 package org.obd.graphs.ui.common
 
-import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
@@ -30,7 +30,6 @@ internal class MetricsProvider {
     }
 
     private fun buildMetrics(ids: Set<Long>): MutableList<ObdMetric> {
-        val dataLogger = DataLogger.instance
         val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
         val histogramSupplier = dataLogger.diagnostics().histogram()
 

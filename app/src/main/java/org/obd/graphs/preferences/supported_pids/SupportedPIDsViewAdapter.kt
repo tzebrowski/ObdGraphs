@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText
 
@@ -33,7 +33,7 @@ class SupportedPIDsViewAdapter internal constructor(
         position: Int
     ) {
         data.elementAt(position).run {
-            val pidList = DataLogger.instance.pidDefinitionRegistry().findAll()
+            val pidList = dataLogger.pidDefinitionRegistry().findAll()
             val pid = pidList.firstOrNull { it.pid == uppercase() }
             if  (pid == null) {
                 holder.mode.setText("", COLOR_PHILIPPINE_GREEN,Typeface.NORMAL, 0.7f)

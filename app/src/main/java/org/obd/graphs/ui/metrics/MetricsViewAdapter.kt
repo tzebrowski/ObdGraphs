@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText
 import org.obd.graphs.ui.common.toNumber
@@ -44,7 +45,7 @@ class MetricsViewAdapter internal constructor(
 
         holder.metricName.setText(metric.command.label, COLOR_PHILIPPINE_GREEN,Typeface.NORMAL, 1.0f)
 
-        DataLogger.instance.diagnostics().histogram().findBy(metric.command.pid).run {
+        dataLogger.diagnostics().histogram().findBy(metric.command.pid).run {
             holder.metricMaxValue.setText(
                 metric.toNumber(max).toString(),
                 Color.GRAY,

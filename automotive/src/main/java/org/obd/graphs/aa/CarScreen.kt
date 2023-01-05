@@ -137,7 +137,7 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
 
     init {
         lifecycle.addObserver(this)
-        DataLogger.instance.observe(this){
+        dataLogger.observe(this){
             surfaceController.render(it)
         }
     }

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.ui.common.MetricsProvider
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
@@ -42,7 +43,7 @@ class MetricsFragment : Fragment() {
         val data = MetricsProvider().findMetrics(dataLoggerPreferences.getPIDsToQuery(), emptyMap())
         adapter = MetricsViewAdapter(root.context, data)
 
-        DataLogger.instance.observe(this){
+        dataLogger.observe(this){
             val indexOf = data.indexOf(it)
             if (indexOf == -1) {
                 data.add(it)

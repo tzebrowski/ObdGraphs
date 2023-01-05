@@ -29,10 +29,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.*
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.Prefs
@@ -160,7 +157,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun registerMetricsObserver() {
-        DataLogger.instance.observe(viewLifecycleOwner) {
+        dataLogger.observe(viewLifecycleOwner) {
             if (preferences.selectedPids.contains(it.command.pid.id)) {
                 addEntry(it)
             }
@@ -175,9 +172,8 @@ class GraphFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
 
-        val diagnostics = DataLogger.instance.diagnostics()
-
-        DataLogger.instance.observe(viewLifecycleOwner) {
+        val diagnostics = dataLogger.diagnostics()
+        dataLogger.observe(viewLifecycleOwner) {
            diagnostics.histogram().findBy(it.command.pid)?.let{ hist ->
                val sensorData = SensorData(id = it.command.pid.id,
                    metrics = mutableListOf(),
@@ -200,7 +196,7 @@ class GraphFragment : Fragment() {
         colors = Colors().generate()
         chart = buildChart(root).apply {
 
-            val pidRegistry: PidDefinitionRegistry = DataLogger.instance.pidDefinitionRegistry()
+            val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
             val metrics = preferences.selectedPids.mapNotNull {
                 pidRegistry.findBy(it)
             }.toMutableList()
@@ -216,7 +212,7 @@ class GraphFragment : Fragment() {
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
             val trip = tripManager.getCurrentTrip()
-            val registry = DataLogger.instance.pidDefinitionRegistry()
+            val registry = dataLogger.pidDefinitionRegistry()
             tripStartTs = trip.startTs
 
             val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)

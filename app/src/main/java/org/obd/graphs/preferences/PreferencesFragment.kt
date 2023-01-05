@@ -11,7 +11,7 @@ import androidx.preference.*
 import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.activity.navigateToScreen
-import org.obd.graphs.bl.datalogger.DataLogger
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
@@ -118,7 +118,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     private fun hidePreferences() {
         findPreference<PreferenceCategory>("pref.dtc.category")?.isVisible =
-            DataLogger.instance.isDTCEnabled()
+            dataLogger.isDTCEnabled()
     }
 
     private fun registerListeners() {

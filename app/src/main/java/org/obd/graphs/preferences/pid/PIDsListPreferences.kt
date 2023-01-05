@@ -6,8 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
-import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.metrics.pid.PIDsGroup
@@ -93,7 +93,7 @@ class PIDsListPreferences(
         return Pair(entries, entriesValues)
     }
 
-    private fun getPidList() = DataLogger.instance.pidDefinitionRegistry().findAll()
+    private fun getPidList() = dataLogger.pidDefinitionRegistry().findAll()
 
     private fun getPriority(attrs: AttributeSet?): String = if (attrs == null) {
         ""

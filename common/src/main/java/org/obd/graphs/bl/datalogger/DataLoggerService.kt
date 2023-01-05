@@ -12,10 +12,10 @@ class DataLoggerService : IntentService("DataLoggerService") {
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_START -> {
-                DataLogger.instance.start()
+                dataLogger.start()
             }
             ACTION_STOP -> {
-                DataLogger.instance.stop()
+                dataLogger.stop()
             }
         }
     }
