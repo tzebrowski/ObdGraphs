@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.TRIP_LOAD_EVENT
 import org.obd.graphs.bl.trip.TripFileDesc
-import org.obd.graphs.bl.trip.TripManager
+import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.getProfileList
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
@@ -101,7 +101,7 @@ class TripsViewAdapter internal constructor(
                 val trip = data.elementAt(adapterPosition)
                 Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
                 data.remove(trip)
-                TripManager.INSTANCE.deleteTrip(trip)
+                tripManager.deleteTrip(trip)
                 notifyDataSetChanged()
             }
         }

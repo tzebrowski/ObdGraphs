@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToScreen
-import org.obd.graphs.bl.trip.TripManager
+import org.obd.graphs.bl.trip.tripManager
 
 class TripsPreferenceDialog : DialogFragment() {
     override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class TripsPreferenceDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.dialog_trips, container, false)
-        val adapter = TripsViewAdapter(context, TripManager.INSTANCE.findAllTripsBy())
+        val adapter = TripsViewAdapter(context, tripManager.findAllTripsBy())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -49,7 +49,7 @@ class TripsPreferenceDialog : DialogFragment() {
                 try {
                     sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
                     adapter.data.forEach {
-                        TripManager.INSTANCE.deleteTrip(it)
+                        tripManager.deleteTrip(it)
                     }
                     adapter.data.clear()
                     adapter.notifyDataSetChanged()

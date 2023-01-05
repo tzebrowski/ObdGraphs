@@ -34,7 +34,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.trip.SensorData
-import org.obd.graphs.bl.trip.TripManager
+import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
@@ -117,17 +117,11 @@ class GraphFragment : Fragment() {
     private val valueScaler = ValueScaler()
     private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
-    private val tripManager: TripManager by lazy { TripManager.INSTANCE }
     private lateinit var root: View
 
     override fun onDestroyView() {
         super.onDestroyView()
         requireContext().unregisterReceiver(broadcastReceiver)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
     }
 
 

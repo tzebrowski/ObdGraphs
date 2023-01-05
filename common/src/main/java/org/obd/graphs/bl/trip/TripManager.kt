@@ -17,25 +17,17 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val LOGGER_TAG = "TripRecorder"
+val tripManager: TripManager = TripManager()
+
+private const val LOGGER_TAG = "TripManager"
 private const val MIN_TRIP_LENGTH = 5
 
 private const val TRIP_DIRECTORY = "trips"
 
-class TripManager private constructor() {
-
-    companion object {
-
-        @JvmStatic
-        val INSTANCE: TripManager = TripManager().apply {
-            val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())
-            tripCache.updateTrip(trip)
-            Log.i(LOGGER_TAG, "Init Trip with stamp: ${trip.startTs}")
-        }
-    }
+class TripManager {
 
     private val valueScaler = ValueScaler()
-    private val context: Context by lazy { getContext()!! }
+
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
 
@@ -133,14 +125,14 @@ class TripManager private constructor() {
                         LOGGER_TAG,
                         "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
                     )
-                    writeFile(context, fileName, content)
-                    Log.w(
+                    writeFile(getContext()!!, fileName, content)
+                    Log.i(
                         LOGGER_TAG,
-                        "Trip was written to the file: '$fileName'. Length: ${MIN_TRIP_LENGTH}s"
+                        "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
                     )
                 }
             } else {
-                Log.i(LOGGER_TAG, "Trip was not saved. Trip time is less than ${tripLength}s")
+                Log.w(LOGGER_TAG, "Trip was not saved. Trip time is less than ${MIN_TRIP_LENGTH}s")
             }
         }
     }
@@ -149,7 +141,7 @@ class TripManager private constructor() {
         Log.i(LOGGER_TAG, "Find all trips by filter: '$filter'")
 
         val profiles = getProfileList()
-        val files = File(getTripsDirectory(context)).list()
+        val files = File(getTripsDirectory(getContext()!!)).list()
         if (files == null) {
             Log.i(LOGGER_TAG, "Find all trips by filter: '${filter}'. Result size: 0")
             return mutableListOf()
@@ -181,7 +173,7 @@ class TripManager private constructor() {
 
     fun deleteTrip(trip: TripFileDesc) {
         Log.i(LOGGER_TAG, "Deleting '${trip.fileName}' from the storage.")
-        val file = File(getTripsDirectory(context), trip.fileName)
+        val file = File(getTripsDirectory(getContext()!!), trip.fileName)
         file.delete()
         Log.i(LOGGER_TAG, "Trip '${trip.fileName}' has been deleted from the storage.")
     }
@@ -192,7 +184,7 @@ class TripManager private constructor() {
         if (tripName.isEmpty()) {
             updateCache(System.currentTimeMillis())
         } else {
-            val file = File(getTripsDirectory(context), tripName)
+            val file = File(getTripsDirectory(getContext()!!), tripName)
             try {
                 val trip: Trip = tripModelSerializer.deserializer.readValue(file, Trip::class.java)
                 Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the disk.")
