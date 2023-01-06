@@ -54,11 +54,11 @@ jobs:
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
         uses: reactivecircus/android-emulator-runner@v2
-          with:
-            api-level: 31
-            target: default
-            arch: x86
-            script: ./gradlew connectedCheck --stacktrace
+        with:
+          api-level: 31
+          target: default
+          arch: x86
+          script: ./gradlew connectedCheck --stacktrace
 
       - name: Upload artifcats
         uses: actions/upload-artifact@v3
