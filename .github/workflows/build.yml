@@ -40,9 +40,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          target: default
-          arch: x86
-          script: ./gradlew connectedCheck --stacktrace
+          script: sh ./gradlew connectedCheck --stacktrace
 
       - name: Build Giulia flavour
         env:
