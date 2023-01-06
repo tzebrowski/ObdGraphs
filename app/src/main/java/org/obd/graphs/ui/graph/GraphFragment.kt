@@ -260,8 +260,6 @@ class GraphFragment : Fragment() {
         )
     }
 
-
-
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(DATA_LOGGER_CONNECTED_EVENT)
