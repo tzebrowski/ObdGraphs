@@ -1,5 +1,6 @@
 package org.obd.graphs
 
+import android.util.Log
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions
@@ -24,7 +25,6 @@ class VehicleProfileTest {
         }
     }
 
-
     @Test
     fun setupProfilesTest() {
 
@@ -42,17 +42,27 @@ class VehicleProfileTest {
     }
 
     private fun assertProfilesExists() {
-        mapOf(
-            "profile_2" to "Profile Alfa 1.75 TBI",
-            "profile_1" to "Profile Default",
-            "profile_3" to "Profile Alfa 2.0 GME"
-        ).forEach {
+        val expected = mapOf(
+            "profile_1" to "Default",
+            "profile_2" to "Alfa 1.75 TBI",
+            "profile_3" to "Alfa 2.0 GME",
+            "profile_4" to "Alfa 2.0 GME (STNxx)"
+        )
+        val given = vehicleProfile.getProfileList().filter { it.key != "profile_5" }.toMutableMap()
+
+        assertTrue("Default profiles does not match", expected == given)
+
+        given.forEach {
             vehicleProfile.loadProfile(it.key)
+
+            assertTrue("Loaded profiles does not match",  vehicleProfile.getCurrentProfile() == it.key)
+
+            val txt =  if (it.value!!.startsWith("Profile"))  it.value!! else "Profile ${it.value}"
 
             val vehicleProfile = Espresso.onView(ViewMatchers.withId(R.id.vehicle_profile))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isEnabled()))
-            vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(it.value)))
+            vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(txt)))
         }
     }
 }

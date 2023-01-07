@@ -20,6 +20,8 @@ private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
 private const val DEFAULT_MAX_PROFILES = "5"
 private const val DEFAULT_PROFILE = "profile_1"
 
+val vehicleProfile = VehicleProfile()
+
 class VehicleProfile {
 
     fun getProfileList() =
@@ -53,14 +55,7 @@ class VehicleProfile {
                                 editor.putBoolean(key, value.toBoolean())
                             }
                             value.isArray() -> {
-                                val v = value
-                                    .replace("[", "")
-                                    .replace("]", "")
-                                    .split(",")
-                                    .map { it.trim() }
-                                    .filter { it.isNotEmpty() }
-                                    .toMutableSet()
-                                editor.putStringSet(key, v)
+                                editor.putStringSet(key, stringToStringSet(value))
                             }
                             value.isNumeric() -> {
                                 editor.putInt(key, value.toInt())
@@ -82,16 +77,6 @@ class VehicleProfile {
         }
     }
 
-    private fun findProfiles(): List<String>?  =  getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
-
-    private fun openProperties(fileName: String): Properties {
-        val prop = Properties()
-        prop.load(getContext()!!.assets.open(fileName))
-        return prop
-    }
-
-    private fun getDefaultProfile(): String =
-        getContext()?.resources?.getString(R.string.DEFAULT_PROFILE) ?: DEFAULT_PROFILE
 
     internal fun getCurrentProfile(): String = Prefs.getString(PROFILE_ID_PREF)!!
 
@@ -198,6 +183,23 @@ class VehicleProfile {
     private fun String.isNumeric(): Boolean = matches(Regex("-?\\d+"))
     private fun String.toBoolean(): Boolean = startsWith("true")
 
-}
 
-val vehicleProfile = VehicleProfile()
+    private fun stringToStringSet(value: String): MutableSet<String> = value
+        .replace("[", "")
+        .replace("]", "")
+        .split(",")
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .toMutableSet()
+
+    private fun findProfiles(): List<String>?  =  getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
+
+    private fun openProperties(fileName: String): Properties {
+        val prop = Properties()
+        prop.load(getContext()!!.assets.open(fileName))
+        return prop
+    }
+
+    private fun getDefaultProfile(): String =
+        getContext()?.resources?.getString(R.string.DEFAULT_PROFILE) ?: DEFAULT_PROFILE
+}
