@@ -4,7 +4,7 @@ import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import org.hamcrest.Matchers.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -14,7 +14,7 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.preferences.updateBoolean
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(AndroidJUnit4ClassRunner::class)
 class VehicleProfileTest {
 
     @Test
