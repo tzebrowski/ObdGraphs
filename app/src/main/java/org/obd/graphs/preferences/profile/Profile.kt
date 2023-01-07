@@ -21,12 +21,6 @@ private const val DEFAULT_MAX_PROFILES = "5"
 private const val DEFAULT_PROFILE = "profile_1"
 
 class VehicleProfile {
-    private val BUILT_IN_PROFILES = arrayOf(
-        "default.properties",
-        "alfa_175_tbi.properties",
-        "alfa_2_0_gme.properties",
-        "alfa_2_0_gme_stn.properties"
-    )
 
     fun getProfileList() =
         (1..Prefs.getString(MAX_PROFILES_PREF, DEFAULT_MAX_PROFILES)!!.toInt())
@@ -39,16 +33,16 @@ class VehicleProfile {
 
     fun setupProfiles() {
         Log.i(LOG_KEY, "Setup profiles enabled='${Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)}'")
+
         if (!Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)) {
-            Log.e(LOG_KEY, "Installing profiles")
+            val profiles = findProfiles()
+            Log.i(LOG_KEY, "Found following profiles: $profiles for installation.")
 
             Prefs.edit().let { editor ->
-                BUILT_IN_PROFILES.forEach { fileName ->
+                profiles?.forEach { fileName ->
                     Log.i(LOG_KEY, "Loading profile file='$fileName'")
 
-                    val prop = Properties()
-                    prop.load(getContext()!!.assets.open(fileName))
-                    prop.forEach { t, u ->
+                    openProperties(fileName).forEach { t, u ->
                         val value = u.toString()
                         val key = t.toString()
 
@@ -86,6 +80,14 @@ class VehicleProfile {
             loadProfile(getDefaultProfile())
             updateToolbar()
         }
+    }
+
+    private fun findProfiles(): List<String>?  =  getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
+
+    private fun openProperties(fileName: String): Properties {
+        val prop = Properties()
+        prop.load(getContext()!!.assets.open(fileName))
+        return prop
     }
 
     private fun getDefaultProfile(): String =

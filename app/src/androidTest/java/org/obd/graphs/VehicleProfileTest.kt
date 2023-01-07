@@ -10,22 +10,49 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.activity.MainActivity
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.profile.vehicleProfile
+import org.obd.graphs.preferences.updateBoolean
 
 @RunWith(AndroidJUnit4::class)
 class VehicleProfileTest {
 
     @Test
-    fun loadVehicleProfileTest() {
+    fun loadProfileTest() {
+        launchActivity<MainActivity>().use {
+            assertProfilesExists()
+        }
+    }
+
+
+    @Test
+    fun setupProfilesTest() {
 
         launchActivity<MainActivity>().use {
-             mapOf("profile_2" to "Profile Alfa 1.75 TBI", "profile_1" to "Profile Default", "profile_3" to "Profile Alfa 2.0 GME").forEach {
-                 org.obd.graphs.preferences.profile.vehicleProfile.loadProfile(it.key)
+            val setupProfilesKey = "prefs.installed.profiles"
+            assertTrue(Prefs.getBoolean(setupProfilesKey, true))
 
-                 val vehicleProfile = Espresso.onView(ViewMatchers.withId(R.id.vehicle_profile))
-                 vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-                 vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isEnabled()))
-                 vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(it.value)))
-             }
+            Prefs.updateBoolean(setupProfilesKey, false)
+            vehicleProfile.setupProfiles()
+
+            assertTrue(Prefs.getBoolean(setupProfilesKey, true))
+
+            assertProfilesExists()
+        }
+    }
+
+    private fun assertProfilesExists() {
+        mapOf(
+            "profile_2" to "Profile Alfa 1.75 TBI",
+            "profile_1" to "Profile Default",
+            "profile_3" to "Profile Alfa 2.0 GME"
+        ).forEach {
+            vehicleProfile.loadProfile(it.key)
+
+            val vehicleProfile = Espresso.onView(ViewMatchers.withId(R.id.vehicle_profile))
+            vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+            vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isEnabled()))
+            vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(it.value)))
         }
     }
 }
