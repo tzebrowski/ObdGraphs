@@ -1,6 +1,5 @@
 package org.obd.graphs
 
-import android.util.Log
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions
@@ -31,8 +30,8 @@ class VehicleProfileTest {
         launchActivity<MainActivity>().use {
             val setupProfilesKey = "prefs.installed.profiles"
             assertTrue(Prefs.getBoolean(setupProfilesKey, true))
-
             Prefs.updateBoolean(setupProfilesKey, false)
+
             vehicleProfile.setupProfiles()
 
             assertTrue(Prefs.getBoolean(setupProfilesKey, true))
@@ -41,14 +40,20 @@ class VehicleProfileTest {
         }
     }
 
+    @Test
+    fun getProfileListTest() {
+
+        launchActivity<MainActivity>().use {
+            val expected = getExpectedProfileList()
+            val given = getGivenProfileList()
+
+            assertTrue("Default profiles does not match", expected == given)
+        }
+    }
+
     private fun assertProfilesExists() {
-        val expected = mapOf(
-            "profile_1" to "Default",
-            "profile_2" to "Alfa 1.75 TBI",
-            "profile_3" to "Alfa 2.0 GME",
-            "profile_4" to "Alfa 2.0 GME (STNxx)"
-        )
-        val given = vehicleProfile.getProfileList().filter { it.key != "profile_5" }.toMutableMap()
+        val expected = getExpectedProfileList()
+        val given = getGivenProfileList()
 
         assertTrue("Default profiles does not match", expected == given)
 
@@ -65,4 +70,14 @@ class VehicleProfileTest {
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(txt)))
         }
     }
+
+    private fun getGivenProfileList() =
+        vehicleProfile.getProfileList().filter { it.key != "profile_5" }.toMutableMap()
+
+    private fun getExpectedProfileList(): Map<String, String> = mapOf(
+            "profile_1" to "Default",
+            "profile_2" to "Alfa 1.75 TBI",
+            "profile_3" to "Alfa 2.0 GME",
+            "profile_4" to "Alfa 2.0 GME (STNxx)"
+        )
 }
