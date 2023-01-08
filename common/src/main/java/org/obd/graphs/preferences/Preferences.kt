@@ -21,6 +21,9 @@ fun SharedPreferences.updateString(key: String, value: String?): SharedPreferenc
     return edit()
 }
 
+fun SharedPreferences.updateStringSet(key: String, list: List<String>) {
+    return edit().putStringSet(key, list.map { l -> l }.toSet()).apply()
+}
 fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
     return edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).apply()
 }
