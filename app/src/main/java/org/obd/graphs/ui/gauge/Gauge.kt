@@ -36,15 +36,13 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private var pointAngle = 0.0
     private var point = 0
     private var pointSize = 0
-    private var pointStartColor = 0
-    private var pointEndColor = 0
+    private var pointColor = 0
     private var dividerColor: Int = 0
     private var dividerSize: Float = 0f
     private var dividerStepAngle = 0
     private var dividersCount = 0
     private var isDividerDrawFirst = false
     private var isDividerDrawLast = false
-    private var linearGradient: LinearGradient
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
     private val initialized = AtomicBoolean(false)
@@ -83,12 +81,8 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         startValue = styledAttributes.getInt(R.styleable.Gauge_gaugeStartValue, 0).toFloat()
         endValue = styledAttributes.getInt(R.styleable.Gauge_gaugeEndValue, 1000).toFloat()
         pointSize = styledAttributes.getInt(R.styleable.Gauge_gaugePointSize, 0)
-        pointStartColor = styledAttributes.getColor(
-            R.styleable.Gauge_gaugePointStartColor,
-            ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white)
-        )
-        pointEndColor = styledAttributes.getColor(
-            R.styleable.Gauge_gaugePointEndColor,
+        pointColor = styledAttributes.getColor(
+            R.styleable.Gauge_gaugePointColor,
             ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white)
         )
         val dividerSize = styledAttributes.getInt(R.styleable.Gauge_gaugeDividerSize, 0)
@@ -107,11 +101,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             dividersCount = 100 / dividerStep
             dividerStepAngle = sweepAngle / dividersCount
         }
-        linearGradient = LinearGradient(
-            width.toFloat(), height.toFloat(), 0f, 0f,
-            pointEndColor,
-            pointStartColor, Shader.TileMode.CLAMP
-        )
+
         gaugeDrawScale = styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawScale, false)
         styledAttributes.recycle()
 
@@ -177,18 +167,15 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
 
         paint.color = strokeColor
-        paint.shader = null
         canvas.drawArc(progressRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
         paint.color = resources.getColor(R.color.md_grey_500, null)
-        paint.shader = null
-        paint.strokeWidth = 5f
+        paint.strokeWidth = 2f
         paint.isAntiAlias = true
         canvas.drawArc(decorRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
         paint.strokeWidth = strokeWidth
-        paint.color = pointStartColor
-        paint.shader = linearGradient
+        paint.color = pointColor
         if (pointSize > 0) {
 
             if (point > startAngle + pointSize / 2) {
