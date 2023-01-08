@@ -77,7 +77,6 @@ class VehicleProfile {
         }
     }
 
-
     internal fun getCurrentProfile(): String = Prefs.getString(PROFILE_ID_PREF)!!
 
     internal fun saveCurrentProfile() {
