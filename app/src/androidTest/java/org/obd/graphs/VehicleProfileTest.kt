@@ -18,6 +18,27 @@ import org.obd.graphs.preferences.updateBoolean
 class VehicleProfileTest {
 
     @Test
+    fun resetProfileTest() {
+
+        launchActivity<MainActivity>().use {
+
+            // lets use this profiles as default
+            vehicleProfile.loadProfile("profile_5")
+
+            val propName = "pref.adapter.batch.enabled";
+            assertEquals(Prefs.getBoolean(propName, true), true)
+
+            // changing the value of property under profile_5
+            Prefs.updateBoolean("pref.adapter.batch.enabled", false)
+            assertEquals(Prefs.getBoolean(propName, false), false)
+
+            // resetting profiles
+            vehicleProfile.reset()
+            assertEquals(Prefs.getBoolean(propName, true), true)
+        }
+    }
+
+    @Test
     fun loadProfileTest() {
         launchActivity<MainActivity>().use {
             assertProfilesExists()
