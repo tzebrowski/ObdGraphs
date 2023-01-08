@@ -150,7 +150,8 @@ class DataLogger internal constructor() {
     }
 
     fun stop() {
-        Log.i(LOGGER_TAG, "Sending STOP to workflow with 'graceful.stop' parameter = ${dataLoggerPreferences.instance.gracefulStop}")
+        Log.i(LOGGER_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
+                "${dataLoggerPreferences.instance.gracefulStop}")
         workflow.stop(dataLoggerPreferences.instance.gracefulStop)
     }
 
@@ -158,7 +159,7 @@ class DataLogger internal constructor() {
         connection()?.run {
 
             val query = query()
-            Log.i(LOGGER_TAG, "Selected PID's: ${query.pids}")
+            Log.i(LOGGER_TAG, "Selected PIDs: ${query.pids}")
 
             workflow.start(
                 this, query, init(),
