@@ -71,13 +71,13 @@ class VehicleProfileTest {
         }
     }
 
-    private fun getGivenProfileList() =
-        vehicleProfile.getProfileList().filter { it.key != "profile_5" }.toMutableMap()
+    private fun getGivenProfileList() =  vehicleProfile.getProfileList()
 
     private fun getExpectedProfileList(): Map<String, String> = mapOf(
             "profile_1" to "Default",
             "profile_2" to "Alfa 1.75 TBI",
             "profile_3" to "Alfa 2.0 GME",
-            "profile_4" to "Alfa 2.0 GME (STNxx)"
+            "profile_4" to "Alfa 2.0 GME (STNxx)",
+            "profile_5" to "5"
         )
 }

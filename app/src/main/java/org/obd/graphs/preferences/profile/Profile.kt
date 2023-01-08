@@ -6,6 +6,7 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getString
+import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateToolbar
 import java.util.*
 
@@ -23,6 +24,12 @@ private const val DEFAULT_PROFILE = "profile_1"
 val vehicleProfile = VehicleProfile()
 
 class VehicleProfile {
+
+    fun reset(){
+        Prefs.updateBoolean(PROFILE_INSTALLATION_KEY, false)
+        resetCurrentProfile()
+        setupProfiles()
+    }
 
     fun getProfileList() =
         (1..Prefs.getString(MAX_PROFILES_PREF, DEFAULT_MAX_PROFILES)!!.toInt())

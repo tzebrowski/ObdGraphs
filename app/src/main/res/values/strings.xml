@@ -179,7 +179,10 @@
     <string name="pref.profile.update_name">Vehicle profile name</string>
     <string name="pref.profile.category">Vehicle Profiles</string>
     <string name="pref.profile.available_list">Available vehicle profiles</string>
+
+    <string name="pref.profile.reset">Reset to factory settings</string>
     <string name="pref.profile.save_user_settings">Save current vehicle profile preferences</string>
+    <string name="pref.profile.reset_summary">This operation resets profile preferences</string>
     <string name="pref.profile.save_user_settings_summary">This operation saves all user selections into the currently selected profile</string>
     <string name="pref.dash.background_color_1">Start color 1</string>
     <string name="pref.dash.background_color_2">End color 2</string>

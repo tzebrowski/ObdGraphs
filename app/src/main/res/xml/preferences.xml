@@ -319,6 +319,11 @@
                 android:title="@string/pref.profile.available_list"
                 app:useSimpleSummaryProvider="true" />
 
+            <org.obd.graphs.preferences.profile.ProfileResetPreferenceAction
+                android:key="pref.profile.reset"
+                android:summary="@string/pref.profile.reset_summary"
+                android:title="@string/pref.profile.reset" />
+
             <org.obd.graphs.preferences.profile.ProfileSavePreferenceAction
                 android:key="pref.profile.save_current"
                 android:summary="@string/pref.profile.save_user_settings_summary"
