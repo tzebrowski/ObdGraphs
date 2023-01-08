@@ -144,7 +144,7 @@
                         <EditTextPreference
                             android:defaultValue="35000"
                             android:dialogTitle="Port"
-                            android:key="pref.adapter_connection_tcp_port"
+                            android:key="pref.adapter.connection.tcp.port"
                             android:title="@string/pref.adapter_connection_tcp_port"
                             app:useSimpleSummaryProvider="true" />
                     </PreferenceCategory>
