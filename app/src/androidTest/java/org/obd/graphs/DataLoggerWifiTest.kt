@@ -8,7 +8,6 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.activity.MainActivity
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -17,42 +16,10 @@ import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.preferences.updateString
 
 @RunWith(AndroidJUnit4ClassRunner::class)
-class DataLoggerTest {
+class DataLoggerWifiTest {
 
     @Test
-    fun bluetoothAdapterNotSetTest() {
-        val countDownLatchBroadcastReceiver = CountDownLatchBroadcastReceiver(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
-
-        launchActivity<MainActivity>().use { it ->
-            it.onActivity { activity ->
-                activity.registerReceiver(countDownLatchBroadcastReceiver.eventReceiver,
-                    IntentFilter(countDownLatchBroadcastReceiver.broadcastEvent))
-            }
-            // lets use this profiles as default
-            vehicleProfile.loadProfile("profile_5")
-            Prefs.updateString("pref.adapter.id","").commit()
-            Prefs.updateString("pref.adapter.connection.type","bluetooth").commit()
-
-            try {
-                runAsync {
-                    dataLogger.start()
-                }
-            } finally {
-
-                countDownLatchBroadcastReceiver.waitOnEvent()
-
-                it.onActivity { activity ->
-                    activity.unregisterReceiver(countDownLatchBroadcastReceiver.eventReceiver)
-                }
-            }
-        }
-
-        assertEquals("Did not receive broadcast event: ${countDownLatchBroadcastReceiver.broadcastEvent}",
-            countDownLatchBroadcastReceiver.eventGate.count,0)
-    }
-
-    @Test
-    fun wifiConnectionErrorTest() {
+    fun connectionErrorTest() {
         val countDownLatchBroadcastReceiver = CountDownLatchBroadcastReceiver(DATA_LOGGER_ERROR_EVENT)
 
         launchActivity<MainActivity>().use { it ->
@@ -85,7 +52,7 @@ class DataLoggerTest {
     }
 
     @Test
-    fun wifiConnectionOkTest() {
+    fun connectionEstablishedTest() {
         val countDownLatchBroadcastReceiver = CountDownLatchBroadcastReceiver(
             DATA_LOGGER_CONNECTED_EVENT, 5L)
 
@@ -102,21 +69,17 @@ class DataLoggerTest {
             Prefs.updateString("pref.adapter.connection.tcp.port","35001")
 
             val requestResponse = mutableMapOf(
-                "ATD" to "ATD OK",
-                "ATZ" to "ATZ OK",
-                "ATL0" to "ATL0 OK",
-                "ATH0" to "ATH0 OK",
-                "ATE0" to "ATE0 OK",
-                "ATPP 2CSV 01" to "ATPP 2CSV 01 OK",
-                "ATPP 2C ON" to "ATPP 2C ON OK",
-                "ATPP 2DSV 01" to "ATPP 2DSV 01 OK",
-                "ATPP 2D ON" to "ATPP 2D ON OK",
-                "ATAT2" to "ATAT2 OK",
-                "ATSP0" to "ATSP0 OK",
-                "0902" to "SEARCHING...0140:4902015756571:5A5A5A314B5A412:4D363930333932",
-                "0100"  to "4100be3ea813",
-                "0200" to "4140fed00400",
-                "01 15 0B 04 11 0F 05" to "nodata"
+                "01 15 0B 04 11 0F 05" to "nodata",
+                "22F191" to "00E0:62F1913532301:353533323020202:20",
+                "22F192" to "00E0:62F1924D4D311:304A41485732332:32",
+                "22F187" to "00E0:62F1873530351:353938353220202:20",
+                "22F190" to "0140:62F1905A41521:454145424E394B2:37363137323839",
+                "22F18C" to "0120:62F18C5444341:313930393539452:3031343430",
+                "22F194" to "00E0:62F1945031341:315641304520202:20",
+                "221008" to "6210080000BFC8",
+                "222008" to "6220080000BFC7",
+                "22F195" to "62F1950000",
+                "22F193" to "62F19300",
             )
 
             val mockServer = MockServer(port = 35001, requestResponse = requestResponse)

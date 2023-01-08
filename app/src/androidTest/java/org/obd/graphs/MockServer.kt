@@ -9,7 +9,7 @@ private const val LOG_TAG = "MockServer"
 
 class MockServer(
     private val port: Int,
-    private val requestResponse: Map<String, String> = mutableMapOf()
+    requestResponse: Map<String, String> = mutableMapOf()
 ) : Runnable {
 
     private val thread: Thread = Thread(this)
@@ -18,6 +18,27 @@ class MockServer(
     private lateinit var dataInputStream: DataInputStream
     private lateinit var dataOutputStream: DataOutputStream
     private var run: Boolean = true
+
+    private val defaultRequestResponse = mutableMapOf(
+        "ATD" to "ATD OK",
+        "ATZ" to "ATZ OK",
+        "ATL0" to "ATL0 OK",
+        "ATH0" to "ATH0 OK",
+        "ATE0" to "ATE0 OK",
+        "ATPP 2CSV 01" to "ATPP 2CSV 01 OK",
+        "ATPP 2C ON" to "ATPP 2C ON OK",
+        "ATPP 2DSV 01" to "ATPP 2DSV 01 OK",
+        "ATPP 2D ON" to "ATPP 2D ON OK",
+        "ATAT2" to "ATAT2 OK",
+        "ATSP0" to "ATSP0 OK",
+        "0902" to "SEARCHING...0140:4902015756571:5A5A5A314B5A412:4D363930333932",
+        "0100"  to "4100be3ea813",
+        "0200" to "4140fed00400",
+    )
+
+    init {
+        defaultRequestResponse.putAll(requestResponse)
+    }
 
     fun launch() {
         thread.priority = Thread.NORM_PRIORITY
@@ -45,15 +66,15 @@ class MockServer(
 
                 val command = readCommand()
 
-                val commandResponse = requestResponse[command]
+                val commandResponse = defaultRequestResponse[command]
 
                 Log.i(LOG_TAG, "Received command: $command = $commandResponse")
 
-                if (requestResponse[command] == null) {
-                    dataOutputStream.write("$commandResponse >".toByteArray())
+                if (commandResponse == null) {
+                    dataOutputStream.write("? >".toByteArray())
                     dataOutputStream.flush()
                 } else {
-                    dataOutputStream.write("? >".toByteArray())
+                    dataOutputStream.write("$commandResponse >".toByteArray())
                     dataOutputStream.flush()
                 }
 
