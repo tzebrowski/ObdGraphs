@@ -6,7 +6,7 @@ import android.content.Intent
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-class CountDownLatchBroadcastReceiver (val broadcastEvent:String) {
+class CountDownLatchBroadcastReceiver (val broadcastEvent:String, private val timeout: Long = 5) {
     val eventGate  = CountDownLatch(1)
     val eventReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -19,6 +19,6 @@ class CountDownLatchBroadcastReceiver (val broadcastEvent:String) {
     }
 
     fun waitOnEvent() {
-        eventGate.await(5, TimeUnit.SECONDS)
+        eventGate.await(timeout, TimeUnit.SECONDS)
     }
 }

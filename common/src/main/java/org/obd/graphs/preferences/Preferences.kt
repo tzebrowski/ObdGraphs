@@ -11,12 +11,14 @@ val Prefs: SharedPreferences by lazy {
 }
 
 
-fun SharedPreferences.updateBoolean(key: String, value: Boolean) {
+fun SharedPreferences.updateBoolean(key: String, value: Boolean): SharedPreferences.Editor {
     edit().putBoolean(key, value).apply()
+    return edit()
 }
 
-fun SharedPreferences.updateString(key: String, value: String?) {
+fun SharedPreferences.updateString(key: String, value: String?): SharedPreferences.Editor {
     edit().putString(key, value).apply()
+    return edit()
 }
 
 fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
