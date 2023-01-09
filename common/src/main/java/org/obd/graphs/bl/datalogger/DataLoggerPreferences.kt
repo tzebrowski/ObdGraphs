@@ -14,6 +14,9 @@ private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
 private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
 private const val LOGGER_TAG = "PREFS"
 
+
+
+
 data class DataLoggerPreferences(
     var pids: MutableSet<Long>,
     var connectionType: String,
@@ -60,6 +63,10 @@ class DataLoggerPreferencesManager {
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
         instance =  loadPreferences()
+    }
+
+    fun reload (){
+        instance = loadPreferences()
     }
 
     private fun loadPreferences(): DataLoggerPreferences {

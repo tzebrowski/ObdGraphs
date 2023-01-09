@@ -41,6 +41,7 @@ class MockServer(
     }
 
     fun launch() {
+        Log.e(LOG_TAG, "Launching MockServer on port=$port")
         thread.priority = Thread.NORM_PRIORITY
         thread.start()
     }
