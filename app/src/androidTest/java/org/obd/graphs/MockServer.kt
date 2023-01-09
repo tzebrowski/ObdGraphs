@@ -32,8 +32,13 @@ class MockServer(
         "ATAT2" to "ATAT2 OK",
         "ATSP0" to "ATSP0 OK",
         "0902" to "SEARCHING...0140:4902015756571:5A5A5A314B5A412:4D363930333932",
-        "0100"  to "4100be3ea813",
-        "0200" to "4140fed00400",
+        "0100"  to "no data",
+        "0120" to "no data",
+        "0140" to "no data",
+        "0160" to "no data",
+        "0180" to "no data",
+        "01A0" to "no data",
+        "01C0" to "no data",
     )
 
     init {

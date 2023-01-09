@@ -1,6 +1,7 @@
 package org.obd.graphs
 
 import android.content.IntentFilter
+import android.util.Log
 import androidx.test.core.app.launchActivity
 import org.junit.Assert
 import org.obd.graphs.activity.MainActivity
@@ -37,8 +38,13 @@ fun tcpTestRunner (profile: String,
         dataLoggerPreferences.reload()
 
         val mockServer = MockServer(port = mockServerPort, requestResponse = mockServerRequestResponse)
+        try {
+            arrange.invoke()
+        }catch (e: Exception){
+            Log.e("tcpTestRunner", "Failed to execute test arrange section",e)
+        }
 
-        arrange.invoke()
+        dataLoggerPreferences.reload()
 
         try {
             runAsync {
@@ -52,9 +58,8 @@ fun tcpTestRunner (profile: String,
             it.onActivity { activity ->
                 activity.unregisterReceiver(receiver.eventReceiver)
             }
-
-            mockServer.stop()
             dataLogger.stop()
+            mockServer.stop()
         }
     }
 
