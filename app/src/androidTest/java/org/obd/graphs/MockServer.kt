@@ -7,14 +7,16 @@ import java.net.Socket
 
 private const val LOG_TAG = "MockServer"
 
+private const val DELAY_BETWEEN_COMMANDS = 5L
+
 class MockServer(
     private val port: Int,
     requestResponse: Map<String, String> = mutableMapOf()
 ) : Runnable {
 
     private val thread: Thread = Thread(this)
-    private var serverSocket: ServerSocket? = null
-    private var socket: Socket? = null
+    private lateinit var serverSocket: ServerSocket
+    private lateinit var socket: Socket
     private lateinit var dataInputStream: DataInputStream
     private lateinit var dataOutputStream: DataOutputStream
     private var run: Boolean = true
@@ -69,34 +71,51 @@ class MockServer(
         while (run) {
 
             try {
+               Thread.sleep(DELAY_BETWEEN_COMMANDS)
 
-                val command = readCommand()
+               readCommand()?.let { command ->
+                    val commandResponse = defaultRequestResponse[command]
+                    Log.i(LOG_TAG, "Received command: $command = $commandResponse")
 
-                val commandResponse = defaultRequestResponse[command]
+                    if (commandResponse == null) {
+                        runQuietly {
+                            dataOutputStream.write("? >".toByteArray())
+                            dataOutputStream.flush()
+                        }
+                    } else {
+                        runQuietly {
+                            dataOutputStream.write("$commandResponse >".toByteArray())
+                            dataOutputStream.flush()
+                        }
+                    }
+               }
 
-                Log.i(LOG_TAG, "Received command: $command = $commandResponse")
-
-                if (commandResponse == null) {
-                    dataOutputStream.write("? >".toByteArray())
-                    dataOutputStream.flush()
-                } else {
-                    dataOutputStream.write("$commandResponse >".toByteArray())
-                    dataOutputStream.flush()
-                }
-
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 Log.e(LOG_TAG, "Caught IO Exception", e)
                 break
             }
         }
-        Log.i(LOG_TAG, "Finishing Mock Server.")
+        runQuietly {
+            dataOutputStream.close()
+        }
+
+        runQuietly {
+            dataInputStream.close()
+        }
+
+        runQuietly {
+            serverSocket.close()
+        }
+
+
+        Log.e(LOG_TAG, "Finishing Mock Server.")
     }
 
     private fun waitForClient(): Boolean {
         Log.i(LOG_TAG, "Waiting for upcoming connections")
 
         try {
-            socket = serverSocket?.accept()
+            socket = serverSocket.accept()
         } catch (e: IOException) {
             Log.e(LOG_TAG, "Caught IO Exception", e)
             return true
@@ -105,8 +124,8 @@ class MockServer(
         Log.i(LOG_TAG, "Client connected")
 
         try {
-            dataInputStream = DataInputStream(BufferedInputStream(socket?.getInputStream()))
-            dataOutputStream = DataOutputStream(BufferedOutputStream(socket?.getOutputStream()))
+            dataInputStream = DataInputStream(BufferedInputStream(socket.getInputStream()))
+            dataOutputStream = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
         } catch (e: IOException) {
             Log.e(LOG_TAG, "Caught IO Exception", e)
             return true
@@ -114,7 +133,7 @@ class MockServer(
         return false
     }
 
-    private fun readCommand(): String {
+    private fun readCommand(): String? {
         var cnt = 0
         var nextByte: Int
         val array = CharArray(255)
@@ -126,9 +145,14 @@ class MockServer(
         }
 
         if (cnt == 0) {
-            Log.i(LOG_TAG, "Read no characters")
-            return ""
+            Log.d(LOG_TAG, "Read no characters")
+            return null
         }
         return array.copyOfRange(0, cnt - 1).concatToString()
+    }
+    private fun runQuietly(m: () -> Unit = {}){
+        try {
+            m.invoke()
+        }catch (_: Exception){ }
     }
 }
