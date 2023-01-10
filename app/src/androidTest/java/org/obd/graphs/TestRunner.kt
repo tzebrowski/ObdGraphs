@@ -12,12 +12,16 @@ import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.preferences.updateString
 
 private const val CONNECTION_TYPE = "wifi"
-private const val TCP_HOST = "192.0.0.2"
+private const val MOCK_SERVER_PORT = "192.0.0.2"
+
+private const val LOG_TAG = "tcpTestRunner"
 
 fun tcpTestRunner (profile: String,
                    expectedEventType: String,
                    mockServerRequestResponse: Map<String,String> = emptyMap(),
                    mockServerPort: Int,
+                   act: () -> Unit = {},
+                   assert: () -> Unit = {},
                    arrange: () -> Unit){
 
     val receiver = CountDownLatchBroadcastReceiver(expectedEventType)
@@ -33,15 +37,16 @@ fun tcpTestRunner (profile: String,
         vehicleProfile.loadProfile(profile)
 
         Prefs.updateString("pref.adapter.connection.type", CONNECTION_TYPE)
-        Prefs.updateString("pref.adapter.connection.tcp.host", TCP_HOST)
+        Prefs.updateString("pref.adapter.connection.tcp.host", MOCK_SERVER_PORT)
         Prefs.updateString("pref.adapter.connection.tcp.port", "$mockServerPort")
         dataLoggerPreferences.reload()
 
         val mockServer = MockServer(port = mockServerPort, requestResponse = mockServerRequestResponse)
+
         try {
             arrange.invoke()
         }catch (e: Exception){
-            Log.e("tcpTestRunner", "Failed to execute test arrange section",e)
+            Log.e(LOG_TAG, "Failed to execute 'arrange' test section",e)
         }
 
         dataLoggerPreferences.reload()
@@ -51,6 +56,14 @@ fun tcpTestRunner (profile: String,
                 mockServer.launch()
                 dataLogger.start()
             }
+
+            try {
+                act.invoke()
+            }catch (e: Exception){
+                Log.e(LOG_TAG, "Failed to execute  'act' test section",e)
+            }
+
+
         } finally {
 
             receiver.waitOnEvent()
@@ -67,4 +80,10 @@ fun tcpTestRunner (profile: String,
         "Did not receive broadcast event: ${receiver.broadcastEvent}",
         receiver.eventGate.count, 0
     )
+
+    try {
+        assert.invoke()
+    }catch (e: Exception){
+        Log.e(LOG_TAG, "Failed to execute 'assert' test  section",e)
+    }
 }

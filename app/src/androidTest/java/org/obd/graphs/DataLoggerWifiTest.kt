@@ -16,57 +16,71 @@ class DataLoggerWifiTest {
     @Test
     fun connectionErrorTest() {
         tcpTestRunner(
+            arrange = {
+                // arrange
+                Prefs.updateString("pref.adapter.connection.type","wifi")
+                Prefs.updateString("pref.adapter.connection.tcp.host","192.168.0.11")
+            },
             expectedEventType = DATA_LOGGER_ERROR_EVENT,
             mockServerPort = 35000,
-            profile = "profile_5"){
-            // arrange
-            Prefs.updateString("pref.adapter.connection.type","wifi")
-            Prefs.updateString("pref.adapter.connection.tcp.host","192.168.0.11")
-        }
+            profile = "profile_5"
+        )
     }
 
     @Test
     fun connectionEstablishedTest() {
 
         tcpTestRunner(
+            arrange = {
+                // arrange
+                Prefs.updateString("pref.adapter.connection.type","wifi")
+                Prefs.updateString("pref.adapter.connection.tcp.host","192.0.0.2")
+                assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isEmpty())
+            },
             expectedEventType = DATA_LOGGER_CONNECTED_EVENT,
             mockServerRequestResponse = mapOf("01 15 0B 04 11 0F 05" to "nodata"),
             mockServerPort = 35007,
-            profile = "profile_3"){
-
-            // arrange
-            Prefs.updateString("pref.adapter.connection.type","wifi")
-            Prefs.updateString("pref.adapter.connection.tcp.host","192.0.0.2")
-            assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isEmpty())
-        }
+            profile = "profile_3"
+        )
     }
 
     @Test
     fun fetchDTCTest() {
 
         tcpTestRunner(
+            assert = {
+                assertTrue(vehicleCapabilitiesManager.getDTC().contains("26E400"))
+                assertTrue(vehicleCapabilitiesManager.getDTC().contains("D00800"))
+                assertTrue(vehicleCapabilitiesManager.getDTC().contains("2BC100"))
+            },
+            arrange = {
+                // arrange
+                Prefs.updateString("pref.adapter.connection.type", "wifi")
+                Prefs.updateString("pref.adapter.connection.tcp.host", "192.0.0.2")
+                Prefs.updateBoolean("pref.adapter.init.fetchDTC", true)
+                Prefs.updateStringSet("pref.datalogger.dtc", emptyList())
+
+                assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isEmpty())
+            },
             expectedEventType = DATA_LOGGER_DTC_AVAILABLE,
             mockServerRequestResponse = mapOf( "19020D" to "00F0:5902CF26E4001:482BC10048D0082:00480"),
-            mockServerPort = 35002,
-            profile = "profile_3"){
-
-            // arrange
-            Prefs.updateString("pref.adapter.connection.type", "wifi")
-            Prefs.updateString("pref.adapter.connection.tcp.host", "192.0.0.2")
-            Prefs.updateBoolean("pref.adapter.init.fetchDTC", true)
-            Prefs.updateStringSet("pref.datalogger.dtc", emptyList())
-
-            assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isEmpty())
-        }
-
-        assertTrue(vehicleCapabilitiesManager.getDTC().contains("26E400"))
-        assertTrue(vehicleCapabilitiesManager.getDTC().contains("D00800"))
-        assertTrue(vehicleCapabilitiesManager.getDTC().contains("2BC100"))
+            mockServerPort = 35009,
+            profile = "profile_3"
+        )
     }
 
     @Test
     fun metadataReadTest() {
         tcpTestRunner(
+            arrange = {
+                Prefs.updateString("pref.adapter.connection.type", "wifi")
+                Prefs.updateString("pref.adapter.connection.tcp.host", "192.0.0.2")
+                Prefs.getStringSet("pref.datalogger.supported.pids", emptySet())
+                assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isEmpty())
+            },
+            assert = {
+                assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isNotEmpty())
+            },
             expectedEventType = DATA_LOGGER_CONNECTED_EVENT,
             mockServerRequestResponse = mapOf("22F191" to "00E0:62F1913532301:353533323020202:20",
                                     "22F192" to "00E0:62F1924D4D311:304A41485732332:32",
@@ -79,44 +93,39 @@ class DataLoggerWifiTest {
                                     "22F195" to "62F1950000",
                                     "22F193" to "62F19300"),
             mockServerPort = 35003,
-            profile = "profile_3"){
-
-            // arrange
-            Prefs.updateString("pref.adapter.connection.type", "wifi")
-            Prefs.updateString("pref.adapter.connection.tcp.host", "192.0.0.2")
-            Prefs.getStringSet("pref.datalogger.supported.pids", emptySet())
-            assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isEmpty())
-        }
-
-        assertTrue(vehicleCapabilitiesManager.getVehicleCapabilities().isNotEmpty())
+            profile = "profile_3"
+        )
     }
 
 
     @Test
     fun supportedPIDsTest() {
         tcpTestRunner(
+            arrange = {
+                // arrange
+                Prefs.updateString("pref.adapter.connection.type", "wifi")
+                Prefs.updateString("pref.adapter.connection.tcp.host", "192.0.0.2")
+                Prefs.updateStringSet("pref.datalogger.supported.pids", emptyList())
+
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().isEmpty())
+            },
+            assert = {
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().isNotEmpty())
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("01"))
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("03"))
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("04"))
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("05"))
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("06"))
+                assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("07"))
+            },
             expectedEventType = DATA_LOGGER_CONNECTED_EVENT,
             mockServerRequestResponse = mapOf("0100" to "4100BE3DA813410098180001",
                 "0200" to "4120801FB011412080018001",
                 "0400" to "4140FED09081414040800000",
                 "0600" to "416001214000"),
             mockServerPort = 35008,
-            profile = "profile_3"){
+            profile = "profile_3"
+        )
 
-            // arrange
-            Prefs.updateString("pref.adapter.connection.type", "wifi")
-            Prefs.updateString("pref.adapter.connection.tcp.host", "192.0.0.2")
-            Prefs.updateStringSet("pref.datalogger.supported.pids", emptyList())
-
-            assertTrue(vehicleCapabilitiesManager.getCapabilities().isEmpty())
-        }
-
-        assertTrue(vehicleCapabilitiesManager.getCapabilities().isNotEmpty())
-        assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("01"))
-        assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("03"))
-        assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("04"))
-        assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("05"))
-        assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("06"))
-        assertTrue(vehicleCapabilitiesManager.getCapabilities().contains("07"))
     }
 }
