@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
@@ -18,6 +20,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.recycler.SimpleAdapter
@@ -31,6 +34,17 @@ private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : Fragment() {
     private lateinit var root: View
+
+    private var broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                TOGGLE_TOOLBAR_ACTION -> {
+                    val virtualScreenPanel = root.findViewById<LinearLayout>(R.id.virtual_view_panel)
+                    virtualScreenPanel.isVisible =  !virtualScreenPanel.isVisible
+                }
+            }
+        }
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     private var configurationChangedReceiver = object : BroadcastReceiver() {
@@ -54,6 +68,12 @@ class GaugeFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireContext().unregisterReceiver(broadcastReceiver)
+    }
+
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         configureView(false)
@@ -67,8 +87,12 @@ class GaugeFragment : Fragment() {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
         configureView(true)
         setupVirtualViewPanel()
+
+             registerReceivers()
+
         return root
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -149,5 +173,10 @@ class GaugeFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_3,selection,"3")
         setVirtualViewBtn(R.id.virtual_view_4,selection,"4")
         setVirtualViewBtn(R.id.virtual_view_5,selection,"5")
+    }
+    private fun registerReceivers() {
+        requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
+            addAction(TOGGLE_TOOLBAR_ACTION)
+        })
     }
 }
