@@ -1,6 +1,7 @@
 package org.obd.graphs.activity
 
 import android.graphics.Color
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import org.obd.graphs.R
@@ -24,6 +25,8 @@ internal fun MainActivity.updateAdapterConnectionType() {
         1.0f
     )
 }
+
+
 
 internal fun MainActivity.setupStatusPanel() {
     updateAdapterConnectionType()

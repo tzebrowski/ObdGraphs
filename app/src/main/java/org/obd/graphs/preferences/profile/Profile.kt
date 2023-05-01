@@ -26,7 +26,7 @@ val vehicleProfile = VehicleProfile()
 class VehicleProfile {
 
     fun reset(){
-        Prefs.updateBoolean(PROFILE_INSTALLATION_KEY, false)
+        Prefs.updateBoolean(getProfileInstallationKey(), false)
         resetCurrentProfile()
         setupProfiles()
     }
@@ -41,9 +41,10 @@ class VehicleProfile {
             }
 
     fun setupProfiles() {
-        Log.i(LOG_KEY, "Setup profiles enabled='${Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)}'")
+        val profileInstallationKey = getProfileInstallationKey()
+        Log.i(LOG_KEY, "Setup profiles. Installation key='$profileInstallationKey', enabled='${Prefs.getBoolean(profileInstallationKey, false)}'")
 
-        if (!Prefs.getBoolean(PROFILE_INSTALLATION_KEY, false)) {
+        if (!Prefs.getBoolean(profileInstallationKey, false)) {
             val profiles = findProfiles()
             Log.i(LOG_KEY, "Found following profiles: $profiles for installation.")
 
@@ -74,7 +75,8 @@ class VehicleProfile {
                     }
                 }
                 editor.putString(PROFILE_ID_PREF, getDefaultProfile())
-                editor.putBoolean(PROFILE_INSTALLATION_KEY, true)
+                Log.i(LOG_KEY,"Updating profile installation key $profileInstallationKey to true")
+                editor.putBoolean(profileInstallationKey, true)
                 editor.apply()
             }
             val defaultProfile = getDefaultProfile()
@@ -94,8 +96,7 @@ class VehicleProfile {
                 .filter { (pref, _) -> !pref.startsWith("profile_") }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
-                .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
-                .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
+                .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                 .forEach { (pref, value) ->
                     Log.d(LOG_KEY, "'$profileName.$pref'=$value")
                     it.updatePreference("$profileName.$pref", value)
@@ -114,7 +115,7 @@ class VehicleProfile {
                 .filter { (pref, _) -> pref.startsWith(profileName) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
-                .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
+                .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                 .forEach { (pref, value) ->
                     pref.substring(profileName.length + 1).run {
                         Log.d(LOG_KEY, "Loading user preference $this = $value")
@@ -144,13 +145,15 @@ class VehicleProfile {
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_ID_PREF) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
-                .filter { (pref, _) -> !pref.startsWith(PROFILE_INSTALLATION_KEY) }
+                .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                 .forEach { (pref, _) ->
                     it.remove(pref)
                 }
             it.apply()
         }
     }
+
+    private fun getProfileInstallationKey() = "${PROFILE_INSTALLATION_KEY}.${BuildConfig.VERSION_CODE}"
 
     private fun SharedPreferences.Editor.updatePreference(
         prefName: String,

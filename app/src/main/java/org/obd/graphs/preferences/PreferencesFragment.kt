@@ -31,16 +31,14 @@ const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_
 const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
 
 private const val PREF_GRAPH_DIALOG = "pref.graph.pids.selected"
-private const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
+const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
 private const val LOG_KEY = "Prefs"
-
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     private val onSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             Log.v(LOG_KEY, "Preference $key changed")
         }
-
     override fun onDisplayPreferenceDialog(preference: Preference?) {
         when (preference) {
             is TripsListPreferences -> {
@@ -63,13 +61,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
         }
     }
-
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
         super.onNavigateToScreen(preferenceScreen)
         setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
         registerListeners()
     }
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
