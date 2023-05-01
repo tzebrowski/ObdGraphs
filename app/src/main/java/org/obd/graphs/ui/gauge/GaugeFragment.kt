@@ -137,7 +137,12 @@ class GaugeFragment : Fragment() {
                 return if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     3
                 } else {
-                    2
+                    when (Prefs.getLongSet(getVirtualScreenMetrics()).size) {
+                        0 -> 1
+                        1 -> 1
+                        2 -> 1
+                        else -> 2
+                    }
                 }
             }
             else -> {
