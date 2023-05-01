@@ -39,8 +39,11 @@ class GaugeFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 TOGGLE_TOOLBAR_ACTION -> {
-                    val virtualScreenPanel = root.findViewById<LinearLayout>(R.id.virtual_view_panel)
-                    virtualScreenPanel.isVisible =  !virtualScreenPanel.isVisible
+                    if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click",false)) {
+                        root.findViewById<LinearLayout>(R.id.virtual_view_panel).let {
+                            it.isVisible = !it.isVisible
+                        }
+                    }
                 }
             }
         }

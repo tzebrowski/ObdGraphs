@@ -528,6 +528,13 @@
                         android:defaultValue="true"
                         android:key="pref.gauge_display_scale"
                         android:title="@string/pref.gauge_display_scale" />
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.gauge.toggle_virtual_screens_double_click"
+                        android:title="@string/pref.gauge_toggle_virtual_screens" />
+
                 </PreferenceCategory>
             </PreferenceScreen>
 
