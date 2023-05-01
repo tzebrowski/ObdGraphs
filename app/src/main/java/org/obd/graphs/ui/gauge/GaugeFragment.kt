@@ -141,6 +141,7 @@ class GaugeFragment : Fragment() {
                         0 -> 1
                         1 -> 1
                         2 -> 1
+                        3 -> 1
                         else -> 2
                     }
                 }
