@@ -475,7 +475,7 @@
                         android:title="@string/pref.displayed_parameter_ids"
                         android:key="pref.gauge.displayed_parameter_ids">
                         <PreferenceCategory android:title="@string/pref.pids_category">
-                            <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                            <org.obd.graphs.preferences.pid.DisplayedPIDsVirtualScreenListPreferences
                                 app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"

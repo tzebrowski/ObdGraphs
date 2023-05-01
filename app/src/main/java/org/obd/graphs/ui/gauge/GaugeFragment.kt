@@ -10,19 +10,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.preferences.*
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.roundToInt
 
-private const val GAUGE_SELECTED_METRICS_PREF = "pref.gauge.pids.selected"
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
 private const val ENABLE_SWIPE_TO_DELETE_PREF = "pref.gauge.swipe_to_delete"
 private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.gauge_id"
@@ -38,11 +39,11 @@ class GaugeFragment : Fragment() {
                 CONFIGURE_CHANGE_EVENT_GAUGE -> {
                     configureView(false)
                 }
-                DATA_LOGGER_CONNECTING_EVENT ->{
+                DATA_LOGGER_CONNECTING_EVENT -> {
                     val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
                     val adapter = recyclerView.adapter as SimpleAdapter
                     val metrics = RecyclerViewSetup().prepareMetrics(
-                        metricsIdsPref = GAUGE_SELECTED_METRICS_PREF,
+                        metricsIdsPref = getVirtualScreenMetrics(),
                         metricsSerializerPref = GAUGE_PIDS_SETTINGS
                     )
                     adapter.data.clear()
@@ -65,6 +66,7 @@ class GaugeFragment : Fragment() {
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
         configureView(true)
+        setupVirtualViewPanel()
         return root
     }
 
@@ -86,7 +88,7 @@ class GaugeFragment : Fragment() {
             configureChangeEventId = CONFIGURE_CHANGE_EVENT_GAUGE,
             viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView,
-            metricsIdsPref = GAUGE_SELECTED_METRICS_PREF,
+            metricsIdsPref = getVirtualScreenMetrics(),
             adapterContext = AdapterContext(
                 layoutId = R.layout.item_gauge,
                 spanCount = calculateSpan()
@@ -115,7 +117,7 @@ class GaugeFragment : Fragment() {
                 }
             }
             else -> {
-                when (val numberOfItems =  Prefs.getLongSet(GAUGE_SELECTED_METRICS_PREF).size) {
+                when (val numberOfItems = Prefs.getLongSet(getVirtualScreenMetrics()).size) {
                     0 -> 1
                     2 -> 2
                     1 -> 1
@@ -123,5 +125,29 @@ class GaugeFragment : Fragment() {
                 }
             }
         }
+    }
+    private fun setVirtualViewBtn (btnId: Int, selection: String, viewId: String){
+        (root.findViewById<Button>(btnId)).let {
+            if (selection == viewId) {
+                it.setBackgroundColor(COLOR_CARDINAL)
+            } else {
+                it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
+            }
+
+            it.setOnClickListener {
+                Prefs.updateString(VIRTUAL_SCREEN_SELECTION, viewId)
+                configureView(true)
+                setupVirtualViewPanel()
+            }
+        }
+    }
+
+    private fun setupVirtualViewPanel() {
+        val selection = getCurrentVirtualScreen()
+        setVirtualViewBtn(R.id.virtual_view_1,selection,"1")
+        setVirtualViewBtn(R.id.virtual_view_2,selection,"2")
+        setVirtualViewBtn(R.id.virtual_view_3,selection,"3")
+        setVirtualViewBtn(R.id.virtual_view_4,selection,"4")
+        setVirtualViewBtn(R.id.virtual_view_5,selection,"5")
     }
 }

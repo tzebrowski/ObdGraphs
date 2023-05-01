@@ -11,12 +11,11 @@ import java.util.*
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
 
-class DisplayedPIDsListPreferences(
+open class DisplayedPIDsListPreferences(
     context: Context?,
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {
-
     init {
 
         val entries: MutableList<CharSequence> =
@@ -26,12 +25,11 @@ class DisplayedPIDsListPreferences(
 
         highPriority(entries, entriesValues)
         lowPriority(entries, entriesValues)
-
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
     }
 
-    private fun highPriority(
+    fun highPriority(
         entries: MutableList<CharSequence>,
         entriesValues: MutableList<CharSequence>
     ) {
@@ -46,7 +44,7 @@ class DisplayedPIDsListPreferences(
             }
     }
 
-    private fun lowPriority(
+    fun lowPriority(
         entries: MutableList<CharSequence>,
         entriesValues: MutableList<CharSequence>
     ) {
