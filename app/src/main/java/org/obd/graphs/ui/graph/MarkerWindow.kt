@@ -8,6 +8,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.utils.MPPointF
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -22,22 +23,16 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
     MarkerView(context, layoutResource) {
     private val valueScaler = ValueScaler()
 
-    private fun buildMetrics(id: Long, v: Float): ObdMetric {
-        val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
-        val pid = pidRegistry.findBy(id)
-        val value = valueScaler.scaleToPidRange(pid, v)
-        return ObdMetric.builder().command(ObdCommand(pid)).value(value).build()
-    }
-
     override fun refreshContent(e: Entry, highlight: Highlight?) {
         val metrics = findClosestMetrics(e)
-
         val adapter = MarkerWindowViewAdapter(context, metrics)
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
         super.refreshContent(e, highlight)
     }
+
+    override fun getOffset(): MPPointF  = MPPointF.getInstance( -(width / 2).toFloat(),-height.toFloat())
 
     private fun findClosestMetrics(e: Entry): MutableCollection<ObdMetric> {
         val metricsMap = mutableMapOf<Long, ObdMetric>()
@@ -90,5 +85,12 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
             }
         }
         return x1
+    }
+
+    private fun buildMetrics(id: Long, v: Float): ObdMetric {
+        val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
+        val pid = pidRegistry.findBy(id)
+        val value = valueScaler.scaleToPidRange(pid, v)
+        return ObdMetric.builder().command(ObdCommand(pid)).value(value).build()
     }
 }
