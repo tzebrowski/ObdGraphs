@@ -72,7 +72,7 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
         }
         time = System.currentTimeMillis() - time
         Log.d(LOG_KEY, "Build map, time: ${time}ms , values: ${metricsMap.values}.")
-        return metricsMap.values
+        return metricsMap.values.sortedBy { i -> i.command.pid.description }.toMutableList()
     }
 
     private fun updateXValue(x: Int): Int {
