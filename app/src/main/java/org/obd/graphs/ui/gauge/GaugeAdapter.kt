@@ -62,7 +62,16 @@ class GaugeAdapter(
             if (isTablet()) {
                 rescaleTextSize(this, calculateScaleMultiplier(itemView))
             } else {
-                rescaleTextSize(this, calculateScaleMultiplier(itemView) * 0.29f)
+                var multiplier = calculateScaleMultiplier(itemView) * 0.29f
+                multiplier *= if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1f else {
+                    when (data.size) {
+                        1 -> 0.9f
+                        3 -> 1.4f
+                        2 -> 1.4f
+                        else -> 1f
+                    }
+                }
+                rescaleTextSize(this, multiplier)
             }
         }
 
@@ -201,9 +210,10 @@ class GaugeAdapter(
         val width = Resources.getSystem().displayMetrics.widthPixels / widthDivider
         val height = itemView.measuredHeight.toFloat()
 
-        val targetSize =
+        var targetSize =
             Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
         val currentSize = width * height
+
         return valueScaler.scaleToNewRange(currentSize, 0.0f, targetSize, 1f, 3f)
     }
 
@@ -224,7 +234,13 @@ class GaugeAdapter(
                     Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
             } else {
                 val x =
-                    if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
+                    if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else {
+                        when (data.size) {
+                            1 -> 1
+                            2 -> 2
+                            else -> 3
+                        }
+                    }
                 view.layoutParams.height = parent.measuredHeight / x
             }
         } else {

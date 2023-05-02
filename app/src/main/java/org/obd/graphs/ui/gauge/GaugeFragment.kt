@@ -39,7 +39,7 @@ class GaugeFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 TOGGLE_TOOLBAR_ACTION -> {
-                    if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click",false)) {
+                    if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
                         root.findViewById<LinearLayout>(R.id.virtual_view_panel).let {
                             it.isVisible = !it.isVisible
                         }
@@ -76,7 +76,6 @@ class GaugeFragment : Fragment() {
         requireContext().unregisterReceiver(broadcastReceiver)
     }
 
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         configureView(false)
@@ -90,9 +89,7 @@ class GaugeFragment : Fragment() {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
         configureView(true)
         setupVirtualViewPanel()
-
-             registerReceivers()
-
+        registerReceivers()
         return root
     }
 
@@ -159,7 +156,8 @@ class GaugeFragment : Fragment() {
             }
         }
     }
-    private fun setVirtualViewBtn (btnId: Int, selection: String, viewId: String){
+
+    private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
         (root.findViewById<Button>(btnId)).let {
             if (selection == viewId) {
                 it.setBackgroundColor(COLOR_CARDINAL)
@@ -177,12 +175,13 @@ class GaugeFragment : Fragment() {
 
     private fun setupVirtualViewPanel() {
         val selection = getCurrentVirtualScreen()
-        setVirtualViewBtn(R.id.virtual_view_1,selection,"1")
-        setVirtualViewBtn(R.id.virtual_view_2,selection,"2")
-        setVirtualViewBtn(R.id.virtual_view_3,selection,"3")
-        setVirtualViewBtn(R.id.virtual_view_4,selection,"4")
-        setVirtualViewBtn(R.id.virtual_view_5,selection,"5")
+        setVirtualViewBtn(R.id.virtual_view_1, selection, "1")
+        setVirtualViewBtn(R.id.virtual_view_2, selection, "2")
+        setVirtualViewBtn(R.id.virtual_view_3, selection, "3")
+        setVirtualViewBtn(R.id.virtual_view_4, selection, "4")
+        setVirtualViewBtn(R.id.virtual_view_5, selection, "5")
     }
+
     private fun registerReceivers() {
         requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(TOGGLE_TOOLBAR_ACTION)
