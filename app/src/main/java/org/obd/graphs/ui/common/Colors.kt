@@ -63,5 +63,6 @@ val COLOR_CARDINAL: Int = color(color.cardinal)
 val COLOR_PHILIPPINE_GREEN: Int = color(color.philippine_green)
 val COLOR_RAINBOW_INDIGO: Int = color(color.rainbow_indigo)
 val COLOR_LIGHT_SHADE_GRAY: Int = color(color.light_shade_gray)
+val COLOR_DARK_LIGHT: Int = color(color.gray_light)
 
 fun color(id: Int) = ContextCompat.getColor(getContext()!!, id)

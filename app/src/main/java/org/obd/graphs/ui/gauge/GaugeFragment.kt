@@ -18,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.preferences.*
-import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
+import org.obd.graphs.ui.common.COLOR_DARK_LIGHT
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.recycler.SimpleAdapter
@@ -160,9 +160,9 @@ class GaugeFragment : Fragment() {
     private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
         (root.findViewById<Button>(btnId)).let {
             if (selection == viewId) {
-                it.setBackgroundColor(COLOR_CARDINAL)
-            } else {
                 it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
+            } else {
+                it.setBackgroundColor(COLOR_DARK_LIGHT)
             }
 
             it.setOnClickListener {
@@ -174,12 +174,15 @@ class GaugeFragment : Fragment() {
     }
 
     private fun setupVirtualViewPanel() {
-        val selection = getCurrentVirtualScreen()
-        setVirtualViewBtn(R.id.virtual_view_1, selection, "1")
-        setVirtualViewBtn(R.id.virtual_view_2, selection, "2")
-        setVirtualViewBtn(R.id.virtual_view_3, selection, "3")
-        setVirtualViewBtn(R.id.virtual_view_4, selection, "4")
-        setVirtualViewBtn(R.id.virtual_view_5, selection, "5")
+        val currentVirtualScreen = getCurrentVirtualScreen()
+        setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
+        setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
+        setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")
+        setVirtualViewBtn(R.id.virtual_view_4, currentVirtualScreen, "4")
+        setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
+        setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
+        setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
+        setVirtualViewBtn(R.id.virtual_view_8, currentVirtualScreen, "8")
     }
 
     private fun registerReceivers() {
