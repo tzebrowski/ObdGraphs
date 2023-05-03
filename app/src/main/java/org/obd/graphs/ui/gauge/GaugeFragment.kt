@@ -60,7 +60,7 @@ class GaugeFragment : Fragment() {
                     val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
                     val adapter = recyclerView.adapter as SimpleAdapter
                     val metrics = RecyclerViewSetup().prepareMetrics(
-                        metricsIdsPref = getVirtualScreenMetrics(),
+                        metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
                         metricsSerializerPref = GAUGE_PIDS_SETTINGS
                     )
                     adapter.data.clear()
@@ -112,7 +112,7 @@ class GaugeFragment : Fragment() {
             configureChangeEventId = CONFIGURE_CHANGE_EVENT_GAUGE,
             viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView,
-            metricsIdsPref = getVirtualScreenMetrics(),
+            metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
             adapterContext = AdapterContext(
                 layoutId = R.layout.item_gauge,
                 spanCount = calculateSpan()
@@ -137,7 +137,7 @@ class GaugeFragment : Fragment() {
                 return if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     3
                 } else {
-                    when (Prefs.getLongSet(getVirtualScreenMetrics()).size) {
+                    when (gaugeVirtualScreen.getVirtualScreenMetrics().size) {
                         0 -> 1
                         1 -> 1
                         2 -> 1
@@ -147,7 +147,7 @@ class GaugeFragment : Fragment() {
                 }
             }
             else -> {
-                when (val numberOfItems = Prefs.getLongSet(getVirtualScreenMetrics()).size) {
+                when (val numberOfItems = gaugeVirtualScreen.getVirtualScreenMetrics().size) {
                     0 -> 1
                     2 -> 2
                     1 -> 1
@@ -174,7 +174,7 @@ class GaugeFragment : Fragment() {
     }
 
     private fun setupVirtualViewPanel() {
-        val currentVirtualScreen = getCurrentVirtualScreen()
+        val currentVirtualScreen = gaugeVirtualScreen.getCurrentVirtualScreen()
         setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
         setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
         setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")

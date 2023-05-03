@@ -2,9 +2,7 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.updateStringSet
-import org.obd.graphs.ui.gauge.getVirtualScreenMetrics
+import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -28,12 +26,12 @@ class DisplayedPIDsVirtualScreenListPreferences(
 
         onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
             val newList = newValue as HashSet<String>
-            Prefs.updateStringSet(getVirtualScreenMetrics(),newList.toList())
+            gaugeVirtualScreen.updateVirtualScreen(newList.toList())
             true
         }
     }
 
     override fun onSetInitialValue(defaultValue: Any?) {
-        values = Prefs.getStringSet(getVirtualScreenMetrics(), mutableSetOf())
+        values = gaugeVirtualScreen.getVirtualScreenMetrics()
     }
 }
