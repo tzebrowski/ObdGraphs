@@ -7,7 +7,8 @@ data class GraphPreferences(
     val xAxisStartMovingAfter: Float,
     val xAxisMinimumShift: Float,
     val cacheEnabled: Boolean,
-    val metrics: Set<Long>
+    val metrics: Set<Long>,
+    val toggleVirtualPanel: Boolean
 )
 
 class GraphPreferencesReader {
@@ -24,20 +25,25 @@ class GraphPreferencesReader {
 
         val metrics = graphVirtualScreen.getVirtualScreenMetrics().map { it.toLong() }.toSet()
 
+        val toggleVirtualPanel = Prefs.getBoolean("$prefixKey.toggle_virtual_screens_double_click", true)
+
         Log.d(
             GRAPH_LOGGER_TAG,
             "Read graph preferences\n" +
                     "xAxisStartMovingAfterProp=$xAxisStartMovingAfter\n" +
                     "xAxisMinimumShiftProp=$xAxisMinimumShift\n" +
                     "cacheEnabledProp=$cacheEnabled\n" +
-                    "metrics=$metrics"
+                    "toggleVirtualPanel=$toggleVirtualPanel\n" +
+                    "metrics=$metrics\n"
         )
+
 
         return GraphPreferences(
             xAxisStartMovingAfter,
             xAxisMinimumShift,
             cacheEnabled,
-            metrics
+            metrics,
+            toggleVirtualPanel = toggleVirtualPanel
         )
     }
 }

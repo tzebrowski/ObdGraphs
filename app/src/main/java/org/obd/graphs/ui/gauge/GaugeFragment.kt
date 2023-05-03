@@ -90,7 +90,6 @@ class GaugeFragment : Fragment() {
         return root
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         activity?.registerReceiver(configurationChangedReceiver, IntentFilter().apply {

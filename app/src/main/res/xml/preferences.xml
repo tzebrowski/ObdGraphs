@@ -637,6 +637,12 @@
                         android:key="pref.graph.cache.enabled"
                         android:title="@string/pref.graph_cache_enabled" />
 
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.graph.toggle_virtual_screens_double_click"
+                        android:title="@string/pref.gauge_toggle_virtual_screens" />
+
                     <EditTextPreference
                         android:defaultValue="20"
                         android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"

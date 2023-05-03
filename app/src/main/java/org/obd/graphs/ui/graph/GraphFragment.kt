@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,10 +35,7 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.COLOR_TRANSPARENT
-import org.obd.graphs.ui.common.Colors
-import org.obd.graphs.ui.common.onDoubleClickListener
+import org.obd.graphs.ui.common.*
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
@@ -62,6 +60,7 @@ class GraphFragment : Fragment() {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            val toggleVirtualPanel = graphPreferencesReader.read().toggleVirtualPanel
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
@@ -69,6 +68,13 @@ class GraphFragment : Fragment() {
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
                     cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
+                }
+                TOGGLE_TOOLBAR_ACTION -> {
+                    if (toggleVirtualPanel) {
+                        root.findViewById<LinearLayout>(R.id.virtual_view_panel).let {
+                            it.isVisible = !it.isVisible
+                        }
+                    }
                 }
             }
         }
@@ -269,6 +275,7 @@ class GraphFragment : Fragment() {
             addAction(DATA_LOGGER_CONNECTED_EVENT)
             addAction(DATA_LOGGER_STOPPED_EVENT)
             addAction(DATA_LOGGER_CONNECTING_EVENT)
+            addAction(TOGGLE_TOOLBAR_ACTION)
         })
     }
 
