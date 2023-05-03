@@ -10,8 +10,8 @@ data class GraphPreferences(
     val metrics: Set<Long>
 )
 
-class GraphPreferencesManager {
-    fun preferences(): GraphPreferences {
+class GraphPreferencesReader {
+    fun read(): GraphPreferences {
         val prefixKey = "pref.graph"
 
         val xAxisStartMovingAfter =
@@ -22,24 +22,24 @@ class GraphPreferencesManager {
 
         val cacheEnabled = Prefs.getBoolean("$prefixKey.cache.enabled", true)
 
-        val selectedPids = graphVirtualScreen.getVirtualScreenMetrics().map { it.toLong() }.toSet()
+        val metrics = graphVirtualScreen.getVirtualScreenMetrics().map { it.toLong() }.toSet()
 
-        Log.i(
-            "GRAPH",
-            "Read Graph Properties from Preferences\n" +
+        Log.d(
+            GRAPH_LOGGER_TAG,
+            "Read graph preferences\n" +
                     "xAxisStartMovingAfterProp=$xAxisStartMovingAfter\n" +
                     "xAxisMinimumShiftProp=$xAxisMinimumShift\n" +
                     "cacheEnabledProp=$cacheEnabled\n" +
-                    "selectedPids=$selectedPids"
+                    "metrics=$metrics"
         )
 
         return GraphPreferences(
             xAxisStartMovingAfter,
             xAxisMinimumShift,
             cacheEnabled,
-            selectedPids
+            metrics
         )
     }
 }
 
-val graphPreferencesManager = GraphPreferencesManager()
+val graphPreferencesReader = GraphPreferencesReader()

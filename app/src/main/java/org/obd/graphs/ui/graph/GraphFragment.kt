@@ -57,7 +57,7 @@ fun ValueScaler.scaleToPidRange(
     )
 }
 
-private const val LOGGER_TAG = "GraphFragment"
+const val GRAPH_LOGGER_TAG = "Graph"
 class GraphFragment : Fragment() {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -130,25 +130,25 @@ class GraphFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
-        preferences = graphPreferencesManager.preferences()
-
+        preferences = graphPreferencesReader.read()
         initializeChart(root)
-
         registerMetricsObserver()
-
         initializeTripDetails()
         loadCurrentTrip()
         registerReceivers()
+        configureRecyclerView()
+        setupVirtualViewPanel()
+        return root
+    }
 
+    private fun configureRecyclerView() {
         val displayInfoPanel = Prefs.getBoolean("pref.trips.recordings.display_info", true)
         configureRecyclerView(R.id.graph_view_chart, true, 5f)
         configureRecyclerView(R.id.graph_view_table_layout, displayInfoPanel, 0.2f)
         configureRecyclerView(R.id.recycler_view, displayInfoPanel, 1.3f)
-
-        setupVirtualViewPanel()
-        return root
     }
 
     private fun configureRecyclerView(id: Int, visible: Boolean, weight: Float) {
@@ -162,7 +162,7 @@ class GraphFragment : Fragment() {
 
     private fun registerMetricsObserver() {
         dataLogger.observe(viewLifecycleOwner) {
-            if (graphPreferencesManager.preferences().metrics.contains(it.command.pid.id)) {
+            if (preferences.metrics.contains(it.command.pid.id)) {
                 addEntry(it)
             }
        }
@@ -201,7 +201,7 @@ class GraphFragment : Fragment() {
         chart = buildChart(root).apply {
 
             val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
-            val metrics = graphPreferencesManager.preferences().metrics.mapNotNull {
+            val metrics = preferences.metrics.mapNotNull {
                 pidRegistry.findBy(it)
             }.toMutableList()
 
@@ -240,7 +240,7 @@ class GraphFragment : Fragment() {
                         }
                     }
 
-                    Log.i(LOGGER_TAG, "Set scale minima of XAxis to 7f")
+                    Log.i(GRAPH_LOGGER_TAG, "Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
                     setScaleMinima(7f, 0.1f)
                     moveViewToX(xAxis.axisMaximum - 5000f)
@@ -259,7 +259,7 @@ class GraphFragment : Fragment() {
 
     private fun LineChart.debug(label: String) {
         Log.i(
-            LOGGER_TAG,
+            GRAPH_LOGGER_TAG,
             "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
         )
     }
@@ -386,9 +386,12 @@ class GraphFragment : Fragment() {
 
             it.setOnClickListener {
                 graphVirtualScreen.updateVirtualScreen(viewId)
-                initializeChart(root)
-                loadCurrentTrip()
                 setupVirtualViewPanel()
+                preferences = graphPreferencesReader.read()
+
+                initializeChart(root)
+                initializeTripDetails()
+                loadCurrentTrip()
             }
         }
     }
