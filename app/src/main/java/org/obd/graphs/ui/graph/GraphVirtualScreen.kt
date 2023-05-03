@@ -8,7 +8,6 @@ const val PREF_GRAPH_DIALOG = "pref.graph.pids.selected"
 class GraphVirtualScreen {
     fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
-
     fun updateVirtualScreen(screenId: String) {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
     }

@@ -60,7 +60,6 @@ class GraphFragment : Fragment() {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val toggleVirtualPanel = graphPreferencesReader.read().toggleVirtualPanel
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
@@ -68,12 +67,20 @@ class GraphFragment : Fragment() {
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
                     cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
+                    virtualScreensPanel {
+                        it.isVisible = true
+                    }
+
                 }
+                DATA_LOGGER_CONNECTED_EVENT  -> {
+                    virtualScreensPanel {
+                        it.isVisible = false
+                    }
+                }
+
                 TOGGLE_TOOLBAR_ACTION -> {
-                    if (toggleVirtualPanel) {
-                        root.findViewById<LinearLayout>(R.id.virtual_view_panel).let {
-                            it.isVisible = !it.isVisible
-                        }
+                    virtualScreensPanel {
+                        it.isVisible = !it.isVisible
                     }
                 }
             }
@@ -410,5 +417,11 @@ class GraphFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")
         setVirtualViewBtn(R.id.virtual_view_4, currentVirtualScreen, "4")
         setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
+    }
+
+    private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
+        if (graphPreferencesReader.read().toggleVirtualPanel) {
+            func(root.findViewById<LinearLayout>(R.id.virtual_view_panel))
+        }
     }
 }

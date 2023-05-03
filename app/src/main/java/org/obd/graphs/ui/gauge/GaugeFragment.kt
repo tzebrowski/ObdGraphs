@@ -16,7 +16,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
@@ -32,22 +34,8 @@ private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 class GaugeFragment : Fragment() {
     private lateinit var root: View
 
-    private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                TOGGLE_TOOLBAR_ACTION -> {
-                    if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
-                        root.findViewById<LinearLayout>(R.id.virtual_view_panel).let {
-                            it.isVisible = !it.isVisible
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     @SuppressLint("NotifyDataSetChanged")
-    private var configurationChangedReceiver = object : BroadcastReceiver() {
+    private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 CONFIGURE_CHANGE_EVENT_GAUGE -> {
@@ -64,13 +52,31 @@ class GaugeFragment : Fragment() {
                     adapter.data.addAll(metrics)
                     adapter.notifyDataSetChanged()
                 }
+                DATA_LOGGER_CONNECTED_EVENT -> {
+                    virtualScreensPanel {
+                        it.isVisible = false
+                    }
+                }
+
+                DATA_LOGGER_STOPPED_EVENT -> {
+                    virtualScreensPanel {
+                        it.isVisible = true
+                    }
+                }
+
+                TOGGLE_TOOLBAR_ACTION -> {
+                    virtualScreensPanel {
+                        it.isVisible = !it.isVisible
+                    }
+                }
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        requireContext().unregisterReceiver(broadcastReceiver)
+    private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
+        if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
+            func(root.findViewById<LinearLayout>(R.id.virtual_view_panel))
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -86,21 +92,23 @@ class GaugeFragment : Fragment() {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
         configureView(true)
         setupVirtualViewPanel()
-        registerReceivers()
         return root
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.registerReceiver(configurationChangedReceiver, IntentFilter().apply {
+        activity?.registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(CONFIGURE_CHANGE_EVENT_GAUGE)
             addAction(DATA_LOGGER_CONNECTING_EVENT)
+            addAction(DATA_LOGGER_CONNECTED_EVENT)
+            addAction(DATA_LOGGER_STOPPED_EVENT)
+            addAction(TOGGLE_TOOLBAR_ACTION)
         })
     }
 
     override fun onDetach() {
         super.onDetach()
-        activity?.unregisterReceiver(configurationChangedReceiver)
+        activity?.unregisterReceiver(broadcastReceiver)
     }
 
     private fun configureView(enableOnTouchListener: Boolean) {
@@ -179,11 +187,5 @@ class GaugeFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
         setVirtualViewBtn(R.id.virtual_view_8, currentVirtualScreen, "8")
-    }
-
-    private fun registerReceivers() {
-        requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(TOGGLE_TOOLBAR_ACTION)
-        })
     }
 }
