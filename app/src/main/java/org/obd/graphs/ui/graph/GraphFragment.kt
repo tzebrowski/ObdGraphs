@@ -287,7 +287,6 @@ class GraphFragment : Fragment() {
         }
     }
 
-
     private fun buildChart(root: View): LineChart {
         return (root.findViewById(R.id.graph_view_chart) as LineChart).apply {
             description.isEnabled = false

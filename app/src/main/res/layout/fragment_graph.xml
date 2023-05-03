@@ -9,88 +9,177 @@
     android:orientation="vertical"
     tools:context="org.obd.graphs.ui.graph.GraphFragment">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/graph_view_chart"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        android:background="@color/black" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TableLayout
-        android:layout_weight="0.2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="0dp"
-        android:paddingEnd="2dip">
-
-        <TableRow
-            android:id="@+id/graph_view_table_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1.5"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text="@string/pid.metric_name"
-                android:textAllCaps="false"
-                android:textColor="@color/cardinal"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="@string/pid.value_min"
-                android:textColor="@color/cardinal"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="@string/pid.value_max"
-                android:textColor="@color/cardinal"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:paddingStart="0dp"
-                android:paddingEnd="6dp"
-                android:text="@string/pid.value_avg"
-                android:textColor="@color/cardinal"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-        </TableRow>
-
-        <TableRow
+        <LinearLayout
+            android:id="@+id/virtual_view_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-          <View
+
+            <Button
+                android:id="@+id/virtual_view_1"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="1"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/virtual_view_2"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="2"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/virtual_view_3"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="3"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/virtual_view_4"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="4"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/virtual_view_5"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="5"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/virtual_view_6"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="6"
+                android:textSize="10dp" />
+
+
+            <Button
+                android:id="@+id/virtual_view_7"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="7"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/virtual_view_8"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/gray_light"
+                android:text="8"
+                android:textSize="10dp" />
+
+        </LinearLayout>
+
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/graph_view_chart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:background="@color/black" />
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:paddingStart="0dp"
+            android:paddingEnd="2dip">
+
+            <TableRow
+                android:id="@+id/graph_view_table_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1.5"
+                    android:gravity="start"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/pid.metric_name"
+                    android:textAllCaps="false"
+                    android:textColor="@color/cardinal"
+                    android:textSize="16sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/pid.value_min"
+                    android:textColor="@color/cardinal"
+                    android:textSize="16sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@string/pid.value_max"
+                    android:textColor="@color/cardinal"
+                    android:textSize="16sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="6dp"
+                    android:text="@string/pid.value_avg"
+                    android:textColor="@color/cardinal"
+                    android:textSize="16sp"
+                    android:textStyle="normal" />
+            </TableRow>
+
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="2dip"
-                android:layout_weight="2"
-                android:background="#FF909090"
-                android:padding="2dip" />
-        </TableRow>
-    </TableLayout>
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dip"
+                    android:layout_weight="2"
+                    android:background="#FF909090"
+                    android:padding="2dip" />
+            </TableRow>
+        </TableLayout>
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.5" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.5" />
+    </LinearLayout>
+
 </LinearLayout>
