@@ -1,11 +1,11 @@
 package org.obd.graphs.ui.gauge
 
-import org.obd.graphs.preferences.PREF_GAUGE_DIALOG
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
 import org.obd.graphs.preferences.updateStringSet
 
 private const val VIRTUAL_SCREEN_SELECTION = "pref.gauge.virtual.selected"
+const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
 
 class GaugeVirtualScreen {
     fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!

@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -33,6 +34,8 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.metrics.api.model.ObdMetric
@@ -129,8 +132,7 @@ class GraphFragment : Fragment() {
     ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
-
-        preferences = getGraphPreferences()
+        preferences = graphPreferencesManager.preferences()
 
         initializeChart(root)
 
@@ -144,6 +146,8 @@ class GraphFragment : Fragment() {
         configureRecyclerView(R.id.graph_view_chart, true, 5f)
         configureRecyclerView(R.id.graph_view_table_layout, displayInfoPanel, 0.2f)
         configureRecyclerView(R.id.recycler_view, displayInfoPanel, 1.3f)
+
+        setupVirtualViewPanel()
         return root
     }
 
@@ -158,7 +162,7 @@ class GraphFragment : Fragment() {
 
     private fun registerMetricsObserver() {
         dataLogger.observe(viewLifecycleOwner) {
-            if (preferences.selectedPids.contains(it.command.pid.id)) {
+            if (graphPreferencesManager.preferences().metrics.contains(it.command.pid.id)) {
                 addEntry(it)
             }
        }
@@ -197,7 +201,7 @@ class GraphFragment : Fragment() {
         chart = buildChart(root).apply {
 
             val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
-            val metrics = preferences.selectedPids.mapNotNull {
+            val metrics = graphPreferencesManager.preferences().metrics.mapNotNull {
                 pidRegistry.findBy(it)
             }.toMutableList()
 
@@ -370,5 +374,31 @@ class GraphFragment : Fragment() {
             isHighlightEnabled = true
         }
         return lineDataSet
+    }
+
+    private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
+        (root.findViewById<Button>(btnId)).let {
+            if (selection == viewId) {
+                it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
+            } else {
+                it.setBackgroundColor(COLOR_TRANSPARENT)
+            }
+
+            it.setOnClickListener {
+                graphVirtualScreen.updateVirtualScreen(viewId)
+                initializeChart(root)
+                loadCurrentTrip()
+                setupVirtualViewPanel()
+            }
+        }
+    }
+
+    private fun setupVirtualViewPanel() {
+        val currentVirtualScreen = graphVirtualScreen.getCurrentVirtualScreen()
+        setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
+        setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
+        setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")
+        setVirtualViewBtn(R.id.virtual_view_4, currentVirtualScreen, "4")
+        setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
     }
 }

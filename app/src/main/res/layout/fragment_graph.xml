@@ -15,7 +15,6 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:visibility="gone"
             android:background="@color/black"
             android:id="@+id/virtual_view_panel"
             android:layout_width="match_parent"
