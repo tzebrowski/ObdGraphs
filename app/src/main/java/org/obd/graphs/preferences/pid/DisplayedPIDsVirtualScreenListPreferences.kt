@@ -26,7 +26,7 @@ class DisplayedPIDsVirtualScreenListPreferences(
 
         onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
             val newList = newValue as HashSet<String>
-            gaugeVirtualScreen.updateVirtualScreen(newList.toList())
+            gaugeVirtualScreen.updateVirtualScreenMetrics(newList.toList())
             true
         }
     }

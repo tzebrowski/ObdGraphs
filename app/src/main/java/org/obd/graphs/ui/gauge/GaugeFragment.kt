@@ -18,10 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.preferences.*
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
-import org.obd.graphs.ui.common.COLOR_DARK_LIGHT
-import org.obd.graphs.ui.common.isTablet
+import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.metrics.api.model.ObdMetric
@@ -162,11 +159,11 @@ class GaugeFragment : Fragment() {
             if (selection == viewId) {
                 it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
             } else {
-                it.setBackgroundColor(COLOR_DARK_LIGHT)
+                it.setBackgroundColor(COLOR_TRANSPARENT)
             }
 
             it.setOnClickListener {
-                Prefs.updateString(VIRTUAL_SCREEN_SELECTION, viewId)
+                gaugeVirtualScreen.updateVirtualScreen(viewId)
                 configureView(true)
                 setupVirtualViewPanel()
             }
