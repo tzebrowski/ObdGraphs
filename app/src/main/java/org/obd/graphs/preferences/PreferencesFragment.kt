@@ -22,6 +22,8 @@ import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
+import org.obd.graphs.ui.gauge.PREF_GAUGE_DIALOG
+import org.obd.graphs.ui.graph.PREF_GRAPH_DIALOG
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
@@ -30,8 +32,6 @@ const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
 const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_ids"
 const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
 
-private const val PREF_GRAPH_DIALOG = "pref.graph.pids.selected"
-const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
 private const val LOG_KEY = "Prefs"
 class PreferencesFragment : PreferenceFragmentCompat() {
 

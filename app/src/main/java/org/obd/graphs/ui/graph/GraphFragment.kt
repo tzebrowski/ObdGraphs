@@ -12,7 +12,9 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,8 +35,7 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.ui.common.Colors
-import org.obd.graphs.ui.common.onDoubleClickListener
+import org.obd.graphs.ui.common.*
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
@@ -54,11 +55,12 @@ fun ValueScaler.scaleToPidRange(
     )
 }
 
-private const val LOGGER_TAG = "GraphFragment"
+const val GRAPH_LOGGER_TAG = "Graph"
 class GraphFragment : Fragment() {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            val toggleVirtualPanel = graphPreferencesReader.read().toggleVirtualPanel
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
@@ -66,6 +68,13 @@ class GraphFragment : Fragment() {
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
                     cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
+                }
+                TOGGLE_TOOLBAR_ACTION -> {
+                    if (toggleVirtualPanel) {
+                        root.findViewById<LinearLayout>(R.id.virtual_view_panel).let {
+                            it.isVisible = !it.isVisible
+                        }
+                    }
                 }
             }
         }
@@ -127,24 +136,25 @@ class GraphFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
-
-        preferences = getGraphPreferences()
-
+        preferences = graphPreferencesReader.read()
         initializeChart(root)
-
         registerMetricsObserver()
-
         initializeTripDetails()
         loadCurrentTrip()
         registerReceivers()
+        configureRecyclerView()
+        setupVirtualViewPanel()
+        return root
+    }
 
+    private fun configureRecyclerView() {
         val displayInfoPanel = Prefs.getBoolean("pref.trips.recordings.display_info", true)
         configureRecyclerView(R.id.graph_view_chart, true, 5f)
         configureRecyclerView(R.id.graph_view_table_layout, displayInfoPanel, 0.2f)
         configureRecyclerView(R.id.recycler_view, displayInfoPanel, 1.3f)
-        return root
     }
 
     private fun configureRecyclerView(id: Int, visible: Boolean, weight: Float) {
@@ -158,7 +168,7 @@ class GraphFragment : Fragment() {
 
     private fun registerMetricsObserver() {
         dataLogger.observe(viewLifecycleOwner) {
-            if (preferences.selectedPids.contains(it.command.pid.id)) {
+            if (preferences.metrics.contains(it.command.pid.id)) {
                 addEntry(it)
             }
        }
@@ -197,7 +207,7 @@ class GraphFragment : Fragment() {
         chart = buildChart(root).apply {
 
             val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
-            val metrics = preferences.selectedPids.mapNotNull {
+            val metrics = preferences.metrics.mapNotNull {
                 pidRegistry.findBy(it)
             }.toMutableList()
 
@@ -236,7 +246,7 @@ class GraphFragment : Fragment() {
                         }
                     }
 
-                    Log.i(LOGGER_TAG, "Set scale minima of XAxis to 7f")
+                    Log.i(GRAPH_LOGGER_TAG, "Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
                     setScaleMinima(7f, 0.1f)
                     moveViewToX(xAxis.axisMaximum - 5000f)
@@ -255,7 +265,7 @@ class GraphFragment : Fragment() {
 
     private fun LineChart.debug(label: String) {
         Log.i(
-            LOGGER_TAG,
+            GRAPH_LOGGER_TAG,
             "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
         )
     }
@@ -265,6 +275,7 @@ class GraphFragment : Fragment() {
             addAction(DATA_LOGGER_CONNECTED_EVENT)
             addAction(DATA_LOGGER_STOPPED_EVENT)
             addAction(DATA_LOGGER_CONNECTING_EVENT)
+            addAction(TOGGLE_TOOLBAR_ACTION)
         })
     }
 
@@ -370,5 +381,34 @@ class GraphFragment : Fragment() {
             isHighlightEnabled = true
         }
         return lineDataSet
+    }
+
+    private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
+        (root.findViewById<Button>(btnId)).let {
+            if (selection == viewId) {
+                it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
+            } else {
+                it.setBackgroundColor(COLOR_TRANSPARENT)
+            }
+
+            it.setOnClickListener {
+                graphVirtualScreen.updateVirtualScreen(viewId)
+                setupVirtualViewPanel()
+                preferences = graphPreferencesReader.read()
+
+                initializeChart(root)
+                initializeTripDetails()
+                loadCurrentTrip()
+            }
+        }
+    }
+
+    private fun setupVirtualViewPanel() {
+        val currentVirtualScreen = graphVirtualScreen.getCurrentVirtualScreen()
+        setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
+        setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
+        setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")
+        setVirtualViewBtn(R.id.virtual_view_4, currentVirtualScreen, "4")
+        setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
     }
 }

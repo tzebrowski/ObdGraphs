@@ -475,7 +475,7 @@
                         android:title="@string/pref.displayed_parameter_ids"
                         android:key="pref.gauge.displayed_parameter_ids">
                         <PreferenceCategory android:title="@string/pref.pids_category">
-                            <org.obd.graphs.preferences.pid.DisplayedPIDsVirtualScreenListPreferences
+                            <org.obd.graphs.preferences.pid.DisplayedPIDsGaugeListPreferences
                                 app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
@@ -601,7 +601,7 @@
                         android:title="@string/pref.displayed_parameter_ids"
                         android:key="pref.graph.displayed_parameter_ids">
                         <PreferenceCategory android:title="@string/pref.pids_category">
-                            <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                            <org.obd.graphs.preferences.pid.DisplayedPIDsGraphListPreferences
                                 app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
@@ -636,6 +636,12 @@
                         android:defaultValue="true"
                         android:key="pref.graph.cache.enabled"
                         android:title="@string/pref.graph_cache_enabled" />
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.graph.toggle_virtual_screens_double_click"
+                        android:title="@string/pref.gauge_toggle_virtual_screens" />
 
                     <EditTextPreference
                         android:defaultValue="20"
