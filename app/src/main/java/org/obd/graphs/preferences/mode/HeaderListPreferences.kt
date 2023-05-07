@@ -36,8 +36,10 @@ class HeaderListPreferences(
             "18DB33F1" to "18DB33F1",
             "DA10F1" to "DA10F1",
             "DB33F1" to "DB33F1",
-            "7DF" to "7DF"
-        ).apply {
+            "7DF" to "7DF",
+            "DA18F1" to "DA18F1",
+            "18DA18F1" to "18DA18F1",
+            ).apply {
             Prefs.getInt(CAN_HEADER_COUNTER_PREF, 0).let { it ->
                 Log.d(MODE_LOG_KEY, "Number of custom CAN headers available: $it")
                 if (it > 0) {

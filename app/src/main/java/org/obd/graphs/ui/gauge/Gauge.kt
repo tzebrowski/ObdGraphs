@@ -194,13 +194,12 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                 )
             } else {
                 canvas.drawArc(
-
                     progressRect, startAngle.toFloat(), (point - startAngle).toFloat(), false,
                     paint
                 )
             }
-
         }
+
         if (dividerSize > 0) {
             drawDivider(canvas)
         }
