@@ -74,14 +74,14 @@ class PIDsListPreferences(
 
         val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
         val ecuSupportedPIDsEnabled =  Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF,false)
-        val stablePIDsEnabled =  Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF,true)
+        val stablePIDsEnabled =  Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF, false)
 
         getPidList()
             .asSequence()
             .filter { p -> p.group == PIDsGroup.LIVEDATA}
-            .filter { p -> if (stablePIDsEnabled)  p.stable!! else true }
+            .filter { p -> if (!stablePIDsEnabled)  p.stable!! else true }
             .filter { p -> predicate.invoke(p) }
-            .filter { p-> if (ecuSupportedPIDsEnabled && p.mode == "01")
+            .filter { p-> if (!ecuSupportedPIDsEnabled && p.mode == "01")
                 ecuSupportedPIDs.contains(p.pid.lowercase()) else true }
             .sortedBy { p -> p.displayString() .toString()}
             .toList()

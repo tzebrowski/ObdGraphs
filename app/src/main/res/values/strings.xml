@@ -211,14 +211,14 @@
     <string name="pref.adapter_graceful_stop_enabled">Enable graceful stop</string>
     <string name="pref.adapter_graceful_stop_enabled_summary">Enabling this option will cause that the session with ECU and Adapter is graceful shutdown. Process of quiting the session with ECU might take longer when option is selected.</string>
     <string name="pref.pids_supported_summary">This list contains OBD2 PIDs/Sensors which are supported by ECU and can be read by the application.</string>
-    <string name="pref_pids_display_only_ecu_supported">Disable unsupported ECU OBD2 PIDs/Sensors</string>
-    <string name="pref_pids_display_only_ecu_supported_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which are supported by ECU.\nAll others will not be visible.</string>
+    <string name="pref.pids_display_only_ecu_supported">Enable unsupported ECU OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_display_only_ecu_supported_summary">When you select this option, then you will be able to select PIDs which are not supported by the ECU.</string>
     <string name="pref.adapter_batch_enabled_summary">Enabling this option will cause batch queries are send to the Adapter. This feature allows to fetch up to 6 PIDs/Sensors in single ECU query.\nWhen feature is enabled it increase performance.</string>
     <string name="pref.adapter_error_handling">Errors handling</string>
     <string name="pref.adapter_error_handling_summary">Under this category you can find settings related to the error handling, like re-connect strategy</string>
 
-    <string name="pref_pids_display_only_stable_pids">Disable experimental OBD2 PIDs/Sensors</string>
-    <string name="pref_pids_display_only_stable_pids_summary">When you select this option, then you will see just these OBD2 PIDs/Sensors which have stable formula calculation.\nExperimental one will not be visible.</string>
+    <string name="pref.pids_display_only_stable_pids">Enable experimental OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_display_only_stable_pids_summary">When you select this option, then you will see PIDs with experimental formula calculation.</string>
     <string name="gauge_item_bg_content_description">Gauge background</string>
     <string name="pref_adapter_settings_summary">Under this section you can find all Adapter related preferences.You can set here connection type Bluetooth or Wifi, CAN preferences or adjust error handling</string>
     <string name="pref_pid_registry_settings_summary">Under this section you can find preferences related to OBD2 PIDs/Sensors configuration. You can set here OBD2 PIDs/Sensors which should be fetched from the ECU</string>
