@@ -255,18 +255,20 @@ class DataLogger internal constructor() {
         .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine("rhino").build())
         .pids(
             Pids.builder().resources(
-                dataLoggerPreferences.instance.resources.map {
-                    if (isExternalStorageResource(it)) {
-                        externalResourceToURL(it)
-                    } else {
-                        Urls.resourceToUrl(it)
-                    }
-                }.toMutableList()
+                getSelectedPIDsResources()
             ).build()
         )
         .observer(metricsAggregator)
         .lifecycle(lifecycle)
         .initialize()
+
+    private fun getSelectedPIDsResources() = dataLoggerPreferences.instance.resources.map {
+        if (isExternalStorageResource(it)) {
+            externalResourceToURL(it)
+        } else {
+            Urls.resourceToUrl(it)
+        }
+    }.toMutableList()
 
     private fun query() = Query.builder().pids(dataLoggerPreferences.instance.pids).build()
 }

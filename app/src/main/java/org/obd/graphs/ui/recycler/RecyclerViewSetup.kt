@@ -23,8 +23,7 @@ class RecyclerViewSetup {
         metricsSerializerPref: String
     ) : MutableList<ObdMetric> {
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
-        val query  = dataLoggerPreferences.getPIDsToQuery()
-        val metricsIds = Prefs.getLongSet(metricsIdsPref).filter {  query.contains(it)}.toSet()
+        val metricsIds = getVisiblePIDsList(metricsIdsPref)
         return MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
     }
 
@@ -48,8 +47,7 @@ class RecyclerViewSetup {
     ) {
 
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
-        val query  = dataLoggerPreferences.getPIDsToQuery()
-        val metricsIds = Prefs.getLongSet(metricsIdsPref).filter {  query.contains(it)}.toSet()
+        val metricsIds = getVisiblePIDsList(metricsIdsPref)
         val metrics =  MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
@@ -69,7 +67,12 @@ class RecyclerViewSetup {
         attachOnTouchListener(enableOnTouchListener, recyclerView)
         adapter(recyclerView).notifyDataSetChanged()
         recyclerView.refreshDrawableState()
-        MetricsObserver().observe(metricsIds,viewLifecycleOwner, adapter(recyclerView), metrics)
+        MetricsObserver().observe(metricsIds, viewLifecycleOwner, adapter(recyclerView), metrics)
+    }
+
+    private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
+        val query = dataLoggerPreferences.getPIDsToQuery()
+        return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
 
     private fun requireContext(): Context = getContext()!!

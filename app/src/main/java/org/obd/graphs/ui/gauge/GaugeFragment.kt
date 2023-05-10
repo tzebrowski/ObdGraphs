@@ -19,6 +19,7 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
@@ -70,12 +71,6 @@ class GaugeFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
-        if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
-            func(root.findViewById<LinearLayout>(R.id.virtual_view_panel))
         }
     }
 
@@ -136,12 +131,14 @@ class GaugeFragment : Fragment() {
     }
 
     private fun calculateSpan(): Int {
+        val numberOfPIDsToDisplay = getVisiblePIDsList().size
+
         return when (isTablet()) {
             false -> {
                 return if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     3
                 } else {
-                    when (gaugeVirtualScreen.getVirtualScreenMetrics().size) {
+                    when (numberOfPIDsToDisplay) {
                         0 -> 1
                         1 -> 1
                         2 -> 1
@@ -151,11 +148,11 @@ class GaugeFragment : Fragment() {
                 }
             }
             else -> {
-                when (val numberOfItems = gaugeVirtualScreen.getVirtualScreenMetrics().size) {
+                when (numberOfPIDsToDisplay) {
                     0 -> 1
                     2 -> 2
                     1 -> 1
-                    else -> (numberOfItems / 2.0).roundToInt()
+                    else -> (numberOfPIDsToDisplay / 2.0).roundToInt()
                 }
             }
         }
@@ -187,5 +184,15 @@ class GaugeFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
         setVirtualViewBtn(R.id.virtual_view_8, currentVirtualScreen, "8")
+    }
+    private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
+        if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
+            func(root.findViewById<LinearLayout>(R.id.virtual_view_panel))
+        }
+    }
+
+    private fun getVisiblePIDsList(): Set<Long> {
+        val query = dataLoggerPreferences.getPIDsToQuery()
+        return Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey()).filter { query.contains(it) }.toSet()
     }
 }
