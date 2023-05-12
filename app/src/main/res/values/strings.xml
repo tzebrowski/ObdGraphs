@@ -197,6 +197,9 @@
     <string name="trip_action_delete">Del</string>
     <string name="trip_dialog_close_window">Close window</string>
     <string name="trip_dialog_delete_all_trips">Delete all</string>
+    <string name="trip_delete_dialog_ask_question">Are you sure you want to Delete?</string>
+    <string name="trip_delete_dialog_ask_question_yes">Yes</string>
+    <string name="trip_delete_dialog_ask_question_no">no</string>
 
     <string name="trip_action_load">Load</string>
     <string name="adapter_connection_type">Adapter</string>

@@ -9,13 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.R
-import org.obd.graphs.TRIP_LOAD_EVENT
+import org.obd.graphs.*
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.getProfileList
-import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
 import java.text.SimpleDateFormat
@@ -98,12 +97,25 @@ class TripsViewAdapter internal constructor(
             }
 
             deleteTrip.setOnClickListener {
-                val trip = data.elementAt(adapterPosition)
+                val builder = AlertDialog.Builder(itemView.context)
+                val title = itemView.context.getString(R.string.trip_delete_dialog_ask_question)
+                val yes = itemView.context.getString(R.string.trip_delete_dialog_ask_question_yes)
+                val no = itemView.context.getString(R.string.trip_delete_dialog_ask_question_no)
 
-                Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
-                data.remove(trip)
-                tripManager.deleteTrip(trip)
-                notifyDataSetChanged()
+                builder.setMessage(title)
+                    .setCancelable(false)
+                    .setPositiveButton(yes) { _, _ ->
+                        val trip = data.elementAt(adapterPosition)
+                        Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
+                        data.remove(trip)
+                        tripManager.deleteTrip(trip)
+                        notifyDataSetChanged()
+                    }
+                    .setNegativeButton(no) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    val alert = builder.create()
+                    alert.show()
             }
         }
     }

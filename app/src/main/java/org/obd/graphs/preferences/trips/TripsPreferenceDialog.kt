@@ -3,13 +3,13 @@ package org.obd.graphs.preferences.trips
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import androidx.annotation.Nullable
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -46,20 +46,34 @@ class TripsPreferenceDialog : DialogFragment() {
 
         root.findViewById<Button>(R.id.trip_delete_all).apply {
             setOnClickListener {
-                try {
-                    sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                    adapter.data.forEach {
-                        tripManager.deleteTrip(it)
-                    }
-                    adapter.data.clear()
-                    adapter.notifyDataSetChanged()
+                val builder = AlertDialog.Builder(context)
+                val title = context.getString(R.string.trip_delete_dialog_ask_question)
+                val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
+                val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
 
-                } finally {
-                    sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
-                }
+                builder.setMessage(title)
+                    .setCancelable(false)
+                    .setPositiveButton(yes) { _, _ ->
+                        try {
+
+                            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                            adapter.data.forEach {
+                                tripManager.deleteTrip(it)
+                            }
+                            adapter.data.clear()
+                            adapter.notifyDataSetChanged()
+
+                        } finally {
+                            sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+                        }
+                    }
+                    .setNegativeButton(no) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val alert = builder.create()
+                alert.show()
             }
         }
-
         return root
     }
 }
