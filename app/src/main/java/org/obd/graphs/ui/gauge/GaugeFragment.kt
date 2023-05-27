@@ -187,7 +187,7 @@ class GaugeFragment : Fragment() {
     }
     private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
         if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
-            func(root.findViewById<LinearLayout>(R.id.virtual_view_panel))
+            func(root.findViewById(R.id.virtual_view_panel))
         }
     }
 

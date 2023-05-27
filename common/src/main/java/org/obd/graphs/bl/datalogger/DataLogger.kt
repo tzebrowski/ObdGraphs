@@ -152,7 +152,11 @@ class DataLogger internal constructor() {
     fun stop() {
         Log.i(LOGGER_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
                 "${dataLoggerPreferences.instance.gracefulStop}")
-        workflow.stop(dataLoggerPreferences.instance.gracefulStop)
+        try {
+            workflow.stop(dataLoggerPreferences.instance.gracefulStop)
+        }catch (e: Exception){
+            Log.e(LOGGER_TAG, "Failed to stop the workflow")
+        }
     }
 
     fun start() {

@@ -65,7 +65,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 42
+            versionCode 44
             versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
             setProperty("archivesBaseName", "MyGiulia_" + versionName)
         }

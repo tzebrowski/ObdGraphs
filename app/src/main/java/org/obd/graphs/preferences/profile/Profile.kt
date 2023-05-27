@@ -22,7 +22,6 @@ private const val DEFAULT_MAX_PROFILES = "5"
 private const val DEFAULT_PROFILE = "profile_1"
 
 val vehicleProfile = VehicleProfile()
-
 class VehicleProfile {
 
     fun reset(){
@@ -98,7 +97,7 @@ class VehicleProfile {
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                 .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                 .forEach { (pref, value) ->
-                    Log.d(LOG_KEY, "'$profileName.$pref'=$value")
+                    Log.i(LOG_KEY, "'$profileName.$pref'=$value")
                     it.updatePreference("$profileName.$pref", value)
                 }
             it.apply()

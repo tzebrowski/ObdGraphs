@@ -125,7 +125,8 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         paint.style = Paint.Style.STROKE
 
-        numbersPaint.color = resources.getColor(R.color.md_grey_500, null)
+        numbersPaint.color = resources.getColor(R.color.white ,null)
+
         strokeWidth *= rescaleValue
         numbersPaint.textSize = strokeWidth * 0.8f
 
