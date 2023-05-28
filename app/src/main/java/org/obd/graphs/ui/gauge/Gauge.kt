@@ -202,7 +202,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             drawDivider(canvas)
         }
         if (gaugeDrawScale) {
-            drawScale(canvas)
+            drawNumbers(canvas)
         }
     }
 
@@ -222,7 +222,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
-    private fun drawScale(canvas: Canvas) {
+    private fun drawNumbers(canvas: Canvas) {
         paint.shader = null
         val numberOfItems = (dividersCount / SCALE_STEP)
 
@@ -230,14 +230,14 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         val baseRadius = this.radius - 32.0f - "$endValue".length
 
         for (i in 0..numberOfItems) {
-            val value = (round(startValue + stepValue * i)).toInt().toString()
+            val text = (round(startValue + stepValue * i)).toInt().toString()
             val rect = Rect()
-            numbersPaint.getTextBounds(value, 0, value.length, rect)
+            numbersPaint.getTextBounds(text, 0, text.length, rect)
             val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
             val x = (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
             val y =
                 (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
-            canvas.drawText(value, x, y, numbersPaint)
+            canvas.drawText(text, x, y, numbersPaint)
         }
     }
 
