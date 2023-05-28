@@ -225,9 +225,10 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private fun drawNumbers(canvas: Canvas) {
         paint.shader = null
         val numberOfItems = (dividersCount / SCALE_STEP)
+        val radiusFactor = 0.85f
 
         val stepValue = round((endValue - startValue) / numberOfItems)
-        val baseRadius = this.radius - 32.0f - "$endValue".length
+        val baseRadius = this.radius * radiusFactor
 
         for (i in 0..numberOfItems) {
             val text = (round(startValue + stepValue * i)).toInt().toString()
@@ -235,8 +236,12 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             numbersPaint.getTextBounds(text, 0, text.length, rect)
             val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
             val x = (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
-            val y =
-                (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
+            var y =  (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
+
+            if (calculatedWidth > height) {
+                y *= radiusFactor
+            }
+
             canvas.drawText(text, x, y, numbersPaint)
         }
     }
