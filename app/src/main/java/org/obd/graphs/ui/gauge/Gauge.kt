@@ -142,9 +142,6 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         radius = if (calculatedWidth < height) calculatedWidth / 2 else height / 2
 
-        calculatedHeight =
-            if (measuredWidth > measuredHeight) measuredWidth.toFloat() else measuredHeight.toFloat()
-
         val rectLeft = (width - 2 * padding) / 2 - radius + padding
         val rectTop = (calculatedHeight - 2 * padding) / 2 - radius + padding
 
