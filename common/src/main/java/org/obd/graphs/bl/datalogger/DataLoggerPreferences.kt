@@ -147,7 +147,13 @@ class DataLoggerPreferencesManager {
     fun getPIDsToQuery() = (fastPIDs() + slowPIDs()).toMutableSet()
 
     private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
-    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).map { s -> s.toLong() }
+    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
+        try {
+            it.toLong()
+        }catch (e: Exception){
+            null
+        }
+    }
 
     private fun resources(): MutableSet<String> =
         Prefs.getStringSet("pref.pids.registry.list", defaultPidFiles.keys)!!
