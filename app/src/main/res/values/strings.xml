@@ -123,6 +123,8 @@
     <string name="pref.metrics_category">Metrics view configuration</string>
     <string name="pref.adapter_category">OBD2 Adapter</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
+    <string name="pref.usb_category">USB</string>
+
     <string name="pref.wifi_category">Wifi</string>
     <string name="pref.adapter_connection_tcp_ssid">SSID</string>
     <string name="pref.adapter_connection_tcp_host">Host</string>
@@ -172,6 +174,7 @@
     <string-array name="pref.connection_type_array">
         <item name="connection.wifi">wifi</item>
         <item name="connection.bluetooth">bluetooth</item>
+        <item name="connection.usb">usb</item>
     </string-array>
 
     <string name="pref.settings">Settings</string>

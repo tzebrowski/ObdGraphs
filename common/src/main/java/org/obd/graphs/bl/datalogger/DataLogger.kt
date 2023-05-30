@@ -175,11 +175,15 @@ class DataLogger internal constructor() {
 
     fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun connection() = if (dataLoggerPreferences.instance.connectionType == "wifi") {
-        wifiConnection()
-    } else {
-        bluetoothConnection()
-    }
+    private fun connection():AdapterConnection? =
+         when (dataLoggerPreferences.instance.connectionType){
+            "wifi" -> wifiConnection()
+            "bluetooth" -> bluetoothConnection()
+            "usb" -> getContext()?.let { UsbConnection(context = it) }
+            else -> {
+                null
+            }
+        }
 
     private fun bluetoothConnection(): AdapterConnection? = try {
         val deviceName = dataLoggerPreferences.instance.adapterId

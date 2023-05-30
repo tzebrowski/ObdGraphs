@@ -125,6 +125,15 @@
                     </PreferenceCategory>
 
                     <PreferenceCategory
+                        android:key="pref.adapter.connection.type.usb"
+                        android:title="@string/pref.usb_category">
+                        <EditTextPreference
+                            android:title="USB settings"
+                            app:useSimpleSummaryProvider="true" />
+                    </PreferenceCategory>
+
+
+                    <PreferenceCategory
                         android:key="pref.adapter.connection.type.wifi"
                         android:title="@string/pref.wifi_category">
 

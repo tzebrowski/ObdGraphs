@@ -62,6 +62,10 @@ internal fun MainActivity.receive(intent: Intent?) {
             requestBluetoothPermissions()
         }
 
+        REQUEST_PERMISSIONS_USB -> {
+            requestBluetoothPermissions()
+        }
+
         TOGGLE_TOOLBAR_ACTION -> {
             toolbar {
                 if (getMainActivityPreferences().hideToolbarDoubleClick) {
@@ -238,11 +242,10 @@ internal fun MainActivity.registerReceiver() {
         addAction(SCREEN_ON_EVENT)
         addAction(PROFILE_CHANGED_EVENT)
         addAction(REQUEST_PERMISSIONS_BT)
+        addAction(REQUEST_PERMISSIONS_USB)
         addAction(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
-
         addAction(SCREEN_LOCK_PROGRESS_EVENT)
         addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
-
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {
