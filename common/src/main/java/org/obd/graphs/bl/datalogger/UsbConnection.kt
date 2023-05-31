@@ -7,6 +7,7 @@ import android.util.Log
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import org.obd.metrics.transport.AdapterConnection
+import org.obd.metrics.transport.Connector
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -16,13 +17,15 @@ const val REQUEST_PERMISSIONS_USB = "REQUEST_PERMISSIONS_USB"
 private const val LOGGER_TAG = "USB_CONNECTION"
 
 private const val IO_TIMEOUT = 35
-
 private const val MAX_READ_ATTEMPTS = 10
 
 class UsbConnection(val context: Context) : AdapterConnection {
 
     class UsbInputStream(val port: UsbSerialPort) : InputStream() {
-        private var buffer =
+        private val buffer =
+            ByteArray(Connector.BUFFER_SIZE).apply { fill(0, 0, size) }
+
+        private val tmp =
             ByteArray(port.readEndpoint.maxPacketSize).apply { fill(0, 0, size) }
 
         private var readPos = 0
@@ -35,22 +38,23 @@ class UsbConnection(val context: Context) : AdapterConnection {
 
         override fun read(): Int {
             if (readPos == 0) {
-                buffer = ByteArray(port.readEndpoint.maxPacketSize).apply { fill(0, 0, size) }
-                var tmpArray = byteArrayOf()
+                buffer.run { fill(0, 0, size) }
+                tmp.run { fill(0, 0, size) }
 
+                var pos = 0
                 loop@ for (it in 1..MAX_READ_ATTEMPTS) {
-                    bytesRead = port.read(buffer, IO_TIMEOUT)
+                    bytesRead = port.read(tmp, IO_TIMEOUT)
                     if (bytesRead > 0) {
-                        tmpArray += buffer.copyOfRange(0, bytesRead)
-                    }
-                    if (bytesRead > 0 && buffer[bytesRead - 1].toInt().toChar() == '>') {
-                        break@loop
+                        System.arraycopy(tmp, 0, buffer, pos, bytesRead)
+                        pos += bytesRead
+                        if (buffer[pos - 1].toInt().toChar() == '>') {
+                            break@loop
+                        }
                     }
                 }
-                bytesRead = tmpArray.size
-                buffer = tmpArray
+                bytesRead = pos
 
-                if (tmpArray.isEmpty()) {
+                if (buffer.isEmpty()) {
                     buffer.fill(0, 0, buffer.size)
                     return -1
                 }
