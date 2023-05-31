@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
+import org.obd.graphs.bl.datalogger.connectors.UsbConnection
+import org.obd.graphs.bl.datalogger.connectors.WifiConnection
 import org.obd.graphs.findBluetoothAdapterByName
 import org.obd.graphs.getContext
 import org.obd.graphs.getModesAndHeaders

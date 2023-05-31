@@ -1,7 +1,8 @@
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs.bl.datalogger.connectors
 
 import android.bluetooth.BluetoothSocket
 import android.util.Log
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bluetoothAdapter
 import org.obd.graphs.findBluetoothAdapterByName
 import org.obd.graphs.requestBluetoothPermissions
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit
 private const val LOGGER_TAG = "BluetoothConnection"
 private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-internal class BluetoothConnection(deviceName: String) : AdapterConnection {
+class BluetoothConnection(deviceName: String) : AdapterConnection {
 
     private var input: InputStream? = null
     private var output: OutputStream? = null

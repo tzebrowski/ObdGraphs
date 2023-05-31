@@ -1,6 +1,7 @@
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs.bl.datalogger.connectors
 
 
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
@@ -17,7 +18,7 @@ class WifiConnection(private val inetSocketAddress: InetSocketAddress) : Adapter
     @Throws(IOException::class)
     override fun connect() {
         socket = Socket()
-        socket.connect(inetSocketAddress,dataLoggerPreferences.instance.connectionTimeout)
+        socket.connect(inetSocketAddress, dataLoggerPreferences.instance.connectionTimeout)
     }
 
     @Throws(IOException::class)

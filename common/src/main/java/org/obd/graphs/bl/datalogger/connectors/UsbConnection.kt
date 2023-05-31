@@ -1,5 +1,4 @@
-package org.obd.graphs.bl.datalogger
-
+package org.obd.graphs.bl.datalogger.connectors
 
 import android.content.Context
 import android.hardware.usb.UsbManager
@@ -12,11 +11,11 @@ import java.io.InputStream
 import java.io.OutputStream
 
 private const val LOGGER_TAG = "USB_CONNECTION"
-
 private const val MAX_READ_SIZE = 16 * 1024
 private const val IO_TIMEOUT = 35
 private const val MAX_READ_ATTEMPTS = 7
 private const val TERMINATOR_CHAR = '>'
+
 class UsbConnection(val context: Context) : AdapterConnection {
 
     class UsbInputStream(val port: UsbSerialPort) : InputStream() {
@@ -61,7 +60,6 @@ class UsbConnection(val context: Context) : AdapterConnection {
                 } else {
                     return if (readPos < bytesRead && buffer[readPos].toInt().toChar() != TERMINATOR_CHAR) {
                         buffer[readPos++].toInt()
-
                     } else {
                         readPos = 0
                         -1
@@ -123,8 +121,14 @@ class UsbConnection(val context: Context) : AdapterConnection {
             )
 
             Log.i(LOGGER_TAG, "USB device is opened ${port.isOpen}")
-            Log.i(LOGGER_TAG, "Read Endpoint,attributes ${port.readEndpoint.attributes}")
-            Log.i(LOGGER_TAG, "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}")
+            Log.i(
+                LOGGER_TAG,
+                "Read Endpoint,attributes ${port.readEndpoint.attributes}"
+            )
+            Log.i(
+                LOGGER_TAG,
+                "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}"
+            )
 
         } catch (e: SecurityException) {
             Log.e(LOGGER_TAG, "Failed to access device", e)
