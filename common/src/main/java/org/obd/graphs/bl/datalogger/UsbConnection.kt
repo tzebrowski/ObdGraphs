@@ -90,7 +90,6 @@ class UsbConnection(val context: Context) : AdapterConnection {
         }
     }
 
-
     private lateinit var port: UsbSerialPort
     private lateinit var inputStream: InputStream
     private lateinit var outputStream: OutputStream
@@ -106,14 +105,13 @@ class UsbConnection(val context: Context) : AdapterConnection {
 
         val driver = availableDrivers[0]
         try {
-            Log.e(LOGGER_TAG, "Getting access to the USB device")
+            Log.i(LOGGER_TAG, "Getting access to the USB device")
 
             val connection = manager!!.openDevice(driver.device)
                 ?: // add UsbManager.requestPermission(driver.getDevice(), ..) handling here
                 return
 
-
-            Log.e(LOGGER_TAG, "USB number of ports: ${driver.ports.size}")
+            Log.i(LOGGER_TAG, "USB number of ports: ${driver.ports.size}")
 
             port = driver.ports[0]
             port.open(connection)
@@ -126,15 +124,15 @@ class UsbConnection(val context: Context) : AdapterConnection {
                 UsbSerialPort.PARITY_NONE
             )
             val device = port.device
-            Log.e(
+            Log.i(
                 LOGGER_TAG,
                 "Allowed to open USB device ${device.deviceId} ${device.deviceName} ${device.deviceProtocol} ${device.deviceClass} " +
                         "${device.manufacturerName} ${device.productId} ${device.serialNumber} ${device.productName}"
             )
 
-            Log.e(LOGGER_TAG, "USB device is opened ${port.isOpen}")
-            Log.e(LOGGER_TAG, "Read Endpoint,attributes ${port.readEndpoint.attributes}")
-            Log.e(LOGGER_TAG, "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}")
+            Log.i(LOGGER_TAG, "USB device is opened ${port.isOpen}")
+            Log.i(LOGGER_TAG, "Read Endpoint,attributes ${port.readEndpoint.attributes}")
+            Log.i(LOGGER_TAG, "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}")
 
         } catch (e: SecurityException) {
             Log.e(LOGGER_TAG, "Failed to access device", e)
