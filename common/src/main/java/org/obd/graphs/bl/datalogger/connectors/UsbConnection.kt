@@ -18,9 +18,12 @@ private const val IO_TIMEOUT = 35
 private const val MAX_READ_ATTEMPTS = 7
 private const val TERMINATOR_CHAR = '>'
 
-data class SerialConnectionSettings (val baudRate:Int)
+data class SerialConnectionSettings(val baudRate: Int)
 
-class UsbConnection(val context: Context, val serialConnectionSettings: SerialConnectionSettings) : AdapterConnection {
+class UsbConnection(
+    val context: Context,
+    private val serialConnectionSettings: SerialConnectionSettings
+) : AdapterConnection {
 
     class UsbInputStream(val port: UsbSerialPort) : InputStream() {
 
@@ -62,7 +65,9 @@ class UsbConnection(val context: Context, val serialConnectionSettings: SerialCo
                     }
                     return buffer[readPos++].toInt()
                 } else {
-                    return if (readPos < bytesRead && buffer[readPos].toInt().toChar() != TERMINATOR_CHAR) {
+                    return if (readPos < bytesRead && buffer[readPos].toInt()
+                            .toChar() != TERMINATOR_CHAR
+                    ) {
                         buffer[readPos++].toInt()
                     } else {
                         readPos = 0
@@ -81,7 +86,11 @@ class UsbConnection(val context: Context, val serialConnectionSettings: SerialCo
         }
 
         override fun write(b: ByteArray) {
-            port.write(b, IO_TIMEOUT)
+            try {
+                port.write(b, 2 * IO_TIMEOUT)
+            } catch (e: IOException) {
+                Log.e(LOGGER_TAG, "Failed to write command ${String(b)}", e)
+            }
         }
     }
 
@@ -110,9 +119,8 @@ class UsbConnection(val context: Context, val serialConnectionSettings: SerialCo
             port = driver.ports[0]
             port.open(connection)
 
-            val baudRate = serialConnectionSettings.baudRate
             port.setParameters(
-                baudRate,
+                serialConnectionSettings.baudRate,
                 UsbSerialPort.DATABITS_8,
                 UsbSerialPort.STOPBITS_1,
                 UsbSerialPort.PARITY_NONE
@@ -157,15 +165,15 @@ class UsbConnection(val context: Context, val serialConnectionSettings: SerialCo
 
         try {
             inputStream.close()
-        } catch (e: IOException) {
+        } catch (_: IOException) {
         }
         try {
             outputStream.close()
-        } catch (e: IOException) {
+        } catch (_: IOException) {
         }
         try {
             port.close()
-        } catch (e: IOException) {
+        } catch (_: IOException) {
         }
     }
 
@@ -174,14 +182,14 @@ class UsbConnection(val context: Context, val serialConnectionSettings: SerialCo
         close()
         try {
             Thread.sleep(500)
-        } catch (e: InterruptedException) {
+        } catch (_: InterruptedException) {
         }
         connect()
     }
 
     companion object {
         fun of(context: Context): UsbConnection {
-            val baudRate  = Prefs.getS("pref.adapter.connection.usb.baud_rate","38400")
+            val baudRate = Prefs.getS("pref.adapter.connection.usb.baud_rate", "38400")
             return UsbConnection(context, SerialConnectionSettings(baudRate.toInt()))
         }
     }
