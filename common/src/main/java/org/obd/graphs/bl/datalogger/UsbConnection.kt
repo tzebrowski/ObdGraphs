@@ -11,16 +11,15 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-
 private const val LOGGER_TAG = "USB_CONNECTION"
 
+private const val MAX_READ_SIZE = 16 * 1024
 private const val IO_TIMEOUT = 35
-private const val MAX_READ_ATTEMPTS = 10
-
+private const val MAX_READ_ATTEMPTS = 7
+private const val TERMINATOR_CHAR = '>'
 class UsbConnection(val context: Context) : AdapterConnection {
 
     class UsbInputStream(val port: UsbSerialPort) : InputStream() {
-        private val MAX_READ_SIZE = 16 * 1024 / 2 // = old bulkTransfer limit
 
         private val buffer =
             ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }
@@ -35,7 +34,6 @@ class UsbConnection(val context: Context) : AdapterConnection {
             return port.read(b, IO_TIMEOUT)
         }
 
-
         override fun read(): Int {
             try {
 
@@ -43,26 +41,25 @@ class UsbConnection(val context: Context) : AdapterConnection {
                     buffer.run { fill(0, 0, bytesRead) }
                     tmp.run { fill(0, 0, size) }
 
-                    var pos = 0
-                    loop@ for (it in 1..MAX_READ_ATTEMPTS) {
+                    var cnt = 0
+                    for (it in 1..MAX_READ_ATTEMPTS) {
                         bytesRead = port.read(tmp, IO_TIMEOUT)
                         if (bytesRead > 0) {
-                            System.arraycopy(tmp, 0, buffer, pos, bytesRead)
-                            pos += bytesRead
-                            if (buffer[pos - 1].toInt().toChar() == '>') {
-                                break@loop
+                            System.arraycopy(tmp, 0, buffer, cnt, bytesRead)
+                            cnt += bytesRead
+                            if (buffer[cnt - 1].toInt().toChar() == TERMINATOR_CHAR) {
+                                break
                             }
                         }
                     }
-                    bytesRead = pos
+                    bytesRead = cnt
 
-                    if (buffer.isEmpty()) {
-                        buffer.fill(0, 0, bytesRead)
+                    if (bytesRead == 0) {
                         return -1
                     }
                     return buffer[readPos++].toInt()
                 } else {
-                    return if (readPos < bytesRead && buffer[readPos].toInt().toChar() != '>') {
+                    return if (readPos < bytesRead && buffer[readPos].toInt().toChar() != TERMINATOR_CHAR) {
                         buffer[readPos++].toInt()
 
                     } else {
