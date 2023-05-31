@@ -5,6 +5,8 @@ import android.hardware.usb.UsbManager
 import android.util.Log
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
@@ -16,7 +18,9 @@ private const val IO_TIMEOUT = 35
 private const val MAX_READ_ATTEMPTS = 7
 private const val TERMINATOR_CHAR = '>'
 
-class UsbConnection(val context: Context) : AdapterConnection {
+data class SerialConnectionSettings (val baudRate:Int)
+
+class UsbConnection(val context: Context, val serialConnectionSettings: SerialConnectionSettings) : AdapterConnection {
 
     class UsbInputStream(val port: UsbSerialPort) : InputStream() {
 
@@ -106,7 +110,7 @@ class UsbConnection(val context: Context) : AdapterConnection {
             port = driver.ports[0]
             port.open(connection)
 
-            val baudRate = 38400
+            val baudRate = serialConnectionSettings.baudRate
             port.setParameters(
                 baudRate,
                 UsbSerialPort.DATABITS_8,
@@ -177,7 +181,8 @@ class UsbConnection(val context: Context) : AdapterConnection {
 
     companion object {
         fun of(context: Context): UsbConnection {
-            return UsbConnection(context)
+            val baudRate  = Prefs.getS("pref.adapter.connection.usb.baud_rate","38400")
+            return UsbConnection(context, SerialConnectionSettings(baudRate.toInt()))
         }
     }
 }

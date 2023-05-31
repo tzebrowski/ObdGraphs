@@ -124,6 +124,8 @@
     <string name="pref.adapter_category">OBD2 Adapter</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
     <string name="pref.usb_category">USB</string>
+    <string name="pref.usb.baud_rate">This parameters allows to set desired baud rate</string>
+
 
     <string name="pref.wifi_category">Wifi</string>
     <string name="pref.adapter_connection_tcp_ssid">SSID</string>
@@ -248,8 +250,33 @@
         <item name="7">7</item>
         <item name="8">8</item>
         <item name="9">9</item>
-        <item name="10">10</item>
+        <item name="11">11</item>
+        <item name="12">12</item>
+        <item name="13">13</item>
+        <item name="14">14</item>
+        <item name="15">15</item>
+        <item name="16">16</item>
     </string-array>
+
+
+    <string-array name="pref.baud_rate_list">
+        <item name="300">300</item>
+        <item name="600">600</item>
+        <item name="1200">1200</item>
+        <item name="2400">2400</item>
+        <item name="4800">4800</item>
+        <item name="9600">9600</item>
+        <item name="14400">14400</item>
+        <item name="19200">19200</item>
+        <item name="28800">28800</item>
+        <item name="38400">38400</item>
+        <item name="56000">56000</item>
+        <item name="57600">57600</item>
+        <item name="115200">115200</item>
+        <item name="128000">128000</item>
+        <item name="256000">256000</item>
+    </string-array>
+
 
 
     <string-array name="pref.numbers_28_34">

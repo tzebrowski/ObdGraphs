@@ -182,7 +182,7 @@ class DataLogger internal constructor() {
          when (dataLoggerPreferences.instance.connectionType){
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
-            "usb" -> getContext()?.let { UsbConnection(context = it) }
+            "usb" -> getContext()?.let { UsbConnection.of(context = it) }
             else -> {
                 null
             }
