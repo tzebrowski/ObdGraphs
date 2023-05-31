@@ -7,7 +7,6 @@ import android.util.Log
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import org.obd.metrics.transport.AdapterConnection
-import org.obd.metrics.transport.Connector
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -23,7 +22,7 @@ class UsbConnection(val context: Context) : AdapterConnection {
 
     class UsbInputStream(val port: UsbSerialPort) : InputStream() {
         private val buffer =
-            ByteArray(Connector.BUFFER_SIZE).apply { fill(0, 0, size) }
+            ByteArray(1024).apply { fill(0, 0, size) }
 
         private val tmp =
             ByteArray(port.readEndpoint.maxPacketSize).apply { fill(0, 0, size) }
@@ -32,56 +31,49 @@ class UsbConnection(val context: Context) : AdapterConnection {
         private var bytesRead = 0
 
         override fun read(b: ByteArray): Int {
-            return port.read(b, IO_TIMEOUT);
+            return port.read(b, IO_TIMEOUT)
         }
 
 
         override fun read(): Int {
-            if (readPos == 0) {
-                buffer.run { fill(0, 0, size) }
-                tmp.run { fill(0, 0, size) }
+            try {
 
-                var pos = 0
-                loop@ for (it in 1..MAX_READ_ATTEMPTS) {
-                    bytesRead = port.read(tmp, IO_TIMEOUT)
-                    if (bytesRead > 0) {
-                        System.arraycopy(tmp, 0, buffer, pos, bytesRead)
-                        pos += bytesRead
-                        if (buffer[pos - 1].toInt().toChar() == '>') {
-                            break@loop
+
+            if (readPos == 0) {
+                    buffer.run { fill(0, 0, bytesRead) }
+                    tmp.run { fill(0, 0, size) }
+
+                    var pos = 0
+                    loop@ for (it in 1..MAX_READ_ATTEMPTS) {
+                        bytesRead = port.read(tmp, IO_TIMEOUT)
+                        if (bytesRead > 0) {
+                            System.arraycopy(tmp, 0, buffer, pos, bytesRead)
+                            pos += bytesRead
+                            if (buffer[pos - 1].toInt().toChar() == '>') {
+                                break@loop
+                            }
                         }
                     }
-                }
-                bytesRead = pos
+                    bytesRead = pos
 
-                if (buffer.isEmpty()) {
-                    buffer.fill(0, 0, buffer.size)
-                    return -1
-                }
-                return buffer[readPos++].toInt();
-            } else {
-                return if (readPos < bytesRead && buffer[readPos].toChar() != '>') {
-                    buffer[readPos++].toInt()
-
+                    if (buffer.isEmpty()) {
+                        buffer.fill(0, 0, bytesRead)
+                        return -1
+                    }
+                    return buffer[readPos++].toInt()
                 } else {
-                    readPos = 0
-                    -1
-                }
-            }
-        }
+                    return if (readPos < bytesRead && buffer[readPos].toInt().toChar() != '>') {
+                        buffer[readPos++].toInt()
 
-        private fun debugRead() {
-            Log.e(
-                LOGGER_TAG,
-                "RX: bytesRead: $bytesRead, buff:  '${
-                    String(
-                        buffer.copyOfRange(
-                            0,
-                            bytesRead
-                        )
-                    )
-                }'"
-            )
+                    } else {
+                        readPos = 0
+                        -1
+                    }
+                }
+            }catch (e: java.lang.Exception){
+                Log.i(LOGGER_TAG, "Failed to read data ",e)
+                return -1
+            }
         }
     }
 
