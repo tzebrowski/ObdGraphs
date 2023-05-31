@@ -11,7 +11,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-const val REQUEST_PERMISSIONS_USB = "REQUEST_PERMISSIONS_USB"
 
 private const val LOGGER_TAG = "USB_CONNECTION"
 
@@ -21,11 +20,13 @@ private const val MAX_READ_ATTEMPTS = 10
 class UsbConnection(val context: Context) : AdapterConnection {
 
     class UsbInputStream(val port: UsbSerialPort) : InputStream() {
+        private val MAX_READ_SIZE = 16 * 1024 / 2 // = old bulkTransfer limit
+
         private val buffer =
-            ByteArray(1024).apply { fill(0, 0, size) }
+            ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }
 
         private val tmp =
-            ByteArray(port.readEndpoint.maxPacketSize).apply { fill(0, 0, size) }
+            ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }
 
         private var readPos = 0
         private var bytesRead = 0
@@ -38,8 +39,7 @@ class UsbConnection(val context: Context) : AdapterConnection {
         override fun read(): Int {
             try {
 
-
-            if (readPos == 0) {
+                if (readPos == 0) {
                     buffer.run { fill(0, 0, bytesRead) }
                     tmp.run { fill(0, 0, size) }
 
@@ -70,8 +70,8 @@ class UsbConnection(val context: Context) : AdapterConnection {
                         -1
                     }
                 }
-            }catch (e: java.lang.Exception){
-                Log.i(LOGGER_TAG, "Failed to read data ",e)
+            } catch (e: java.lang.Exception) {
+                Log.i(LOGGER_TAG, "Failed to read data ", e)
                 return -1
             }
         }
@@ -96,18 +96,17 @@ class UsbConnection(val context: Context) : AdapterConnection {
         val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
 
         if (availableDrivers.isEmpty()) {
+            Log.w(LOGGER_TAG, "No available USB drivers found.")
             return
         }
 
-        val driver = availableDrivers[0]
         try {
+
+            val driver = availableDrivers[0]
             Log.i(LOGGER_TAG, "Getting access to the USB device")
 
             val connection = manager!!.openDevice(driver.device)
-                ?: // add UsbManager.requestPermission(driver.getDevice(), ..) handling here
-                return
-
-            Log.i(LOGGER_TAG, "USB number of ports: ${driver.ports.size}")
+                ?: return
 
             port = driver.ports[0]
             port.open(connection)
@@ -132,7 +131,6 @@ class UsbConnection(val context: Context) : AdapterConnection {
 
         } catch (e: SecurityException) {
             Log.e(LOGGER_TAG, "Failed to access device", e)
-//            sendBroadcastEvent(REQUEST_PERMISSIONS_USB)
         }
     }
 
@@ -142,8 +140,12 @@ class UsbConnection(val context: Context) : AdapterConnection {
     }
 
     @Throws(IOException::class)
-    override fun openOutputStream(): OutputStream {
-        return UsbOutputStream(port).also { outputStream = it }
+    override fun openOutputStream(): UsbOutputStream? {
+        return if (::port.isInitialized) {
+            UsbOutputStream(port).also { outputStream = it }
+        } else {
+            null
+        }
     }
 
     override fun close() {
