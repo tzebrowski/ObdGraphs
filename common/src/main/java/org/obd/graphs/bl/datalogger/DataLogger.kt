@@ -274,8 +274,8 @@ class DataLogger internal constructor() {
         .initialize()
 
     private fun getSelectedPIDsResources() = dataLoggerPreferences.instance.resources.map {
-        if (isExternalStorageResource(it)) {
-            externalResourceToURL(it)
+        if (pidResources.isExternalStorageResource(it)) {
+            pidResources.externalResourceToURL(it)
         } else {
             Urls.resourceToUrl(it)
         }

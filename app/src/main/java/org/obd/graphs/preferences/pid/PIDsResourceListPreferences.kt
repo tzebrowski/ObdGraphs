@@ -8,8 +8,7 @@ import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.bl.datalogger.ACCESS_EXTERNAL_STORAGE_ENABLED
 import org.obd.graphs.bl.datalogger.RESOURCE_LIST_CHANGED_EVENT
-import org.obd.graphs.bl.datalogger.defaultPidFiles
-import org.obd.graphs.bl.datalogger.getExternalPidResources
+import org.obd.graphs.bl.datalogger.pidResources
 import org.obd.graphs.sendBroadcastEvent
 
 
@@ -20,7 +19,7 @@ class PIDsResourceListPreferences(
     MultiSelectListPreference(context, attrs) {
 
     init {
-        initialize { getExternalPidResources(context) }
+        initialize { pidResources.getExternalPidResources(context) }
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
@@ -35,14 +34,14 @@ class PIDsResourceListPreferences(
 
         findPreferenceInHierarchy<CheckBoxPreference>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run {
             onPreferenceChangeListener = OnPreferenceChangeListener { _, new ->
-                initialize { getExternalPidResources(context) { new.toString().toBoolean() } }
+                initialize { pidResources.getExternalPidResources(context) { new.toString().toBoolean() } }
                 true
             }
         }
     }
 
     private fun initialize(files: () -> MutableMap<String, String>? = { null }) {
-        val mutableMap = defaultPidFiles.toMutableMap().apply {
+        val mutableMap = pidResources.getDefaultPidFiles().toMutableMap().apply {
             files()?.let {
                 putAll(it)
             }

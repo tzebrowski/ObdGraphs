@@ -156,7 +156,7 @@ class DataLoggerPreferencesManager {
     }
 
     private fun resources(): MutableSet<String> =
-        Prefs.getStringSet("pref.pids.registry.list", defaultPidFiles.keys)!!
+        Prefs.getStringSet("pref.pids.registry.list", pidResources.getDefaultPidFiles().keys)!!
 }
 
 val dataLoggerPreferences  by lazy {  DataLoggerPreferencesManager() }

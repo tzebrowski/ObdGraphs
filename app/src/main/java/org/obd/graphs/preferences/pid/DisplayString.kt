@@ -5,13 +5,13 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import org.obd.graphs.bl.datalogger.defaultPidFiles
+import org.obd.graphs.bl.datalogger.pidResources
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.metrics.pid.PidDefinition
 
 internal fun PidDefinition.displayString(): Spanned {
-    val text = "[${defaultPidFiles[resourceFile]?: resourceFile}] ${longDescription?:description} " +  (if (stable) "" else "(Experimental)")
+    val text = "[${pidResources.getDefaultPidFiles()[resourceFile]?: resourceFile}] ${longDescription?:description} " +  (if (stable) "" else "(Experimental)")
     return SpannableString(text).apply {
         var endIndexOf = text.indexOf("]") + 1
         setSpan(
