@@ -3,7 +3,6 @@ package org.obd.graphs.preferences.profile
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
-import android.util.Log
 import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
@@ -20,7 +19,6 @@ class ProfileListPreference(
 
         vehicleProfile.getProfileList()
             .let {
-                Log.e("EEEEEEEEEEEEEEEEEEEE", "EEEEEEEEEEEEEEEEEE $it")
                 entries = it.values.toTypedArray()
                 entryValues = it.keys.toTypedArray()
                 if (it.keys.isNotEmpty()) {
