@@ -59,7 +59,7 @@
 
         <activity
             android:name="org.obd.graphs.activity.UsbEventReceiverActivity"
-            android:label="Grant permissions to access USB device"
+            android:label="@string/pref.usb_event_receiver_activity_label"
             android:noHistory="true"
             android:theme="@style/Theme.Transparent"
             android:excludeFromRecents="true"

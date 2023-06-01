@@ -125,6 +125,8 @@
     <string name="pref.bluetooth_category">Bluetooth</string>
     <string name="pref.usb_category">USB</string>
     <string name="pref.usb.baud_rate">This parameter allows to set desired baud rate</string>
+    <string name="pref.usb.device_attached">USB OBD2 adapter %s has been attached</string>
+    <string name="pref.usb.device_detached">USB OBD2 adapter %s has been detached</string>
 
 
     <string name="pref.wifi_category">Wifi</string>
@@ -238,6 +240,7 @@
     <string name="supported_pids_status">Status</string>
     <string name="supported_pids_name">Name</string>
     <string name="supported_pids_file">File</string>
+    <string name="pref.usb_event_receiver_activity_label">Grant permissions to access USB device</string>
 
     <string-array name="pref.numbers_1_10">
         <item name="0">0</item>
