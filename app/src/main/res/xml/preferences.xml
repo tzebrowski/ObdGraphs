@@ -125,6 +125,24 @@
                     </PreferenceCategory>
 
                     <PreferenceCategory
+                        android:key="pref.adapter.connection.type.usb"
+                        android:title="@string/pref.usb_category">
+
+                        <ListPreference
+                            android:summary="@string/pref.usb.baud_rate"
+                            app:singleLineTitle="false"
+                            android:defaultValue="38400"
+                            android:entries="@array/pref.baud_rate_list"
+                            android:entryValues="@array/pref.baud_rate_list"
+                            android:inputType="number"
+                            android:key="pref.adapter.connection.usb.baud_rate"
+                            android:title="@string/pref.usb.baud_rate"
+                            app:useSimpleSummaryProvider="true" />
+
+                     </PreferenceCategory>
+
+
+                    <PreferenceCategory
                         android:key="pref.adapter.connection.type.wifi"
                         android:title="@string/pref.wifi_category">
 

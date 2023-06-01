@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.hardware.usb.UsbDevice
+import android.hardware.usb.UsbManager
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
@@ -47,6 +49,10 @@ internal fun MainActivity.receive(intent: Intent?) {
                 dialogTitle.text = msg
             }
         }
+        USB_DEVICE_ATTACHED_EVENT -> {
+            val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
+            toast(R.string.pref_usb_device_attached,usbDevice.productName!!)
+        }
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> {
             lockScreenDialog.dismiss()
@@ -61,6 +67,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         REQUEST_PERMISSIONS_BT -> {
             requestBluetoothPermissions()
         }
+
 
         TOGGLE_TOOLBAR_ACTION -> {
             toolbar {
@@ -239,10 +246,9 @@ internal fun MainActivity.registerReceiver() {
         addAction(PROFILE_CHANGED_EVENT)
         addAction(REQUEST_PERMISSIONS_BT)
         addAction(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
-
         addAction(SCREEN_LOCK_PROGRESS_EVENT)
         addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
-
+        addAction(USB_DEVICE_ATTACHED_EVENT)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {
@@ -256,7 +262,6 @@ internal fun MainActivity.registerReceiver() {
         addAction("android.intent.action.ACTION_POWER_CONNECTED")
         addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
     })
-
 
     registerReceiver(dataLogger.eventsReceiver, IntentFilter().apply {
         addAction(RESOURCE_LIST_CHANGED_EVENT)

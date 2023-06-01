@@ -1,5 +1,6 @@
 package org.obd.graphs
 
+import android.util.Log
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions
@@ -66,7 +67,7 @@ class VehicleProfileTest {
 
         launchActivity<MainActivity>().use {
             val expected = getExpectedProfileList()
-            val given = getGivenProfileList()
+            val given = vehicleProfile.getProfileList()
 
             assertTrue("Default profiles does not match", expected == given)
         }
@@ -74,7 +75,9 @@ class VehicleProfileTest {
 
     private fun assertProfilesExists() {
         val expected = getExpectedProfileList()
-        val given = getGivenProfileList()
+        val given = vehicleProfile.getProfileList()
+        Log.e("assertProfilesExists", "Given profiles: $given")
+        Log.e("assertProfilesExists", "Expected profiles: $expected")
 
         assertTrue("Default profiles does not match", expected == given)
 
@@ -92,13 +95,16 @@ class VehicleProfileTest {
         }
     }
 
-    private fun getGivenProfileList() =  vehicleProfile.getProfileList()
-
     private fun getExpectedProfileList(): Map<String, String> = mapOf(
-            "profile_1" to "Default",
-            "profile_2" to "Alfa 1.75 TBI",
-            "profile_3" to "Alfa 2.0 GME",
-            "profile_4" to "Alfa 2.0 GME (STNxx)",
-            "profile_5" to "5"
+            "profile_1" to "Default (BT)",
+            "profile_2" to "Alfa 1.75 TBI (BT)",
+            "profile_3" to "Alfa 2.0 GME (BT)",
+            "profile_4" to "Alfa 2.0 GME (STN,WIFI)",
+            "profile_5" to "Alfa 1.75 TBI (STN,WIFI)",
+            "profile_6" to "Alfa 2.0 GME (STN,USB)",
+            "profile_7" to "Profile 7",
+            "profile_8" to "Profile 8",
+            "profile_9" to "Profile 9",
+            "profile_10" to "Profile 10",
         )
 }

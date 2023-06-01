@@ -61,3 +61,43 @@ fun MainActivity.requestBluetoothPermissions() {
         *perms.toTypedArray()
     )
 }
+
+
+fun MainActivity.requestUSBPermissions() {
+
+
+    val perms = mutableListOf(
+        Manifest.permission.BLUETOOTH_ADMIN,
+        Manifest.permission.BLUETOOTH
+    )
+
+    if (Build.VERSION.SDK_INT > 30) {
+        Log.d(
+            ACTIVITY_LOGGER_TAG,
+            "Has permission to BLUETOOTH_CONNECT ${
+                EasyPermissions.hasPermissions(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                )
+            }"
+        )
+        Log.d(
+            ACTIVITY_LOGGER_TAG,
+            "Has permission to BLUETOOTH_SCAN ${
+                EasyPermissions.hasPermissions(
+                    this,
+                    Manifest.permission.BLUETOOTH_SCAN
+                )
+            }"
+        )
+        perms.add(Manifest.permission.BLUETOOTH_CONNECT)
+        perms.add(Manifest.permission.BLUETOOTH_SCAN)
+    }
+
+    EasyPermissions.requestPermissions(
+        this,
+        resources.getString(R.string.permissions_missing_bt_msg),
+        1,
+        *perms.toTypedArray()
+    )
+}

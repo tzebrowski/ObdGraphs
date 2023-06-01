@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
+import org.obd.graphs.bl.datalogger.connectors.UsbConnection
+import org.obd.graphs.bl.datalogger.connectors.WifiConnection
 import org.obd.graphs.findBluetoothAdapterByName
 import org.obd.graphs.getContext
 import org.obd.graphs.getModesAndHeaders
@@ -175,11 +178,15 @@ class DataLogger internal constructor() {
 
     fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun connection() = if (dataLoggerPreferences.instance.connectionType == "wifi") {
-        wifiConnection()
-    } else {
-        bluetoothConnection()
-    }
+    private fun connection():AdapterConnection? =
+         when (dataLoggerPreferences.instance.connectionType){
+            "wifi" -> wifiConnection()
+            "bluetooth" -> bluetoothConnection()
+            "usb" -> getContext()?.let { UsbConnection.of(context = it) }
+            else -> {
+                null
+            }
+        }
 
     private fun bluetoothConnection(): AdapterConnection? = try {
         val deviceName = dataLoggerPreferences.instance.adapterId

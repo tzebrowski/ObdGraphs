@@ -65,4 +65,5 @@ dependencies {
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
     implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
+    implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
 }

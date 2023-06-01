@@ -135,15 +135,30 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val connectionType = findPreference<ListPreference>(PREFERENCE_CONNECTION_TYPE)
         val p1 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.$bluetooth")
         val p2 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.wifi")
+        val p3 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.usb")
+
 
         when (Prefs.getString(PREFERENCE_CONNECTION_TYPE)) {
             bluetooth -> {
                 p1?.isVisible = true
                 p2?.isVisible = false
+                p3?.isVisible = false
+
             }
-            else -> {
+            "wifi" -> {
                 p1?.isVisible = false
                 p2?.isVisible = true
+                p3?.isVisible = false
+            }
+
+            "usb" -> {
+                p1?.isVisible = false
+                p2?.isVisible = false
+                p3?.isVisible = true
+            }
+
+            else -> {
+
             }
         }
 
@@ -154,6 +169,19 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     bluetooth -> {
                         p1?.isVisible = true
                         p2?.isVisible = false
+                        p3?.isVisible = false
+
+                    }
+                    "wifi" -> {
+                        p1?.isVisible = false
+                        p2?.isVisible = true
+                        p3?.isVisible = false
+                    }
+
+                    "usb" -> {
+                        p1?.isVisible = false
+                        p2?.isVisible = false
+                        p3?.isVisible = true
                     }
                     else -> {
                         p1?.isVisible = false

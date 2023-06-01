@@ -58,6 +58,22 @@
         </receiver>
 
         <activity
+            android:name="org.obd.graphs.activity.UsbEventReceiverActivity"
+            android:label="@string/pref.usb_event_receiver_activity_label"
+            android:noHistory="true"
+            android:theme="@style/Theme.Transparent"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.example.taskAffinityUsbEventReceiver"
+            android:process=":UsbEventReceiverActivityProcess"
+            android:exported="false"
+            android:directBootAware="true">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
+        </activity>
+
+        <activity
             android:name="org.obd.graphs.activity.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">

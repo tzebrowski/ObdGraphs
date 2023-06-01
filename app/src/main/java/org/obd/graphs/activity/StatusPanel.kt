@@ -1,14 +1,13 @@
 package org.obd.graphs.activity
 
 import android.graphics.Color
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.preferences.profile.vehicleProfile
+import org.obd.graphs.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
