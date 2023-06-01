@@ -148,8 +148,12 @@ class UsbConnection(
     }
 
     @Throws(IOException::class)
-    override fun openInputStream(): InputStream {
-        return UsbInputStream(port).also { inputStream = it }
+    override fun openInputStream(): InputStream? {
+        return if (::port.isInitialized) {
+            return UsbInputStream(port).also { inputStream = it }
+        } else {
+            null
+        }
     }
 
     @Throws(IOException::class)
@@ -162,18 +166,23 @@ class UsbConnection(
     }
 
     override fun close() {
-
-        try {
-            inputStream.close()
-        } catch (_: IOException) {
+        if (::inputStream.isInitialized) {
+            try {
+                inputStream.close()
+            } catch (_: IOException) {
+            }
         }
-        try {
-            outputStream.close()
-        } catch (_: IOException) {
+        if (::outputStream.isInitialized) {
+            try {
+                outputStream.close()
+            } catch (_: IOException) {
+            }
         }
-        try {
-            port.close()
-        } catch (_: IOException) {
+        if (::port.isInitialized) {
+            try {
+                port.close()
+            } catch (_: IOException) {
+            }
         }
     }
 
