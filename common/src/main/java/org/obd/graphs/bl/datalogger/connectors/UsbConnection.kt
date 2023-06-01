@@ -13,10 +13,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 private const val LOGGER_TAG = "USB_CONNECTION"
-private const val MAX_READ_SIZE = 16 * 1024
-private const val IO_TIMEOUT = 35
-private const val MAX_READ_ATTEMPTS = 7
-private const val TERMINATOR_CHAR = '>'
+const val IO_TIMEOUT = 35
 
 data class SerialConnectionSettings(val baudRate: Int)
 
@@ -24,75 +21,6 @@ class UsbConnection(
     val context: Context,
     private val serialConnectionSettings: SerialConnectionSettings
 ) : AdapterConnection {
-
-    class UsbInputStream(val port: UsbSerialPort) : InputStream() {
-
-        private val buffer =
-            ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }
-
-        private val tmp =
-            ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }
-
-        private var readPos = 0
-        private var bytesRead = 0
-
-        override fun read(b: ByteArray): Int {
-            return port.read(b, IO_TIMEOUT)
-        }
-
-        override fun read(): Int {
-            try {
-
-                if (readPos == 0) {
-                    buffer.run { fill(0, 0, bytesRead) }
-                    tmp.run { fill(0, 0, size) }
-
-                    var cnt = 0
-                    for (it in 1..MAX_READ_ATTEMPTS) {
-                        bytesRead = port.read(tmp, IO_TIMEOUT)
-                        if (bytesRead > 0) {
-                            System.arraycopy(tmp, 0, buffer, cnt, bytesRead)
-                            cnt += bytesRead
-                            if (buffer[cnt - 1].toInt().toChar() == TERMINATOR_CHAR) {
-                                break
-                            }
-                        }
-                    }
-                    bytesRead = cnt
-
-                    if (bytesRead == 0) {
-                        return -1
-                    }
-                    return buffer[readPos++].toInt()
-                } else {
-                    return if (readPos < bytesRead && buffer[readPos].toInt()
-                            .toChar() != TERMINATOR_CHAR
-                    ) {
-                        buffer[readPos++].toInt()
-                    } else {
-                        readPos = 0
-                        -1
-                    }
-                }
-            } catch (e: java.lang.Exception) {
-                Log.i(LOGGER_TAG, "Failed to read data ", e)
-                return -1
-            }
-        }
-    }
-
-    class UsbOutputStream(val port: UsbSerialPort) : OutputStream() {
-        override fun write(p0: Int) {
-        }
-
-        override fun write(b: ByteArray) {
-            try {
-                port.write(b, 2 * IO_TIMEOUT)
-            } catch (e: IOException) {
-                Log.e(LOGGER_TAG, "Failed to write command ${String(b)}", e)
-            }
-        }
-    }
 
     private lateinit var port: UsbSerialPort
     private lateinit var inputStream: InputStream
