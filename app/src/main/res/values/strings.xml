@@ -124,7 +124,7 @@
     <string name="pref.adapter_category">OBD2 Adapter</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
     <string name="pref.usb_category">USB</string>
-    <string name="pref.usb.baud_rate">This parameters allows to set desired baud rate</string>
+    <string name="pref.usb.baud_rate">This parameter allows to set desired baud rate</string>
 
 
     <string name="pref.wifi_category">Wifi</string>

@@ -66,7 +66,7 @@ class VehicleProfileTest {
 
         launchActivity<MainActivity>().use {
             val expected = getExpectedProfileList()
-            val given = getGivenProfileList()
+            val given = vehicleProfile.getProfileList()
 
             assertTrue("Default profiles does not match", expected == given)
         }
@@ -74,7 +74,7 @@ class VehicleProfileTest {
 
     private fun assertProfilesExists() {
         val expected = getExpectedProfileList()
-        val given = getGivenProfileList()
+        val given = vehicleProfile.getProfileList()
 
         assertTrue("Default profiles does not match", expected == given)
 
@@ -91,8 +91,6 @@ class VehicleProfileTest {
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(txt)))
         }
     }
-
-    private fun getGivenProfileList() =  vehicleProfile.getProfileList()
 
     private fun getExpectedProfileList(): Map<String, String> = mapOf(
             "profile_1" to "Default",

@@ -8,17 +8,14 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getString
 import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateToolbar
+import org.obd.graphs.profile.*
 import java.util.*
 
-const val PROFILE_NAME_PREFIX = "pref.profile.names"
 const val LOG_KEY = "Profile"
 const val PROFILES_PREF = "pref.profiles"
 
-private const val PROFILE_ID_PREF = "pref.profile.id"
-private const val MAX_PROFILES_PREF = "pref.profile.max_profiles"
 private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
 private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
-private const val DEFAULT_MAX_PROFILES = "5"
 private const val DEFAULT_PROFILE = "profile_1"
 
 val vehicleProfile = VehicleProfile()
@@ -30,14 +27,7 @@ class VehicleProfile {
         setupProfiles()
     }
 
-    fun getProfileList() =
-        (1..Prefs.getString(MAX_PROFILES_PREF, DEFAULT_MAX_PROFILES)!!.toInt())
-            .associate {
-                "profile_$it" to Prefs.getString(
-                    "$PROFILE_NAME_PREFIX.profile_$it",
-                    "Profile $it"
-                )
-            }
+    fun getProfileList() = getProfiles()
 
     fun setupProfiles() {
         val profileInstallationKey = getProfileInstallationKey()
@@ -48,6 +38,8 @@ class VehicleProfile {
             Log.i(LOG_KEY, "Found following profiles: $profiles for installation.")
 
             Prefs.edit().let { editor ->
+                // clear all preferences
+                editor.clear()
                 profiles?.forEach { fileName ->
                     Log.i(LOG_KEY, "Loading profile file='$fileName'")
 
@@ -85,7 +77,7 @@ class VehicleProfile {
         }
     }
 
-    internal fun getCurrentProfile(): String = Prefs.getString(PROFILE_ID_PREF)!!
+    internal fun getCurrentProfile(): String = getSelectedProfile()
 
     internal fun saveCurrentProfile() {
         Prefs.edit().let {

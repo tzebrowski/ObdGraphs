@@ -7,6 +7,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.profile.PROFILE_NAME_PREFIX
 
 class ProfileNamePreference(
     context: Context?,
