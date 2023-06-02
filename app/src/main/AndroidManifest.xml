@@ -87,6 +87,12 @@
             android:name="org.obd.graphs.activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
+            </intent-filter>
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" android:resource="@xml/usb_device_filter" />
+
         </activity>
     </application>
 </manifest>

@@ -49,6 +49,12 @@ internal fun MainActivity.receive(intent: Intent?) {
                 dialogTitle.text = msg
             }
         }
+        UsbManager.ACTION_USB_DEVICE_DETACHED -> {
+            val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
+            toast(R.string.pref_usb_device_detached,usbDevice.productName!!)
+            DataLoggerService.stop()
+        }
+
         USB_DEVICE_ATTACHED_EVENT -> {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_attached,usbDevice.productName!!)
@@ -249,6 +255,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(SCREEN_LOCK_PROGRESS_EVENT)
         addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
         addAction(USB_DEVICE_ATTACHED_EVENT)
+        addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {

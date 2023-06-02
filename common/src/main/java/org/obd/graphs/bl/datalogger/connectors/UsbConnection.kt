@@ -32,7 +32,7 @@ class UsbConnection(
         val availableDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
 
         if (availableDrivers.isEmpty()) {
-            Log.w(LOGGER_TAG, "No available USB drivers found.")
+            Log.e(LOGGER_TAG, "No USB devices connected.")
             throw  IOException("No USB devices connected")
         }
 
