@@ -33,7 +33,7 @@ class UsbConnection(
 
         if (availableDrivers.isEmpty()) {
             Log.w(LOGGER_TAG, "No available USB drivers found.")
-            return
+            throw  IOException("No USB devices connected")
         }
 
         try {
