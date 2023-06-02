@@ -223,7 +223,8 @@ class DataLogger internal constructor() {
     }
 
     private fun init() = Init.builder()
-        .delay(dataLoggerPreferences.instance.initDelay)
+        .delayAfterInit(dataLoggerPreferences.instance.initDelay)
+        .delayAfterReset(dataLoggerPreferences.instance.delayAfterReset)
         .headers(getModesAndHeaders().map { entry ->
             Init.Header.builder().mode(entry.key).header(entry.value).build()
         }.toMutableList())
@@ -247,6 +248,10 @@ class DataLogger internal constructor() {
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
                 .resultCacheEnabled(dataLoggerPreferences.instance.resultsCacheEnabled).build()
         )
+        .producerPolicy(ProducerPolicy
+            .builder()
+            .conditionalSleepEnabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
+            .conditionalSleepSliceSize(10).build())
         .generator(
             GeneratorPolicy
                 .builder()
@@ -258,8 +263,9 @@ class DataLogger internal constructor() {
                 .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
                 .checkInterval(5000)
                 .commandFrequency(dataLoggerPreferences.instance.commandFrequency)
-                .minimumTimeout(100)
+                .minimumTimeout(10)
                 .build()
+
         ).build()
 
     private fun workflow() = Workflow.instance()

@@ -44,7 +44,8 @@ data class DataLoggerPreferences(
     var vehicleDTCCleaningEnabled: Boolean,
     var responseLengthEnabled: Boolean,
     var gracefulStop: Boolean,
-    var dumpRawConnectorResponse: Boolean
+    var dumpRawConnectorResponse: Boolean,
+    var delayAfterReset: Long,
     )
 
 class DataLoggerPreferencesManager {
@@ -81,6 +82,7 @@ class DataLoggerPreferencesManager {
         val adapterId = Prefs.getS("pref.adapter.id", "OBDII")
         val commandFrequency = Prefs.getS("pref.adapter.command.freq", "6").toLong()
         val initDelay = Prefs.getS("pref.adapter.init.delay", "500").toLong()
+        val delayAfterReset = Prefs.getS("pref.adapter.init.delay_after_reset", "0").toLong()
 
         val mode = Prefs.getS("pref.mode", GENERIC_MODE)
         val generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
@@ -137,7 +139,8 @@ class DataLoggerPreferencesManager {
             gracefulStop = gracefulStop,
             reconnectSilent = reconnectSilent,
             connectionTimeout = timeout,
-            dumpRawConnectorResponse = dumpRawConnectorResponse
+            dumpRawConnectorResponse = dumpRawConnectorResponse,
+            delayAfterReset = delayAfterReset
         )
 
         Log.d(LOGGER_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")

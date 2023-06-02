@@ -107,7 +107,9 @@
     <string name="pref.vehicle.metadata.name">Name</string>
     <string name="pref.vehicle.metadata.value">Value</string>
 
-    <string name="pref.adapter_init_delay">Init delay</string>
+    <string name="pref.adapter_init_delay">Delay after init</string>
+    <string name="pref.adapter_delay_reset">Delay after reset (ATZ)</string>
+
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>
     <string name="pref.adapter.general_settings">Advanced settings</string>
@@ -253,12 +255,15 @@
         <item name="7">7</item>
         <item name="8">8</item>
         <item name="9">9</item>
+        <item name="10">10</item>
         <item name="11">11</item>
         <item name="12">12</item>
         <item name="13">13</item>
         <item name="14">14</item>
         <item name="15">15</item>
         <item name="16">16</item>
+        <item name="17">17</item>
+        <item name="18">18</item>
     </string-array>
 
 
@@ -304,6 +309,7 @@
     </string-array>
 
     <string-array name="pref.numbers_500_6000">
+        <item name="0">0</item>
         <item name="500">500</item>
         <item name="1000">1000</item>
         <item name="2000">2000</item>

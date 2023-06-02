@@ -185,6 +185,15 @@
                         app:useSimpleSummaryProvider="true" />
 
                     <ListPreference
+                        android:defaultValue="0"
+                        android:entries="@array/pref.numbers_500_6000"
+                        android:entryValues="@array/pref.numbers_500_6000"
+                        android:inputType="number"
+                        android:key="pref.adapter.init.delay_after_reset"
+                        android:title="@string/pref.adapter_delay_reset"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <ListPreference
                         android:defaultValue="AUTO"
                         android:entries="@array/pref.init_protocol"
                         android:entryValues="@array/pref.init_protocol"
