@@ -8,14 +8,16 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import org.slf4j.LoggerFactory
 
-private const val LOGGER_TAG = "ToggleDebugLogging"
+private const val LOGGER_TAG = "ToggleObdMetricsDebugLogging"
 
-class ToggleDebugLogging(
+class ToggleObdMetricsDebugLogging(
     context: Context?,
     attrs: AttributeSet?
 ) : CheckBoxPreference(context, attrs) {
 
-    private val loggers =  setOf("org.obd.metrics.transport.StreamConnector")
+    private val loggers =  setOf(
+        "org.obd.metrics.transport.StreamConnector",
+        "org.obd.metrics.api.DefaultWorkflow")
 
     init {
         setOnPreferenceChangeListener { _, value ->
@@ -26,10 +28,9 @@ class ToggleDebugLogging(
 
     private fun toggleDebugLogging(value: Boolean) {
         loggers.forEach {
-            Log.i(LOGGER_TAG,"Enable debug logging = $value")
             val logger = LoggerFactory.getLogger(it) as Logger
             logger.level = if (value) Level.TRACE else Level.INFO
-            logger.isAdditive = false
+            Log.i(LOGGER_TAG,"Enabled debug logging = $value for $it, isDebugEnabled=${logger.isDebugEnabled}, isTraceEnabled=${logger.isTraceEnabled}")
         }
     }
 }
