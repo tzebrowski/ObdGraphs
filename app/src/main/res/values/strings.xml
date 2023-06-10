@@ -244,7 +244,7 @@
     <string name="supported_pids_file">File</string>
     <string name="pref.usb_event_receiver_activity_label">Grant permissions to access USB device</string>
 
-    <string-array name="pref.numbers_1_10">
+    <string-array name="pref.numbers_1_20">
         <item name="0">0</item>
         <item name="1">1</item>
         <item name="2">2</item>
@@ -264,6 +264,8 @@
         <item name="16">16</item>
         <item name="17">17</item>
         <item name="18">18</item>
+        <item name="19">19</item>
+        <item name="20">20</item>
     </string-array>
 
 
