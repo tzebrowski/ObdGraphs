@@ -118,18 +118,24 @@ class TripManager {
                         "It seems that Trip which start same date='${filter}' is already saved."
                     )
                 } else {
-                    val content: String = tripModelSerializer.serializer.writeValueAsString(trip)
+                    try {
+                        val content: String =
+                            tripModelSerializer.serializer.writeValueAsString(trip)
 
-                    val fileName = "trip-${getSelectedProfile()}-${tripStartTs}-${tripLength}.json"
-                    Log.i(
-                        LOGGER_TAG,
-                        "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
-                    )
-                    writeFile(getContext()!!, fileName, content)
-                    Log.i(
-                        LOGGER_TAG,
-                        "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
-                    )
+                        val fileName =
+                            "trip-${getSelectedProfile()}-${tripStartTs}-${tripLength}.json"
+                        Log.i(
+                            LOGGER_TAG,
+                            "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
+                        )
+                        writeFile(getContext()!!, fileName, content)
+                        Log.i(
+                            LOGGER_TAG,
+                            "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
+                        )
+                    }catch (e: java.lang.Exception) {
+                        Log.e(LOGGER_TAG,"Failed to save trip", e)
+                    }
                 }
             } else {
                 Log.w(LOGGER_TAG, "Trip was not saved. Trip time is less than ${MIN_TRIP_LENGTH}s")
