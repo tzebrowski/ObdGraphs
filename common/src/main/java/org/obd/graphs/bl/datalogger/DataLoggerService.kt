@@ -2,6 +2,7 @@ package org.obd.graphs.bl.datalogger
 
 import android.app.IntentService
 import android.content.Intent
+import android.util.Log
 import org.obd.graphs.getContext
 
 private const val ACTION_START = "org.obd.graphs.logger.START"
@@ -25,18 +26,26 @@ class DataLoggerService : IntentService("DataLoggerService") {
         @JvmStatic
         fun start() {
             getContext()?.let {
-                it.startService(Intent(it, DataLoggerService::class.java).apply {
-                    action = ACTION_START
-                })
+                try {
+                    it.startService(Intent(it, DataLoggerService::class.java).apply {
+                        action = ACTION_START
+                    })
+                }catch (e: IllegalStateException){
+                    Log.e("DataLoggerService", "Failed to start DataLoggerService",e)
+                }
             }
         }
 
         @JvmStatic
         fun stop() {
             getContext()?.let {
-                it.startService(Intent(it, DataLoggerService::class.java).apply {
-                    action = ACTION_STOP
-                })
+                try {
+                    it.startService(Intent(it, DataLoggerService::class.java).apply {
+                        action = ACTION_STOP
+                    })
+                }catch (e: IllegalStateException){
+                    Log.e("DataLoggerService", "Failed to stop DataLoggerService",e)
+                }
             }
         }
     }
