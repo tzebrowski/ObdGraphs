@@ -38,21 +38,24 @@ class UsbInputStream(val port: UsbSerialPort) : InputStream() {
     }
 
     private fun fillBuffer(): Int {
+        var ts = System.currentTimeMillis()
         buffer.run { fill(0, 0, bytesRead) }
         tmp.run { fill(0, 0, size) }
 
-        var cnt = 0
+        var nread = 0
         for (it in 1..MAX_READ_ATTEMPTS) {
-            bytesRead = port.read(tmp, IO_TIMEOUT)
+            bytesRead = port.read(tmp, 0)
             if (bytesRead > 0) {
-                System.arraycopy(tmp, 0, buffer, cnt, bytesRead)
-                cnt += bytesRead
-                if (buffer[cnt - 1].toInt().toChar() == TERMINATOR_CHAR) {
+                System.arraycopy(tmp, 0, buffer, nread, bytesRead)
+                nread += bytesRead
+                if (buffer[nread - 1].toInt().toChar() == TERMINATOR_CHAR) {
                     break
                 }
             }
         }
-        bytesRead = cnt
+        bytesRead = nread
+        ts = System.currentTimeMillis() - ts
+        Log.v(LOGGER_TAG,"Fill buffer time: ${ts}ms")
 
         if (bytesRead == 0) {
             return -1
