@@ -14,9 +14,9 @@ Application offers integration with `Android Auto` and it is available in google
 ## Features
 
 * Native support for the Alfa Romeo engines: `1.75 TBI`, `2.0 GME`, available in 4C, Giulietta, Giulia and Stelvio
-* Collecting telemetry from different vehicle components within single session, e.g: ECU, TCU
-* Native support for Android Auto  
-* Supports WIFI, Bluetooth, USB ELM327 and STNxxx (STN1170,STN2120) compatible adapters 
+* Collecting telemetry from different vehicle components within single session, e.g: `ECU`, `TCU`
+* Native support for `Android Auto`  
+* Supports `WIFI`, `Bluetooth`, `USB` `ELM327` and `STNxxx` (`STN1170`,`STN2120`) compatible adapters 
 * Recordings -  The application saves all user trips on the storage. At any time user can open it and check telemetry collected in the past.
 * Configurable views -  The application offers few different kind of gauges which can visualize telemetry in the real-time, e.g: Boost, MAF, OIL temp 
 * Vehicle profiles - The application allows to create configurable vehicle profiles which can contains vehicle specific type settings.
