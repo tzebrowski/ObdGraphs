@@ -22,6 +22,8 @@ Application offers integration with `Android Auto` and it is available in google
 * Vehicle profiles - The application allows to create configurable vehicle profiles which can contains vehicle specific type settings.
 * Up to 8 configurable virtual screens for `Gauge View`
 * Up to 5 configurable virtual screens for `Graph View`
+* Reading and cleaning DTC
+* Reading vehicle metadata e.g: VIN
 
 
 ## Views
