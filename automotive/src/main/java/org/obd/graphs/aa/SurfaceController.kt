@@ -75,7 +75,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
                     )
                     it.unlockCanvasAndPost(canvas)
                 }catch (e: IllegalArgumentException){
-                    Log.e("SurfaceController", "Canvas already locked")
+                    Log.e(LOG_KEY, "Canvas already locked")
                 } finally {
                     surfaceLocked =  false
                 }

@@ -3,7 +3,6 @@ package org.obd.graphs.aa
 import android.util.Log
 import java.util.concurrent.*
 
-private const val TAG_KEY = "CarRenderingThread"
 internal class CarRenderingThread ( surfaceController: SurfaceController) {
 
     private val singleTaskPool: ExecutorService = ThreadPoolExecutor(
@@ -24,14 +23,14 @@ internal class CarRenderingThread ( surfaceController: SurfaceController) {
     }
 
     fun start () {
-        Log.e(TAG_KEY, "Submitting rendering task")
+        Log.e(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(renderingTask)
-        Log.e(TAG_KEY, "Rendering task is submitted")
+        Log.e(LOG_KEY, "Rendering task is submitted")
     }
 
     fun stop () {
-        Log.e(TAG_KEY, "Shutdown down rendering task")
+        Log.e(LOG_KEY, "Shutdown down rendering task")
         tasks?.cancel(true)
-        Log.e(TAG_KEY, "Rendering task is now shutdown down")
+        Log.e(LOG_KEY, "Rendering task is now shutdown down")
     }
 }
