@@ -1,0 +1,5 @@
+<resources >
+    <string name="app_name">My Giulia (AA)</string>
+    <string name="pref.about_title">My Giulia(AA) is an application intended to display car telemetry through Android Auto.
+        It has native support for the Alfa Romeo engines like 2.0 GME which can be found in Alfa Romeo cars like Giulia and Stelvio.</string>
+</resources>

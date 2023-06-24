@@ -52,20 +52,20 @@ android {
     flavorDimensions "version"
     productFlavors {
 
-        obdGraphs {
+        giuliaAA {
             dimension "version"
-            resValue "string", "DEFAULT_PROFILE", "profile_1"
-            applicationId "org.obd.graphs.app"
-            versionCode 1
+            resValue "string", "DEFAULT_PROFILE", "profile_3"
+            applicationId "org.obd.graphs.my.giulia.aa"
+            versionCode 3
             versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
-            setProperty("archivesBaseName", "ObdGraphs_" + versionName)
+            setProperty("archivesBaseName", "MyGiulia_AA_" + versionName)
         }
 
         giulia {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 46
+            versionCode 48
             versionName versionCode + "-" +  new Date().format('yyyyMMdd.HHmm')
             setProperty("archivesBaseName", "MyGiulia_" + versionName)
         }

@@ -114,8 +114,7 @@ class TripsViewAdapter internal constructor(
                     .setNegativeButton(no) { dialog, _ ->
                         dialog.dismiss()
                     }
-                    val alert = builder.create()
-                    alert.show()
+                    builder.create().show()
             }
         }
     }
