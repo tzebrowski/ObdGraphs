@@ -5,7 +5,9 @@ import org.obd.graphs.bl.datalogger.MetricsProvider
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.metrics.api.model.ObdMetric
 
-class CarMetricsManager {
+val metricsCollector = CarMetricsCollector()
+
+class CarMetricsCollector {
 
     private var metrics: MutableMap<Long,CarMetric> = mutableMapOf()
     private val histogram by lazy {  dataLogger.diagnostics().histogram() }
@@ -13,7 +15,6 @@ class CarMetricsManager {
     fun metrics() = metrics.values
 
     fun configure() {
-
         metrics = MetricsProvider().findMetrics(aaPIDs()).associate {
             it.command.pid.id to CarMetric(it.command.pid, null,0.0,0.0,0.0)
         }.toMutableMap()
@@ -21,10 +22,10 @@ class CarMetricsManager {
         Log.i(LOG_KEY,"Rebuilding metrics configuration: $metrics")
     }
 
-    fun updateMetric(obdMetric: ObdMetric?) {
-        obdMetric?.let { metric ->
+    fun collect(input: ObdMetric?) {
+        input?.let { metric ->
             metrics[metric.command.pid.id]?.let {
-                it.value = obdMetric.valueToDouble()
+                it.value = input.valueToDouble()
                 val hist = histogram.findBy(metric.command.pid)
 
                 hist.mean?.let { mean ->

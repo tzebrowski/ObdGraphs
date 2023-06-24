@@ -5,7 +5,6 @@ import androidx.core.content.ContextCompat
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
-import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.min
 
 private const val ROW_SPACING = 12
@@ -18,7 +17,7 @@ private const val DEFAULT_FONT_SIZE= 34
 private const val PREF_MAX_PIDS_IN_COLUMN = "pref.aa.max_pids_in_column"
 private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
 
-class CarScreenRenderer() {
+internal class CarScreenRenderer {
 
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
     private val philippineGreen by lazy { ContextCompat.getColor(getContext()!!, R.color.philippine_green) }
@@ -26,17 +25,12 @@ class CarScreenRenderer() {
 
     private val paint = Paint()
     private val valueScaler: ValueScaler = ValueScaler()
-    private val metricsManager = CarMetricsManager()
 
     fun configure(){
-        metricsManager.configure()
+        metricsCollector.configure()
     }
 
-    fun render(
-        canvas: Canvas,
-        visibleArea: Rect?,
-        obdMetric: ObdMetric?
-    ) {
+    fun render(canvas: Canvas, visibleArea: Rect?) {
 
         val maxItemsInColumn = Integer.valueOf(Prefs.getString(PREF_MAX_PIDS_IN_COLUMN, "$DEFAULT_ITEMS_IN_COLUMN"))
 
@@ -45,8 +39,7 @@ class CarScreenRenderer() {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            metricsManager.updateMetric(obdMetric)
-            val metrics = metricsManager.metrics()
+            val metrics = metricsCollector.metrics()
             val baseFontSize = calculateFontSize(metrics)
 
             val textHeight = min(area.height() / 8, baseFontSize)

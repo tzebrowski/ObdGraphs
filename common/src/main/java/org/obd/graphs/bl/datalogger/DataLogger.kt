@@ -40,7 +40,7 @@ const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
 private const val LOGGER_TAG = "DataLogger"
 
-var dataLogger: DataLogger = DataLogger()
+val dataLogger: DataLogger = DataLogger()
 
 /**
  * That's the wrapper interface on Workflow API.

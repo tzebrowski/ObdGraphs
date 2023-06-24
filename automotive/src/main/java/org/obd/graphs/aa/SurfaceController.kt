@@ -1,7 +1,10 @@
 package org.obd.graphs.aa
 
 import android.graphics.Rect
+import android.os.Build
+import android.util.Log
 import android.view.Surface
+import androidx.annotation.RequiresApi
 import androidx.car.app.AppManager
 import androidx.car.app.CarContext
 import androidx.car.app.SurfaceCallback
@@ -9,7 +12,6 @@ import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import org.obd.metrics.api.model.ObdMetric
 
 
 class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
@@ -18,11 +20,14 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
     private val renderer: CarScreenRenderer = CarScreenRenderer()
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
+    private var surfaceLocked = false
 
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
+        @RequiresApi(Build.VERSION_CODES.R)
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
                 surface = surfaceContainer.surface
+                surface?.setFrameRate(60f,Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE)
                 renderer.configure()
                 render()
             }
@@ -58,16 +63,22 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
         renderer.configure()
     }
 
-    fun render(metric: ObdMetric? = null) {
+    fun render() {
         surface?.let {
-            if (it.isValid) {
-                val canvas = it.lockCanvas(null)
-                renderer.render(
-                    canvas = canvas,
-                    visibleArea = visibleArea,
-                    obdMetric = metric)
-
-                it.unlockCanvasAndPost(canvas)
+            if (it.isValid && !surfaceLocked) {
+                try {
+                    val canvas = it.lockCanvas(null)
+                    surfaceLocked = true
+                    renderer.render(
+                        canvas = canvas,
+                        visibleArea = visibleArea
+                    )
+                    it.unlockCanvasAndPost(canvas)
+                }catch (e: IllegalArgumentException){
+                    Log.e("SurfaceController", "Canvas already locked")
+                } finally {
+                    surfaceLocked =  false
+                }
             }
         }
     }

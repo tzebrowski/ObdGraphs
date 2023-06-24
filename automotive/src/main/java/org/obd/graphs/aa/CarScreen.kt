@@ -14,7 +14,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.datalogger.*
 
-class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : Screen(carContext),
+internal class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : Screen(carContext),
     DefaultLifecycleObserver {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -27,32 +27,34 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     surfaceController.configure()
-                    carToast(getCarContext(),R.string.main_activity_toast_connection_connecting)
+                    carToast(getCarContext(), R.string.main_activity_toast_connection_connecting)
                 }
 
                 DATA_LOGGER_NO_NETWORK_EVENT -> {
-                    carToast(getCarContext(),R.string.main_activity_toast_connection_no_network)
+                    carToast(getCarContext(), R.string.main_activity_toast_connection_no_network)
                 }
 
                 DATA_LOGGER_ERROR_EVENT -> {
-                    carToast(getCarContext(),R.string.main_activity_toast_connection_error)
+                    carToast(getCarContext(), R.string.main_activity_toast_connection_error)
                 }
 
 
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    carToast(getCarContext(),R.string.main_activity_toast_connection_stopped)
+                    carToast(getCarContext(), R.string.main_activity_toast_connection_stopped)
+                    renderingThread.stop()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    carToast(getCarContext(),R.string.main_activity_toast_connection_established)
+                    carToast(getCarContext(), R.string.main_activity_toast_connection_established)
+                    renderingThread.start()
                 }
 
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-                    carToast(getCarContext(),R.string.main_activity_toast_connection_connect_error)
+                    carToast(getCarContext(), R.string.main_activity_toast_connection_connect_error)
                 }
 
                 DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
-                    carToast(getCarContext(),R.string.main_activity_toast_adapter_is_not_selected)
+                    carToast(getCarContext(), R.string.main_activity_toast_adapter_is_not_selected)
                 }
             }
         }
@@ -113,7 +115,8 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
             )
             .setOnClickListener {
                 DataLoggerService.start()
-            }.build())
+            }.build()
+        )
 
         .addAction(Action.Builder()
             .setIcon(
@@ -126,7 +129,8 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
             )
             .setOnClickListener {
                 DataLoggerService.stop()
-            }.build())
+            }.build()
+        )
         .addAction(Action.Builder()
             .setTitle(carContext.getString(R.string.pref_aa_action_exit))
             .setOnClickListener {
@@ -135,10 +139,12 @@ class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : 
             .build())
         .build()
 
+    private var renderingThread =  CarRenderingThread(surfaceController)
+
     init {
         lifecycle.addObserver(this)
         dataLogger.observe(this){
-            surfaceController.render(it)
+            metricsCollector.collect(it)
         }
     }
 }
