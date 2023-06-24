@@ -357,8 +357,8 @@
                 app:useSimpleSummaryProvider="true" />
 
             <ListPreference
-                android:entries="@array/pref.numbers_3_10"
-                android:entryValues="@array/pref.numbers_3_10"
+                android:entries="@array/pref.numbers_1_10"
+                android:entryValues="@array/pref.numbers_1_10"
                 android:defaultValue="5"
                 android:dialogTitle="@string/pref.profile.max_profiles"
                 android:inputType="number"
@@ -577,8 +577,8 @@
 
                 <ListPreference
                     app:singleLineTitle="false"
-                    android:entries="@array/pref.numbers_3_10"
-                    android:entryValues="@array/pref.numbers_3_10"
+                    android:entries="@array/pref.numbers_1_10"
+                    android:entryValues="@array/pref.numbers_1_10"
                     android:defaultValue="5"
                     android:dialogTitle="@string/pref.aa.number_of_items_in_column"
                     android:inputType="number"

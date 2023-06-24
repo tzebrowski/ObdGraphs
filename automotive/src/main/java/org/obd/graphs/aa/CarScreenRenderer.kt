@@ -32,8 +32,7 @@ internal class CarScreenRenderer {
 
     fun render(canvas: Canvas, visibleArea: Rect?) {
 
-        val maxItemsInColumn = Integer.valueOf(Prefs.getString(PREF_MAX_PIDS_IN_COLUMN, "$DEFAULT_ITEMS_IN_COLUMN"))
-
+        val maxItemsInColumn = maxItemsInColumn()
         visibleArea?.let { area ->
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
@@ -74,19 +73,44 @@ internal class CarScreenRenderer {
                     horizontalPos = drawText("avg",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
                     drawText(metric.toNumber(metric.avg).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
 
-                    drawDivider(canvas, margin.toFloat(),verticalPos,(area.width() / 2).toFloat())
+                    drawDivider(canvas, margin.toFloat(),verticalPos, itemWidth(area).toFloat())
                     verticalPos += 1
-                    drawProgressBar(canvas, margin.toFloat(),(area.width() / 2).toFloat(), verticalPos,metric)
+                    drawProgressBar(canvas, margin.toFloat(),
+                        itemWidth(area).toFloat(), verticalPos,metric)
 
                     verticalPos += textHeight.toFloat() + 10
                     paint.textSize =  originalSize
                     paint.color = Color.BLACK
                 }
-                margin += canvas.width / 2
-                verticalPos = verticalPosCpy
+                margin += calculateMargin(canvas)
+                verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
             }
         }
     }
+
+    private fun calculateVerticalPos(textHeight: Int,verticalPos: Float, verticalPosCpy: Float) : Float {
+        return when (maxItemsInColumn()) {
+            1 ->   verticalPos + (textHeight / 3)
+            else ->  verticalPosCpy
+        }
+    }
+
+    private fun calculateMargin(canvas: Canvas) : Int {
+        return when (maxItemsInColumn()) {
+            1 ->   0
+            else ->  canvas.width / 2
+        }
+    }
+
+    private fun itemWidth(area: Rect) : Int {
+        return when (maxItemsInColumn()) {
+            1 ->  area.width()
+            else -> area.width() / 2
+        }
+    }
+
+    private fun maxItemsInColumn() =
+        Integer.valueOf(Prefs.getString(PREF_MAX_PIDS_IN_COLUMN, "$DEFAULT_ITEMS_IN_COLUMN"))
 
     private fun drawTitle(
         canvas: Canvas,
@@ -163,10 +187,19 @@ internal class CarScreenRenderer {
         verticalPos: Float,
         width: Float
     ) {
-
         paint.color = Color.LTGRAY
         paint.strokeWidth = 2f
-        canvas.drawLine(start - 6, verticalPos + 4, start + width - MARGIN_END, verticalPos  + 4 , paint)
+        canvas.drawLine(start - 6, verticalPos + 4, start + width - MARGIN_END, verticalPos  + calculateDividerHeight() , paint)
+    }
+
+    private fun calculateDividerHeight() = when (maxItemsInColumn()){
+        1 -> 8
+        else -> 4
+    }
+
+    private fun calculateProgressBarHeight() = when (maxItemsInColumn()){
+            1 -> 24
+            else -> 11
     }
 
     private fun drawProgressBar(
@@ -184,7 +217,7 @@ internal class CarScreenRenderer {
             start - 6,
             verticalPos + 4,
             progress,
-            verticalPos + 11,
+            verticalPos + calculateProgressBarHeight(),
             paint
         )
     }

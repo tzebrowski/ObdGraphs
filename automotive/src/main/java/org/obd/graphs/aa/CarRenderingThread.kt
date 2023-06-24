@@ -13,12 +13,9 @@ internal class CarRenderingThread ( surfaceController: SurfaceController) {
     private var tasks: Future<*>? = null
 
     private val renderingTask: Runnable = Runnable {
-
         while (!Thread.currentThread().isInterrupted) {
             surfaceController.render()
-            try {
-                Thread.sleep(10)
-            } catch (e: InterruptedException) {}
+            Thread.sleep(5)
         }
     }
 

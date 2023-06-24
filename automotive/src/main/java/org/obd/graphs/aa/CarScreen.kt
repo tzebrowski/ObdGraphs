@@ -134,6 +134,8 @@ internal class CarScreen(carContext: CarContext, surfaceController: SurfaceContr
         .addAction(Action.Builder()
             .setTitle(carContext.getString(R.string.pref_aa_action_exit))
             .setOnClickListener {
+                renderingThread.stop()
+                DataLoggerService.stop()
                 carContext.finishCarApp()
             }
             .build())
