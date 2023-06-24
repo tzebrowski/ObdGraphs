@@ -104,6 +104,7 @@ internal class CarScreen(carContext: CarContext, surfaceController: SurfaceContr
     }
 
     private fun actions(): ActionStrip = ActionStrip.Builder()
+
         .addAction(Action.Builder()
             .setIcon(
                 CarIcon.Builder(
@@ -132,7 +133,14 @@ internal class CarScreen(carContext: CarContext, surfaceController: SurfaceContr
             }.build()
         )
         .addAction(Action.Builder()
-            .setTitle(carContext.getString(R.string.pref_aa_action_exit))
+            .setIcon(
+                CarIcon.Builder(
+                    IconCompat.createWithResource(
+                        carContext,
+                        R.drawable.action_exit
+                    )
+                ).setTint(CarColor.RED).build()
+            )
             .setOnClickListener {
                 renderingThread.stop()
                 DataLoggerService.stop()

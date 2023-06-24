@@ -14,7 +14,7 @@ class CarSession : Session(), DefaultLifecycleObserver {
         lifecycle.addObserver(this)
         setCarContext(carContext)
         surfaceController =  SurfaceController(carContext, lifecycle)
-        return CarScreen(carContext,surfaceController)
+        return CarScreen(carContext, surfaceController)
     }
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
