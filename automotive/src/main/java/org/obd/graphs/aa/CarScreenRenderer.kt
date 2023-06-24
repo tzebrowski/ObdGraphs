@@ -23,6 +23,7 @@ internal class CarScreenRenderer {
     private val philippineGreen by lazy { ContextCompat.getColor(getContext()!!, R.color.philippine_green) }
 
     private val paint = Paint()
+    private val valuePaint = Paint()
     private val valueScaler: ValueScaler = ValueScaler()
 
     fun configure(){
@@ -52,7 +53,7 @@ internal class CarScreenRenderer {
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            var valueVerticalPos = initialValueVerticalPos(area)
+            var valueHorizontalPos = initialValueHorizontalPos(area)
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
                 chunk.forEach { metric ->
@@ -60,10 +61,9 @@ internal class CarScreenRenderer {
                     val valueTextSize = updatedSize.toFloat() / infoDiv
                     val labelTextSize = updatedSize.toFloat() / infoDiv / 1.3f
                     var horizontalPos = margin.toFloat()
+
                     drawTitle(canvas, metric, horizontalPos, verticalPos)
-
-                    drawText(metric.valueToString(),canvas, valueVerticalPos, verticalPos + 6, Color.WHITE,Typeface.NORMAL,updatedSize.toFloat() + 14)
-
+                    drawValue(metric.valueToString(),canvas, valueHorizontalPos, verticalPos + 6, Color.WHITE,Typeface.NORMAL,updatedSize.toFloat() + 14)
                     verticalPos += textHeight.toFloat() / infoDiv
 
                     horizontalPos = drawText("min",canvas, margin.toFloat(), verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
@@ -87,18 +87,17 @@ internal class CarScreenRenderer {
                 }
 
                 if (maxItemsInColumn() > 1) {
-                    valueVerticalPos += area.width() / 2
+                    valueHorizontalPos += area.width() / 2
                 }
 
                 margin += calculateMargin(canvas)
-
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
             }
         }
     }
-    private fun initialValueVerticalPos (area: Rect) : Float = when (maxItemsInColumn()){
-            1 -> (area.width()) - 130f
-            else -> (area.width()/2) - 130f
+    private fun initialValueHorizontalPos (area: Rect) : Float = when (maxItemsInColumn()){
+            1 -> ((area.width()) - MARGIN_END).toFloat()
+            else -> ((area.width()/2) - MARGIN_END).toFloat()
     }
 
     private fun calculateVerticalPos(textHeight: Int,verticalPos: Float, verticalPosCpy: Float) : Float  =  when (maxItemsInColumn()) {
@@ -165,6 +164,24 @@ internal class CarScreenRenderer {
 
             else -> maxFontSize
         }
+    }
+
+    private fun drawValue(
+        text: String,
+        canvas: Canvas,
+        horizontalPos: Float,
+        verticalPos: Float,
+        color: Int,
+        font: Int,
+        textSize: Float
+
+    ): Float {
+        valuePaint.typeface = Typeface.create(Typeface.DEFAULT, font)
+        valuePaint.color = color
+        valuePaint.textSize =  textSize
+        valuePaint.textAlign = Paint.Align.RIGHT
+        canvas.drawText(text, horizontalPos, verticalPos, valuePaint)
+        return (horizontalPos + getTextWidth(text,valuePaint) * 1.25f)
     }
 
 
