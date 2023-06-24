@@ -52,13 +52,13 @@ jobs:
           ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
         run: sh ./gradlew app:bundleGiulia
 
-      - name: Build ObdGraph flavour
+      - name: Build Giulia AA flavour
         env:
           ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
-        run: sh ./gradlew app:bundleObdGraphs
+        run: sh ./gradlew app:bundleGiuliaAA
 
 
       - name: Upload artifcats
