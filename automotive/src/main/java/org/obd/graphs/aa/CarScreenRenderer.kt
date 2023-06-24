@@ -21,7 +21,6 @@ internal class CarScreenRenderer {
 
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
     private val philippineGreen by lazy { ContextCompat.getColor(getContext()!!, R.color.philippine_green) }
-    private val rainbowIndigo by lazy { ContextCompat.getColor(getContext()!!, R.color.rainbow_indigo) }
 
     private val paint = Paint()
     private val valueScaler: ValueScaler = ValueScaler()
@@ -45,7 +44,7 @@ internal class CarScreenRenderer {
             val updatedSize = textHeight - ROW_SPACING
             paint.textSize = updatedSize.toFloat()
             canvas.drawRect(area, paint)
-            canvas.drawColor(Color.WHITE)
+            canvas.drawColor(Color.BLACK)
 
             var verticalPos = area.top - paint.fontMetrics.ascent + 4
             val verticalPosCpy = verticalPos
@@ -53,25 +52,28 @@ internal class CarScreenRenderer {
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
+            var valueVerticalPos = initialValueVerticalPos(area)
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
+
                 chunk.forEach { metric ->
                     val originalSize = updatedSize.toFloat()
                     val valueTextSize = updatedSize.toFloat() / infoDiv
                     val labelTextSize = updatedSize.toFloat() / infoDiv / 1.3f
-
                     var horizontalPos = margin.toFloat()
-                    horizontalPos = drawTitle(canvas, metric, horizontalPos, verticalPos)
-                    drawText(metric.valueToString(),canvas, horizontalPos, verticalPos, philippineGreen,Typeface.BOLD,updatedSize.toFloat())
+                    drawTitle(canvas, metric, horizontalPos, verticalPos)
+
+                    drawText(metric.valueToString(),canvas, valueVerticalPos, verticalPos + 6, Color.WHITE,Typeface.NORMAL,updatedSize.toFloat() + 14)
+
                     verticalPos += textHeight.toFloat() / infoDiv
 
                     horizontalPos = drawText("min",canvas, margin.toFloat(), verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(metric.toNumber(metric.min).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
+                    horizontalPos = drawText(metric.toNumber(metric.min).toString(),canvas, horizontalPos, verticalPos, Color.LTGRAY,Typeface.NORMAL,valueTextSize)
 
                     horizontalPos = drawText("max",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    horizontalPos = drawText(metric.toNumber(metric.max).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
+                    horizontalPos = drawText(metric.toNumber(metric.max).toString(),canvas, horizontalPos, verticalPos, Color.LTGRAY,Typeface.NORMAL,valueTextSize)
 
                     horizontalPos = drawText("avg",canvas, horizontalPos, verticalPos, Color.DKGRAY,Typeface.NORMAL,labelTextSize)
-                    drawText(metric.toNumber(metric.avg).toString(),canvas, horizontalPos, verticalPos, rainbowIndigo,Typeface.BOLD,valueTextSize)
+                    drawText(metric.toNumber(metric.avg).toString(),canvas, horizontalPos, verticalPos, Color.LTGRAY,Typeface.NORMAL,valueTextSize)
 
                     drawDivider(canvas, margin.toFloat(),verticalPos, itemWidth(area).toFloat())
                     verticalPos += 1
@@ -81,33 +83,40 @@ internal class CarScreenRenderer {
                     verticalPos += textHeight.toFloat() + 10
                     paint.textSize =  originalSize
                     paint.color = Color.BLACK
+
                 }
+
+                if (maxItemsInColumn() > 1) {
+                    valueVerticalPos += area.width() / 2
+                }
+
                 margin += calculateMargin(canvas)
+
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
             }
         }
     }
+    private fun initialValueVerticalPos (area: Rect) : Float = when (maxItemsInColumn()){
+            1 -> (area.width()) - 130f
+            else -> (area.width()/2) - 130f
+    }
 
-    private fun calculateVerticalPos(textHeight: Int,verticalPos: Float, verticalPosCpy: Float) : Float {
-        return when (maxItemsInColumn()) {
+    private fun calculateVerticalPos(textHeight: Int,verticalPos: Float, verticalPosCpy: Float) : Float  =  when (maxItemsInColumn()) {
             1 ->   verticalPos + (textHeight / 3)
             else ->  verticalPosCpy
         }
-    }
 
-    private fun calculateMargin(canvas: Canvas) : Int {
-        return when (maxItemsInColumn()) {
+    private fun calculateMargin(canvas: Canvas) : Int  =
+        when (maxItemsInColumn()) {
             1 ->   0
             else ->  canvas.width / 2
         }
-    }
 
-    private fun itemWidth(area: Rect) : Int {
-        return when (maxItemsInColumn()) {
+    private fun itemWidth(area: Rect) : Int  =
+        when (maxItemsInColumn()) {
             1 ->  area.width()
             else -> area.width() / 2
         }
-    }
 
     private fun maxItemsInColumn() =
         Integer.valueOf(Prefs.getString(PREF_MAX_PIDS_IN_COLUMN, "$DEFAULT_ITEMS_IN_COLUMN"))
@@ -119,8 +128,8 @@ internal class CarScreenRenderer {
         verticalPos: Float
     ) : Float{
 
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        paint.color = Color.BLACK
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+        paint.color = Color.LTGRAY
         val text = metric.pid.description.replace("\n", " ")
         canvas.drawText(
            text,
@@ -158,6 +167,7 @@ internal class CarScreenRenderer {
         }
     }
 
+
     private fun drawText(
         text: String,
         canvas: Canvas,
@@ -166,11 +176,11 @@ internal class CarScreenRenderer {
         color: Int,
         font: Int,
         textSize: Float
+
     ): Float {
         paint.typeface = Typeface.create(Typeface.DEFAULT, font)
         paint.color = color
         paint.textSize =  textSize
-
         canvas.drawText(text, horizontalPos, verticalPos, paint)
         return (horizontalPos + getTextWidth(text,paint) * 1.25f)
     }
@@ -187,7 +197,7 @@ internal class CarScreenRenderer {
         verticalPos: Float,
         width: Float
     ) {
-        paint.color = Color.LTGRAY
+        paint.color = philippineGreen
         paint.strokeWidth = 2f
         canvas.drawLine(start - 6, verticalPos + 4, start + width - MARGIN_END, verticalPos  + calculateDividerHeight() , paint)
     }
