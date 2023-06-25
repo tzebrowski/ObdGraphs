@@ -15,7 +15,7 @@ class CarMetricsCollector {
     fun metrics() = metrics.values
 
     fun configure() {
-        metrics = MetricsProvider().findMetrics(aaPIDs()).associate {
+        metrics = MetricsProvider().findMetrics(carScreenSettings.getSelectedPIDs()).associate {
             it.command.pid.id to CarMetric(it.command.pid, null,0.0,0.0,0.0)
         }.toMutableMap()
 

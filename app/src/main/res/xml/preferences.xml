@@ -573,6 +573,40 @@
                         android:key="pref.aa.pids.selected"
                         android:summary="@string/pref.displayed_parameter_ids_summary"
                         android:title="@string/pref.displayed_parameter_ids" />
+
+
+                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="@array/pref.empty_array"
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.aa.pids.profile_1"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.aa.profile_1.displayed_parameter_ids" />
+
+                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="@array/pref.empty_array"
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.aa.pids.profile_2"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.aa.profile_2.displayed_parameter_ids" />
+
+                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="@array/pref.empty_array"
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.aa.pids.profile_3"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.aa.profile_3.displayed_parameter_ids" />
+
+                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
+                        app:useSimpleSummaryProvider="true"
+                        android:defaultValue="@array/pref.empty_array"
+                        android:dialogTitle="@string/pref.displayed_parameter_ids"
+                        android:key="pref.aa.pids.profile_4"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.aa.profile_4.displayed_parameter_ids" />
+
                 </PreferenceCategory>
 
                 <ListPreference

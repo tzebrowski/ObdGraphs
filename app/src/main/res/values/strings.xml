@@ -41,6 +41,12 @@
     <string name="context_menu.obd2_pids_sensors">OBD2 PIDs/Sensors</string>
     <string name="context_menu.custom_action_1">Custom</string>
 
+    <string name="pref.aa.profile_1.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 1</string>
+    <string name="pref.aa.profile_2.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 2</string>
+    <string name="pref.aa.profile_3.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 3</string>
+    <string name="pref.aa.profile_4.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 4</string>
+
+
     <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors you would like to see on the screen</string>
 

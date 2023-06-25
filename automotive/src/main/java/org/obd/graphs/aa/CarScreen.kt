@@ -14,7 +14,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.datalogger.*
 
-internal class CarScreen(carContext: CarContext, surfaceController: SurfaceController) : Screen(carContext),
+
+internal class CarScreen(carContext: CarContext,val surfaceController: SurfaceController) :
+    Screen(carContext),
     DefaultLifecycleObserver {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -83,7 +85,7 @@ internal class CarScreen(carContext: CarContext, surfaceController: SurfaceContr
     }
 
     override fun onGetTemplate(): Template {
-        return if (MetricsProvider().findMetrics(aaPIDs()).isEmpty()) {
+        return if (MetricsProvider().findMetrics(carScreenSettings.getSelectedPIDs()).isEmpty()) {
             PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
                 .setTitle(carContext.getString(R.string.pref_aa_car_no_pids_selected))
@@ -91,6 +93,7 @@ internal class CarScreen(carContext: CarContext, surfaceController: SurfaceContr
         } else {
             return try {
                 NavigationTemplate.Builder()
+                    .setMapActionStrip(profilesActionStrip())
                     .setActionStrip(actions())
                     .build()
             } catch (e: Exception) {
@@ -103,34 +106,105 @@ internal class CarScreen(carContext: CarContext, surfaceController: SurfaceContr
         }
     }
 
-    private fun actions(): ActionStrip = ActionStrip.Builder()
+    private fun profilesActionStrip(): ActionStrip = ActionStrip.Builder()
 
-        .addAction(Action.Builder()
-            .setIcon(
-                CarIcon.Builder(
-                    IconCompat.createWithResource(
-                        carContext,
-                        R.drawable.actions_connect
-                    )
-                ).setTint(CarColor.GREEN).build()
-            )
-            .setOnClickListener {
-                DataLoggerService.start()
-            }.build()
+        .addAction(
+            Action.Builder()
+                .setIcon(
+                    CarIcon.Builder(
+                        IconCompat.createWithResource(
+                            carContext,
+                            R.drawable.action_profile_1
+                        )
+                    ).setTint(CarColor.YELLOW).build()
+                )
+                .setOnClickListener {
+                    Log.e(LOG_KEY, "EEEE 1")
+                    carScreenSettings.setProfile1()
+                    surfaceController.configure()
+                    surfaceController.render()
+                }.build()
         )
 
+        .addAction(
+            Action.Builder()
+                .setIcon(
+                    CarIcon.Builder(
+                        IconCompat.createWithResource(
+                            carContext,
+                            R.drawable.action_profile_2
+                        )
+                    ).setTint(CarColor.YELLOW).build()
+                )
+                .setOnClickListener {
+                    carScreenSettings.setProfile2()
+                    surfaceController.configure()
+                    surfaceController.render()
+                }.build()
+        )
         .addAction(Action.Builder()
             .setIcon(
                 CarIcon.Builder(
                     IconCompat.createWithResource(
                         carContext,
-                        R.drawable.action_disconnect
+                        R.drawable.action_profile_3
                     )
-                ).setTint(CarColor.RED).build()
+                ).setTint(CarColor.YELLOW).build()
             )
             .setOnClickListener {
-                DataLoggerService.stop()
-            }.build()
+                carScreenSettings.setProfile3()
+                surfaceController.configure()
+                surfaceController.render()
+            }
+            .build())
+        .addAction(Action.Builder()
+            .setIcon(
+                CarIcon.Builder(
+                    IconCompat.createWithResource(
+                        carContext,
+                        R.drawable.action_profile_4
+                    )
+                ).setTint(CarColor.YELLOW).build()
+            )
+            .setOnClickListener {
+                carScreenSettings.setProfile4()
+                surfaceController.configure()
+                surfaceController.render()
+            }
+            .build())
+        .build()
+
+
+    private fun actions(): ActionStrip = ActionStrip.Builder()
+
+        .addAction(
+            Action.Builder()
+                .setIcon(
+                    CarIcon.Builder(
+                        IconCompat.createWithResource(
+                            carContext,
+                            R.drawable.actions_connect
+                        )
+                    ).setTint(CarColor.GREEN).build()
+                )
+                .setOnClickListener {
+                    DataLoggerService.start()
+                }.build()
+        )
+
+        .addAction(
+            Action.Builder()
+                .setIcon(
+                    CarIcon.Builder(
+                        IconCompat.createWithResource(
+                            carContext,
+                            R.drawable.action_disconnect
+                        )
+                    ).setTint(CarColor.RED).build()
+                )
+                .setOnClickListener {
+                    DataLoggerService.stop()
+                }.build()
         )
         .addAction(Action.Builder()
             .setIcon(
@@ -149,11 +223,11 @@ internal class CarScreen(carContext: CarContext, surfaceController: SurfaceContr
             .build())
         .build()
 
-    private var renderingThread =  CarRenderingThread(surfaceController)
+    private var renderingThread = CarRenderingThread(surfaceController)
 
     init {
         lifecycle.addObserver(this)
-        dataLogger.observe(this){
+        dataLogger.observe(this) {
             metricsCollector.collect(it)
         }
     }
