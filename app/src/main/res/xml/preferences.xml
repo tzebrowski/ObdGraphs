@@ -565,7 +565,7 @@
                 android:title="@string/navigation.title_aa"
                 app:key="pref.aa">
 
-                <PreferenceCategory android:title="@string/pref.pids_category">
+                <PreferenceCategory android:title="@string/pref.aa_category">
                     <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
                         app:useSimpleSummaryProvider="true"
                         android:defaultValue="@array/pref.empty_array"

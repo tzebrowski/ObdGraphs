@@ -64,6 +64,8 @@ internal fun MainActivity.setupNavigationBar() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
+                it.menu.findItem(R.id.ctx_menu_android_auto).isVisible = resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)
+
                 when (destination.label.toString()) {
                     resources.getString(R.string.navigation_title_graph) -> {
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
@@ -129,6 +131,10 @@ internal fun MainActivity.setupNavigationBarButtons() {
 
                 R.id.ctx_menu_dtc -> {
                     navigateToPreferencesScreen("pref.dtc")
+                }
+
+                R.id.ctx_menu_android_auto -> {
+                    navigateToPreferencesScreen("pref.aa")
                 }
 
                 R.id.ctx_menu_view_configuration -> {

@@ -26,10 +26,15 @@
         android:title="@string/pref.vehicle.metadata_title" />
 
     <item
+        android:id="@+id/ctx_menu_android_auto"
+        android:title="@string/pref.aa.title" />
+
+    <item
         android:id="@+id/ctx_menu_about"
         android:title="@string/context_menu.about" />
 
     <item
         android:id="@+id/ctx_menu_view_custom_action_1"
         android:title="@string/context_menu.custom_action_1" />
+
 </menu>
