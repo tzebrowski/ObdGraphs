@@ -32,9 +32,9 @@ Application offers few configurable screens which visualize vehicle telemetry da
 
 ### Android Auto
 
-|                                                              |
-|--------------------------------------------------------------| 
-| ![Alt text](./res/aa_screenshot.png?raw=true "Android Auto") | 
+|                                                     |
+|-----------------------------------------------------| 
+| ![Alt text](./res/aa_1.jpg?raw=true "Android Auto") | 
 
 
 
