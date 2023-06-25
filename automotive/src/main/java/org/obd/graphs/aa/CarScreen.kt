@@ -21,7 +21,6 @@ internal class CarScreen(carContext: CarContext,val surfaceController: SurfaceCo
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-
             when (intent?.action) {
                 PROFILE_CHANGED_EVENT -> {
                     surfaceController.configure()
@@ -39,7 +38,6 @@ internal class CarScreen(carContext: CarContext,val surfaceController: SurfaceCo
                 DATA_LOGGER_ERROR_EVENT -> {
                     carToast(getCarContext(), R.string.main_activity_toast_connection_error)
                 }
-
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     carToast(getCarContext(), R.string.main_activity_toast_connection_stopped)
@@ -64,7 +62,6 @@ internal class CarScreen(carContext: CarContext,val surfaceController: SurfaceCo
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-
         carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             addAction(DATA_LOGGER_CONNECTING_EVENT)
@@ -105,123 +102,57 @@ internal class CarScreen(carContext: CarContext,val surfaceController: SurfaceCo
             }
         }
     }
+    private fun createAction(iconResId: Int, iconColorTint: CarColor, func: () -> Unit): Action  =
+        Action.Builder()
+            .setIcon(
+                CarIcon.Builder(
+                    IconCompat.createWithResource(
+                        carContext,
+                        iconResId
+                    )
+                ).setTint(iconColorTint).build()
+            )
+            .setOnClickListener {
+                func()
+            }.build()
 
     private fun profilesActionStrip(): ActionStrip = ActionStrip.Builder()
 
-        .addAction(
-            Action.Builder()
-                .setIcon(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.action_profile_1
-                        )
-                    ).setTint(CarColor.YELLOW).build()
-                )
-                .setOnClickListener {
-                    Log.e(LOG_KEY, "EEEE 1")
-                    carScreenSettings.setProfile1()
-                    surfaceController.configure()
-                    surfaceController.render()
-                }.build()
-        )
+        .addAction(createAction(R.drawable.action_profile_1, CarColor.YELLOW) {
+            carScreenSettings.setProfile1()
+            surfaceController.configure()
+            surfaceController.render()
+        })
+        .addAction(createAction(R.drawable.action_profile_2, CarColor.YELLOW) {
+            carScreenSettings.setProfile2()
+            surfaceController.configure()
+            surfaceController.render()
+        })
 
-        .addAction(
-            Action.Builder()
-                .setIcon(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.action_profile_2
-                        )
-                    ).setTint(CarColor.YELLOW).build()
-                )
-                .setOnClickListener {
-                    carScreenSettings.setProfile2()
-                    surfaceController.configure()
-                    surfaceController.render()
-                }.build()
-        )
-        .addAction(Action.Builder()
-            .setIcon(
-                CarIcon.Builder(
-                    IconCompat.createWithResource(
-                        carContext,
-                        R.drawable.action_profile_3
-                    )
-                ).setTint(CarColor.YELLOW).build()
-            )
-            .setOnClickListener {
-                carScreenSettings.setProfile3()
-                surfaceController.configure()
-                surfaceController.render()
-            }
-            .build())
-        .addAction(Action.Builder()
-            .setIcon(
-                CarIcon.Builder(
-                    IconCompat.createWithResource(
-                        carContext,
-                        R.drawable.action_profile_4
-                    )
-                ).setTint(CarColor.YELLOW).build()
-            )
-            .setOnClickListener {
-                carScreenSettings.setProfile4()
-                surfaceController.configure()
-                surfaceController.render()
-            }
-            .build())
+        .addAction(createAction(R.drawable.action_profile_3, CarColor.YELLOW) {
+            carScreenSettings.setProfile3()
+            surfaceController.configure()
+            surfaceController.render()
+        })
+        .addAction(createAction(R.drawable.action_profile_4, CarColor.YELLOW) {
+            carScreenSettings.setProfile4()
+            surfaceController.configure()
+            surfaceController.render()
+        })
         .build()
-
 
     private fun actions(): ActionStrip = ActionStrip.Builder()
-
-        .addAction(
-            Action.Builder()
-                .setIcon(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.actions_connect
-                        )
-                    ).setTint(CarColor.GREEN).build()
-                )
-                .setOnClickListener {
-                    DataLoggerService.start()
-                }.build()
-        )
-
-        .addAction(
-            Action.Builder()
-                .setIcon(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.action_disconnect
-                        )
-                    ).setTint(CarColor.RED).build()
-                )
-                .setOnClickListener {
-                    DataLoggerService.stop()
-                }.build()
-        )
-        .addAction(Action.Builder()
-            .setIcon(
-                CarIcon.Builder(
-                    IconCompat.createWithResource(
-                        carContext,
-                        R.drawable.action_exit
-                    )
-                ).setTint(CarColor.RED).build()
-            )
-            .setOnClickListener {
-                renderingThread.stop()
-                DataLoggerService.stop()
-                carContext.finishCarApp()
-            }
-            .build())
-        .build()
+        .addAction(createAction(R.drawable.actions_connect,CarColor.GREEN) {
+            DataLoggerService.start()
+        })
+        .addAction(createAction(R.drawable.action_disconnect,CarColor.BLUE) {
+            DataLoggerService.stop()
+        })
+        .addAction(createAction(R.drawable.action_exit,CarColor.RED) {
+            renderingThread.stop()
+            DataLoggerService.stop()
+            carContext.finishCarApp()
+        }).build()
 
     private var renderingThread = CarRenderingThread(surfaceController)
 

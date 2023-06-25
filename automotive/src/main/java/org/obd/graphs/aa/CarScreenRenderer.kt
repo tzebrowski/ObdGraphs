@@ -1,6 +1,7 @@
 package org.obd.graphs.aa
 
 import android.graphics.*
+import androidx.car.app.CarContext
 import androidx.core.content.ContextCompat
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.getContext
@@ -11,8 +12,8 @@ private const val ROW_SPACING = 12
 private const val MARGIN_START = 15
 private const val MARGIN_END = 30
 
+internal class CarScreenRenderer(carContext: CarContext) {
 
-internal class CarScreenRenderer {
 
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
     private val philippineGreen by lazy {
@@ -24,7 +25,11 @@ internal class CarScreenRenderer {
 
     private val paint = Paint()
     private val valuePaint = Paint()
+    private val backgroundPaint = Paint()
+
     private val valueScaler: ValueScaler = ValueScaler()
+    private val background: Bitmap =
+        BitmapFactory.decodeResource(carContext.resources, R.drawable.background)
 
     fun configure() {
         metricsCollector.configure()
@@ -45,6 +50,7 @@ internal class CarScreenRenderer {
 
             canvas.drawRect(area, paint)
             canvas.drawColor(Color.BLACK)
+            canvas.drawBitmap(background, 0f, 0f, backgroundPaint)
 
             var verticalPos = area.top - paint.fontMetrics.ascent + 4
             val verticalPosCpy = verticalPos
@@ -61,7 +67,8 @@ internal class CarScreenRenderer {
                     val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
                     var horizontalPos = margin.toFloat()
 
-                    drawTitle(canvas, metric, horizontalPos, verticalPos,
+                    drawTitle(
+                        canvas, metric, horizontalPos, verticalPos,
                         calculateTitleTextSize(textSize)
                     )
                     drawValue(
@@ -155,10 +162,11 @@ internal class CarScreenRenderer {
         }
     }
 
-    private fun calculateTitleTextSize(textSize: Int): Float = when (carScreenSettings.maxItemsInColumn()) {
-        1 -> textSize.toFloat()
-        else -> textSize / 1.1f
-    }
+    private fun calculateTitleTextSize(textSize: Int): Float =
+        when (carScreenSettings.maxItemsInColumn()) {
+            1 -> textSize.toFloat()
+            else -> textSize / 1.1f
+        }
 
     private fun initialValueHorizontalPos(area: Rect): Float =
         when (carScreenSettings.maxItemsInColumn()) {
