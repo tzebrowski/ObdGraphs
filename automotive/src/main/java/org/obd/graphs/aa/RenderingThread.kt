@@ -3,7 +3,7 @@ package org.obd.graphs.aa
 import android.util.Log
 import java.util.concurrent.*
 
-internal class CarRenderingThread ( surfaceController: SurfaceController) {
+internal class RenderingThread (surfaceController: SurfaceController) {
 
     private val singleTaskPool: ExecutorService = ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS,

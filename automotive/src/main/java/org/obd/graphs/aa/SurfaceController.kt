@@ -17,7 +17,7 @@ import androidx.lifecycle.LifecycleOwner
 class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
     DefaultLifecycleObserver {
 
-    private val renderer: CarScreenRenderer = CarScreenRenderer(carContext)
+    private val renderer: ScreenRenderer = ScreenRenderer(carContext)
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false

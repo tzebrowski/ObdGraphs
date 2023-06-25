@@ -15,7 +15,7 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.datalogger.*
 
 
-internal class CarScreen(carContext: CarContext,val surfaceController: SurfaceController) :
+internal class Screen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
     DefaultLifecycleObserver {
 
@@ -154,7 +154,7 @@ internal class CarScreen(carContext: CarContext,val surfaceController: SurfaceCo
             carContext.finishCarApp()
         }).build()
 
-    private var renderingThread = CarRenderingThread(surfaceController)
+    private var renderingThread = RenderingThread(surfaceController)
 
     init {
         lifecycle.addObserver(this)

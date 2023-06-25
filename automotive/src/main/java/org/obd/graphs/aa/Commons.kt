@@ -2,8 +2,6 @@ package org.obd.graphs.aa
 
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getStringSet
 
 
 internal const val LOG_KEY = "AndroidAuto"

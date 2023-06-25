@@ -12,7 +12,7 @@ private const val ROW_SPACING = 12
 private const val MARGIN_START = 15
 private const val MARGIN_END = 30
 
-internal class CarScreenRenderer(carContext: CarContext) {
+internal class ScreenRenderer(carContext: CarContext) {
 
 
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
