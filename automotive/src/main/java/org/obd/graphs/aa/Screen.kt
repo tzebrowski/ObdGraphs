@@ -161,9 +161,17 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
     private var renderingThread = RenderingThread(surfaceController)
 
     init {
+
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
             metricsCollector.collect(it)
+        }
+
+        if (dataLogger.isRunning()){
+            Log.i(LOG_KEY,"Data logger is running, connecting.................")
+            renderingThread.start()
+        } else {
+            Log.i(LOG_KEY,"Data logger is not running.")
         }
     }
 }
