@@ -31,10 +31,6 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
     private val background: Bitmap =
             BitmapFactory.decodeResource(carContext.resources, R.drawable.background)
 
-    fun configure() {
-        metricsCollector.configure()
-    }
-
     fun render(canvas: Canvas, visibleArea: Rect?) {
 
         val maxItemsInColumn = carScreenSettings.maxItemsInColumn()

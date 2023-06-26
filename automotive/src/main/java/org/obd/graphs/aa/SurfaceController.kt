@@ -25,7 +25,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY,"Surface is now available")
                 surface = surfaceContainer.surface
-                renderer.configure()
+                metricsCollector.configure()
                 render()
             }
         }
@@ -61,10 +61,6 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
     fun onCarConfigurationChanged() {
         render()
-    }
-
-    fun configure() {
-        renderer.configure()
     }
 
     fun render() {

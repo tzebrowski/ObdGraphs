@@ -6,6 +6,7 @@ import androidx.preference.MultiSelectListPreference
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.sendBroadcastEvent
 import java.util.*
 
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
@@ -27,6 +28,10 @@ open class DisplayedPIDsListPreferences(
         lowPriority(entries, entriesValues)
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
+        setOnPreferenceChangeListener { _, _ ->
+            sendBroadcastEvent("${key}.event.changed")
+            true
+        }
     }
 
     fun highPriority(
