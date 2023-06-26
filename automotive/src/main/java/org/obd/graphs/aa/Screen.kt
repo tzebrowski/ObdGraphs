@@ -77,7 +77,6 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-
         carContext.unregisterReceiver(broadcastReceiver)
     }
 
@@ -142,17 +141,22 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
         .build()
 
     private fun actions(): ActionStrip = ActionStrip.Builder()
-        .addAction(createAction(R.drawable.actions_connect,CarColor.GREEN) {
+        .addAction(createAction(R.drawable.actions_connect, CarColor.GREEN) {
             DataLoggerService.start()
         })
-        .addAction(createAction(R.drawable.action_disconnect,CarColor.BLUE) {
-            DataLoggerService.stop()
+        .addAction(createAction(R.drawable.action_disconnect, CarColor.BLUE) {
+            stopDataLogging()
         })
         .addAction(createAction(R.drawable.action_exit,CarColor.RED) {
-            renderingThread.stop()
-            DataLoggerService.stop()
+            stopDataLogging()
             carContext.finishCarApp()
         }).build()
+
+    private fun stopDataLogging() {
+        Log.i(LOG_KEY,"Stopping data logging process.")
+        renderingThread.stop()
+        DataLoggerService.stop()
+    }
 
     private var renderingThread = RenderingThread(surfaceController)
 
