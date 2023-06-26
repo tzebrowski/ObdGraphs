@@ -112,24 +112,24 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
 
     private fun profilesActionStrip(): ActionStrip = ActionStrip.Builder()
 
-        .addAction(createAction(R.drawable.action_profile_1, CarColor.YELLOW) {
-            carScreenSettings.setProfile1()
+        .addAction(createAction(R.drawable.action_virtual_screen_1, CarColor.YELLOW) {
+            carScreenSettings.applyVirtualScreen1()
             surfaceController.configure()
             surfaceController.render()
         })
-        .addAction(createAction(R.drawable.action_profile_2, CarColor.YELLOW) {
-            carScreenSettings.setProfile2()
+        .addAction(createAction(R.drawable.action_virtual_screen_2, CarColor.YELLOW) {
+            carScreenSettings.applyVirtualScreen2()
             surfaceController.configure()
             surfaceController.render()
         })
 
-        .addAction(createAction(R.drawable.action_profile_3, CarColor.YELLOW) {
-            carScreenSettings.setProfile3()
+        .addAction(createAction(R.drawable.action_virtual_screen_3, CarColor.YELLOW) {
+            carScreenSettings.applyVirtualScreen3()
             surfaceController.configure()
             surfaceController.render()
         })
-        .addAction(createAction(R.drawable.action_profile_4, CarColor.YELLOW) {
-            carScreenSettings.setProfile4()
+        .addAction(createAction(R.drawable.action_virtual_screen_4, CarColor.YELLOW) {
+            carScreenSettings.applyVirtualScreen4()
             surfaceController.configure()
             surfaceController.render()
         })

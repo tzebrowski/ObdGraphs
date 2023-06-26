@@ -15,25 +15,10 @@ val carScreenSettings =  CarScreenSettings()
 
 class CarScreenSettings {
 
-    fun setProfile1(){
-        val stringSet = Prefs.getStringSet("pref.aa.pids.profile_1")
-        Prefs.updateStringSet(PREF_SELECTED_PIDS,stringSet.toList())
-    }
-
-    fun setProfile2(){
-        val stringSet = Prefs.getStringSet("pref.aa.pids.profile_2")
-        Prefs.updateStringSet(PREF_SELECTED_PIDS,stringSet.toList())
-    }
-
-    fun setProfile3(){
-        val stringSet = Prefs.getStringSet("pref.aa.pids.profile_3")
-        Prefs.updateStringSet(PREF_SELECTED_PIDS,stringSet.toList())
-    }
-
-    fun setProfile4(){
-        val stringSet = Prefs.getStringSet("pref.aa.pids.profile_4")
-        Prefs.updateStringSet(PREF_SELECTED_PIDS,stringSet.toList())
-    }
+    fun applyVirtualScreen1() = applyVirtualScreen("pref.aa.pids.profile_1")
+    fun applyVirtualScreen2() = applyVirtualScreen("pref.aa.pids.profile_2")
+    fun applyVirtualScreen3() = applyVirtualScreen("pref.aa.pids.profile_3")
+    fun applyVirtualScreen4() = applyVirtualScreen("pref.aa.pids.profile_4")
 
     fun getSelectedPIDs() =
         Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
@@ -50,4 +35,6 @@ class CarScreenSettings {
 
     fun  maxFontSize(): Int =
         Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
+
+    private fun applyVirtualScreen(key: String) =  Prefs.updateStringSet(PREF_SELECTED_PIDS, Prefs.getStringSet(key).toList())
 }

@@ -41,10 +41,10 @@
     <string name="context_menu.obd2_pids_sensors">OBD2 PIDs/Sensors</string>
     <string name="context_menu.custom_action_1">Custom</string>
 
-    <string name="pref.aa.profile_1.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 1</string>
-    <string name="pref.aa.profile_2.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 2</string>
-    <string name="pref.aa.profile_3.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 3</string>
-    <string name="pref.aa.profile_4.displayed_parameter_ids">Edit displayed OBD2 PIDs for Profile 4</string>
+    <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
+    <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>
+    <string name="pref.aa.profile_3.displayed_parameter_ids">Edit Virtual Screen 3</string>
+    <string name="pref.aa.profile_4.displayed_parameter_ids">Edit Virtual Screen 4</string>
 
 
     <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
@@ -128,6 +128,7 @@
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
     <string name="pref.aa_category">Android Auto view configuration</string>
+    <string name="pref.aa_category_summary">You can update here AA preferences</string>
 
     <string name="pref.metrics_category">Metrics view configuration</string>
     <string name="pref.adapter_category">OBD2 Adapter</string>
@@ -136,7 +137,6 @@
     <string name="pref.usb.baud_rate">This parameter allows to set desired baud rate</string>
     <string name="pref.usb.device_attached">USB OBD2 adapter %s has been attached</string>
     <string name="pref.usb.device_detached">USB OBD2 adapter %s has been detached</string>
-
 
     <string name="pref.wifi_category">Wifi</string>
     <string name="pref.adapter_connection_tcp_ssid">SSID</string>
