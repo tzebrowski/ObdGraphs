@@ -78,6 +78,7 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
                 DATA_LOGGER_STOPPED_EVENT -> {
                     carToast(getCarContext(), R.string.main_activity_toast_connection_stopped)
                     renderingThread.stop()
+                    surfaceController.render()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
@@ -211,7 +212,7 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
         }
 
         if (dataLogger.isRunning()){
-            Log.i(LOG_KEY,"Data logger is running, connecting.................")
+            Log.i(LOG_KEY,"Data logger is running, connecting....")
             renderingThread.start()
         } else {
             Log.i(LOG_KEY,"Data logger is not running.")

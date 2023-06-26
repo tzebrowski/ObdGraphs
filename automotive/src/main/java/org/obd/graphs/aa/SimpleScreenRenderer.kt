@@ -4,6 +4,7 @@ import android.graphics.*
 import androidx.car.app.CarContext
 import androidx.core.content.ContextCompat
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import kotlin.math.min
 
@@ -25,6 +26,8 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
 
     private val paint = Paint()
     private val valuePaint = Paint()
+    private val statusPaint = Paint()
+
     private val backgroundPaint = Paint()
 
     private val valueScaler: ValueScaler = ValueScaler()
@@ -35,6 +38,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
 
         val maxItemsInColumn = carScreenSettings.maxItemsInColumn()
         visibleArea?.let { area ->
+
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
@@ -48,12 +52,13 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
             canvas.drawColor(Color.BLACK)
             canvas.drawBitmap(background, 0f, 0f, backgroundPaint)
 
-            var verticalPos = area.top - paint.fontMetrics.ascent + 4
-            val verticalPosCpy = verticalPos
-
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
+            drawStatusBar(area, canvas, margin)
+
+            var verticalPos = area.top - paint.fontMetrics.ascent + 22
+            val verticalPosCpy = verticalPos
             var valueHorizontalPos = initialValueHorizontalPos(area)
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
@@ -149,6 +154,41 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
             }
         }
+    }
+
+    private fun drawStatusBar(area: Rect, canvas: Canvas, margin: Int) {
+        val statusVerticalPos = area.top - paint.fontMetrics.ascent
+        var text = "connection: "
+
+        drawText(
+            text,
+            canvas,
+            margin.toFloat(),
+            statusVerticalPos,
+            Color.WHITE,
+            12f,
+            statusPaint
+        )
+        val verticalAlignment = getTextWidth(text, statusPaint) + 2
+
+        val color: Int
+        if (dataLogger.isRunning()) {
+            text = "connected"
+            color = Color.GREEN
+        } else {
+            text = "disconnected"
+            color = Color.YELLOW
+        }
+
+        drawText(
+            text,
+            canvas,
+            margin.toFloat() + verticalAlignment,
+            statusVerticalPos,
+            color,
+            18f,
+            statusPaint
+        )
     }
 
     private fun calculateTitleTextSize(textSize: Int): Float =
@@ -247,7 +287,8 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
         valuePaint.textAlign = Paint.Align.LEFT
         valuePaint.textSize = (textSize * 0.6).toFloat()
         canvas.drawText(metric.pid.units, (horizontalPos + 4), verticalPos , valuePaint)
-   }
+    }
+
 
     private fun drawText(
             text: String,
@@ -257,12 +298,23 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
             color: Int,
             textSize: Float
 
+    ): Float = drawText(text, canvas, horizontalPos, verticalPos, color, textSize, paint)
+
+
+    private fun drawText(
+        text: String,
+        canvas: Canvas,
+        horizontalPos: Float,
+        verticalPos: Float,
+        color: Int,
+        textSize: Float,
+        paint1: Paint
     ): Float {
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        paint.color = color
-        paint.textSize = textSize
-        canvas.drawText(text, horizontalPos, verticalPos, paint)
-        return (horizontalPos + getTextWidth(text, paint) * 1.25f)
+        paint1.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint1.color = color
+        paint1.textSize = textSize
+        canvas.drawText(text, horizontalPos, verticalPos, paint1)
+        return (horizontalPos + getTextWidth(text, paint1) * 1.25f)
     }
 
     private fun getTextWidth(text: String, paint: Paint): Int {
