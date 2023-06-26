@@ -144,13 +144,12 @@ class DataLogger internal constructor() {
         }
     }
 
-    fun diagnostics(): Diagnostics {
-        return workflow.diagnostics
-    }
+    fun isRunning(): Boolean  =  workflow.isRunning
 
-    fun pidDefinitionRegistry(): PidDefinitionRegistry {
-        return workflow.pidRegistry
-    }
+    fun diagnostics(): Diagnostics = workflow.diagnostics
+
+    fun pidDefinitionRegistry(): PidDefinitionRegistry  = workflow.pidRegistry
+
 
     fun stop() {
         Log.i(LOGGER_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
