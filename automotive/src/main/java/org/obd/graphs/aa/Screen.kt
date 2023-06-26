@@ -149,12 +149,16 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
         })
 
         .addAction(createAction(R.drawable.action_exit,CarColor.RED) {
-            stopDataLogging()
-            carContext.finishCarApp()
+            try {
+                stopDataLogging()
+            } finally {
+                Log.i(LOG_KEY, "Exiting the app. Closing the context")
+                carContext.finishCarApp()
+            }
         }).build()
 
     private fun stopDataLogging() {
-        Log.i(LOG_KEY,"Stopping data logging process.")
+        Log.i(LOG_KEY,"Stopping data logging process")
         renderingThread.stop()
         DataLoggerService.stop()
     }

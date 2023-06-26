@@ -1,10 +1,8 @@
 package org.obd.graphs.aa
 
 import android.graphics.Rect
-import android.os.Build
 import android.util.Log
 import android.view.Surface
-import androidx.annotation.RequiresApi
 import androidx.car.app.AppManager
 import androidx.car.app.CarContext
 import androidx.car.app.SurfaceCallback
@@ -23,11 +21,10 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
     private var surfaceLocked = false
 
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
-        @RequiresApi(Build.VERSION_CODES.R)
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
+                Log.i(LOG_KEY,"Surface is now available")
                 surface = surfaceContainer.surface
-                surface?.setFrameRate(60f,Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE)
                 renderer.configure()
                 render()
             }
@@ -35,6 +32,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
         override fun onVisibleAreaChanged(visibleArea: Rect) {
             synchronized(this@SurfaceController) {
+                Log.i(LOG_KEY,"Surface visible area changed")
                 this@SurfaceController.visibleArea = visibleArea
                 render()
             }
@@ -42,16 +40,22 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
         override fun onStableAreaChanged(stableArea: Rect) {
             synchronized(this@SurfaceController) {
+                Log.i(LOG_KEY,"Surface stable area changed")
                 render()
             }
         }
 
         override fun onSurfaceDestroyed(surfaceContainer: SurfaceContainer) {
-            synchronized(this@SurfaceController) { surface = null }
+            synchronized(this@SurfaceController) {
+                Log.i(LOG_KEY,"Surface destroyed")
+                surface?.release()
+                surface = null
+            }
         }
     }
 
     override fun onCreate(owner: LifecycleOwner) {
+         Log.i(LOG_KEY, "SurfaceRenderer created")
          carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
     }
 
@@ -75,7 +79,14 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
                     )
                     it.unlockCanvasAndPost(canvas)
                 }catch (e: IllegalArgumentException){
-                    Log.e(LOG_KEY, "Canvas already locked")
+                    try {
+                        Log.e(LOG_KEY, "Canvas already locked")
+                        Log.e(LOG_KEY, "Destroying currently allocated surface")
+                        it.release()
+                        surface = null
+                    } finally {
+                        carToast(carContext,R.string.pref_aa_reopen_app)
+                    }
                 } finally {
                     surfaceLocked =  false
                 }
