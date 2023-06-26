@@ -20,14 +20,14 @@ internal class RenderingThread (surfaceController: SurfaceController) {
     }
 
     fun start () {
-        Log.e(LOG_KEY, "Submitting rendering task")
+        Log.i(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(renderingTask)
-        Log.e(LOG_KEY, "Rendering task is submitted")
+        Log.i(LOG_KEY, "Rendering task is submitted")
     }
 
     fun stop () {
-        Log.e(LOG_KEY, "Shutdown down rendering task")
+        Log.i(LOG_KEY, "Shutdown rendering task")
         tasks?.cancel(true)
-        Log.e(LOG_KEY, "Rendering task is now shutdown down")
+        Log.i(LOG_KEY, "Rendering task is now shutdown")
     }
 }
