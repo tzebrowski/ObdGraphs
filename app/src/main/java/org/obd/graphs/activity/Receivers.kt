@@ -35,7 +35,7 @@ const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
 const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
 const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
-
+const val AA_EDIT_PREF_SCREEN = "pref.aa.edit"
 
 internal fun MainActivity.receive(intent: Intent?) {
 
@@ -49,6 +49,10 @@ internal fun MainActivity.receive(intent: Intent?) {
                 dialogTitle.text = msg
             }
         }
+        AA_EDIT_PREF_SCREEN -> {
+            navigateToPreferencesScreen("pref.aa")
+        }
+
         UsbManager.ACTION_USB_DEVICE_DETACHED -> {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_detached,usbDevice.productName!!)
@@ -256,6 +260,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
         addAction(USB_DEVICE_ATTACHED_EVENT)
         addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+        addAction(AA_EDIT_PREF_SCREEN)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {

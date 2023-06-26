@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.sendBroadcastEvent
 
 
 internal class Screen(carContext: CarContext, val surfaceController: SurfaceController) :
@@ -140,6 +141,12 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
         .addAction(createAction(R.drawable.action_disconnect, CarColor.BLUE) {
             stopDataLogging()
         })
+
+        .addAction(createAction(R.drawable.config, CarColor.BLUE) {
+            sendBroadcastEvent("pref.aa.edit")
+            carToast(carContext,R.string.pref_aa_get_to_app_conf)
+        })
+
         .addAction(createAction(R.drawable.action_exit,CarColor.RED) {
             stopDataLogging()
             carContext.finishCarApp()
