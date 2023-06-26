@@ -59,6 +59,13 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
          carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
     }
 
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        Log.i(LOG_KEY, "SurfaceRenderer destroyed")
+        surface?.release()
+        surface = null
+    }
+
     fun onCarConfigurationChanged() {
         render()
     }

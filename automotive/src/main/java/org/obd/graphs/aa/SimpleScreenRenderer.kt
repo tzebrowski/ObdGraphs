@@ -4,15 +4,12 @@ import android.graphics.*
 import androidx.car.app.CarContext
 import androidx.core.content.ContextCompat
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import kotlin.math.min
-
 
 private const val ROW_SPACING = 12
 private const val MARGIN_START = 15
 private const val MARGIN_END = 30
-
 
 internal class SimpleScreenRenderer(carContext: CarContext) {
 
@@ -27,6 +24,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
     private val paint = Paint()
     private val valuePaint = Paint()
     private val statusPaint = Paint()
+    private val drawingManager  = DrawingManager(paint, valuePaint, statusPaint)
 
     private val backgroundPaint = Paint()
 
@@ -55,9 +53,9 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            drawStatusBar(area, canvas, margin)
+            drawingManager.drawStatusBar(area, canvas, margin)
 
-            var verticalPos = area.top - paint.fontMetrics.ascent + 22
+            var verticalPos = area.top - paint.fontMetrics.ascent + 12
             val verticalPosCpy = verticalPos
             var valueHorizontalPos = initialValueHorizontalPos(area)
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
@@ -68,11 +66,11 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                     val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
                     var horizontalPos = margin.toFloat()
 
-                    drawTitle(
+                    drawingManager.drawTitle(
                             canvas, metric, horizontalPos, verticalPos,
                             calculateTitleTextSize(textSize)
                     )
-                    drawValue(
+                    drawingManager.drawValue(
                             canvas,
                             metric,
                             valueHorizontalPos,
@@ -82,7 +80,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
 
                     verticalPos += textHeight.toFloat() / infoDiv
 
-                    horizontalPos = drawText(
+                    horizontalPos = drawingManager.drawText(
                             "min",
                             canvas,
                             margin.toFloat(),
@@ -90,7 +88,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                             Color.DKGRAY,
                             footerTitleTextSize
                     )
-                    horizontalPos = drawText(
+                    horizontalPos = drawingManager.drawText(
                             metric.toNumber(metric.min).toString(),
                             canvas,
                             horizontalPos,
@@ -99,7 +97,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                             footerValueTextSize
                     )
 
-                    horizontalPos = drawText(
+                    horizontalPos = drawingManager.drawText(
                             "max",
                             canvas,
                             horizontalPos,
@@ -107,7 +105,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                             Color.DKGRAY,
                             footerTitleTextSize
                     )
-                    horizontalPos = drawText(
+                    horizontalPos = drawingManager.drawText(
                             metric.toNumber(metric.max).toString(),
                             canvas,
                             horizontalPos,
@@ -116,7 +114,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                             footerValueTextSize
                     )
 
-                    horizontalPos = drawText(
+                    horizontalPos = drawingManager.drawText(
                             "avg",
                             canvas,
                             horizontalPos,
@@ -124,7 +122,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                             Color.DKGRAY,
                             footerTitleTextSize
                     )
-                    drawText(
+                    drawingManager.drawText(
                             metric.toNumber(metric.avg).toString(),
                             canvas,
                             horizontalPos,
@@ -156,40 +154,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
         }
     }
 
-    private fun drawStatusBar(area: Rect, canvas: Canvas, margin: Int) {
-        val statusVerticalPos = area.top - paint.fontMetrics.ascent
-        var text = "connection: "
 
-        drawText(
-            text,
-            canvas,
-            margin.toFloat(),
-            statusVerticalPos,
-            Color.WHITE,
-            12f,
-            statusPaint
-        )
-        val verticalAlignment = getTextWidth(text, statusPaint) + 2
-
-        val color: Int
-        if (dataLogger.isRunning()) {
-            text = "connected"
-            color = Color.GREEN
-        } else {
-            text = "disconnected"
-            color = Color.YELLOW
-        }
-
-        drawText(
-            text,
-            canvas,
-            margin.toFloat() + verticalAlignment,
-            statusVerticalPos,
-            color,
-            18f,
-            statusPaint
-        )
-    }
 
     private fun calculateTitleTextSize(textSize: Int): Float =
             when (carScreenSettings.maxItemsInColumn()) {
@@ -199,8 +164,8 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
 
     private fun initialValueHorizontalPos(area: Rect): Float =
             when (carScreenSettings.maxItemsInColumn()) {
-                1 -> ((area.width()) - 24).toFloat()
-                else -> ((area.width() / 2) - 24).toFloat()
+                1 -> ((area.width()) - 30).toFloat()
+                else -> ((area.width() / 2) - 30).toFloat()
             }
 
     private fun calculateVerticalPos(
@@ -224,27 +189,6 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
                 else -> area.width() / 2
             }
 
-
-    private fun drawTitle(
-            canvas: Canvas,
-            metric: CarMetric,
-            horizontalPos: Float,
-            verticalPos: Float,
-            textSize: Float
-    ){
-
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-        paint.color = Color.LTGRAY
-        paint.textSize = textSize
-        val text = metric.pid.description.replace("\n", " ")
-        canvas.drawText(
-                text,
-                horizontalPos,
-                verticalPos,
-                paint
-        )
-    }
-
     private fun calculateFontSize(data: MutableCollection<CarMetric>): Int {
         val maxFontSize = carScreenSettings.maxFontSize()
         return when (data.size) {
@@ -266,61 +210,6 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
 
             else -> maxFontSize
         }
-    }
-
-    private fun drawValue(
-            canvas: Canvas,
-            metric: CarMetric,
-            horizontalPos: Float,
-            verticalPos: Float,
-            textSize: Float
-
-    ){
-        valuePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        valuePaint.color = Color.WHITE
-        valuePaint.textSize = textSize
-        valuePaint.textAlign = Paint.Align.RIGHT
-        val text = metric.valueToString()
-        canvas.drawText(text, horizontalPos, verticalPos, valuePaint)
-
-        valuePaint.color = Color.LTGRAY
-        valuePaint.textAlign = Paint.Align.LEFT
-        valuePaint.textSize = (textSize * 0.6).toFloat()
-        canvas.drawText(metric.pid.units, (horizontalPos + 4), verticalPos , valuePaint)
-    }
-
-
-    private fun drawText(
-            text: String,
-            canvas: Canvas,
-            horizontalPos: Float,
-            verticalPos: Float,
-            color: Int,
-            textSize: Float
-
-    ): Float = drawText(text, canvas, horizontalPos, verticalPos, color, textSize, paint)
-
-
-    private fun drawText(
-        text: String,
-        canvas: Canvas,
-        horizontalPos: Float,
-        verticalPos: Float,
-        color: Int,
-        textSize: Float,
-        paint1: Paint
-    ): Float {
-        paint1.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        paint1.color = color
-        paint1.textSize = textSize
-        canvas.drawText(text, horizontalPos, verticalPos, paint1)
-        return (horizontalPos + getTextWidth(text, paint1) * 1.25f)
-    }
-
-    private fun getTextWidth(text: String, paint: Paint): Int {
-        val bounds = Rect()
-        paint.getTextBounds(text, 0, text.length, bounds)
-        return bounds.left + bounds.width()
     }
 
     private fun drawDivider(
