@@ -158,7 +158,7 @@ class DataLogger internal constructor() {
         try {
             workflow.stop(dataLoggerPreferences.instance.gracefulStop)
         }catch (e: Exception){
-            Log.e(LOGGER_TAG, "Failed to stop the workflow")
+            Log.e(LOGGER_TAG, "Failed to stop the workflow", e)
         }
     }
 
