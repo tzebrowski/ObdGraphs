@@ -35,7 +35,6 @@ const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
 const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
 const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
-const val AA_EDIT_PREF_SCREEN = "pref.aa.edit"
 
 internal fun MainActivity.receive(intent: Intent?) {
 

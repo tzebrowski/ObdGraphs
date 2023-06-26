@@ -12,6 +12,7 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.sendBroadcastEvent
 
@@ -143,7 +144,7 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
         })
 
         .addAction(createAction(R.drawable.config, CarColor.BLUE) {
-            sendBroadcastEvent("pref.aa.edit")
+            sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
             carToast(carContext,R.string.pref_aa_get_to_app_conf)
         })
 
