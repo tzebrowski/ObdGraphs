@@ -81,26 +81,19 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
     }
 
     override fun onGetTemplate(): Template {
-        return if (MetricsProvider().findMetrics(carScreenSettings.getSelectedPIDs()).isEmpty()) {
+        return try {
+            NavigationTemplate.Builder()
+                .setMapActionStrip(profilesActionStrip())
+                .setActionStrip(actions())
+                .build()
+        } catch (e: Exception) {
+            Log.e(LOG_KEY, "Failed to build template", e)
             PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
                 .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getString(R.string.pref_aa_car_no_pids_selected))
+                .setTitle(carContext.getString(R.string.pref_aa_car_error))
                 .build()
-        } else {
-            return try {
-                NavigationTemplate.Builder()
-                    .setMapActionStrip(profilesActionStrip())
-                    .setActionStrip(actions())
-                    .build()
-            } catch (e: Exception) {
-                Log.e(LOG_KEY, "Failed to build template", e)
-                PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
-                    .setHeaderAction(Action.BACK)
-                    .setTitle(carContext.getString(R.string.pref_aa_car_error))
-                    .build()
-            }
         }
-    }
+}
     private fun createAction(iconResId: Int, iconColorTint: CarColor, func: () -> Unit): Action  =
         Action.Builder()
             .setIcon(

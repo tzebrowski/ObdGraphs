@@ -15,7 +15,6 @@ private const val MARGIN_END = 30
 
 internal class SimpleScreenRenderer(carContext: CarContext) {
 
-
     private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
     private val philippineGreen by lazy {
         ContextCompat.getColor(
