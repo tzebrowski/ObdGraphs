@@ -3,11 +3,12 @@ package org.obd.graphs.aa
 import android.util.Log
 import java.util.concurrent.*
 
+
 internal class RenderingThread (surfaceController: SurfaceController) {
 
     private val singleTaskPool: ExecutorService = ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS,
-        LinkedBlockingQueue<Runnable>(1), ThreadPoolExecutor.DiscardPolicy()
+        LinkedBlockingQueue(1), ThreadPoolExecutor.DiscardPolicy()
     )
 
     private var tasks: Future<*>? = null
@@ -15,7 +16,7 @@ internal class RenderingThread (surfaceController: SurfaceController) {
     private val renderingTask: Runnable = Runnable {
         while (!Thread.currentThread().isInterrupted) {
             surfaceController.render()
-            Thread.sleep(5)
+            Thread.sleep(20)
         }
     }
 
