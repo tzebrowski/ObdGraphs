@@ -10,12 +10,13 @@ import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.aa.renderer.ScreenRenderer
 
 
 class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
     DefaultLifecycleObserver {
 
-    private val renderer: SimpleScreenRenderer = SimpleScreenRenderer(carContext)
+    private val renderer: ScreenRenderer = ScreenRenderer.of(carContext)
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -55,6 +56,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
     }
 
     override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
         Log.i(LOG_KEY, "SurfaceRenderer created")
         carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
     }

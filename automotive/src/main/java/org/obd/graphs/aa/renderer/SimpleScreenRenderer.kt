@@ -1,19 +1,22 @@
-package org.obd.graphs.aa
+package org.obd.graphs.aa.renderer
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import androidx.car.app.CarContext
+import org.obd.graphs.aa.CarMetric
+import org.obd.graphs.aa.carScreenSettings
+import org.obd.graphs.aa.metricsCollector
 import kotlin.math.min
 
 private const val ROW_SPACING = 12
 private const val MARGIN_START = 15
 
-internal class SimpleScreenRenderer(carContext: CarContext) {
+internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
     private val drawingManager = DrawingManager(carContext)
 
-    fun render(canvas: Canvas, visibleArea: Rect?) {
+    override fun render(canvas: Canvas, visibleArea: Rect?) {
 
         val maxItemsInColumn = carScreenSettings.maxItemsInColumn()
         visibleArea?.let { area ->

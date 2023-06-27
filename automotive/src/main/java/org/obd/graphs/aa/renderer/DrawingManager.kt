@@ -1,9 +1,12 @@
-package org.obd.graphs.aa
+package org.obd.graphs.aa.renderer
 
 import android.graphics.*
 import androidx.car.app.CarContext
 import androidx.core.content.ContextCompat
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.aa.CarMetric
+import org.obd.graphs.aa.R
+import org.obd.graphs.aa.carScreenSettings
 import org.obd.graphs.bl.datalogger.dataLogger
 
 const val MARGIN_END = 30
