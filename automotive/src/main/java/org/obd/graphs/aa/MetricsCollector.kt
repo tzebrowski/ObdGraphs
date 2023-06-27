@@ -9,17 +9,17 @@ val metricsCollector = CarMetricsCollector()
 
 class CarMetricsCollector {
 
-    private var metrics: MutableMap<Long,CarMetric> = mutableMapOf()
-    private val histogram by lazy {  dataLogger.diagnostics().histogram() }
+    private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
+    private val histogram by lazy { dataLogger.diagnostics().histogram() }
 
     fun metrics() = metrics.values
 
     fun configure() {
         metrics = MetricsProvider().findMetrics(carScreenSettings.getSelectedPIDs()).associate {
-            it.command.pid.id to CarMetric(it.command.pid, null,0.0,0.0,0.0)
+            it.command.pid.id to CarMetric(it.command.pid, null, 0.0, 0.0, 0.0)
         }.toMutableMap()
 
-        Log.i(LOG_KEY,"Rebuilding metrics configuration: $metrics")
+        Log.i(LOG_KEY, "Rebuilding metrics configuration: $metrics")
     }
 
     fun collect(input: ObdMetric?) {
@@ -32,11 +32,11 @@ class CarMetricsCollector {
                     it.avg = mean
                 }
 
-                hist.max?.let { max ->
+                hist.max.let { max ->
                     it.max = max
                 }
 
-                hist.min?.let { min ->
+                hist.min.let { min ->
                     it.min = min
                 }
             }

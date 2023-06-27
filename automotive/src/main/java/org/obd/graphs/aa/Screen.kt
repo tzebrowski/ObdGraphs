@@ -134,8 +134,9 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
                 .setTitle(carContext.getString(R.string.pref_aa_car_error))
                 .build()
         }
-}
-    private fun createAction(iconResId: Int, iconColorTint: CarColor, func: () -> Unit): Action  =
+    }
+
+    private fun createAction(iconResId: Int, iconColorTint: CarColor, func: () -> Unit): Action =
         Action.Builder()
             .setIcon(
                 CarIcon.Builder(
@@ -184,10 +185,10 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
 
         .addAction(createAction(R.drawable.config, CarColor.BLUE) {
             sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
-            carToast(carContext,R.string.pref_aa_get_to_app_conf)
+            carToast(carContext, R.string.pref_aa_get_to_app_conf)
         })
 
-        .addAction(createAction(R.drawable.action_exit,CarColor.RED) {
+        .addAction(createAction(R.drawable.action_exit, CarColor.RED) {
             try {
                 stopDataLogging()
             } finally {
@@ -197,7 +198,7 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
         }).build()
 
     private fun stopDataLogging() {
-        Log.i(LOG_KEY,"Stopping data logging process")
+        Log.i(LOG_KEY, "Stopping data logging process")
         renderingThread.stop()
         DataLoggerService.stop()
     }
@@ -211,11 +212,11 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
             metricsCollector.collect(it)
         }
 
-        if (dataLogger.isRunning()){
-            Log.i(LOG_KEY,"Data logger is running, connecting....")
+        if (dataLogger.isRunning()) {
+            Log.i(LOG_KEY, "Data logger is running, connecting....")
             renderingThread.start()
         } else {
-            Log.i(LOG_KEY,"Data logger is not running.")
+            Log.i(LOG_KEY, "Data logger is not running.")
         }
     }
 }

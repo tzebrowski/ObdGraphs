@@ -6,10 +6,9 @@ import androidx.car.app.CarToast
 
 internal const val LOG_KEY = "AndroidAuto"
 
-fun carToast(carCtx: CarContext,id: Int) {
+fun carToast(carCtx: CarContext, id: Int) {
     CarToast.makeText(
         carCtx,
-        carCtx.getString(id)
-        , CarToast.LENGTH_LONG
-    ).show();
+        carCtx.getString(id), CarToast.LENGTH_LONG
+    ).show()
 }

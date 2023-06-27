@@ -23,7 +23,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
-                Log.i(LOG_KEY,"Surface is now available")
+                Log.i(LOG_KEY, "Surface is now available")
                 surface?.release()
                 surface = surfaceContainer.surface
                 metricsCollector.configure()
@@ -32,7 +32,7 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
         override fun onVisibleAreaChanged(visibleArea: Rect) {
             synchronized(this@SurfaceController) {
-                Log.i(LOG_KEY,"Surface visible area changed")
+                Log.i(LOG_KEY, "Surface visible area changed")
                 this@SurfaceController.visibleArea = visibleArea
                 render()
             }
@@ -40,14 +40,14 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
 
         override fun onStableAreaChanged(stableArea: Rect) {
             synchronized(this@SurfaceController) {
-                Log.i(LOG_KEY,"Surface stable area changed")
+                Log.i(LOG_KEY, "Surface stable area changed")
                 render()
             }
         }
 
         override fun onSurfaceDestroyed(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
-                Log.i(LOG_KEY,"Surface destroyed")
+                Log.i(LOG_KEY, "Surface destroyed")
                 surface?.release()
                 surface = null
             }
@@ -55,8 +55,8 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
     }
 
     override fun onCreate(owner: LifecycleOwner) {
-         Log.i(LOG_KEY, "SurfaceRenderer created")
-         carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
+        Log.i(LOG_KEY, "SurfaceRenderer created")
+        carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {

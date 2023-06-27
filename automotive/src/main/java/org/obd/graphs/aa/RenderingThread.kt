@@ -4,7 +4,7 @@ import android.util.Log
 import java.util.concurrent.*
 
 
-internal class RenderingThread (surfaceController: SurfaceController) {
+internal class RenderingThread(surfaceController: SurfaceController) {
 
     private val singleTaskPool: ExecutorService = ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS,
@@ -20,13 +20,13 @@ internal class RenderingThread (surfaceController: SurfaceController) {
         }
     }
 
-    fun start () {
+    fun start() {
         Log.i(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(renderingTask)
         Log.i(LOG_KEY, "Rendering task is submitted")
     }
 
-    fun stop () {
+    fun stop() {
         Log.i(LOG_KEY, "Shutdown rendering task")
         tasks?.cancel(true)
         Log.i(LOG_KEY, "Rendering task is now shutdown")

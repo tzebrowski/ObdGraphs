@@ -10,12 +10,13 @@ fun Double.round(decimals: Int): Double {
 }
 
 
-data class CarMetric (
+data class CarMetric(
     val pid: PidDefinition,
     var value: Double?,
     var min: Double,
     var max: Double,
-    var avg: Double){
+    var avg: Double
+) {
 
     fun valueToString(): String {
         return if (value == null) {
