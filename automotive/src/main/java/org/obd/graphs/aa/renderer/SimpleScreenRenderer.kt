@@ -132,8 +132,8 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
     private fun initialValueHorizontalPos(area: Rect): Float =
         when (carScreenSettings.maxItemsInColumn()) {
-            1 -> ((area.width()) - 30).toFloat()
-            else -> ((area.width() / 2) - 30).toFloat()
+            1 -> ((area.width()) - 32).toFloat()
+            else -> ((area.width() / 2) - 32).toFloat()
         }
 
     private fun calculateVerticalPos(
