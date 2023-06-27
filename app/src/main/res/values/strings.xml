@@ -2,6 +2,7 @@
 
     <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
 
+    <string name="pref.aa.surface.fps">Head unit refresh rate (FPS)</string>
     <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>
     <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>
 
@@ -294,6 +295,18 @@
         <item name="256000">256000</item>
     </string-array>
 
+    <string-array name="pref.aa.fps">
+        <item name="1">1</item>
+        <item name="5">5</item>
+        <item name="10">10</item>
+        <item name="15">15</item>
+        <item name="20">20</item>
+        <item name="25">25</item>
+        <item name="30">30</item>
+        <item name="40">40</item>
+        <item name="50">50</item>
+        <item name="60">60</item>
+    </string-array>
 
 
     <string-array name="pref.numbers_28_34">

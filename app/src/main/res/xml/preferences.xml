@@ -610,6 +610,8 @@
                         android:summary="@string/pref.displayed_parameter_ids_summary"
                         android:title="@string/pref.aa.profile_4.displayed_parameter_ids" />
 
+
+
                 </PreferenceCategory>
 
                 <ListPreference
@@ -633,6 +635,17 @@
                     android:inputType="number"
                     android:key="pref.aa.screen_font_size"
                     android:title="@string/pref.aa.font_size"
+                    app:useSimpleSummaryProvider="true" />
+
+                <ListPreference
+                    app:singleLineTitle="false"
+                    android:entries="@array/pref.aa.fps"
+                    android:entryValues="@array/pref.aa.fps"
+                    android:defaultValue="20"
+                    android:dialogTitle="@string/pref.aa.surface.fps"
+                    android:inputType="number"
+                    android:key="pref.aa.surface.fps"
+                    android:title="@string/pref.aa.surface.fps"
                     app:useSimpleSummaryProvider="true" />
 
             </PreferenceScreen>
