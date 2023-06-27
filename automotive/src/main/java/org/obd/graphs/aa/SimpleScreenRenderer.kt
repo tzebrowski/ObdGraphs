@@ -1,36 +1,17 @@
 package org.obd.graphs.aa
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Rect
 import androidx.car.app.CarContext
-import androidx.core.content.ContextCompat
-import org.obd.graphs.ValueScaler
-import org.obd.graphs.getContext
 import kotlin.math.min
 
 private const val ROW_SPACING = 12
 private const val MARGIN_START = 15
-private const val MARGIN_END = 30
 
 internal class SimpleScreenRenderer(carContext: CarContext) {
 
-    private val cardinal by lazy { ContextCompat.getColor(getContext()!!, R.color.cardinal) }
-    private val philippineGreen by lazy {
-        ContextCompat.getColor(
-                getContext()!!,
-                R.color.philippine_green
-        )
-    }
-
-    private val paint = Paint()
-    private val valuePaint = Paint()
-    private val statusPaint = Paint()
-    private val drawingManager  = DrawingManager(paint, valuePaint, statusPaint)
-
-    private val backgroundPaint = Paint()
-
-    private val valueScaler: ValueScaler = ValueScaler()
-    private val background: Bitmap =
-            BitmapFactory.decodeResource(carContext.resources, R.drawable.background)
+    private val drawingManager = DrawingManager(carContext)
 
     fun render(canvas: Canvas, visibleArea: Rect?) {
 
@@ -40,108 +21,96 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
+            drawingManager.updateCanvas(canvas)
 
             val metrics = metricsCollector.metrics()
             val baseFontSize = calculateFontSize(metrics)
             val textHeight = min(area.height() / 8, baseFontSize)
             val textSize = textHeight - ROW_SPACING
 
-            canvas.drawRect(area, paint)
-            canvas.drawColor(Color.BLACK)
-            canvas.drawBitmap(background, 0f, 0f, backgroundPaint)
+            drawingManager.drawBackground(area)
 
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            drawingManager.drawStatusBar(area, canvas, margin)
+            drawingManager.drawStatusBar(area, margin)
 
-            var verticalPos = area.top - paint.fontMetrics.ascent + 12
+            var verticalPos = drawingManager.getStatusBarSpacing(area)
             val verticalPosCpy = verticalPos
             var valueHorizontalPos = initialValueHorizontalPos(area)
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
                 chunk.forEach { metric ->
-                    val originalSize = textSize.toFloat()
                     val footerValueTextSize = textSize.toFloat() / infoDiv
                     val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
                     var horizontalPos = margin.toFloat()
 
                     drawingManager.drawTitle(
-                            canvas, metric, horizontalPos, verticalPos,
-                            calculateTitleTextSize(textSize)
+                        metric, horizontalPos, verticalPos,
+                        calculateTitleTextSize(textSize)
                     )
                     drawingManager.drawValue(
-                            canvas,
-                            metric,
-                            valueHorizontalPos,
-                            verticalPos + 6,
-                            textSize.toFloat() + 14
+                        metric,
+                        valueHorizontalPos,
+                        verticalPos + 6,
+                        textSize.toFloat() + 14
                     )
 
                     verticalPos += textHeight.toFloat() / infoDiv
 
                     horizontalPos = drawingManager.drawText(
-                            "min",
-                            canvas,
-                            margin.toFloat(),
-                            verticalPos,
-                            Color.DKGRAY,
-                            footerTitleTextSize
+                        "min",
+                        margin.toFloat(),
+                        verticalPos,
+                        Color.DKGRAY,
+                        footerTitleTextSize
                     )
                     horizontalPos = drawingManager.drawText(
-                            metric.toNumber(metric.min).toString(),
-                            canvas,
-                            horizontalPos,
-                            verticalPos,
-                            Color.LTGRAY,
-                            footerValueTextSize
+                        metric.toNumber(metric.min).toString(),
+                        horizontalPos,
+                        verticalPos,
+                        Color.LTGRAY,
+                        footerValueTextSize
                     )
 
                     horizontalPos = drawingManager.drawText(
-                            "max",
-                            canvas,
-                            horizontalPos,
-                            verticalPos,
-                            Color.DKGRAY,
-                            footerTitleTextSize
+                        "max",
+                        horizontalPos,
+                        verticalPos,
+                        Color.DKGRAY,
+                        footerTitleTextSize
                     )
                     horizontalPos = drawingManager.drawText(
-                            metric.toNumber(metric.max).toString(),
-                            canvas,
-                            horizontalPos,
-                            verticalPos,
-                            Color.LTGRAY,
-                            footerValueTextSize
+                        metric.toNumber(metric.max).toString(),
+                        horizontalPos,
+                        verticalPos,
+                        Color.LTGRAY,
+                        footerValueTextSize
                     )
 
                     horizontalPos = drawingManager.drawText(
-                            "avg",
-                            canvas,
-                            horizontalPos,
-                            verticalPos,
-                            Color.DKGRAY,
-                            footerTitleTextSize
+                        "avg",
+                        horizontalPos,
+                        verticalPos,
+                        Color.DKGRAY,
+                        footerTitleTextSize
                     )
                     drawingManager.drawText(
-                            metric.toNumber(metric.avg).toString(),
-                            canvas,
-                            horizontalPos,
-                            verticalPos,
-                            Color.LTGRAY,
-                            footerValueTextSize
+                        metric.toNumber(metric.avg).toString(),
+                        horizontalPos,
+                        verticalPos,
+                        Color.LTGRAY,
+                        footerValueTextSize
                     )
 
-                    drawDivider(canvas, margin.toFloat(), verticalPos, itemWidth(area).toFloat())
+                    drawingManager.drawDivider(margin.toFloat(), verticalPos, itemWidth(area).toFloat())
                     verticalPos += 1
-                    drawProgressBar(
-                            canvas, margin.toFloat(),
-                            itemWidth(area).toFloat(), verticalPos, metric
+                    drawingManager.drawProgressBar(
+                        margin.toFloat(),
+                        itemWidth(area).toFloat(), verticalPos, metric
                     )
 
                     verticalPos += textHeight.toFloat() + 10
-                    paint.textSize = originalSize
-                    paint.color = Color.BLACK
-
                 }
 
                 if (carScreenSettings.maxItemsInColumn() > 1) {
@@ -154,40 +123,38 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
         }
     }
 
-
-
     private fun calculateTitleTextSize(textSize: Int): Float =
-            when (carScreenSettings.maxItemsInColumn()) {
-                1 -> textSize.toFloat()
-                else -> textSize / 1.1f
-            }
+        when (carScreenSettings.maxItemsInColumn()) {
+            1 -> textSize.toFloat()
+            else -> textSize / 1.1f
+        }
 
     private fun initialValueHorizontalPos(area: Rect): Float =
-            when (carScreenSettings.maxItemsInColumn()) {
-                1 -> ((area.width()) - 30).toFloat()
-                else -> ((area.width() / 2) - 30).toFloat()
-            }
+        when (carScreenSettings.maxItemsInColumn()) {
+            1 -> ((area.width()) - 30).toFloat()
+            else -> ((area.width() / 2) - 30).toFloat()
+        }
 
     private fun calculateVerticalPos(
-            textHeight: Int,
-            verticalPos: Float,
-            verticalPosCpy: Float
+        textHeight: Int,
+        verticalPos: Float,
+        verticalPosCpy: Float
     ): Float = when (carScreenSettings.maxItemsInColumn()) {
         1 -> verticalPos + (textHeight / 3)
         else -> verticalPosCpy
     }
 
     private fun calculateMargin(canvas: Canvas): Int =
-            when (carScreenSettings.maxItemsInColumn()) {
-                1 -> 0
-                else -> canvas.width / 2
-            }
+        when (carScreenSettings.maxItemsInColumn()) {
+            1 -> 0
+            else -> canvas.width / 2
+        }
 
     private fun itemWidth(area: Rect): Int =
-            when (carScreenSettings.maxItemsInColumn()) {
-                1 -> area.width()
-                else -> area.width() / 2
-            }
+        when (carScreenSettings.maxItemsInColumn()) {
+            1 -> area.width()
+            else -> area.width() / 2
+        }
 
     private fun calculateFontSize(data: MutableCollection<CarMetric>): Int {
         val maxFontSize = carScreenSettings.maxFontSize()
@@ -210,64 +177,5 @@ internal class SimpleScreenRenderer(carContext: CarContext) {
 
             else -> maxFontSize
         }
-    }
-
-    private fun drawDivider(
-            canvas: Canvas,
-            start: Float,
-            verticalPos: Float,
-            width: Float
-    ) {
-        paint.color = philippineGreen
-        paint.strokeWidth = 2f
-        canvas.drawLine(
-                start - 6,
-                verticalPos + 4,
-                start + width - MARGIN_END,
-                verticalPos + calculateDividerHeight(),
-                paint
-        )
-    }
-
-    private fun calculateDividerHeight() = when (carScreenSettings.maxItemsInColumn()) {
-        1 -> 8
-        else -> 4
-    }
-
-    private fun calculateProgressBarHeight() = when (carScreenSettings.maxItemsInColumn()) {
-        1 -> 24
-        else -> 11
-    }
-
-    private fun drawProgressBar(
-            canvas: Canvas,
-            start: Float,
-            width: Float,
-            verticalPos: Float,
-            it: CarMetric
-    ) {
-        paint.color = cardinal
-        val progress = valueScaler.scaleToNewRange(
-                (it.value ?: it.pid.min).toFloat(),
-                it.pid.min.toFloat(), it.pid.max.toFloat(), start, start + width - MARGIN_END
-        )
-
-        canvas.drawRect(
-                start - 6,
-                verticalPos + 4,
-                progress,
-                verticalPos + calculateProgressBarHeight(),
-                paint
-        )
-    }
-
-    init {
-        paint.color = Color.BLACK
-        paint.isAntiAlias = true
-        paint.style = Paint.Style.FILL
-
-        valuePaint.color = Color.WHITE
-        valuePaint.isAntiAlias = true
-        valuePaint.style = Paint.Style.FILL
     }
 }
