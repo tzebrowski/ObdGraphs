@@ -24,9 +24,9 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY,"Surface is now available")
+                surface?.release()
                 surface = surfaceContainer.surface
                 metricsCollector.configure()
-                render()
             }
         }
 
@@ -81,17 +81,16 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
                         visibleArea = visibleArea
                     )
                     it.unlockCanvasAndPost(canvas)
-                }catch (e: IllegalArgumentException){
+                } catch (e: IllegalArgumentException) {
                     try {
-                        Log.e(LOG_KEY, "Canvas already locked")
-                        Log.e(LOG_KEY, "Destroying currently allocated surface")
+                        Log.e(LOG_KEY, "Canvas already locked. Destroying currently allocated surface")
                         it.release()
                         surface = null
                     } finally {
-                        carToast(carContext,R.string.pref_aa_reopen_app)
+                        carToast(carContext, R.string.pref_aa_reopen_app)
                     }
                 } finally {
-                    surfaceLocked =  false
+                    surfaceLocked = false
                 }
             }
         }
