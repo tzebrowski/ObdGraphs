@@ -17,7 +17,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent) {
         val powerPreferences: PowerPreferences = getPowerPreferences()
-        Log.i(
+        Log.d(
             LOGGER_TAG,
             "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}"
         )
@@ -46,7 +46,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (powerPreferences.connectOnPower) {
-                Log.i(
+                Log.d(
                     LOGGER_TAG,
                     "Stop data logging"
                 )
