@@ -10,6 +10,8 @@ import org.obd.graphs.aa.carScreenSettings
 import org.obd.graphs.bl.datalogger.dataLogger
 
 const val MARGIN_END = 30
+const val ROW_SPACING = 12
+const val MARGIN_START = 15
 
 internal class DrawingManager(carContext: CarContext) {
 
@@ -26,8 +28,12 @@ internal class DrawingManager(carContext: CarContext) {
     private val background: Bitmap =
         BitmapFactory.decodeResource(carContext.resources, R.drawable.background)
 
+    private val statusLabel: String
+    private val statusConnected: String
+    private val statusDisconnected: String
 
     init {
+
         valuePaint.color = Color.WHITE
         valuePaint.isAntiAlias = true
         valuePaint.style = Paint.Style.FILL
@@ -39,6 +45,10 @@ internal class DrawingManager(carContext: CarContext) {
         paint.color = Color.BLACK
         paint.isAntiAlias = true
         paint.style = Paint.Style.FILL
+
+        statusLabel = carContext.resources.getString(R.string.status_bar_status)
+        statusConnected = carContext.resources.getString(R.string.status_bar_connected)
+        statusDisconnected = carContext.resources.getString(R.string.status_bar_disconnected)
     }
 
     fun updateCanvas(canvas: Canvas) {
@@ -85,7 +95,7 @@ internal class DrawingManager(carContext: CarContext) {
 
     fun drawStatusBar(area: Rect, margin: Int) {
         val statusVerticalPos = area.top + 4f
-        var text = "connection: "
+        var text = statusLabel
 
         drawText(
             text,
@@ -99,10 +109,10 @@ internal class DrawingManager(carContext: CarContext) {
 
         val color: Int
         if (dataLogger.isRunning()) {
-            text = "connected"
+            text = statusConnected
             color = Color.GREEN
         } else {
-            text = "disconnected"
+            text = statusDisconnected
             color = Color.YELLOW
         }
 

@@ -9,8 +9,6 @@ import org.obd.graphs.aa.carScreenSettings
 import org.obd.graphs.aa.metricsCollector
 import kotlin.math.min
 
-private const val ROW_SPACING = 12
-private const val MARGIN_START = 15
 
 internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
