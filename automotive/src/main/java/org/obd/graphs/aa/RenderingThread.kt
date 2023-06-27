@@ -37,9 +37,8 @@ internal class RenderingThread(private val surfaceController: SurfaceController)
             surfaceController.render()
             ts = System.currentTimeMillis() - ts
 
-            if (targetDelay > ts) {
-                val wait = targetDelay - ts
-                Thread.sleep(wait)
+            if (targetDelay > ts && (targetDelay - ts) > 0) {
+                Thread.sleep( targetDelay - ts)
             }
         }
     }

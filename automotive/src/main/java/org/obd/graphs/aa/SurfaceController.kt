@@ -85,11 +85,12 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
                     it.unlockCanvasAndPost(canvas)
                 } catch (e: IllegalArgumentException) {
                     try {
-                        Log.e(LOG_KEY, "Canvas already locked. Destroying currently allocated surface")
+                        Log.e(LOG_KEY, "Canvas already locked. Destroying currently allocated surface",e)
                         it.release()
                         surface = null
                     } finally {
                         carToast(carContext, R.string.pref_aa_reopen_app)
+                        carContext.finishCarApp()
                     }
                 } finally {
                     surfaceLocked = false
