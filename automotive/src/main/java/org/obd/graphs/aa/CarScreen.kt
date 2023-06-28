@@ -22,9 +22,26 @@ private const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.ev
 private const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
 private const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
 
-internal class Screen(carContext: CarContext, val surfaceController: SurfaceController) :
+internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
     DefaultLifecycleObserver {
+
+    private var renderingThread = RenderingThread(surfaceController)
+
+    init {
+
+        lifecycle.addObserver(this)
+        dataLogger.observe(this) {
+            metricsCollector.collect(it)
+        }
+
+        if (dataLogger.isRunning()) {
+            Log.i(LOG_KEY, "Data logger is running, connecting....")
+            renderingThread.start()
+        } else {
+            Log.i(LOG_KEY, "Data logger is not running.")
+        }
+    }
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -201,22 +218,5 @@ internal class Screen(carContext: CarContext, val surfaceController: SurfaceCont
         Log.i(LOG_KEY, "Stopping data logging process")
         renderingThread.stop()
         DataLoggerService.stop()
-    }
-
-    private var renderingThread = RenderingThread(surfaceController)
-
-    init {
-
-        lifecycle.addObserver(this)
-        dataLogger.observe(this) {
-            metricsCollector.collect(it)
-        }
-
-        if (dataLogger.isRunning()) {
-            Log.i(LOG_KEY, "Data logger is running, connecting....")
-            renderingThread.start()
-        } else {
-            Log.i(LOG_KEY, "Data logger is not running.")
-        }
     }
 }

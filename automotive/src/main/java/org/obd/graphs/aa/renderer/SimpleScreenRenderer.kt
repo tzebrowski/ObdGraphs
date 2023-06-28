@@ -16,12 +16,12 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
     override fun render(canvas: Canvas, visibleArea: Rect?) {
 
-        val maxItemsInColumn = carScreenSettings.maxItemsInColumn()
         visibleArea?.let { area ->
 
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
+
             drawingManager.updateCanvas(canvas)
 
             val metrics = metricsCollector.metrics()
@@ -31,15 +31,17 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             drawingManager.drawBackground(area)
 
+            var verticalPos = drawingManager.drawStatusBar(area) + 14
+
+            drawingManager.drawDivider(MARGIN_START.toFloat(),area.width().toFloat(),  area.top + 8f, Color.DKGRAY)
+
+            val verticalPosCpy = verticalPos
+            var valueHorizontalPos = initialValueHorizontalPos(area)
+
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            drawingManager.drawStatusBar(area, margin)
-
-            var verticalPos = drawingManager.getStatusBarSpacing(area)
-            val verticalPosCpy = verticalPos
-            var valueHorizontalPos = initialValueHorizontalPos(area)
-            metrics.chunked(maxItemsInColumn).forEach { chunk ->
+            metrics.chunked(carScreenSettings.maxItemsInColumn()).forEach { chunk ->
 
                 chunk.forEach { metric ->
                     val footerValueTextSize = textSize.toFloat() / infoDiv
@@ -53,7 +55,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     drawingManager.drawValue(
                         metric,
                         valueHorizontalPos,
-                        verticalPos + 6,
+                        verticalPos + 12,
                         textSize.toFloat() + 14
                     )
 
@@ -104,8 +106,8 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                         footerValueTextSize
                     )
 
-                    drawingManager.drawDivider(margin.toFloat(), verticalPos, itemWidth(area).toFloat())
-                    verticalPos += 1
+                    drawingManager.drawDivider(margin.toFloat(),itemWidth(area).toFloat(), verticalPos)
+                    verticalPos += 2
                     drawingManager.drawProgressBar(
                         margin.toFloat(),
                         itemWidth(area).toFloat(), verticalPos, metric
@@ -115,10 +117,10 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                 }
 
                 if (carScreenSettings.maxItemsInColumn() > 1) {
-                    valueHorizontalPos += area.width() / 2
+                    valueHorizontalPos += area.width() / 2 - 18
                 }
 
-                margin += calculateMargin(canvas)
+                margin += calculateMargin(area)
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
             }
         }
@@ -145,10 +147,10 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
         else -> verticalPosCpy
     }
 
-    private fun calculateMargin(canvas: Canvas): Int =
+    private fun calculateMargin(area: Rect): Int =
         when (carScreenSettings.maxItemsInColumn()) {
             1 -> 0
-            else -> canvas.width / 2
+            else -> (area.width() / 2)
         }
 
     private fun itemWidth(area: Rect): Int =

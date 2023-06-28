@@ -8,12 +8,11 @@ import androidx.car.app.CarContext
 import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.renderer.ScreenRenderer
 
 
-class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle) :
+class SurfaceController(private val carContext: CarContext) :
     DefaultLifecycleObserver {
 
     private val renderer: ScreenRenderer = ScreenRenderer.of(carContext)
@@ -97,9 +96,5 @@ class SurfaceController(private val carContext: CarContext, lifecycle: Lifecycle
                 }
             }
         }
-    }
-
-    init {
-        lifecycle.addObserver(this)
     }
 }

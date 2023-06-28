@@ -55,7 +55,7 @@ internal class DrawingManager(carContext: CarContext) {
         this.canvas = canvas
     }
 
-    fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12
+
 
     fun drawBackground(area: Rect) {
         canvas?.drawRect(area, paint)
@@ -93,9 +93,10 @@ internal class DrawingManager(carContext: CarContext) {
         )
     }
 
-    fun drawStatusBar(area: Rect, margin: Int) {
+    fun drawStatusBar(area: Rect): Float {
         val statusVerticalPos = area.top + 4f
         var text = statusLabel
+        val margin = MARGIN_START
 
         drawText(
             text,
@@ -124,6 +125,7 @@ internal class DrawingManager(carContext: CarContext) {
             18f,
             statusPaint
         )
+        return getStatusBarSpacing(area)
     }
 
     fun drawValue(
@@ -181,10 +183,19 @@ internal class DrawingManager(carContext: CarContext) {
 
     fun drawDivider(
         start: Float,
+        width: Float,
         verticalPos: Float,
-        width: Float
     ) {
-        paint.color = colorPhilippineGreen
+        return drawDivider(start, width, verticalPos, colorPhilippineGreen)
+    }
+
+    fun drawDivider(
+        start: Float,
+        width: Float,
+        verticalPos: Float,
+        color: Int
+    ) {
+        paint.color = color
         paint.strokeWidth = 2f
         canvas?.drawLine(
             start - 6,
@@ -194,6 +205,8 @@ internal class DrawingManager(carContext: CarContext) {
             paint
         )
     }
+
+    private fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12
 
     private fun calculateDividerHeight() = when (carScreenSettings.maxItemsInColumn()) {
         1 -> 8
