@@ -17,7 +17,7 @@ internal class RenderingThread(private val surfaceController: SurfaceController)
 
 
     fun start() {
-        Log.e(LOG_KEY, "Submitting rendering task")
+        Log.i(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(getRenderingTask(surfaceController))
         Log.i(LOG_KEY, "Rendering task is submitted")
     }

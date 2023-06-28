@@ -7,7 +7,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import androidx.core.content.ContextCompat
-import org.obd.graphs.R.color
+import org.obd.graphs.commons.R
 import org.obd.graphs.getContext
 
 fun String.colorize(color: Int, typeface: Int, size: Float) : SpannableString {
@@ -59,10 +59,10 @@ class Colors {
     }
 }
 
-val COLOR_CARDINAL: Int = color(color.cardinal)
-val COLOR_PHILIPPINE_GREEN: Int = color(color.philippine_green)
-val COLOR_RAINBOW_INDIGO: Int = color(color.rainbow_indigo)
-val COLOR_LIGHT_SHADE_GRAY: Int = color(color.light_shade_gray)
-val COLOR_TRANSPARENT: Int = color(color.transparent)
+val COLOR_CARDINAL: Int = color(R.color.cardinal)
+val COLOR_PHILIPPINE_GREEN: Int = color(R.color.philippine_green)
+val COLOR_RAINBOW_INDIGO: Int = color(R.color.rainbow_indigo)
+val COLOR_LIGHT_SHADE_GRAY: Int = color(R.color.light_shade_gray)
+val COLOR_TRANSPARENT: Int = color(R.color.transparent)
 
 fun color(id: Int) = ContextCompat.getColor(getContext()!!, id)

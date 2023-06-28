@@ -25,8 +25,6 @@ internal fun MainActivity.updateAdapterConnectionType() {
     )
 }
 
-
-
 internal fun MainActivity.setupStatusPanel() {
     updateAdapterConnectionType()
     updateVehicleProfile()

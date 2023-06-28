@@ -2,12 +2,16 @@ package org.obd.graphs.aa.renderer
 
 import android.graphics.*
 import androidx.car.app.CarContext
-import androidx.core.content.ContextCompat
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.aa.CarMetric
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.carScreenSettings
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.profile.PROFILE_NAME_PREFIX
+import org.obd.graphs.profile.getSelectedProfile
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 
 const val MARGIN_END = 30
 const val ROW_SPACING = 12
@@ -16,8 +20,6 @@ const val MARGIN_START = 15
 internal class DrawingManager(carContext: CarContext) {
 
     private val valueScaler: ValueScaler = ValueScaler()
-    private val colorCardinal = ContextCompat.getColor(carContext, R.color.cardinal)
-    private val colorPhilippineGreen = ContextCompat.getColor(carContext, R.color.philippine_green)
 
     private val paint = Paint()
     private val statusPaint = Paint()
@@ -31,6 +33,7 @@ internal class DrawingManager(carContext: CarContext) {
     private val statusLabel: String
     private val statusConnected: String
     private val statusDisconnected: String
+    private val profileLabel: String
 
     init {
 
@@ -46,6 +49,7 @@ internal class DrawingManager(carContext: CarContext) {
         paint.isAntiAlias = true
         paint.style = Paint.Style.FILL
 
+        profileLabel = carContext.resources.getString(R.string.status_bar_profile)
         statusLabel = carContext.resources.getString(R.string.status_bar_status)
         statusConnected = carContext.resources.getString(R.string.status_bar_connected)
         statusDisconnected = carContext.resources.getString(R.string.status_bar_disconnected)
@@ -54,7 +58,6 @@ internal class DrawingManager(carContext: CarContext) {
     fun updateCanvas(canvas: Canvas) {
         this.canvas = canvas
     }
-
 
 
     fun drawBackground(area: Rect) {
@@ -78,7 +81,7 @@ internal class DrawingManager(carContext: CarContext) {
         verticalPos: Float,
         it: CarMetric
     ) {
-        paint.color = colorCardinal
+        paint.color = COLOR_CARDINAL
         val progress = valueScaler.scaleToNewRange(
             (it.value ?: it.pid.min).toFloat(),
             it.pid.min.toFloat(), it.pid.max.toFloat(), start, start + width - MARGIN_END
@@ -96,17 +99,17 @@ internal class DrawingManager(carContext: CarContext) {
     fun drawStatusBar(area: Rect): Float {
         val statusVerticalPos = area.top + 4f
         var text = statusLabel
-        val margin = MARGIN_START
-
+        var horizontalAlignment = MARGIN_START.toFloat()
         drawText(
             text,
-            margin.toFloat(),
+            horizontalAlignment,
             statusVerticalPos,
             Color.WHITE,
             12f,
             statusPaint
         )
-        val verticalAlignment = getTextWidth(text, statusPaint) + 2
+
+        horizontalAlignment += getTextWidth(text, statusPaint) + 2f
 
         val color: Int
         if (dataLogger.isRunning()) {
@@ -119,12 +122,37 @@ internal class DrawingManager(carContext: CarContext) {
 
         drawText(
             text,
-            margin.toFloat() + verticalAlignment,
+            horizontalAlignment,
             statusVerticalPos,
             color,
             18f,
             statusPaint
         )
+
+        horizontalAlignment += getTextWidth(text, statusPaint) + 4F
+
+        text = profileLabel
+        drawText(
+            text,
+            horizontalAlignment,
+            statusVerticalPos,
+            Color.WHITE,
+            12f,
+            statusPaint
+        )
+
+        horizontalAlignment += getTextWidth(text, statusPaint) + 4F
+        text = Prefs.getString("$PROFILE_NAME_PREFIX.${getSelectedProfile()}", "")!!
+
+        drawText(
+            text,
+            horizontalAlignment,
+            statusVerticalPos,
+            Color.YELLOW,
+            18f,
+            statusPaint
+        )
+
         return getStatusBarSpacing(area)
     }
 
@@ -186,7 +214,7 @@ internal class DrawingManager(carContext: CarContext) {
         width: Float,
         verticalPos: Float,
     ) {
-        return drawDivider(start, width, verticalPos, colorPhilippineGreen)
+        return drawDivider(start, width, verticalPos, COLOR_PHILIPPINE_GREEN)
     }
 
     fun drawDivider(
