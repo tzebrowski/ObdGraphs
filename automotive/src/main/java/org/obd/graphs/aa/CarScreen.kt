@@ -214,7 +214,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
 
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
-            metricsCollector.collect(it)
+            metricsCollector.append(it)
         }
 
         if (dataLogger.isRunning()) {

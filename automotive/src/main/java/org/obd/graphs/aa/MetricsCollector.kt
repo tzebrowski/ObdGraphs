@@ -12,17 +12,30 @@ class CarMetricsCollector {
     private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
     private val histogram by lazy { dataLogger.diagnostics().histogram() }
 
-    fun metrics() = metrics.values
+    fun metrics() = metrics.values.filter { it.enabled }
 
     fun configure() {
-        metrics = MetricsProvider().findMetrics(carScreenSettings.getSelectedPIDs()).associate {
-            it.command.pid.id to CarMetric(it.command.pid, null, 0.0, 0.0, 0.0)
-        }.toMutableMap()
-
-        Log.i(LOG_KEY, "Rebuilding metrics configuration: $metrics")
+        val ids = carScreenSettings.getSelectedPIDs()
+        Log.i(LOG_KEY, "Rebuilding metrics configuration for: $ids")
+        val newMetrics = MetricsProvider().findMetrics(ids)
+        if (metrics.isEmpty()){
+            metrics = newMetrics.associate {
+                it.command.pid.id to toCarMetric(it)
+            }.toMutableMap()
+        } else {
+            //append new
+            newMetrics.forEach {
+                if (!metrics.containsKey(it.command.pid.id)){
+                    metrics[it.command.pid.id] = toCarMetric(it)
+                }
+            }
+            metrics.forEach { (t, u) ->
+                u.enabled = ids.contains(t)
+            }
+        }
     }
 
-    fun collect(input: ObdMetric?) {
+    fun append(input: ObdMetric?) {
         input?.let { metric ->
             metrics[metric.command.pid.id]?.let {
                 it.value = input.valueToDouble()
@@ -42,4 +55,7 @@ class CarMetricsCollector {
             }
         }
     }
+
+    private fun toCarMetric(it: ObdMetric) = CarMetric(it.command.pid, null, 0.0, 0.0, 0.0)
+
 }

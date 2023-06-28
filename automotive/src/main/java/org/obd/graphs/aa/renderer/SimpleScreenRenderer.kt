@@ -160,7 +160,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
             else -> area.width() / 2
         }
 
-    private fun calculateFontSize(data: MutableCollection<CarMetric>): Int {
+    private fun calculateFontSize(data: List<CarMetric>): Int {
         val maxFontSize = carScreenSettings.maxFontSize()
         return when (data.size) {
             1 -> {

@@ -15,7 +15,8 @@ data class CarMetric(
     var value: Double?,
     var min: Double,
     var max: Double,
-    var avg: Double
+    var avg: Double,
+    var enabled: Boolean = true
 ) {
 
     fun valueToString(): String {
