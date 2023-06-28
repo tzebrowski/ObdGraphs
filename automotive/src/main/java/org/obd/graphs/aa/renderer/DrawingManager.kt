@@ -97,7 +97,7 @@ internal class DrawingManager(carContext: CarContext) {
     }
 
     fun drawStatusBar(area: Rect): Float {
-        val statusVerticalPos = area.top + 4f
+        val statusVerticalPos = area.top + 6f
         var text = statusLabel
         var horizontalAlignment = MARGIN_START.toFloat()
         drawText(

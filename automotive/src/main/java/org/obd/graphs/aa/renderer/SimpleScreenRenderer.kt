@@ -31,9 +31,9 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             drawingManager.drawBackground(area)
 
-            var verticalPos = drawingManager.drawStatusBar(area) + 14
+            var verticalPos = drawingManager.drawStatusBar(area) + 16
 
-            drawingManager.drawDivider(MARGIN_START.toFloat(),area.width().toFloat(),  area.top + 8f, Color.DKGRAY)
+            drawingManager.drawDivider(MARGIN_START.toFloat(),area.width().toFloat(),  area.top + 10f, Color.DKGRAY)
 
             val verticalPosCpy = verticalPos
             var valueHorizontalPos = initialValueHorizontalPos(area)
