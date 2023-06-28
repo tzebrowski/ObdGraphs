@@ -28,20 +28,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
 
     private var renderingThread = RenderingThread(surfaceController)
 
-    init {
 
-        lifecycle.addObserver(this)
-        dataLogger.observe(this) {
-            metricsCollector.collect(it)
-        }
-
-        if (dataLogger.isRunning()) {
-            Log.i(LOG_KEY, "Data logger is running, connecting....")
-            renderingThread.start()
-        } else {
-            Log.i(LOG_KEY, "Data logger is not running.")
-        }
-    }
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -221,5 +208,20 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
         Log.i(LOG_KEY, "Stopping data logging process")
         renderingThread.stop()
         DataLoggerService.stop()
+    }
+
+    init {
+
+        lifecycle.addObserver(this)
+        dataLogger.observe(this) {
+            metricsCollector.collect(it)
+        }
+
+        if (dataLogger.isRunning()) {
+            Log.i(LOG_KEY, "Data logger is running, connecting....")
+            renderingThread.start()
+        } else {
+            Log.i(LOG_KEY, "Data logger is not running.")
+        }
     }
 }
