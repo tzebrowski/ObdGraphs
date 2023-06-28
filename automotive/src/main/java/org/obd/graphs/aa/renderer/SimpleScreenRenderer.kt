@@ -98,6 +98,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                         Color.DKGRAY,
                         footerTitleTextSize
                     )
+
                     drawingManager.drawText(
                         metric.toNumber(metric.avg).toString(),
                         horizontalPos,

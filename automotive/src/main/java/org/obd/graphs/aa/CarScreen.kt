@@ -78,7 +78,10 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                     }
                 }
 
-                PROFILE_CHANGED_EVENT -> metricsCollector.configure()
+                PROFILE_CHANGED_EVENT -> {
+                    metricsCollector.configure()
+                    surfaceController.render()
+                }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     carToast(getCarContext(), R.string.main_activity_toast_connection_connecting)
