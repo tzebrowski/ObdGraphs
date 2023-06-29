@@ -1,5 +1,6 @@
 package org.obd.graphs.aa
 
+import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType
 
@@ -9,7 +10,6 @@ fun Double.round(decimals: Int): Double {
     return kotlin.math.round(this * multiplier) / multiplier
 }
 
-
 data class CarMetric(
     val pid: PidDefinition,
     var value: Double?,
@@ -18,6 +18,10 @@ data class CarMetric(
     var avg: Double,
     var enabled: Boolean = true
 ) {
+
+    companion object {
+        fun newInstance(it: ObdMetric) = CarMetric(it.command.pid, null, 0.0, 0.0, 0.0)
+    }
 
     fun valueToString(): String {
         return if (value == null) {

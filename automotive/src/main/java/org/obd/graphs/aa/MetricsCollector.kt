@@ -3,6 +3,7 @@ package org.obd.graphs.aa
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProvider
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.metrics.api.model.ObdMetric
 
 val metricsCollector = CarMetricsCollector()
@@ -15,22 +16,15 @@ class CarMetricsCollector {
     fun metrics() = metrics.values.filter { it.enabled }
 
     fun configure() {
-        val ids = carScreenSettings.getSelectedPIDs()
-        Log.i(LOG_KEY, "Rebuilding metrics configuration for: $ids")
-        val newMetrics = MetricsProvider().findMetrics(ids)
+        val selectedPIDs = carScreenSettings.getSelectedPIDs()
+        Log.i(LOG_KEY, "Rebuilding metrics configuration for: $selectedPIDs")
         if (metrics.isEmpty()){
-            metrics = newMetrics.associate {
-                it.command.pid.id to toCarMetric(it)
+            metrics = MetricsProvider().findMetrics(dataLoggerPreferences.getPIDsToQuery()).associate {
+                it.command.pid.id to CarMetric.newInstance(it)
             }.toMutableMap()
         } else {
-            //append new
-            newMetrics.forEach {
-                if (!metrics.containsKey(it.command.pid.id)){
-                    metrics[it.command.pid.id] = toCarMetric(it)
-                }
-            }
             metrics.forEach { (t, u) ->
-                u.enabled = ids.contains(t)
+                u.enabled = selectedPIDs.contains(t)
             }
         }
     }
@@ -55,7 +49,4 @@ class CarMetricsCollector {
             }
         }
     }
-
-    private fun toCarMetric(it: ObdMetric) = CarMetric(it.command.pid, null, 0.0, 0.0, 0.0)
-
 }
