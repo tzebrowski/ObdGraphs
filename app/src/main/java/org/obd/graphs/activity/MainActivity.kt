@@ -81,14 +81,16 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupStatusPanel()
         setupPreferences()
 
-        setupConnectedNetworksCallback()
+        network.setupConnectedNetworksCallback()
 
         progressBar {
             it.visibility = View.GONE
         }
 
+
         AlertDialog.Builder(this).run {
             setCancelable(false)
+
             val dialogView: View = this@MainActivity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
             setView(dialogView)
             lockScreenDialog = create()

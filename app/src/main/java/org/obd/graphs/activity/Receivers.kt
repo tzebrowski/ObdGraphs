@@ -7,6 +7,7 @@ import android.graphics.PorterDuffColorFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.SystemClock
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -39,6 +40,15 @@ const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
 internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
+        DATA_LOGGER_WIFI_NOT_CONNECTED -> {
+            getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+            toast(R.string.main_activity_toast_connection_wifi_not_connected)
+        }
+
+        DATA_LOGGER_WIFI_INCORRECT -> {
+            getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+            toast(R.string.main_activity_toast_connection_wifi_incorrect_ssid)
+        }
         SCREEN_LOCK_PROGRESS_EVENT -> {
             lockScreenDialogShow { dialogTitle ->
                 var msg = intent.getExtraParam()
@@ -260,6 +270,8 @@ internal fun MainActivity.registerReceiver() {
         addAction(USB_DEVICE_ATTACHED_EVENT)
         addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
         addAction(AA_EDIT_PREF_SCREEN)
+        addAction(DATA_LOGGER_WIFI_INCORRECT)
+        addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {

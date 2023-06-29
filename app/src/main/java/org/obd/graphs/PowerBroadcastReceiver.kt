@@ -25,8 +25,8 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
             if (powerPreferences.switchNetworkOffOn) {
                 true.run {
-                    bluetooth(this)
-                    wifi(this)
+                    network.bluetooth(this)
+                    network.wifi(this)
                     jobScheduler.scheduleDataLogger()
                 }
             } else {
@@ -41,8 +41,8 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
             if (powerPreferences.switchNetworkOffOn) {
-                bluetooth(false)
-                wifi(false)
+                network. bluetooth(false)
+                network.wifi(false)
             }
 
             if (powerPreferences.connectOnPower) {

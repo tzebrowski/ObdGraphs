@@ -5,8 +5,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.bluetoothAdapter
-import org.obd.graphs.requestBluetoothPermissions
+import org.obd.graphs.network
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 import java.util.*
@@ -70,7 +69,7 @@ class BluetoothAdaptersListPreferences(
     private fun getDeviceList(handler: (device: Device) -> Unit) {
 
         try {
-            bluetoothAdapter()?.run {
+            network.bluetoothAdapter()?.run {
                 bondedDevices
                     .sortedBy { currentDevice -> currentDevice.name }
                     .forEach { currentDevice ->
@@ -78,7 +77,7 @@ class BluetoothAdaptersListPreferences(
                     }
             }
         } catch (e: SecurityException) {
-            requestBluetoothPermissions()
+            network.requestBluetoothPermissions()
         }
     }
 }

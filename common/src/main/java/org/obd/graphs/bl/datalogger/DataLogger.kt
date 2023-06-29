@@ -3,7 +3,6 @@ package org.obd.graphs.bl.datalogger
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
@@ -28,6 +27,8 @@ const val RESOURCE_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
 const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
 const val DATA_LOGGER_ADAPTER_NOT_SET_EVENT = "data.logger.adapter.not_set"
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
+const val DATA_LOGGER_WIFI_INCORRECT = "data.logger.error.wifi.incorrect"
+const val DATA_LOGGER_WIFI_NOT_CONNECTED = "data.logger.error.wifi.not.connected"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
 const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
@@ -193,7 +194,7 @@ class DataLogger internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             null
         } else {
-            if (findBluetoothAdapterByName(deviceName) == null) {
+            if (network.findBluetoothAdapterByName(deviceName) == null) {
                 Log.e(LOGGER_TAG, "Did not find Bluetooth Adapter: $deviceName")
                 sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                 null
@@ -207,27 +208,38 @@ class DataLogger internal constructor() {
         null
     }
 
-    private fun wifiConnection() = try {
-        Log.i(
-            LOGGER_TAG,
-            "Creating TCP connection: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
-        )
+    private fun wifiConnection(): WifiConnection? {
+        try {
 
-        Log.e("!!!!!!!!!!!!!!!!!!","Preferences selected SSID: ${dataLoggerPreferences.instance.wifiSSID}")
-        Log.e("!!!!!!!!!!!!!!!!!!","Current connected SSID $currentSSID")
-        if (dataLoggerPreferences.instance.wifiSSID.isEmpty()){
+            Log.i(
+                LOGGER_TAG,
+                "Creating TCP connection to: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
+            )
 
-        } else if (dataLoggerPreferences.instance.wifiSSID != currentSSID) {
-            Log.e("!!!!!!!!!!!!!!!!!!","Preferences selected SSID ${dataLoggerPreferences.instance.wifiSSID} is different than current connected $currentSSID")
-            getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-            null
+            Log.i(LOGGER_TAG, "Selected WIFI SSID in preferences: ${dataLoggerPreferences.instance.wifiSSID}")
+            Log.i(LOGGER_TAG, "Current connected WIFI SSID ${network.currentSSID}")
+
+            if (dataLoggerPreferences.instance.wifiSSID.isEmpty()) {
+                Log.d(LOGGER_TAG, "Target WIFI SSID is not specified in the prefs section. Connecting to the default one.")
+            } else if (network.currentSSID.isNullOrBlank()) {
+                sendBroadcastEvent(DATA_LOGGER_WIFI_NOT_CONNECTED)
+                return null
+            }  else if (dataLoggerPreferences.instance.wifiSSID != network.currentSSID) {
+                Log.w(
+                    LOGGER_TAG,
+                    "Preferences selected WIFI SSID ${dataLoggerPreferences.instance.wifiSSID} " +
+                            "is different than current connected ${network.currentSSID}"
+                )
+                sendBroadcastEvent(DATA_LOGGER_WIFI_INCORRECT)
+                return null
+            }
+            return WifiConnection.of()
+
+        } catch (e: Exception) {
+            Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
+            sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
         }
-
-        WifiConnection.of()
-    } catch (e: Exception) {
-        Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
-        sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
-        null
+        return null
     }
 
     private fun init() = Init.builder()
