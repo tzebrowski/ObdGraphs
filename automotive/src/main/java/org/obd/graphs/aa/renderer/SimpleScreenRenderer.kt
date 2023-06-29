@@ -3,8 +3,10 @@ package org.obd.graphs.aa.renderer
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.util.Log
 import androidx.car.app.CarContext
 import org.obd.graphs.aa.CarMetric
+import org.obd.graphs.aa.LOG_KEY
 import org.obd.graphs.aa.carScreenSettings
 import org.obd.graphs.aa.metricsCollector
 import kotlin.math.min
@@ -48,8 +50,13 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
             }
 
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
-
+                
                 chunk.forEach { metric ->
+                    if (verticalPos > area.height()){
+                        Log.v(LOG_KEY, "Skipping entry to display verticalPos=$verticalPos},area.height=${area.height()}")
+                        return@forEach
+                    }
+
                     val footerValueTextSize = textSize.toFloat() / infoDiv
                     val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
                     var horizontalPos = margin.toFloat()
@@ -121,6 +128,8 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     )
 
                     verticalPos += textHeight.toFloat() + 10
+                    Log.e("AAAA", "verticalPos = $verticalPos")
+
                 }
 
                 if (carScreenSettings.maxItemsInColumn() > 1) {
@@ -128,6 +137,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                 }
 
                 margin += calculateMargin(area)
+
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
             }
         }
