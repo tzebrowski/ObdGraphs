@@ -68,7 +68,6 @@ class WifiSSIDListPreferences(
     }
 
     private fun getDeviceList(handler: (device: SSID) -> Unit) {
-        handler(SSID(""))
         network.findWifiSSID().forEach {
             handler(SSID(it))
         }
