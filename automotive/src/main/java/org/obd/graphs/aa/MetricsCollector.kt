@@ -24,11 +24,10 @@ class CarMetricsCollector {
             metrics = MetricsProvider().findMetrics(pidsToQuery).associate {
                 it.command.pid.id to CarMetric.newInstance(it)
             }.toMutableMap()
-        } else {
-            Log.i(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
-            metrics.forEach { (t, u) ->
-                u.enabled = selectedPIDs.contains(t)
-            }
+        }
+        Log.i(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
+        metrics.forEach { (t, u) ->
+            u.enabled = selectedPIDs.contains(t)
         }
     }
 

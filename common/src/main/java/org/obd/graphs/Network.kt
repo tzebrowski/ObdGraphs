@@ -90,7 +90,7 @@ class Network {
     private fun readSSID(networkCapabilities: NetworkCapabilities): String? {
         val wifiInfo = networkCapabilities.transportInfo as WifiInfo?
         val ssid = wifiInfo?.ssid?.trim()?.replace("\"", "")
-        Log.d(LOG_LEVEL, "Wifi state changed, current WIFI SSID: $ssid")
+        Log.i(LOG_LEVEL, "Wifi state changed, current WIFI SSID: $ssid, $wifiInfo")
         return ssid
     }
 

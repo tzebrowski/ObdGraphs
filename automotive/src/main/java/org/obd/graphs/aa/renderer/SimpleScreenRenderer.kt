@@ -41,7 +41,13 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            metrics.chunked(carScreenSettings.maxItemsInColumn()).forEach { chunk ->
+            var maxItemsInColumn = carScreenSettings.maxItemsInColumn()
+
+            if (metrics.size > 10){
+                maxItemsInColumn = metrics.size/2
+            }
+
+            metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
                 chunk.forEach { metric ->
                     val footerValueTextSize = textSize.toFloat() / infoDiv
