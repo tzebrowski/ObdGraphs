@@ -1,5 +1,6 @@
 package org.obd.graphs.aa
 
+import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import android.view.Surface
@@ -34,21 +35,20 @@ class SurfaceController(private val carContext: CarContext) :
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface visible area changed")
                 this@SurfaceController.visibleArea = visibleArea
-                render()
+                renderFrame()
             }
         }
 
         override fun onStableAreaChanged(stableArea: Rect) {
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface stable area changed")
-                render()
+                renderFrame()
             }
         }
 
         override fun onSurfaceDestroyed(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface destroyed")
-                surface?.release()
                 surface = null
             }
         }
@@ -68,16 +68,18 @@ class SurfaceController(private val carContext: CarContext) :
     }
 
     fun onCarConfigurationChanged() {
-        render()
+        renderFrame()
     }
 
-    fun render() {
+    fun renderFrame() {
         surface?.let {
             if (it.isValid && !surfaceLocked) {
                 try {
                     val canvas = it.lockCanvas(null)
+                    canvas.drawColor(if (carContext.isDarkMode) Color.DKGRAY else Color.LTGRAY)
+
                     surfaceLocked = true
-                    renderer.render(
+                    renderer.onDraw(
                         canvas = canvas,
                         visibleArea = visibleArea
                     )
@@ -85,7 +87,6 @@ class SurfaceController(private val carContext: CarContext) :
                 } catch (e: IllegalArgumentException) {
                     try {
                         Log.e(LOG_KEY, "Canvas already locked. Destroying currently allocated surface",e)
-                        it.release()
                         surface = null
                     } finally {
                         carToast(carContext, R.string.pref_aa_reopen_app)

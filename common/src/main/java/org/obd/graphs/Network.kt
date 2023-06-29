@@ -19,7 +19,6 @@ private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
 
 val network = Network()
-
 class Network {
 
     var currentSSID: String? = ""
@@ -63,6 +62,7 @@ class Network {
                         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                             currentSSID = readSSID(networkCapabilities)
                         }
+
                     }
                 }
                 else -> null

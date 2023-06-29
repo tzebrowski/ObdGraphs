@@ -16,7 +16,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
     private val drawingManager = DrawingManager(carContext)
 
-    override fun render(canvas: Canvas, visibleArea: Rect?) {
+    override fun onDraw(canvas: Canvas, visibleArea: Rect?) {
 
         visibleArea?.let { area ->
 
@@ -50,12 +50,8 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
             }
 
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
-                
+
                 chunk.forEach { metric ->
-                    if (verticalPos > area.height()){
-                        Log.v(LOG_KEY, "Skipping entry to display verticalPos=$verticalPos},area.height=${area.height()}")
-                        return@forEach
-                    }
 
                     val footerValueTextSize = textSize.toFloat() / infoDiv
                     val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
@@ -128,8 +124,11 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     )
 
                     verticalPos += textHeight.toFloat() + 10
-                    Log.e("AAAA", "verticalPos = $verticalPos")
 
+                    if (verticalPos > area.height()){
+                        Log.v(LOG_KEY, "Skipping entry to display verticalPos=$verticalPos},area.height=${area.height()}")
+                        return@forEach
+                    }
                 }
 
                 if (carScreenSettings.maxItemsInColumn() > 1) {
@@ -137,7 +136,6 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                 }
 
                 margin += calculateMargin(area)
-
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
             }
         }
@@ -160,7 +158,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
         verticalPos: Float,
         verticalPosCpy: Float
     ): Float = when (carScreenSettings.maxItemsInColumn()) {
-        1 -> verticalPos + (textHeight / 3)
+        1 -> verticalPos + (textHeight / 3)  - 8
         else -> verticalPosCpy
     }
 
@@ -194,7 +192,6 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
             5 -> {
                 maxFontSize
             }
-
             else -> maxFontSize
         }
     }

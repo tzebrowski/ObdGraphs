@@ -35,7 +35,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                     if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         carScreenSettings.applyVirtualScreen1()
                         metricsCollector.configure()
-                        surfaceController.render()
+                        surfaceController.renderFrame()
                     }
                 }
 
@@ -43,7 +43,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                     if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         carScreenSettings.applyVirtualScreen2()
                         metricsCollector.configure()
-                        surfaceController.render()
+                        surfaceController.renderFrame()
                     }
                 }
 
@@ -51,7 +51,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                     if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         carScreenSettings.applyVirtualScreen3()
                         metricsCollector.configure()
-                        surfaceController.render()
+                        surfaceController.renderFrame()
                     }
                 }
 
@@ -59,13 +59,13 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                     if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         carScreenSettings.applyVirtualScreen4()
                         metricsCollector.configure()
-                        surfaceController.render()
+                        surfaceController.renderFrame()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
                     metricsCollector.configure()
-                    surfaceController.render()
+                    surfaceController.renderFrame()
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
@@ -83,7 +83,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 DATA_LOGGER_STOPPED_EVENT -> {
                     carToast(getCarContext(), R.string.main_activity_toast_connection_stopped)
                     renderingThread.stop()
-                    surfaceController.render()
+                    surfaceController.renderFrame()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
@@ -160,23 +160,23 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
         .addAction(createAction(R.drawable.action_virtual_screen_1, CarColor.YELLOW) {
             carScreenSettings.applyVirtualScreen1()
             metricsCollector.configure()
-            surfaceController.render()
+            surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_2, CarColor.YELLOW) {
             carScreenSettings.applyVirtualScreen2()
             metricsCollector.configure()
-            surfaceController.render()
+            surfaceController.renderFrame()
         })
 
         .addAction(createAction(R.drawable.action_virtual_screen_3, CarColor.YELLOW) {
             carScreenSettings.applyVirtualScreen3()
             metricsCollector.configure()
-            surfaceController.render()
+            surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_4, CarColor.YELLOW) {
             carScreenSettings.applyVirtualScreen4()
             metricsCollector.configure()
-            surfaceController.render()
+            surfaceController.renderFrame()
         })
         .build()
 
