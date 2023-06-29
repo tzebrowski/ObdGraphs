@@ -15,7 +15,6 @@ internal class RenderingThread(private val surfaceController: SurfaceController)
 
     private var tasks: Future<*>? = null
 
-
     fun start() {
         Log.i(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(getRenderingTask(surfaceController))

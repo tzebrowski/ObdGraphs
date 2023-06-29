@@ -28,8 +28,6 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
 
     private var renderingThread = RenderingThread(surfaceController)
 
-
-
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
