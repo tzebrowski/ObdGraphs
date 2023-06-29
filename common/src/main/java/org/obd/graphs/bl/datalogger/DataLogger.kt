@@ -3,16 +3,14 @@ package org.obd.graphs.bl.datalogger
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.findBluetoothAdapterByName
-import org.obd.graphs.getContext
-import org.obd.graphs.getModesAndHeaders
 import org.obd.graphs.preferences.vehicleCapabilitiesManager
-import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
@@ -214,6 +212,17 @@ class DataLogger internal constructor() {
             LOGGER_TAG,
             "Creating TCP connection: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
         )
+
+        Log.e("!!!!!!!!!!!!!!!!!!","Preferences selected SSID: ${dataLoggerPreferences.instance.wifiSSID}")
+        Log.e("!!!!!!!!!!!!!!!!!!","Current connected SSID $currentSSID")
+        if (dataLoggerPreferences.instance.wifiSSID.isEmpty()){
+
+        } else if (dataLoggerPreferences.instance.wifiSSID != currentSSID) {
+            Log.e("!!!!!!!!!!!!!!!!!!","Preferences selected SSID ${dataLoggerPreferences.instance.wifiSSID} is different than current connected $currentSSID")
+            getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+            null
+        }
+
         WifiConnection.of()
     } catch (e: Exception) {
         Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")

@@ -13,12 +13,11 @@ import java.util.*
 
 private class Device(val name: String)
 
-class AdaptersListPreferences(
+class BluetoothAdaptersListPreferences(
     context: Context?,
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {
-
     init {
         setOnPreferenceChangeListener{ _,_ ->
             navigateToPreferencesScreen("pref.adapter.connection")

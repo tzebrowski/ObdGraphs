@@ -21,6 +21,7 @@ data class DataLoggerPreferences(
     var pids: MutableSet<Long>,
     var connectionType: String,
     var tcpHost: String,
+    var wifiSSID: String,
     var tcpPort: Int,
     var connectionTimeout: Int,
     var stnExtensionsEnabled: Boolean,
@@ -79,6 +80,8 @@ class DataLoggerPreferencesManager {
 
         val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
+        val wifiSSID = Prefs.getS("pref.adapter.connection.tcp.ssid", "")
+
         val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
         val reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
         val adapterId = Prefs.getS("pref.adapter.id", "OBDII")
@@ -120,6 +123,7 @@ class DataLoggerPreferencesManager {
             connectionType = connectionType,
             tcpHost = tcpHost,
             tcpPort = tcpPort,
+            wifiSSID = wifiSSID,
             batchEnabled = batchEnabled,
             reconnectWhenError = reconnectWhenError,
             adapterId = adapterId,

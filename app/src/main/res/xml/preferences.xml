@@ -116,7 +116,7 @@
                         android:key="pref.adapter.connection.type.bluetooth"
                         android:title="@string/pref.bluetooth_category">
 
-                        <org.obd.graphs.preferences.AdaptersListPreferences
+                        <org.obd.graphs.preferences.BluetoothAdaptersListPreferences
                             android:defaultValue="@array/pref.empty_array"
                             android:dialogTitle="@string/pref.adapter_id"
                             android:key="pref.adapter.id"
@@ -145,6 +145,13 @@
                     <PreferenceCategory
                         android:key="pref.adapter.connection.type.wifi"
                         android:title="@string/pref.wifi_category">
+
+                        <org.obd.graphs.preferences.WifiSSIDListPreferences
+                            android:defaultValue="@array/pref.empty_array"
+                            android:dialogTitle="@string/pref.adapter_connection_tcp_ssid"
+                            android:key="pref.adapter.connection.tcp.ssid"
+                            android:title="@string/pref.adapter_connection_tcp_ssid"
+                            app:useSimpleSummaryProvider="true" />
 
                         <EditTextPreference
                             android:defaultValue="192.168.0.10"

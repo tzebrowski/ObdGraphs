@@ -81,6 +81,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupStatusPanel()
         setupPreferences()
 
+        setupConnectedNetworksCallback()
+
         progressBar {
             it.visibility = View.GONE
         }
