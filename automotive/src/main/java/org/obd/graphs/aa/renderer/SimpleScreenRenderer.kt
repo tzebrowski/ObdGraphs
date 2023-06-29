@@ -33,7 +33,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             drawingManager.drawBackground(area)
 
-            var verticalPos = drawingManager.drawStatusBar(area) + 16
+            var verticalPos = drawingManager.drawStatusBar(area) + 18
 
             drawingManager.drawDivider(MARGIN_START.toFloat(),area.width().toFloat(),  area.top + 10f, Color.DKGRAY)
 
@@ -64,7 +64,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     drawingManager.drawValue(
                         metric,
                         valueHorizontalPos,
-                        verticalPos + 12,
+                        verticalPos + 10,
                         textSize.toFloat() + 14
                     )
 
