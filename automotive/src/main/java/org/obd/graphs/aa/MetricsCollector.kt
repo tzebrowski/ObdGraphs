@@ -17,12 +17,15 @@ class CarMetricsCollector {
 
     fun configure() {
         val selectedPIDs = carScreenSettings.getSelectedPIDs()
-        Log.i(LOG_KEY, "Rebuilding metrics configuration for: $selectedPIDs")
-        if (metrics.isEmpty()){
-            metrics = MetricsProvider().findMetrics(dataLoggerPreferences.getPIDsToQuery()).associate {
+        val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
+
+        if (metrics.isEmpty() || metrics.size !=pidsToQuery.size){
+            Log.i(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
+            metrics = MetricsProvider().findMetrics(pidsToQuery).associate {
                 it.command.pid.id to CarMetric.newInstance(it)
             }.toMutableMap()
         } else {
+            Log.i(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
             metrics.forEach { (t, u) ->
                 u.enabled = selectedPIDs.contains(t)
             }
