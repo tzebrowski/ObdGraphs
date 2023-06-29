@@ -53,7 +53,9 @@ class DataLoggerPreferencesManager {
     private inner class SharedPreferenceChangeListener :
         SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-            Log.d(LOGGER_TAG, "Key to update $key")
+            if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
+                Log.v(LOGGER_TAG, "Key to update $key")
+            }
             instance = loadPreferences()
         }
     }
@@ -143,7 +145,10 @@ class DataLoggerPreferencesManager {
             delayAfterReset = delayAfterReset
         )
 
-        Log.d(LOGGER_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
+        if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
+            Log.v(LOGGER_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
+        }
+
         return dataLoggerPreferences
     }
 
