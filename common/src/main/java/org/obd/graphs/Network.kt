@@ -40,14 +40,20 @@ class Network {
     fun findWifiSSID(): List<String> {
         return if (EasyPermissions.hasPermissions(getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            val wifiManager = getContext()?.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            wifiManager.startScan()
-            val ll = mutableListOf<String>()
-            wifiManager.scanResults.forEach {
-                Log.d(LOG_LEVEL, "Found WIFI SSID: ${it.SSID}")
-                ll.add(it.SSID)
+            try {
+                val wifiManager = getContext()?.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                wifiManager.startScan()
+                val ll = mutableListOf<String>()
+                wifiManager.scanResults.forEach {
+                    Log.d(LOG_LEVEL, "Found WIFI SSID: ${it.SSID}")
+                    ll.add(it.SSID)
+                }
+                ll
+            }catch (e: SecurityException){
+                Log.e(LOG_LEVEL,"Used does not has access to ACCESS_COARSE_LOCATION permission.")
+                sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
+                emptyList()
             }
-            ll
         } else {
             Log.e(LOG_LEVEL,"Used does not has access to ACCESS_COARSE_LOCATION permission.")
             sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
