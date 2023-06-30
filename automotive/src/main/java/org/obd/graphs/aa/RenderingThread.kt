@@ -29,6 +29,10 @@ internal class RenderingThread(surfaceController: SurfaceController) {
         }
     }
 
+    fun isRunning(): Boolean {
+        return tasks != null && !tasks!!.isDone
+    }
+
     fun start() {
         Log.i(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(getRenderingTask())

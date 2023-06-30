@@ -12,6 +12,7 @@ import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.renderer.ScreenRenderer
+import org.obd.graphs.sendBroadcastEvent
 
 
 class SurfaceController(private val carContext: CarContext) :
@@ -42,6 +43,7 @@ class SurfaceController(private val carContext: CarContext) :
                 Log.i(LOG_KEY, "Surface visible area changed")
                 this@SurfaceController.visibleArea = visibleArea
                 renderFrame()
+                sendBroadcastEvent(SURFACE_VISIBLE_AREA_CHANGED_EVENT)
             }
         }
 
@@ -56,6 +58,7 @@ class SurfaceController(private val carContext: CarContext) :
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface destroyed")
                 surface = null
+                sendBroadcastEvent(SURFACE_DESTROYED_EVENT)
             }
         }
     }

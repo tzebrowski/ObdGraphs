@@ -21,6 +21,8 @@ private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.ev
 private const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
 private const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
 private const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
+const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
+const val SURFACE_VISIBLE_AREA_CHANGED_EVENT = "car.event.surface.visible_area_changed"
 
 internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
@@ -31,6 +33,15 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                SURFACE_DESTROYED_EVENT -> {
+                    renderingThread.stop()
+                }
+                SURFACE_VISIBLE_AREA_CHANGED_EVENT -> {
+                    if (!renderingThread.isRunning() && dataLogger.isRunning()){
+                        renderingThread.start()
+                    }
+                }
+
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         carSettings.applyVirtualScreen1()
@@ -118,6 +129,8 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
             addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
+            addAction(SURFACE_DESTROYED_EVENT)
+            addAction(SURFACE_VISIBLE_AREA_CHANGED_EVENT)
         })
     }
 
