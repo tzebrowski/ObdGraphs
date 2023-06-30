@@ -1,6 +1,5 @@
-package org.obd.graphs.aa.renderer
+package org.obd.graphs.aa
 
-import org.obd.graphs.aa.round
 import java.util.*
 
 private const val MAX_SIZE = 100
@@ -9,13 +8,23 @@ private const val NANOS = 1000000000.0
 val fps = Fps()
 
 class Fps {
-    var times: LinkedList<Long> = object : LinkedList<Long>() {
-        init {
-            add(System.nanoTime())
-        }
+    var times: LinkedList<Long> = LinkedList<Long>()
+
+    fun start() {
+        times.clear()
+        times.add(System.nanoTime())
+    }
+    fun stop() {
+        times.clear()
     }
 
     fun get(): Double {
+
+        if (times.size == 0){
+            times.clear()
+            return 0.0
+        }
+
         val lastTime = System.nanoTime()
         val difference = (lastTime - times.first) / NANOS
 
@@ -26,6 +35,6 @@ class Fps {
             times.removeFirst()
         }
 
-        return if (difference > 0) (times.size / difference).round(2) else 0.0
+        return if (difference > 0) (times.size / difference).round(3) else 0.0
     }
 }

@@ -35,10 +35,12 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
             when (intent?.action) {
                 SURFACE_DESTROYED_EVENT -> {
                     renderingThread.stop()
+                    fps.stop()
                 }
                 SURFACE_VISIBLE_AREA_CHANGED_EVENT -> {
                     if (!renderingThread.isRunning() && dataLogger.isRunning()){
                         renderingThread.start()
+                        fps.start()
                     }
                 }
 
@@ -100,6 +102,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 DATA_LOGGER_CONNECTED_EVENT -> {
                     carToast(getCarContext(), R.string.main_activity_toast_connection_established)
                     renderingThread.start()
+                    fps.start()
                 }
 
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
@@ -217,6 +220,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
 
     private fun stopDataLogging() {
         Log.i(LOG_KEY, "Stopping data logging process")
+        fps.stop()
         renderingThread.stop()
         DataLoggerService.stop()
     }

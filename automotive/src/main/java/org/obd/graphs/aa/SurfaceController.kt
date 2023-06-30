@@ -74,6 +74,7 @@ class SurfaceController(private val carContext: CarContext) :
         Log.i(LOG_KEY, "SurfaceRenderer destroyed")
         surface?.release()
         surface = null
+
     }
 
     fun onCarConfigurationChanged() {
