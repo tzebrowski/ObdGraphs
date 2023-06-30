@@ -59,7 +59,8 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
                     drawingManager.drawTitle(
                         metric, horizontalPos, verticalPos,
-                        calculateTitleTextSize(textSize)
+                        calculateTitleTextSize(textSize),
+                        carScreenSettings.maxItemsInColumn()
                     )
                     drawingManager.drawValue(
                         metric,

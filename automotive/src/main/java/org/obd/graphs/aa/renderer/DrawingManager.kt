@@ -82,6 +82,7 @@ internal class DrawingManager(carContext: CarContext) {
         it: CarMetric
     ) {
         paint.color = COLOR_CARDINAL
+
         val progress = valueScaler.scaleToNewRange(
             (it.value ?: it.pid.min).toFloat(),
             it.pid.min.toFloat(), it.pid.max.toFloat(), start, start + width - MARGIN_END
@@ -179,19 +180,44 @@ internal class DrawingManager(carContext: CarContext) {
         metric: CarMetric,
         horizontalPos: Float,
         verticalPos: Float,
-        textSize: Float
+        textSize: Float,
+        maxItemsInColumn: Int
     ) {
 
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
         paint.color = Color.LTGRAY
         paint.textSize = textSize
-        val text = metric.pid.description.replace("\n", " ")
-        canvas?.drawText(
-            text,
-            horizontalPos,
-            verticalPos,
-            paint
-        )
+        if (maxItemsInColumn == 1) {
+            val text = metric.pid.description.replace("\n"," ")
+            canvas?.drawText(
+                text,
+                horizontalPos,
+                verticalPos,
+                paint
+            )
+        } else {
+            val text = metric.pid.description.split("\n")
+            if (text.size == 1) {
+                canvas?.drawText(
+                    text[0],
+                    horizontalPos,
+                    verticalPos,
+                    paint
+                )
+            } else {
+                paint.textSize = textSize * 0.8f
+                var vPos = verticalPos - 12
+                text.forEach {
+                    canvas?.drawText(
+                        it,
+                        horizontalPos,
+                        vPos,
+                        paint
+                    )
+                    vPos += paint.textSize
+                }
+            }
+        }
     }
 
     private fun drawText(
@@ -248,7 +274,7 @@ internal class DrawingManager(carContext: CarContext) {
     }
 
     private fun calculateProgressBarHeight() = when (carScreenSettings.maxItemsInColumn()) {
-        1 -> 24
-        else -> 11
+        1 -> 18
+        else -> 10
     }
 }
