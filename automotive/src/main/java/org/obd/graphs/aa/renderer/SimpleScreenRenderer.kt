@@ -5,10 +5,8 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import androidx.car.app.CarContext
-import org.obd.graphs.aa.CarMetric
+import org.obd.graphs.aa.*
 import org.obd.graphs.aa.LOG_KEY
-import org.obd.graphs.aa.carSettings
-import org.obd.graphs.aa.metricsCollector
 import kotlin.math.min
 
 
@@ -33,7 +31,8 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             drawingManager.drawBackground(area)
 
-            var verticalPos = drawingManager.drawStatusBar(area) + 18
+            val fps = fps.get()
+            var verticalPos = drawingManager.drawStatusBar(area, fps) + 18
 
             drawingManager.drawDivider(MARGIN_START.toFloat(),area.width().toFloat(),  area.top + 10f, Color.DKGRAY)
 
@@ -143,6 +142,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
             }
         }
     }
+
 
     private fun calculateTitleTextSize(textSize: Int): Float =
         when (carSettings.maxItemsInColumn()) {

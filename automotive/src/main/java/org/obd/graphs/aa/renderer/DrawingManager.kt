@@ -34,6 +34,7 @@ internal class DrawingManager(carContext: CarContext) {
     private val statusConnected: String
     private val statusDisconnected: String
     private val profileLabel: String
+    private val fpsLabel: String
 
     init {
 
@@ -50,6 +51,7 @@ internal class DrawingManager(carContext: CarContext) {
         paint.style = Paint.Style.FILL
 
         profileLabel = carContext.resources.getString(R.string.status_bar_profile)
+        fpsLabel = carContext.resources.getString(R.string.status_bar_fps)
         statusLabel = carContext.resources.getString(R.string.status_bar_status)
         statusConnected = carContext.resources.getString(R.string.status_bar_connected)
         statusDisconnected = carContext.resources.getString(R.string.status_bar_disconnected)
@@ -97,7 +99,7 @@ internal class DrawingManager(carContext: CarContext) {
         )
     }
 
-    fun drawStatusBar(area: Rect): Float {
+    fun drawStatusBar(area: Rect, fps: Double): Float {
         val statusVerticalPos = area.top + 6f
         var text = statusLabel
         var horizontalAlignment = MARGIN_START.toFloat()
@@ -130,7 +132,7 @@ internal class DrawingManager(carContext: CarContext) {
             statusPaint
         )
 
-        horizontalAlignment += getTextWidth(text, statusPaint) + 4F
+        horizontalAlignment += getTextWidth(text, statusPaint) + 12F
 
         text = profileLabel
         drawText(
@@ -151,6 +153,27 @@ internal class DrawingManager(carContext: CarContext) {
             statusVerticalPos,
             Color.YELLOW,
             18f,
+            statusPaint
+        )
+
+        horizontalAlignment += getTextWidth(text, statusPaint) + 12F
+        text = fpsLabel
+        drawText(
+            text,
+            horizontalAlignment,
+            statusVerticalPos,
+            Color.WHITE,
+            12f,
+            statusPaint
+        )
+
+        horizontalAlignment += getTextWidth(text, statusPaint) + 4F
+        drawText(
+            fps.toString(),
+            horizontalAlignment,
+            statusVerticalPos,
+            Color.YELLOW,
+            16f,
             statusPaint
         )
 
