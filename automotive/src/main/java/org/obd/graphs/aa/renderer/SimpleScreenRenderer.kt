@@ -51,7 +51,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
-                chunk.forEach { metric ->
+                chunk.forEach lit@ { metric ->
 
                     val footerValueTextSize = textSize.toFloat() / infoDiv
                     val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
@@ -126,8 +126,10 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     verticalPos += textHeight.toFloat() + 10
 
                     if (verticalPos > area.height()){
-                        Log.v(LOG_KEY, "Skipping entry to display verticalPos=$verticalPos},area.height=${area.height()}")
-                        return@forEach
+                        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                            Log.v(LOG_KEY, "Skipping entry to display verticalPos=$verticalPos},area.height=${area.height()}")
+                        }
+                        return@lit
                     }
                 }
 

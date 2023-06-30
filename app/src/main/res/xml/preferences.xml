@@ -615,8 +615,6 @@
                         android:summary="@string/pref.displayed_parameter_ids_summary"
                         android:title="@string/pref.aa.profile_4.displayed_parameter_ids" />
 
-
-
                 </PreferenceCategory>
 
                 <ListPreference
@@ -646,7 +644,7 @@
                     app:singleLineTitle="false"
                     android:entries="@array/pref.aa.fps"
                     android:entryValues="@array/pref.aa.fps"
-                    android:defaultValue="20"
+                    android:defaultValue="10"
                     android:dialogTitle="@string/pref.aa.surface.fps"
                     android:inputType="number"
                     android:key="pref.aa.surface.fps"
