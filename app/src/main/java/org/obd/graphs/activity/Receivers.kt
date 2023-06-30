@@ -41,7 +41,7 @@ internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
         REQUEST_LOCATION_PERMISSIONS ->{
-            requestLocationPermissions()
+            permissions.requestLocationPermissions(this)
         }
 
         DATA_LOGGER_WIFI_NOT_CONNECTED -> {
@@ -88,7 +88,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         REQUEST_PERMISSIONS_BT -> {
-            requestBluetoothPermissions()
+            permissions.requestBluetoothPermissions(this)
         }
 
 

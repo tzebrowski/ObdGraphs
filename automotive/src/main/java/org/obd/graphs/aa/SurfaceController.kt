@@ -2,6 +2,7 @@ package org.obd.graphs.aa
 
 import android.graphics.Color
 import android.graphics.Rect
+import android.os.Build
 import android.util.Log
 import android.view.Surface
 import androidx.car.app.AppManager
@@ -27,6 +28,11 @@ class SurfaceController(private val carContext: CarContext) :
                 Log.i(LOG_KEY, "Surface is now available")
                 surface?.release()
                 surface = surfaceContainer.surface
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val frameRate = carSettings.getSurfaceFrameRate() + 5f
+                    Log.i(LOG_KEY,"Setting surface Frame Rate to=$frameRate")
+                    surface?.setFrameRate(frameRate,Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
+                }
                 metricsCollector.configure()
             }
         }

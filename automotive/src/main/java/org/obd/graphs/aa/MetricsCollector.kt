@@ -16,7 +16,7 @@ class CarMetricsCollector {
     fun metrics() = metrics.values.filter { it.enabled }
 
     fun configure() {
-        val selectedPIDs = carScreenSettings.getSelectedPIDs()
+        val selectedPIDs = carSettings.getSelectedPIDs()
         val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
 
         if (metrics.isEmpty() || metrics.size !=pidsToQuery.size){

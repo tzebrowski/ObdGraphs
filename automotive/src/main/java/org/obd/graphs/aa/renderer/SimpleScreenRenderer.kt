@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.car.app.CarContext
 import org.obd.graphs.aa.CarMetric
 import org.obd.graphs.aa.LOG_KEY
-import org.obd.graphs.aa.carScreenSettings
+import org.obd.graphs.aa.carSettings
 import org.obd.graphs.aa.metricsCollector
 import kotlin.math.min
 
@@ -43,7 +43,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            var maxItemsInColumn = carScreenSettings.maxItemsInColumn()
+            var maxItemsInColumn = carSettings.maxItemsInColumn()
 
             if (metrics.size > 10){
                 maxItemsInColumn = metrics.size/2
@@ -60,7 +60,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     drawingManager.drawTitle(
                         metric, horizontalPos, verticalPos,
                         calculateTitleTextSize(textSize),
-                        carScreenSettings.maxItemsInColumn()
+                        carSettings.maxItemsInColumn()
                     )
                     drawingManager.drawValue(
                         metric,
@@ -134,7 +134,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     }
                 }
 
-                if (carScreenSettings.maxItemsInColumn() > 1) {
+                if (carSettings.maxItemsInColumn() > 1) {
                     valueHorizontalPos += area.width() / 2 - 18
                 }
 
@@ -145,13 +145,13 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
     }
 
     private fun calculateTitleTextSize(textSize: Int): Float =
-        when (carScreenSettings.maxItemsInColumn()) {
+        when (carSettings.maxItemsInColumn()) {
             1 -> textSize.toFloat()
             else -> textSize / 1.1f
         }
 
     private fun initialValueHorizontalPos(area: Rect): Float =
-        when (carScreenSettings.maxItemsInColumn()) {
+        when (carSettings.maxItemsInColumn()) {
             1 -> ((area.width()) - 32).toFloat()
             else -> ((area.width() / 2) - 32).toFloat()
         }
@@ -160,25 +160,25 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
         textHeight: Int,
         verticalPos: Float,
         verticalPosCpy: Float
-    ): Float = when (carScreenSettings.maxItemsInColumn()) {
+    ): Float = when (carSettings.maxItemsInColumn()) {
         1 -> verticalPos + (textHeight / 3)  - 8
         else -> verticalPosCpy
     }
 
     private fun calculateMargin(area: Rect): Int =
-        when (carScreenSettings.maxItemsInColumn()) {
+        when (carSettings.maxItemsInColumn()) {
             1 -> 0
             else -> (area.width() / 2)
         }
 
     private fun itemWidth(area: Rect): Int =
-        when (carScreenSettings.maxItemsInColumn()) {
+        when (carSettings.maxItemsInColumn()) {
             1 -> area.width()
             else -> area.width() / 2
         }
 
     private fun calculateFontSize(data: List<CarMetric>): Int {
-        val maxFontSize = carScreenSettings.maxFontSize()
+        val maxFontSize = carSettings.maxFontSize()
         return when (data.size) {
             1 -> {
                 (maxFontSize * 3)

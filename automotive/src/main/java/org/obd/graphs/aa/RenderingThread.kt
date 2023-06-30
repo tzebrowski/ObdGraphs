@@ -4,8 +4,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getS
 import java.util.concurrent.*
 
 private const val MSG_RENDER_FRAME = 1
@@ -45,7 +43,7 @@ internal class RenderingThread(surfaceController: SurfaceController) {
     }
 
     private fun getRenderingTask(): Runnable  = Runnable {
-        val fps = Prefs.getS("pref.aa.surface.fps", "10").toInt()
+        val fps = carSettings.getSurfaceFrameRate()
         Log.i(LOG_KEY, "Expected surface FPS $fps")
         val targetDelay = 1000 / fps
         while (!Thread.currentThread().isInterrupted) {

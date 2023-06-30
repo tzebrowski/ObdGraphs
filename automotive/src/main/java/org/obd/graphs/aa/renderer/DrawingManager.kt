@@ -5,7 +5,7 @@ import androidx.car.app.CarContext
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.aa.CarMetric
 import org.obd.graphs.aa.R
-import org.obd.graphs.aa.carScreenSettings
+import org.obd.graphs.aa.carSettings
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.profile.PROFILE_NAME_PREFIX
@@ -262,7 +262,7 @@ internal class DrawingManager(carContext: CarContext) {
 
     private fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12
 
-    private fun calculateDividerHeight() = when (carScreenSettings.maxItemsInColumn()) {
+    private fun calculateDividerHeight() = when (carSettings.maxItemsInColumn()) {
         1 -> 8
         else -> 4
     }
@@ -273,7 +273,7 @@ internal class DrawingManager(carContext: CarContext) {
         return bounds.left + bounds.width()
     }
 
-    private fun calculateProgressBarHeight() = when (carScreenSettings.maxItemsInColumn()) {
+    private fun calculateProgressBarHeight() = when (carSettings.maxItemsInColumn()) {
         1 -> 18
         else -> 10
     }

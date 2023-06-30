@@ -32,32 +32,32 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
-                    if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
-                        carScreenSettings.applyVirtualScreen1()
+                    if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
+                        carSettings.applyVirtualScreen1()
                         metricsCollector.configure()
                         surfaceController.renderFrame()
                     }
                 }
 
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
-                    if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
-                        carScreenSettings.applyVirtualScreen2()
+                    if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
+                        carSettings.applyVirtualScreen2()
                         metricsCollector.configure()
                         surfaceController.renderFrame()
                     }
                 }
 
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
-                    if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
-                        carScreenSettings.applyVirtualScreen3()
+                    if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
+                        carSettings.applyVirtualScreen3()
                         metricsCollector.configure()
                         surfaceController.renderFrame()
                     }
                 }
 
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
-                    if (carScreenSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
-                        carScreenSettings.applyVirtualScreen4()
+                    if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
+                        carSettings.applyVirtualScreen4()
                         metricsCollector.configure()
                         surfaceController.renderFrame()
                     }
@@ -158,23 +158,23 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
     private fun profilesActionStrip(): ActionStrip = ActionStrip.Builder()
 
         .addAction(createAction(R.drawable.action_virtual_screen_1, CarColor.YELLOW) {
-            carScreenSettings.applyVirtualScreen1()
+            carSettings.applyVirtualScreen1()
             metricsCollector.configure()
             surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_2, CarColor.YELLOW) {
-            carScreenSettings.applyVirtualScreen2()
+            carSettings.applyVirtualScreen2()
             metricsCollector.configure()
             surfaceController.renderFrame()
         })
 
         .addAction(createAction(R.drawable.action_virtual_screen_3, CarColor.YELLOW) {
-            carScreenSettings.applyVirtualScreen3()
+            carSettings.applyVirtualScreen3()
             metricsCollector.configure()
             surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_4, CarColor.YELLOW) {
-            carScreenSettings.applyVirtualScreen4()
+            carSettings.applyVirtualScreen4()
             metricsCollector.configure()
             surfaceController.renderFrame()
         })

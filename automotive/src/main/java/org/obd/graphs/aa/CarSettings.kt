@@ -8,15 +8,18 @@ private const val PREF_MAX_PIDS_IN_COLUMN = "pref.aa.max_pids_in_column"
 private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
 private const val DEFAULT_ITEMS_IN_COLUMN = "6"
 private const val DEFAULT_FONT_SIZE = "34"
+private const val SURFACE_FRAME_RATE = "pref.aa.surface.fps"
+private const val DEFAULT_FRAME_RATE = "10"
 
 const val VIRTUAL_SCREEN_1 = "pref.aa.pids.profile_1"
 const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
 const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
-val carScreenSettings = CarScreenSettings()
+val carSettings = CarSettings()
 
-class CarScreenSettings {
+
+class CarSettings {
 
     fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
     fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
@@ -36,6 +39,7 @@ class CarScreenSettings {
         }
     }
 
+    fun getSurfaceFrameRate(): Int =  Prefs.getS(SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
     fun maxFontSize(): Int =
         Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
 
