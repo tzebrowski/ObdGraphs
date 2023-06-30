@@ -45,7 +45,7 @@ internal class RenderingThread(surfaceController: SurfaceController) {
     }
 
     private fun getRenderingTask(): Runnable  = Runnable {
-        val fps = Prefs.getS("pref.aa.surface.fps", "20").toInt()
+        val fps = Prefs.getS("pref.aa.surface.fps", "10").toInt()
         Log.i(LOG_KEY, "Expected surface FPS $fps")
         val targetDelay = 1000 / fps
         while (!Thread.currentThread().isInterrupted) {
