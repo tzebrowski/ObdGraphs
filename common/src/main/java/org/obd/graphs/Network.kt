@@ -1,5 +1,6 @@
 package org.obd.graphs
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
@@ -13,10 +14,12 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import pub.devrel.easypermissions.EasyPermissions
 
 
 private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
+const val REQUEST_LOCATION_PERMISSIONS = "REQUEST_LOCATION_PERMISSION"
 
 val network = Network()
 class Network {
@@ -35,14 +38,21 @@ class Network {
     }
 
     fun findWifiSSID(): List<String> {
-        val wm = getContext()?.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        wm.startScan()
-        val ll = mutableListOf<String>()
-        wm.scanResults.forEach {
-            Log.i(LOG_LEVEL, "Found SSID: ${it.SSID}")
-            ll.add(it.SSID)
+        return if (EasyPermissions.hasPermissions(getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            val wifiManager = getContext()?.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            wifiManager.startScan()
+            val ll = mutableListOf<String>()
+            wifiManager.scanResults.forEach {
+                Log.d(LOG_LEVEL, "Found WIFI SSID: ${it.SSID}")
+                ll.add(it.SSID)
+            }
+            ll
+        } else {
+            Log.e(LOG_LEVEL,"Used does not has access to ACCESS_COARSE_LOCATION permission.")
+            sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
+            emptyList()
         }
-        return ll
     }
 
     fun setupConnectedNetworksCallback() {

@@ -40,6 +40,10 @@ const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
 internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
+        REQUEST_LOCATION_PERMISSIONS ->{
+            requestLocationPermissions()
+        }
+
         DATA_LOGGER_WIFI_NOT_CONNECTED -> {
             getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
             toast(R.string.main_activity_toast_connection_wifi_not_connected)
@@ -272,6 +276,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(AA_EDIT_PREF_SCREEN)
         addAction(DATA_LOGGER_WIFI_INCORRECT)
         addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
+        addAction(REQUEST_LOCATION_PERMISSIONS)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {
