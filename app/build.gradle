@@ -53,9 +53,9 @@ android {
 
         giuliaAA {
             dimension "version"
-            resValue "string", "DEFAULT_PROFILE", "profile_3"
+            resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 24
+            versionCode 25
         }
 
         giulia {
