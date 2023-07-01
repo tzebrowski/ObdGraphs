@@ -57,6 +57,7 @@ class SurfaceController(private val carContext: CarContext) :
         override fun onSurfaceDestroyed(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface destroyed")
+                surface?.release()
                 surface = null
                 sendBroadcastEvent(SURFACE_DESTROYED_EVENT)
             }
@@ -82,31 +83,33 @@ class SurfaceController(private val carContext: CarContext) :
     }
 
     fun renderFrame() {
-        surface?.let {
-            var canvas: Canvas? = null
-            if (it.isValid && !surfaceLocked) {
-                try {
-                    canvas = it.lockCanvas(null)
-                    surfaceLocked = true
-                    renderer.onDraw(
-                        canvas = canvas,
-                        visibleArea = visibleArea
-                    )
-
-                } catch (e: Throwable) {
+        synchronized(this@SurfaceController) {
+            surface?.let {
+                var canvas: Canvas? = null
+                if (it.isValid && !surfaceLocked) {
                     try {
-                        Log.e(LOG_KEY, "Exception was thrown during surface rendering. Finishing the car app.",e)
-                        carToast(carContext,e.message.toString())
-                        surface = null
+                        canvas = it.lockCanvas(null)
+                        surfaceLocked = true
+                        renderer.onDraw(
+                            canvas = canvas,
+                            visibleArea = visibleArea
+                        )
+
+                    } catch (e: Throwable) {
+                        try {
+                            Log.e(LOG_KEY, "Exception was thrown during surface rendering. Finishing the car app.", e)
+                            carToast(carContext, e.message.toString())
+                            surface = null
+                        } finally {
+                            carToast(carContext, R.string.pref_aa_reopen_app)
+                            carContext.finishCarApp()
+                        }
                     } finally {
-                        carToast(carContext, R.string.pref_aa_reopen_app)
-                        carContext.finishCarApp()
+                        canvas?.let { c ->
+                            it.unlockCanvasAndPost(c)
+                        }
+                        surfaceLocked = false
                     }
-                } finally {
-                    canvas?.let { c ->
-                        it.unlockCanvasAndPost(c)
-                    }
-                    surfaceLocked = false
                 }
             }
         }
