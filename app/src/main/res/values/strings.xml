@@ -105,6 +105,7 @@
     <string name="pref.pids.group.enableMetadataReadings_summary">Enabling this option will cause Vehicle metadata will be read during the session with ECU</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will cause OBD2 PIDs/Sensors will be read during the session with ECU</string>
 
+    <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
     <string name="pref.aa.title">Android Auto</string>
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
     <string name="pref.dtc.code">Code</string>

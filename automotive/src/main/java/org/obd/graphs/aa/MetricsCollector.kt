@@ -11,7 +11,6 @@ val metricsCollector = CarMetricsCollector()
 class CarMetricsCollector {
 
     private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
-    private val histogram by lazy { dataLogger.diagnostics().histogram() }
 
     fun metrics() = metrics.values.filter { it.enabled }
 
@@ -33,9 +32,10 @@ class CarMetricsCollector {
 
     fun append(input: ObdMetric?) {
         input?.let { metric ->
+
             metrics[metric.command.pid.id]?.let {
                 it.value = input.valueToDouble()
-                val hist = histogram.findBy(metric.command.pid)
+                val hist = dataLogger.diagnostics().histogram().findBy(metric.command.pid)
 
                 hist.mean?.let { mean ->
                     it.avg = mean

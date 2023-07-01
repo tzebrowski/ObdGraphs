@@ -13,6 +13,7 @@ import org.obd.graphs.profile.getSelectedProfile
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 
+
 const val MARGIN_END = 30
 const val ROW_SPACING = 12
 const val MARGIN_START = 15
@@ -27,7 +28,7 @@ internal class DrawingManager(carContext: CarContext) {
     private val backgroundPaint = Paint()
     private var canvas: Canvas? = null
 
-    private val background: Bitmap =
+    val background: Bitmap =
         BitmapFactory.decodeResource(carContext.resources, R.drawable.background)
 
     private val statusLabel: String
@@ -61,11 +62,12 @@ internal class DrawingManager(carContext: CarContext) {
         this.canvas = canvas
     }
 
-
     fun drawBackground(area: Rect) {
-        canvas?.drawRect(area, paint)
-        canvas?.drawColor(Color.BLACK)
-        canvas?.drawBitmap(background, 0f, 0f, backgroundPaint)
+        canvas?.let {
+            it.drawRect(area, paint)
+            it.drawColor(Color.BLACK)
+            it.drawBitmap(background,0f,0f, backgroundPaint)
+        }
     }
 
     fun drawText(

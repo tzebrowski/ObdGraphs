@@ -31,8 +31,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             drawingManager.drawBackground(area)
 
-            val fps = fps.get()
-            var verticalPos = drawingManager.drawStatusBar(area, fps) + 18
+            var verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
 
             drawingManager.drawDivider(MARGIN_START.toFloat(),area.width().toFloat(),  area.top + 10f, Color.DKGRAY)
 
@@ -69,52 +68,54 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                     )
 
                     verticalPos += textHeight.toFloat() / infoDiv
+                    if (carSettings.isHistoryEnabled()) {
+                        horizontalPos = drawingManager.drawText(
+                            "min",
+                            margin.toFloat(),
+                            verticalPos,
+                            Color.DKGRAY,
+                            footerTitleTextSize
+                        )
+                        horizontalPos = drawingManager.drawText(
+                            metric.toNumber(metric.min).toString(),
+                            horizontalPos,
+                            verticalPos,
+                            Color.LTGRAY,
+                            footerValueTextSize
+                        )
 
-                    horizontalPos = drawingManager.drawText(
-                        "min",
-                        margin.toFloat(),
-                        verticalPos,
-                        Color.DKGRAY,
-                        footerTitleTextSize
-                    )
-                    horizontalPos = drawingManager.drawText(
-                        metric.toNumber(metric.min).toString(),
-                        horizontalPos,
-                        verticalPos,
-                        Color.LTGRAY,
-                        footerValueTextSize
-                    )
+                        horizontalPos = drawingManager.drawText(
+                            "max",
+                            horizontalPos,
+                            verticalPos,
+                            Color.DKGRAY,
+                            footerTitleTextSize
+                        )
+                        horizontalPos = drawingManager.drawText(
+                            metric.toNumber(metric.max).toString(),
+                            horizontalPos,
+                            verticalPos,
+                            Color.LTGRAY,
+                            footerValueTextSize
+                        )
 
-                    horizontalPos = drawingManager.drawText(
-                        "max",
-                        horizontalPos,
-                        verticalPos,
-                        Color.DKGRAY,
-                        footerTitleTextSize
-                    )
-                    horizontalPos = drawingManager.drawText(
-                        metric.toNumber(metric.max).toString(),
-                        horizontalPos,
-                        verticalPos,
-                        Color.LTGRAY,
-                        footerValueTextSize
-                    )
+                        horizontalPos = drawingManager.drawText(
+                            "avg",
+                            horizontalPos,
+                            verticalPos,
+                            Color.DKGRAY,
+                            footerTitleTextSize
+                        )
 
-                    horizontalPos = drawingManager.drawText(
-                        "avg",
-                        horizontalPos,
-                        verticalPos,
-                        Color.DKGRAY,
-                        footerTitleTextSize
-                    )
+                        drawingManager.drawText(
+                            metric.toNumber(metric.avg).toString(),
+                            horizontalPos,
+                            verticalPos,
+                            Color.LTGRAY,
+                            footerValueTextSize
+                        )
+                    }
 
-                    drawingManager.drawText(
-                        metric.toNumber(metric.avg).toString(),
-                        horizontalPos,
-                        verticalPos,
-                        Color.LTGRAY,
-                        footerValueTextSize
-                    )
 
                     drawingManager.drawDivider(margin.toFloat(),itemWidth(area).toFloat(), verticalPos)
                     verticalPos += 2

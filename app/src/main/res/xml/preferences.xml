@@ -617,6 +617,12 @@
 
                 </PreferenceCategory>
 
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:key="pref.aa.pids.history.enabled"
+                    android:title="@string/pref.aa.display_pid_history" />
+
                 <ListPreference
                     app:singleLineTitle="false"
                     android:entries="@array/pref.numbers_1_10"

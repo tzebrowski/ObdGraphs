@@ -1,6 +1,6 @@
 package org.obd.graphs.aa
 
-import android.graphics.Color
+import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Build
 import android.util.Log
@@ -83,17 +83,16 @@ class SurfaceController(private val carContext: CarContext) :
 
     fun renderFrame() {
         surface?.let {
+            var canvas: Canvas? = null
             if (it.isValid && !surfaceLocked) {
                 try {
-                    val canvas = it.lockCanvas(null)
-                    canvas.drawColor(if (carContext.isDarkMode) Color.DKGRAY else Color.LTGRAY)
-
+                    canvas = it.lockCanvas(null)
                     surfaceLocked = true
                     renderer.onDraw(
                         canvas = canvas,
                         visibleArea = visibleArea
                     )
-                    it.unlockCanvasAndPost(canvas)
+
                 } catch (e: IllegalArgumentException) {
                     try {
                         Log.e(LOG_KEY, "Canvas already locked. Destroying currently allocated surface",e)
@@ -103,6 +102,9 @@ class SurfaceController(private val carContext: CarContext) :
                         carContext.finishCarApp()
                     }
                 } finally {
+                    canvas?.let { c ->
+                        it.unlockCanvasAndPost(c)
+                    }
                     surfaceLocked = false
                 }
             }
