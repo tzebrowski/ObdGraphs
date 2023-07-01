@@ -642,7 +642,7 @@
                     app:singleLineTitle="false"
                     android:entries="@array/pref.aa.fps"
                     android:entryValues="@array/pref.aa.fps"
-                    android:defaultValue="10"
+                    android:defaultValue="5"
                     android:dialogTitle="@string/pref.aa.surface.fps"
                     android:inputType="number"
                     android:key="pref.aa.surface.fps"

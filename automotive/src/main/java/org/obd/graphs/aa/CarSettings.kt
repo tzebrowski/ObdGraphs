@@ -9,7 +9,7 @@ private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
 private const val DEFAULT_ITEMS_IN_COLUMN = "6"
 private const val DEFAULT_FONT_SIZE = "34"
 private const val SURFACE_FRAME_RATE = "pref.aa.surface.fps"
-private const val DEFAULT_FRAME_RATE = "10"
+private const val DEFAULT_FRAME_RATE = "5"
 
 const val VIRTUAL_SCREEN_1 = "pref.aa.pids.profile_1"
 const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
