@@ -60,6 +60,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                         calculateTitleTextSize(textSize),
                         carSettings.maxItemsInColumn()
                     )
+
                     drawingManager.drawValue(
                         metric,
                         valueHorizontalPos,
@@ -67,8 +68,9 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                         textSize.toFloat() + 14
                     )
 
-                    verticalPos += textHeight.toFloat() / infoDiv
+
                     if (carSettings.isHistoryEnabled()) {
+                        verticalPos += textHeight.toFloat() / infoDiv
                         horizontalPos = drawingManager.drawText(
                             "min",
                             margin.toFloat(),
@@ -114,17 +116,23 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                             Color.LTGRAY,
                             footerValueTextSize
                         )
+                    } else {
+                        verticalPos += 12
                     }
-
 
                     drawingManager.drawDivider(margin.toFloat(),itemWidth(area).toFloat(), verticalPos)
                     verticalPos += 2
+
                     drawingManager.drawProgressBar(
                         margin.toFloat(),
                         itemWidth(area).toFloat(), verticalPos, metric
                     )
 
-                    verticalPos += textHeight.toFloat() + 10
+                    verticalPos += if (carSettings.isHistoryEnabled()) {
+                        textHeight.toFloat() + 10
+                    }else {
+                        textHeight.toFloat() + 4
+                    }
 
                     if (verticalPos > area.height()){
                         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
@@ -153,7 +161,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
     private fun initialValueHorizontalPos(area: Rect): Float =
         when (carSettings.maxItemsInColumn()) {
-            1 -> ((area.width()) - 32).toFloat()
+            1 -> ((area.width()) - 42).toFloat()
             else -> ((area.width() / 2) - 32).toFloat()
         }
 
