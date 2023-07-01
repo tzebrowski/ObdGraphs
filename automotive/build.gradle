@@ -13,7 +13,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
     buildTypes {
         release {
         }
@@ -45,7 +44,7 @@ android {
 
 dependencies {
     implementation project(":common")
-    implementation "androidx.car.app:app:1.2.0-rc01"
+    implementation "androidx.car.app:app:1.2.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
