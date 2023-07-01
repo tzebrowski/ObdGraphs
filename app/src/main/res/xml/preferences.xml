@@ -574,14 +574,6 @@
                     app:singleLineTitle="false"
                     android:title="@string/pref.aa_category"
                     android:summary="@string/pref.aa_category_summary">
-                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
-                        app:useSimpleSummaryProvider="true"
-                        android:defaultValue="@array/pref.empty_array"
-                        android:dialogTitle="@string/pref.displayed_parameter_ids"
-                        android:key="pref.aa.pids.selected"
-                        android:summary="@string/pref.displayed_parameter_ids_summary"
-                        android:title="@string/pref.displayed_parameter_ids" />
-
 
                     <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
                         app:useSimpleSummaryProvider="true"
