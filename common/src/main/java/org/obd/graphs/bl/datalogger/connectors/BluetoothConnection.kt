@@ -46,16 +46,17 @@ class BluetoothConnection(deviceName: String) : AdapterConnection {
 
         try {
             input?.close()
-        } catch (_: Exception){}
+        } catch (_: Throwable){}
 
         try {
+
             output?.close()
-        } catch (_: Exception){}
+        } catch (_: Throwable){}
 
         try {
             if (::socket.isInitialized)
                 socket.close()
-        } catch (_: Exception){}
+        } catch (_: Throwable){}
 
         Log.i(LOGGER_TAG, "Socket for device: $device has been closed.")
     }
