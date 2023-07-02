@@ -869,9 +869,15 @@
             android:title="@string/pref.about_category">
            <Preference app:title="@string/pref.about_title"/>
            <EditTextPreference app:enabled="false"
-               app:title="@string/pref.about_build_version"
-               android:key="pref.about.build_version"
+               app:title="@string/pref.about_build_time"
+               android:key="pref.about.build_time"
                app:useSimpleSummaryProvider="true"/>
+
+            <EditTextPreference app:enabled="false"
+                app:title="@string/pref.about_build_version"
+                android:key="pref.about.build_version"
+                app:useSimpleSummaryProvider="true"/>
+
         </PreferenceCategory>
     </PreferenceScreen>
 </PreferenceScreen>

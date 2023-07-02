@@ -18,6 +18,8 @@ import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 const val ACTIVITY_LOGGER_TAG = "MainActivity"
@@ -88,14 +90,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
 
 
-        AlertDialog.Builder(this).run {
-            setCancelable(false)
-
-            val dialogView: View = this@MainActivity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
-            setView(dialogView)
-            lockScreenDialog = create()
-        }
+        setupLockScreenDialog()
     }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -120,11 +118,22 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setupPreferences() {
-        Prefs.updateString("pref.about.build_version", BuildConfig.VERSION_NAME)
+        Prefs.updateString("pref.about.build_time", "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(BuildConfig.VERSION_NAME)}")
+        Prefs.updateString("pref.about.build_version", "${BuildConfig.VERSION_CODE}")
         Prefs.updateBoolean("pref.debug.logging.enabled", false)
     }
 
     private fun initCache() {
         cacheManager.initCache(cache)
+    }
+
+    private fun setupLockScreenDialog() {
+        AlertDialog.Builder(this).run {
+            setCancelable(false)
+
+            val dialogView: View = this@MainActivity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
+            setView(dialogView)
+            lockScreenDialog = create()
+        }
     }
 }

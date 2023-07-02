@@ -3,7 +3,6 @@ package org.obd.graphs.preferences
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.obd.graphs.bl.datalogger.DataLogger
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.metrics.api.model.VehicleCapabilities
 
@@ -15,7 +14,7 @@ private const val PREF_DTC = "pref.datalogger.dtc"
 
 class PIDsGroupManager {
 
-    private var mapper = ObjectMapper().apply {
+    private val mapper = ObjectMapper().apply {
         registerModule(KotlinModule())
     }
 

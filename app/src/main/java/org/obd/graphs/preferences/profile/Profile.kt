@@ -5,7 +5,6 @@ import android.util.Log
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getString
 import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateToolbar
 import org.obd.graphs.profile.*
@@ -131,6 +130,7 @@ class VehicleProfile {
             it.putString(PREF_ADAPTER_MODE_ID_EDITOR, "")
 
             Prefs.all
+                .filter { (pref, _) -> !pref.startsWith("pref.about") }
                 .filter { (pref, _) -> !pref.startsWith("datalogger") }
                 .filter { (pref, _) -> !pref.startsWith("profile_") }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_ID_PREF) }
@@ -138,6 +138,7 @@ class VehicleProfile {
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                 .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                 .forEach { (pref, _) ->
+                    Log.e("EEEEEEEEEEEEEE","EEEEEEEEEEEEEEEEEEE $pref")
                     it.remove(pref)
                 }
             it.apply()
