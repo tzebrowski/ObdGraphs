@@ -30,9 +30,9 @@ class BluetoothConnection(deviceName: String) : AdapterConnection {
         if (dataLoggerPreferences.instance.reconnectWhenError && dataLoggerPreferences.instance .hardReset) {
             throw IOException("Doing hard reset")
         }
-        input?.close()
-        output?.close()
-        socket.close()
+
+        close()
+
         TimeUnit.MILLISECONDS.sleep(1000)
         connectToDevice(device)
         Log.i(LOGGER_TAG, "Successfully reconnect to the device: $device")
@@ -43,8 +43,20 @@ class BluetoothConnection(deviceName: String) : AdapterConnection {
     }
 
     override fun close() {
-        if (::socket.isInitialized)
-            socket.close()
+
+        try {
+            input?.close()
+        } catch (_: Exception){}
+
+        try {
+            output?.close()
+        } catch (_: Exception){}
+
+        try {
+            if (::socket.isInitialized)
+                socket.close()
+        } catch (_: Exception){}
+
         Log.i(LOGGER_TAG, "Socket for device: $device has been closed.")
     }
 
