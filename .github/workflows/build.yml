@@ -12,7 +12,7 @@ jobs:
           echo ${{ github.workspace }}
           echo $GITHUB_WORKSPACE
           echo $RUNNER_TEMP
-          echo GOOGLE_SERVICE_FILE | base64 -di > "${RUNNER_TEMP}/app/"google-services.json
+          echo GOOGLE_SERVICE_FILE | base64 -di > "/home/runner/work/ObdGraphs/app/google-services.json"
 
       - name: Decode keystore
         env:
