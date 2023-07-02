@@ -22,7 +22,7 @@ jobs:
           GOOGLE_SERVICE_FILE: ${{ secrets.GOOGLE_SERVICE_FILE }}
         run: |
           echo ${{ github.workspace }}
-          ls -l /home/runner/work/ObdGraphs/
+          ls -l app
           echo GOOGLE_SERVICE_FILE | base64 -di > "app/google-services.json"
 
       - name: Run Lint
