@@ -5,6 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: Decode Firebase API Key
+        env:
+          GOOGLE_SERVICE_FILE: ${{ secrets.GOOGLE_SERVICE_FILE }}
+          WORKING_DIR: ${{ github.workspace }}
+        run: |
+          echo "${WORKING_DIR}"
+          echo GOOGLE_SERVICE_FILE | base64 -di > "${WORKING_DIR}/app/"google-services.json
+
       - name: Decode keystore
         env:
           ENCODED_STRING: ${{ secrets.SIGNING_KEYSTORE }}
