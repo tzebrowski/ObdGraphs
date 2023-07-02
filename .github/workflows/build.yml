@@ -11,6 +11,7 @@ jobs:
           WORKING_DIR: ${{ github.workspace }}
         run: |
           echo "${WORKING_DIR}"
+          cd ..
           echo GOOGLE_SERVICE_FILE | base64 -di > "${WORKING_DIR}/app/"google-services.json
 
       - name: Decode keystore
