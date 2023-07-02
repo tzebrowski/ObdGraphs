@@ -24,3 +24,4 @@ local.properties
 /.idea/vcs.xml
 .idea/deploymentTargetDropDown.xml
 /.idea/androidTestResultsUserPreferences.xml
+/app/google-services.json

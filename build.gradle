@@ -1,14 +1,23 @@
 buildscript {
-    ext.kotlin_version = "1.6.0"
+    ext {
+        gradle_version = '4.2.2'
+        kotlin_version = '1.6.0'
+        gms_version = '4.3.15'
+    }
     repositories {
         google()
         jcenter()
 
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.1.2"
+        classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
+}
+
+plugins {
+    id("com.google.gms.google-services") version "$gms_version" apply false
+    id("com.google.firebase.crashlytics") version "2.9.2" apply false
 }
 
 allprojects {
