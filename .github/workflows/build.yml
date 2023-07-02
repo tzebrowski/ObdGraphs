@@ -31,18 +31,19 @@ jobs:
           report-path: build/reports/*.xml
           continue-on-error: false
 
-#      - name: Android Integration Tests
-#        env:
-#          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-#          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-#          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-#          ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
-#        uses: reactivecircus/android-emulator-runner@v2
-#        with:
-#          api-level: 29
-#          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-#          disable-animations: true
-#          script: sh ./gradlew connectedCheck --stacktrace
+      - name: Android Integration Tests
+        if: ${{ false }}
+        env:
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: sh ./gradlew connectedCheck --stacktrace
 
       - name: Build Giulia flavour
         env:
