@@ -6,19 +6,19 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.util.Log
+import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.bl.datalogger.DataLoggerService
 
 const val SCREEN_OFF_EVENT = "power.screen.off"
 const val SCREEN_ON_EVENT = "power.screen.on"
-const val LOGGER_TAG = "PowerBroadcastReceiver"
 
 internal class PowerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent) {
         val powerPreferences: PowerPreferences = getPowerPreferences()
         Log.d(
-            LOGGER_TAG,
+            LOG_TAG,
             "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}"
         )
 
@@ -47,7 +47,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
 
             if (powerPreferences.connectOnPower) {
                 Log.d(
-                    LOGGER_TAG,
+                    LOG_TAG,
                     "Stop data logging"
                 )
                 DataLoggerService.stop()
@@ -70,7 +70,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
     private fun isActivityVisibleOnTheScreen(context: Context, activityClass: Class<*>): Boolean {
         val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val taskInfo = activityManager.getRunningTasks(1)
-        Log.d(LOGGER_TAG, "Current top activity ${taskInfo[0].topActivity!!.className}")
+        Log.d(LOG_TAG, "Current top activity ${taskInfo[0].topActivity!!.className}")
         val componentInfo = taskInfo[0].topActivity
         return activityClass.canonicalName.equals(componentInfo!!.className, ignoreCase = true)
     }

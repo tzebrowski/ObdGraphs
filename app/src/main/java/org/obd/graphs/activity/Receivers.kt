@@ -108,7 +108,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             lockScreen()
         }
         SCREEN_ON_EVENT -> {
-            Log.i(ACTIVITY_LOGGER_TAG, "Activating application.")
+            Log.i(LOG_TAG, "Activating application.")
             changeScreenBrightness(1f)
         }
         DATA_LOGGER_ERROR_CONNECT_EVENT -> {
@@ -151,7 +151,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.backgroundTintList =
                     ContextCompat.getColorStateList(applicationContext, R.color.cardinal)
                 it.setOnClickListener {
-                    Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
+                    Log.i(LOG_TAG, "Stop data logging ")
                     DataLoggerService.stop()
                 }
                 it.refreshDrawableState()
@@ -215,7 +215,7 @@ private fun MainActivity.handleStop() {
         it.backgroundTintList =
             ContextCompat.getColorStateList(applicationContext, R.color.philippine_green)
         it.setOnClickListener {
-            Log.i(ACTIVITY_LOGGER_TAG, "Stop data logging ")
+            Log.i(LOG_TAG, "Stop data logging ")
             DataLoggerService.start()
         }
     }

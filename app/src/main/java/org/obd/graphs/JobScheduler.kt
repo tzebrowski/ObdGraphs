@@ -1,6 +1,7 @@
 package org.obd.graphs
 
 import android.util.Log
+import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -9,7 +10,7 @@ import java.util.concurrent.TimeUnit
 class JobScheduler {
     private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private val dataLoggerTask = Runnable {
-        Log.i(LOGGER_TAG, "Start data logging")
+        Log.i(LOG_TAG, "Start data logging")
         DataLoggerService.start()
     }
 
@@ -17,7 +18,7 @@ class JobScheduler {
         val powerPreferences: PowerPreferences = getPowerPreferences()
 
         Log.i(
-            LOGGER_TAG,
+            LOG_TAG,
             "Schedule connect task WITH delay: ${powerPreferences.startDataLoggingAfter}"
         )
         scheduleService.schedule(

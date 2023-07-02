@@ -51,7 +51,7 @@ internal fun MainActivity.changeScreenBrightness(value: Float) {
         window.attributes = params
 
     } catch (e: Throwable) {
-        Log.e(ACTIVITY_LOGGER_TAG, "Failed to change screen brightness", e)
+        Log.e(LOG_TAG, "Failed to change screen brightness", e)
     } finally {
         wl.release()
     }

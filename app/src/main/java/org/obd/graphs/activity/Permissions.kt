@@ -12,7 +12,7 @@ val permissions = Permissions()
 class Permissions {
     fun requestLocationPermissions(activity: Activity) {
         Log.d(
-            ACTIVITY_LOGGER_TAG,
+            LOG_TAG,
             "Has permission to ACCESS_COARSE_LOCATION ${
                 EasyPermissions.hasPermissions(
                     activity,
@@ -22,7 +22,7 @@ class Permissions {
         )
 
         Log.d(
-            ACTIVITY_LOGGER_TAG,
+            LOG_TAG,
             "Has permission to ACCESS_FINE_LOCATION ${
                 EasyPermissions.hasPermissions(
                     activity,
@@ -46,7 +46,7 @@ class Permissions {
     fun requestBluetoothPermissions(activity: Activity) {
 
         Log.d(
-            ACTIVITY_LOGGER_TAG,
+            LOG_TAG,
             "Has permission to BLUETOOTH_ADMIN ${
                 EasyPermissions.hasPermissions(
                     activity,
@@ -55,7 +55,7 @@ class Permissions {
             }"
         )
         Log.d(
-            ACTIVITY_LOGGER_TAG,
+            LOG_TAG,
             "Has permission to BLUETOOTH ${
                 EasyPermissions.hasPermissions(
                     activity,
@@ -71,7 +71,7 @@ class Permissions {
 
         if (Build.VERSION.SDK_INT > 30) {
             Log.d(
-                ACTIVITY_LOGGER_TAG,
+                LOG_TAG,
                 "Has permission to BLUETOOTH_CONNECT ${
                     EasyPermissions.hasPermissions(
                         activity,
@@ -80,7 +80,7 @@ class Permissions {
                 }"
             )
             Log.d(
-                ACTIVITY_LOGGER_TAG,
+                LOG_TAG,
                 "Has permission to BLUETOOTH_SCAN ${
                     EasyPermissions.hasPermissions(
                         activity,

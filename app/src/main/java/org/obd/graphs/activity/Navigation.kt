@@ -84,7 +84,7 @@ internal fun MainActivity.setupNavigationBar() {
 internal fun MainActivity.setupNavigationBarButtons() {
     floatingActionButton {
         it.setOnClickListener {
-            Log.i(ACTIVITY_LOGGER_TAG, "Start data logging")
+            Log.i(LOG_TAG, "Start data logging")
             DataLoggerService.start()
         }
     }

@@ -7,6 +7,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
+import android.os.StrictMode.VmPolicy
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,10 +21,10 @@ import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 
-const val ACTIVITY_LOGGER_TAG = "MainActivity"
+const val LOG_TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
@@ -63,14 +65,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setupStrictMode()
         super.onCreate(savedInstanceState)
+
         setActivityContext(this)
         initCache()
-        StrictMode.setThreadPolicy(
-            ThreadPolicy.Builder()
-                .permitAll().build()
-        )
-
         setContentView(R.layout.activity_main)
 
         setupWindowManager()
@@ -92,8 +91,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         setupLockScreenDialog()
     }
-
-
 
     override fun onResume() {
         super.onResume()
@@ -134,6 +131,23 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             val dialogView: View = this@MainActivity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
             setView(dialogView)
             lockScreenDialog = create()
+        }
+    }
+
+    private fun setupStrictMode() {
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyFlashScreen()
+                    .build()
+            )
+
+            StrictMode.setVmPolicy(VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build())
         }
     }
 }
