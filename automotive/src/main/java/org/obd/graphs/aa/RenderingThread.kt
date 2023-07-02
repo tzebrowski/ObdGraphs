@@ -7,6 +7,7 @@ import android.util.Log
 import java.util.concurrent.*
 
 private const val MSG_RENDER_FRAME = 1
+private const val LOG_KEY = "RenderingThread"
 
 internal class RenderingThread(surfaceController: SurfaceController) {
 

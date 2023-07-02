@@ -15,7 +15,9 @@ import org.obd.graphs.aa.renderer.ScreenRenderer
 import org.obd.graphs.sendBroadcastEvent
 
 
-class SurfaceController(private val carContext: CarContext) :
+private const val LOG_KEY = "SurfaceController"
+
+internal class SurfaceController(private val carContext: CarContext) :
     DefaultLifecycleObserver {
 
     private val renderer: ScreenRenderer = ScreenRenderer.of(carContext)
@@ -98,10 +100,10 @@ class SurfaceController(private val carContext: CarContext) :
                     } catch (e: Throwable) {
                         try {
                             Log.e(LOG_KEY, "Exception was thrown during surface rendering. Finishing the car app.", e)
-                            carToast(carContext, e.message.toString())
+                            toast.show(carContext, e.message.toString())
                             surface = null
                         } finally {
-                            carToast(carContext, R.string.pref_aa_reopen_app)
+                            toast.show(carContext, R.string.pref_aa_reopen_app)
                             carContext.finishCarApp()
                         }
                     } finally {

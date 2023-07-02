@@ -6,9 +6,9 @@ import android.graphics.Rect
 import android.util.Log
 import androidx.car.app.CarContext
 import org.obd.graphs.aa.*
-import org.obd.graphs.aa.LOG_KEY
 import kotlin.math.min
 
+private const val LOG_KEY = "SimpleScreenRenderer"
 
 internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 

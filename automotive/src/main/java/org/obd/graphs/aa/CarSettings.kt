@@ -16,9 +16,9 @@ const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
 const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
-val carSettings = CarSettings()
+internal val carSettings = CarSettings()
 
-class CarSettings {
+internal class CarSettings {
 
     fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
     fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)

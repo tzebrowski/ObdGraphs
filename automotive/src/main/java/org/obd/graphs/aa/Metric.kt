@@ -6,7 +6,7 @@ import org.obd.metrics.pid.ValueType
 
 
 
-data class CarMetric(
+internal data class CarMetric(
     val pid: PidDefinition,
     var value: Double?,
     var min: Double,

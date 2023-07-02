@@ -7,7 +7,7 @@ import androidx.car.app.Session
 import androidx.lifecycle.DefaultLifecycleObserver
 import org.obd.graphs.setCarContext
 
-class CarSession : Session(), DefaultLifecycleObserver {
+internal class CarSession : Session(), DefaultLifecycleObserver {
     private lateinit var surfaceController: SurfaceController
 
     override fun onCreateScreen(intent: Intent): Screen {
