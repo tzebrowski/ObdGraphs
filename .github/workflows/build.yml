@@ -5,14 +5,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Decode Firebase API Key
-        env:
-          GOOGLE_SERVICE_FILE: ${{ secrets.GOOGLE_SERVICE_FILE }}
-        run: |
-          echo ${{ github.workspace }}
-          ls -l /home/runner/work/ObdGraphs/
-          echo GOOGLE_SERVICE_FILE | base64 -di > "/home/runner/work/ObdGraphs/app/google-services.json"
-
       - name: Decode keystore
         env:
           ENCODED_STRING: ${{ secrets.SIGNING_KEYSTORE }}
@@ -24,6 +16,14 @@ jobs:
 
       - name: Checkout the code
         uses: actions/checkout@v2
+
+      - name: Decode Firebase API Key
+        env:
+          GOOGLE_SERVICE_FILE: ${{ secrets.GOOGLE_SERVICE_FILE }}
+        run: |
+          echo ${{ github.workspace }}
+          ls -l /home/runner/work/ObdGraphs/
+          echo GOOGLE_SERVICE_FILE | base64 -di > "app/google-services.json"
 
       - name: Run Lint
         env:
