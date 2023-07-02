@@ -10,8 +10,7 @@ jobs:
           GOOGLE_SERVICE_FILE: ${{ secrets.GOOGLE_SERVICE_FILE }}
         run: |
           echo ${{ github.workspace }}
-          echo $GITHUB_WORKSPACE
-          echo $RUNNER_TEMP
+          ls -l /home/runner/work/ObdGraphs/
           echo GOOGLE_SERVICE_FILE | base64 -di > "/home/runner/work/ObdGraphs/app/google-services.json"
 
       - name: Decode keystore
