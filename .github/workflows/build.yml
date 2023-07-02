@@ -8,7 +8,7 @@ jobs:
       - name: Decode Firebase API Key
         env:
           GOOGLE_SERVICE_FILE: ${{ secrets.GOOGLE_SERVICE_FILE }}
-          WORKING_DIR: ${{ github.workspace }}
+          WORKING_DIR: ${{ GITHUB_WORKSPACE }}
         run: |
           echo "${WORKING_DIR}"
           ls -la ${WORKING_DIR}
