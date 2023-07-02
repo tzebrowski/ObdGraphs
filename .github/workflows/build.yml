@@ -21,9 +21,7 @@ jobs:
         env:
           GOOGLE_SERVICE_FILE: ${{ secrets.GOOGLE_SERVICE_FILE }}
         run: |
-          echo ${{ github.workspace }}
-          ls -l app
-          echo GOOGLE_SERVICE_FILE | base64 -di > "app/google-services.json"
+          echo $GOOGLE_SERVICE_FILE | base64 -di > "app/google-services.json"
 
       - name: Run Lint
         env:
