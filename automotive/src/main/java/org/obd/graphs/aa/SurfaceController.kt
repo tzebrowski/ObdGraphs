@@ -33,8 +33,8 @@ internal class SurfaceController(private val carContext: CarContext) :
                 surface = surfaceContainer.surface
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val frameRate = carSettings.getSurfaceFrameRate() + 5f
-                    Log.i(LOG_KEY,"Setting surface Frame Rate to=$frameRate")
-                    surface?.setFrameRate(frameRate,Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
+                    Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
+                    surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
                 metricsCollector.configure()
             }

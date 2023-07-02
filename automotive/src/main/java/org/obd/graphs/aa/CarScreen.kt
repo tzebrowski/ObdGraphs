@@ -38,7 +38,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                     fps.stop()
                 }
                 SURFACE_VISIBLE_AREA_CHANGED_EVENT -> {
-                    if (!renderingThread.isRunning() && dataLogger.isRunning()){
+                    if (!renderingThread.isRunning() && dataLogger.isRunning()) {
                         renderingThread.start()
                         fps.start()
                     }

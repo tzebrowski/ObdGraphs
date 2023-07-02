@@ -14,13 +14,14 @@ internal class Fps {
         times.clear()
         times.add(System.nanoTime())
     }
+
     fun stop() {
         times.clear()
     }
 
     fun get(): Double {
 
-        if (times.size == 0){
+        if (times.size == 0) {
             times.clear()
             return 0.0
         }

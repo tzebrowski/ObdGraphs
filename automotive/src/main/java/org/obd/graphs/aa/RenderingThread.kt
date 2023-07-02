@@ -47,7 +47,7 @@ internal class RenderingThread(surfaceController: SurfaceController) {
         Log.i(LOG_KEY, "Rendering task is now shutdown")
     }
 
-    private fun getRenderingTask(): Runnable  = Runnable {
+    private fun getRenderingTask(): Runnable = Runnable {
         val fps = carSettings.getSurfaceFrameRate()
         Log.i(LOG_KEY, "Expected surface FPS $fps")
         val targetDelay = 1000 / fps
@@ -57,7 +57,7 @@ internal class RenderingThread(surfaceController: SurfaceController) {
             ts = System.currentTimeMillis() - ts
 
             if (targetDelay > ts && (targetDelay - ts) > 0) {
-                Thread.sleep( targetDelay - ts)
+                Thread.sleep(targetDelay - ts)
             }
         }
     }

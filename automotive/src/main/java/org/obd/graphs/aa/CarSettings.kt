@@ -37,10 +37,12 @@ internal class CarSettings {
             else -> Prefs.getS(PREF_MAX_PIDS_IN_COLUMN, DEFAULT_ITEMS_IN_COLUMN).toInt()
         }
     }
-    fun isHistoryEnabled(): Boolean{
+
+    fun isHistoryEnabled(): Boolean {
         return Prefs.getBoolean("pref.aa.pids.history.enabled", true)
     }
-    fun getSurfaceFrameRate(): Int =  Prefs.getS(SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
+
+    fun getSurfaceFrameRate(): Int = Prefs.getS(SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
     fun maxFontSize(): Int =
         Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
 

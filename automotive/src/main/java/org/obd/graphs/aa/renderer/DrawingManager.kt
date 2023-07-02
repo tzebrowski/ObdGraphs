@@ -66,7 +66,7 @@ internal class DrawingManager(carContext: CarContext) {
         canvas?.let {
             it.drawRect(area, paint)
             it.drawColor(Color.BLACK)
-            it.drawBitmap(background,0f,0f, backgroundPaint)
+            it.drawBitmap(background, 0f, 0f, backgroundPaint)
         }
     }
 
@@ -213,7 +213,7 @@ internal class DrawingManager(carContext: CarContext) {
         paint.color = Color.LTGRAY
         paint.textSize = textSize
         if (maxItemsInColumn == 1) {
-            val text = metric.pid.description.replace("\n"," ")
+            val text = metric.pid.description.replace("\n", " ")
             canvas?.drawText(
                 text,
                 horizontalPos,

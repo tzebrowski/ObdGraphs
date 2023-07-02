@@ -5,12 +5,15 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import androidx.car.app.CarContext
-import org.obd.graphs.aa.*
+import org.obd.graphs.aa.CarMetric
+import org.obd.graphs.aa.carSettings
+import org.obd.graphs.aa.fps
+import org.obd.graphs.aa.metricsCollector
 import kotlin.math.min
 
 private const val LOG_KEY = "SimpleScreenRenderer"
 
-internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
+internal class SimpleScreenRenderer(carContext: CarContext) : ScreenRenderer {
 
     private val drawingManager = DrawingManager(carContext)
 
@@ -33,7 +36,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             var verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
 
-            drawingManager.drawDivider(MARGIN_START.toFloat(),area.width().toFloat(),  area.top + 10f, Color.DKGRAY)
+            drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
 
             val verticalPosCpy = verticalPos
             var valueHorizontalPos = initialValueHorizontalPos(area)
@@ -43,13 +46,13 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
             var maxItemsInColumn = carSettings.maxItemsInColumn()
 
-            if (metrics.size > 10){
-                maxItemsInColumn = metrics.size/2
+            if (metrics.size > 10) {
+                maxItemsInColumn = metrics.size / 2
             }
 
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
-                chunk.forEach lit@ { metric ->
+                chunk.forEach lit@{ metric ->
 
                     val footerValueTextSize = textSize.toFloat() / infoDiv
                     val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
@@ -120,7 +123,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
                         verticalPos += 12
                     }
 
-                    drawingManager.drawDivider(margin.toFloat(),itemWidth(area).toFloat(), verticalPos)
+                    drawingManager.drawDivider(margin.toFloat(), itemWidth(area).toFloat(), verticalPos)
                     verticalPos += 2
 
                     drawingManager.drawProgressBar(
@@ -130,11 +133,11 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
 
                     verticalPos += if (carSettings.isHistoryEnabled()) {
                         textHeight.toFloat() + 10
-                    }else {
+                    } else {
                         textHeight.toFloat() + 4
                     }
 
-                    if (verticalPos > area.height()){
+                    if (verticalPos > area.height()) {
                         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
                             Log.v(LOG_KEY, "Skipping entry to display verticalPos=$verticalPos},area.height=${area.height()}")
                         }
@@ -170,7 +173,7 @@ internal class SimpleScreenRenderer(carContext: CarContext): ScreenRenderer {
         verticalPos: Float,
         verticalPosCpy: Float
     ): Float = when (carSettings.maxItemsInColumn()) {
-        1 -> verticalPos + (textHeight / 3)  - 8
+        1 -> verticalPos + (textHeight / 3) - 8
         else -> verticalPosCpy
     }
 

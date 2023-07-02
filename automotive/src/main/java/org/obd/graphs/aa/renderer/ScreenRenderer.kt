@@ -8,7 +8,7 @@ interface ScreenRenderer {
     fun onDraw(canvas: Canvas, visibleArea: Rect?)
 
     companion object {
-       fun of(carContext: CarContext): ScreenRenderer {
+        fun of(carContext: CarContext): ScreenRenderer {
             return SimpleScreenRenderer(carContext)
         }
     }

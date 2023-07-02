@@ -20,7 +20,7 @@ internal class CarMetricsCollector {
         val selectedPIDs = carSettings.getSelectedPIDs()
         val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
 
-        if (metrics.isEmpty() || metrics.size !=pidsToQuery.size){
+        if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
             Log.i(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
             metrics = MetricsProvider().findMetrics(pidsToQuery).associate {
                 it.command.pid.id to CarMetric.newInstance(it)
