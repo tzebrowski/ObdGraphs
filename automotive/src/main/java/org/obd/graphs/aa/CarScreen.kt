@@ -25,7 +25,7 @@ private const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.ev
 private const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
-const val SURFACE_BROKEN = "surface_broken.event"
+const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 
 internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
@@ -36,7 +36,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                SURFACE_BROKEN -> {
+                SURFACE_BROKEN_EVENT -> {
                     Log.d(LOG_KEY,"Received event about ")
                     renderingThread.stop()
                     fps.stop()
@@ -153,7 +153,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
             addAction(SURFACE_AREA_CHANGED_EVENT)
             addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
             addAction(MAIN_ACTIVITY_EVENT_PAUSE)
-            addAction(SURFACE_BROKEN)
+            addAction(SURFACE_BROKEN_EVENT)
         })
     }
 

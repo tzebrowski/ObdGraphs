@@ -113,7 +113,7 @@ internal class SurfaceController(private val carContext: CarContext) :
                 } catch (e: Throwable) {
                     Log.e(LOG_KEY, "Exception was thrown during surface locking.", e)
                     surface = null
-                    sendBroadcastEvent(SURFACE_BROKEN)
+                    sendBroadcastEvent(SURFACE_BROKEN_EVENT)
                 } finally {
                     try {
                         canvas?.let { c ->
@@ -121,7 +121,7 @@ internal class SurfaceController(private val carContext: CarContext) :
                         }
                     } catch (e: Throwable) {
                         Log.e(LOG_KEY, "Exception was thrown during surface un-locking.", e)
-                        sendBroadcastEvent(SURFACE_BROKEN)
+                        sendBroadcastEvent(SURFACE_BROKEN_EVENT)
                     }
 
                     surfaceLocked = false
