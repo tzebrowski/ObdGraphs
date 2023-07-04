@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.util.Log
 import android.view.Surface
+import androidx.annotation.MainThread
 import androidx.car.app.AppManager
 import androidx.car.app.CarContext
 import androidx.car.app.SurfaceCallback
@@ -26,6 +27,7 @@ internal class SurfaceController(private val carContext: CarContext) :
     private var surfaceLocked = false
 
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
+
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface is now available")
@@ -44,14 +46,15 @@ internal class SurfaceController(private val carContext: CarContext) :
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface visible area changed")
                 this@SurfaceController.visibleArea = visibleArea
+                sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
-                sendBroadcastEvent(SURFACE_VISIBLE_AREA_CHANGED_EVENT)
             }
         }
 
         override fun onStableAreaChanged(stableArea: Rect) {
             synchronized(this@SurfaceController) {
                 Log.i(LOG_KEY, "Surface stable area changed")
+                sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
             }
         }
@@ -69,49 +72,59 @@ internal class SurfaceController(private val carContext: CarContext) :
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         Log.i(LOG_KEY, "SurfaceRenderer created")
+        surface?.release()
+        surface = null
+
         carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-        Log.i(LOG_KEY, "SurfaceRenderer destroyed")
+        Log.d(LOG_KEY, "(onDestroy) SurfaceRenderer destroyed")
         surface?.release()
         surface = null
+    }
 
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        Log.d(LOG_KEY, "(onPause) SurfaceRenderer destroyed")
+        surface?.release()
+        surface = null
     }
 
     fun onCarConfigurationChanged() {
         renderFrame()
     }
 
+    @MainThread
     fun renderFrame() {
-        synchronized(this@SurfaceController) {
-            surface?.let {
-                var canvas: Canvas? = null
-                if (it.isValid && !surfaceLocked) {
-                    try {
-                        canvas = it.lockCanvas(null)
-                        surfaceLocked = true
-                        renderer.onDraw(
-                            canvas = canvas,
-                            visibleArea = visibleArea
-                        )
 
-                    } catch (e: Throwable) {
-                        try {
-                            Log.e(LOG_KEY, "Exception was thrown during surface rendering. Finishing the car app.", e)
-                            toast.show(carContext, e.message.toString())
-                            surface = null
-                        } finally {
-                            toast.show(carContext, R.string.pref_aa_reopen_app)
-                            carContext.finishCarApp()
-                        }
-                    } finally {
+        surface?.let {
+            var canvas: Canvas? = null
+            if (it.isValid && !surfaceLocked) {
+                try {
+                    canvas = it.lockHardwareCanvas()
+                    surfaceLocked = true
+                    renderer.onDraw(
+                        canvas = canvas,
+                        visibleArea = visibleArea
+                    )
+
+                } catch (e: Throwable) {
+                    Log.e(LOG_KEY, "Exception was thrown during surface locking.", e)
+                    surface = null
+                    sendBroadcastEvent(SURFACE_BROKEN)
+                } finally {
+                    try {
                         canvas?.let { c ->
                             it.unlockCanvasAndPost(c)
                         }
-                        surfaceLocked = false
+                    } catch (e: Throwable) {
+                        Log.e(LOG_KEY, "Exception was thrown during surface un-locking.", e)
+                        sendBroadcastEvent(SURFACE_BROKEN)
                     }
+
+                    surfaceLocked = false
                 }
             }
         }

@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +24,7 @@ import java.util.*
 
 
 const val LOG_TAG = "MainActivity"
+
 
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
@@ -64,6 +64,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
+
+    override fun onPause() {
+        super.onPause()
+        sendBroadcastEvent(MAIN_ACTIVITY_EVENT_PAUSE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setupStrictMode()
         super.onCreate(savedInstanceState)
@@ -88,7 +94,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             it.visibility = View.GONE
         }
 
-
         setupLockScreenDialog()
     }
 
@@ -108,6 +113,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver()
+        sendBroadcastEvent(MAIN_ACTIVITY_EVENT_DESTROYED)
     }
 
     private fun setupExceptionHandler() {

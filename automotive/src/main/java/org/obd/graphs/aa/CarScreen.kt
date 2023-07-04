@@ -13,6 +13,8 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.AA_EDIT_PREF_SCREEN
+import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
+import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.sendBroadcastEvent
 
@@ -22,7 +24,8 @@ private const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.ev
 private const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
 private const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
-const val SURFACE_VISIBLE_AREA_CHANGED_EVENT = "car.event.surface.visible_area_changed"
+const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
+const val SURFACE_BROKEN = "surface_broken.event"
 
 internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
@@ -33,11 +36,25 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                SURFACE_BROKEN -> {
+                    Log.d(LOG_KEY,"Received event about ")
+                    renderingThread.stop()
+                    fps.stop()
+                    carContext.finishCarApp()
+                }
+                MAIN_ACTIVITY_EVENT_DESTROYED -> {
+                    Log.d(LOG_KEY, "Main activity has been destroyed.")
+                    invalidate()
+                }
+                MAIN_ACTIVITY_EVENT_PAUSE -> {
+                    Log.d(LOG_KEY, "Main activity is going to the background.")
+                    invalidate()
+                }
                 SURFACE_DESTROYED_EVENT -> {
                     renderingThread.stop()
                     fps.stop()
                 }
-                SURFACE_VISIBLE_AREA_CHANGED_EVENT -> {
+                SURFACE_AREA_CHANGED_EVENT -> {
                     if (!renderingThread.isRunning() && dataLogger.isRunning()) {
                         renderingThread.start()
                         fps.start()
@@ -82,35 +99,35 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    toast.show(getCarContext(), R.string.main_activity_toast_connection_connecting)
+                    toast.show(carContext, R.string.main_activity_toast_connection_connecting)
                 }
 
                 DATA_LOGGER_NO_NETWORK_EVENT -> {
-                    toast.show(getCarContext(), R.string.main_activity_toast_connection_no_network)
+                    toast.show(carContext, R.string.main_activity_toast_connection_no_network)
                 }
 
                 DATA_LOGGER_ERROR_EVENT -> {
-                    toast.show(getCarContext(), R.string.main_activity_toast_connection_error)
+                    toast.show(carContext, R.string.main_activity_toast_connection_error)
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    toast.show(getCarContext(), R.string.main_activity_toast_connection_stopped)
+                    toast.show(carContext, R.string.main_activity_toast_connection_stopped)
                     renderingThread.stop()
                     surfaceController.renderFrame()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    toast.show(getCarContext(), R.string.main_activity_toast_connection_established)
+                    toast.show(carContext, R.string.main_activity_toast_connection_established)
                     renderingThread.start()
                     fps.start()
                 }
 
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-                    toast.show(getCarContext(), R.string.main_activity_toast_connection_connect_error)
+                    toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
                 }
 
                 DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
-                    toast.show(getCarContext(), R.string.main_activity_toast_adapter_is_not_selected)
+                    toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
                 }
             }
         }
@@ -133,7 +150,10 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
             addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
             addAction(SURFACE_DESTROYED_EVENT)
-            addAction(SURFACE_VISIBLE_AREA_CHANGED_EVENT)
+            addAction(SURFACE_AREA_CHANGED_EVENT)
+            addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
+            addAction(MAIN_ACTIVITY_EVENT_PAUSE)
+            addAction(SURFACE_BROKEN)
         })
     }
 
@@ -201,6 +221,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
             DataLoggerService.start()
         })
         .addAction(createAction(R.drawable.action_disconnect, CarColor.BLUE) {
+            toast.show(carContext, R.string.toast_connection_disconnect)
             stopDataLogging()
         })
 
@@ -226,7 +247,6 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
     }
 
     init {
-
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
             metricsCollector.append(it)
