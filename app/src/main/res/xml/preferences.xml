@@ -649,6 +649,12 @@
                     android:title="@string/pref.aa.surface.fps"
                     app:useSimpleSummaryProvider="true" />
 
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:key="pref.aa.status.fps.enabled"
+                    android:title="@string/pref.aa.surface.fps.display_status" />
+
             </PreferenceScreen>
 
             <PreferenceScreen

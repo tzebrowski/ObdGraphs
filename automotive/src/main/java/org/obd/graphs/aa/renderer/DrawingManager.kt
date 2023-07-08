@@ -158,26 +158,28 @@ internal class DrawingManager(carContext: CarContext) {
             statusPaint
         )
 
-        horizontalAlignment += getTextWidth(text, statusPaint) + 12F
-        text = fpsLabel
-        drawText(
-            text,
-            horizontalAlignment,
-            statusVerticalPos,
-            Color.WHITE,
-            12f,
-            statusPaint
-        )
+        if (carSettings.isFpsCounterEnabled()) {
+            horizontalAlignment += getTextWidth(text, statusPaint) + 12F
+            text = fpsLabel
+            drawText(
+                text,
+                horizontalAlignment,
+                statusVerticalPos,
+                Color.WHITE,
+                12f,
+                statusPaint
+            )
 
-        horizontalAlignment += getTextWidth(text, statusPaint) + 4F
-        drawText(
-            fps.toString(),
-            horizontalAlignment,
-            statusVerticalPos,
-            Color.YELLOW,
-            16f,
-            statusPaint
-        )
+            horizontalAlignment += getTextWidth(text, statusPaint) + 4F
+            drawText(
+                fps.toString(),
+                horizontalAlignment,
+                statusVerticalPos,
+                Color.YELLOW,
+                16f,
+                statusPaint
+            )
+        }
 
         return getStatusBarSpacing(area)
     }

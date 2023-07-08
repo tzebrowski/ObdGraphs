@@ -6,9 +6,11 @@ private const val PREF_CURRENT_VIRTUAL_SCREEN = "pref.aa.pids.vs.current"
 private const val PREF_SELECTED_PIDS = "pref.aa.pids.selected"
 private const val PREF_MAX_PIDS_IN_COLUMN = "pref.aa.max_pids_in_column"
 private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
+private const val PREF_SURFACE_FRAME_RATE = "pref.aa.surface.fps"
+private const val PREF_STATUS_FPS_VISIBLE = "pref.aa.status.fps.enabled"
+
 private const val DEFAULT_ITEMS_IN_COLUMN = "6"
 private const val DEFAULT_FONT_SIZE = "34"
-private const val SURFACE_FRAME_RATE = "pref.aa.surface.fps"
 private const val DEFAULT_FRAME_RATE = "5"
 
 const val VIRTUAL_SCREEN_1 = "pref.aa.pids.profile_1"
@@ -17,6 +19,7 @@ const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
 internal val carSettings = CarSettings()
+
 
 internal class CarSettings {
 
@@ -42,7 +45,11 @@ internal class CarSettings {
         return Prefs.getBoolean("pref.aa.pids.history.enabled", true)
     }
 
-    fun getSurfaceFrameRate(): Int = Prefs.getS(SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
+    fun isFpsCounterEnabled(): Boolean {
+        return Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
+    }
+
+    fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
     fun maxFontSize(): Int =
         Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
 
