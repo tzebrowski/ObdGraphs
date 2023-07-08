@@ -12,11 +12,8 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.AA_EDIT_PREF_SCREEN
-import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
-import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "CarScreen"
 private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
@@ -30,8 +27,12 @@ const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
     DefaultLifecycleObserver {
-
-    private var renderingThread = RenderingThread(surfaceController)
+    private val renderingThread: RenderingThread = RenderingThread(
+        renderAction = { surfaceController.renderFrame() },
+        perfFrameRate = {
+            carSettings.getSurfaceFrameRate()
+        }
+    )
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
