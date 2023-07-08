@@ -1,6 +1,6 @@
 package org.obd.graphs.ui.common
 
-import org.obd.graphs.ui.dashboard.round
+import org.obd.graphs.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType

@@ -43,7 +43,8 @@ class RecyclerViewSetup {
             resourceId: Int,
             height: Int?
         ) -> SimpleAdapter<*>,
-        metricsSerializerPref: String
+        metricsSerializerPref: String,
+        metricsObserverEnabled: Boolean = false
     ) {
 
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
@@ -67,7 +68,10 @@ class RecyclerViewSetup {
         attachOnTouchListener(enableOnTouchListener, recyclerView)
         adapter(recyclerView).notifyDataSetChanged()
         recyclerView.refreshDrawableState()
-        MetricsObserver().observe(metricsIds, viewLifecycleOwner, adapter(recyclerView), metrics)
+
+        if (metricsObserverEnabled) {
+            MetricsObserver().observe(metricsIds, viewLifecycleOwner, adapter(recyclerView), metrics)
+        }
     }
 
     private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {

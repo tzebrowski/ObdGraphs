@@ -1,14 +1,7 @@
 package org.obd.graphs.ui.dashboard
 
+import org.obd.graphs.round
 import java.util.*
-import kotlin.math.round
-
-fun Double.round(decimals: Int): Double {
-    var multiplier = 1.0
-    repeat(decimals) { multiplier *= 10 }
-    return round(this * multiplier) / multiplier
-}
-
 
 class Segments(
     val numOfSegments: Int,

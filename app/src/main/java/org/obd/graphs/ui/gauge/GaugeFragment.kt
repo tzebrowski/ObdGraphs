@@ -16,10 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
@@ -34,6 +31,12 @@ private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : Fragment() {
     private lateinit var root: View
+    private val renderingThread: RenderingThread = RenderingThread(
+        renderAction = {updateScreen()},
+        perfFrameRate = {
+            Prefs.getS("pref.gauge.fps", "10").toInt()
+        }
+    )
 
     @SuppressLint("NotifyDataSetChanged")
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -57,12 +60,15 @@ class GaugeFragment : Fragment() {
                     virtualScreensPanel {
                         it.isVisible = false
                     }
+                    renderingThread.start()
+
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     virtualScreensPanel {
                         it.isVisible = true
                     }
+                    renderingThread.stop()
                 }
 
                 TOGGLE_TOOLBAR_ACTION -> {
@@ -85,8 +91,14 @@ class GaugeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
+
         configureView(true)
         setupVirtualViewPanel()
+
+        if (dataLogger.isRunning()){
+            renderingThread.start()
+        }
+
         return root
     }
 
@@ -101,10 +113,18 @@ class GaugeFragment : Fragment() {
         })
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        renderingThread.stop()
+    }
+
     override fun onDetach() {
         super.onDetach()
         activity?.unregisterReceiver(broadcastReceiver)
+        renderingThread.stop()
     }
+
 
     private fun configureView(enableOnTouchListener: Boolean) {
         RecyclerViewSetup().configureView(
@@ -126,8 +146,23 @@ class GaugeFragment : Fragment() {
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)
             },
-            metricsSerializerPref = GAUGE_PIDS_SETTINGS
+            metricsSerializerPref = GAUGE_PIDS_SETTINGS,
+            metricsObserverEnabled = false
         )
+
+        dataLogger.observe(viewLifecycleOwner) {
+            it.run {
+
+                metricsCollector.append(it)
+            }
+        }
+        metricsCollector.configure(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
+    }
+
+
+    private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
+        val query = dataLoggerPreferences.getPIDsToQuery()
+        return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
 
     private fun calculateSpan(): Int {
@@ -185,6 +220,7 @@ class GaugeFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
         setVirtualViewBtn(R.id.virtual_view_8, currentVirtualScreen, "8")
     }
+
     private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
         if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
             func(root.findViewById(R.id.virtual_view_panel))
@@ -194,5 +230,22 @@ class GaugeFragment : Fragment() {
     private fun getVisiblePIDsList(): Set<Long> {
         val query = dataLoggerPreferences.getPIDsToQuery()
         return Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey()).filter { query.contains(it) }.toSet()
+    }
+    private fun updateScreen() {
+        val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
+        val adapter = recyclerView.adapter as GaugeAdapter
+        val data = adapter.data
+        metricsCollector.metrics().forEach {
+            it.run {
+                val indexOf = data.indexOf(it.value)
+                if (indexOf == -1) {
+                    data.add(it.value)
+                    adapter.notifyItemInserted(data.indexOf(it.value))
+                } else {
+                    data[indexOf] = it.value
+                    adapter.notifyItemChanged(indexOf, it.value)
+                }
+            }
+        }
     }
 }
