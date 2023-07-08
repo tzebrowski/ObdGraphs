@@ -114,6 +114,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                     toast.show(carContext, R.string.main_activity_toast_connection_stopped)
                     renderingThread.stop()
                     surfaceController.renderFrame()
+                    fps.stop()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
