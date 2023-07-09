@@ -18,7 +18,6 @@ class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> 
     )
 
     private val handler = Handler(Looper.getMainLooper(), HandlerCallback(renderAction))
-
     private var tasks: Future<*>? = null
 
     internal class HandlerCallback(private val renderAction: () -> Unit) : Handler.Callback {
@@ -36,21 +35,21 @@ class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> 
     }
 
     fun start() {
-        Log.i(LOG_KEY, "Submitting rendering task")
+        Log.d(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(getRenderingTask())
-        Log.i(LOG_KEY, "Rendering task is submitted")
+        Log.d(LOG_KEY, "Rendering task is submitted")
     }
 
     fun stop() {
-        Log.i(LOG_KEY, "Shutdown rendering task")
+        Log.d(LOG_KEY, "Shutdown rendering task")
         tasks?.cancel(true)
         handler.removeMessages(MSG_RENDER_FRAME)
-        Log.i(LOG_KEY, "Rendering task is now shutdown")
+        Log.d(LOG_KEY, "Rendering task is now shutdown")
     }
 
     private fun getRenderingTask(): Runnable = Runnable {
         val fps =  perfFrameRate()
-        Log.i(LOG_KEY, "Expected surface FPS $fps")
+        Log.d(LOG_KEY, "Expected surface FPS $fps")
         val targetDelay = 1000 / fps
         while (!Thread.currentThread().isInterrupted) {
             var ts = System.currentTimeMillis()

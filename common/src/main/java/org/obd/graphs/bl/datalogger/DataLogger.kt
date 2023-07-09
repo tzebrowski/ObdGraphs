@@ -16,6 +16,7 @@ import org.obd.metrics.codec.GeneratorPolicy
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
+import org.obd.metrics.diagnostic.Histogram
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
@@ -45,7 +46,6 @@ val dataLogger: DataLogger = DataLogger()
  * That's the wrapper interface on Workflow API.
  */
 class DataLogger internal constructor() {
-
     inner class EventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             if (intent.action === PROFILE_CHANGED_EVENT) {
@@ -146,6 +146,8 @@ class DataLogger internal constructor() {
     fun isRunning(): Boolean  =  workflow.isRunning
 
     fun diagnostics(): Diagnostics = workflow.diagnostics
+
+    fun findHistogramFor(metric: ObdMetric): Histogram = workflow.diagnostics.histogram().findBy(metric.command.pid)
 
     fun pidDefinitionRegistry(): PidDefinitionRegistry  = workflow.pidRegistry
 

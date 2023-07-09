@@ -24,6 +24,8 @@ const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 
+val metricsCollector = CarMetricsCollector()
+
 internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
     DefaultLifecycleObserver {
@@ -66,7 +68,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         carSettings.applyVirtualScreen1()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
@@ -74,7 +76,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         carSettings.applyVirtualScreen2()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
@@ -82,7 +84,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         carSettings.applyVirtualScreen3()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
@@ -90,13 +92,13 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         carSettings.applyVirtualScreen4()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
-                    metricsCollector.configure()
+                    metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                     surfaceController.renderFrame()
                 }
 
@@ -198,23 +200,23 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
 
         .addAction(createAction(R.drawable.action_virtual_screen_1, CarColor.YELLOW) {
             carSettings.applyVirtualScreen1()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_2, CarColor.YELLOW) {
             carSettings.applyVirtualScreen2()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
 
         .addAction(createAction(R.drawable.action_virtual_screen_3, CarColor.YELLOW) {
             carSettings.applyVirtualScreen3()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_4, CarColor.YELLOW) {
             carSettings.applyVirtualScreen4()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
         .build()

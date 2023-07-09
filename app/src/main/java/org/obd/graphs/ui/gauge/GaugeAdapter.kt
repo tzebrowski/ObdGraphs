@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.CarMetric
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -20,19 +21,18 @@ import org.obd.graphs.bl.datalogger.pidResources
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.metrics.api.model.ObdMetric
+import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
 import kotlin.math.roundToInt
 
 class GaugeAdapter(
     context: Context,
-    data: MutableList<ObdMetric>,
+    data: MutableList<CarMetric>,
     resourceId: Int,
     height: Int? = null
 ) :
-    SimpleAdapter<GaugeAdapter.ViewHolder>(context, data, resourceId, height) {
+    RecyclerViewAdapter<GaugeAdapter.ViewHolder>(context, data, resourceId, height) {
 
     inner class ViewHolder internal constructor(itemView: View):
         RecyclerView.ViewHolder(itemView) {
@@ -92,7 +92,7 @@ class GaugeAdapter(
     private val valueScaler = ValueScaler()
 
     override fun getItemId(position: Int): Long {
-        return data[position].command.pid.id
+        return data[position].source.command.pid.id
     }
 
     override fun onCreateViewHolder(
@@ -110,10 +110,10 @@ class GaugeAdapter(
     ) {
         val metric = data.elementAt(position)
         if (!holder.init) {
-            holder.label.text = metric.command.pid.longDescription ?: metric.command.pid.description
+            holder.label.text = metric.source.command.pid.longDescription ?: metric.source.command.pid.description
             holder.resourceFile?.run {
-                val resourceFile = pidResources.getDefaultPidFiles()[metric.command.pid.resourceFile]
-                    ?: metric.command.pid.resourceFile
+                val resourceFile = pidResources.getDefaultPidFiles()[metric.source.command.pid.resourceFile]
+                    ?: metric.source.command.pid.resourceFile
                 text = resourceFile
                 highLightText(
                     resourceFile, 0.5f,
@@ -124,8 +124,8 @@ class GaugeAdapter(
         }
 
         holder.value.run {
-            val units = (metric.command as ObdCommand).pid.units
-            val txt = "${metric.valueToStringExt()} $units"
+            val units = (metric.source.command as ObdCommand).pid.units
+            val txt = "${metric.source.valueToStringExt()} $units"
             text = txt
 
             highLightText(
@@ -134,39 +134,39 @@ class GaugeAdapter(
             )
         }
 
-        dataLogger.diagnostics().histogram().findBy(metric.command.pid).run {
-            holder.minValue.run {
-                val txt = "min\n ${metric.toNumber(min)}"
-                text = txt
-                highLightText(
-                    "min", 0.5f,
-                    COLOR_PHILIPPINE_GREEN
-                )
-            }
 
-            holder.maxValue.run {
-                val txt = "max\n  ${metric.toNumber(max)} "
-                text = txt
-                highLightText(
-                    "max", 0.5f,
-                    COLOR_PHILIPPINE_GREEN
-                )
-            }
-
-            holder.avgValue?.run {
-                val txt = "avg\n ${metric.toNumber(mean)}"
-                text = txt
-                highLightText(
-                    "avg", 0.5f,
-                    COLOR_PHILIPPINE_GREEN
-                )
-            }
+        holder.minValue.run {
+            val txt = "min\n ${metric.source.toNumber(metric.min)}"
+            text = txt
+            highLightText(
+                "min", 0.5f,
+                COLOR_PHILIPPINE_GREEN
+            )
         }
+
+        holder.maxValue.run {
+            val txt = "max\n  ${metric.source.toNumber(metric.max)} "
+            text = txt
+            highLightText(
+                "max", 0.5f,
+                COLOR_PHILIPPINE_GREEN
+            )
+        }
+
+        holder.avgValue?.run {
+            val txt = "avg\n ${metric.source.toNumber(metric.mean)}"
+            text = txt
+            highLightText(
+                "avg", 0.5f,
+                COLOR_PHILIPPINE_GREEN
+            )
+        }
+
         holder.commandRate?.run {
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
                 val rate = dataLogger.diagnostics().rate()
-                    .findBy(RateType.MEAN, metric.command.pid)
+                    .findBy(RateType.MEAN, metric.source.command.pid)
                 val txt = "rate ${rate.get().value.round(2)}"
                 text = txt
                 highLightText(
@@ -183,9 +183,9 @@ class GaugeAdapter(
         }
 
         holder.gauge?.apply {
-            startValue = (metric.command as ObdCommand).pid.min.toFloat()
-            endValue = (metric.command as ObdCommand).pid.max.toFloat()
-            value = metric.toFloat()
+            startValue = (metric.source.command as ObdCommand).pid.min.toFloat()
+            endValue = (metric.source.command as ObdCommand).pid.max.toFloat()
+            value = metric.source.toFloat()
             invalidate()
         }
     }

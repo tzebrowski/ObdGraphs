@@ -3,6 +3,7 @@ package org.obd.graphs.ui.recycler
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import org.obd.graphs.CarMetric
 import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 
@@ -21,11 +22,11 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
         }
 
     internal fun store(
-        data: MutableList<ObdMetric>
+        data: MutableList<CarMetric>
     ) {
 
         val mapIndexed = data.mapIndexed { index, metric ->
-            map(metric, index)
+            map(metric.source, index)
         }
 
         val writeValueAsString = mapper.writeValueAsString(mapIndexed)

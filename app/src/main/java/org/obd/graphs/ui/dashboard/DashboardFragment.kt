@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.CarMetric
 import org.obd.graphs.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
@@ -24,7 +25,6 @@ import org.obd.graphs.preferences.getS
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.gauge.GaugeAdapter
-import org.obd.metrics.api.model.ObdMetric
 
 private const val CONFIGURATION_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.dash_gauge_id"
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
@@ -187,7 +187,7 @@ class DashboardFragment : RefreshableFragment() {
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
-                        data: MutableList<ObdMetric>,
+                        data: MutableList<CarMetric>,
                         resourceId: Int,
                         height: Int? ->
                 DashboardViewAdapter(context, data, resourceId, height)
@@ -212,7 +212,7 @@ class DashboardFragment : RefreshableFragment() {
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
-                        data: MutableList<ObdMetric>,
+                        data: MutableList<CarMetric>,
                         resourceId: Int,
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)

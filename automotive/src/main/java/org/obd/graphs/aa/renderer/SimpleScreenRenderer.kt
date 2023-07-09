@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import androidx.car.app.CarContext
-import org.obd.graphs.aa.CarMetric
+import org.obd.graphs.CarMetric
 import org.obd.graphs.aa.carSettings
 import org.obd.graphs.aa.fps
 import org.obd.graphs.aa.metricsCollector
@@ -82,7 +82,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) : ScreenRenderer {
                             footerTitleTextSize
                         )
                         horizontalPos = drawingManager.drawText(
-                            metric.toNumber(metric.min).toString(),
+                            metric.toNumber(metric.min),
                             horizontalPos,
                             verticalPos,
                             Color.LTGRAY,
@@ -97,7 +97,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) : ScreenRenderer {
                             footerTitleTextSize
                         )
                         horizontalPos = drawingManager.drawText(
-                            metric.toNumber(metric.max).toString(),
+                            metric.toNumber(metric.max),
                             horizontalPos,
                             verticalPos,
                             Color.LTGRAY,
@@ -113,7 +113,7 @@ internal class SimpleScreenRenderer(carContext: CarContext) : ScreenRenderer {
                         )
 
                         drawingManager.drawText(
-                            metric.toNumber(metric.avg).toString(),
+                            metric.toNumber(metric.mean),
                             horizontalPos,
                             verticalPos,
                             Color.LTGRAY,

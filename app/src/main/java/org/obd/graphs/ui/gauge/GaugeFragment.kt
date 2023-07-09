@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.CarMetric
 import org.obd.graphs.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
@@ -21,8 +22,7 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RefreshableFragment
-import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.metrics.api.model.ObdMetric
+import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import kotlin.math.roundToInt
 
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
@@ -51,7 +51,7 @@ class GaugeFragment : RefreshableFragment() {
                 }
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
-                    val adapter = recyclerView.adapter as SimpleAdapter
+                    val adapter = recyclerView.adapter as RecyclerViewAdapter
                     val metrics = prepareMetrics(
                         metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
                         metricsSerializerPref = GAUGE_PIDS_SETTINGS
@@ -65,7 +65,6 @@ class GaugeFragment : RefreshableFragment() {
                         it.isVisible = false
                     }
                     renderingThread.start()
-
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
@@ -123,6 +122,11 @@ class GaugeFragment : RefreshableFragment() {
         })
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        renderingThread.stop()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         renderingThread.stop()
@@ -149,7 +153,7 @@ class GaugeFragment : RefreshableFragment() {
             enableDragManager = Prefs.getBoolean(ENABLE_DRAG_AND_DROP_PREF, false),
             enableOnTouchListener = enableOnTouchListener,
             adapter = { context: Context,
-                        data: MutableList<ObdMetric>,
+                        data: MutableList<CarMetric>,
                         resourceId: Int,
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)

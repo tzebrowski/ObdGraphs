@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.CarMetric
 import org.obd.graphs.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.MetricsProvider
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
@@ -18,7 +19,6 @@ import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 import org.obd.graphs.ui.gauge.AdapterContext
-import org.obd.metrics.api.model.ObdMetric
 
 open class RefreshableFragment : Fragment() {
 
@@ -26,17 +26,17 @@ open class RefreshableFragment : Fragment() {
 
     protected fun refreshRecyclerView(metricsCollector: CarMetricsCollector, recyclerViewId: Int) {
         if (::root.isInitialized){
-            val adapter = ((root.findViewById(recyclerViewId) as RecyclerView).adapter) as SimpleAdapter<RecyclerView.ViewHolder>
+            val adapter = ((root.findViewById(recyclerViewId) as RecyclerView).adapter) as RecyclerViewAdapter<RecyclerView.ViewHolder>
             val data = adapter.data
             metricsCollector.metrics().forEach {
                 it.run {
-                    val indexOf = data.indexOf(it.value)
+                    val indexOf = data.indexOf(it)
                     if (indexOf == -1) {
-                        data.add(it.value)
-                        adapter.notifyItemInserted(data.indexOf(it.value))
+                        data.add(it)
+                        adapter.notifyItemInserted(data.indexOf(it))
                     } else {
-                        data[indexOf] = it.value
-                        adapter.notifyItemChanged(indexOf, it.value)
+                        data[indexOf] = it
+                        adapter.notifyItemChanged(indexOf, it)
                     }
                 }
             }
@@ -46,7 +46,7 @@ open class RefreshableFragment : Fragment() {
     protected fun prepareMetrics(
         metricsIdsPref: String,
         metricsSerializerPref: String
-    ): MutableList<ObdMetric> {
+    ): MutableList<CarMetric> {
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
         return MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
@@ -63,10 +63,10 @@ open class RefreshableFragment : Fragment() {
         enableOnTouchListener: Boolean = false,
         adapter: (
             context: Context,
-            data: MutableList<ObdMetric>,
+            data: MutableList<CarMetric>,
             resourceId: Int,
             height: Int?
-        ) -> SimpleAdapter<*>,
+        ) -> RecyclerViewAdapter<*>,
         metricsSerializerPref: String
     ) {
 
@@ -76,7 +76,7 @@ open class RefreshableFragment : Fragment() {
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
         recyclerView.adapter = adapter(requireContext(), metrics, adapterContext.layoutId, adapterContext.height).apply {
-            setHasStableIds(true)
+//            setHasStableIds(true)
             notifyDataSetChanged()
         }
 
@@ -119,12 +119,12 @@ open class RefreshableFragment : Fragment() {
 
         override fun deleteItems(fromPosition: Int) {
             val data = adapter(recyclerView).data
-            val itemId: ObdMetric = data[fromPosition]
+            val itemId: CarMetric = data[fromPosition]
             data.remove(itemId)
 
             Prefs.updateLongSet(
                 metricsIdsPref,
-                data.map { obdMetric -> obdMetric.command.pid.id }.toList()
+                data.map { obdMetric -> obdMetric.source.command.pid.id }.toList()
             )
             sendBroadcastEvent(configureChangeEventId)
         }
@@ -172,6 +172,6 @@ open class RefreshableFragment : Fragment() {
     }
 
     private fun adapter(recyclerView: RecyclerView) =
-        (recyclerView.adapter as SimpleAdapter)
+        (recyclerView.adapter as RecyclerViewAdapter)
 
 }

@@ -2,8 +2,8 @@ package org.obd.graphs.aa.renderer
 
 import android.graphics.*
 import androidx.car.app.CarContext
+import org.obd.graphs.CarMetric
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.aa.CarMetric
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.carSettings
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -88,8 +88,8 @@ internal class DrawingManager(carContext: CarContext) {
         paint.color = COLOR_CARDINAL
 
         val progress = valueScaler.scaleToNewRange(
-            (it.value ?: it.pid.min).toFloat(),
-            it.pid.min.toFloat(), it.pid.max.toFloat(), start, start + width - MARGIN_END
+            it.value.toFloat(),
+            it.source.command.pid.min.toFloat(),  it.source.command.pid.max.toFloat(), start, start + width - MARGIN_END
         )
 
         canvas?.drawRect(
@@ -194,13 +194,13 @@ internal class DrawingManager(carContext: CarContext) {
         valuePaint.color = Color.WHITE
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
-        val text = metric.valueToString()
+        val text = metric.source.valueToString()
         canvas?.drawText(text, horizontalPos, verticalPos, valuePaint)
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textAlign = Paint.Align.LEFT
         valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas?.drawText(metric.pid.units, (horizontalPos + 2), verticalPos, valuePaint)
+        canvas?.drawText(metric.source.command.pid.units, (horizontalPos + 2), verticalPos, valuePaint)
     }
 
     fun drawTitle(
@@ -215,7 +215,7 @@ internal class DrawingManager(carContext: CarContext) {
         paint.color = Color.LTGRAY
         paint.textSize = textSize
         if (maxItemsInColumn == 1) {
-            val text = metric.pid.description.replace("\n", " ")
+            val text = metric.source.command.pid.description.replace("\n", " ")
             canvas?.drawText(
                 text,
                 horizontalPos,
@@ -223,7 +223,7 @@ internal class DrawingManager(carContext: CarContext) {
                 paint
             )
         } else {
-            val text = metric.pid.description.split("\n")
+            val text = metric.source.command.pid.description.split("\n")
             if (text.size == 1) {
                 canvas?.drawText(
                     text[0],
