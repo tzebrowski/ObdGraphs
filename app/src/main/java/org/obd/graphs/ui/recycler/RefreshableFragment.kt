@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.CarMetric
-import org.obd.graphs.CarMetricsCollector
+import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.MetricsProvider
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs

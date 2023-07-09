@@ -2,7 +2,7 @@ package org.obd.graphs.aa.renderer
 
 import android.graphics.*
 import androidx.car.app.CarContext
-import org.obd.graphs.CarMetric
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.carSettings

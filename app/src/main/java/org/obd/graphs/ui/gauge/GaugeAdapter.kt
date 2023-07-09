@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.CarMetric
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger

@@ -42,9 +42,9 @@ class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> 
 
     fun stop() {
         Log.d(LOG_KEY, "Shutdown rendering task")
-        tasks?.cancel(true)
+        val res = tasks?.cancel(true)
         handler.removeMessages(MSG_RENDER_FRAME)
-        Log.d(LOG_KEY, "Rendering task is now shutdown")
+        Log.d(LOG_KEY, "Rendering task is now shutdown, result=$res")
     }
 
     private fun getRenderingTask(): Runnable = Runnable {

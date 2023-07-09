@@ -1,7 +1,7 @@
 package org.obd.graphs.bl.datalogger
 
 
-import org.obd.graphs.CarMetric
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry

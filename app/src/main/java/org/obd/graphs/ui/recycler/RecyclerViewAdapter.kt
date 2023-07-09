@@ -2,7 +2,7 @@ package org.obd.graphs.ui.recycler
 
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.CarMetric
+import org.obd.graphs.bl.collector.CarMetric
 import java.util.Collections
 
 abstract class RecyclerViewAdapter<T : RecyclerView.ViewHolder>(

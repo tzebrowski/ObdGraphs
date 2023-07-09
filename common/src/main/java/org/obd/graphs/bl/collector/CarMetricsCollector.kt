@@ -1,4 +1,4 @@
-package org.obd.graphs
+package org.obd.graphs.bl.collector
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProvider
@@ -7,18 +7,19 @@ import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.metrics.api.model.ObdMetric
 
 private const val  LOG_KEY = "CarMetricsCollector"
+
 class CarMetricsCollector {
 
     private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
+
     fun metrics() = metrics.values.filter { it.enabled }
+
     fun applyFilter(selectedPIDs: Set<Long>) {
         val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
 
         if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
             Log.i(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
-            metrics = MetricsProvider().findMetrics(pidsToQuery).associate {
-                it.source.command.pid.id to it
-            }.toMutableMap()
+            metrics = MetricsProvider().findMetrics(pidsToQuery).associateBy { it.source.command.pid.id }.toMutableMap()
         }
         metrics.forEach { (t, u) ->
             u.enabled = selectedPIDs.contains(t)

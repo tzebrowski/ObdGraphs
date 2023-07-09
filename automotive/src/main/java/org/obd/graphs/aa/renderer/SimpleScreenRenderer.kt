@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import androidx.car.app.CarContext
-import org.obd.graphs.CarMetric
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.aa.carSettings
 import org.obd.graphs.aa.fps
 import org.obd.graphs.aa.metricsCollector

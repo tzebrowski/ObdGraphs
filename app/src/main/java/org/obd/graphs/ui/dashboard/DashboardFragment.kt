@@ -12,8 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.CarMetric
-import org.obd.graphs.CarMetricsCollector
+import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT

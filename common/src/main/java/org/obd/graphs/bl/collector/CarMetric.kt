@@ -1,5 +1,6 @@
-package org.obd.graphs
+package org.obd.graphs.bl.collector
 
+import org.obd.graphs.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType
