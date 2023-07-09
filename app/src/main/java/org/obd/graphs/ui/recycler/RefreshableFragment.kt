@@ -76,7 +76,7 @@ open class RefreshableFragment : Fragment() {
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
         recyclerView.adapter = adapter(requireContext(), metrics, adapterContext.layoutId, adapterContext.height).apply {
-//            setHasStableIds(true)
+            setHasStableIds(true)
             notifyDataSetChanged()
         }
 
