@@ -13,14 +13,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewSetup
+import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.metrics.api.model.ObdMetric
 import kotlin.math.roundToInt
@@ -30,28 +31,12 @@ private const val ENABLE_SWIPE_TO_DELETE_PREF = "pref.gauge.swipe_to_delete"
 private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.gauge_id"
 private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
-class GaugeFragment : Fragment() {
+class GaugeFragment : RefreshableFragment() {
 
-    private lateinit var root: View
-
+    private val metricsCollector = CarMetricsCollector()
     private val renderingThread: RenderingThread = RenderingThread(
         renderAction = {
-
-            val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
-            val adapter = recyclerView.adapter as GaugeAdapter
-            val data = adapter.data
-            metricsCollector.metrics().forEach {
-                it.run {
-                    val indexOf = data.indexOf(it.value)
-                    if (indexOf == -1) {
-                        data.add(it.value)
-                        adapter.notifyItemInserted(data.indexOf(it.value))
-                    } else {
-                        data[indexOf] = it.value
-                        adapter.notifyItemChanged(indexOf, it.value)
-                    }
-                }
-            }
+            refreshRecyclerView(metricsCollector, R.id.recycler_view)
         },
         perfFrameRate = {
             Prefs.getS("pref.gauge.fps", "10").toInt()
@@ -112,6 +97,12 @@ class GaugeFragment : Fragment() {
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
 
+        dataLogger.observe(viewLifecycleOwner) {
+            it.run {
+                metricsCollector.append(it)
+            }
+        }
+
         configureView(true)
         setupVirtualViewPanel()
 
@@ -168,14 +159,7 @@ class GaugeFragment : Fragment() {
             metricsSerializerPref = GAUGE_PIDS_SETTINGS,
             metricsObserverEnabled = false
         )
-
-        dataLogger.observe(viewLifecycleOwner) {
-            it.run {
-
-                metricsCollector.append(it)
-            }
-        }
-        metricsCollector.configure(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
+        metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
     }
 
 

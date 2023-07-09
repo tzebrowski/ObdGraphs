@@ -1,21 +1,18 @@
-package org.obd.graphs.ui.gauge
+package org.obd.graphs
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProvider
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.metrics.api.model.ObdMetric
 
-private const val LOG_KEY = "MetricsCollector"
-
-internal val metricsCollector = CarMetricsCollector()
-
-internal class CarMetricsCollector {
+private const val  LOG_KEY = "CarMetricsCollector"
+class CarMetricsCollector {
 
     private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
 
     fun metrics() = metrics.values.filter { it.enabled }
 
-    fun configure(selectedPIDs: Set<Long>) {
+    fun applyFilter(selectedPIDs: Set<Long>) {
         val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
 
         if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {

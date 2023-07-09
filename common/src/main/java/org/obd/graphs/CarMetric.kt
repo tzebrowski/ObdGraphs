@@ -1,12 +1,12 @@
-package org.obd.graphs.ui.gauge
+package org.obd.graphs
 
 import org.obd.metrics.api.model.ObdMetric
 
-internal data class CarMetric(
+
+data class CarMetric(
     var value: ObdMetric,
     var enabled: Boolean = true
 ) {
-
     companion object {
         fun newInstance(it: ObdMetric) = CarMetric(it, enabled = true)
     }

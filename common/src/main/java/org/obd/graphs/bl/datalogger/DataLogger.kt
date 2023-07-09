@@ -61,7 +61,7 @@ class DataLogger internal constructor() {
     }
 
     val eventsReceiver = EventsReceiver()
-    private var metricsAggregator = MetricsCollector()
+    private var metricsAggregator = MetricsObserver()
     private var reconnectAttemptCount = 0
     private var reconnecting = false
 

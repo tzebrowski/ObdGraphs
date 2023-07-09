@@ -27,6 +27,7 @@ const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
     DefaultLifecycleObserver {
+
     private val renderingThread: RenderingThread = RenderingThread(
         renderAction = { surfaceController.renderFrame() },
         perfFrameRate = {
