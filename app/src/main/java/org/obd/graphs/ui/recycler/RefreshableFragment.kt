@@ -31,10 +31,7 @@ open class RefreshableFragment : Fragment() {
             metricsCollector.metrics().forEach {
                 it.run {
                     val indexOf = data.indexOf(it)
-                    if (indexOf == -1) {
-                        data.add(it)
-                        adapter.notifyItemInserted(data.indexOf(it))
-                    } else {
+                    if (indexOf > -1) {
                         data[indexOf] = it
                         adapter.notifyItemChanged(indexOf, it)
                     }

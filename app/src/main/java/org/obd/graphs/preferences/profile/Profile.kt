@@ -138,7 +138,6 @@ class VehicleProfile {
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                 .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                 .forEach { (pref, _) ->
-                    Log.e("EEEEEEEEEEEEEE","EEEEEEEEEEEEEEEEEEE $pref")
                     it.remove(pref)
                 }
             it.apply()
