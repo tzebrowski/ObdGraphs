@@ -8,19 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLogger
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText
 import org.obd.graphs.ui.common.toNumber
-import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 
 
 class MetricsViewAdapter internal constructor(
     context: Context?,
-    var data: MutableCollection<ObdMetric>
+    var data: MutableList<CarMetric>
 ) :
     RecyclerView.Adapter<MetricsViewAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -38,33 +36,32 @@ class MetricsViewAdapter internal constructor(
     ) {
 
         val metric = data.elementAt(position)
-        var valueTxt: String? = metric.valueToString()
+        var valueTxt: String? = metric.source.valueToString()
         if (valueTxt != null) {
-            valueTxt += " " + (metric.command as ObdCommand).pid.units
+            valueTxt += " " + (metric.source.command as ObdCommand).pid.units
         }
 
-        holder.metricName.setText(metric.command.label, COLOR_PHILIPPINE_GREEN,Typeface.NORMAL, 1.0f)
+        holder.metricName.setText(metric.source.command.label, COLOR_PHILIPPINE_GREEN,Typeface.NORMAL, 1.0f)
 
-        dataLogger.diagnostics().histogram().findBy(metric.command.pid).run {
-            holder.metricMaxValue.setText(
-                metric.toNumber(max).toString(),
-                Color.GRAY,
-                Typeface.NORMAL,
-                1.0f
-            )
-            holder.metricMinValue.setText(
-                metric.toNumber(min).toString(),
-                Color.GRAY,
-                Typeface.NORMAL,
-                1.0f
-            )
-            holder.metricMeanValue.setText(
-                metric.toNumber(mean).toString(),
-                Color.GRAY,
-                Typeface.NORMAL,
-                1.0f
-            )
-        }
+        holder.metricMaxValue.setText(
+            metric.source.toNumber(metric.max).toString(),
+            Color.GRAY,
+            Typeface.NORMAL,
+            1.0f
+        )
+        holder.metricMinValue.setText(
+            metric.source.toNumber(metric.min).toString(),
+            Color.GRAY,
+            Typeface.NORMAL,
+            1.0f
+        )
+        holder.metricMeanValue.setText(
+            metric.source.toNumber(metric.mean).toString(),
+            Color.GRAY,
+            Typeface.NORMAL,
+            1.0f
+        )
+
         holder.metricValue.setText(valueTxt, Color.GRAY, 1.0f)
     }
 

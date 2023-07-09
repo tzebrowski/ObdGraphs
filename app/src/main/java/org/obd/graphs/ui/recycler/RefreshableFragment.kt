@@ -2,35 +2,59 @@ package org.obd.graphs.ui.recycler
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.lifecycle.LifecycleOwner
+import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.datalogger.MetricsProvider
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.updateLongSet
 import org.obd.graphs.sendBroadcastEvent
-import org.obd.graphs.ui.common.*
+import org.obd.graphs.ui.common.DragManageAdapter
+import org.obd.graphs.ui.common.SwappableAdapter
+import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 import org.obd.graphs.ui.gauge.AdapterContext
-import org.obd.metrics.api.model.ObdMetric
 
-class RecyclerViewSetup {
+open class RefreshableFragment : Fragment() {
 
-    fun prepareMetrics(
-         metricsIdsPref: String,
+    protected lateinit var root: View
+
+    protected fun refreshRecyclerView(metricsCollector: CarMetricsCollector, recyclerViewId: Int) {
+        if (::root.isInitialized){
+            val adapter = ((root.findViewById(recyclerViewId) as RecyclerView).adapter) as RecyclerViewAdapter<RecyclerView.ViewHolder>
+            val data = adapter.data
+            metricsCollector.metrics().forEach {
+                it.run {
+                    val indexOf = data.indexOf(it)
+                    if (indexOf == -1) {
+                        data.add(it)
+                        adapter.notifyItemInserted(data.indexOf(it))
+                    } else {
+                        data[indexOf] = it
+                        adapter.notifyItemChanged(indexOf, it)
+                    }
+                }
+            }
+        }
+    }
+
+    protected fun prepareMetrics(
+        metricsIdsPref: String,
         metricsSerializerPref: String
-    ) : MutableList<ObdMetric> {
+    ): MutableList<CarMetric> {
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
         return MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun configureView(
+    protected fun configureView(
         configureChangeEventId: String,
-        viewLifecycleOwner: LifecycleOwner,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
         adapterContext: AdapterContext,
@@ -39,19 +63,19 @@ class RecyclerViewSetup {
         enableOnTouchListener: Boolean = false,
         adapter: (
             context: Context,
-            data: MutableList<ObdMetric>,
+            data: MutableList<CarMetric>,
             resourceId: Int,
             height: Int?
-        ) -> SimpleAdapter<*>,
+        ) -> RecyclerViewAdapter<*>,
         metricsSerializerPref: String
     ) {
 
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
-        val metrics =  MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
+        val metrics = MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
-        recyclerView.adapter = adapter(requireContext(),metrics,adapterContext.layoutId,adapterContext.height).apply {
+        recyclerView.adapter = adapter(requireContext(), metrics, adapterContext.layoutId, adapterContext.height).apply {
             setHasStableIds(true)
             notifyDataSetChanged()
         }
@@ -61,22 +85,19 @@ class RecyclerViewSetup {
             enableSwipeToDelete = enableSwipeToDelete,
             enableDragManager = enableDragManager,
             recyclerView = recyclerView,
-            metricsIdsPref =  metricsIdsPref,
-            viewPreferences = viewPreferences)
+            metricsIdsPref = metricsIdsPref,
+            viewPreferences = viewPreferences
+        )
 
         attachOnTouchListener(enableOnTouchListener, recyclerView)
         adapter(recyclerView).notifyDataSetChanged()
         recyclerView.refreshDrawableState()
-        MetricsObserver().observe(metricsIds, viewLifecycleOwner, adapter(recyclerView), metrics)
     }
 
-    private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
+    protected fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
         val query = dataLoggerPreferences.getPIDsToQuery()
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
-
-    private fun requireContext(): Context = getContext()!!
-
     private fun createSwappableAdapter(
         configureChangeEventId: String,
         recyclerView: RecyclerView,
@@ -98,12 +119,12 @@ class RecyclerViewSetup {
 
         override fun deleteItems(fromPosition: Int) {
             val data = adapter(recyclerView).data
-            val itemId: ObdMetric = data[fromPosition]
+            val itemId: CarMetric = data[fromPosition]
             data.remove(itemId)
 
             Prefs.updateLongSet(
                 metricsIdsPref,
-                data.map { obdMetric -> obdMetric.command.pid.id }.toList()
+                data.map { obdMetric -> obdMetric.source.command.pid.id }.toList()
             )
             sendBroadcastEvent(configureChangeEventId)
         }
@@ -131,7 +152,7 @@ class RecyclerViewSetup {
         viewPreferences: RecycleViewPreferences
     ) {
         if (enableDragManager) {
-            val swappableAdapter = createSwappableAdapter(configureChangeEventId, recyclerView,metricsIdsPref,viewPreferences)
+            val swappableAdapter = createSwappableAdapter(configureChangeEventId, recyclerView, metricsIdsPref, viewPreferences)
 
             val callback = if (enableSwipeToDelete)
                 DragManageAdapter(
@@ -151,5 +172,6 @@ class RecyclerViewSetup {
     }
 
     private fun adapter(recyclerView: RecyclerView) =
-        (recyclerView.adapter as SimpleAdapter)
+        (recyclerView.adapter as RecyclerViewAdapter)
+
 }

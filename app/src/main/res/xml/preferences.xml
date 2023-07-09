@@ -561,6 +561,18 @@
                         android:key="pref.gauge.toggle_virtual_screens_double_click"
                         android:title="@string/pref.gauge_toggle_virtual_screens" />
 
+
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.aa.fps"
+                        android:entryValues="@array/pref.aa.fps"
+                        android:defaultValue="10"
+                        android:dialogTitle="@string/pref.screen.fps"
+                        android:inputType="number"
+                        android:key="pref.gauge.fps"
+                        android:title="@string/pref.screen.fps"
+                        app:useSimpleSummaryProvider="true" />
+
                 </PreferenceCategory>
             </PreferenceScreen>
 
@@ -643,10 +655,10 @@
                     android:entries="@array/pref.aa.fps"
                     android:entryValues="@array/pref.aa.fps"
                     android:defaultValue="5"
-                    android:dialogTitle="@string/pref.aa.surface.fps"
+                    android:dialogTitle="@string/pref.screen.fps"
                     android:inputType="number"
                     android:key="pref.aa.surface.fps"
-                    android:title="@string/pref.aa.surface.fps"
+                    android:title="@string/pref.screen.fps"
                     app:useSimpleSummaryProvider="true" />
 
                 <CheckBoxPreference
@@ -736,8 +748,8 @@
                         android:key="pref.graph.x-axis.start-moving-after.time"
                         android:title="@string/pref.graph_x_axis_start_moving_after_time"
                         app:useSimpleSummaryProvider="true" />
-                </PreferenceCategory>
 
+                </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.trips_category">
                     <CheckBoxPreference

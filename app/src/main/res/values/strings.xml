@@ -102,7 +102,7 @@
     <string name="pref.pids.group.enableMetadataReadings_summary">Enabling this option will cause Vehicle metadata will be read during the session with ECU</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will cause OBD2 PIDs/Sensors will be read during the session with ECU</string>
 
-    <string name="pref.aa.surface.fps">Head unit refresh rate (FPS)</string>
+    <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
     <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>
     <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>

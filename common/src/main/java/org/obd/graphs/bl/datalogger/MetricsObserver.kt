@@ -6,7 +6,7 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
 
-internal class MetricsCollector : ReplyObserver<Reply<*>>() {
+internal class MetricsObserver : ReplyObserver<Reply<*>>() {
     internal val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
     fun reset() {
         metrics.postValue(null)

@@ -1,29 +1,24 @@
-package org.obd.graphs.aa
+package org.obd.graphs.bl.collector
 
+import org.obd.graphs.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType
 
-
-internal data class CarMetric(
-    val pid: PidDefinition,
-    var value: Double?,
+data class CarMetric(
+    var source: ObdMetric,
+    var value: Number,
     var min: Double,
     var max: Double,
-    var avg: Double,
+    var mean: Double,
     var enabled: Boolean = true
 ) {
-
     companion object {
-        fun newInstance(it: ObdMetric) = CarMetric(it.command.pid, null, 0.0, 0.0, 0.0)
+        fun newInstance(source: ObdMetric) = CarMetric(source, value = 0, min = 0.0, max = 0.0, mean = 0.0, enabled = true)
     }
 
-    fun valueToString(): String {
-        return if (value == null) {
-            "No data"
-        } else {
-            return toNumber(value).toString()
-        }
+    fun toNumber(value: Double?): String {
+        return toNumber(source.command.pid, value).toString()
     }
 
     private fun toNumber(pid: PidDefinition, input: Number?): Number {
@@ -47,7 +42,17 @@ internal data class CarMetric(
             }
     }
 
-    fun toNumber(value: Double?): Number {
-        return toNumber(pid, value)
+
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as CarMetric
+
+        return this.source == other.source
+    }
+
+    override fun hashCode(): Int{
+        return this.source.hashCode()
     }
 }

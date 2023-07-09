@@ -1,4 +1,4 @@
-package org.obd.graphs.aa
+package org.obd.graphs
 
 import android.os.Handler
 import android.os.Looper
@@ -6,24 +6,24 @@ import android.os.Message
 import android.util.Log
 import java.util.concurrent.*
 
-private const val MSG_RENDER_FRAME = 1
-private const val LOG_KEY = "RenderingThread"
 
-internal class RenderingThread(surfaceController: SurfaceController) {
+private const val LOG_KEY = "RenderingThread"
+private const val MSG_RENDER_FRAME = 1
+
+class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> Int) {
 
     private val singleTaskPool: ExecutorService = ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS,
         LinkedBlockingQueue(1), ThreadPoolExecutor.DiscardPolicy()
     )
 
-    private val handler = Handler(Looper.getMainLooper(), HandlerCallback(surfaceController))
-
+    private val handler = Handler(Looper.getMainLooper(), HandlerCallback(renderAction))
     private var tasks: Future<*>? = null
 
-    internal class HandlerCallback(private val surfaceController: SurfaceController) : Handler.Callback {
+    internal class HandlerCallback(private val renderAction: () -> Unit) : Handler.Callback {
         override fun handleMessage(msg: Message): Boolean {
             if (msg.what == MSG_RENDER_FRAME) {
-                surfaceController.renderFrame()
+                renderAction()
                 return true
             }
             return false
@@ -35,21 +35,21 @@ internal class RenderingThread(surfaceController: SurfaceController) {
     }
 
     fun start() {
-        Log.i(LOG_KEY, "Submitting rendering task")
+        Log.d(LOG_KEY, "Submitting rendering task")
         tasks = singleTaskPool.submit(getRenderingTask())
-        Log.i(LOG_KEY, "Rendering task is submitted")
+        Log.d(LOG_KEY, "Rendering task is submitted")
     }
 
     fun stop() {
-        Log.i(LOG_KEY, "Shutdown rendering task")
-        tasks?.cancel(true)
+        Log.d(LOG_KEY, "Shutdown rendering task")
+        val res = tasks?.cancel(true)
         handler.removeMessages(MSG_RENDER_FRAME)
-        Log.i(LOG_KEY, "Rendering task is now shutdown")
+        Log.d(LOG_KEY, "Rendering task is now shutdown, result=$res")
     }
 
     private fun getRenderingTask(): Runnable = Runnable {
-        val fps = carSettings.getSurfaceFrameRate()
-        Log.i(LOG_KEY, "Expected surface FPS $fps")
+        val fps =  perfFrameRate()
+        Log.d(LOG_KEY, "Expected surface FPS $fps")
         val targetDelay = 1000 / fps
         while (!Thread.currentThread().isInterrupted) {
             var ts = System.currentTimeMillis()

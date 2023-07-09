@@ -38,7 +38,7 @@ internal class SurfaceController(private val carContext: CarContext) :
                     Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
                     surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
-                metricsCollector.configure()
+                metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             }
         }
 

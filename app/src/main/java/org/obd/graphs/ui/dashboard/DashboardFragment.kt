@@ -11,26 +11,63 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
+import org.obd.graphs.RenderingThread
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.preferences.getS
+import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.gauge.GaugeAdapter
-import org.obd.graphs.ui.recycler.RecyclerViewSetup
-import org.obd.metrics.api.model.ObdMetric
 
 private const val CONFIGURATION_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.dash_gauge_id"
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 
-class DashboardFragment : Fragment() {
-    private lateinit var root: View
+class DashboardFragment : RefreshableFragment() {
+
+    private val dashboardCollector = CarMetricsCollector()
+    private val gaugeCollector = CarMetricsCollector()
+
+    private val renderingThread: RenderingThread = RenderingThread(
+        renderAction = {
+            if (dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
+                refreshRecyclerView(dashboardCollector, R.id.dashboard_recycler_view)
+                refreshRecyclerView(gaugeCollector, R.id.gauge_recycler_view)
+            } else {
+                if (dashboardPreferences.gaugeViewVisible && !dashboardPreferences.dashboardViewVisible) {
+                    refreshRecyclerView(gaugeCollector, R.id.gauge_recycler_view)
+                }
+                if (!dashboardPreferences.gaugeViewVisible && dashboardPreferences.dashboardViewVisible) {
+                    refreshRecyclerView(dashboardCollector, R.id.dashboard_recycler_view)
+                }
+            }
+        },
+        perfFrameRate = {
+            Prefs.getS("pref.dashboard.fps", "10").toInt()
+        }
+    )
 
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
-    private var configurationChangedReceiver = object : BroadcastReceiver() {
+    private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-          configureView(false)
+            when (intent?.action) {
+                CONFIGURATION_CHANGE_EVENT_DASH -> configureView(false)
+                CONFIGURATION_CHANGE_EVENT_GAUGE -> configureView(false)
+
+                DATA_LOGGER_CONNECTED_EVENT -> {
+                    renderingThread.start()
+                }
+
+                DATA_LOGGER_STOPPED_EVENT -> {
+                    renderingThread.stop()
+                }
+            }
         }
     }
 
@@ -41,15 +78,23 @@ class DashboardFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.registerReceiver(configurationChangedReceiver, IntentFilter().apply {
+        activity?.registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(CONFIGURATION_CHANGE_EVENT_DASH)
             addAction(CONFIGURATION_CHANGE_EVENT_GAUGE)
+            addAction(DATA_LOGGER_CONNECTED_EVENT)
+            addAction(DATA_LOGGER_STOPPED_EVENT)
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        renderingThread.stop()
     }
 
     override fun onDetach() {
         super.onDetach()
-        activity?.unregisterReceiver(configurationChangedReceiver)
+        activity?.unregisterReceiver(broadcastReceiver)
+        renderingThread.stop()
     }
 
     override fun onCreateView(
@@ -59,6 +104,18 @@ class DashboardFragment : Fragment() {
     ): View {
         root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         configureView(true)
+
+        dataLogger.observe(viewLifecycleOwner) {
+            it.run {
+                dashboardCollector.append(it)
+                gaugeCollector.append(it)
+            }
+        }
+
+        if (dataLogger.isRunning()) {
+            renderingThread.start()
+        }
+
         return root
     }
 
@@ -117,9 +174,8 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
-        RecyclerViewSetup().configureView(
+        configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_DASH,
-            viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.dashboard_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext = AdapterContext(
@@ -131,21 +187,20 @@ class DashboardFragment : Fragment() {
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
-                        data: MutableList<ObdMetric>,
+                        data: MutableList<CarMetric>,
                         resourceId: Int,
                         height: Int? ->
                 DashboardViewAdapter(context, data, resourceId, height)
             },
             metricsSerializerPref = "prefs.dash.pids.settings"
         )
+
+        dashboardCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second)
     }
 
-
     private fun setupGaugeRecyclerView(spanCount: Int, enableOnTouchListener: Boolean) {
-
-        RecyclerViewSetup().configureView(
+        configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_GAUGE,
-            viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.gauge_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.gaugeSelectedMetrics.first,
             adapterContext = AdapterContext(
@@ -157,13 +212,15 @@ class DashboardFragment : Fragment() {
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
-                        data: MutableList<ObdMetric>,
+                        data: MutableList<CarMetric>,
                         resourceId: Int,
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)
             },
             metricsSerializerPref = "prefs.gauge.pids.settings"
-        )
+       )
+
+        gaugeCollector.applyFilter(dashboardPreferences.gaugeSelectedMetrics.second)
     }
 
     private fun calculateHeight(numberOfItems: Int): Int {

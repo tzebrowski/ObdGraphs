@@ -12,11 +12,9 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.AA_EDIT_PREF_SCREEN
-import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
-import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.*
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "CarScreen"
 private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
@@ -27,11 +25,18 @@ const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 
+val metricsCollector = CarMetricsCollector()
+
 internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceController) :
     Screen(carContext),
     DefaultLifecycleObserver {
 
-    private var renderingThread = RenderingThread(surfaceController)
+    private val renderingThread: RenderingThread = RenderingThread(
+        renderAction = { surfaceController.renderFrame() },
+        perfFrameRate = {
+            carSettings.getSurfaceFrameRate()
+        }
+    )
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -64,7 +69,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         carSettings.applyVirtualScreen1()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
@@ -72,7 +77,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         carSettings.applyVirtualScreen2()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
@@ -80,7 +85,7 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         carSettings.applyVirtualScreen3()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
@@ -88,13 +93,13 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (carSettings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         carSettings.applyVirtualScreen4()
-                        metricsCollector.configure()
+                        metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                         surfaceController.renderFrame()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
-                    metricsCollector.configure()
+                    metricsCollector.applyFilter(carSettings.getSelectedPIDs())
                     surfaceController.renderFrame()
                 }
 
@@ -196,23 +201,23 @@ internal class CarScreen(carContext: CarContext, val surfaceController: SurfaceC
 
         .addAction(createAction(R.drawable.action_virtual_screen_1, CarColor.YELLOW) {
             carSettings.applyVirtualScreen1()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_2, CarColor.YELLOW) {
             carSettings.applyVirtualScreen2()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
 
         .addAction(createAction(R.drawable.action_virtual_screen_3, CarColor.YELLOW) {
             carSettings.applyVirtualScreen3()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
         .addAction(createAction(R.drawable.action_virtual_screen_4, CarColor.YELLOW) {
             carSettings.applyVirtualScreen4()
-            metricsCollector.configure()
+            metricsCollector.applyFilter(carSettings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
         .build()

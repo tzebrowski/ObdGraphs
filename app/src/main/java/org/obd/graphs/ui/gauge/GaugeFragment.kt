@@ -13,18 +13,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.RenderingThread
+import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.recycler.RecyclerViewSetup
-import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.metrics.api.model.ObdMetric
+import org.obd.graphs.ui.recycler.RefreshableFragment
+import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import kotlin.math.roundToInt
 
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
@@ -32,8 +30,17 @@ private const val ENABLE_SWIPE_TO_DELETE_PREF = "pref.gauge.swipe_to_delete"
 private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.gauge_id"
 private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
-class GaugeFragment : Fragment() {
-    private lateinit var root: View
+class GaugeFragment : RefreshableFragment() {
+
+    private val metricsCollector = CarMetricsCollector()
+    private val renderingThread: RenderingThread = RenderingThread(
+        renderAction = {
+            refreshRecyclerView(metricsCollector, R.id.recycler_view)
+        },
+        perfFrameRate = {
+            Prefs.getS("pref.gauge.fps", "10").toInt()
+        }
+    )
 
     @SuppressLint("NotifyDataSetChanged")
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -44,8 +51,8 @@ class GaugeFragment : Fragment() {
                 }
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
-                    val adapter = recyclerView.adapter as SimpleAdapter
-                    val metrics = RecyclerViewSetup().prepareMetrics(
+                    val adapter = recyclerView.adapter as RecyclerViewAdapter
+                    val metrics = prepareMetrics(
                         metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
                         metricsSerializerPref = GAUGE_PIDS_SETTINGS
                     )
@@ -57,12 +64,14 @@ class GaugeFragment : Fragment() {
                     virtualScreensPanel {
                         it.isVisible = false
                     }
+                    renderingThread.start()
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     virtualScreensPanel {
                         it.isVisible = true
                     }
+                    renderingThread.stop()
                 }
 
                 TOGGLE_TOOLBAR_ACTION -> {
@@ -85,8 +94,20 @@ class GaugeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
+
+        dataLogger.observe(viewLifecycleOwner) {
+            it.run {
+                metricsCollector.append(it)
+            }
+        }
+
         configureView(true)
         setupVirtualViewPanel()
+
+        if (dataLogger.isRunning()) {
+            renderingThread.start()
+        }
+
         return root
     }
 
@@ -101,15 +122,26 @@ class GaugeFragment : Fragment() {
         })
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        renderingThread.stop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        renderingThread.stop()
+    }
+
     override fun onDetach() {
         super.onDetach()
         activity?.unregisterReceiver(broadcastReceiver)
+        renderingThread.stop()
     }
 
+
     private fun configureView(enableOnTouchListener: Boolean) {
-        RecyclerViewSetup().configureView(
+        configureView(
             configureChangeEventId = CONFIGURE_CHANGE_EVENT_GAUGE,
-            viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView,
             metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
             adapterContext = AdapterContext(
@@ -121,13 +153,14 @@ class GaugeFragment : Fragment() {
             enableDragManager = Prefs.getBoolean(ENABLE_DRAG_AND_DROP_PREF, false),
             enableOnTouchListener = enableOnTouchListener,
             adapter = { context: Context,
-                        data: MutableList<ObdMetric>,
+                        data: MutableList<CarMetric>,
                         resourceId: Int,
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)
             },
             metricsSerializerPref = GAUGE_PIDS_SETTINGS
         )
+        metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
     }
 
     private fun calculateSpan(): Int {
@@ -185,6 +218,7 @@ class GaugeFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
         setVirtualViewBtn(R.id.virtual_view_8, currentVirtualScreen, "8")
     }
+
     private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
         if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
             func(root.findViewById(R.id.virtual_view_panel))

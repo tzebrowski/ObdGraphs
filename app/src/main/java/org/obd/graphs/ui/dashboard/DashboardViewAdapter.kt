@@ -19,29 +19,29 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.R
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
-import org.obd.graphs.ui.recycler.SimpleAdapter
-import org.obd.metrics.api.model.ObdMetric
+import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 
 class DashboardViewAdapter(
     context: Context,
-    data: MutableList<ObdMetric>,
+    data: MutableList<CarMetric>,
     resourceId: Int,
     height: Int? = null
 ) :
-    SimpleAdapter<DashboardViewAdapter.ViewHolder>(context, data, resourceId, height) {
+    RecyclerViewAdapter<DashboardViewAdapter.ViewHolder>(context, data, resourceId, height) {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
 
     override fun getItemId(position: Int): Long {
-        return data[position].command.pid.id
+        return data[position].source.command.pid.id
     }
 
     override fun onCreateViewHolder(
@@ -61,10 +61,10 @@ class DashboardViewAdapter(
     ) {
         val metric = data.elementAt(position)
 
-        val obdCommand = metric.command as ObdCommand
+        val obdCommand = metric.source.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        val segmentNum: Int = holder.segments.indexOf(if (metric.value == null) 0.0 else metric.valueToDouble())
+        val segmentNum: Int = holder.segments.indexOf(if (metric.value == null) 0.0 else metric.source.valueToDouble())
         (segmentNum > 0).apply {
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
@@ -81,7 +81,6 @@ class DashboardViewAdapter(
                             Prefs.getInt("pref.dash.background_color_2", -1)
                         )
                     )
-
                 }
             }
 
@@ -115,8 +114,8 @@ class DashboardViewAdapter(
 
         holder.chart.invalidate()
         holder.label.text = obdCommand.pid.description
-        val units = (metric.command as ObdCommand).pid.units
-        val value = metric.valueToString() + " " + units
+        val units = (metric.source.command as ObdCommand).pid.units
+        val value = metric.source.valueToString() + " " + units
         holder.value.text = value
         holder.value.highLightText(units, 0.3f, COLOR_PHILIPPINE_GREEN)
     }
