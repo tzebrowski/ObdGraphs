@@ -24,7 +24,7 @@ open class RefreshableFragment : Fragment() {
 
     protected lateinit var root: View
 
-    fun refreshRecyclerView(metricsCollector: CarMetricsCollector, recyclerViewId: Int) {
+    protected fun refreshRecyclerView(metricsCollector: CarMetricsCollector, recyclerViewId: Int) {
         if (::root.isInitialized){
             val adapter = ((root.findViewById(recyclerViewId) as RecyclerView).adapter) as SimpleAdapter<RecyclerView.ViewHolder>
             val data = adapter.data
@@ -43,7 +43,7 @@ open class RefreshableFragment : Fragment() {
         }
     }
 
-    fun prepareMetrics(
+    protected fun prepareMetrics(
         metricsIdsPref: String,
         metricsSerializerPref: String
     ): MutableList<ObdMetric> {
@@ -53,7 +53,7 @@ open class RefreshableFragment : Fragment() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun configureView(
+    protected fun configureView(
         configureChangeEventId: String,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
@@ -94,7 +94,7 @@ open class RefreshableFragment : Fragment() {
         recyclerView.refreshDrawableState()
     }
 
-    private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
+    protected fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
         val query = dataLoggerPreferences.getPIDsToQuery()
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }

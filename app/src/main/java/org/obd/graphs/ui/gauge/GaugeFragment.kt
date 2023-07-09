@@ -159,12 +159,6 @@ class GaugeFragment : RefreshableFragment() {
         metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
     }
 
-
-    private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
-        val query = dataLoggerPreferences.getPIDsToQuery()
-        return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
-    }
-
     private fun calculateSpan(): Int {
         val numberOfPIDsToDisplay = getVisiblePIDsList().size
 
