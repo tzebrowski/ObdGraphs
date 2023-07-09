@@ -20,7 +20,6 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.recycler.SimpleAdapter
 import org.obd.metrics.api.model.ObdMetric
@@ -53,7 +52,7 @@ class GaugeFragment : RefreshableFragment() {
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
                     val adapter = recyclerView.adapter as SimpleAdapter
-                    val metrics = RecyclerViewSetup().prepareMetrics(
+                    val metrics = prepareMetrics(
                         metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
                         metricsSerializerPref = GAUGE_PIDS_SETTINGS
                     )
@@ -137,9 +136,8 @@ class GaugeFragment : RefreshableFragment() {
 
 
     private fun configureView(enableOnTouchListener: Boolean) {
-        RecyclerViewSetup().configureView(
+        configureView(
             configureChangeEventId = CONFIGURE_CHANGE_EVENT_GAUGE,
-            viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView,
             metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
             adapterContext = AdapterContext(
@@ -156,8 +154,7 @@ class GaugeFragment : RefreshableFragment() {
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)
             },
-            metricsSerializerPref = GAUGE_PIDS_SETTINGS,
-            metricsObserverEnabled = false
+            metricsSerializerPref = GAUGE_PIDS_SETTINGS
         )
         metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
     }

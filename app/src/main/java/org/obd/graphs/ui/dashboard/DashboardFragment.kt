@@ -24,7 +24,6 @@ import org.obd.graphs.preferences.getS
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.gauge.GaugeAdapter
-import org.obd.graphs.ui.recycler.RecyclerViewSetup
 import org.obd.metrics.api.model.ObdMetric
 
 private const val CONFIGURATION_CHANGE_EVENT_GAUGE = "recycler.view.change.configuration.event.dash_gauge_id"
@@ -175,9 +174,8 @@ class DashboardFragment : RefreshableFragment() {
     }
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
-        RecyclerViewSetup().configureView(
+        configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_DASH,
-            viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.dashboard_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext = AdapterContext(
@@ -194,19 +192,15 @@ class DashboardFragment : RefreshableFragment() {
                         height: Int? ->
                 DashboardViewAdapter(context, data, resourceId, height)
             },
-            metricsSerializerPref = "prefs.dash.pids.settings",
-            metricsObserverEnabled = false
+            metricsSerializerPref = "prefs.dash.pids.settings"
         )
 
         dashboardCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second)
     }
 
-
     private fun setupGaugeRecyclerView(spanCount: Int, enableOnTouchListener: Boolean) {
-
-        RecyclerViewSetup().configureView(
+        configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_GAUGE,
-            viewLifecycleOwner = viewLifecycleOwner,
             recyclerView = root.findViewById(R.id.gauge_recycler_view) as RecyclerView,
             metricsIdsPref = dashboardPreferences.gaugeSelectedMetrics.first,
             adapterContext = AdapterContext(
@@ -223,9 +217,8 @@ class DashboardFragment : RefreshableFragment() {
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)
             },
-            metricsSerializerPref = "prefs.gauge.pids.settings",
-            metricsObserverEnabled = false
-        )
+            metricsSerializerPref = "prefs.gauge.pids.settings"
+       )
 
         gaugeCollector.applyFilter(dashboardPreferences.gaugeSelectedMetrics.second)
     }
