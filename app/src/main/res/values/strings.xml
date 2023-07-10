@@ -302,6 +302,8 @@
 
     <string-array name="pref.aa.fps">
         <item name="1">1</item>
+        <item name="3">3</item>
+        <item name="4">4</item>
         <item name="5">5</item>
         <item name="6">6</item>
         <item name="7">7</item>

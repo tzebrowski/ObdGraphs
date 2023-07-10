@@ -30,10 +30,11 @@ class CarMetricsCollector {
 
     fun append(input: ObdMetric?) {
         input?.let { metric ->
+
             metrics[metric.command.pid.id]?.let {
                 it.source = metric
 
-                it.value = input.valueToDouble()
+                it.value = metric.valueToDouble()
                 val hist = dataLogger.findHistogramFor(metric)
 
                 hist.mean?.let { mean ->
