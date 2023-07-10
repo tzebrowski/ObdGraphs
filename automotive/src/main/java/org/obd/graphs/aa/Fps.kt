@@ -6,9 +6,7 @@ import java.util.*
 private const val MAX_SIZE = 100
 private const val NANOS = 1000000000.0
 
-internal val fps = Fps()
-
-internal class Fps {
+class Fps {
     var times: LinkedList<Long> = LinkedList<Long>()
 
     fun start() {

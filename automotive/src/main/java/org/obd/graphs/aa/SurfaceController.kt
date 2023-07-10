@@ -13,15 +13,20 @@ import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.renderer.ScreenRenderer
+import org.obd.graphs.aa.renderer.ScreenSettings
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.sendBroadcastEvent
-
 
 private const val LOG_KEY = "SurfaceController"
 
-internal class SurfaceController(private val carContext: CarContext) :
+internal class SurfaceController(private val carContext: CarContext,
+                                 private val settings: ScreenSettings,
+                                 private val metricsCollector: CarMetricsCollector,
+                                 fps: Fps) :
     DefaultLifecycleObserver {
 
-    private val renderer: ScreenRenderer = ScreenRenderer.of(carContext)
+
+    private val renderer: ScreenRenderer = ScreenRenderer.of(carContext, settings, metricsCollector, fps)
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -34,11 +39,11 @@ internal class SurfaceController(private val carContext: CarContext) :
                 surface?.release()
                 surface = surfaceContainer.surface
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    val frameRate = carSettings.getSurfaceFrameRate() + 5f
+                    val frameRate = settings.getSurfaceFrameRate() + 5f
                     Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
                     surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
-                metricsCollector.applyFilter(carSettings.getSelectedPIDs())
+                metricsCollector.applyFilter(settings.getSelectedPIDs())
             }
         }
 

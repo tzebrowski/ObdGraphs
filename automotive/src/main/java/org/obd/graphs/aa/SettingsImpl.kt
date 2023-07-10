@@ -1,5 +1,6 @@
 package org.obd.graphs.aa
 
+import org.obd.graphs.aa.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 
 private const val PREF_CURRENT_VIRTUAL_SCREEN = "pref.aa.pids.vs.current"
@@ -18,20 +19,17 @@ const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
 const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
-internal val carSettings = CarSettings()
+internal class SettingsImpl : ScreenSettings {
 
+    override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
+    override fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
+    override fun applyVirtualScreen3() = applyVirtualScreen(VIRTUAL_SCREEN_3)
+    override fun applyVirtualScreen4() = applyVirtualScreen(VIRTUAL_SCREEN_4)
 
-internal class CarSettings {
-
-    fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
-    fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
-    fun applyVirtualScreen3() = applyVirtualScreen(VIRTUAL_SCREEN_3)
-    fun applyVirtualScreen4() = applyVirtualScreen(VIRTUAL_SCREEN_4)
-
-    fun getSelectedPIDs() =
+    override fun getSelectedPIDs() =
         Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
 
-    fun maxItemsInColumn(): Int {
+    override fun maxItemsInColumn(): Int {
         return when (getSelectedPIDs().size) {
             1 -> 1
             2 -> 1
@@ -41,21 +39,21 @@ internal class CarSettings {
         }
     }
 
-    fun isHistoryEnabled(): Boolean {
+    override fun isHistoryEnabled(): Boolean {
         return Prefs.getBoolean("pref.aa.pids.history.enabled", true)
     }
 
-    fun isFpsCounterEnabled(): Boolean {
+    override fun isFpsCounterEnabled(): Boolean {
         return Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
     }
 
-    fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
-    fun maxFontSize(): Int =
+    override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
+    override fun maxFontSize(): Int =
         Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
 
-    fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
+    override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
 
-    private fun applyVirtualScreen(key: String) {
+    override fun applyVirtualScreen(key: String) {
         Prefs.updateString(PREF_CURRENT_VIRTUAL_SCREEN, key)
         Prefs.updateStringSet(PREF_SELECTED_PIDS, Prefs.getStringSet(key).toList())
     }

@@ -1,11 +1,10 @@
 package org.obd.graphs.aa.renderer
 
+import android.content.Context
 import android.graphics.*
-import androidx.car.app.CarContext
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.aa.R
-import org.obd.graphs.aa.carSettings
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.profile.PROFILE_NAME_PREFIX
@@ -18,7 +17,7 @@ const val MARGIN_END = 30
 const val ROW_SPACING = 12
 const val MARGIN_START = 15
 
-internal class DrawingManager(carContext: CarContext) {
+class DrawingManager(context: Context,  private val settings: ScreenSettings) {
 
     private val valueScaler: ValueScaler = ValueScaler()
 
@@ -29,7 +28,7 @@ internal class DrawingManager(carContext: CarContext) {
     private var canvas: Canvas? = null
 
     val background: Bitmap =
-        BitmapFactory.decodeResource(carContext.resources, R.drawable.background)
+        BitmapFactory.decodeResource(context.resources, R.drawable.background)
 
     private val statusLabel: String
     private val statusConnected: String
@@ -51,11 +50,11 @@ internal class DrawingManager(carContext: CarContext) {
         paint.isAntiAlias = true
         paint.style = Paint.Style.FILL
 
-        profileLabel = carContext.resources.getString(R.string.status_bar_profile)
-        fpsLabel = carContext.resources.getString(R.string.status_bar_fps)
-        statusLabel = carContext.resources.getString(R.string.status_bar_status)
-        statusConnected = carContext.resources.getString(R.string.status_bar_connected)
-        statusDisconnected = carContext.resources.getString(R.string.status_bar_disconnected)
+        profileLabel = context.resources.getString(R.string.status_bar_profile)
+        fpsLabel = context.resources.getString(R.string.status_bar_fps)
+        statusLabel = context.resources.getString(R.string.status_bar_status)
+        statusConnected = context.resources.getString(R.string.status_bar_connected)
+        statusDisconnected = context.resources.getString(R.string.status_bar_disconnected)
     }
 
     fun updateCanvas(canvas: Canvas) {
@@ -158,7 +157,7 @@ internal class DrawingManager(carContext: CarContext) {
             statusPaint
         )
 
-        if (carSettings.isFpsCounterEnabled()) {
+        if (settings.isFpsCounterEnabled()) {
             horizontalAlignment += getTextWidth(text, statusPaint) + 12F
             text = fpsLabel
             drawText(
@@ -289,7 +288,7 @@ internal class DrawingManager(carContext: CarContext) {
 
     private fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12
 
-    private fun calculateDividerHeight() = when (carSettings.maxItemsInColumn()) {
+    private fun calculateDividerHeight() = when (settings.maxItemsInColumn()) {
         1 -> 8
         else -> 4
     }
@@ -300,7 +299,7 @@ internal class DrawingManager(carContext: CarContext) {
         return bounds.left + bounds.width()
     }
 
-    private fun calculateProgressBarHeight() = when (carSettings.maxItemsInColumn()) {
+    private fun calculateProgressBarHeight() = when (settings.maxItemsInColumn()) {
         1 -> 18
         else -> 10
     }
