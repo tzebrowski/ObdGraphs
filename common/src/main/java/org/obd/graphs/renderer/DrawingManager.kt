@@ -1,11 +1,11 @@
-package org.obd.graphs.aa.renderer
+package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.aa.R
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.commons.R
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.profile.getSelectedProfile
@@ -17,7 +17,7 @@ const val MARGIN_END = 30
 const val ROW_SPACING = 12
 const val MARGIN_START = 15
 
-class DrawingManager(context: Context,  private val settings: ScreenSettings) {
+internal class DrawingManager(context: Context,  private val settings: ScreenSettings) {
 
     private val valueScaler: ValueScaler = ValueScaler()
 

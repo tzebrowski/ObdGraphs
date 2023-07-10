@@ -1,9 +1,8 @@
-package org.obd.graphs.aa.renderer
+package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import org.obd.graphs.aa.Fps
 import org.obd.graphs.bl.collector.CarMetricsCollector
 
 interface ScreenRenderer {

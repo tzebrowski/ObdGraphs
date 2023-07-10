@@ -5,9 +5,4 @@
     <string name="pref.aa.action_exit">Exit</string>
     <string name="pref.aa.get_to_app_conf">AA preferences are opened in the mobile app\n Go there to edit App settings</string>
     <string name="pref.aa.reopen_app">App has been closed due to issues, please open it manually</string>
-    <string name="status_bar.status">status: </string>
-    <string name="status_bar.profile">profile: </string>
-    <string name="status_bar.fps">fps: </string>
-    <string name="status_bar.connected">connected</string>
-    <string name="status_bar.disconnected">disconnected</string>
 </resources>

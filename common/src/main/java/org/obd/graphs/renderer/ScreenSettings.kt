@@ -1,4 +1,4 @@
-package org.obd.graphs.aa.renderer
+package org.obd.graphs.renderer
 
 interface ScreenSettings {
     fun applyVirtualScreen1()

@@ -12,8 +12,9 @@ import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.aa.renderer.ScreenRenderer
-import org.obd.graphs.aa.renderer.ScreenSettings
+import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.ScreenRenderer
+import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.sendBroadcastEvent
 
@@ -22,7 +23,8 @@ private const val LOG_KEY = "SurfaceController"
 internal class SurfaceController(private val carContext: CarContext,
                                  private val settings: ScreenSettings,
                                  private val metricsCollector: CarMetricsCollector,
-                                 fps: Fps) :
+                                 fps: Fps
+) :
     DefaultLifecycleObserver {
 
 

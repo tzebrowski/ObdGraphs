@@ -13,9 +13,10 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
-import org.obd.graphs.aa.renderer.ScreenSettings
+import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.renderer.Fps
 
 private const val LOG_KEY = "CarScreen"
 private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
@@ -31,7 +32,8 @@ internal class CarScreen(carContext: CarContext,
                          private val surfaceController: SurfaceController,
                          private val settings: ScreenSettings,
                          private val metricsCollector: CarMetricsCollector,
-                         private val fps: Fps) :
+                         private val fps: Fps
+) :
     Screen(carContext),
     DefaultLifecycleObserver {
 
@@ -259,6 +261,7 @@ internal class CarScreen(carContext: CarContext,
     init {
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
+            Log.i("AAAA","AAAA $it")
             metricsCollector.append(it)
         }
 

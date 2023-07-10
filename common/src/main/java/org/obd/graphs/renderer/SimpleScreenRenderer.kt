@@ -1,21 +1,21 @@
-package org.obd.graphs.aa.renderer
+package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
-import org.obd.graphs.aa.Fps
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import kotlin.math.min
 
 private const val LOG_KEY = "SimpleScreenRenderer"
 
-class SimpleScreenRenderer(context: Context,
+internal class SimpleScreenRenderer(context: Context,
                            private val settings: ScreenSettings,
                            private val metricsCollector: CarMetricsCollector,
-                           private val fps: Fps): ScreenRenderer {
+                           private val fps: Fps
+): ScreenRenderer {
 
     private val drawingManager = DrawingManager(context, settings)
 

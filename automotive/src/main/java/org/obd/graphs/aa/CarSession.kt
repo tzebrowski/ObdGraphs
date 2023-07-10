@@ -7,17 +7,18 @@ import androidx.car.app.Screen
 import androidx.car.app.Session
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.renderer.Fps
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.setCarContext
 
 
 private const val LOG_TAG = "CarSession"
+private val settings = SettingsImpl()
+private val metricsCollector = CarMetricsCollector()
+private val fps: Fps = Fps()
 
 internal class CarSession : Session(), DefaultLifecycleObserver {
     private lateinit var surfaceController: SurfaceController
-    private val settings = SettingsImpl()
-    private val metricsCollector = CarMetricsCollector()
-    private val fps: Fps = Fps()
 
     override fun onCreateScreen(intent: Intent): Screen {
         lifecycle.addObserver(this)
@@ -26,7 +27,6 @@ internal class CarSession : Session(), DefaultLifecycleObserver {
         lifecycle.addObserver(surfaceController)
         return CarScreen(carContext, surfaceController, settings, metricsCollector, fps)
     }
-
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
         super.onCarConfigurationChanged(newConfiguration)

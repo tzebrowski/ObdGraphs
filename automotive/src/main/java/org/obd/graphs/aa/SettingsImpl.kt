@@ -1,6 +1,6 @@
 package org.obd.graphs.aa
 
-import org.obd.graphs.aa.renderer.ScreenSettings
+import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 
 private const val PREF_CURRENT_VIRTUAL_SCREEN = "pref.aa.pids.vs.current"
