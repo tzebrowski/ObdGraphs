@@ -35,15 +35,15 @@ class WifiConnection(private val inetSocketAddress: InetSocketAddress) : Adapter
 
         try {
             inputStream.close()
-        } catch (e: IOException) {
+        } catch (_: IOException) {
         }
         try {
             outputStream.close()
-        } catch (e: IOException) {
+        } catch (_: IOException) {
         }
         try {
             socket.close()
-        } catch (e: IOException) {
+        } catch (_: IOException) {
         }
     }
 
@@ -52,7 +52,7 @@ class WifiConnection(private val inetSocketAddress: InetSocketAddress) : Adapter
         close()
         try {
             Thread.sleep(500)
-        } catch (e: InterruptedException) {
+        } catch (_: InterruptedException) {
         }
         connect()
     }

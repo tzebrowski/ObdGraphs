@@ -1,9 +1,9 @@
-package org.obd.graphs.preferences
+package org.obd.graphs.bl.datalogger
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.VehicleCapabilities
 
 class VehicleMetadata(var name: String, var value: String)

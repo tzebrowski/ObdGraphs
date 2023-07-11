@@ -123,6 +123,10 @@ android {
 }
 
 dependencies {
+    implementation project(":datalogger")
+    implementation project(":common")
+    debugImplementation project(":automotive")
+    releaseImplementation project(":automotive")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
@@ -152,10 +156,6 @@ dependencies {
     implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
     debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
     implementation 'pub.devrel:easypermissions:3.0.0'
-
-    implementation project(":common")
-    debugImplementation project(":automotive")
-    releaseImplementation project(":automotive")
 
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
     androidTestImplementation 'androidx.test:core-ktx:1.5.0'

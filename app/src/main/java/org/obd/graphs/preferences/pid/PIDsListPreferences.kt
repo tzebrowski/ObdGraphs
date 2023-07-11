@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import androidx.preference.MultiSelectListPreference
 import org.obd.graphs.bl.datalogger.WORKFLOW_RELOAD_EVENT
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*

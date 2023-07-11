@@ -9,7 +9,6 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.preferences.vehicleCapabilitiesManager
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
