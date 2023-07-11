@@ -7,10 +7,9 @@ pluginManagement {
     }
 }
 
-
-
 rootProject.name = "ObdGraphs"
 include ':common'
+include ':renderer'
 include ':app'
 include ':automotive'
 

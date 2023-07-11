@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rainbow_indigo">#1C3D72</color>
+    <color name="cardinal">#C22636</color>
+    <color name="philippine_green">#01804F</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="light_shade_gray">#ffffff</color>
+    <color name="gray">#BBBBBB</color>
+    <color name="gray_light">#878787</color>
+    <color name="gray_dark">#565656</color>
+    <color name="transparent">#80000000</color>
+</resources>

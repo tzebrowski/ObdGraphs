@@ -10,29 +10,24 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 31
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testFunctionalTest false
+        testHandleProfiling false
     }
 
     buildTypes {
         release {
         }
-
         play {
         }
-
         debug {
         }
-    }
-
-    sourceSets {
-        debug.setRoot('build-types/debug')
-        release.setRoot('build-types/release')
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -43,10 +38,7 @@ android {
 }
 
 dependencies {
-    implementation project(":renderer")
     implementation project(":common")
-    implementation "androidx.car.app:app:1.2.0"
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -73,7 +65,6 @@ dependencies {
     implementation 'io.dropwizard.metrics:metrics-core:4.1.17'
     implementation 'com.dynatrace.dynahist:dynahist:1.1'
     implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
-    implementation 'com.github.kizitonwose.colorpreference:core:1.1.0'
-    implementation 'com.github.kizitonwose.colorpreference:support:1.1.0'
-    debugImplementation 'com.github.DonaldDu:FixUnhandledEvent:1.0'
+    implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
+    implementation 'pub.devrel:easypermissions:3.0.0'
 }
