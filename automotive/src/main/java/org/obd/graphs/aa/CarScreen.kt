@@ -261,7 +261,6 @@ internal class CarScreen(carContext: CarContext,
     init {
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
-            Log.i("AAAA","AAAA $it")
             metricsCollector.append(it)
         }
 
