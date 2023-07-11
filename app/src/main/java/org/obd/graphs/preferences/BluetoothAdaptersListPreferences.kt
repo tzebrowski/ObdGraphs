@@ -2,6 +2,10 @@ package org.obd.graphs.preferences
 
 import android.content.Context
 import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.activity.navigateToPreferencesScreen
@@ -10,7 +14,7 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 import java.util.*
 
-private class Device(val name: String)
+private class Device(val address: String, val label: Spanned)
 
 class BluetoothAdaptersListPreferences(
     context: Context?,
@@ -29,8 +33,8 @@ class BluetoothAdaptersListPreferences(
             LinkedList()
 
         getDeviceList {
-            entries.add(it.name)
-            entriesValues.add(it.name)
+            entries.add(it.label)
+            entriesValues.add(it.address)
         }
 
         setEntries(entries.toTypedArray())
@@ -46,7 +50,7 @@ class BluetoothAdaptersListPreferences(
             LinkedList()
 
         getDeviceList {
-            entriesValues.add(it.name)
+            entriesValues.add(it.address)
         }
 
         entryValues = entriesValues.toTypedArray()
@@ -59,7 +63,7 @@ class BluetoothAdaptersListPreferences(
             LinkedList()
 
         getDeviceList {
-            entries.add(it.name)
+            entries.add(it.label)
         }
 
         setEntries(entries.toTypedArray())
@@ -73,11 +77,29 @@ class BluetoothAdaptersListPreferences(
                 bondedDevices
                     .sortedBy { currentDevice -> currentDevice.name }
                     .forEach { currentDevice ->
-                        handler(Device(currentDevice.name))
+
+                        handler(Device(address = currentDevice.address, label = format("${currentDevice.name} (${currentDevice.address})")))
                     }
             }
         } catch (e: SecurityException) {
             network.requestBluetoothPermissions()
+        }
+    }
+    private fun format(text: String): Spanned {
+        return SpannableString(text).apply {
+            val endIndexOf = text.indexOf(")") + 1
+            val startIndexOf = text.indexOf("(")
+            setSpan(
+                RelativeSizeSpan(0.5f), startIndexOf, endIndexOf,
+                0
+            )
+
+            setSpan(
+                ForegroundColorSpan(COLOR_PHILIPPINE_GREEN),
+                startIndexOf,
+                endIndexOf,
+                0
+            )
         }
     }
 }

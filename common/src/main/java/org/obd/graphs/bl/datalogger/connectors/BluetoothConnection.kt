@@ -14,19 +14,18 @@ import java.util.concurrent.TimeUnit
 private const val LOGGER_TAG = "BluetoothConnection"
 private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-class BluetoothConnection(deviceName: String) : AdapterConnection {
+class BluetoothConnection(private val deviceName: String) : AdapterConnection {
 
     private var input: InputStream? = null
     private var output: OutputStream? = null
     private lateinit var socket: BluetoothSocket
-    private var device: String? = deviceName
 
     init {
         Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $deviceName")
     }
 
     override fun reconnect() {
-        Log.i(LOGGER_TAG, "Reconnecting to the device: $device")
+        Log.i(LOGGER_TAG, "Reconnecting to the device: $deviceName")
         if (dataLoggerPreferences.instance.reconnectWhenError && dataLoggerPreferences.instance .hardReset) {
             throw IOException("Doing hard reset")
         }
@@ -34,12 +33,12 @@ class BluetoothConnection(deviceName: String) : AdapterConnection {
         close()
 
         TimeUnit.MILLISECONDS.sleep(1000)
-        connectToDevice(device)
-        Log.i(LOGGER_TAG, "Successfully reconnect to the device: $device")
+        connectToDevice()
+        Log.i(LOGGER_TAG, "Successfully reconnect to the device: $deviceName")
     }
 
     override fun connect() {
-        connectToDevice(device)
+        connectToDevice()
     }
 
     override fun close() {
@@ -58,7 +57,7 @@ class BluetoothConnection(deviceName: String) : AdapterConnection {
                 socket.close()
         } catch (_: Throwable){}
 
-        Log.i(LOGGER_TAG, "Socket for device: $device has been closed.")
+        Log.i(LOGGER_TAG, "Socket for device: $deviceName has been closed.")
     }
 
     override fun openOutputStream(): OutputStream? {
@@ -69,36 +68,36 @@ class BluetoothConnection(deviceName: String) : AdapterConnection {
         return input
     }
 
-    private fun connectToDevice(btDeviceName: String?) {
+    private fun connectToDevice() {
         try {
             Log.i(
                 LOGGER_TAG,
                 "Found bounded connections, size: ${network.bluetoothAdapter()?.bondedDevices?.size}"
             )
-            btDeviceName?.let {
-                network.findBluetoothAdapterByName(it)?.let { adapter ->
+
+            network.findBluetoothAdapterByName(deviceName)?.let { adapter ->
+                Log.i(
+                    LOGGER_TAG,
+                    "Opening connection to bounded device: ${adapter.name}"
+                )
+                socket =
+                    adapter.createRfcommSocketToServiceRecord(RFCOMM_UUID)
+                socket.connect()
+                Log.i(LOGGER_TAG, "Doing socket connect for: ${adapter.name}")
+
+                if (socket.isConnected) {
                     Log.i(
                         LOGGER_TAG,
-                        "Opening connection to bounded device: ${adapter.name}"
+                        "Successfully established connection for: ${adapter.name}"
                     )
-                    socket =
-                        adapter.createRfcommSocketToServiceRecord(RFCOMM_UUID)
-                    socket.connect()
-                    Log.i(LOGGER_TAG, "Doing socket connect for: ${adapter.name}")
-
-                    if (socket.isConnected) {
-                        Log.i(
-                            LOGGER_TAG,
-                            "Successfully established connection for: ${adapter.name}"
-                        )
-                        input = socket.inputStream
-                        output = socket.outputStream
-                        Log.i(
-                            LOGGER_TAG,
-                            "Successfully opened  the sockets to device: ${adapter.name}"
-                        )
-                    }
+                    input = socket.inputStream
+                    output = socket.outputStream
+                    Log.i(
+                        LOGGER_TAG,
+                        "Successfully opened  the sockets to device: ${adapter.name}"
+                    )
                 }
+
             }
         }catch (e: SecurityException){
             network.requestBluetoothPermissions()

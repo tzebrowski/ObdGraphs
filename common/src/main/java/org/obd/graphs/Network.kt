@@ -30,7 +30,7 @@ class Network {
 
     fun findBluetoothAdapterByName(deviceName: String): BluetoothDevice? {
         return try {
-            bluetoothAdapter()?.bondedDevices?.find { it.name == deviceName }
+            bluetoothAdapter()?.bondedDevices?.find { deviceName == it.address}
         } catch (e: SecurityException) {
             requestBluetoothPermissions()
             return null
@@ -78,7 +78,6 @@ class Network {
                         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                             currentSSID = readSSID(networkCapabilities)
                         }
-
                     }
                 }
                 else -> null
