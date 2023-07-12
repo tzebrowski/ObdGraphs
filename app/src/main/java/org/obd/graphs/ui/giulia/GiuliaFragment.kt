@@ -25,12 +25,12 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 
 
-open class GiuliaDashboardFragment : Fragment() {
+open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
     private val metricsCollector = CarMetricsCollector()
     private val fps = Fps()
-    private val settings = GiuliaDashboardSettings()
+    private val settings = GiuliaSettings()
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
@@ -88,7 +88,7 @@ open class GiuliaDashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        root  = inflater.inflate(R.layout.fragment_giulia_dashboard, container, false)
+        root  = inflater.inflate(R.layout.fragment_giulia, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         setupVirtualViewPanel()
         surfaceController = SurfaceController(ScreenRenderer.of(requireContext(), settings, metricsCollector, fps))

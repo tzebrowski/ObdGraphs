@@ -21,9 +21,9 @@
 
     <fragment
         android:id="@+id/navigation_giulia"
-        android:name="org.obd.graphs.ui.giulia.GiuliaDashboardFragment"
+        android:name="org.obd.graphs.ui.giulia.GiuliaFragment"
         android:label="@string/navigation.title_giulia_dashboard"
-        tools:layout="@layout/fragment_giulia_dashboard" />
+        tools:layout="@layout/fragment_giulia" />
 
     <fragment
         android:id="@+id/navigation_graph"

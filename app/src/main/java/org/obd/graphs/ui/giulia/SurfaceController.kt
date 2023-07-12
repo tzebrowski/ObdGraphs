@@ -38,7 +38,6 @@ class SurfaceController(private val renderer: ScreenRenderer) : SurfaceHolder.Ca
         surface?.release()
     }
 
-
     @MainThread
     fun renderFrame() {
 
