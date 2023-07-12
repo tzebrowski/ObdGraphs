@@ -13,12 +13,14 @@ import org.obd.graphs.setCarContext
 
 
 private const val LOG_TAG = "CarSession"
-private val settings = SettingsImpl()
-private val metricsCollector = CarMetricsCollector()
-private val fps: Fps = Fps()
+
 
 internal class CarSession : Session(), DefaultLifecycleObserver {
+
     private lateinit var surfaceController: SurfaceController
+    private val settings = SettingsImpl()
+    private val metricsCollector = CarMetricsCollector()
+    private val fps: Fps = Fps()
 
     override fun onCreateScreen(intent: Intent): Screen {
         lifecycle.addObserver(this)

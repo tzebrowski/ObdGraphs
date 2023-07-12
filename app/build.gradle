@@ -123,6 +123,7 @@ android {
 }
 
 dependencies {
+    implementation project(':giulia_renderer')
     implementation project(":datalogger")
     implementation project(":common")
     debugImplementation project(":automotive")

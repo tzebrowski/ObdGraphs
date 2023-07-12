@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/navigation_dashboard">
+    app:startDestination="@+id/navigation_gauge">
 
 
     <fragment
@@ -11,11 +11,19 @@
         android:label="@string/navigation.title_gauge"
         tools:layout="@layout/fragment_gauge" />
 
+    <!--
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="org.obd.graphs.ui.dashboard.DashboardFragment"
         android:label="@string/navigation.title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
+    -->
+
+    <fragment
+        android:id="@+id/navigation_giulia"
+        android:name="org.obd.graphs.ui.giulia.GiuliaFragment"
+        android:label="@string/navigation.title_giulia_dashboard"
+        tools:layout="@layout/fragment_giulia" />
 
     <fragment
         android:id="@+id/navigation_graph"

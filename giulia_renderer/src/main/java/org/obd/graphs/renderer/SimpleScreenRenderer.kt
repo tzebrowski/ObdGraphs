@@ -35,22 +35,21 @@ internal class SimpleScreenRenderer(context: Context,
             val textSize = textHeight - ROW_SPACING
 
             drawingManager.drawBackground(area)
+            var verticalPos =  area.top + textHeight.toFloat()
 
-            var verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
+            if (settings.isStatusPanelEnabled()) {
+                verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
+            }
 
             drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
 
             val verticalPosCpy = verticalPos
-            var valueHorizontalPos = initialValueHorizontalPos(area)
+            var valueHorizontalPos = initialValueHorizontalPos(area, metrics)
 
             var margin = MARGIN_START
             val infoDiv = 1.3f
 
-            var maxItemsInColumn = settings.maxItemsInColumn()
-
-            if (metrics.size > 10) {
-                maxItemsInColumn = metrics.size / 2
-            }
+            val maxItemsInColumn = getMaxItemsInColumn(metrics)
 
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
@@ -62,8 +61,8 @@ internal class SimpleScreenRenderer(context: Context,
 
                     drawingManager.drawTitle(
                         metric, horizontalPos, verticalPos,
-                        calculateTitleTextSize(textSize),
-                        settings.maxItemsInColumn()
+                        calculateTitleTextSize(textSize, metrics),
+                        getMaxItemsInColumn(metrics)
                     )
 
                     drawingManager.drawValue(
@@ -125,18 +124,19 @@ internal class SimpleScreenRenderer(context: Context,
                         verticalPos += 12
                     }
 
-                    drawingManager.drawDivider(margin.toFloat(), itemWidth(area).toFloat(), verticalPos)
-                    verticalPos += 2
+                    verticalPos += 6
+                    drawingManager.drawDivider(margin.toFloat(), itemWidth(area, metrics).toFloat(), verticalPos)
+                    verticalPos += 4
 
                     drawingManager.drawProgressBar(
                         margin.toFloat(),
-                        itemWidth(area).toFloat(), verticalPos, metric
+                        itemWidth(area, metrics).toFloat(), verticalPos, metric
                     )
 
                     verticalPos += if (settings.isHistoryEnabled()) {
-                        textHeight.toFloat() + 10
+                        textHeight.toFloat() + 14
                     } else {
-                        textHeight.toFloat() + 4
+                        textHeight.toFloat() + 6
                     }
 
                     if (verticalPos > area.height()) {
@@ -147,25 +147,25 @@ internal class SimpleScreenRenderer(context: Context,
                     }
                 }
 
-                if (settings.maxItemsInColumn() > 1) {
+                if (getMaxItemsInColumn(metrics) > 1 ) {
                     valueHorizontalPos += area.width() / 2 - 18
                 }
 
-                margin += calculateMargin(area)
-                verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy)
+                margin += calculateMargin(area, metrics)
+                verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy, metrics)
             }
         }
     }
 
 
-    private fun calculateTitleTextSize(textSize: Int): Float =
-        when (settings.maxItemsInColumn()) {
+    private fun calculateTitleTextSize(textSize: Int,metrics: Collection<CarMetric>): Float =
+        when (getMaxItemsInColumn(metrics)) {
             1 -> textSize.toFloat()
             else -> textSize / 1.1f
         }
 
-    private fun initialValueHorizontalPos(area: Rect): Float =
-        when (settings.maxItemsInColumn()) {
+    private fun initialValueHorizontalPos(area: Rect, metrics: Collection<CarMetric>): Float =
+        when (getMaxItemsInColumn(metrics)) {
             1 -> ((area.width()) - 42).toFloat()
             else -> ((area.width() / 2) - 32).toFloat()
         }
@@ -173,22 +173,30 @@ internal class SimpleScreenRenderer(context: Context,
     private fun calculateVerticalPos(
         textHeight: Int,
         verticalPos: Float,
-        verticalPosCpy: Float
-    ): Float = when (settings.maxItemsInColumn()) {
+        verticalPosCpy: Float,
+        metrics: Collection<CarMetric>
+    ): Float = when (getMaxItemsInColumn(metrics)) {
         1 -> verticalPos + (textHeight / 3) - 8
         else -> verticalPosCpy
     }
 
-    private fun calculateMargin(area: Rect): Int =
-        when (settings.maxItemsInColumn()) {
+    private fun calculateMargin(area: Rect, metrics: Collection<CarMetric>): Int =
+        when (getMaxItemsInColumn(metrics)) {
             1 -> 0
             else -> (area.width() / 2)
         }
 
-    private fun itemWidth(area: Rect): Int =
-        when (settings.maxItemsInColumn()) {
+    private fun itemWidth(area: Rect,metrics: Collection<CarMetric>): Int =
+        when (getMaxItemsInColumn(metrics)) {
             1 -> area.width()
             else -> area.width() / 2
+        }
+
+    private fun getMaxItemsInColumn(metrics: Collection<CarMetric>): Int =
+        if (metrics.size < settings.getMaxAllowedItemsInColumn()) {
+            1
+        }else{
+            settings.maxItemsInColumn()
         }
 
     private fun calculateFontSize(data: List<CarMetric>): Int {

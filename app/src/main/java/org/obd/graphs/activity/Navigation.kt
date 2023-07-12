@@ -11,10 +11,7 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
-import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
-import org.obd.graphs.preferences.PREF_GAUGE_DISPLAYED_PARAMETERS_IDS
-import org.obd.graphs.preferences.PREF_GAUGE_RECORDINGS
-import org.obd.graphs.preferences.PREF_GRAPH_DISPLAYED_PARAMETERS_IDS
+import org.obd.graphs.preferences.*
 
 fun navigateToPreferencesScreen(prefKey: String) {
     (getContext() as MainActivity).navController {
@@ -34,7 +31,7 @@ internal fun MainActivity.setupNavigationBar() {
             setOf(
                 R.id.navigation_gauge,
                 R.id.navigation_graph,
-                R.id.navigation_dashboard,
+                R.id.navigation_giulia,
                 R.id.navigation_metrics,
                 R.id.navigation_preferences
             )
@@ -48,7 +45,7 @@ internal fun MainActivity.setupNavigationBar() {
 
         val mainActivityPreferences = getMainActivityPreferences()
         findViewById<BottomNavigationView>(R.id.nav_view).menu.run {
-            findItem(R.id.navigation_dashboard).isVisible =
+            findItem(R.id.navigation_giulia).isVisible =
                 mainActivityPreferences.showDashView
 
             findItem(R.id.navigation_gauge).isVisible =
@@ -106,6 +103,8 @@ internal fun MainActivity.setupNavigationBarButtons() {
                     val screenId = when (getCurrentScreenId()) {
                         R.id.navigation_gauge -> PREF_GAUGE_DISPLAYED_PARAMETERS_IDS
                         R.id.navigation_graph -> PREF_GRAPH_DISPLAYED_PARAMETERS_IDS
+                        R.id.navigation_giulia -> PREF_GIULIA_DISPLAYED_PARAMETERS_IDS
+
                         else -> null
                     }
                     screenId?.apply {
@@ -140,7 +139,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 R.id.ctx_menu_view_configuration -> {
                     navigateToPreferencesScreen(
                         when (getCurrentScreenId()) {
-                            R.id.navigation_dashboard -> "pref.dashboard"
+                            R.id.navigation_giulia -> "pref.giulia"
                             R.id.navigation_gauge -> "pref.gauge"
                             R.id.navigation_graph -> "pref.graph"
                             R.id.navigation_metrics -> "pref.metrics"

@@ -10,7 +10,7 @@ pluginManagement {
 rootProject.name = "ObdGraphs"
 include ':common'
 include ':datalogger'
-include ':renderer'
+include ':giulia_renderer'
 include ':app'
 include ':automotive'
 

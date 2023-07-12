@@ -129,7 +129,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         NOTIFICATION_DASH_VIEW_TOGGLE -> {
-            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
+            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_giulia)
         }
 
         NOTIFICATION_GAUGE_VIEW_TOGGLE -> {
