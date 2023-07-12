@@ -15,4 +15,6 @@ interface ScreenSettings {
     fun applyVirtualScreen(key: String)
 
     fun isStatusPanelEnabled (): Boolean = true
+
+    fun getMaxAllowedItemsInColumn(): Int = 10
 }
