@@ -38,7 +38,7 @@ open class GiuliaFragment : Fragment() {
             surfaceController.renderFrame()
         },
         perfFrameRate = {
-            Prefs.getS("pref.giulia.dashboard.fps", "10").toInt()
+            settings.getSurfaceFrameRate()
         }
     )
 
