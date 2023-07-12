@@ -14,12 +14,16 @@
     <string name="navigation.title_metrics">Metrics</string>
     <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>
+    <string name="navigation.title_giulia_dashboard">Dashboard</string>
+
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>
     <string name="navigation.tooltip_gauge">Gauge view</string>
     <string name="navigation.tooltip_metrics">Metrics view</string>
     <string name="navigation.tooltip_preferences">Preferences view</string>
     <string name="navigation.tooltip_dashboard">Dashboard view</string>
+    <string name="navigation.tooltip_giulia_dashboard">Giulia dashboard view</string>
+
     <string name="navigation.tooltip_graph">Graph view</string>
 
 

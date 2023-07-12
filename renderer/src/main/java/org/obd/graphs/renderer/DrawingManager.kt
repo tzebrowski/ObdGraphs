@@ -27,7 +27,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     private val backgroundPaint = Paint()
     private var canvas: Canvas? = null
 
-    val background: Bitmap =
+    private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
 
     private val statusLabel: String

@@ -13,4 +13,6 @@ interface ScreenSettings {
     fun maxFontSize(): Int
     fun getCurrentVirtualScreen(): String
     fun applyVirtualScreen(key: String)
+
+    fun isStatusPanelEnabled (): Boolean = true
 }

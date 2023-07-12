@@ -35,8 +35,11 @@ internal class SimpleScreenRenderer(context: Context,
             val textSize = textHeight - ROW_SPACING
 
             drawingManager.drawBackground(area)
+            var verticalPos =  area.top + textHeight.toFloat()
 
-            var verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
+            if (settings.isStatusPanelEnabled()) {
+                verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
+            }
 
             drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
 
@@ -125,8 +128,9 @@ internal class SimpleScreenRenderer(context: Context,
                         verticalPos += 12
                     }
 
+                    verticalPos += 6
                     drawingManager.drawDivider(margin.toFloat(), itemWidth(area).toFloat(), verticalPos)
-                    verticalPos += 2
+                    verticalPos += 4
 
                     drawingManager.drawProgressBar(
                         margin.toFloat(),
@@ -134,9 +138,9 @@ internal class SimpleScreenRenderer(context: Context,
                     )
 
                     verticalPos += if (settings.isHistoryEnabled()) {
-                        textHeight.toFloat() + 10
+                        textHeight.toFloat() + 14
                     } else {
-                        textHeight.toFloat() + 4
+                        textHeight.toFloat() + 6
                     }
 
                     if (verticalPos > area.height()) {

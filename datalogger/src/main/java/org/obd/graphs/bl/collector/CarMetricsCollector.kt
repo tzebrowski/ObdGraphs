@@ -7,7 +7,6 @@ import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.metrics.api.model.ObdMetric
 
 private const val  LOG_KEY = "CarMetricsCollector"
-
 class CarMetricsCollector {
 
     private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
