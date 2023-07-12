@@ -224,7 +224,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     navigateToScreen(R.id.navigation_giulia)
                 }
             }
-
         }
     }
 }
