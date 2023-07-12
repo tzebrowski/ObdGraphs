@@ -576,6 +576,68 @@
                 </PreferenceCategory>
             </PreferenceScreen>
 
+
+            <PreferenceScreen
+                android:summary="@string/pref.giulia_category"
+                android:title="@string/navigation.title_giulia_dashboard"
+                app:key="pref.giulia">
+
+                <PreferenceCategory android:title="@string/pref.pids_category">
+                    <PreferenceScreen
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids"
+                        android:key="pref.giulia.displayed_parameter_ids">
+                        <PreferenceCategory android:title="@string/pref.pids_category">
+                            <org.obd.graphs.preferences.pid.DisplayedPIDsGiuliaListPreferences
+                                app:useSimpleSummaryProvider="true"
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.giulia.pids.selected"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.displayed_parameter_ids" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.general_settings">
+
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.numbers_28_34"
+                        android:entryValues="@array/pref.numbers_28_34"
+                        android:defaultValue="34"
+                        android:dialogTitle="@string/pref.aa.font_size"
+                        android:inputType="number"
+                        android:key="pref.giulia.screen_font_size"
+                        android:title="@string/pref.aa.font_size"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.numbers_1_10"
+                        android:entryValues="@array/pref.numbers_1_10"
+                        android:defaultValue="5"
+                        android:dialogTitle="@string/pref.aa.number_of_items_in_column"
+                        android:inputType="number"
+                        android:key="pref.giulia.max_pids_in_column"
+                        android:title="@string/pref.aa.number_of_items_in_column"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.aa.fps"
+                        android:entryValues="@array/pref.aa.fps"
+                        android:defaultValue="5"
+                        android:dialogTitle="@string/pref.screen.fps"
+                        android:inputType="number"
+                        android:key="pref.giulia.fps"
+                        android:title="@string/pref.screen.fps"
+                        app:useSimpleSummaryProvider="true" />
+
+                </PreferenceCategory>
+            </PreferenceScreen>
+
+
             <PreferenceScreen
                 app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
                 android:summary="@string/pref.aa_category"

@@ -14,7 +14,7 @@
     <string name="navigation.title_metrics">Metrics</string>
     <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>
-    <string name="navigation.title_giulia_dashboard">Dashboard</string>
+    <string name="navigation.title_giulia_dashboard">Giulia</string>
 
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>
@@ -132,6 +132,8 @@
 
     <string name="pref.pids_category">OBD2 PIDs/Sensors</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
+    <string name="pref.giulia_category">Giulia view configuration</string>
+
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
     <string name="pref.aa_category">Android Auto view configuration</string>
@@ -332,6 +334,18 @@
         <item name="32">32</item>
         <item name="33">33</item>
         <item name="34">34</item>
+        <item name="36">36</item>
+        <item name="38">38</item>
+        <item name="40">40</item>
+        <item name="42">42</item>
+        <item name="44">44</item>
+        <item name="50">50</item>
+        <item name="56">56</item>
+        <item name="58">58</item>
+        <item name="60">60</item>
+        <item name="66">66</item>
+        <item name="72">72</item>
+
     </string-array>
 
     <string-array name="pref.numbers_1_10">

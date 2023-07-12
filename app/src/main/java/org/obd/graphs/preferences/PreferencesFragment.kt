@@ -31,6 +31,8 @@ const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.e
 const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
 const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_ids"
 const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
+const val PREF_GIULIA_DISPLAYED_PARAMETERS_IDS = "pref.giulia.displayed_parameter_ids"
+
 
 private const val LOG_KEY = "Prefs"
 class PreferencesFragment : PreferenceFragmentCompat() {
@@ -213,6 +215,16 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     navigateToScreen(R.id.navigation_graph)
                 }
             }
+
+            PREF_GIULIA_DISPLAYED_PARAMETERS_IDS -> {
+                showMultiSelectListDialog(
+                    preferenceKey = "pref.giulia.pids.selected",
+                    targetFragment = this
+                ) {
+                    navigateToScreen(R.id.navigation_giulia)
+                }
+            }
+
         }
     }
 }
