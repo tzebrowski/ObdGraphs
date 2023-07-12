@@ -29,7 +29,7 @@ class GiuliaSettings: ScreenSettings {
     override fun maxFontSize(): Int = Prefs.getS("pref.giulia.screen_font_size","32").toInt()
     override fun isStatusPanelEnabled(): Boolean = false
 
-    override fun getMaxAllowedItemsInColumn(): Int  = 14
+    override fun getMaxAllowedItemsInColumn(): Int  = 8
 
     override fun getCurrentVirtualScreen(): String {
         return ""

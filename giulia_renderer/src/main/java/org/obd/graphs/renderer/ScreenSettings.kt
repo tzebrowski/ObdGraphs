@@ -16,5 +16,5 @@ interface ScreenSettings {
 
     fun isStatusPanelEnabled (): Boolean = true
 
-    fun getMaxAllowedItemsInColumn(): Int = 10
+    fun getMaxAllowedItemsInColumn(): Int = 5
 }

@@ -193,7 +193,7 @@ internal class SimpleScreenRenderer(context: Context,
         }
 
     private fun getMaxItemsInColumn(metrics: Collection<CarMetric>): Int =
-        if (metrics.size < 5) {
+        if (metrics.size < settings.getMaxAllowedItemsInColumn()) {
             1
         }else{
             settings.maxItemsInColumn()
