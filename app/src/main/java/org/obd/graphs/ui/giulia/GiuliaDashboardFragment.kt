@@ -5,17 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
-import android.graphics.Canvas
-import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Button
-import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.aa.SURFACE_BROKEN_EVENT
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
@@ -26,31 +21,21 @@ import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenRenderer
-import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
-import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 
-private const val LOG_KEY = "GiuliaDashboardFragment"
 
-open class GiuliaDashboardFragment : Fragment(), SurfaceHolder.Callback {
+open class GiuliaDashboardFragment : Fragment() {
     private lateinit var root: View
 
     private val metricsCollector = CarMetricsCollector()
-
-    private lateinit var surfaceHolder: SurfaceHolder
-    private var surface: Surface? = null
-    private var visibleArea: Rect? = null
-    private var surfaceLocked = false
-
     private val fps = Fps()
-    private lateinit var renderer: ScreenRenderer
-
     private val settings = GiuliaDashboardSettings()
+    private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
         renderAction = {
-            renderFrame()
+            surfaceController.renderFrame()
         },
         perfFrameRate = {
             Prefs.getS("pref.giulia.dashboard.fps", "10").toInt()
@@ -74,7 +59,9 @@ open class GiuliaDashboardFragment : Fragment(), SurfaceHolder.Callback {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        surfaceController.renderFrame()
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -101,12 +88,12 @@ open class GiuliaDashboardFragment : Fragment(), SurfaceHolder.Callback {
         savedInstanceState: Bundle?
     ): View {
 
-        root  = inflater.inflate(R.layout.fragment_giulia_dashboard, container, false);
+        root  = inflater.inflate(R.layout.fragment_giulia_dashboard, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
-        surfaceView.holder.addCallback(this)
         setupVirtualViewPanel()
+        surfaceController = SurfaceController(ScreenRenderer.of(requireContext(), settings, metricsCollector, fps))
+        surfaceView.holder.addCallback(surfaceController)
 
-        renderer = ScreenRenderer.of(requireContext(), settings, metricsCollector, fps)
         metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
 
         dataLogger.observe(viewLifecycleOwner) {
@@ -122,27 +109,6 @@ open class GiuliaDashboardFragment : Fragment(), SurfaceHolder.Callback {
         return root
     }
 
-    override fun surfaceCreated(holder: SurfaceHolder) {
-        surfaceHolder = holder
-        surfaceHolder.addCallback(this);
-        visibleArea = Rect()
-        visibleArea?.set(holder.surfaceFrame.left+10, holder.surfaceFrame.top + 10, holder.surfaceFrame.right+10, holder.surfaceFrame.bottom);
-        surface = surfaceHolder.surface
-        renderFrame()
-    }
-
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-
-        surface = surfaceHolder.surface
-        visibleArea?.set(holder.surfaceFrame.left+10, holder.surfaceFrame.top + 10, width, height);
-
-        renderFrame()
-    }
-
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-       surface?.release()
-    }
-
     private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
         (root.findViewById<Button>(btnId)).let {
             if (selection == viewId) {
@@ -155,7 +121,7 @@ open class GiuliaDashboardFragment : Fragment(), SurfaceHolder.Callback {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
                 metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
                 setupVirtualViewPanel()
-                renderFrame()
+                surfaceController.renderFrame()
             }
         }
     }
@@ -175,40 +141,5 @@ open class GiuliaDashboardFragment : Fragment(), SurfaceHolder.Callback {
     private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
         val query = dataLoggerPreferences.getPIDsToQuery()
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
-    }
-
-    @MainThread
-    fun renderFrame() {
-
-        surface?.let {
-            var canvas: Canvas? = null
-            if (it.isValid && !surfaceLocked) {
-                try {
-                    Log.e("Render frame", "Render frame")
-                    canvas = it.lockHardwareCanvas()
-                    surfaceLocked = true
-                    renderer.onDraw(
-                        canvas = canvas,
-                        visibleArea = visibleArea
-                    )
-
-                } catch (e: Throwable) {
-                    Log.e(LOG_KEY, "Exception was thrown during surface locking.", e)
-                    surface = null
-                    sendBroadcastEvent(SURFACE_BROKEN_EVENT)
-                } finally {
-                    try {
-                        canvas?.let { c ->
-                            it.unlockCanvasAndPost(c)
-                        }
-                    } catch (e: Throwable) {
-                        Log.e(LOG_KEY, "Exception was thrown during surface un-locking.", e)
-                        sendBroadcastEvent(SURFACE_BROKEN_EVENT)
-                    }
-
-                    surfaceLocked = false
-                }
-            }
-        }
     }
 }
