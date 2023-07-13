@@ -11,7 +11,6 @@
 
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_gauge">Gauge</string>
-    <string name="navigation.title_metrics">Metrics</string>
     <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>
     <string name="navigation.title_giulia_dashboard">Giulia</string>
@@ -19,7 +18,6 @@
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>
     <string name="navigation.tooltip_gauge">Gauge view</string>
-    <string name="navigation.tooltip_metrics">Metrics view</string>
     <string name="navigation.tooltip_preferences">Preferences view</string>
     <string name="navigation.tooltip_dashboard">Dashboard view</string>
     <string name="navigation.tooltip_giulia_dashboard">Giulia dashboard view</string>
@@ -40,7 +38,6 @@
     <string name="context_menu.view_configuration">View Settings</string>
     <string name="context_menu.profiles">Vehicle Profiles</string>
     <string name="context_menu.about">About</string>
-    <string name="context_menu.obd2_pids_sensors">OBD2 PIDs/Sensors</string>
     <string name="context_menu.custom_action_1">Custom</string>
 
     <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
@@ -72,7 +69,6 @@
     <string name="pref.connection.category">Connection</string>
     <string name="pref.connection.category.summary">Under this section you can find preferences related to the adapter type. You can configure here WIFI or Bluetooth parameters of your adapter</string>
 
-    <string name="pref.connection.timeout">Connection timeout</string>
     <string name="pref.connection.connection_type">Type of connection</string>
     <string name="pref.connection.connection_timeout">Connection timeout</string>
 
@@ -139,7 +135,6 @@
     <string name="pref.aa_category">Android Auto view configuration</string>
     <string name="pref.aa_category_summary">You can update here AA preferences</string>
 
-    <string name="pref.metrics_category">Metrics view configuration</string>
     <string name="pref.adapter_category">OBD2 Adapter</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
     <string name="pref.usb_category">USB</string>
