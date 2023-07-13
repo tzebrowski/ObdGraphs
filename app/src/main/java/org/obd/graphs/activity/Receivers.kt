@@ -31,11 +31,11 @@ internal val powerReceiver = PowerBroadcastReceiver()
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"
 const val NOTIFICATION_DASH_VIEW_TOGGLE = "view.dash.toggle"
 const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "view.gauge.toggle"
-const val NOTIFICATION_METRICS_VIEW_TOGGLE = "view.metrics.toggle"
+const val NOTIFICATION_GIULIA_VIEW_TOGGLE = "view.metrics.toggle"
 const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
 const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
 const val DASH_VIEW_ID = "pref.dash.view.enabled"
-const val METRICS_VIEW_ID = "pref.metrics.view.enabled"
+const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
 
 internal fun MainActivity.receive(intent: Intent?) {
 
@@ -120,8 +120,8 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(R.string.main_activity_toast_adapter_is_not_selected)
         }
 
-        NOTIFICATION_METRICS_VIEW_TOGGLE -> {
-            toggleNavigationItem(METRICS_VIEW_ID, R.id.navigation_metrics)
+        NOTIFICATION_GIULIA_VIEW_TOGGLE -> {
+            toggleNavigationItem(GIULIA_VIEW_ID, R.id.navigation_giulia)
         }
 
         NOTIFICATION_GRAPH_VIEW_TOGGLE -> {
@@ -129,7 +129,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         NOTIFICATION_DASH_VIEW_TOGGLE -> {
-            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_giulia)
+            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
         }
 
         NOTIFICATION_GAUGE_VIEW_TOGGLE -> {
@@ -262,7 +262,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)
         addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)
         addAction(NOTIFICATION_DASH_VIEW_TOGGLE)
-        addAction(NOTIFICATION_METRICS_VIEW_TOGGLE)
+        addAction(NOTIFICATION_GIULIA_VIEW_TOGGLE)
         addAction(TOGGLE_TOOLBAR_ACTION)
         addAction(SCREEN_OFF_EVENT)
         addAction(SCREEN_ON_EVENT)

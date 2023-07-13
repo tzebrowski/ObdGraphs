@@ -18,20 +18,11 @@
         android:id="@+id/navigation_graph"
         android:icon="@android:drawable/ic_menu_gallery"
         android:title="@string/navigation.title_graph" />
-    <!--
     <item
         android:tooltipText="@string/navigation.tooltip_dashboard"
         android:id="@+id/navigation_dashboard"
         android:icon="@android:drawable/ic_dialog_dialer"
         android:title="@string/navigation.title_dashboard" />
-    -->
-
-
-    <item
-        android:tooltipText="@string/navigation.tooltip_metrics"
-        android:id="@+id/navigation_metrics"
-        android:icon="@android:drawable/ic_menu_compass"
-        android:title="@string/navigation.title_metrics" />
 
     <item
         android:tooltipText="@string/navigation.tooltip_preferences"

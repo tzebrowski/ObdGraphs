@@ -32,7 +32,7 @@ internal fun MainActivity.setupNavigationBar() {
                 R.id.navigation_gauge,
                 R.id.navigation_graph,
                 R.id.navigation_giulia,
-                R.id.navigation_metrics,
+                R.id.navigation_dashboard,
                 R.id.navigation_preferences
             )
         )
@@ -46,13 +46,13 @@ internal fun MainActivity.setupNavigationBar() {
         val mainActivityPreferences = getMainActivityPreferences()
         findViewById<BottomNavigationView>(R.id.nav_view).menu.run {
             findItem(R.id.navigation_giulia).isVisible =
-                mainActivityPreferences.showDashView
+                mainActivityPreferences.showGiuliaView
 
             findItem(R.id.navigation_gauge).isVisible =
                 mainActivityPreferences.showGaugeView
 
-            findItem(R.id.navigation_metrics).isVisible =
-                mainActivityPreferences.showMetricsView
+            findItem(R.id.navigation_dashboard).isVisible =
+                mainActivityPreferences.showDashView
 
             findItem(R.id.navigation_graph).isVisible =
                 mainActivityPreferences.showGraphView
@@ -142,7 +142,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
                             R.id.navigation_giulia -> "pref.giulia"
                             R.id.navigation_gauge -> "pref.gauge"
                             R.id.navigation_graph -> "pref.graph"
-                            R.id.navigation_metrics -> "pref.metrics"
+                            R.id.navigation_dashboard -> "pref.dashboard"
                             else -> "pref.root"
                         }
                     )

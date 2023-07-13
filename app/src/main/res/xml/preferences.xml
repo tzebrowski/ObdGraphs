@@ -601,6 +601,11 @@
 
                 <PreferenceCategory android:title="@string/pref.general_settings">
 
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.giulia.view.enabled"
+                        android:title="@string/pref.enable_view" />
+
                     <ListPreference
                         app:singleLineTitle="false"
                         android:entries="@array/pref.numbers_28_34"
@@ -731,16 +736,6 @@
 
             </PreferenceScreen>
 
-            <PreferenceScreen
-                android:summary="@string/pref.metrics_category"
-                android:title="@string/navigation.title_metrics"
-                app:key="pref.metrics">
-
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.metrics.view.enabled"
-                    android:title="@string/pref.enable_view" />
-            </PreferenceScreen>
 
             <PreferenceScreen
                 android:summary="@string/pref.graph_category"
