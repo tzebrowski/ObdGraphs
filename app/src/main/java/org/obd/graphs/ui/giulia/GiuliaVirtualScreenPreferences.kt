@@ -7,7 +7,7 @@ import org.obd.graphs.preferences.updateStringSet
 private const val VIRTUAL_SCREEN_SELECTION = "pref.giulia.virtual.selected"
 const val PREF_GAUGE_DIALOG = "pref.giulia.pids.selected"
 
-class GiuliaVirtualScreenGaugeVirtualScreen {
+class GiuliaVirtualScreenPreferences {
     fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
     fun getVirtualScreenPrefKey(): String = "$PREF_GAUGE_DIALOG.${getCurrentVirtualScreen()}"
@@ -24,4 +24,4 @@ class GiuliaVirtualScreenGaugeVirtualScreen {
         Prefs.getStringSet(getVirtualScreenPrefKey(), mutableSetOf())!!
 }
 
-val giuliaVirtualScreen = GiuliaVirtualScreenGaugeVirtualScreen()
+val giuliaVirtualScreen = GiuliaVirtualScreenPreferences()
