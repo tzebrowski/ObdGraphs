@@ -1,6 +1,7 @@
 package org.obd.graphs.ui.giulia
 
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.updateString
 import org.obd.graphs.preferences.updateStringSet
 
@@ -22,6 +23,8 @@ class GiuliaVirtualScreenPreferences {
 
     fun getVirtualScreenMetrics(): Set<String> =
         Prefs.getStringSet(getVirtualScreenPrefKey(), mutableSetOf())!!
+
+    fun getFontSize (): Int =  Prefs.getS("pref.giulia.screen_font_size.${getCurrentVirtualScreen()}","32").toInt()
 }
 
 val giuliaVirtualScreen = GiuliaVirtualScreenPreferences()

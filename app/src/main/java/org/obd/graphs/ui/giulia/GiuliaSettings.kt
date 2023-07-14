@@ -26,7 +26,7 @@ class GiuliaSettings: ScreenSettings {
     override fun isHistoryEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
     override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.giulia.fps","5").toInt()
-    override fun maxFontSize(): Int = Prefs.getS("pref.giulia.screen_font_size","32").toInt()
+    override fun maxFontSize(): Int = giuliaVirtualScreen.getFontSize()
     override fun isStatusPanelEnabled(): Boolean = false
 
     override fun getMaxAllowedItemsInColumn(): Int  = 8

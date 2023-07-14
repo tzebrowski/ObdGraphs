@@ -599,6 +599,82 @@
                     </PreferenceScreen>
                 </PreferenceCategory>
 
+                <PreferenceCategory android:title="@string/pref.aa.font_size.category" app:singleLineTitle="false">
+                    <PreferenceScreen  android:title="@string/pref.aa.font_size" app:singleLineTitle="false"
+                        android:key="pref.giulia.screen.font_size.category">
+                        <PreferenceCategory android:title="@string/pref.aa.font_size" app:singleLineTitle="false">
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="34"
+                                android:dialogTitle="@string/pref.aa.font_size.1"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.1"
+                                android:title="@string/pref.aa.font_size.1"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="34"
+                                android:dialogTitle="@string/pref.aa.font_size.2"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.2"
+                                android:title="@string/pref.aa.font_size.2"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="34"
+                                android:dialogTitle="@string/pref.aa.font_size.3"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.3"
+                                android:title="@string/pref.aa.font_size.3"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="34"
+                                android:dialogTitle="@string/pref.aa.font_size.4"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.4"
+                                android:title="@string/pref.aa.font_size.4"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="34"
+                                android:dialogTitle="@string/pref.aa.font_size.5"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.5"
+                                android:title="@string/pref.aa.font_size.5"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="34"
+                                android:dialogTitle="@string/pref.aa.font_size.6"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.6"
+                                android:title="@string/pref.aa.font_size.6"
+                                app:useSimpleSummaryProvider="true" />
+
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
                 <PreferenceCategory android:title="@string/pref.general_settings">
 
                     <CheckBoxPreference
@@ -606,16 +682,6 @@
                         android:key="pref.giulia.view.enabled"
                         android:title="@string/pref.enable_view" />
 
-                    <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_28_34"
-                        android:entryValues="@array/pref.numbers_28_34"
-                        android:defaultValue="34"
-                        android:dialogTitle="@string/pref.aa.font_size"
-                        android:inputType="number"
-                        android:key="pref.giulia.screen_font_size"
-                        android:title="@string/pref.aa.font_size"
-                        app:useSimpleSummaryProvider="true" />
 
                     <ListPreference
                         app:singleLineTitle="false"
