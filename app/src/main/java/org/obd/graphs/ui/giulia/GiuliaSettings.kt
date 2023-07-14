@@ -22,11 +22,11 @@ class GiuliaSettings: ScreenSettings {
         return dataLoggerPreferences.getPIDsToQuery()
     }
 
-    override fun maxItemsInColumn(): Int = Prefs.getS("pref.giulia.max_pids_in_column","5").toInt()
+    override fun getMaxItemsInColumn(): Int = giuliaVirtualScreen.getMaxItemsInColumn()
     override fun isHistoryEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
     override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.giulia.fps","5").toInt()
-    override fun maxFontSize(): Int = giuliaVirtualScreen.getFontSize()
+    override fun getMaxFontSize(): Int = giuliaVirtualScreen.getFontSize()
     override fun isStatusPanelEnabled(): Boolean = false
 
     override fun getMaxAllowedItemsInColumn(): Int  = 8

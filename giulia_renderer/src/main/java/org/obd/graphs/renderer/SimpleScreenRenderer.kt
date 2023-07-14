@@ -196,11 +196,11 @@ internal class SimpleScreenRenderer(context: Context,
         if (metrics.size < settings.getMaxAllowedItemsInColumn()) {
             1
         }else{
-            settings.maxItemsInColumn()
+            settings.getMaxItemsInColumn()
         }
 
     private fun calculateFontSize(data: List<CarMetric>): Int {
-        val maxFontSize = settings.maxFontSize()
+        val maxFontSize = settings.getMaxFontSize()
         return when (data.size) {
             1 -> {
                 (maxFontSize * 3)

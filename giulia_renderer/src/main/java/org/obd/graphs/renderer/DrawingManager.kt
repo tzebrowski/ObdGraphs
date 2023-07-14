@@ -288,7 +288,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
 
     private fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12
 
-    private fun calculateDividerHeight() = when (settings.maxItemsInColumn()) {
+    private fun calculateDividerHeight() = when (settings.getMaxItemsInColumn()) {
         1 -> 8
         else -> 4
     }
@@ -299,7 +299,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         return bounds.left + bounds.width()
     }
 
-    private fun calculateProgressBarHeight() = when (settings.maxItemsInColumn()) {
+    private fun calculateProgressBarHeight() = when (settings.getMaxItemsInColumn()) {
         1 -> 18
         else -> 10
     }

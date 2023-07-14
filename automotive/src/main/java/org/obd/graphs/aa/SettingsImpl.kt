@@ -29,7 +29,7 @@ internal class SettingsImpl : ScreenSettings {
     override fun getSelectedPIDs() =
         Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
 
-    override fun maxItemsInColumn(): Int {
+    override fun getMaxItemsInColumn(): Int {
         return when (getSelectedPIDs().size) {
             1 -> 1
             2 -> 1
@@ -48,7 +48,7 @@ internal class SettingsImpl : ScreenSettings {
     }
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
-    override fun maxFontSize(): Int =
+    override fun getMaxFontSize(): Int =
         Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
 
     override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
