@@ -7,8 +7,6 @@ import org.obd.graphs.preferences.isEnabled
 
 data class DashboardPreferences(
     val swipeToDeleteEnabled: Boolean,
-    val gaugeViewVisible: Boolean,
-    val dashboardViewVisible: Boolean,
     val dragAndDropEnabled: Boolean,
     val dashboardSelectedMetrics: Pair<String,Set<Long>>,
     val gaugeSelectedMetrics: Pair<String,Set<Long>>,
@@ -26,8 +24,6 @@ fun getDashboardPreferences(): DashboardPreferences {
         Prefs.getBoolean("pref.dash.swipe.to.delete", false)
 
     val dragAndDropEnabled =  Prefs.getBoolean("pref.dash.enable_drag", false)
-    val gaugeViewVisible = Prefs.getBoolean("pref.dash.gauge.view.visible", false)
-    val dashboardVisible = Prefs.getBoolean("pref.dash.dash.view.visible", false)
     val dashboardSelectedMetrics = Prefs.getLongSet(SELECTED_DASHBOARD_METRICS)
     val gaugeSelectedMetrics =  Prefs.getLongSet("pref.dash.gauge_pids.selected")
 
@@ -36,8 +32,6 @@ fun getDashboardPreferences(): DashboardPreferences {
 
     return DashboardPreferences(
         swipeToDeleteEnabled = swipeToDelete,
-        gaugeViewVisible = gaugeViewVisible,
-        dashboardViewVisible = dashboardVisible,
         dashboardSelectedMetrics = Pair(SELECTED_DASHBOARD_METRICS,dashboardSelectedMetrics),
         gaugeSelectedMetrics = Pair(SELECTED_GAUGE_METRICS,gaugeSelectedMetrics),
         colorsEnabled = colors,

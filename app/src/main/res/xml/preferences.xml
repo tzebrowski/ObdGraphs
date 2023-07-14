@@ -761,6 +761,17 @@
                                 android:title="@string/pref.aa.font_size.6"
                                 app:useSimpleSummaryProvider="true" />
 
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="34"
+                                android:dialogTitle="@string/pref.aa.font_size.7"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.7"
+                                android:title="@string/pref.aa.font_size.7"
+                                app:useSimpleSummaryProvider="true" />
+
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
@@ -977,23 +988,7 @@
                     android:key="pref.dash.view.enabled"
                     android:title="@string/pref.enable_view" />
 
-                <PreferenceCategory android:title="@string/navigation.title_gauge">
-                    <CheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.dash.gauge.view.visible"
-                        android:title="@string/pref.enable_view" />
-
-                    <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
-                        android:dialogTitle="@string/pref.displayed_parameter_ids"
-                        android:key="pref.dash.gauge_pids.selected"
-                        android:title="@string/pref.displayed_parameter_ids" />
-                </PreferenceCategory>
                 <PreferenceCategory  android:title="@string/navigation.title_dashboard">
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="pref.dash.dash.view.visible"
-                        android:title="@string/pref.enable_view" />
-
                     <org.obd.graphs.preferences.pid.DisplayedPIDsListPreferences
                         android:dialogTitle="@string/pref.displayed_parameter_ids"
                         android:key="pref.dash.pids.selected"
