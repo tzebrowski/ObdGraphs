@@ -5,6 +5,12 @@
     android:layout_height="fill_parent"
     tools:context="org.obd.graphs.ui.gauge.GaugeFragment">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:scaleType="center"
+        android:src="@drawable/background" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,67 +26,74 @@
                 android:id="@+id/virtual_view_1"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:text="1"
-                android:layout_marginEnd="4dp"/>
+                android:layout_marginEnd="4dp"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/virtual_view_2"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="2" />
+                android:text="2"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/virtual_view_3"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="3" />
+                android:text="3"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/virtual_view_4"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="4" />
+                android:text="4"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/virtual_view_5"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="5" />
+                android:text="5"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
-                
                 android:id="@+id/virtual_view_6"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="6" />
+                android:text="6"
+                style="?android:attr/buttonBarButtonStyle" />
 
 
             <Button
                 android:id="@+id/virtual_view_7"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="7" />
+                android:text="7"
+                style="?android:attr/buttonBarButtonStyle" />
 
             <Button
                 android:id="@+id/virtual_view_8"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="10dp"
+                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="8" />
+                android:text="8"
+                style="?android:attr/buttonBarButtonStyle" />
 
         </LinearLayout>
 

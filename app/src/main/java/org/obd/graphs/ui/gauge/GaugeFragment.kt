@@ -138,7 +138,6 @@ class GaugeFragment : RefreshableFragment() {
         renderingThread.stop()
     }
 
-
     private fun configureView(enableOnTouchListener: Boolean) {
         configureView(
             configureChangeEventId = CONFIGURE_CHANGE_EVENT_GAUGE,
