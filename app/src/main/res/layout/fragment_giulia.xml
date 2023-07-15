@@ -72,14 +72,6 @@
                 android:layout_marginEnd="4dp"
                 android:text="7" />
 
-            <Button
-                android:id="@+id/virtual_view_8"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="10dp"
-                android:layout_marginEnd="4dp"
-                android:text="8" />
-
         </LinearLayout>
         <SurfaceView
             android:id="@+id/surface_view"

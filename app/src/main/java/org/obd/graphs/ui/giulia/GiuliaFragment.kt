@@ -135,7 +135,6 @@ open class GiuliaFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
         setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
-        setVirtualViewBtn(R.id.virtual_view_8, currentVirtualScreen, "8")
     }
 
     private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
