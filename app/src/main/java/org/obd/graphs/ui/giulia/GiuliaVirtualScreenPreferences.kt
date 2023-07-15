@@ -24,8 +24,8 @@ class GiuliaVirtualScreenPreferences {
     fun getVirtualScreenMetrics(): Set<String> =
         Prefs.getStringSet(getVirtualScreenPrefKey(), mutableSetOf())!!
 
-    fun getMaxItemsInColumn(): Int  = Prefs.getS("pref.giulia.max_pids_in_column.${getCurrentVirtualScreen()}","5").toInt()
-    fun getFontSize (): Int =  Prefs.getS("pref.giulia.screen_font_size.${getCurrentVirtualScreen()}","32").toInt()
+    fun getMaxItemsInColumn(): Int  = Prefs.getS("pref.giulia.max_pids_in_column.${getCurrentVirtualScreen()}","1g ").toInt()
+    fun getFontSize (): Int =  Prefs.getS("pref.giulia.screen_font_size.${getCurrentVirtualScreen()}","52").toInt()
 }
 
 val giuliaVirtualScreen = GiuliaVirtualScreenPreferences()
