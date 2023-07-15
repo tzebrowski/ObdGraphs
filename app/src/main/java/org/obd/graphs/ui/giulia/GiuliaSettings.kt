@@ -6,18 +6,6 @@ import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.ScreenSettings
 
 class GiuliaSettings: ScreenSettings {
-    override fun applyVirtualScreen1() {
-    }
-
-    override fun applyVirtualScreen2() {
-    }
-
-    override fun applyVirtualScreen3() {
-    }
-
-    override fun applyVirtualScreen4() {
-    }
-
     override fun getSelectedPIDs(): Set<Long> {
         return dataLoggerPreferences.getPIDsToQuery()
     }
@@ -30,11 +18,4 @@ class GiuliaSettings: ScreenSettings {
     override fun isStatusPanelEnabled(): Boolean = false
 
     override fun getMaxAllowedItemsInColumn(): Int  = 8
-
-    override fun getCurrentVirtualScreen(): String {
-        return ""
-    }
-
-    override fun applyVirtualScreen(key: String) {
-    }
 }
