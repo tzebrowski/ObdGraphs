@@ -7,15 +7,18 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import kotlin.math.min
 
 private const val LOG_KEY = "SimpleScreenRenderer"
 
-internal class SimpleScreenRenderer(context: Context,
-                           private val settings: ScreenSettings,
-                           private val metricsCollector: CarMetricsCollector,
-                           private val fps: Fps
-): ScreenRenderer {
+internal class SimpleScreenRenderer(
+    context: Context,
+    private val settings: ScreenSettings,
+    private val metricsCollector: CarMetricsCollector,
+    private val fps: Fps
+) : ScreenRenderer {
 
     private val drawingManager = DrawingManager(context, settings)
 
@@ -35,13 +38,12 @@ internal class SimpleScreenRenderer(context: Context,
             val textSize = textHeight - ROW_SPACING
 
             drawingManager.drawBackground(area)
-            var verticalPos =  area.top + textHeight.toFloat()
+            var verticalPos = area.top + textHeight.toFloat()
 
             if (settings.isStatusPanelEnabled()) {
                 verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
+                drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
-
-            drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
 
             val verticalPosCpy = verticalPos
             var valueHorizontalPos = initialValueHorizontalPos(area, metrics)
@@ -125,12 +127,18 @@ internal class SimpleScreenRenderer(context: Context,
                     }
 
                     verticalPos += 6
-                    drawingManager.drawDivider(margin.toFloat(), itemWidth(area, metrics).toFloat(), verticalPos)
-                    verticalPos += 4
 
                     drawingManager.drawProgressBar(
                         margin.toFloat(),
-                        itemWidth(area, metrics).toFloat(), verticalPos, metric
+                        itemWidth(area, metrics).toFloat(), verticalPos, metric,
+                        color = COLOR_CARDINAL
+                    )
+
+                    verticalPos += calculateDividerSpacing(metrics)
+
+                    drawingManager.drawDivider(
+                        margin.toFloat(), itemWidth(area, metrics).toFloat(), verticalPos,
+                        color = COLOR_PHILIPPINE_GREEN
                     )
 
                     verticalPos += if (settings.isHistoryEnabled()) {
@@ -147,7 +155,7 @@ internal class SimpleScreenRenderer(context: Context,
                     }
                 }
 
-                if (getMaxItemsInColumn(metrics) > 1 ) {
+                if (getMaxItemsInColumn(metrics) > 1) {
                     valueHorizontalPos += area.width() / 2 - 18
                 }
 
@@ -157,8 +165,12 @@ internal class SimpleScreenRenderer(context: Context,
         }
     }
 
+    private fun calculateDividerSpacing(metrics: Collection<CarMetric>) = when (getMaxItemsInColumn(metrics)) {
+        1 -> 16
+        else -> 8
+    }
 
-    private fun calculateTitleTextSize(textSize: Int,metrics: Collection<CarMetric>): Float =
+    private fun calculateTitleTextSize(textSize: Int, metrics: Collection<CarMetric>): Float =
         when (getMaxItemsInColumn(metrics)) {
             1 -> textSize.toFloat()
             else -> textSize / 1.1f
@@ -176,7 +188,7 @@ internal class SimpleScreenRenderer(context: Context,
         verticalPosCpy: Float,
         metrics: Collection<CarMetric>
     ): Float = when (getMaxItemsInColumn(metrics)) {
-        1 -> verticalPos + (textHeight / 3) - 8
+        1 -> verticalPos + (textHeight / 3) - 10
         else -> verticalPosCpy
     }
 
@@ -186,7 +198,7 @@ internal class SimpleScreenRenderer(context: Context,
             else -> (area.width() / 2)
         }
 
-    private fun itemWidth(area: Rect,metrics: Collection<CarMetric>): Int =
+    private fun itemWidth(area: Rect, metrics: Collection<CarMetric>): Int =
         when (getMaxItemsInColumn(metrics)) {
             1 -> area.width()
             else -> area.width() / 2
@@ -195,7 +207,7 @@ internal class SimpleScreenRenderer(context: Context,
     private fun getMaxItemsInColumn(metrics: Collection<CarMetric>): Int =
         if (metrics.size < settings.getMaxAllowedItemsInColumn()) {
             1
-        }else{
+        } else {
             settings.getMaxItemsInColumn()
         }
 

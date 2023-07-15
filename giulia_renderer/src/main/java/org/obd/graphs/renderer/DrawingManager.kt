@@ -9,8 +9,6 @@ import org.obd.graphs.commons.R
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.profile.getSelectedProfile
-import org.obd.graphs.ui.common.COLOR_CARDINAL
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 
 
 const val MARGIN_END = 30
@@ -82,9 +80,10 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         start: Float,
         width: Float,
         verticalPos: Float,
-        it: CarMetric
+        it: CarMetric,
+        color: Int
     ) {
-        paint.color = COLOR_CARDINAL
+        paint.color = color
 
         val progress = valueScaler.scaleToNewRange(
             it.value.toFloat(),
@@ -265,14 +264,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         start: Float,
         width: Float,
         verticalPos: Float,
-    ) {
-        return drawDivider(start, width, verticalPos, COLOR_PHILIPPINE_GREEN)
-    }
-
-    fun drawDivider(
-        start: Float,
-        width: Float,
-        verticalPos: Float,
         color: Int
     ) {
         paint.color = color
@@ -281,17 +272,14 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             start - 6,
             verticalPos + 4,
             start + width - MARGIN_END,
-            verticalPos + calculateDividerHeight(),
+            verticalPos + 4,
             paint
         )
     }
 
     private fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12
 
-    private fun calculateDividerHeight() = when (settings.getMaxItemsInColumn()) {
-        1 -> 8
-        else -> 4
-    }
+
 
     private fun getTextWidth(text: String, paint: Paint): Int {
         val bounds = Rect()
@@ -300,7 +288,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     }
 
     private fun calculateProgressBarHeight() = when (settings.getMaxItemsInColumn()) {
-        1 -> 18
+        1 -> 16
         else -> 10
     }
 }
