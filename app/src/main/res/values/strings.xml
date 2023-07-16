@@ -276,6 +276,14 @@
     <string name="supported_pids_name">Name</string>
     <string name="supported_pids_file">File</string>
     <string name="pref.usb_event_receiver_activity_label">Grant permissions to access USB device</string>
+    <string name="virtual_screen_1">1</string>
+    <string name="virtual_screen_2">2</string>
+    <string name="virtual_screen_3">3</string>
+    <string name="virtual_screen_4">4</string>
+    <string name="virtual_screen_5">5</string>
+    <string name="virtual_screen_6">6</string>
+    <string name="virtual_screen_7">7</string>
+    <string name="virtual_screen_8">8</string>
 
     <string-array name="pref.numbers_1_20">
         <item name="0">0</item>
