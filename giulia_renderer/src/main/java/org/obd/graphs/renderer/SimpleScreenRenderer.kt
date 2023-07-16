@@ -38,7 +38,7 @@ internal class SimpleScreenRenderer(
             val textSize = textHeight - ROW_SPACING
 
             drawingManager.drawBackground(area)
-            var verticalPos = area.top + textHeight.toFloat()
+            var verticalPos = area.top + textHeight.toFloat() / 2
 
             if (settings.isStatusPanelEnabled()) {
                 verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
@@ -142,9 +142,9 @@ internal class SimpleScreenRenderer(
                     )
 
                     verticalPos += if (settings.isHistoryEnabled()) {
-                        textHeight.toFloat() + 14
+                        textHeight.toFloat() + 12
                     } else {
-                        textHeight.toFloat() + 6
+                        textHeight.toFloat() + 4
                     }
 
                     if (verticalPos > area.height()) {
@@ -166,7 +166,7 @@ internal class SimpleScreenRenderer(
     }
 
     private fun calculateDividerSpacing(metrics: Collection<CarMetric>) = when (getMaxItemsInColumn(metrics)) {
-        1 -> 16
+        1 -> 14
         else -> 8
     }
 
