@@ -8,7 +8,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.*
@@ -82,7 +81,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
     floatingActionButton {
         it.setOnClickListener {
             Log.i(LOG_TAG, "Start data logging")
-            DataLoggerService.start()
+            dataLogger.start()
         }
     }
     bottomAppBar {

@@ -13,7 +13,7 @@ internal class DataLoggerJobScheduler {
 
     private val task = Runnable {
         Log.i(LOGGER_TAG, "Starting data logger task....")
-        DataLoggerService.start()
+        dataLogger.start()
     }
     fun stop() {
         Log.i(

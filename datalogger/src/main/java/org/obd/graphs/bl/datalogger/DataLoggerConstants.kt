@@ -16,5 +16,3 @@ const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
 internal const val LOGGER_TAG = "DataLogger"
-
-val dataLogger: DataLogger = DataLogger()

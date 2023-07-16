@@ -69,7 +69,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         UsbManager.ACTION_USB_DEVICE_DETACHED -> {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_detached,usbDevice.productName!!)
-            DataLoggerService.stop()
+            dataLogger.stop()
         }
 
         USB_DEVICE_ATTACHED_EVENT -> {
@@ -152,7 +152,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                     ContextCompat.getColorStateList(applicationContext, R.color.cardinal)
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
-                    DataLoggerService.stop()
+                    dataLogger.stop()
                 }
                 it.refreshDrawableState()
             }
@@ -216,7 +216,7 @@ private fun MainActivity.handleStop() {
             ContextCompat.getColorStateList(applicationContext, R.color.philippine_green)
         it.setOnClickListener {
             Log.i(LOG_TAG, "Stop data logging ")
-            DataLoggerService.start()
+            dataLogger.start()
         }
     }
 

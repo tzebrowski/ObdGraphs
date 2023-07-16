@@ -230,7 +230,7 @@ internal class CarScreen(carContext: CarContext,
 
     private fun actions(): ActionStrip = ActionStrip.Builder()
         .addAction(createAction(R.drawable.actions_connect, CarColor.GREEN) {
-            DataLoggerService.start()
+            dataLogger.start()
         })
         .addAction(createAction(R.drawable.action_disconnect, CarColor.BLUE) {
             toast.show(carContext, R.string.toast_connection_disconnect)
@@ -255,7 +255,7 @@ internal class CarScreen(carContext: CarContext,
         Log.i(LOG_KEY, "Stopping data logging process")
         fps.stop()
         renderingThread.stop()
-        DataLoggerService.stop()
+        dataLogger.stop()
     }
 
     init {
