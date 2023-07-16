@@ -12,13 +12,13 @@ internal class DataLoggerJobScheduler {
     private var future: ScheduledFuture<*>? = null
 
     private val task = Runnable {
-        Log.i(LOGGER_TAG, "Start data logging")
+        Log.i(LOGGER_TAG, "Starting data logger task....")
         DataLoggerService.start()
     }
     fun stop() {
         Log.i(
             LOGGER_TAG,
-            "Canceling Data Logger task"
+            "Canceling data logger scheduled task"
         )
 
         future?.cancel(true)
@@ -28,7 +28,7 @@ internal class DataLoggerJobScheduler {
 
         Log.i(
             LOGGER_TAG,
-            "Schedule Data Logger task with the delay: $delay"
+            "Schedule data logger task with the delay=${delay}s"
         )
 
         future = scheduleService.schedule(

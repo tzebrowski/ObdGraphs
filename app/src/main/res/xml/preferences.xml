@@ -476,8 +476,11 @@
                 android:title="@string/pref.adapter_power_bt_off"
                 app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED" />
 
-            <EditTextPreference
-                android:defaultValue="10"
+            <ListPreference
+                app:singleLineTitle="false"
+                android:entries="@array/pref.numbers_1_60"
+                android:entryValues="@array/pref.numbers_1_60"
+                android:defaultValue="5"
                 android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
                 android:inputType="number"
                 android:key="pref.adapter.power.start_data_logging.after"
@@ -564,8 +567,8 @@
 
                     <ListPreference
                         app:singleLineTitle="false"
-                        android:entries="@array/pref.aa.fps"
-                        android:entryValues="@array/pref.aa.fps"
+                        android:entries="@array/pref.numbers_1_60"
+                        android:entryValues="@array/pref.numbers_1_60"
                         android:defaultValue="10"
                         android:dialogTitle="@string/pref.screen.fps"
                         android:inputType="number"
@@ -786,8 +789,8 @@
 
                     <ListPreference
                         app:singleLineTitle="false"
-                        android:entries="@array/pref.aa.fps"
-                        android:entryValues="@array/pref.aa.fps"
+                        android:entries="@array/pref.numbers_1_60"
+                        android:entryValues="@array/pref.numbers_1_60"
                         android:defaultValue="5"
                         android:dialogTitle="@string/pref.screen.fps"
                         android:inputType="number"
@@ -875,8 +878,8 @@
 
                 <ListPreference
                     app:singleLineTitle="false"
-                    android:entries="@array/pref.aa.fps"
-                    android:entryValues="@array/pref.aa.fps"
+                    android:entries="@array/pref.numbers_1_60"
+                    android:entryValues="@array/pref.numbers_1_60"
                     android:defaultValue="5"
                     android:dialogTitle="@string/pref.screen.fps"
                     android:inputType="number"
