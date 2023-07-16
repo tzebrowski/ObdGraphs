@@ -8,6 +8,8 @@ import org.obd.graphs.getContext
 private const val ACTION_START = "org.obd.graphs.logger.START"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 
+private val jobScheduler = DataLoggerJobScheduler()
+
 class DataLoggerService : IntentService("DataLoggerService") {
 
     override fun onHandleIntent(intent: Intent?) {
@@ -22,6 +24,15 @@ class DataLoggerService : IntentService("DataLoggerService") {
     }
 
     companion object {
+        @JvmStatic
+        fun scheduleStart(delay: Long) {
+            jobScheduler.schedule(delay)
+        }
+
+        @JvmStatic
+        fun scheduledStop() {
+            jobScheduler.stop()
+        }
 
         @JvmStatic
         fun start() {

@@ -27,11 +27,11 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
                 true.run {
                     network.bluetooth(this)
                     network.wifi(this)
-                    jobScheduler.scheduleDataLogger()
+                    DataLoggerService.scheduleStart(powerPreferences.startDataLoggingAfter)
                 }
             } else {
                 if (powerPreferences.connectOnPower) {
-                    DataLoggerService.start()
+                    DataLoggerService.scheduleStart(powerPreferences.startDataLoggingAfter)
                 }
             }
 
@@ -51,6 +51,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
                     "Stop data logging"
                 )
                 DataLoggerService.stop()
+                DataLoggerService.scheduledStop()
             }
 
             if (powerPreferences.screenOnOff) {

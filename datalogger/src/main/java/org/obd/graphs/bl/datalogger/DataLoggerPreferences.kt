@@ -12,7 +12,6 @@ const val GENERIC_MODE = "Generic mode"
 private const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
 private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
-private const val LOGGER_TAG = "PREFS"
 
 data class DataLoggerPreferences(
     var pids: MutableSet<Long>,
