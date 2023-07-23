@@ -12,9 +12,9 @@ interface DataLogger {
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)
     fun isRunning(): Boolean
-    fun diagnostics(): Diagnostics
+    fun getDiagnostics(): Diagnostics
     fun findHistogramFor(metric: ObdMetric): Histogram
-    fun pidDefinitionRegistry(): PidDefinitionRegistry
+    fun getPidDefinitionRegistry(): PidDefinitionRegistry
     fun isDTCEnabled(): Boolean
     fun scheduleStart(delay: Long)
     fun scheduledStop()

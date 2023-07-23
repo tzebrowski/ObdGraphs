@@ -33,7 +33,7 @@ class SupportedPIDsViewAdapter internal constructor(
         position: Int
     ) {
         data.elementAt(position).run {
-            val pidList = dataLogger.pidDefinitionRegistry().findAll()
+            val pidList = dataLogger.getPidDefinitionRegistry().findAll()
             val pid = pidList.firstOrNull { it.pid == uppercase() }
             if  (pid == null) {
                 holder.mode.setText("", COLOR_PHILIPPINE_GREEN,Typeface.NORMAL, 0.7f)

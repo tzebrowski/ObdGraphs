@@ -43,17 +43,12 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     val eventsReceiver = EventsReceiver()
-
     private var metricsAggregator = MetricsObserver()
-    private var reconnectAttemptCount = 0
-    private var reconnecting = false
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
             Log.i(LOGGER_TAG, "Start collecting process")
-            if (!reconnecting) {
-                sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
-            }
+            sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
@@ -73,27 +68,8 @@ internal class WorkflowOrchestrator internal constructor() {
                 "An error occurred during interaction with the device. Msg: $msg"
             )
 
-            if (dataLoggerPreferences.instance.reconnectWhenError && reconnectAttemptCount < dataLoggerPreferences.instance.maxReconnectRetry) {
-
-                if (dataLoggerPreferences.instance.reconnectSilent) {
-                    reconnecting = true
-                }
-
-                Log.e(
-                    LOGGER_TAG,
-                    "Flag to reconnect automatically when errors occurs is turn on." +
-                            " Re-establishing new connection. Reconnect attempt count=$reconnectAttemptCount"
-                )
-
-                stop()
-                start()
-                reconnectAttemptCount++
-            } else {
-                reconnecting = false
-                stop()
-                reconnectAttemptCount = 0
-                sendBroadcastEvent(DATA_LOGGER_ERROR_EVENT)
-            }
+            stop()
+            sendBroadcastEvent(DATA_LOGGER_ERROR_EVENT)
         }
 
         override fun onStopped() {
@@ -103,16 +79,12 @@ internal class WorkflowOrchestrator internal constructor() {
             )
 
             metricsAggregator.reset()
-            if (!reconnecting) {
-                sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
-            }
+            sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
         }
 
         override fun onStopping() {
             Log.i(LOGGER_TAG, "Stopping collecting process...")
-            if (!reconnecting) {
-                sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
-            }
+            sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
         }
     }
 
@@ -139,10 +111,12 @@ internal class WorkflowOrchestrator internal constructor() {
                 "${dataLoggerPreferences.instance.gracefulStop}")
         try {
             workflow.stop(dataLoggerPreferences.instance.gracefulStop)
+            Log.i(LOGGER_TAG, "After send the STOP. Workflow is running ${workflow.isRunning}")
         }catch (e: Exception){
             Log.e(LOGGER_TAG, "Failed to stop the workflow", e)
         }
     }
+
 
     fun start() {
         connection()?.run {
@@ -235,6 +209,9 @@ internal class WorkflowOrchestrator internal constructor() {
         .sequence(DefaultCommandGroup.INIT).build()
 
     private fun adjustments() = Adjustments.builder()
+        .errorsPolicy(ErrorsPolicy.builder()
+            .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
+            .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build())
         .batchEnabled(dataLoggerPreferences.instance.batchEnabled)
         .collectRawConnectorResponseEnabled(dataLoggerPreferences.instance.dumpRawConnectorResponse)
         .stNxx(STNxxExtensions.builder()

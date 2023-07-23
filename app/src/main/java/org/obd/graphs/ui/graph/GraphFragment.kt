@@ -189,7 +189,7 @@ class GraphFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
 
-        val diagnostics = dataLogger.diagnostics()
+        val diagnostics = dataLogger.getDiagnostics()
         dataLogger.observe(viewLifecycleOwner) {
            diagnostics.histogram().findBy(it.command.pid)?.let{ hist ->
                val sensorData = SensorData(id = it.command.pid.id,
@@ -213,7 +213,7 @@ class GraphFragment : Fragment() {
         colors = Colors().generate()
         chart = buildChart(root).apply {
 
-            val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
+            val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
             val metrics = preferences.metrics.mapNotNull {
                 pidRegistry.findBy(it)
             }.toMutableList()
@@ -229,7 +229,7 @@ class GraphFragment : Fragment() {
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
             val trip = tripManager.getCurrentTrip()
-            val registry = dataLogger.pidDefinitionRegistry()
+            val registry = dataLogger.getPidDefinitionRegistry()
             tripStartTs = trip.startTs
 
             val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)

@@ -60,11 +60,8 @@
     <string name="pref.adapter_stn_enabled_summary">Enabling this option will cause that STNxx chip specific commands are used during session with ECU which might increase performance. This option should be turned on only when STNxx based adapter is in use, otherwise it will cause errors. </string>
     <string name="pref.adapter_cache_result_enabled">Enable result cache</string>
     <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
-    <string name="pref.adapter_reconnect">Enable automatically reconnect when errors occur</string>
-    <string name="pref.adapter_reconnect_silent">Enable reconnect silent mode</string>
-
-    <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts when errors occur</string>
-    <string name="pref.adapter.reconnect.hard_reset">Enable hard reset during reconnect attempt</string>
+    <string name="pref.adapter_reconnect">Enable OBD2 Adapter automatic reconnect when connectivity errors occur</string>
+    <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts</string>
 
     <string name="pref.connection.category">Connection</string>
     <string name="pref.connection.category.summary">Under this section you can find preferences related to the adapter type. You can configure here WIFI or Bluetooth parameters of your adapter</string>

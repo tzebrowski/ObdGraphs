@@ -88,7 +88,7 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
     }
 
     private fun buildMetrics(id: Long, v: Float): ObdMetric {
-        val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
+        val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
         val pid = pidRegistry.findBy(id)
         val value = valueScaler.scaleToPidRange(pid, v)
         return ObdMetric.builder().command(ObdCommand(pid)).value(value).build()

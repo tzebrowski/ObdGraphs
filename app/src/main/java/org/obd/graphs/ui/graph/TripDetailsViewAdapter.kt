@@ -36,7 +36,7 @@ class TripDetailsViewAdapter internal constructor(
     ) {
 
         mData.elementAt(position).let { metric ->
-            val pid = dataLogger.pidDefinitionRegistry().findBy(metric.id)
+            val pid = dataLogger.getPidDefinitionRegistry().findBy(metric.id)
             holder.metricName.setText(pid.description, COLOR_PHILIPPINE_GREEN, 1.0f)
             metric.run {
                 holder.metricMaxValue.setText(

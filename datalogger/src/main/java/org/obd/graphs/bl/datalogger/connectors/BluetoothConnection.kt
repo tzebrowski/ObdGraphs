@@ -2,10 +2,8 @@ package org.obd.graphs.bl.datalogger.connectors
 
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.network
 import org.obd.metrics.transport.AdapterConnection
-import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
@@ -26,12 +24,7 @@ class BluetoothConnection(private val deviceName: String) : AdapterConnection {
 
     override fun reconnect() {
         Log.i(LOGGER_TAG, "Reconnecting to the device: $deviceName")
-        if (dataLoggerPreferences.instance.reconnectWhenError && dataLoggerPreferences.instance .hardReset) {
-            throw IOException("Doing hard reset")
-        }
-
         close()
-
         TimeUnit.MILLISECONDS.sleep(1000)
         connectToDevice()
         Log.i(LOGGER_TAG, "Successfully reconnect to the device: $deviceName")
@@ -48,7 +41,6 @@ class BluetoothConnection(private val deviceName: String) : AdapterConnection {
         } catch (_: Throwable){}
 
         try {
-
             output?.close()
         } catch (_: Throwable){}
 
@@ -57,7 +49,7 @@ class BluetoothConnection(private val deviceName: String) : AdapterConnection {
                 socket.close()
         } catch (_: Throwable){}
 
-        Log.i(LOGGER_TAG, "Socket for device: $deviceName has been closed.")
+        Log.i(LOGGER_TAG, "Socket for the device: $deviceName is closed.")
     }
 
     override fun openOutputStream(): OutputStream? {

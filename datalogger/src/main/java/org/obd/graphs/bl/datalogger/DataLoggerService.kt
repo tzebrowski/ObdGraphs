@@ -69,11 +69,11 @@ class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun isRunning(): Boolean  = workflowOrchestrator.isRunning()
 
-    override fun diagnostics(): Diagnostics  = workflowOrchestrator.diagnostics()
+    override fun getDiagnostics(): Diagnostics  = workflowOrchestrator.diagnostics()
 
     override fun findHistogramFor(metric: ObdMetric): Histogram  = workflowOrchestrator.findHistogramFor(metric)
 
-    override fun pidDefinitionRegistry(): PidDefinitionRegistry  = workflowOrchestrator.pidDefinitionRegistry()
+    override fun getPidDefinitionRegistry(): PidDefinitionRegistry  = workflowOrchestrator.pidDefinitionRegistry()
     override fun isDTCEnabled(): Boolean  = workflowOrchestrator.isDTCEnabled()
 
     private fun enqueueWork(intentAction: String, func: (p: Intent) -> Unit = {}) {

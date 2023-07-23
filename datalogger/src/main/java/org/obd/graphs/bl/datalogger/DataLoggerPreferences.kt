@@ -22,7 +22,6 @@ data class DataLoggerPreferences(
     var connectionTimeout: Int,
     var stnExtensionsEnabled: Boolean,
     var batchEnabled: Boolean,
-    var reconnectSilent: Boolean,
     var reconnectWhenError: Boolean,
     var adapterId: String,
     var commandFrequency: Long,
@@ -32,8 +31,7 @@ data class DataLoggerPreferences(
     var adaptiveConnectionEnabled: Boolean,
     var resultsCacheEnabled: Boolean,
     var initProtocol: String,
-    var hardReset: Boolean,
-    var maxReconnectRetry: Int,
+    var maxReconnectNum: Int,
     var resources: Set<String>,
     var vehicleMetadataReadingEnabled: Boolean,
     var vehicleCapabilitiesReadingEnabled: Boolean,
@@ -92,10 +90,7 @@ class DataLoggerPreferencesManager {
 
         val initProtocol = Prefs.getS("pref.adapter.init.protocol", "AUTO")
 
-        val hardReset =
-            Prefs.getBoolean("pref.adapter.reconnect.hard_reset", false)
-
-        val maxReconnectRetry =
+        val maxReconnectNum =
             Prefs.getS("pref.adapter.reconnect.max_retry", "0").toInt()
 
         val vehicleMetadataReadingEnabled =
@@ -109,7 +104,6 @@ class DataLoggerPreferencesManager {
 
         val gracefulStop = Prefs.getBoolean("pref.adapter.graceful_stop.enabled", true)
 
-        val reconnectSilent = Prefs.getBoolean("pref.adapter.reconnect.silent", true)
 
         val dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
 
@@ -130,8 +124,7 @@ class DataLoggerPreferencesManager {
             adaptiveConnectionEnabled = adaptiveConnectionEnabled,
             resultsCacheEnabled = resultsCacheEnabled,
             initProtocol = initProtocol,
-            hardReset = hardReset,
-            maxReconnectRetry = maxReconnectRetry,
+            maxReconnectNum = maxReconnectNum,
             resources = resources(),
             vehicleMetadataReadingEnabled = vehicleMetadataReadingEnabled,
             vehicleCapabilitiesReadingEnabled = vehicleCapabilitiesReadingEnabled,
@@ -139,7 +132,6 @@ class DataLoggerPreferencesManager {
             vehicleDTCCleaningEnabled = vehicleDTCCleaningEnabled,
             responseLengthEnabled = responseLength,
             gracefulStop = gracefulStop,
-            reconnectSilent = reconnectSilent,
             connectionTimeout = timeout,
             dumpRawConnectorResponse = dumpRawConnectorResponse,
             delayAfterReset = delayAfterReset

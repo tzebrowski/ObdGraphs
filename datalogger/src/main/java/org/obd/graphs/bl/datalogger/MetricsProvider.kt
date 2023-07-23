@@ -29,8 +29,8 @@ class MetricsProvider {
     }
 
     private fun buildMetrics(ids: Set<Long>): MutableList<CarMetric> {
-        val pidRegistry: PidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
-        val histogramSupplier = dataLogger.diagnostics().histogram()
+        val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
+        val histogramSupplier = dataLogger.getDiagnostics().histogram()
 
         return ids.mapNotNull {
             pidRegistry.findBy(it)?.let { pid ->

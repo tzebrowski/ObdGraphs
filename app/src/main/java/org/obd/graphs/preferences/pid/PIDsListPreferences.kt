@@ -93,7 +93,7 @@ class PIDsListPreferences(
         return Pair(entries, entriesValues)
     }
 
-    private fun getPidList() = dataLogger.pidDefinitionRegistry().findAll()
+    private fun getPidList() = dataLogger.getPidDefinitionRegistry().findAll()
 
     private fun getPriority(attrs: AttributeSet?): String = if (attrs == null) {
         ""

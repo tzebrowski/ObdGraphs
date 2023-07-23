@@ -87,8 +87,8 @@ class TripManager {
     fun saveCurrentTrip() {
         tripCache.getTrip { trip ->
 
-            val histogram = dataLogger.diagnostics().histogram()
-            val pidDefinitionRegistry = dataLogger.pidDefinitionRegistry()
+            val histogram = dataLogger.getDiagnostics().histogram()
+            val pidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
 
             trip.entries.forEach { (t, u) ->
                 val p = pidDefinitionRegistry.findBy(t)

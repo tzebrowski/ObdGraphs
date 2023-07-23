@@ -165,7 +165,7 @@ class GaugeAdapter(
         holder.commandRate?.run {
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
-                val rate = dataLogger.diagnostics().rate()
+                val rate = dataLogger.getDiagnostics().rate()
                     .findBy(RateType.MEAN, metric.source.command.pid)
                 val txt = "rate ${rate.get().value.round(2)}"
                 text = txt
