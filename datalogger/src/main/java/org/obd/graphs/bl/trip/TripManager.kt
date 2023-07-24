@@ -84,26 +84,10 @@ class TripManager {
         updateCache(newTs)
     }
 
-    fun saveCurrentTrip() {
+    fun saveCurrentTrip(f: () -> Unit) {
         tripCache.getTrip { trip ->
-
-            val histogram = dataLogger.getDiagnostics().histogram()
-            val pidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
-
-            trip.entries.forEach { (t, u) ->
-                val p = pidDefinitionRegistry.findBy(t)
-                p?.let {
-                    val histogramSupplier = histogram.findBy(it)
-                    u.max = histogramSupplier.max
-                    u.min = histogramSupplier.min
-                    u.mean = histogramSupplier.mean
-                }
-            }
-
             val recordShortTrip = Prefs.isEnabled("pref.trips.recordings.save.short.trip")
-
             val tripLength = getTripLength(trip)
-
             Log.i(LOGGER_TAG, "Recorded trip, length: ${tripLength}s")
 
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
@@ -119,6 +103,20 @@ class TripManager {
                     )
                 } else {
                     try {
+                        f()
+                        val histogram = dataLogger.getDiagnostics().histogram()
+                        val pidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
+
+                        trip.entries.forEach { (t, u) ->
+                            val p = pidDefinitionRegistry.findBy(t)
+                            p?.let {
+                                val histogramSupplier = histogram.findBy(it)
+                                u.max = histogramSupplier.max
+                                u.min = histogramSupplier.min
+                                u.mean = histogramSupplier.mean
+                            }
+                        }
+
                         val content: String =
                             tripModelSerializer.serializer.writeValueAsString(trip)
 

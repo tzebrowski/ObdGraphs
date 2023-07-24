@@ -21,7 +21,7 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
         when (intent?.action) {
 
             DATA_LOGGER_CONNECTING_EVENT -> {
-                cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
+                cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING, true)
             }
 
             DATA_LOGGER_CONNECTED_EVENT -> {
@@ -32,12 +32,13 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
             DATA_LOGGER_STOPPED_EVENT -> {
                 runAsync {
                     try {
-                        val msg = context?.getText(R.string.dialog_screen_lock_saving_trip_message) as String
-                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, msg)
-                        Log.i(LOGGER_KEY, "Received event: DATA_LOGGER_STOPPED_EVENT")
-                        tripManager.saveCurrentTrip()
-                        cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
+                        tripManager.saveCurrentTrip {
+                            val msg = context?.getText(R.string.dialog_screen_lock_saving_trip_message) as String
+                            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, msg)
+                            Log.i(LOGGER_KEY, "Received event: DATA_LOGGER_STOPPED_EVENT")
+                        }
                     } finally {
+                        cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING, false)
                         sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                     }
                 }
