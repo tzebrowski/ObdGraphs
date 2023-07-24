@@ -189,23 +189,22 @@ class GraphFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
 
-        val diagnostics = dataLogger.getDiagnostics()
         dataLogger.observe(viewLifecycleOwner) {
-           diagnostics.histogram().findBy(it.command.pid)?.let{ hist ->
-               val sensorData = SensorData(id = it.command.pid.id,
-                   metrics = mutableListOf(),
-                   min = hist.min,
-                   max = hist.max,
-                   mean = hist.mean)
-               val indexOf = data.indexOf(sensorData)
-               if (indexOf == -1) {
-                   data.add(sensorData)
-                   adapter.notifyItemInserted(data.indexOf(sensorData))
-               } else {
-                   data[indexOf] = sensorData
-                   adapter.notifyItemChanged(indexOf, sensorData)
-               }
-           }
+            dataLogger.findHistogramFor(it).let{ hist ->
+                val sensorData = SensorData(id = it.command.pid.id,
+                    metrics = mutableListOf(),
+                    min = hist.min,
+                    max = hist.max,
+                    mean = hist.mean)
+                val indexOf = data.indexOf(sensorData)
+                if (indexOf == -1) {
+                    data.add(sensorData)
+                    adapter.notifyItemInserted(data.indexOf(sensorData))
+                } else {
+                    data[indexOf] = sensorData
+                    adapter.notifyItemChanged(indexOf, sensorData)
+                }
+            }
         }
     }
 
