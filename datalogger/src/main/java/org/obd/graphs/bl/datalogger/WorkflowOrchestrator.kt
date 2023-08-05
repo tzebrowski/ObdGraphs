@@ -209,9 +209,11 @@ internal class WorkflowOrchestrator internal constructor() {
         .sequence(DefaultCommandGroup.INIT).build()
 
     private fun adjustments() = Adjustments.builder()
+        .debugEnabled(dataLoggerPreferences.instance.debugLogging)
         .errorsPolicy(ErrorsPolicy.builder()
             .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
             .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build())
+        .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize)
         .batchEnabled(dataLoggerPreferences.instance.batchEnabled)
         .collectRawConnectorResponseEnabled(dataLoggerPreferences.instance.dumpRawConnectorResponse)
         .stNxx(STNxxExtensions.builder()

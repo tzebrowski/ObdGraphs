@@ -14,6 +14,7 @@ private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
 private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
 
 data class DataLoggerPreferences(
+    var debugLogging: Boolean,
     var pids: MutableSet<Long>,
     var connectionType: String,
     var tcpHost: String,
@@ -22,6 +23,7 @@ data class DataLoggerPreferences(
     var connectionTimeout: Int,
     var stnExtensionsEnabled: Boolean,
     var batchEnabled: Boolean,
+    var mode22BatchSize: Int?,
     var reconnectWhenError: Boolean,
     var adapterId: String,
     var commandFrequency: Long,
@@ -76,6 +78,9 @@ class DataLoggerPreferencesManager {
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
         val wifiSSID = Prefs.getS("pref.adapter.connection.tcp.ssid", "")
 
+        val batchSize = Prefs.getString("pref.adapter.batch.size", null)
+        val debugLogging = Prefs.getBoolean("pref.debug.logging.enabled", false)
+
         val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
         val reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
         val adapterId = Prefs.getS("pref.adapter.id", "OBDII")
@@ -108,6 +113,7 @@ class DataLoggerPreferencesManager {
         val dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
 
         val dataLoggerPreferences = DataLoggerPreferences(
+            mode22BatchSize = batchSize?.toInt(),
             stnExtensionsEnabled = stnEnabled,
             pids = getPIDsToQuery(),
             connectionType = connectionType,
@@ -134,7 +140,8 @@ class DataLoggerPreferencesManager {
             gracefulStop = gracefulStop,
             connectionTimeout = timeout,
             dumpRawConnectorResponse = dumpRawConnectorResponse,
-            delayAfterReset = delayAfterReset
+            delayAfterReset = delayAfterReset,
+            debugLogging = debugLogging
         )
 
         if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
