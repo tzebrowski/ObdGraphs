@@ -226,7 +226,7 @@ internal class WorkflowOrchestrator internal constructor() {
         .vehicleCapabilitiesReadingEnabled(dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled)
         .vehicleDtcReadingEnabled(dataLoggerPreferences.instance.vehicleDTCReadingEnabled)
         .vehicleDtcCleaningEnabled(dataLoggerPreferences.instance.vehicleDTCCleaningEnabled)
-        .cacheConfig(
+        .cachePolicy(
             CachePolicy.builder()
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
                 .resultCacheEnabled(dataLoggerPreferences.instance.resultsCacheEnabled).build()
@@ -235,12 +235,12 @@ internal class WorkflowOrchestrator internal constructor() {
             .builder()
             .conditionalSleepEnabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
             .conditionalSleepSliceSize(10).build())
-        .generator(
+        .generatorPolicy(
             GeneratorPolicy
                 .builder()
                 .enabled(dataLoggerPreferences.instance.generatorEnabled)
                 .increment(0.5).build()
-        ).adaptiveTiming(
+        ).adaptiveTimeoutPolicy(
             AdaptiveTimeoutPolicy
                 .builder()
                 .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
