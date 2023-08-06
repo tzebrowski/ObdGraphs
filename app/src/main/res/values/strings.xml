@@ -55,6 +55,7 @@
     <string name="pref.pids_generic_low_summary">Choose Low priority OBD2 PIDs/Sensors you would like to query from ECU</string>
 
     <string name="pref.pids_supported">OBD2 PIDs/Sensors supported by ECU\n(fetched after first successful connection to the ECU)</string>
+    <string name="prefs.adapter_batch_mode_22_batch_size">Batch Size for Mode 22</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
     <string name="pref.adapter_stn_enabled">Enable STN extensions</string>
     <string name="pref.adapter_stn_enabled_summary">Enabling this option will cause that STNxx chip specific commands are used during session with ECU which might increase performance. This option should be turned on only when STNxx based adapter is in use, otherwise it will cause errors. </string>

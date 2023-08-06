@@ -291,7 +291,7 @@
                     android:entryValues="@array/pref.numbers_1_20"
                     android:inputType="number"
                     android:key="pref.adapter.batch.size"
-                    android:title="Batch Size for Mode 22"
+                    android:title="@string/prefs.adapter_batch_mode_22_batch_size"
                     app:useSimpleSummaryProvider="true" />
 
                 <CheckBoxPreference
