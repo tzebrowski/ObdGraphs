@@ -326,8 +326,9 @@
         <item name="256000">256000</item>
     </string-array>
 
-    <string-array name="pref.numbers_1_60">
+    <string-array name="pref.numbers_1_25">
         <item name="1">1</item>
+        <item name="2">2</item>
         <item name="3">3</item>
         <item name="4">4</item>
         <item name="5">5</item>
@@ -339,10 +340,6 @@
         <item name="15">15</item>
         <item name="20">20</item>
         <item name="25">25</item>
-        <item name="30">30</item>
-        <item name="40">40</item>
-        <item name="50">50</item>
-        <item name="60">60</item>
     </string-array>
 
 
