@@ -6,7 +6,7 @@ import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
 
 
-
+private const val PREF_ALERTING_ENABLED= "pref.aa.alerting.enabled"
 private const val PREF_THEME_PROGRESS_BAR_COLOR= "pref.aa.theme.progressColor"
 private const val PREF_THEME_DIVIDER_COLOR= "pref.aa.theme.dividerColor"
 private const val PREF_THEME_CURR_VALUE_COLOR= "pref.aa.theme.currentValueColor"
@@ -27,7 +27,7 @@ const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
 const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
-internal class SettingsImpl : ScreenSettings {
+internal class CarSettings : ScreenSettings {
     override fun colorTheme(): ColorTheme {
         return ColorTheme(
             progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, Color.RED),
@@ -53,13 +53,11 @@ internal class SettingsImpl : ScreenSettings {
         }
     }
 
-    override fun isHistoryEnabled(): Boolean {
-        return Prefs.getBoolean("pref.aa.pids.history.enabled", true)
-    }
+    override fun isAlertingEnabled(): Boolean = Prefs.getBoolean(PREF_ALERTING_ENABLED, false)
 
-    override fun isFpsCounterEnabled(): Boolean {
-        return Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
-    }
+    override fun isHistoryEnabled(): Boolean = Prefs.getBoolean("pref.aa.pids.history.enabled", true)
+
+    override fun isFpsCounterEnabled(): Boolean  = Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
     override fun getMaxFontSize(): Int =

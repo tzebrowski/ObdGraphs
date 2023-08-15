@@ -8,13 +8,15 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       val statusConnectedColor: Int = Color.GREEN,
                       val statusDisconnectedColor: Int = Color.YELLOW,
                       val currentValueColor: Int = Color.WHITE,
+                      val currentValueInAlertColor: Int = Color.RED,
                       val currentProfileColor: Int = Color.YELLOW,
-
                       val actionsBtnConnectColor: Int = Color.GREEN,
                       val actionsBtnDisconnectColor: Int = Color.BLUE,
                       val actionsBtnVirtualScreensColor: Int = Color.YELLOW)
 
 interface ScreenSettings {
+
+    fun isAlertingEnabled (): Boolean = false
 
     fun colorTheme(): ColorTheme = ColorTheme()
 

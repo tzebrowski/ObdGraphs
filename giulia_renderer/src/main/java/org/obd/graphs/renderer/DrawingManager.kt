@@ -190,7 +190,13 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         colorTheme: ColorTheme
     ) {
         valuePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        valuePaint.color = colorTheme.currentValueColor
+
+        valuePaint.color = if (inAlert(metric)){
+            colorTheme.currentValueInAlertColor
+        } else {
+            colorTheme.currentValueColor
+        }
+
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()
@@ -201,6 +207,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         valuePaint.textSize = (textSize * 0.4).toFloat()
         canvas?.drawText(metric.source.command.pid.units, (horizontalPos + 2), verticalPos, valuePaint)
     }
+
 
     fun drawTitle(
         metric: CarMetric,
@@ -246,20 +253,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         }
     }
 
-    private fun drawText(
-        text: String,
-        horizontalPos: Float,
-        verticalPos: Float,
-        color: Int,
-        textSize: Float,
-        paint1: Paint
-    ): Float {
-        paint1.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        paint1.color = color
-        paint1.textSize = textSize
-        canvas?.drawText(text, horizontalPos, verticalPos, paint1)
-        return (horizontalPos + getTextWidth(text, paint1) * 1.25f)
-    }
+
 
     fun drawDivider(
         start: Float,
@@ -278,9 +272,22 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         )
     }
 
+    private fun drawText(
+        text: String,
+        horizontalPos: Float,
+        verticalPos: Float,
+        color: Int,
+        textSize: Float,
+        paint1: Paint
+    ): Float {
+        paint1.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        paint1.color = color
+        paint1.textSize = textSize
+        canvas?.drawText(text, horizontalPos, verticalPos, paint1)
+        return (horizontalPos + getTextWidth(text, paint1) * 1.25f)
+    }
+
     private fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12
-
-
 
     private fun getTextWidth(text: String, paint: Paint): Int {
         val bounds = Rect()
@@ -292,4 +299,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         1 -> 16
         else -> 10
     }
+
+    private fun inAlert(metric: CarMetric) = settings.isAlertingEnabled() && metric.isInAlert()
+
 }

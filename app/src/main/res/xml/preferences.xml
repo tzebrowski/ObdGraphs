@@ -889,6 +889,12 @@
                     android:key="pref.aa.status.fps.enabled"
                     android:title="@string/pref.aa.surface.fps.display_status" />
 
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:key="pref.aa.alerting.enabled"
+                    android:title="@string/pref.aa.alerting.enabled" />
+
                 <PreferenceCategory android:title="@string/pref.theme">
                     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
                         android:defaultValue="0xffff0000"

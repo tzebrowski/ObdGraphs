@@ -40,15 +40,6 @@
     <string name="context_menu.about">About</string>
     <string name="context_menu.custom_action_1">Custom</string>
 
-    <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
-    <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>
-    <string name="pref.aa.profile_3.displayed_parameter_ids">Edit Virtual Screen 3</string>
-    <string name="pref.aa.profile_4.displayed_parameter_ids">Edit Virtual Screen 4</string>
-    <string name="pref.aa.theme.progress_bar_color">Progress bar color</string>
-    <string name="pref.aa.theme.divider_color">Divider color</string>
-    <string name="pref.aa.theme.current_value_color">Current value color</string>
-
-
     <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors you would like to see on the screen</string>
 
@@ -104,6 +95,16 @@
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will cause OBD2 PIDs/Sensors will be read during the session with ECU</string>
 
     <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
+
+    <!-- Android Auto -->
+    <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
+    <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>
+    <string name="pref.aa.profile_3.displayed_parameter_ids">Edit Virtual Screen 3</string>
+    <string name="pref.aa.profile_4.displayed_parameter_ids">Edit Virtual Screen 4</string>
+    <string name="pref.aa.theme.progress_bar_color">Progress bar color</string>
+    <string name="pref.aa.theme.divider_color">Divider color</string>
+    <string name="pref.aa.theme.current_value_color">Current value color</string>
+
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
     <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>
     <string name="pref.aa.number_of_items_in_column.1">Number of OBD2 PIDs/Sensors displayed in the column for screen 1</string>
@@ -113,11 +114,9 @@
     <string name="pref.aa.number_of_items_in_column.5">Number of OBD2 PIDs/Sensors displayed in the column for screen 5</string>
     <string name="pref.aa.number_of_items_in_column.6">Number of OBD2 PIDs/Sensors displayed in the column for screen 6</string>
     <string name="pref.aa.number_of_items_in_column.7">Number of OBD2 PIDs/Sensors displayed in the column for screen 7</string>
-
     <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>
     <string name="pref.aa.font_size.category">Font size</string>
     <string name="pref.aa.number_of_items_in_column.category">Number of items in the column</string>
-
     <string name="pref.aa.font_size.1">Font size of the displayed OBD2 PIDs/Sensors for screen 1</string>
     <string name="pref.aa.font_size.2">Font size of the displayed OBD2 PIDs/Sensors for screen 2</string>
     <string name="pref.aa.font_size.3">Font size of the displayed OBD2 PIDs/Sensors for screen 3</string>
@@ -125,9 +124,11 @@
     <string name="pref.aa.font_size.5">Font size of the displayed OBD2 PIDs/Sensors for screen 5</string>
     <string name="pref.aa.font_size.6">Font size of the displayed OBD2 PIDs/Sensors for screen 6</string>
     <string name="pref.aa.font_size.7">Font size of the displayed OBD2 PIDs/Sensors for screen 7</string>
-
     <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
     <string name="pref.aa.title">Android Auto</string>
+    <string name="pref.aa.alerting.enabled">Enable Alerting</string>
+
+
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
     <string name="pref.dtc.code">Code</string>
     <string name="pref.dtc.description">Description</string>

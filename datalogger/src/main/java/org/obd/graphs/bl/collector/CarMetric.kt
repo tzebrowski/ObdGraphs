@@ -21,6 +21,8 @@ data class CarMetric(
         return toNumber(source.command.pid, value).toString()
     }
 
+    fun isInAlert() : Boolean = source.isAlert
+
     private fun toNumber(pid: PidDefinition, input: Number?): Number {
 
         if (input == null) {
