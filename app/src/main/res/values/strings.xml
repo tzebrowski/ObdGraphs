@@ -44,6 +44,9 @@
     <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>
     <string name="pref.aa.profile_3.displayed_parameter_ids">Edit Virtual Screen 3</string>
     <string name="pref.aa.profile_4.displayed_parameter_ids">Edit Virtual Screen 4</string>
+    <string name="pref.aa.theme.progress_bar_color">Progress bar color</string>
+    <string name="pref.aa.theme.divider_color">Divider color</string>
+    <string name="pref.aa.theme.current_value_color">Current value color</string>
 
 
     <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
@@ -282,6 +285,7 @@
     <string name="virtual_screen_6">6</string>
     <string name="virtual_screen_7">7</string>
     <string name="virtual_screen_8">8</string>
+
 
     <string-array name="pref.numbers_1_20">
         <item name="0">0</item>

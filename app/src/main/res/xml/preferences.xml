@@ -889,8 +889,24 @@
                     android:key="pref.aa.status.fps.enabled"
                     android:title="@string/pref.aa.surface.fps.display_status" />
 
-            </PreferenceScreen>
+                <PreferenceCategory android:title="@string/pref.theme">
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffff0000"
+                        android:key="pref.aa.theme.progressColor"
+                        android:title="@string/pref.aa.theme.progress_bar_color" />
 
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffffffff"
+                        android:key="pref.aa.theme.dividerColor"
+                        android:title="@string/pref.aa.theme.divider_color" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffffffff"
+                        android:key="pref.aa.theme.currentValueColor"
+                        android:title="@string/pref.aa.theme.current_value_color" />
+
+                </PreferenceCategory>
+            </PreferenceScreen>
 
             <PreferenceScreen
                 android:summary="@string/pref.graph_category"

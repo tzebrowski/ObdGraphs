@@ -99,7 +99,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         )
     }
 
-    fun drawStatusBar(area: Rect, fps: Double): Float {
+    fun drawStatusBar(area: Rect, fps: Double, colorTheme: ColorTheme): Float {
         val statusVerticalPos = area.top + 6f
         var text = statusLabel
         var horizontalAlignment = MARGIN_START.toFloat()
@@ -117,10 +117,10 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         val color: Int
         if (dataLogger.isRunning()) {
             text = statusConnected
-            color = Color.GREEN
+            color = colorTheme.statusConnectedColor
         } else {
             text = statusDisconnected
-            color = Color.YELLOW
+            color = colorTheme.statusDisconnectedColor
         }
 
         drawText(
@@ -151,7 +151,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             text,
             horizontalAlignment,
             statusVerticalPos,
-            Color.YELLOW,
+            colorTheme.currentProfileColor,
             18f,
             statusPaint
         )
@@ -186,10 +186,11 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         metric: CarMetric,
         horizontalPos: Float,
         verticalPos: Float,
-        textSize: Float
+        textSize: Float,
+        colorTheme: ColorTheme
     ) {
         valuePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        valuePaint.color = Color.WHITE
+        valuePaint.color = colorTheme.currentValueColor
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()

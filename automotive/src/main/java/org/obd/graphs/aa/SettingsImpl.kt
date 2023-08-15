@@ -1,7 +1,15 @@
 package org.obd.graphs.aa
 
+import android.graphics.Color
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
+import org.obd.graphs.renderer.ColorTheme
+
+
+
+private const val PREF_THEME_PROGRESS_BAR_COLOR= "pref.aa.theme.progressColor"
+private const val PREF_THEME_DIVIDER_COLOR= "pref.aa.theme.dividerColor"
+private const val PREF_THEME_CURR_VALUE_COLOR= "pref.aa.theme.currentValueColor"
 
 private const val PREF_CURRENT_VIRTUAL_SCREEN = "pref.aa.pids.vs.current"
 private const val PREF_SELECTED_PIDS = "pref.aa.pids.selected"
@@ -20,7 +28,13 @@ const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
 internal class SettingsImpl : ScreenSettings {
-
+    override fun colorTheme(): ColorTheme {
+        return ColorTheme(
+            progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, Color.RED),
+            dividerColor =  Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE),
+            currentValueColor =  Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE)
+        )
+    }
     override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
     override fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
     override fun applyVirtualScreen3() = applyVirtualScreen(VIRTUAL_SCREEN_3)

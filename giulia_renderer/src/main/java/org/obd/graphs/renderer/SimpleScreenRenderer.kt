@@ -7,8 +7,6 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.ui.common.COLOR_CARDINAL
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import kotlin.math.min
 
 private const val LOG_KEY = "SimpleScreenRenderer"
@@ -41,7 +39,7 @@ internal class SimpleScreenRenderer(
             var verticalPos = area.top + textHeight.toFloat() / 2
 
             if (settings.isStatusPanelEnabled()) {
-                verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
+                verticalPos = drawingManager.drawStatusBar(area, fps.get(), settings.colorTheme()) + 18
                 drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
@@ -71,7 +69,8 @@ internal class SimpleScreenRenderer(
                         metric,
                         valueHorizontalPos,
                         verticalPos + 10,
-                        textSize.toFloat() + 14
+                        textSize.toFloat() + 14,
+                        colorTheme = settings.colorTheme()
                     )
 
 
@@ -131,14 +130,14 @@ internal class SimpleScreenRenderer(
                     drawingManager.drawProgressBar(
                         margin.toFloat(),
                         itemWidth(area, metrics).toFloat(), verticalPos, metric,
-                        color = COLOR_CARDINAL
+                        color = settings.colorTheme().progressColor
                     )
 
                     verticalPos += calculateDividerSpacing(metrics)
 
                     drawingManager.drawDivider(
                         margin.toFloat(), itemWidth(area, metrics).toFloat(), verticalPos,
-                        color = COLOR_PHILIPPINE_GREEN
+                        color = settings.colorTheme().dividerColor
                     )
 
                     verticalPos += if (settings.isHistoryEnabled()) {

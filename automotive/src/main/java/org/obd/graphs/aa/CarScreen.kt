@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -205,23 +206,23 @@ internal class CarScreen(carContext: CarContext,
 
     private fun profilesActionStrip(): ActionStrip = ActionStrip.Builder()
 
-        .addAction(createAction(R.drawable.action_virtual_screen_1, CarColor.YELLOW) {
+        .addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
             settings.applyVirtualScreen1()
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
-        .addAction(createAction(R.drawable.action_virtual_screen_2, CarColor.YELLOW) {
+        .addAction(createAction(R.drawable.action_virtual_screen_2, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
             settings.applyVirtualScreen2()
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
 
-        .addAction(createAction(R.drawable.action_virtual_screen_3, CarColor.YELLOW) {
+        .addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
             settings.applyVirtualScreen3()
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             surfaceController.renderFrame()
         })
-        .addAction(createAction(R.drawable.action_virtual_screen_4, CarColor.YELLOW) {
+        .addAction(createAction(R.drawable.action_virtual_screen_4, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
             settings.applyVirtualScreen4()
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             surfaceController.renderFrame()
@@ -229,10 +230,10 @@ internal class CarScreen(carContext: CarContext,
         .build()
 
     private fun actions(): ActionStrip = ActionStrip.Builder()
-        .addAction(createAction(R.drawable.actions_connect, CarColor.GREEN) {
+        .addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
             dataLogger.start()
         })
-        .addAction(createAction(R.drawable.action_disconnect, CarColor.BLUE) {
+        .addAction(createAction(R.drawable.action_disconnect,mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
             toast.show(carContext, R.string.toast_connection_disconnect)
             stopDataLogging()
         })
@@ -257,6 +258,14 @@ internal class CarScreen(carContext: CarContext,
         renderingThread.stop()
         dataLogger.stop()
     }
+
+    private fun mapColor(color: Int): CarColor =
+        when (color){
+            Color.BLUE -> CarColor.BLUE
+            Color.GREEN -> CarColor.GREEN
+            Color.YELLOW -> CarColor.YELLOW
+            else -> CarColor.PRIMARY
+        }
 
     init {
         lifecycle.addObserver(this)
