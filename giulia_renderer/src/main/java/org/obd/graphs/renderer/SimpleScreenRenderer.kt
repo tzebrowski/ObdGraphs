@@ -140,11 +140,7 @@ internal class SimpleScreenRenderer(
                         color = settings.colorTheme().dividerColor
                     )
 
-                    verticalPos += if (settings.isHistoryEnabled()) {
-                        textHeight.toFloat() + 12
-                    } else {
-                        textHeight.toFloat() + 4
-                    }
+                    verticalPos += (textHeight.toFloat() * 0.95).toInt()
 
                     if (verticalPos > area.height()) {
                         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
