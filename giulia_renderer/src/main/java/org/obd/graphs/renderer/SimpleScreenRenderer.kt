@@ -74,6 +74,7 @@ internal class SimpleScreenRenderer(
                     )
 
 
+
                     if (settings.isHistoryEnabled()) {
                         verticalPos += textHeight.toFloat() / infoDiv
                         horizontalPos = drawingManager.drawText(
@@ -125,6 +126,8 @@ internal class SimpleScreenRenderer(
                         verticalPos += 12
                     }
 
+                    drawAlertsLegend(metric, valueHorizontalPos, verticalPos)
+
                     verticalPos += 6
 
                     drawingManager.drawProgressBar(
@@ -157,6 +160,29 @@ internal class SimpleScreenRenderer(
                 margin += calculateMargin(area, metrics)
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy, metrics)
             }
+        }
+    }
+
+    private fun drawAlertsLegend(metric: CarMetric, valueHorizontalPos: Float, verticalPos: Float) {
+        if (settings.isAlertLegendEnabled() && (metric.source.command.pid.alertLowerThreshold != null ||
+                    metric.source.command.pid.alertUpperThreshold != null)
+        ) {
+            var label = ""
+            if (metric.source.command.pid.alertLowerThreshold != null) {
+                label += "X<${metric.source.command.pid.alertLowerThreshold}"
+            }
+
+            if (metric.source.command.pid.alertUpperThreshold != null) {
+                label += " X>${metric.source.command.pid.alertUpperThreshold}"
+            }
+
+            drawingManager.drawText(
+                label,
+                valueHorizontalPos - 24,
+                verticalPos,
+                Color.LTGRAY,
+                14f
+            )
         }
     }
 

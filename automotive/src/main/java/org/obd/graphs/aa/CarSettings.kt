@@ -5,7 +5,7 @@ import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
 
-
+private const val PREF_ALERT_LEGEND_ENABLED= "pref.aa.alerting.legend.enabled"
 private const val PREF_ALERTING_ENABLED= "pref.aa.alerting.enabled"
 private const val PREF_THEME_PROGRESS_BAR_COLOR= "pref.aa.theme.progressColor"
 private const val PREF_THEME_DIVIDER_COLOR= "pref.aa.theme.dividerColor"
@@ -54,6 +54,8 @@ internal class CarSettings : ScreenSettings {
     }
 
     override fun isAlertingEnabled(): Boolean = Prefs.getBoolean(PREF_ALERTING_ENABLED, false)
+
+    override fun isAlertLegendEnabled(): Boolean = Prefs.getBoolean(PREF_ALERT_LEGEND_ENABLED, false)
 
     override fun isHistoryEnabled(): Boolean = Prefs.getBoolean("pref.aa.pids.history.enabled", true)
 

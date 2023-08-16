@@ -895,6 +895,12 @@
                     android:key="pref.aa.alerting.enabled"
                     android:title="@string/pref.aa.alerting.enabled" />
 
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="false"
+                    android:key="pref.aa.alerting.legend.enabled"
+                    android:title="@string/pref.aa.alerting.legend.enabled" />
+
                 <PreferenceCategory android:title="@string/pref.theme">
                     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
                         android:defaultValue="0xffff0000"

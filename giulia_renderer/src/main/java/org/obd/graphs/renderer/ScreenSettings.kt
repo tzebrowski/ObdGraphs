@@ -16,6 +16,7 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
 
 interface ScreenSettings {
 
+    fun isAlertLegendEnabled (): Boolean = false
     fun isAlertingEnabled (): Boolean = false
 
     fun colorTheme(): ColorTheme = ColorTheme()

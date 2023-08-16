@@ -127,6 +127,7 @@
     <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
     <string name="pref.aa.title">Android Auto</string>
     <string name="pref.aa.alerting.enabled">Enable Alerting</string>
+    <string name="pref.aa.alerting.legend.enabled">Enable Alerting Legend</string>
 
 
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
