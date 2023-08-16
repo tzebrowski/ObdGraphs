@@ -20,6 +20,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     private val valueScaler: ValueScaler = ValueScaler()
 
     private val paint = Paint()
+    private val alertingLegendPaint = Paint()
     private val statusPaint = Paint()
     private val valuePaint = Paint()
     private val backgroundPaint = Paint()
@@ -47,6 +48,9 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         paint.color = Color.BLACK
         paint.isAntiAlias = true
         paint.style = Paint.Style.FILL
+
+        alertingLegendPaint.isAntiAlias = true
+        alertingLegendPaint.style = Paint.Style.FILL_AND_STROKE
 
         profileLabel = context.resources.getString(R.string.status_bar_profile)
         fpsLabel = context.resources.getString(R.string.status_bar_fps)
@@ -99,10 +103,48 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         )
     }
 
+    fun drawAlertingLegend(metric: CarMetric, horizontalPos: Float, verticalPos: Float) {
+        if (settings.isAlertLegendEnabled() && (metric.source.command.pid.alertLowerThreshold != null ||
+                    metric.source.command.pid.alertUpperThreshold != null)
+        ) {
+
+            val text = "  alerting rule "
+            drawText(
+                text,
+                horizontalPos,
+                verticalPos,
+                Color.LTGRAY,
+                12f,
+                alertingLegendPaint
+            )
+
+            val hPos = horizontalPos  + getTextWidth(text, alertingLegendPaint) + 2f
+
+            var label = ""
+            if (metric.source.command.pid.alertLowerThreshold != null) {
+                label += "X<${metric.source.command.pid.alertLowerThreshold}"
+            }
+
+            if (metric.source.command.pid.alertUpperThreshold != null) {
+                label += " X>${metric.source.command.pid.alertUpperThreshold}"
+            }
+
+            drawText(
+                label,
+                hPos + 4,
+                verticalPos,
+                Color.YELLOW,
+                14f,
+                alertingLegendPaint
+            )
+        }
+    }
+
     fun drawStatusBar(area: Rect, fps: Double, colorTheme: ColorTheme): Float {
         val statusVerticalPos = area.top + 6f
         var text = statusLabel
         var horizontalAlignment = MARGIN_START.toFloat()
+
         drawText(
             text,
             horizontalAlignment,
