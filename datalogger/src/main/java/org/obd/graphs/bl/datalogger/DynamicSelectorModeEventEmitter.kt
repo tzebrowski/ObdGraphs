@@ -5,12 +5,11 @@ import org.obd.metrics.api.model.ObdMetric
 
 private const val DYNAMIC_SELECTOR_PID_ID = 7036L
 
-internal class DynamicSelectorModeEvenEmitter() {
+internal class DynamicSelectorModeEventEmitter {
     private var currentMode = -1
 
     fun postValue(obdMetric: ObdMetric) {
         if (isDynamicSelectorPID(obdMetric)) {
-
             if (currentMode != obdMetric.value) {
                 currentMode = obdMetric.value.toInt()
                 when (obdMetric.value.toInt()) {

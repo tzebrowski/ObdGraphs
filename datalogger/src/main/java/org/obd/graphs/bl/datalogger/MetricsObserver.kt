@@ -8,7 +8,7 @@ import org.obd.metrics.api.model.ReplyObserver
 
 internal class MetricsObserver : ReplyObserver<Reply<*>>() {
     internal val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
-    private val  dynamicSelectorModeEvenEmitter = DynamicSelectorModeEvenEmitter()
+    private val  dynamicSelectorModeEvenEmitter = DynamicSelectorModeEventEmitter()
     fun reset() {
         metrics.postValue(null)
     }
