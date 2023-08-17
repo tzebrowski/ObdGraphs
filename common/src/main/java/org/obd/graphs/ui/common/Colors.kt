@@ -65,4 +65,9 @@ val COLOR_RAINBOW_INDIGO: Int = color(R.color.rainbow_indigo)
 val COLOR_LIGHT_SHADE_GRAY: Int = color(R.color.light_shade_gray)
 val COLOR_TRANSPARENT: Int = color(R.color.transparent)
 
+val COLOR_DYNAMIC_SELECTOR_RACE: Int = color(R.color.dynamic_selector_race)
+val COLOR_DYNAMIC_SELECTOR_ECO: Int = color(R.color.dynamic_selector_eco)
+val COLOR_DYNAMIC_SELECTOR_SPORT: Int = color(R.color.dynamic_selector_sport)
+val COLOR_DYNAMIC_SELECTOR_NORMAL: Int = color(R.color.dynamic_selector_normal)
+
 fun color(id: Int) = ContextCompat.getColor(getContext()!!, id)

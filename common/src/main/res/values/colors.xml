@@ -10,4 +10,10 @@
     <color name="gray_light">#878787</color>
     <color name="gray_dark">#565656</color>
     <color name="transparent">#80000000</color>
+
+    <color name="dynamic_selector_sport">#FFFF4444</color>
+    <color name="dynamic_selector_eco">#FF99CC00</color>
+    <color name="dynamic_selector_race">#FFBB33</color>
+    <color name="dynamic_selector_normal">#33B5E5</color>
+
 </resources>

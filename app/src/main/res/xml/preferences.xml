@@ -901,7 +901,14 @@
                     android:key="pref.aa.alerting.legend.enabled"
                     android:title="@string/pref.aa.alerting.legend.enabled" />
 
+
                 <PreferenceCategory android:title="@string/pref.theme">
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="false"
+                        android:key="pref.aa.theme.dynamic-selector.enabled"
+                        android:title="@string/pref.aa.theme.dynamic_selector.enabled" />
+
                     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
                         android:defaultValue="0xffff0000"
                         android:key="pref.aa.theme.progressColor"

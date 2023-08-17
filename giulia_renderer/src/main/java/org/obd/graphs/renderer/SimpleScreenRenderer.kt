@@ -19,6 +19,7 @@ internal class SimpleScreenRenderer(
 ) : ScreenRenderer {
 
     private val drawingManager = DrawingManager(context, settings)
+    private val dynamicThemeSelector = DynamicThemeSelector(settings, metricsCollector)
 
     override fun onDraw(canvas: Canvas, visibleArea: Rect?) {
 
@@ -31,6 +32,9 @@ internal class SimpleScreenRenderer(
             drawingManager.updateCanvas(canvas)
 
             val metrics = metricsCollector.metrics()
+
+            dynamicThemeSelector.updateTheme()
+
             val baseFontSize = calculateFontSize(metrics)
             val textHeight = min(area.height() / 8, baseFontSize)
             val textSize = textHeight - ROW_SPACING
@@ -39,7 +43,7 @@ internal class SimpleScreenRenderer(
             var verticalPos = area.top + textHeight.toFloat() / 2
 
             if (settings.isStatusPanelEnabled()) {
-                verticalPos = drawingManager.drawStatusBar(area, fps.get(), settings.colorTheme()) + 18
+                verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
                 drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
@@ -69,8 +73,7 @@ internal class SimpleScreenRenderer(
                         metric,
                         valueHorizontalPos,
                         verticalPos + 10,
-                        textSize.toFloat() + 14,
-                        colorTheme = settings.colorTheme()
+                        textSize.toFloat() + 14
                     )
 
                     if (settings.isHistoryEnabled()) {
@@ -161,6 +164,8 @@ internal class SimpleScreenRenderer(
             }
         }
     }
+
+
 
     private fun calculateDividerSpacing(metrics: Collection<CarMetric>) = when (getMaxItemsInColumn(metrics)) {
         1 -> 14

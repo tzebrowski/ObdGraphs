@@ -128,6 +128,7 @@
     <string name="pref.aa.title">Android Auto</string>
     <string name="pref.aa.alerting.enabled">Enable Alerting</string>
     <string name="pref.aa.alerting.legend.enabled">Enable Alerting Legend</string>
+    <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector theme</string>
 
 
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>

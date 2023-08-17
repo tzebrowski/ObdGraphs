@@ -11,7 +11,9 @@ class CarMetricsCollector {
 
     private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
 
-    fun metrics() = metrics.values.filter { it.enabled }
+    fun metrics(enabled: Boolean = true) = metrics.values.filter { it.enabled == enabled }
+
+    fun metricBy(id: Long) = metrics[id]
 
     fun applyFilter(selectedPIDs: Set<Long>) {
         val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()

@@ -4,7 +4,7 @@ import android.graphics.Color
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 
 data class ColorTheme(val dividerColor: Int = Color.WHITE,
-                      val progressColor: Int = COLOR_CARDINAL,
+                      var progressColor: Int = COLOR_CARDINAL,
                       val statusConnectedColor: Int = Color.GREEN,
                       val statusDisconnectedColor: Int = Color.YELLOW,
                       val currentValueColor: Int = Color.WHITE,
@@ -15,6 +15,8 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       val actionsBtnVirtualScreensColor: Int = Color.YELLOW)
 
 interface ScreenSettings {
+
+    fun isDynamicSelectorThemeEnabled (): Boolean = false
 
     fun isAlertLegendEnabled (): Boolean = false
     fun isAlertingEnabled (): Boolean = false
