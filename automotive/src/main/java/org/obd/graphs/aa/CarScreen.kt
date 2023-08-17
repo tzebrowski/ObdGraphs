@@ -17,6 +17,7 @@ import org.obd.graphs.*
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 
 private const val LOG_KEY = "CarScreen"
@@ -48,6 +49,11 @@ internal class CarScreen(carContext: CarContext,
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                EVENT_DYNAMIC_SELECTOR_MODE_NORMAL -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.NORMAL)
+                EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
+                EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
+                EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
+
                 SURFACE_BROKEN_EVENT -> {
                     Log.d(LOG_KEY,"Received event about ")
                     renderingThread.stop()
@@ -167,6 +173,11 @@ internal class CarScreen(carContext: CarContext,
             addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
             addAction(MAIN_ACTIVITY_EVENT_PAUSE)
             addAction(SURFACE_BROKEN_EVENT)
+
+            addAction(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
+            addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
+            addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
+            addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
         })
     }
 

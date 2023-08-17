@@ -4,6 +4,10 @@ import android.graphics.Color
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
+enum class DynamicSelectorMode {
+    NORMAL,ECO, SPORT, RACE
+}
+
 data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       var progressColor: Int = COLOR_CARDINAL,
                       val statusConnectedColor: Int = Color.GREEN,
@@ -16,6 +20,8 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       val actionsBtnVirtualScreensColor: Int = Color.YELLOW)
 
 interface ScreenSettings {
+
+    fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode){}
 
     fun isDynamicSelectorThemeEnabled (): Boolean = false
 

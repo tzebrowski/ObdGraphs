@@ -20,6 +20,10 @@ fun SharedPreferences.updateString(key: String, value: String?): SharedPreferenc
     return edit()
 }
 
+fun SharedPreferences.updateInt(key: String, value: Int){
+   edit().putInt(key, value).commit()
+}
+
 fun SharedPreferences.updateStringSet(key: String, list: List<String>) {
     return edit().putStringSet(key, list.map { l -> l }.toSet()).apply()
 }

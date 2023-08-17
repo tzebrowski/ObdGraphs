@@ -4,9 +4,17 @@ import android.graphics.Color
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
+import org.obd.graphs.renderer.DynamicSelectorMode
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_RACE
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
+
+private const val PREF_PIDS_HISTORY_ENABLED= "pref.aa.pids.history.enabled"
+
 private const val PREF_THEME_IN_ALLERT_VALUE_COLOR= "pref.aa.theme.inAlertValueColor"
+private const val PREF_DYNAMIC_SELECTOR_ENABLED= "pref.aa.theme.dynamic-selector.enabled"
 
 private const val PREF_ALERT_LEGEND_ENABLED= "pref.aa.alerting.legend.enabled"
 private const val PREF_ALERTING_ENABLED= "pref.aa.alerting.enabled"
@@ -39,6 +47,16 @@ internal class CarSettings : ScreenSettings {
             currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
         )
     }
+
+    override fun dynamicSelectorChangedEvent(dynamicMode: DynamicSelectorMode) {
+        when (dynamicMode) {
+            DynamicSelectorMode.NORMAL -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_NORMAL)
+            DynamicSelectorMode.SPORT -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
+            DynamicSelectorMode.ECO -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_ECO)
+            DynamicSelectorMode.RACE -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_RACE)
+       }
+    }
+
     override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
     override fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
     override fun applyVirtualScreen3() = applyVirtualScreen(VIRTUAL_SCREEN_3)
@@ -57,11 +75,13 @@ internal class CarSettings : ScreenSettings {
         }
     }
 
+    override fun isDynamicSelectorThemeEnabled(): Boolean =  Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)
+
     override fun isAlertingEnabled(): Boolean = Prefs.getBoolean(PREF_ALERTING_ENABLED, false)
 
     override fun isAlertLegendEnabled(): Boolean = Prefs.getBoolean(PREF_ALERT_LEGEND_ENABLED, false)
 
-    override fun isHistoryEnabled(): Boolean = Prefs.getBoolean("pref.aa.pids.history.enabled", true)
+    override fun isHistoryEnabled(): Boolean = Prefs.getBoolean(PREF_PIDS_HISTORY_ENABLED, true)
 
     override fun isFpsCounterEnabled(): Boolean  = Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
 

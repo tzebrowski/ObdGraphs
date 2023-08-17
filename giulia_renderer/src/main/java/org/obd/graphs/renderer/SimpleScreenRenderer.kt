@@ -19,7 +19,6 @@ internal class SimpleScreenRenderer(
 ) : ScreenRenderer {
 
     private val drawingManager = DrawingManager(context, settings)
-    private val dynamicThemeSelector = DynamicThemeSelector(settings, metricsCollector)
 
     override fun onDraw(canvas: Canvas, visibleArea: Rect?) {
 
@@ -32,8 +31,6 @@ internal class SimpleScreenRenderer(
             drawingManager.updateCanvas(canvas)
 
             val metrics = metricsCollector.metrics()
-
-            dynamicThemeSelector.updateTheme()
 
             val baseFontSize = calculateFontSize(metrics)
             val textHeight = min(area.height() / 8, baseFontSize)
@@ -130,7 +127,7 @@ internal class SimpleScreenRenderer(
                         verticalPos += 12
                     }
 
-                    verticalPos += 6
+                    verticalPos += 6f
 
                     drawingManager.drawProgressBar(
                         margin.toFloat(),

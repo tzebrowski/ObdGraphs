@@ -8,12 +8,14 @@ import org.obd.metrics.api.model.ReplyObserver
 
 internal class MetricsObserver : ReplyObserver<Reply<*>>() {
     internal val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
+    private val  dynamicSelectorModeEvenEmitter = DynamicSelectorModeEvenEmitter()
     fun reset() {
         metrics.postValue(null)
     }
     override fun onNext(reply: Reply<*>) {
         if (reply is ObdMetric) {
             reply.command.pid?.let {
+                dynamicSelectorModeEvenEmitter.postValue(reply)
                 metrics.postValue(reply)
                 tripManager.addTripEntry(reply)
             }
