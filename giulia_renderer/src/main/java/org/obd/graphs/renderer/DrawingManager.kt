@@ -231,8 +231,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         verticalPos: Float,
         textSize: Float
     ) {
-        valuePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-
         val colorTheme = settings.colorTheme()
         valuePaint.color = if (inAlert(metric)){
             colorTheme.currentValueInAlertColor
@@ -250,7 +248,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         valuePaint.textSize = (textSize * 0.4).toFloat()
         canvas?.drawText(metric.source.command.pid.units, (horizontalPos + 2), verticalPos, valuePaint)
     }
-
 
     fun drawTitle(
         metric: CarMetric,

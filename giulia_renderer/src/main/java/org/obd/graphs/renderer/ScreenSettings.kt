@@ -2,13 +2,14 @@ package org.obd.graphs.renderer
 
 import android.graphics.Color
 import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
 data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       var progressColor: Int = COLOR_CARDINAL,
                       val statusConnectedColor: Int = Color.GREEN,
                       val statusDisconnectedColor: Int = Color.YELLOW,
                       val currentValueColor: Int = Color.WHITE,
-                      val currentValueInAlertColor: Int = Color.RED,
+                      val currentValueInAlertColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
                       val currentProfileColor: Int = Color.YELLOW,
                       val actionsBtnConnectColor: Int = Color.GREEN,
                       val actionsBtnDisconnectColor: Int = Color.BLUE,

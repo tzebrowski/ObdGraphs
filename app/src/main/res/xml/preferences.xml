@@ -924,6 +924,11 @@
                         android:key="pref.aa.theme.currentValueColor"
                         android:title="@string/pref.aa.theme.current_value_color" />
 
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffff0000"
+                        android:key="pref.aa.theme.inAlertValueColor"
+                        android:title="@string/pref.aa.theme.inalert_value_color" />
+
                 </PreferenceCategory>
             </PreferenceScreen>
 

@@ -104,6 +104,7 @@
     <string name="pref.aa.theme.progress_bar_color">Progress bar color</string>
     <string name="pref.aa.theme.divider_color">Divider color</string>
     <string name="pref.aa.theme.current_value_color">Current value color</string>
+    <string name="pref.aa.theme.inalert_value_color">In alert value color</string>
 
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
     <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>

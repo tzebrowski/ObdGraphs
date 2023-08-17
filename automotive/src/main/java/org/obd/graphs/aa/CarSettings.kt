@@ -4,6 +4,9 @@ import android.graphics.Color
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
+
+private const val PREF_THEME_IN_ALLERT_VALUE_COLOR= "pref.aa.theme.inAlertValueColor"
 
 private const val PREF_ALERT_LEGEND_ENABLED= "pref.aa.alerting.legend.enabled"
 private const val PREF_ALERTING_ENABLED= "pref.aa.alerting.enabled"
@@ -30,9 +33,10 @@ const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 internal class CarSettings : ScreenSettings {
     override fun colorTheme(): ColorTheme {
         return ColorTheme(
-            progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, Color.RED),
+            progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
             dividerColor =  Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE),
-            currentValueColor =  Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE)
+            currentValueColor =  Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE),
+            currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
         )
     }
     override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
