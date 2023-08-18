@@ -127,9 +127,19 @@
     <string name="pref.aa.font_size.7">Font size of the displayed OBD2 PIDs/Sensors for screen 7</string>
     <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
     <string name="pref.aa.title">Android Auto</string>
+
+    <string name="pref.aa.alerting_category">Alerting</string>
+    <string name="pref.aa.debug_category">Debug</string>
+    <string name="pref.aa.screen_category">Screen</string>
+
     <string name="pref.aa.alerting.enabled">Enable Alerting</string>
+    <string name="pref.aa.alerting.enabled_summary">When enabled, additional information appears on the screen if upper or lower threshold of given PIDs overflow: OIL_TEMP > 110</string>
+
     <string name="pref.aa.alerting.legend.enabled">Enable Alerting Legend</string>
-    <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector theme</string>
+    <string name="pref.aa.alerting.legend.enabled_summary">When enabled, rules for alerting are displayed on the screen if available for given PID: ENGINE_TEMP > 110</string>
+
+    <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector enabled</string>
+    <string name="pref.aa.theme.dynamic_selector.enabled_summary">When enabled, colors are applied based on selected dynamic mode: RACE,SPORT,NORMAL,ECO</string>
 
 
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
