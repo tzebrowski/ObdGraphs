@@ -167,7 +167,7 @@
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
     <string name="pref.aa_category">Android Auto view configuration</string>
-    <string name="pref.aa_category_summary">You can update here AA preferences</string>
+    <string name="pref.aa_category_summary">This page collects Android Auto specific configuration parameters.</string>
 
     <string name="pref.adapter_category">OBD2 Adapter</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
