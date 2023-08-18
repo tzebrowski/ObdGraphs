@@ -852,7 +852,7 @@
 
                 <PreferenceCategory
                     app:singleLineTitle="false"
-                    android:title="@string/pref.aa.screen_category">
+                    android:title="@string/pref.aa.general_category">
 
                     <CheckBoxPreference
                         app:singleLineTitle="false"
