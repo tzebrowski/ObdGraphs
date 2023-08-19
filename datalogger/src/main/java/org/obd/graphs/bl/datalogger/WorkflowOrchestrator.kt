@@ -43,7 +43,7 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     val eventsReceiver = EventsReceiver()
-    private var metricsAggregator = MetricsObserver()
+    private var metricsObserver = MetricsObserver()
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
@@ -77,8 +77,6 @@ internal class WorkflowOrchestrator internal constructor() {
                 LOGGER_TAG,
                 "Collecting process is completed."
             )
-
-            metricsAggregator.reset()
             sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
         }
 
@@ -90,13 +88,13 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private var workflow: Workflow = workflow()
 
-    fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
-        metricsAggregator.metrics.observe(lifecycleOwner){
+    fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)  =
+        metricsObserver.observe(lifecycleOwner){
             it?.let {
                 observer(it)
             }
         }
-    }
+
 
     fun isRunning(): Boolean  =  workflow.isRunning
 
@@ -117,7 +115,6 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-
     fun start() {
         connection()?.run {
             val query = query()
@@ -133,7 +130,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun connection():AdapterConnection? =
+    private fun connection(): AdapterConnection? =
          when (dataLoggerPreferences.instance.connectionType){
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
@@ -258,8 +255,9 @@ internal class WorkflowOrchestrator internal constructor() {
                 getSelectedPIDsResources()
             ).build()
         )
-        .observer(metricsAggregator)
+        .observer(metricsObserver)
         .lifecycle(lifecycle)
+        .lifecycle(metricsObserver)
         .initialize()
 
     private fun getSelectedPIDsResources() = dataLoggerPreferences.instance.resources.map {

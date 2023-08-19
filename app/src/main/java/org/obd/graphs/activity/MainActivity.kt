@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setupStrictMode() {
-        if (BuildConfig.DEBUG && false) {
+        if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
                 ThreadPolicy.Builder()
                     .detectAll()

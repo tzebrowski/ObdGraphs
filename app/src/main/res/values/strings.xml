@@ -201,6 +201,8 @@
     <string name="pref.graph_x_axis_minimum_shift_time">X-Axis moving time</string>
     <string name="pref.graph_cache_enabled">Cache enabled</string>
 
+    <string name="pref.debug_broadcast_fake_metrics">Broadcast fake metrics</string>
+
     <string name="pref.debug_trip_save_connector_response">Save connector response</string>
     <string name="pref.debug_logging_enabled">Enable debug logging</string>
     <string name="pref.debug_generator_enabled">Enable data generator</string>

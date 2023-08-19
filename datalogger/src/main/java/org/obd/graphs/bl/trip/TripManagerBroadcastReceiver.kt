@@ -30,12 +30,13 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
             }
 
             DATA_LOGGER_STOPPED_EVENT -> {
+                Log.d(LOGGER_KEY, "Received data logger on stopped event. Saving trip into file.")
+
                 runAsync {
                     try {
                         tripManager.saveCurrentTrip {
                             val msg = context?.getText(R.string.dialog_screen_lock_saving_trip_message) as String
                             sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, msg)
-                            Log.i(LOGGER_KEY, "Received event: DATA_LOGGER_STOPPED_EVENT")
                         }
                     } finally {
                         cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING, false)
