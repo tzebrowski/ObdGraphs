@@ -105,21 +105,23 @@ internal class SimpleScreenRenderer(
                             footerValueTextSize
                         )
 
-                        horizontalPos = drawingManager.drawText(
-                            "avg",
-                            horizontalPos,
-                            verticalPos,
-                            Color.DKGRAY,
-                            footerTitleTextSize
-                        )
+                        if (metric.source.command.pid.historgam.isAvgEnabled) {
+                            horizontalPos = drawingManager.drawText(
+                                "avg",
+                                horizontalPos,
+                                verticalPos,
+                                Color.DKGRAY,
+                                footerTitleTextSize
+                            )
 
-                        horizontalPos =  drawingManager.drawText(
-                            metric.toNumber(metric.mean),
-                            horizontalPos,
-                            verticalPos,
-                            Color.LTGRAY,
-                            footerValueTextSize
-                        )
+                            horizontalPos = drawingManager.drawText(
+                                metric.toNumber(metric.mean),
+                                horizontalPos,
+                                verticalPos,
+                                Color.LTGRAY,
+                                footerValueTextSize
+                            )
+                        }
 
                         drawingManager.drawAlertingLegend(metric, horizontalPos, verticalPos)
 
