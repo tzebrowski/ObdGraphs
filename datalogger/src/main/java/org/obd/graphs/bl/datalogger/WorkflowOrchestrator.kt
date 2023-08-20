@@ -42,7 +42,7 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    val eventsReceiver = EventsReceiver()
+    internal val eventsReceiver = EventsReceiver()
     private var metricsObserver = MetricsObserver()
 
     private var lifecycle = object : Lifecycle {

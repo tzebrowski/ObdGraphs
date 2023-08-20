@@ -45,8 +45,7 @@ private const val DYNAMIC_SELECTOR_PID_ID = 7036L
 internal class DynamicSelectorModeEventBroadcaster: Lifecycle {
     private var currentMode = -1
     private val fakeEventsBroadcaster = FakeMetricsBroadcaster(this)
-
-
+    
     override fun onStopped() {
         if (isBroadcastingFakeMetricsEnabled()){
             fakeEventsBroadcaster.onStopped()
