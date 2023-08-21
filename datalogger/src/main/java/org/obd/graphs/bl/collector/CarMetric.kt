@@ -7,14 +7,14 @@ import org.obd.metrics.pid.ValueType
 
 data class CarMetric(
     var source: ObdMetric,
-    var value: Number,
+    var value: Number?,
     var min: Double,
     var max: Double,
     var mean: Double,
     var enabled: Boolean = true
 ) {
     companion object {
-        fun newInstance(source: ObdMetric, value: Number = 0, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0)
+        fun newInstance(source: ObdMetric, value: Number, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0)
         = CarMetric(source, value = value, min = min, max = max, mean = mean, enabled = true)
     }
 

@@ -90,7 +90,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         paint.color = color
 
         val progress = valueScaler.scaleToNewRange(
-            it.value.toFloat(),
+            it.source.value?.toFloat()?:it.source.command.pid.min.toFloat(),
             it.source.command.pid.min.toFloat(),  it.source.command.pid.max.toFloat(), start, start + width - MARGIN_END
         )
 
