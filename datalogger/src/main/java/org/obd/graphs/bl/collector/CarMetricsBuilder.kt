@@ -1,24 +1,24 @@
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs.bl.collector
 
 
-import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 
-class MetricsProvider {
-    fun findMetrics(ids: Set<Long>) = findMetrics(ids, emptyMap())
+class CarMetricsBuilder {
+    fun buildFor(ids: Set<Long>) = buildFor(ids, emptyMap())
 
-    fun findMetrics(ids: Set<Long>, order: Map<Long, Int>?): MutableList<CarMetric> {
+    fun buildFor(ids: Set<Long>, sortOrder: Map<Long, Int>?): MutableList<CarMetric> {
         val metrics = buildMetrics(ids)
-        order?.let { sortOrder ->
+        sortOrder?.let { order ->
             metrics.sortWith { m1: CarMetric, m2: CarMetric ->
-                if (sortOrder.containsKey(m1.source.command.pid.id) && sortOrder.containsKey(
+                if (order.containsKey(m1.source.command.pid.id) && order.containsKey(
                         m2.source.command.pid.id
                     )
                 ) {
-                    sortOrder[m1.source.command.pid.id]!!
-                        .compareTo(sortOrder[m2.source.command.pid.id]!!)
+                    order[m1.source.command.pid.id]!!
+                        .compareTo(order[m2.source.command.pid.id]!!)
                 } else {
                     -1
                 }
@@ -35,7 +35,10 @@ class MetricsProvider {
         return ids.mapNotNull {
             pidRegistry.findBy(it)?.let { pid ->
                 val histogram = histogramSupplier.findBy(pid)
-                CarMetric.newInstance(ObdMetric.builder().command(ObdCommand(pid)).value(histogram?.latestValue).build())
+                CarMetric
+                    .newInstance(ObdMetric.builder()
+                        .command(ObdCommand(pid))
+                        .value(histogram?.latestValue).build())
             }
         }.toMutableList()
     }

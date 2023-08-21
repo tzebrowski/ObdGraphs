@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.datalogger.MetricsProvider
+import org.obd.graphs.bl.collector.CarMetricsBuilder
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -46,7 +46,7 @@ open class RefreshableFragment : Fragment() {
     ): MutableList<CarMetric> {
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
-        return MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
+        return CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -69,7 +69,7 @@ open class RefreshableFragment : Fragment() {
 
         val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
-        val metrics = MetricsProvider().findMetrics(metricsIds, viewPreferences.getItemsSortOrder())
+        val metrics = CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
         recyclerView.adapter = adapter(requireContext(), metrics, adapterContext.layoutId, adapterContext.height).apply {
