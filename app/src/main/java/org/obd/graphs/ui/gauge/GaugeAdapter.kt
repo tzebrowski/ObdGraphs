@@ -125,7 +125,7 @@ class GaugeAdapter(
 
         holder.value.run {
             val units = (metric.source.command as ObdCommand).pid.units
-            val txt = "${metric.source.valueToStringExt()} $units"
+            val txt = "${metric.valueToStringExt()} $units"
             text = txt
 
             highLightText(
@@ -136,7 +136,7 @@ class GaugeAdapter(
 
 
         holder.minValue.run {
-            val txt = "min\n ${metric.source.toNumber(metric.min)}"
+            val txt = "min\n ${metric.toNumber(metric.min)}"
             text = txt
             highLightText(
                 "min", 0.5f,
@@ -145,7 +145,7 @@ class GaugeAdapter(
         }
 
         holder.maxValue.run {
-            val txt = "max\n  ${metric.source.toNumber(metric.max)} "
+            val txt = "max\n  ${metric.toNumber(metric.max)} "
             text = txt
             highLightText(
                 "max", 0.5f,
@@ -154,7 +154,7 @@ class GaugeAdapter(
         }
 
         holder.avgValue?.run {
-            val txt = "avg\n ${metric.source.toNumber(metric.mean)}"
+            val txt = "avg\n ${metric.toNumber(metric.mean)}"
             text = txt
             highLightText(
                 "avg", 0.5f,
@@ -185,7 +185,7 @@ class GaugeAdapter(
         holder.gauge?.apply {
             startValue = (metric.source.command as ObdCommand).pid.min.toFloat()
             endValue = (metric.source.command as ObdCommand).pid.max.toFloat()
-            value = metric.source.toFloat()
+            value = metric.toFloat()
             invalidate()
         }
     }

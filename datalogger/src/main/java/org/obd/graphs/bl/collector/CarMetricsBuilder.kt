@@ -36,7 +36,12 @@ class CarMetricsBuilder {
             pidRegistry.findBy(it)?.let { pid ->
                 val histogram = histogramSupplier.findBy(pid)
                 CarMetric
-                    .newInstance(ObdMetric.builder()
+                    .newInstance(
+                        min = histogram?.min?:0.0,
+                        max = histogram?.max?:0.0,
+                        mean = histogram?.mean?:0.0,
+                        value = histogram?.latestValue?:0,
+                        source=ObdMetric.builder()
                         .command(ObdCommand(pid))
                         .value(histogram?.latestValue).build())
             }
