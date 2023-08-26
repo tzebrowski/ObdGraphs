@@ -16,7 +16,7 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       val currentValueInAlertColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
                       val currentProfileColor: Int = Color.YELLOW,
                       val actionsBtnConnectColor: Int = Color.GREEN,
-                      val actionsBtnDisconnectColor: Int = Color.BLUE,
+                      val actionsBtnDisconnectColor: Int = Color.RED,
                       val actionsBtnVirtualScreensColor: Int = Color.YELLOW)
 
 interface ScreenSettings {

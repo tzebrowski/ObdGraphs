@@ -62,11 +62,9 @@ class GraphFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,true)
                     initializeChart(root)
                 }
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING,false)
                     virtualScreensPanel {
                         it.isVisible = true
                     }

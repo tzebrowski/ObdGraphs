@@ -6,23 +6,17 @@ import android.content.Intent
 import android.util.Log
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
 
 
 private const val LOGGER_KEY = "TripRecorderBroadcastReceiver"
 
 class TripManagerBroadcastReceiver : BroadcastReceiver() {
-    private fun isDataCollectingProcessWorking() =
-        (cacheManager.findEntry(DATA_LOGGER_PROCESS_IS_RUNNING) as Boolean?) ?: false
 
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
-
-            DATA_LOGGER_CONNECTING_EVENT -> {
-                cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING, true)
-            }
 
             DATA_LOGGER_CONNECTED_EVENT -> {
                 Log.i(LOGGER_KEY, "Received event: DATA_LOGGER_CONNECTED_EVENT")
@@ -39,14 +33,13 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
                             sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, msg)
                         }
                     } finally {
-                        cacheManager.updateEntry(DATA_LOGGER_PROCESS_IS_RUNNING, false)
                         sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                     }
                 }
             }
             TRIP_LOAD_EVENT -> {
 
-                if (!isDataCollectingProcessWorking()) {
+                if (!dataLogger.isRunning()) {
                     context?.run {
                         runAsync {
                             try {
