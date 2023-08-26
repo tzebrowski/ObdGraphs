@@ -22,7 +22,10 @@ import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import java.io.File
 
-internal val workflowOrchestrator = WorkflowOrchestrator()
+internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
+    runAsync { WorkflowOrchestrator()  }
+}
+
 
 /**
  * That's the wrapper interface on Workflow API.
