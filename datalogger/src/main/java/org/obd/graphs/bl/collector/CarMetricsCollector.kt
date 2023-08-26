@@ -16,14 +16,14 @@ class CarMetricsCollector {
         val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
 
         if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
-            Log.i(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
+            Log.d(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
             metrics = CarMetricsBuilder().buildFor(pidsToQuery).associateBy { it.source.command.pid.id }.toMutableMap()
         }
         metrics.forEach { (t, u) ->
             u.enabled = selectedPIDs.contains(t)
         }
 
-        Log.i(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
+        Log.d(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
     }
 
     fun append(input: ObdMetric?) {

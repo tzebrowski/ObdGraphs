@@ -14,11 +14,11 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
-import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.ScreenSettings
 
 private const val LOG_KEY = "CarScreen"
 private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
@@ -30,11 +30,12 @@ const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 
 
-internal class CarScreen(carContext: CarContext,
-                         private val surfaceController: SurfaceController,
-                         private val settings: ScreenSettings,
-                         private val metricsCollector: CarMetricsCollector,
-                         private val fps: Fps
+internal class CarScreen(
+    carContext: CarContext,
+    private val surfaceController: SurfaceController,
+    private val settings: ScreenSettings,
+    private val metricsCollector: CarMetricsCollector,
+    private val fps: Fps
 ) :
     Screen(carContext),
     DefaultLifecycleObserver {
@@ -55,7 +56,7 @@ internal class CarScreen(carContext: CarContext,
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
 
                 SURFACE_BROKEN_EVENT -> {
-                    Log.d(LOG_KEY,"Received event about ")
+                    Log.d(LOG_KEY, "Received event about ")
                     renderingThread.stop()
                     fps.stop()
                     carContext.finishCarApp()
@@ -117,6 +118,7 @@ internal class CarScreen(carContext: CarContext,
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
+                    invalidate()
                     toast.show(carContext, R.string.main_activity_toast_connection_connecting)
                 }
 
@@ -125,6 +127,7 @@ internal class CarScreen(carContext: CarContext,
                 }
 
                 DATA_LOGGER_ERROR_EVENT -> {
+                    invalidate()
                     toast.show(carContext, R.string.main_activity_toast_connection_error)
                 }
 
@@ -133,19 +136,23 @@ internal class CarScreen(carContext: CarContext,
                     renderingThread.stop()
                     surfaceController.renderFrame()
                     fps.stop()
+                    invalidate()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
                     toast.show(carContext, R.string.main_activity_toast_connection_established)
                     renderingThread.start()
                     fps.start()
+                    invalidate()
                 }
 
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
+                    invalidate()
                     toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
                 }
 
                 DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
+                    invalidate()
                     toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
                 }
             }
@@ -216,7 +223,6 @@ internal class CarScreen(carContext: CarContext,
             }.build()
 
     private fun profilesActionStrip(): ActionStrip = ActionStrip.Builder()
-
         .addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
             settings.applyVirtualScreen1()
             metricsCollector.applyFilter(settings.getSelectedPIDs())
@@ -237,31 +243,42 @@ internal class CarScreen(carContext: CarContext,
             settings.applyVirtualScreen4()
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             surfaceController.renderFrame()
-        })
-        .build()
+        }).build()
 
-    private fun actions(): ActionStrip = ActionStrip.Builder()
-        .addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-            dataLogger.start()
-        })
-        .addAction(createAction(R.drawable.action_disconnect,mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
-            toast.show(carContext, R.string.toast_connection_disconnect)
-            stopDataLogging()
-        })
 
-        .addAction(createAction(R.drawable.config, CarColor.BLUE) {
+    private fun actions(): ActionStrip {
+        var builder = ActionStrip.Builder()
+
+        if (!dataLogger.isRunning()) {
+            builder = builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
+                dataLogger.start()
+            })
+        }
+
+        if (dataLogger.isRunning()) {
+            builder =
+                builder.addAction(createAction(R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
+                    toast.show(carContext, R.string.toast_connection_disconnect)
+                    stopDataLogging()
+                })
+        }
+
+        builder = builder.addAction(createAction(R.drawable.config, CarColor.BLUE) {
             sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
             toast.show(carContext, R.string.pref_aa_get_to_app_conf)
         })
 
-        .addAction(createAction(R.drawable.action_exit, CarColor.RED) {
+        builder = builder.addAction(createAction(R.drawable.action_exit, CarColor.RED) {
             try {
                 stopDataLogging()
             } finally {
                 Log.i(LOG_KEY, "Exiting the app. Closing the context")
                 carContext.finishCarApp()
             }
-        }).build()
+        })
+
+        return builder.build()
+    }
 
     private fun stopDataLogging() {
         Log.i(LOG_KEY, "Stopping data logging process")
@@ -271,7 +288,8 @@ internal class CarScreen(carContext: CarContext,
     }
 
     private fun mapColor(color: Int): CarColor =
-        when (color){
+        when (color) {
+            Color.RED -> CarColor.RED
             Color.BLUE -> CarColor.BLUE
             Color.GREEN -> CarColor.GREEN
             Color.YELLOW -> CarColor.YELLOW
