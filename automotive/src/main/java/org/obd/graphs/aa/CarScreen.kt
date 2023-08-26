@@ -118,6 +118,7 @@ internal class CarScreen(
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
+                    surfaceController.renderFrame()
                     invalidate()
                     toast.show(carContext, R.string.main_activity_toast_connection_connecting)
                 }
@@ -143,6 +144,11 @@ internal class CarScreen(
                     toast.show(carContext, R.string.main_activity_toast_connection_established)
                     renderingThread.start()
                     fps.start()
+                    invalidate()
+                }
+
+                DATA_LOGGER_STOPPING_EVENT -> {
+                    surfaceController.renderFrame()
                     invalidate()
                 }
 

@@ -42,6 +42,8 @@ class DataLoggerService : JobIntentService(), DataLogger {
         }
     }
 
+    override fun status(): WorkflowStatus  = workflowOrchestrator.status()
+
     override fun scheduleStart(delay: Long) {
         enqueueWork(SCHEDULED_ACTION_START) {
             it.putExtra(SCHEDULED_START_DELAY, delay)

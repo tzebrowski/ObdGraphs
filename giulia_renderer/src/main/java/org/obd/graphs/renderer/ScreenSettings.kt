@@ -10,14 +10,15 @@ enum class DynamicSelectorMode {
 
 data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       var progressColor: Int = COLOR_CARDINAL,
+                      val statusConnectingColor: Int =  Color.YELLOW,
                       val statusConnectedColor: Int = Color.GREEN,
-                      val statusDisconnectedColor: Int = Color.YELLOW,
+                      val statusDisconnectedColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
                       val currentValueColor: Int = Color.WHITE,
                       val currentValueInAlertColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
-                      val currentProfileColor: Int = Color.YELLOW,
+                      val currentProfileColor: Int = Color.WHITE,
                       val actionsBtnConnectColor: Int = Color.GREEN,
                       val actionsBtnDisconnectColor: Int = Color.RED,
-                      val actionsBtnVirtualScreensColor: Int = Color.YELLOW)
+                      val actionsBtnVirtualScreensColor: Int = Color.WHITE)
 
 interface ScreenSettings {
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
 import org.obd.graphs.preferences.Prefs
@@ -30,8 +31,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
 
     private val statusLabel: String
-    private val statusConnected: String
-    private val statusDisconnected: String
     private val profileLabel: String
     private val fpsLabel: String
 
@@ -55,8 +54,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         profileLabel = context.resources.getString(R.string.status_bar_profile)
         fpsLabel = context.resources.getString(R.string.status_bar_fps)
         statusLabel = context.resources.getString(R.string.status_bar_status)
-        statusConnected = context.resources.getString(R.string.status_bar_connected)
-        statusDisconnected = context.resources.getString(R.string.status_bar_disconnected)
     }
 
     fun updateCanvas(canvas: Canvas) {
@@ -149,7 +146,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             text,
             horizontalAlignment,
             statusVerticalPos,
-            Color.WHITE,
+            Color.LTGRAY,
             12f,
             statusPaint
         )
@@ -158,12 +155,16 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
 
         val color: Int
         val colorTheme = settings.colorTheme()
-        if (dataLogger.isRunning()) {
-            text = statusConnected
-            color = colorTheme.statusConnectedColor
-        } else {
-            text = statusDisconnected
-            color = colorTheme.statusDisconnectedColor
+        text = dataLogger.status().name.lowercase()
+
+        color = when (dataLogger.status()) {
+            WorkflowStatus.Disconnected -> colorTheme.statusDisconnectedColor
+
+            WorkflowStatus.Stopping -> colorTheme.statusDisconnectedColor
+
+            WorkflowStatus.Connecting -> colorTheme.statusConnectingColor
+
+            WorkflowStatus.Connected -> colorTheme.statusConnectedColor
         }
 
         drawText(
@@ -182,7 +183,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             text,
             horizontalAlignment,
             statusVerticalPos,
-            Color.WHITE,
+            Color.LTGRAY,
             12f,
             statusPaint
         )

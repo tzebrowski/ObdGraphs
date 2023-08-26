@@ -47,11 +47,13 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
+            status = WorkflowStatus.Connecting
             Log.i(LOGGER_TAG, "Start collecting process")
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
+            status = WorkflowStatus.Connected
             Log.i(LOGGER_TAG, "We are connected to the vehicle: $vehicleCapabilities")
             vehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
@@ -73,6 +75,7 @@ internal class WorkflowOrchestrator internal constructor() {
         }
 
         override fun onStopped() {
+            status = WorkflowStatus.Disconnected
             Log.i(
                 LOGGER_TAG,
                 "Collecting process is completed."
@@ -81,12 +84,14 @@ internal class WorkflowOrchestrator internal constructor() {
         }
 
         override fun onStopping() {
+            status = WorkflowStatus.Stopping
             Log.i(LOGGER_TAG, "Stopping collecting process...")
             sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
         }
     }
 
     private var workflow: Workflow = workflow()
+    private var status = WorkflowStatus.Disconnected
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)  =
         metricsObserver.observe(lifecycleOwner){
@@ -95,6 +100,7 @@ internal class WorkflowOrchestrator internal constructor() {
             }
         }
 
+    fun status(): WorkflowStatus = status
 
     fun isRunning(): Boolean  =  workflow.isRunning
 
