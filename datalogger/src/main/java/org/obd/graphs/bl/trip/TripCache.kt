@@ -5,7 +5,7 @@ import org.obd.graphs.cacheManager
 
 private const val CACHE_TRIP_PROPERTY_NAME = "cache.trip.current"
 
-class TripCache {
+internal class TripCache {
 
     init {
         val trip = Trip(startTs = System.currentTimeMillis(), entries = mutableMapOf())

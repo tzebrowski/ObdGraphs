@@ -16,7 +16,7 @@ import java.io.IOException
 
 private val EMPTY_CONNECTOR_RESPONSE = ConnectorResponseFactory.wrap(byteArrayOf())
 
-private class ConnectorResponseSerializer() :
+private class ConnectorResponseSerializer:
     StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
 
     @Throws(IOException::class)
@@ -29,7 +29,7 @@ private class ConnectorResponseSerializer() :
     }
 }
 
-private class NopeConnectorResponseSerializer() :
+private class NopeConnectorResponseSerializer:
     StdSerializer<ConnectorResponse>(ConnectorResponse::class.java) {
 
     @Throws(IOException::class)
@@ -50,7 +50,7 @@ private class ConnectorResponseDeserializer() :
     }
 }
 
-class TripModelSerializer {
+internal class TripModelSerializer {
 
     val serializer: ObjectMapper by lazy { serializer() }
     val deserializer: ObjectMapper by lazy { deserializer() }
