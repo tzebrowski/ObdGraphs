@@ -10,8 +10,10 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.metrics.pid.PidDefinition
 
+private const val EXPERIMENTAL_LABEL  = "(Experimental)"
+
 internal fun PidDefinition.displayString(): Spanned {
-    val text = "[${pidResources.getDefaultPidFiles()[resourceFile]?: resourceFile}] ${longDescription?:description} " +  (if (stable) "" else "(Experimental)")
+    val text = "[${pidResources.getDefaultPidFiles()[resourceFile]?: resourceFile}] ${longDescription?:description} " +  (if (stable) "" else EXPERIMENTAL_LABEL)
     return SpannableString(text).apply {
         var endIndexOf = text.indexOf("]") + 1
         setSpan(
@@ -25,8 +27,9 @@ internal fun PidDefinition.displayString(): Spanned {
         )
 
         if (!stable){
-            endIndexOf = text.indexOf(")") + 1
-            val startIndexOf = text.indexOf("(")
+            val startIndexOf = text.indexOf(EXPERIMENTAL_LABEL)
+            endIndexOf = startIndexOf + EXPERIMENTAL_LABEL.length
+
             setSpan(
                 RelativeSizeSpan(0.5f), startIndexOf, endIndexOf,
                0

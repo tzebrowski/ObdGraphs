@@ -26,7 +26,6 @@ internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
     runAsync { WorkflowOrchestrator()  }
 }
 
-
 /**
  * That's the wrapper interface on Workflow API.
  */
@@ -35,18 +34,18 @@ internal class WorkflowOrchestrator internal constructor() {
         override fun onReceive(context: Context?, intent: Intent) {
             if (intent.action === PROFILE_CHANGED_EVENT) {
                 Log.i(LOGGER_TAG,"Received profile changed event")
-                workflow = workflow()
+                updatePidRegistry()
             }
 
             if (intent.action === RESOURCE_LIST_CHANGED_EVENT) {
-                workflow = workflow()
+                updatePidRegistry()
                 sendBroadcastEvent(WORKFLOW_RELOAD_EVENT)
             }
         }
     }
 
     internal val eventsReceiver = EventsReceiver()
-    private var metricsObserver = MetricsObserver()
+    private val metricsObserver = MetricsObserver()
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
@@ -93,7 +92,7 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    private var workflow: Workflow = workflow()
+    private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)  =
@@ -268,6 +267,12 @@ internal class WorkflowOrchestrator internal constructor() {
         .lifecycle(lifecycle)
         .lifecycle(metricsObserver)
         .initialize()
+
+    private fun updatePidRegistry() = runAsync {
+        workflow.updatePidRegistry(Pids.builder().resources(
+            getSelectedPIDsResources()
+        ).build())
+    }
 
     private fun getSelectedPIDsResources() = dataLoggerPreferences.instance.resources.map {
         if (pidResources.isExternalStorageResource(it)) {

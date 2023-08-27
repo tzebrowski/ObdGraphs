@@ -99,6 +99,4 @@ class Permissions {
             *perms.toTypedArray()
         )
     }
-
-
 }

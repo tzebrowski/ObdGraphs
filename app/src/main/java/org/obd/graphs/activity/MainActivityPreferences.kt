@@ -3,6 +3,7 @@ package org.obd.graphs.activity
 import android.util.Log
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.runAsync
 
 data class MainActivityPreferences(
     val hideToolbarDoubleClick: Boolean,
@@ -16,13 +17,10 @@ data class MainActivityPreferences(
 
 const val PREFS_LOGGER_TAG = "PREFS"
 
-fun getMainActivityPreferences(): MainActivityPreferences {
-
+fun getMainActivityPreferences(): MainActivityPreferences  = runAsync {
     val hideToolbarDoubleClick = Prefs.isEnabled("pref.toolbar.hide.doubleclick")
     val hideToolbarLandscape = Prefs.isEnabled("pref.toolbar.hide.landscape")
     val hideToolbarConnected = Prefs.isEnabled("pref.toolbar.hide.connected")
-
-    val showDebugView = Prefs.isEnabled("pref.debug.view.enabled")
     val showDashView = Prefs.isEnabled("pref.dash.view.enabled")
     val showGaugeView = Prefs.isEnabled("pref.gauge.view.enabled")
 
@@ -40,5 +38,5 @@ fun getMainActivityPreferences(): MainActivityPreferences {
     )
 
     Log.d(PREFS_LOGGER_TAG, "Loaded MainActivity preferences: $prefs")
-    return prefs
+    prefs
 }

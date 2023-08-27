@@ -121,9 +121,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setupPreferences() {
-        Prefs.updateString("pref.about.build_time", "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(BuildConfig.VERSION_NAME)}")
-        Prefs.updateString("pref.about.build_version", "${BuildConfig.VERSION_CODE}")
-        Prefs.updateBoolean("pref.debug.logging.enabled", false)
+        runAsync {
+            Prefs.updateString("pref.about.build_time", "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(BuildConfig.VERSION_NAME)}")
+            Prefs.updateString("pref.about.build_version", "${BuildConfig.VERSION_CODE}")
+            Prefs.updateBoolean("pref.debug.logging.enabled", false)
+        }
     }
 
     private fun initCache() {
