@@ -12,7 +12,7 @@ private const val PREF_VEHICLE_CAPABILITIES = "pref.datalogger.supported.pids"
 private const val PREF_VEHICLE_METADATA = "pref.datalogger.vehicle.properties"
 private const val PREF_DTC = "pref.datalogger.dtc"
 
-class PIDsGroupManager {
+class VehicleCapabilitiesManager {
 
     private val mapper = ObjectMapper().apply {
         registerModule(KotlinModule())
@@ -46,9 +46,4 @@ class PIDsGroupManager {
     }
 }
 
-val vehicleCapabilitiesManager =  PIDsGroupManager()
-
-
-
-
-
+val vehicleCapabilitiesManager =  VehicleCapabilitiesManager()
