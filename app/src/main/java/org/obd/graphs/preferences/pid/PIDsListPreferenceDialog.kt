@@ -20,13 +20,12 @@ import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
-import java.util.*
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 
 
-data class PidDefinitionWrapper(val source: PidDefinition, var checked: Boolean = false)
+data class PidDefinitionWrapper(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean =  true)
 
 
 class PIDsListPreferenceDialog(private val key: String, private val priority: String) : DialogFragment() {
@@ -90,34 +89,26 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
             .map { it.source.id.toString() }.toList()
 
 
-    private fun findPidDefinitionByPriority(predicate: (PidDefinition) -> Boolean): MutableList<PidDefinitionWrapper> {
-        val entriesValues: MutableList<PidDefinitionWrapper> =
-            LinkedList()
+    private fun findPidDefinitionByPriority(predicate: (PidDefinition) -> Boolean): List<PidDefinitionWrapper> {
 
         val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
         val ecuSupportedPIDsEnabled = Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF, false)
         val stablePIDsEnabled = Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF, false)
 
-        getPidList()
+        return getPidList()
             .asSequence()
             .filter { p -> p.group == PIDsGroup.LIVEDATA }
             .filter { p -> if (!stablePIDsEnabled) p.stable!! else true }
             .filter { p -> predicate.invoke(p) }
-            .filter { p ->
-                if (ecuSupportedPIDs.size > 0 &&
-                    !ecuSupportedPIDsEnabled && p.mode == "01"
-                )
-                    ecuSupportedPIDs.contains(p.pid.lowercase()) else true
-            }
-            .sortedBy { p -> p.displayString().toString() }
+            .map { p -> PidDefinitionWrapper(source=p, supported=isSupported(ecuSupportedPIDs, p))}
+            .filter { p-> if (ecuSupportedPIDsEnabled) true else p.supported }
             .toList()
-            .forEach { p ->
-
-                entriesValues.add(PidDefinitionWrapper(p))
-            }
-
-        return entriesValues
     }
+
+    private fun isSupported(
+        ecuSupportedPIDs: MutableList<String>, p: PidDefinition) : Boolean  =  if (p.mode == "01"){
+             ecuSupportedPIDs.contains(p.pid.lowercase())
+        } else true
 
     private fun getPidList() = dataLogger.getPidDefinitionRegistry().findAll()
 }

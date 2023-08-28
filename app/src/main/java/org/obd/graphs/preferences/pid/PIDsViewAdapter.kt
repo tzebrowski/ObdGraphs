@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.setText
 
 
 class PIDsViewAdapter internal constructor(
     context: Context?,
-    var data: MutableList<PidDefinitionWrapper>
+    var data: List<PidDefinitionWrapper>
 ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -37,10 +38,17 @@ class PIDsViewAdapter internal constructor(
         data.elementAt(position).run {
             holder.mode.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
             holder.name.setText(source.description, Color.GRAY, Typeface.NORMAL, 1f)
+
             if (source.stable) {
                 holder.status.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.8f)
             } else {
                 holder.status.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.8f)
+            }
+
+            if (supported) {
+                holder.supported.setText("Yes", COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 0.8f)
+            } else {
+                holder.supported.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.8f)
             }
 
             holder.selected.isChecked = checked
@@ -76,5 +84,7 @@ class PIDsViewAdapter internal constructor(
         val status: TextView = itemView.findViewById(R.id.pid_status)
         val selected: CheckBox = itemView.findViewById(R.id.pid_selected)
         val alert: TextView = itemView.findViewById(R.id.pid_alert)
+        val supported: TextView = itemView.findViewById(R.id.pid_supported)
+
     }
 }
