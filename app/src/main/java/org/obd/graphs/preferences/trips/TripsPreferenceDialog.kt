@@ -37,7 +37,7 @@ class TripsPreferenceDialog : DialogFragment() {
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
-        root.findViewById<Button>(R.id.trip_close_window).apply {
+        root.findViewById<Button>(R.id.pid_list_close_window).apply {
             setOnClickListener {
                 navigateToScreen(R.id.navigation_graph)
                 dialog?.dismiss()

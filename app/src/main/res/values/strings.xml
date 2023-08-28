@@ -48,7 +48,6 @@
     <string name="pref.pids_generic_low">Low priority OBD2 PIDs/Sensors</string>
     <string name="pref.pids_generic_low_summary">Choose Low priority OBD2 PIDs/Sensors you would like to query from ECU</string>
 
-    <string name="pref.pids_supported">OBD2 PIDs/Sensors supported by ECU\n(fetched after first successful connection to the ECU)</string>
     <string name="prefs.adapter_batch_mode_22_batch_size">Batch Size for Mode 22</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
     <string name="pref.adapter_stn_enabled">Enable STN extensions</string>
@@ -272,7 +271,6 @@
     <string name="pref.adapter_response_length_enabled_summary">Enabling this option will cause that FW tells the Adapter how many lines in the response is expected, so the Adapter does not need to go through final timeout.\nWhen feature is enabled it increase performance.</string>
     <string name="pref.adapter_graceful_stop_enabled">Enable graceful stop</string>
     <string name="pref.adapter_graceful_stop_enabled_summary">Enabling this option will cause that the session with ECU and Adapter is graceful shutdown. Process of quiting the session with ECU might take longer when option is selected.</string>
-    <string name="pref.pids_supported_summary">This list contains OBD2 PIDs/Sensors which are supported by ECU and can be read by the application.</string>
     <string name="pref.pids_display_only_ecu_supported">Display unsupported OBD2 PIDs/Sensors</string>
     <string name="pref.pids_display_only_ecu_supported_summary">When you select this option, then you will be able to select PIDs which are not supported by the ECU.</string>
     <string name="pref.adapter_batch_enabled_summary">Enabling this option will cause batch queries are send to the Adapter. This feature allows to fetch up to 6 PIDs/Sensors in single ECU query.\nWhen feature is enabled it increase performance.</string>
@@ -289,9 +287,10 @@
     <string name="pref_power_settings_summary">Under this section you can find Power related preferences. You can configure here how Application should behave when charger is connected/disconnected</string>
     <string name="pref_dtc_settings_summary">Under this section you can find Diagnostics Trouble Codes read from ECU.</string>
 
-    <string name="supported_pids_status">Status</string>
-    <string name="supported_pids_name">Name</string>
-    <string name="supported_pids_file">File</string>
+    <string name="pids_stable">Stable</string>
+    <string name="pids_alert">Alert\nrule</string>
+    <string name="pids_name">Name</string>
+    <string name="pids_file">File</string>
     <string name="pref.usb_event_receiver_activity_label">Grant permissions to access USB device</string>
     <string name="virtual_screen_1">1</string>
     <string name="virtual_screen_2">2</string>

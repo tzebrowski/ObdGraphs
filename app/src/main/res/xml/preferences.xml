@@ -34,14 +34,7 @@
                     android:key="pref.adapter.init.fetchSupportedPids"
                     android:title="@string/pref.pids.group.enableCapabilitiesReadings"/>
 
-                <org.obd.graphs.preferences.supported_pids.SupportedPIDsListPreferences
-                    app:singleLineTitle="false"
-                    android:dialogTitle="@string/pref.pids_supported"
-                    android:key="pref.pids.supported"
-                    android:summary="@string/pref.pids_supported_summary"
-                    android:title="@string/pref.pids_supported" />
-
-                <org.obd.graphs.preferences.supported_pids.FilterBySupportedPIDsAction
+                <org.obd.graphs.preferences.pid.FilterBySupportedPIDsAction
                     app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids_display_only_ecu_supported"
@@ -49,7 +42,7 @@
                     android:title="@string/pref.pids_display_only_ecu_supported"
                     android:summary="@string/pref.pids_display_only_ecu_supported_summary"/>
 
-                <org.obd.graphs.preferences.supported_pids.FilterByStablePIDsAction
+                <org.obd.graphs.preferences.pid.FilterByStablePIDsAction
                     app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids_display_only_ecu_supported"

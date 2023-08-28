@@ -19,36 +19,57 @@
             android:paddingStart="0dp"
             android:paddingEnd="8dp">
 
+            <CheckBox
+                android:id="@+id/pid_selected"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/gray_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <TextView
-                android:id="@+id/supported_pid_file"
+                android:id="@+id/pid_file"
                 android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:text="@string/supported_pids_file"
+                android:text="@string/pids_file"
                 android:textColor="@color/gray_light"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/supported_pid_name"
+                android:id="@+id/pid_name"
                 android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
-                android:text="@string/supported_pids_name"
+                android:text="@string/pids_name"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_light"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/supported_pid_status"
+                android:id="@+id/pid_status"
                 android:layout_width="0dp"
-                android:layout_weight="1.0"
+                android:layout_weight="0.5"
                 android:gravity="start"
-                android:text="@string/supported_pids_status"
+                android:text="@string/pids_stable"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_light"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/pid_alert"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:textAllCaps="false"
+                android:textColor="@color/gray_light"
+                android:textSize="16sp"/>
+
         </TableRow>
 
         <TableRow

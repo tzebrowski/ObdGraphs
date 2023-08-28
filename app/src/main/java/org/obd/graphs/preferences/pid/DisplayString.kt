@@ -28,19 +28,21 @@ internal fun PidDefinition.displayString(): Spanned {
 
         if (!stable){
             val startIndexOf = text.indexOf(EXPERIMENTAL_LABEL)
-            endIndexOf = startIndexOf + EXPERIMENTAL_LABEL.length
+            if (startIndexOf > -1) {
+                endIndexOf = text.length
 
-            setSpan(
-                RelativeSizeSpan(0.5f), startIndexOf, endIndexOf,
-               0
-            )
+                setSpan(
+                    RelativeSizeSpan(0.5f), startIndexOf, endIndexOf,
+                    0
+                )
 
-            setSpan(
-                ForegroundColorSpan(COLOR_CARDINAL),
-                startIndexOf,
-                endIndexOf,
-                0
-            )
+                setSpan(
+                    ForegroundColorSpan(COLOR_CARDINAL),
+                    startIndexOf,
+                    endIndexOf,
+                    0
+                )
+            }
         }
     }
 }

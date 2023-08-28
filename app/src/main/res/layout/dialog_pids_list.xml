@@ -19,34 +19,56 @@
 
             <TextView
                 android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/gray_dark"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:text="@string/supported_pids_file"
+                android:text="@string/pids_file"
                 android:textColor="@color/gray_dark"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
-                android:text="@string/supported_pids_name"
+                android:text="@string/pids_name"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_dark"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1.0"
+                android:layout_weight="0.5"
                 android:gravity="start"
-                android:text="@string/supported_pids_status"
+                android:text="@string/pids_stable"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_dark"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:text="@string/pids_alert"
+                android:textAllCaps="false"
+                android:textColor="@color/gray_dark"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
 
         </TableRow>
         <TableRow
@@ -63,9 +85,37 @@
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/tablelayout"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_above="@id/button_panel"
+        android:layout_below="@id/tablelayout"/>
+
+
+    <LinearLayout
+        android:id="@+id/button_panel"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/pid_list_close_window"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="@string/trip_dialog_close_window"
+            android:textSize="12sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/pid_list_save"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="Save"
+            android:textSize="12sp" />
+    </LinearLayout>
 </RelativeLayout>
 

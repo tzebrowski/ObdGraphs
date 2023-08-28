@@ -1,4 +1,4 @@
-package org.obd.graphs.preferences.supported_pids
+package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet

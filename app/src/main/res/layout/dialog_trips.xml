@@ -79,16 +79,18 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/button_panel"
         android:layout_below="@id/tablelayout" />
 
     <LinearLayout
+        android:id="@+id/button_panel"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/trip_close_window"
+            android:id="@+id/pid_list_close_window"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"

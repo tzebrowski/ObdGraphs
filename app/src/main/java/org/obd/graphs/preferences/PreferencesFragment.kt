@@ -16,8 +16,8 @@ import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
 import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialog
-import org.obd.graphs.preferences.supported_pids.SupportedPIDsListPreferences
-import org.obd.graphs.preferences.supported_pids.SupportedPIDsPreferenceDialog
+import org.obd.graphs.preferences.pid.PIDsListPreferences
+import org.obd.graphs.preferences.pid.PIDsListPreferenceDialog
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.sendBroadcastEvent
@@ -50,8 +50,9 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 VehicleMetadataPreferenceDialog().show(parentFragmentManager, null)
             }
 
-            is SupportedPIDsListPreferences -> {
-                SupportedPIDsPreferenceDialog().show(parentFragmentManager, null)
+            is PIDsListPreferences -> {
+               PIDsListPreferenceDialog(preference.key, preference.prio)
+                   .show(parentFragmentManager, null)
             }
 
             is DiagnosticTroubleCodeListPreferences -> {
