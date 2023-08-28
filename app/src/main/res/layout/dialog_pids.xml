@@ -94,6 +94,7 @@
 
     <LinearLayout
         android:id="@+id/button_panel"
+        android:gravity="end"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_alignParentBottom="true"
@@ -104,7 +105,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
-            android:text="@string/trip_dialog_close_window"
+            android:backgroundTint="@color/rainbow_indigo"
+            android:text="@string/dialog_close_window_action"
             android:textSize="12sp"
             style="?android:attr/buttonBarButtonStyle" />
 
@@ -114,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
-            android:text="Save"
+            android:text="@string/dialog_save_action"
             android:textSize="12sp" />
     </LinearLayout>
 </RelativeLayout>

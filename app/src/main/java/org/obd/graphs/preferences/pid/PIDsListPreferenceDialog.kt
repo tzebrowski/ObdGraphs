@@ -45,7 +45,7 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
         savedInstanceState: Bundle?
     ): View? {
 
-        val root = inflater.inflate(R.layout.dialog_pids_list, container, false)
+        val root = inflater.inflate(R.layout.dialog_pids, container, false)
 
         when (priority) {
             "low" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority > 0 }

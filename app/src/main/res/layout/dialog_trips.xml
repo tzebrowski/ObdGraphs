@@ -85,6 +85,7 @@
     <LinearLayout
         android:id="@+id/button_panel"
         android:layout_height="wrap_content"
+        android:gravity="end"
         android:layout_width="fill_parent"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
@@ -95,8 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:backgroundTint="@color/rainbow_indigo"
-
-            android:text="@string/trip_dialog_close_window"
+            android:text="@string/dialog_close_window_action"
             android:textSize="12sp"
             style="?android:attr/buttonBarButtonStyle" />
 
