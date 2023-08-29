@@ -19,7 +19,7 @@ import org.obd.graphs.ui.common.setText
 
 class PIDsViewAdapter internal constructor(
     context: Context?,
-    var data: List<PidDefinitionWrapper>
+    var data: List<PidDefinitionDetails>
 ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -37,7 +37,7 @@ class PIDsViewAdapter internal constructor(
     ) {
         data.elementAt(position).run {
             holder.mode.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
-            holder.name.setText(source.description, Color.GRAY, Typeface.NORMAL, 1f)
+            holder.name.setText(source.description, COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 1f)
 
             if (source.stable) {
                 holder.status.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.8f)
@@ -46,7 +46,7 @@ class PIDsViewAdapter internal constructor(
             }
 
             if (supported) {
-                holder.supported.setText("Yes", COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 0.8f)
+                holder.supported.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.8f)
             } else {
                 holder.supported.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.8f)
             }

@@ -25,7 +25,7 @@ private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 
 
-data class PidDefinitionWrapper(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean =  true)
+data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean =  true)
 
 
 class PIDsListPreferenceDialog(private val key: String, private val priority: String) : DialogFragment() {
@@ -89,7 +89,7 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
             .map { it.source.id.toString() }.toList()
 
 
-    private fun findPidDefinitionByPriority(predicate: (PidDefinition) -> Boolean): List<PidDefinitionWrapper> {
+    private fun findPidDefinitionByPriority(predicate: (PidDefinition) -> Boolean): List<PidDefinitionDetails> {
 
         val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
         val ecuSupportedPIDsEnabled = Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF, false)
@@ -100,7 +100,7 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
             .filter { p -> p.group == PIDsGroup.LIVEDATA }
             .filter { p -> if (!stablePIDsEnabled) p.stable!! else true }
             .filter { p -> predicate.invoke(p) }
-            .map { p -> PidDefinitionWrapper(source=p, supported=isSupported(ecuSupportedPIDs, p))}
+            .map { p -> PidDefinitionDetails(source=p, supported=isSupported(ecuSupportedPIDs, p))}
             .filter { p-> if (ecuSupportedPIDsEnabled) true else p.supported }
             .toList()
     }
