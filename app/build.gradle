@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "org.obd.graphs.app"
-        minSdkVersion 24
-        targetSdkVersion 31
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.compileSdkVersion
         versionName new Date().format('yyyyMMdd.HHmm')
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testFunctionalTest false
@@ -57,7 +57,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 46
+            versionCode 47
         }
 
         giulia {
