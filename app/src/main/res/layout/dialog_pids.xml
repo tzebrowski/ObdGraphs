@@ -121,6 +121,16 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/pid_list_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:backgroundTint="@color/rainbow_indigo"
+            android:text="@string/dialog_select_all_action"
+            android:textSize="12sp"
+            style="?android:attr/buttonBarButtonStyle" />
+
+        <Button
             android:id="@+id/pid_list_close_window"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

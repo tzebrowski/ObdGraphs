@@ -1,5 +1,6 @@
 package org.obd.graphs.preferences.pid
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -44,11 +45,12 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
     }
     private lateinit var listOfItems: List<PidDefinitionDetails>
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         root = inflater.inflate(R.layout.dialog_pids, container, false)
         val toolbar = root.findViewById<Toolbar>(R.id.custom_dialog_layout_toolbar)
@@ -91,6 +93,15 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
             }
         }
 
+        root.findViewById<Button>(R.id.pid_list_select_all).apply {
+            setOnClickListener {
+                adapter.data.forEach {
+                    it.checked = true
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+
         return root
     }
 
@@ -103,6 +114,7 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
         Prefs.updateStringSet(key, pidList)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun filterListOfItems(newText: String) {
         val adapter = getAdapter()
 

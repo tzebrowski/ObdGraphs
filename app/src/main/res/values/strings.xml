@@ -250,6 +250,7 @@
     <string name="trip_vehicle_profile">Profile</string>
     <string name="trip_action">Action</string>
     <string name="trip_action_delete">Del</string>
+    <string name="dialog_select_all_action">Select all</string>
     <string name="dialog_close_window_action">Close window</string>
     <string name="trip_dialog_delete_all_trips">Delete all</string>
     <string name="trip_delete_dialog_ask_question">Are you sure you want to Delete?</string>
