@@ -74,6 +74,10 @@ class PIDsViewAdapter internal constructor(
         }
     }
 
+    fun updateData(data: List<PidDefinitionDetails>){
+        this.data = data
+    }
+
     override fun getItemCount(): Int {
         return data.size
     }

@@ -302,6 +302,7 @@
     <string name="virtual_screen_8">8</string>
     <string name="dialog_save_action">Save</string>
     <string name="pids_supported">Supported</string>
+    <string name="pref_search_view_title">Search</string>
 
 
     <string-array name="pref.numbers_1_20">
