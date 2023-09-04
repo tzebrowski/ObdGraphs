@@ -109,6 +109,15 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
             }
         }
 
+        root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
+            setOnClickListener {
+                adapter.data.forEach {
+                    it.checked = false
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+
         return root
     }
 

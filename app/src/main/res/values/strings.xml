@@ -250,8 +250,10 @@
     <string name="trip_vehicle_profile">Profile</string>
     <string name="trip_action">Action</string>
     <string name="trip_action_delete">Del</string>
-    <string name="dialog_select_all_action">Select all</string>
-    <string name="dialog_close_window_action">Close window</string>
+    <string name="dialog_select_all_action">Select\nAll</string>
+    <string name="dialog_deselect_all_action">Deselect\nAll</string>
+
+    <string name="dialog_close_window_action">Close\n </string>
     <string name="trip_dialog_delete_all_trips">Delete all</string>
     <string name="trip_delete_dialog_ask_question">Are you sure you want to Delete?</string>
     <string name="trip_delete_dialog_ask_question_yes">Yes</string>
@@ -301,10 +303,9 @@
     <string name="virtual_screen_6">6</string>
     <string name="virtual_screen_7">7</string>
     <string name="virtual_screen_8">8</string>
-    <string name="dialog_save_action">Save</string>
+    <string name="dialog_save_action">Save\n </string>
     <string name="pids_supported">Supported</string>
     <string name="pref_search_view_title">Search</string>
-
 
     <string-array name="pref.numbers_1_20">
         <item name="0">0</item>
