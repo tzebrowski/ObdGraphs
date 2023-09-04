@@ -12,14 +12,10 @@ class GraphVirtualScreen {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
     }
 
-    fun updateVirtualScreenMetrics(newList: List<String>) {
-        Prefs.updateStringSet(getVirtualScreenPrefKey(), newList)
-    }
-
     fun getVirtualScreenMetrics(): Set<String> =
         Prefs.getStringSet(getVirtualScreenPrefKey(), mutableSetOf())!!
 
-    private fun getVirtualScreenPrefKey(): String = "$PREF_GRAPH_DIALOG.${getCurrentVirtualScreen()}"
+    fun getVirtualScreenPrefKey(): String = "$PREF_GRAPH_DIALOG.${getCurrentVirtualScreen()}"
 }
 
 val graphVirtualScreen = GraphVirtualScreen()

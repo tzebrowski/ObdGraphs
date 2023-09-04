@@ -32,9 +32,11 @@ private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_s
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
 
-data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean =  true)
+data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean = true)
 
-class PIDsListPreferenceDialog(private val key: String, private val source: String) :
+private const val LOG_KEY = "PIDsListPreferenceDialog"
+
+class PIDsListPreferenceDialog(private val key: String, private val source: String, private val onDialogCloseListener: (() -> Unit) = {}) :
     DialogFragment() {
 
     private lateinit var root: View
@@ -64,13 +66,13 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.i("PIDsListPreferenceDialog", "OnQueryTextSubmit newText=$query")
+                Log.d(LOG_KEY, "OnQueryTextSubmit newText=$query")
                 filterListOfItems(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                Log.i("PIDsListPreferenceDialog", "OnQueryTextChange newText=$newText")
+                Log.d(LOG_KEY, "OnQueryTextChange newText=$newText")
                 filterListOfItems(newText)
                 return false
             }
@@ -86,6 +88,7 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
         root.findViewById<Button>(R.id.pid_list_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
+                onDialogCloseListener.invoke()
             }
         }
 
@@ -93,6 +96,7 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
             setOnClickListener {
                 persistSelection()
                 dialog?.dismiss()
+                onDialogCloseListener.invoke()
             }
         }
 
@@ -113,7 +117,7 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
             .filter { it.checked }
             .map { it.source.id.toString() }.toList()
 
-        Log.i("PIDsListPreferenceDialog", "Key=$key, selected PIDs=$newList")
+        Log.i(LOG_KEY, "Key=$key, selected PIDs=$newList")
 
         if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
             sendBroadcastEvent("${key}.event.changed")
@@ -140,19 +144,35 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
     private fun getAdapter() = (getRecyclerView(root).adapter as PIDsViewAdapter)
 
     private fun buildInitialList(): List<PidDefinitionDetails> {
-        val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
         val all = dataLogger.getPidDefinitionRegistry().findAll()
 
         val list = when (source) {
             "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
             "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
-            "aa" -> {
-                val source = Prefs.getStringSet(HIGH_PRIO_PID_PREF).map { s -> s.toLong() } +  Prefs.getStringSet(LOW_PRIO_PID_PREF).map { s -> s.toLong() }
-                findPidDefinitionByPriority(all.filter { source.contains(it.id) }){ true }
+
+            "dashboard" -> {
+                buildListFromSource(all)
             }
-            else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()){ true }
+
+            "graph" -> {
+                buildListFromSource(all)
+            }
+
+            "gauge" -> {
+                buildListFromSource(all)
+            }
+
+            "giulia" -> {
+                buildListFromSource(all)
+            }
+
+            "aa" -> {
+                buildListFromSource(all)
+            }
+            else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
         }
 
+        val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
         list.let {
             it.forEach { p ->
                 if (pref.contains(p.source.id)) {
@@ -163,9 +183,18 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
         return list
     }
 
+    private fun buildListFromSource(all: MutableCollection<PidDefinition>): List<PidDefinitionDetails> {
+        val source =
+            Prefs.getStringSet(HIGH_PRIO_PID_PREF).map { s -> s.toLong() } + Prefs.getStringSet(LOW_PRIO_PID_PREF).map { s -> s.toLong() }
+        return findPidDefinitionByPriority(all.filter { source.contains(it.id) }) { true }
+    }
+
     private fun getRecyclerView(root: View): RecyclerView = root.findViewById(R.id.recycler_view)
 
-    private fun findPidDefinitionByPriority(source: Collection<PidDefinition>, predicate: (PidDefinition) -> Boolean): List<PidDefinitionDetails> {
+    private fun findPidDefinitionByPriority(
+        source: Collection<PidDefinition>,
+        predicate: (PidDefinition) -> Boolean
+    ): List<PidDefinitionDetails> {
 
         val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
         val ecuSupportedPIDsEnabled = Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF, false)
@@ -176,13 +205,14 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
             .filter { p -> p.group == PIDsGroup.LIVEDATA }
             .filter { p -> if (!stablePIDsEnabled) p.stable!! else true }
             .filter { p -> predicate.invoke(p) }
-            .map { p -> PidDefinitionDetails(source=p, supported=isSupported(ecuSupportedPIDs, p))}
-            .filter { p-> if (ecuSupportedPIDsEnabled) true else p.supported }
+            .map { p -> PidDefinitionDetails(source = p, supported = isSupported(ecuSupportedPIDs, p)) }
+            .filter { p -> if (ecuSupportedPIDsEnabled) true else p.supported }
             .toList()
     }
 
     private fun isSupported(
-        ecuSupportedPIDs: MutableList<String>, p: PidDefinition) : Boolean  =  if (p.mode == "01"){
-             ecuSupportedPIDs.contains(p.pid.lowercase())
-        } else true
+        ecuSupportedPIDs: MutableList<String>, p: PidDefinition
+    ): Boolean = if (p.mode == "01") {
+        ecuSupportedPIDs.contains(p.pid.lowercase())
+    } else true
 }
