@@ -51,7 +51,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
 
             is PIDsListPreferences -> {
-               PIDsListPreferenceDialog(preference.key, preference.prio)
+               PIDsListPreferenceDialog(preference.key, preference.source)
                    .show(parentFragmentManager, null)
             }
 

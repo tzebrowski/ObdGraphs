@@ -4,18 +4,18 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.DialogPreference
 
-class PIDsListPreferences(
+open class PIDsListPreferences(
     context: Context?,
     private val attrs: AttributeSet?
 ) : DialogPreference(context, attrs) {
 
-    var prio = getPriority()
+    val source = getAttribute("source")
 
-    private fun getPriority(): String = if (attrs == null) {
+    private fun getAttribute(attrName: String): String = if (attrs == null) {
         ""
     } else {
         val priority: String? = (0 until attrs.attributeCount)
-            .filter { index -> attrs.getAttributeName(index) == "priority" }
+            .filter { index -> attrs.getAttributeName(index) == attrName }
             .map { index -> attrs.getAttributeValue(index) }.firstOrNull()
         priority ?: ""
     }

@@ -21,6 +21,7 @@ import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
@@ -28,13 +29,16 @@ import java.util.*
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
-
+private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
+private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
 
 data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean =  true)
 
-class PIDsListPreferenceDialog(private val key: String, private val priority: String) : DialogFragment() {
+class PIDsListPreferenceDialog(private val key: String, private val source: String) :
+    DialogFragment() {
 
     private lateinit var root: View
+    private lateinit var listOfItems: List<PidDefinitionDetails>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         dialog?.let {
@@ -43,7 +47,6 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
         }
         super.onViewCreated(view, savedInstanceState)
     }
-    private lateinit var listOfItems: List<PidDefinitionDetails>
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -73,7 +76,7 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
             }
         })
 
-        listOfItems = findPIDs()
+        listOfItems = buildInitialList()
 
         val adapter = PIDsViewAdapter(context, listOfItems)
         val recyclerView: RecyclerView = getRecyclerView(root)
@@ -106,12 +109,17 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
     }
 
     private fun persistSelection() {
-        val pidList = getAdapter().data
+        val newList = getAdapter().data
             .filter { it.checked }
             .map { it.source.id.toString() }.toList()
 
-        Log.i("PIDsListPreferenceDialog", "Key=$key, selected PIDs=$pidList")
-        Prefs.updateStringSet(key, pidList)
+        Log.i("PIDsListPreferenceDialog", "Key=$key, selected PIDs=$newList")
+
+        if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
+            sendBroadcastEvent("${key}.event.changed")
+        }
+
+        Prefs.updateStringSet(key, newList)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -131,13 +139,18 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
 
     private fun getAdapter() = (getRecyclerView(root).adapter as PIDsViewAdapter)
 
-    private fun findPIDs(): List<PidDefinitionDetails> {
+    private fun buildInitialList(): List<PidDefinitionDetails> {
         val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
+        val all = dataLogger.getPidDefinitionRegistry().findAll()
 
-        val list = when (priority) {
-            "low" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority > 0 }
-            "high" -> findPidDefinitionByPriority { pidDefinition -> pidDefinition.priority == 0 }
-            else -> mutableListOf()
+        val list = when (source) {
+            "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
+            "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
+            "aa" -> {
+                val source = Prefs.getStringSet(HIGH_PRIO_PID_PREF).map { s -> s.toLong() } +  Prefs.getStringSet(LOW_PRIO_PID_PREF).map { s -> s.toLong() }
+                findPidDefinitionByPriority(all.filter { source.contains(it.id) }){ true }
+            }
+            else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()){ true }
         }
 
         list.let {
@@ -152,14 +165,13 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
 
     private fun getRecyclerView(root: View): RecyclerView = root.findViewById(R.id.recycler_view)
 
-
-    private fun findPidDefinitionByPriority(predicate: (PidDefinition) -> Boolean): List<PidDefinitionDetails> {
+    private fun findPidDefinitionByPriority(source: Collection<PidDefinition>, predicate: (PidDefinition) -> Boolean): List<PidDefinitionDetails> {
 
         val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
         val ecuSupportedPIDsEnabled = Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF, false)
         val stablePIDsEnabled = Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF, false)
 
-        return getPidList()
+        return source
             .asSequence()
             .filter { p -> p.group == PIDsGroup.LIVEDATA }
             .filter { p -> if (!stablePIDsEnabled) p.stable!! else true }
@@ -173,6 +185,4 @@ class PIDsListPreferenceDialog(private val key: String, private val priority: St
         ecuSupportedPIDs: MutableList<String>, p: PidDefinition) : Boolean  =  if (p.mode == "01"){
              ecuSupportedPIDs.contains(p.pid.lowercase())
         } else true
-
-    private fun getPidList() = dataLogger.getPidDefinitionRegistry().findAll()
 }
