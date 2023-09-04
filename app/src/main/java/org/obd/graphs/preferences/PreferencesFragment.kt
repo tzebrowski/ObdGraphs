@@ -228,14 +228,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                  { navigateToScreen(R.id.navigation_gauge) }
                      .show(parentFragmentManager, null)
 
-            PREF_GRAPH_DISPLAYED_PARAMETERS_IDS ->
+            PREF_GIULIA_DISPLAYED_PARAMETERS_IDS ->
                 PIDsListPreferenceDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(),  "giulia")
-                { navigateToScreen(R.id.navigation_graph) }
+                { navigateToScreen(R.id.navigation_giulia) }
                     .show(parentFragmentManager, null)
 
-            PREF_GIULIA_DISPLAYED_PARAMETERS_IDS ->
+            PREF_GRAPH_DISPLAYED_PARAMETERS_IDS ->
                 PIDsListPreferenceDialog(graphVirtualScreen.getVirtualScreenPrefKey(), "graph")
-                { navigateToScreen(R.id.navigation_giulia) }
+                { navigateToScreen(R.id.navigation_graph) }
                     .show(parentFragmentManager, null)
         }
     }
