@@ -64,7 +64,9 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         canvas?.let {
             it.drawRect(area, paint)
             it.drawColor(Color.BLACK)
-            it.drawBitmap(background, area.left.toFloat(), area.top.toFloat(), backgroundPaint)
+            if (settings.isBackgroundDrawingEnabled()) {
+                it.drawBitmap(background, area.left.toFloat(), area.top.toFloat(), backgroundPaint)
+            }
         }
     }
 

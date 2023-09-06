@@ -16,6 +16,8 @@ private const val PREF_PIDS_HISTORY_ENABLED= "pref.aa.pids.history.enabled"
 private const val PREF_THEME_IN_ALLERT_VALUE_COLOR= "pref.aa.theme.inAlertValueColor"
 private const val PREF_DYNAMIC_SELECTOR_ENABLED= "pref.aa.theme.dynamic-selector.enabled"
 
+private const val BACKGROUND_ENABLED= "pref.aa.theme.background.enabled"
+
 private const val PREF_ALERT_LEGEND_ENABLED= "pref.aa.alerting.legend.enabled"
 private const val PREF_ALERTING_ENABLED= "pref.aa.alerting.enabled"
 private const val PREF_THEME_PROGRESS_BAR_COLOR= "pref.aa.theme.progressColor"
@@ -76,6 +78,8 @@ internal class CarSettings : ScreenSettings {
             else -> Prefs.getS(PREF_MAX_PIDS_IN_COLUMN, DEFAULT_ITEMS_IN_COLUMN).toInt()
         }
     }
+
+    override fun isBackgroundDrawingEnabled(): Boolean  = Prefs.getBoolean(BACKGROUND_ENABLED, true)
 
     override fun isDynamicSelectorThemeEnabled(): Boolean =  Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)
 

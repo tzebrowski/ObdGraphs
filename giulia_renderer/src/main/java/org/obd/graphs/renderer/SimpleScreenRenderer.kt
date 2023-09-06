@@ -19,7 +19,6 @@ internal class SimpleScreenRenderer(
 ) : ScreenRenderer {
 
     private val drawingManager = DrawingManager(context, settings)
-
     override fun onDraw(canvas: Canvas, visibleArea: Rect?) {
 
         visibleArea?.let { area ->
@@ -37,6 +36,7 @@ internal class SimpleScreenRenderer(
             val textSize = textHeight - ROW_SPACING
 
             drawingManager.drawBackground(area)
+
             var verticalPos = area.top + textHeight.toFloat() / 2
 
             if (settings.isStatusPanelEnabled()) {

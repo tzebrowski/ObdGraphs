@@ -918,6 +918,12 @@
                 <PreferenceCategory android:title="@string/pref.theme">
                     <CheckBoxPreference
                         app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.aa.theme.background.enabled"
+                        android:title="@string/pref.aa.theme.background.enabled" />
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.theme.dynamic-selector.enabled"
                         android:summary="@string/pref.aa.theme.dynamic_selector.enabled_summary"

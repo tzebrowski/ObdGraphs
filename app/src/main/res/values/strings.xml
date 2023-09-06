@@ -137,6 +137,8 @@
     <string name="pref.aa.alerting.legend.enabled">Enable Alerting Legend</string>
     <string name="pref.aa.alerting.legend.enabled_summary">When enabled, rules for alerting are displayed on the screen if available for given PID: ENGINE_TEMP > 110</string>
 
+    <string name="pref.aa.theme.background.enabled">Background enabled</string>
+
     <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector enabled</string>
     <string name="pref.aa.theme.dynamic_selector.enabled_summary">When enabled, colors are applied based on selected dynamic mode: SPORT,NORMAL,ECO</string>
 

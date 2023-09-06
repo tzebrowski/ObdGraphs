@@ -24,6 +24,9 @@ interface ScreenSettings {
 
     fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode){}
 
+
+    fun isBackgroundDrawingEnabled (): Boolean = true
+
     fun isDynamicSelectorThemeEnabled (): Boolean = false
 
     fun isAlertLegendEnabled (): Boolean = false
