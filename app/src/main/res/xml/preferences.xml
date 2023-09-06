@@ -875,7 +875,7 @@
                         app:singleLineTitle="false"
                         android:entries="@array/pref.numbers_28_34"
                         android:entryValues="@array/pref.numbers_28_34"
-                        android:defaultValue="34"
+                        android:defaultValue="32"
                         android:dialogTitle="@string/pref.aa.font_size"
                         android:inputType="number"
                         android:key="pref.aa.screen_font_size"
