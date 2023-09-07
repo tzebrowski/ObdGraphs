@@ -104,6 +104,8 @@
     <string name="pref.aa.theme.divider_color">Divider color</string>
     <string name="pref.aa.theme.current_value_color">Current value color</string>
     <string name="pref.aa.theme.inalert_value_color">In alert value color</string>
+    <string name="pref.aa.theme.virtual_screen_color">Virtual screen buttons color</string>
+
 
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
     <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>
@@ -394,6 +396,14 @@
         <item name="72">72</item>
 
     </string-array>
+
+    <integer-array name="pref.colors">
+        <item name="-48060"> -48060</item>
+        <item name="-6697984">-6697984</item>
+        <item name="-17613">-17613</item>
+        <item name="-16737844">-16737844</item>
+        <item name="-1">-1</item>
+    </integer-array>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

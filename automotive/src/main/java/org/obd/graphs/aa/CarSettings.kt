@@ -24,6 +24,7 @@ private const val PREF_ALERTING_ENABLED= "pref.aa.alerting.enabled"
 private const val PREF_THEME_PROGRESS_BAR_COLOR= "pref.aa.theme.progressColor"
 private const val PREF_THEME_DIVIDER_COLOR= "pref.aa.theme.dividerColor"
 private const val PREF_THEME_CURR_VALUE_COLOR= "pref.aa.theme.currentValueColor"
+private const val PREF_THEME_VIRTUAL_SCREEN_COLOR= "pref.aa.theme.btn.virtual-screen.color"
 
 private const val PREF_CURRENT_VIRTUAL_SCREEN = "pref.aa.pids.vs.current"
 private const val PREF_SELECTED_PIDS = "pref.aa.pids.selected"
@@ -48,6 +49,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
             dividerColor =  Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE),
             currentValueColor =  Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE),
             currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
+            actionsBtnVirtualScreensColor = Prefs.getInt(PREF_THEME_VIRTUAL_SCREEN_COLOR, Color.GREEN)
         )
     }
 

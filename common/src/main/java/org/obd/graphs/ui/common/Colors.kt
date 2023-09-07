@@ -70,4 +70,6 @@ val COLOR_DYNAMIC_SELECTOR_ECO: Int = color(R.color.dynamic_selector_eco)
 val COLOR_DYNAMIC_SELECTOR_SPORT: Int = color(R.color.dynamic_selector_sport)
 val COLOR_DYNAMIC_SELECTOR_NORMAL: Int = color(R.color.dynamic_selector_normal)
 
+val COLOR_WHITE: Int  = color(R.color.white)
+
 fun color(id: Int) = ContextCompat.getColor(getContext()!!, id)

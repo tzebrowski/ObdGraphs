@@ -16,8 +16,8 @@ import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
 import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialog
-import org.obd.graphs.preferences.pid.PIDsListPreferences
 import org.obd.graphs.preferences.pid.PIDsListPreferenceDialog
+import org.obd.graphs.preferences.pid.PIDsListPreferences
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialog
 import org.obd.graphs.sendBroadcastEvent
@@ -36,6 +36,7 @@ const val PREF_GIULIA_DISPLAYED_PARAMETERS_IDS = "pref.giulia.displayed_paramete
 
 
 private const val LOG_KEY = "Prefs"
+
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     private val onSharedPreferenceChangeListener =
@@ -57,23 +58,21 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 when (preference.source) {
 
                     "graph" -> {
-                        PIDsListPreferenceDialog(graphVirtualScreen.getVirtualScreenPrefKey(), preference.source)
-                            .show(parentFragmentManager, null)
+                        openPIDsDialog(graphVirtualScreen.getVirtualScreenPrefKey(),preference.source)
+                        { navigateToScreen(R.id.navigation_graph) }
                     }
 
                     "giulia" -> {
-                        PIDsListPreferenceDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(), preference.source)
-                            .show(parentFragmentManager, null)
+                        openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(),preference.source)
+                        { navigateToScreen(R.id.navigation_giulia) }
                     }
 
                     "gauge" -> {
-
-                        PIDsListPreferenceDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), preference.source)
-                            .show(parentFragmentManager, null)
+                        openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(),preference.source)
+                        { navigateToScreen(R.id.navigation_gauge) }
                     }
                     else -> {
-                          PIDsListPreferenceDialog(preference.key, preference.source)
-                            .show(parentFragmentManager, null)
+                        openPIDsDialog(preference.key, preference.source)
                     }
                 }
             }
@@ -87,26 +86,29 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
         }
     }
+
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
         super.onNavigateToScreen(preferenceScreen)
         setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
         registerListeners()
     }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
         } else {
 
-            val preferenceKey = requireArguments().get(PREFERENCE_SCREEN_KEY) as String
+            requireArguments().getString(PREFERENCE_SCREEN_KEY)?.let {
 
-            Log.d(LOG_KEY, "Loading Pref Screen for key=$preferenceKey")
+                Log.d(LOG_KEY, "Loading Pref Screen for key=$it")
 
-            setPreferencesFromResource(
-                R.xml.preferences,
-                preferenceKey
-            )
+                setPreferencesFromResource(
+                    R.xml.preferences,
+                    it
+                )
 
-            openPreferenceDialogFor(preferenceKey)
+                openPreferenceDialogFor(it)
+            }
         }
     }
 
@@ -224,19 +226,21 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             PREF_GAUGE_RECORDINGS -> TripsPreferenceDialog().show(parentFragmentManager, null)
 
             PREF_GAUGE_DISPLAYED_PARAMETERS_IDS ->
-                 PIDsListPreferenceDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(),"gauge")
-                 { navigateToScreen(R.id.navigation_gauge) }
-                     .show(parentFragmentManager, null)
+                openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(),"gauge")
+                { navigateToScreen(R.id.navigation_gauge) }
 
             PREF_GIULIA_DISPLAYED_PARAMETERS_IDS ->
-                PIDsListPreferenceDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(),  "giulia")
+                openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(),"giulia")
                 { navigateToScreen(R.id.navigation_giulia) }
-                    .show(parentFragmentManager, null)
 
             PREF_GRAPH_DISPLAYED_PARAMETERS_IDS ->
-                PIDsListPreferenceDialog(graphVirtualScreen.getVirtualScreenPrefKey(), "graph")
+                openPIDsDialog(graphVirtualScreen.getVirtualScreenPrefKey(),"graph")
                 { navigateToScreen(R.id.navigation_graph) }
-                    .show(parentFragmentManager, null)
         }
+    }
+
+    private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
+        PIDsListPreferenceDialog(key = key, source = source, onDialogCloseListener = onDialogCloseListener)
+            .show(parentFragmentManager, null)
     }
 }

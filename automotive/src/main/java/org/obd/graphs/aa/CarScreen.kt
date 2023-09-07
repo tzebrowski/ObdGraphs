@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -297,15 +296,6 @@ internal class CarScreen(
         renderingThread.stop()
         dataLogger.stop()
     }
-
-    private fun mapColor(color: Int): CarColor =
-        when (color) {
-            Color.RED -> CarColor.RED
-            Color.BLUE -> CarColor.BLUE
-            Color.GREEN -> CarColor.GREEN
-            Color.YELLOW -> CarColor.YELLOW
-            else -> CarColor.PRIMARY
-        }
 
     init {
 
