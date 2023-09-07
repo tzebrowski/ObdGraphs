@@ -18,7 +18,7 @@ private const val LOG_TAG = "CarSession"
 internal class CarSession : Session(), DefaultLifecycleObserver {
 
     private lateinit var surfaceController: SurfaceController
-    private val settings = CarSettings()
+    private val settings by lazy {  CarSettings(carContext) }
     private val metricsCollector = CarMetricsCollector()
     private val fps: Fps = Fps()
 

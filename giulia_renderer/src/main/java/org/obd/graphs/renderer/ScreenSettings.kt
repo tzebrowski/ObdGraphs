@@ -22,6 +22,8 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
 
 interface ScreenSettings {
 
+    fun getBackgroundColor(): Int = Color.BLACK
+
     fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode){}
 
 

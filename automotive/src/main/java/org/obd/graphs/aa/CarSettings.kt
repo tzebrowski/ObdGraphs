@@ -1,6 +1,7 @@
 package org.obd.graphs.aa
 
 import android.graphics.Color
+import androidx.car.app.CarContext
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
@@ -40,7 +41,7 @@ const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
 const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
-internal class CarSettings : ScreenSettings {
+internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun colorTheme(): ColorTheme {
         return ColorTheme(
             progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
@@ -78,6 +79,8 @@ internal class CarSettings : ScreenSettings {
             else -> Prefs.getS(PREF_MAX_PIDS_IN_COLUMN, DEFAULT_ITEMS_IN_COLUMN).toInt()
         }
     }
+
+    override fun getBackgroundColor(): Int =  if (carContext.isDarkMode)  Color.BLACK else Color.BLACK
 
     override fun isBackgroundDrawingEnabled(): Boolean  = Prefs.getBoolean(BACKGROUND_ENABLED, true)
 
