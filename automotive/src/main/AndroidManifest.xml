@@ -24,7 +24,16 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="androidx.car.app.CarAppService" />
+                <category android:name="androidx.car.app.category.NAVIGATION"/>
+                <category android:name="androidx.car.app.category.FEATURE_CLUSTER"/>
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="androidx.car.app.action.NAVIGATE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="geo" />
+            </intent-filter>
+
         </service>
     </application>
 </manifest>

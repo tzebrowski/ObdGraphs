@@ -9,6 +9,8 @@ import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
+import androidx.car.app.navigation.NavigationManager
+import androidx.car.app.navigation.NavigationManagerCallback
 import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -19,6 +21,7 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
+
 
 private const val LOG_KEY = "CarScreen"
 private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
@@ -138,6 +141,7 @@ internal class CarScreen(
                     surfaceController.renderFrame()
                     fps.stop()
                     invalidate()
+                    navigationManager().navigationEnded()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
@@ -145,6 +149,7 @@ internal class CarScreen(
                     renderingThread.start()
                     fps.start()
                     invalidate()
+                    navigationManager().navigationStarted()
                 }
 
                 DATA_LOGGER_STOPPING_EVENT -> {
@@ -303,6 +308,7 @@ internal class CarScreen(
         }
 
     init {
+
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
             metricsCollector.append(it)
@@ -314,5 +320,26 @@ internal class CarScreen(
         } else {
             Log.i(LOG_KEY, "Data logger is not running.")
         }
+
+        navigationManager().setNavigationManagerCallback(
+            object : NavigationManagerCallback {
+                override fun onStopNavigation() {
+
+                    try {
+                        renderingThread.stop()
+                        surfaceController.renderFrame()
+                        fps.stop()
+                        invalidate()
+                    }catch (e: Throwable){
+                        Log.e(LOG_KEY,"Failed to stop DL threads",e)
+                    }
+                }
+
+                override fun onAutoDriveEnabled() {
+
+                }
+            })
     }
+
+    private fun navigationManager() = carContext.getCarService(NavigationManager::class.java)
 }
