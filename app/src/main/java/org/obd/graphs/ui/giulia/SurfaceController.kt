@@ -27,10 +27,8 @@ class SurfaceController(private val renderer: ScreenRenderer) : SurfaceHolder.Ca
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-
         surface = surfaceHolder.surface
         visibleArea?.set(holder.surfaceFrame.left+10, holder.surfaceFrame.top + 10, width, height)
-
         renderFrame()
     }
 
@@ -49,7 +47,7 @@ class SurfaceController(private val renderer: ScreenRenderer) : SurfaceHolder.Ca
                     surfaceLocked = true
                     renderer.onDraw(
                         canvas = canvas,
-                        visibleArea = visibleArea
+                        drawArea = visibleArea
                     )
 
                 } catch (e: Throwable) {

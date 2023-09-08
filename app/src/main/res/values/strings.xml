@@ -372,6 +372,9 @@
 
 
     <string-array name="pref.numbers_28_34">
+        <item name="22">22</item>
+        <item name="24">24</item>
+        <item name="26">26</item>
         <item name="28">28</item>
         <item name="29">29</item>
         <item name="30">30</item>

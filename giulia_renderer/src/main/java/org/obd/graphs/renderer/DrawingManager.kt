@@ -14,7 +14,6 @@ import org.obd.graphs.profile.getSelectedProfile
 
 const val MARGIN_END = 30
 const val ROW_SPACING = 12
-const val MARGIN_START = 15
 
 internal class DrawingManager(context: Context,  private val settings: ScreenSettings) {
 
@@ -142,7 +141,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     fun drawStatusBar(area: Rect, fps: Double): Float {
         val statusVerticalPos = area.top + 6f
         var text = statusLabel
-        var horizontalAlignment = MARGIN_START.toFloat()
+        var horizontalAlignment = getMarginLeft(area)
 
         drawText(
             text,
@@ -296,14 +295,13 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         }
     }
 
-
-
     fun drawDivider(
         start: Float,
         width: Float,
         verticalPos: Float,
         color: Int
     ) {
+
         paint.color = color
         paint.strokeWidth = 2f
         canvas?.drawLine(
@@ -345,4 +343,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
 
     private fun inAlert(metric: CarMetric) = settings.isAlertingEnabled() && metric.isInAlert()
 
+
+    fun getMarginLeft( drawArea: Rect): Float = 12 + drawArea.left.toFloat()
 }

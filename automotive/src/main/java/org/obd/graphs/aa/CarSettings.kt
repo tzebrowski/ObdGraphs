@@ -43,6 +43,9 @@ const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
+
+    var fontSize: Int? = null
+
     override fun colorTheme(): ColorTheme {
         return ColorTheme(
             progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
@@ -97,8 +100,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     override fun isFpsCounterEnabled(): Boolean  = Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
-    override fun getMaxFontSize(): Int =
-        Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
+    override fun getMaxFontSize(): Int = if (fontSize == null)  Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt() else fontSize!!
 
     override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
 

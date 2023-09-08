@@ -11,6 +11,7 @@ import androidx.car.app.model.*
 import androidx.car.app.navigation.NavigationManager
 import androidx.car.app.navigation.NavigationManagerCallback
 import androidx.car.app.navigation.model.NavigationTemplate
+import androidx.car.app.navigation.model.RoutingInfo
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -122,7 +123,6 @@ internal class CarScreen(
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     surfaceController.renderFrame()
                     invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_connection_connecting)
                 }
 
                 DATA_LOGGER_NO_NETWORK_EVENT -> {
@@ -205,10 +205,18 @@ internal class CarScreen(
 
     override fun onGetTemplate(): Template {
         return try {
-            NavigationTemplate.Builder()
-                .setMapActionStrip(profilesActionStrip())
-                .setActionStrip(actions())
-                .build()
+            return if (dataLogger.status() == WorkflowStatus.Connecting) {
+                NavigationTemplate.Builder()
+                    .setMapActionStrip(profilesActionStrip())
+                    .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
+                    .setActionStrip(actions())
+                    .build()
+            } else {
+                NavigationTemplate.Builder()
+                    .setMapActionStrip(profilesActionStrip())
+                    .setActionStrip(actions())
+                    .build()
+            }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)
             PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
@@ -320,8 +328,8 @@ internal class CarScreen(
                         surfaceController.renderFrame()
                         fps.stop()
                         invalidate()
-                    }catch (e: Throwable){
-                        Log.e(LOG_KEY,"Failed to stop DL threads",e)
+                    } catch (e: Throwable) {
+                        Log.e(LOG_KEY, "Failed to stop DL threads", e)
                     }
                 }
 

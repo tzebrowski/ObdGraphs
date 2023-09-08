@@ -14,19 +14,17 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenRenderer
-import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"
 
 internal class SurfaceController(private val carContext: CarContext,
-                                 private val settings: ScreenSettings,
+                                 private val settings: CarSettings,
                                  private val metricsCollector: CarMetricsCollector,
                                  fps: Fps
 ) :
     DefaultLifecycleObserver {
-
 
     private val renderer: ScreenRenderer = ScreenRenderer.of(carContext, settings, metricsCollector, fps)
     private var surface: Surface? = null
@@ -51,8 +49,15 @@ internal class SurfaceController(private val carContext: CarContext,
 
         override fun onVisibleAreaChanged(visibleArea: Rect) {
             synchronized(this@SurfaceController) {
-                Log.i(LOG_KEY, "Surface visible area changed")
+                Log.i(LOG_KEY, "Surface visible area changed: w=${visibleArea.width()} h=${visibleArea.height()},l=${visibleArea.left}")
                 this@SurfaceController.visibleArea = visibleArea
+
+                if ( visibleArea.width() < 500 ){
+                    settings.fontSize = 26
+                } else {
+                    settings.fontSize = null
+                }
+
                 sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
             }
@@ -60,7 +65,7 @@ internal class SurfaceController(private val carContext: CarContext,
 
         override fun onStableAreaChanged(stableArea: Rect) {
             synchronized(this@SurfaceController) {
-                Log.i(LOG_KEY, "Surface stable area changed")
+                Log.i(LOG_KEY, "Surface stable area changed: w=${stableArea.width()} h=${stableArea.height()}")
                 sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
             }
@@ -114,7 +119,7 @@ internal class SurfaceController(private val carContext: CarContext,
                     surfaceLocked = true
                     renderer.onDraw(
                         canvas = canvas,
-                        visibleArea = visibleArea
+                        drawArea = visibleArea
                     )
 
                 } catch (e: Throwable) {

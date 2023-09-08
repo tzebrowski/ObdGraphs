@@ -19,9 +19,9 @@ internal class SimpleScreenRenderer(
 ) : ScreenRenderer {
 
     private val drawingManager = DrawingManager(context, settings)
-    override fun onDraw(canvas: Canvas, visibleArea: Rect?) {
+    override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
-        visibleArea?.let { area ->
+        drawArea?.let { area ->
 
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
@@ -32,33 +32,35 @@ internal class SimpleScreenRenderer(
             val metrics = metricsCollector.metrics()
 
             val baseFontSize = calculateFontSize(metrics)
-            val textHeight = min(area.height() / 8, baseFontSize)
+            val textHeight = min(area.height() / 8, baseFontSize).toFloat()
+            val valueTextHeight =   min(itemWidth(area, metrics).toFloat() / 10.0f, 50f)
             val textSize = textHeight - ROW_SPACING
 
             drawingManager.drawBackground(area)
 
-            var verticalPos = area.top + textHeight.toFloat() / 2
+            var verticalPos = area.top + textHeight / 2
+            var leftMargin =  drawingManager.getMarginLeft (area)
 
             if (settings.isStatusPanelEnabled()) {
                 verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
-                drawingManager.drawDivider(MARGIN_START.toFloat(), area.width().toFloat(), area.top + 10f, Color.DKGRAY)
+                drawingManager.drawDivider(leftMargin, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
             val verticalPosCpy = verticalPos
             var valueHorizontalPos = initialValueHorizontalPos(area, metrics)
 
-            var margin = MARGIN_START
             val infoDiv = 1.3f
 
             val maxItemsInColumn = getMaxItemsInColumn(metrics)
+
 
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
                 chunk.forEach lit@{ metric ->
 
-                    val footerValueTextSize = textSize.toFloat() / infoDiv
-                    val footerTitleTextSize = textSize.toFloat() / infoDiv / 1.3f
-                    var horizontalPos = margin.toFloat()
+                    val footerValueTextSize = textSize / infoDiv
+                    val footerTitleTextSize = textSize / infoDiv / 1.3f
+                    var horizontalPos = leftMargin
 
                     drawingManager.drawTitle(
                         metric, horizontalPos, verticalPos,
@@ -70,14 +72,14 @@ internal class SimpleScreenRenderer(
                         metric,
                         valueHorizontalPos,
                         verticalPos + 10,
-                        textSize.toFloat() + 14
+                        valueTextHeight
                     )
 
                     if (settings.isHistoryEnabled()) {
-                        verticalPos += textHeight.toFloat() / infoDiv
+                        verticalPos += textHeight/ infoDiv
                         horizontalPos = drawingManager.drawText(
                             "min",
-                            margin.toFloat(),
+                            leftMargin,
                             verticalPos,
                             Color.DKGRAY,
                             footerTitleTextSize
@@ -132,7 +134,7 @@ internal class SimpleScreenRenderer(
                     verticalPos += 6f
 
                     drawingManager.drawProgressBar(
-                        margin.toFloat(),
+                        leftMargin,
                         itemWidth(area, metrics).toFloat(), verticalPos, metric,
                         color = settings.colorTheme().progressColor
                     )
@@ -140,11 +142,11 @@ internal class SimpleScreenRenderer(
                     verticalPos += calculateDividerSpacing(metrics)
 
                     drawingManager.drawDivider(
-                        margin.toFloat(), itemWidth(area, metrics).toFloat(), verticalPos,
+                        leftMargin, itemWidth(area, metrics).toFloat(), verticalPos,
                         color = settings.colorTheme().dividerColor
                     )
 
-                    verticalPos += (textHeight.toFloat() * 0.95).toInt()
+                    verticalPos += (textHeight * 0.95).toInt()
 
                     if (verticalPos > area.height()) {
                         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
@@ -158,7 +160,7 @@ internal class SimpleScreenRenderer(
                     valueHorizontalPos += area.width() / 2 - 18
                 }
 
-                margin += calculateMargin(area, metrics)
+                leftMargin += calculateMargin(area, metrics)
                 verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy, metrics)
             }
         }
@@ -171,20 +173,20 @@ internal class SimpleScreenRenderer(
         else -> 8
     }
 
-    private fun calculateTitleTextSize(textSize: Int, metrics: Collection<CarMetric>): Float =
+    private fun calculateTitleTextSize(textSize: Float, metrics: Collection<CarMetric>): Float =
         when (getMaxItemsInColumn(metrics)) {
-            1 -> textSize.toFloat()
+            1 -> textSize
             else -> textSize / 1.1f
         }
 
     private fun initialValueHorizontalPos(area: Rect, metrics: Collection<CarMetric>): Float =
         when (getMaxItemsInColumn(metrics)) {
-            1 -> ((area.width()) - 42).toFloat()
-            else -> ((area.width() / 2) - 32).toFloat()
+            1 -> area.left + ((area.width()) - 42).toFloat()
+            else -> area.left +  ((area.width() / 2) - 32).toFloat()
         }
 
     private fun calculateVerticalPos(
-        textHeight: Int,
+        textHeight: Float,
         verticalPos: Float,
         verticalPosCpy: Float,
         metrics: Collection<CarMetric>
