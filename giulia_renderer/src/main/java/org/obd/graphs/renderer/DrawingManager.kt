@@ -13,7 +13,6 @@ import org.obd.graphs.profile.getSelectedProfile
 
 
 const val MARGIN_END = 30
-const val ROW_SPACING = 12
 
 internal class DrawingManager(context: Context,  private val settings: ScreenSettings) {
 
@@ -106,7 +105,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
                     metric.source.command.pid.alertUpperThreshold != null)
         ) {
 
-            val text = "  alerting rule "
+            val text = "  alerting "
             drawText(
                 text,
                 horizontalPos,

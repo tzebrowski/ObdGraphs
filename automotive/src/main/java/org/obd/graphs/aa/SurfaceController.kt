@@ -52,12 +52,6 @@ internal class SurfaceController(private val carContext: CarContext,
                 Log.i(LOG_KEY, "Surface visible area changed: w=${visibleArea.width()} h=${visibleArea.height()},l=${visibleArea.left}")
                 this@SurfaceController.visibleArea = visibleArea
 
-                if ( visibleArea.width() < 500 ){
-                    settings.fontSize = 26
-                } else {
-                    settings.fontSize = null
-                }
-
                 sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
             }

@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
+import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import kotlin.math.min
@@ -17,7 +18,7 @@ internal class SimpleScreenRenderer(
     private val metricsCollector: CarMetricsCollector,
     private val fps: Fps
 ) : ScreenRenderer {
-
+    private  val valueScaler = ValueScaler()
     private val drawingManager = DrawingManager(context, settings)
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -30,15 +31,26 @@ internal class SimpleScreenRenderer(
             drawingManager.updateCanvas(canvas)
 
             val metrics = metricsCollector.metrics()
+            val rescale = valueScaler.scaleToNewRange(settings.getMaxFontSize().toFloat(),22f,72f,0.6f,1.6f )
+            val areaWidth = min(when (getMaxItemsInColumn(metrics)) {
+                1 -> area.width()
+                else -> area.width() / 2
+            }, 500)
 
-            val baseFontSize = calculateFontSize(metrics)
-            val textHeight = min(area.height() / 8, baseFontSize).toFloat()
-            val valueTextHeight =   min(itemWidth(area, metrics).toFloat() / 10.0f, 50f)
-            val textSize = textHeight - ROW_SPACING
+            val valueTextSize = (areaWidth / 10f) * rescale
+            val textSizeBase = (areaWidth / 16f) * rescale
+
+
+            if (Log.isLoggable("SimpleScreenRenderer",Log.DEBUG)) {
+                Log.d(
+                    "SimpleScreenRenderer",
+                    "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase rescale=$rescale"
+                )
+            }
 
             drawingManager.drawBackground(area)
 
-            var verticalPos = area.top + textHeight / 2
+            var verticalPos = area.top + textSizeBase / 2
             var leftMargin =  drawingManager.getMarginLeft (area)
 
             if (settings.isStatusPanelEnabled()) {
@@ -53,18 +65,17 @@ internal class SimpleScreenRenderer(
 
             val maxItemsInColumn = getMaxItemsInColumn(metrics)
 
-
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
                 chunk.forEach lit@{ metric ->
 
-                    val footerValueTextSize = textSize / infoDiv
-                    val footerTitleTextSize = textSize / infoDiv / 1.3f
+                    val footerValueTextSize = textSizeBase / infoDiv
+                    val footerTitleTextSize = textSizeBase / infoDiv / 1.3f
                     var horizontalPos = leftMargin
 
                     drawingManager.drawTitle(
                         metric, horizontalPos, verticalPos,
-                        calculateTitleTextSize(textSize, metrics),
+                        textSizeBase,
                         getMaxItemsInColumn(metrics)
                     )
 
@@ -72,11 +83,11 @@ internal class SimpleScreenRenderer(
                         metric,
                         valueHorizontalPos,
                         verticalPos + 10,
-                        valueTextHeight
+                        valueTextSize
                     )
 
                     if (settings.isHistoryEnabled()) {
-                        verticalPos += textHeight/ infoDiv
+                        verticalPos += textSizeBase/ infoDiv
                         horizontalPos = drawingManager.drawText(
                             "min",
                             leftMargin,
@@ -146,7 +157,7 @@ internal class SimpleScreenRenderer(
                         color = settings.colorTheme().dividerColor
                     )
 
-                    verticalPos += (textHeight * 0.95).toInt()
+                    verticalPos += (textSizeBase * 1.7).toInt()
 
                     if (verticalPos > area.height()) {
                         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
@@ -161,23 +172,16 @@ internal class SimpleScreenRenderer(
                 }
 
                 leftMargin += calculateMargin(area, metrics)
-                verticalPos = calculateVerticalPos(textHeight, verticalPos, verticalPosCpy, metrics)
+                verticalPos = calculateVerticalPos(textSizeBase, verticalPos, verticalPosCpy, metrics)
             }
         }
     }
-
-
 
     private fun calculateDividerSpacing(metrics: Collection<CarMetric>) = when (getMaxItemsInColumn(metrics)) {
         1 -> 14
         else -> 8
     }
 
-    private fun calculateTitleTextSize(textSize: Float, metrics: Collection<CarMetric>): Float =
-        when (getMaxItemsInColumn(metrics)) {
-            1 -> textSize
-            else -> textSize / 1.1f
-        }
 
     private fun initialValueHorizontalPos(area: Rect, metrics: Collection<CarMetric>): Float =
         when (getMaxItemsInColumn(metrics)) {
@@ -213,26 +217,4 @@ internal class SimpleScreenRenderer(
         } else {
             settings.getMaxItemsInColumn()
         }
-
-    private fun calculateFontSize(data: List<CarMetric>): Int {
-        val maxFontSize = settings.getMaxFontSize()
-        return when (data.size) {
-            1 -> {
-                (maxFontSize * 3)
-            }
-            2 -> {
-                (maxFontSize * 1.6).toInt()
-            }
-            3 -> {
-                (maxFontSize * 1.5).toInt()
-            }
-            4 -> {
-                (maxFontSize * 1.1).toInt()
-            }
-            5 -> {
-                maxFontSize
-            }
-            else -> maxFontSize
-        }
-    }
 }
