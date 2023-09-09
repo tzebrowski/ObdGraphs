@@ -108,14 +108,14 @@
 
 
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
-    <string name="pref.aa.number_of_items_in_column">Number of OBD2 PIDs/Sensors displayed in the column</string>
-    <string name="pref.aa.number_of_items_in_column.1">Number of OBD2 PIDs/Sensors displayed in the column for screen 1</string>
-    <string name="pref.aa.number_of_items_in_column.2">Number of OBD2 PIDs/Sensors displayed in the column for screen 2</string>
-    <string name="pref.aa.number_of_items_in_column.3">Number of OBD2 PIDs/Sensors displayed in the column for screen 3</string>
-    <string name="pref.aa.number_of_items_in_column.4">Number of OBD2 PIDs/Sensors displayed in the column for screen 4</string>
-    <string name="pref.aa.number_of_items_in_column.5">Number of OBD2 PIDs/Sensors displayed in the column for screen 5</string>
-    <string name="pref.aa.number_of_items_in_column.6">Number of OBD2 PIDs/Sensors displayed in the column for screen 6</string>
-    <string name="pref.aa.number_of_items_in_column.7">Number of OBD2 PIDs/Sensors displayed in the column for screen 7</string>
+    <string name="pref.aa.number_of_items_in_column">Number of columns on the screen</string>
+    <string name="pref.aa.number_of_items_in_column.1">Number of columns for screen 1</string>
+    <string name="pref.aa.number_of_items_in_column.2">Number of columns for screen 2</string>
+    <string name="pref.aa.number_of_items_in_column.3">Number of columns for screen 3</string>
+    <string name="pref.aa.number_of_items_in_column.4">Number of columns for screen 4</string>
+    <string name="pref.aa.number_of_items_in_column.5">Number of columns for screen 5</string>
+    <string name="pref.aa.number_of_items_in_column.6">Number of columns for screen 6</string>
+    <string name="pref.aa.number_of_items_in_column.7">Number ofs columns for screen 7</string>
     <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>
     <string name="pref.aa.font_size.category">Font size</string>
     <string name="pref.aa.number_of_items_in_column.category">Number of items in the column</string>
@@ -407,6 +407,11 @@
         <item name="-16737844">-16737844</item>
         <item name="-1">-1</item>
     </integer-array>
+
+    <string-array name="pref.numbers_1_2">
+        <item name="1">1</item>
+        <item name="2">2</item>
+    </string-array>
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

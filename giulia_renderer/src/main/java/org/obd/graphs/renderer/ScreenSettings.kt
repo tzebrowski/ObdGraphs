@@ -41,11 +41,11 @@ interface ScreenSettings {
     fun applyVirtualScreen3() {}
     fun applyVirtualScreen4() {}
     fun getSelectedPIDs(): Set<Long> = emptySet()
-    fun getMaxItemsInColumn(): Int
+    fun getMaxColumns(): Int
     fun isHistoryEnabled(): Boolean
     fun isFpsCounterEnabled(): Boolean
     fun getSurfaceFrameRate(): Int
-    fun getMaxFontSize(): Int
+    fun getFontSize(): Int
     fun getCurrentVirtualScreen(): String = ""
     fun applyVirtualScreen(key: String) {}
 

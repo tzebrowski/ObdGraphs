@@ -8,6 +8,7 @@ import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import kotlin.math.max
 import kotlin.math.min
 
 private const val LOG_KEY = "SimpleScreenRenderer"
@@ -37,7 +38,7 @@ internal class SimpleScreenRenderer(
             }
 
             val metrics = metricsCollector.metrics()
-            val (valueTextSize, textSizeBase) = calculateFontSize(area, metrics)
+            val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
             drawingManager.canvas = canvas
             drawingManager.drawBackground(area)
@@ -51,17 +52,13 @@ internal class SimpleScreenRenderer(
             }
 
             val topCpy = top
-            var valueTop = initialValueTop(area, metrics)
+            var valueTop = initialValueTop(area)
 
-            val maxItemsInColumn = getMaxItemsInColumn(metrics)
-
-            metrics.chunked(maxItemsInColumn).forEach { chunk ->
-
+            metrics.chunked(max(metrics.size / settings.getMaxColumns(),1)).forEach { chunk ->
                 chunk.forEach lit@{ metric ->
                     top = drawMetric(
                         area = area,
                         metric = metric,
-                        metrics = metrics,
                         textSizeBase = textSizeBase,
                         valueTextSize = valueTextSize,
                         left = left,
@@ -70,12 +67,12 @@ internal class SimpleScreenRenderer(
                     )
                 }
 
-                if (getMaxItemsInColumn(metrics) > 1) {
+                if (settings.getMaxColumns() > 1) {
                     valueTop += area.width() / 2 - 18
                 }
 
-                left += calculateLeftMargin(area, metrics)
-                top = calculateTop(textSizeBase, top, topCpy, metrics)
+                left += calculateLeftMargin(area)
+                top = calculateTop(textSizeBase, top, topCpy)
             }
         }
     }
@@ -83,7 +80,6 @@ internal class SimpleScreenRenderer(
     private inline fun drawMetric(
         area: Rect,
         metric: CarMetric,
-        metrics: List<CarMetric>,
         textSizeBase: Float,
         valueTextSize: Float,
         left: Float,
@@ -99,7 +95,7 @@ internal class SimpleScreenRenderer(
         drawingManager.drawTitle(
             metric, left1, top1,
             textSizeBase,
-            getMaxItemsInColumn(metrics)
+            settings.getMaxColumns()
         )
 
         drawingManager.drawValue(
@@ -169,14 +165,14 @@ internal class SimpleScreenRenderer(
 
         drawingManager.drawProgressBar(
             left,
-            itemWidth(area, metrics).toFloat(), top1, metric,
+            itemWidth(area).toFloat(), top1, metric,
             color = settings.colorTheme().progressColor
         )
 
-        top1 += calculateDividerSpacing(metrics)
+        top1 += calculateDividerSpacing()
 
         drawingManager.drawDivider(
-            left, itemWidth(area, metrics).toFloat(), top1,
+            left, itemWidth(area).toFloat(), top1,
             color = settings.colorTheme().dividerColor
         )
 
@@ -193,14 +189,13 @@ internal class SimpleScreenRenderer(
     }
 
     private inline fun calculateFontSize(
-        area: Rect,
-        metrics: List<CarMetric>,
+        area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getMaxFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        val scaleRatio = valueScaler.scaleToNewRange(settings.getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = min(
-            when (getMaxItemsInColumn(metrics)) {
+            when (settings.getMaxColumns()) {
                 1 -> area.width()
                 else -> area.width() / 2
             }, AREA_MAX_WIDTH
@@ -218,14 +213,13 @@ internal class SimpleScreenRenderer(
         return Pair(valueTextSize, textSizeBase)
     }
 
-    private inline fun calculateDividerSpacing(metrics: Collection<CarMetric>) = when (getMaxItemsInColumn(metrics)) {
+    private inline fun calculateDividerSpacing() = when (settings.getMaxColumns()) {
         1 -> 14
         else -> 8
     }
 
-
-    private inline fun initialValueTop(area: Rect, metrics: Collection<CarMetric>): Float =
-        when (getMaxItemsInColumn(metrics)) {
+    private inline fun initialValueTop(area: Rect): Float =
+        when (settings.getMaxColumns()) {
             1 -> area.left + ((area.width()) - 42).toFloat()
             else -> area.left + ((area.width() / 2) - 32).toFloat()
         }
@@ -233,29 +227,22 @@ internal class SimpleScreenRenderer(
     private inline fun calculateTop(
         textHeight: Float,
         top: Float,
-        topCpy: Float,
-        metrics: Collection<CarMetric>
-    ): Float = when (getMaxItemsInColumn(metrics)) {
+        topCpy: Float
+    ): Float = when (settings.getMaxColumns()) {
         1 -> top + (textHeight / 3) - 10
         else -> topCpy
     }
 
-    private inline fun calculateLeftMargin(area: Rect, metrics: Collection<CarMetric>): Int =
-        when (getMaxItemsInColumn(metrics)) {
+    private inline fun calculateLeftMargin(area: Rect): Int =
+        when (settings.getMaxColumns()) {
             1 -> 0
             else -> (area.width() / 2)
         }
 
-    private inline fun itemWidth(area: Rect, metrics: Collection<CarMetric>): Int =
-        when (getMaxItemsInColumn(metrics)) {
+    private inline fun itemWidth(area: Rect): Int =
+        when (settings.getMaxColumns()) {
             1 -> area.width()
             else -> area.width() / 2
         }
 
-    private inline fun getMaxItemsInColumn(metrics: Collection<CarMetric>): Int =
-        if (metrics.size < settings.getMaxAllowedItemsInColumn()) {
-            1
-        } else {
-            settings.getMaxItemsInColumn()
-        }
 }

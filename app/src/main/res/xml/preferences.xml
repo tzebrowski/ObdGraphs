@@ -601,9 +601,9 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_10"
-                                android:entryValues="@array/pref.numbers_1_10"
-                                android:defaultValue="5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.number_of_items_in_column.1"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.1"
@@ -612,9 +612,9 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_10"
-                                android:entryValues="@array/pref.numbers_1_10"
-                                android:defaultValue="5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.number_of_items_in_column.2"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.2"
@@ -624,9 +624,9 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_10"
-                                android:entryValues="@array/pref.numbers_1_10"
-                                android:defaultValue="5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.number_of_items_in_column.3"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.3"
@@ -636,9 +636,9 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_10"
-                                android:entryValues="@array/pref.numbers_1_10"
-                                android:defaultValue="5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.number_of_items_in_column.4"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.4"
@@ -647,9 +647,9 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_10"
-                                android:entryValues="@array/pref.numbers_1_10"
-                                android:defaultValue="5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.number_of_items_in_column.5"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.5"
@@ -658,9 +658,9 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_10"
-                                android:entryValues="@array/pref.numbers_1_10"
-                                android:defaultValue="5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.number_of_items_in_column.6"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.6"
@@ -669,9 +669,9 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_10"
-                                android:entryValues="@array/pref.numbers_1_10"
-                                android:defaultValue="5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.number_of_items_in_column.7"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.7"
@@ -681,7 +681,6 @@
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
-
 
                 <PreferenceCategory android:title="@string/pref.aa.font_size.category" app:singleLineTitle="false">
                     <PreferenceScreen  android:title="@string/pref.aa.font_size" app:singleLineTitle="false"
@@ -777,7 +776,6 @@
                         android:key="pref.giulia.view.enabled"
                         android:title="@string/pref.enable_view" />
 
-
                     <ListPreference
                         app:singleLineTitle="false"
                         android:entries="@array/pref.numbers_1_25"
@@ -810,43 +808,45 @@
                         android:key="pref.aa.displayed.pids"
                         android:title="@string/pref.displayed_parameter_ids">
 
-                        <org.obd.graphs.preferences.pid.PIDsListPreferences
-                            app:source="aa"
-                            app:useSimpleSummaryProvider="true"
-                            android:defaultValue="@array/pref.empty_array"
-                            android:dialogTitle="@string/pref.displayed_parameter_ids"
-                            android:key="pref.aa.pids.profile_1"
-                            android:summary="@string/pref.displayed_parameter_ids_summary"
-                            android:title="@string/pref.aa.profile_1.displayed_parameter_ids" />
+                        <PreferenceCategory android:title="@string/pref.displayed_parameter_ids_summary" app:singleLineTitle="false">
 
-                        <org.obd.graphs.preferences.pid.PIDsListPreferences
-                            app:source="aa"
-                            app:useSimpleSummaryProvider="true"
-                            android:defaultValue="@array/pref.empty_array"
-                            android:dialogTitle="@string/pref.displayed_parameter_ids"
-                            android:key="pref.aa.pids.profile_2"
-                            android:summary="@string/pref.displayed_parameter_ids_summary"
-                            android:title="@string/pref.aa.profile_2.displayed_parameter_ids" />
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true"
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.pids.profile_1"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_1.displayed_parameter_ids" />
 
-                        <org.obd.graphs.preferences.pid.PIDsListPreferences
-                            app:source="aa"
-                            app:useSimpleSummaryProvider="true"
-                            android:defaultValue="@array/pref.empty_array"
-                            android:dialogTitle="@string/pref.displayed_parameter_ids"
-                            android:key="pref.aa.pids.profile_3"
-                            android:summary="@string/pref.displayed_parameter_ids_summary"
-                            android:title="@string/pref.aa.profile_3.displayed_parameter_ids" />
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true"
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.pids.profile_2"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_2.displayed_parameter_ids" />
 
-                        <org.obd.graphs.preferences.pid.PIDsListPreferences
-                            app:source="aa"
-                            app:useSimpleSummaryProvider="true"
-                            android:defaultValue="@array/pref.empty_array"
-                            android:dialogTitle="@string/pref.displayed_parameter_ids"
-                            android:key="pref.aa.pids.profile_4"
-                            android:summary="@string/pref.displayed_parameter_ids_summary"
-                            android:title="@string/pref.aa.profile_4.displayed_parameter_ids" />
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true"
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.pids.profile_3"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_3.displayed_parameter_ids" />
+
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true"
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.pids.profile_4"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_4.displayed_parameter_ids" />
+                        </PreferenceCategory>
                     </PreferenceScreen>
-
                 </PreferenceCategory>
 
                 <PreferenceCategory
@@ -871,6 +871,58 @@
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
 
+                <PreferenceCategory android:title="@string/pref.aa.number_of_items_in_column"
+                    app:singleLineTitle="false">
+
+                    <PreferenceScreen  android:title="@string/pref.aa.number_of_items_in_column"
+                        app:singleLineTitle="false"
+                        android:key="pref.aa.screen.columns.category">
+
+                        <PreferenceCategory android:title="@string/pref.aa.number_of_items_in_column" app:singleLineTitle="false">
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.1"
+                                android:key="pref.aa.max_pids_in_column.1"
+                                android:title="@string/pref.aa.number_of_items_in_column.1"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.2"
+                                android:key="pref.aa.max_pids_in_column.2"
+                                android:title="@string/pref.aa.number_of_items_in_column.2"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.3"
+                                android:key="pref.aa.max_pids_in_column.3"
+                                android:title="@string/pref.aa.number_of_items_in_column.3"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.4"
+                                android:key="pref.aa.max_pids_in_column.4"
+                                android:title="@string/pref.aa.number_of_items_in_column.4"
+                                app:useSimpleSummaryProvider="true" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
                 <PreferenceCategory android:title="@string/pref.aa.font_size.category" app:singleLineTitle="false">
                     <PreferenceScreen  android:title="@string/pref.aa.font_size" app:singleLineTitle="false"
                         android:key="pref.aa.screen.font_size.category">
@@ -881,7 +933,6 @@
                                 android:entryValues="@array/pref.numbers_28_34"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
-                                android:inputType="number"
                                 android:key="pref.aa.screen_font_size.1"
                                 android:title="@string/pref.aa.font_size.1"
                                 app:useSimpleSummaryProvider="true" />
@@ -892,7 +943,6 @@
                                 android:entryValues="@array/pref.numbers_28_34"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
-                                android:inputType="number"
                                 android:key="pref.aa.screen_font_size.2"
                                 android:title="@string/pref.aa.font_size.2"
                                 app:useSimpleSummaryProvider="true" />
@@ -903,7 +953,6 @@
                                 android:entryValues="@array/pref.numbers_28_34"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
-                                android:inputType="number"
                                 android:key="pref.aa.screen_font_size.3"
                                 android:title="@string/pref.aa.font_size.3"
                                 app:useSimpleSummaryProvider="true" />
@@ -915,7 +964,6 @@
                                 android:entryValues="@array/pref.numbers_28_34"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
-                                android:inputType="number"
                                 android:key="pref.aa.screen_font_size.4"
                                 android:title="@string/pref.aa.font_size.4"
                                 app:useSimpleSummaryProvider="true" />
@@ -983,10 +1031,7 @@
                         android:key="pref.aa.theme.btn.virtual-screen.color"
                         android:title="@string/pref.aa.theme.virtual_screen_color" />
 
-
                 </PreferenceCategory>
-
-
                 <PreferenceCategory
                     app:singleLineTitle="false"
                     android:title="@string/pref.aa.debug_category">

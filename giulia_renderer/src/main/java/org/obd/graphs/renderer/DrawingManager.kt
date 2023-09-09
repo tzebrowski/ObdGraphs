@@ -332,7 +332,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         return bounds.left + bounds.width()
     }
 
-    private fun calculateProgressBarHeight() = when (settings.getMaxItemsInColumn()) {
+    private fun calculateProgressBarHeight() = when (settings.getMaxColumns()) {
         1 -> 16
         else -> 10
     }
