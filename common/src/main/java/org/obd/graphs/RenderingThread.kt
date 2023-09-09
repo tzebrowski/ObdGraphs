@@ -31,7 +31,7 @@ class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> 
     }
 
     fun isRunning(): Boolean {
-        return tasks != null && running
+        return tasks != null && !tasks!!.isDone
     }
 
     fun start() {
@@ -53,7 +53,7 @@ class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> 
         val fps =  perfFrameRate()
         Log.d(LOG_KEY, "Expected surface FPS $fps")
         val targetDelay = 1000 / fps
-        while (running) {
+        while (!Thread.currentThread().isInterrupted) {
             var ts = System.currentTimeMillis()
             handler.sendEmptyMessage(MSG_RENDER_FRAME)
             ts = System.currentTimeMillis() - ts
