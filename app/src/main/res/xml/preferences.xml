@@ -869,32 +869,60 @@
                         android:key="pref.aa.max_pids_in_column"
                         android:title="@string/pref.aa.number_of_items_in_column"
                         app:useSimpleSummaryProvider="true" />
-
-
-                    <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_28_34"
-                        android:entryValues="@array/pref.numbers_28_34"
-                        android:defaultValue="32"
-                        android:dialogTitle="@string/pref.aa.font_size"
-                        android:inputType="number"
-                        android:key="pref.aa.screen_font_size"
-                        android:title="@string/pref.aa.font_size"
-                        app:useSimpleSummaryProvider="true" />
-
                 </PreferenceCategory>
 
-                <ListPreference
-                    app:singleLineTitle="false"
-                    android:entries="@array/pref.numbers_1_25"
-                    android:entryValues="@array/pref.numbers_1_25"
-                    android:defaultValue="5"
-                    android:dialogTitle="@string/pref.screen.fps"
-                    android:inputType="number"
-                    android:key="pref.aa.surface.fps"
-                    android:title="@string/pref.screen.fps"
-                    app:useSimpleSummaryProvider="true" />
+                <PreferenceCategory android:title="@string/pref.aa.font_size.category" app:singleLineTitle="false">
+                    <PreferenceScreen  android:title="@string/pref.aa.font_size" app:singleLineTitle="false"
+                        android:key="pref.aa.screen.font_size.category">
+                        <PreferenceCategory android:title="@string/pref.aa.font_size" app:singleLineTitle="false">
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.1"
+                                android:inputType="number"
+                                android:key="pref.aa.screen_font_size.1"
+                                android:title="@string/pref.aa.font_size.1"
+                                app:useSimpleSummaryProvider="true" />
 
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.2"
+                                android:inputType="number"
+                                android:key="pref.aa.screen_font_size.2"
+                                android:title="@string/pref.aa.font_size.2"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.3"
+                                android:inputType="number"
+                                android:key="pref.aa.screen_font_size.3"
+                                android:title="@string/pref.aa.font_size.3"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                app:singleLineTitle="false"
+                                android:entries="@array/pref.numbers_28_34"
+                                android:entryValues="@array/pref.numbers_28_34"
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.4"
+                                android:inputType="number"
+                                android:key="pref.aa.screen_font_size.4"
+                                android:title="@string/pref.aa.font_size.4"
+                                app:useSimpleSummaryProvider="true" />
+
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
 
                 <PreferenceCategory
                     app:singleLineTitle="false"

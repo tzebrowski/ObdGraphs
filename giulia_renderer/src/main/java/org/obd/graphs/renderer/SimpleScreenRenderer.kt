@@ -12,14 +12,22 @@ import kotlin.math.min
 
 private const val LOG_KEY = "SimpleScreenRenderer"
 
+private const val CURRENT_MIN = 22f
+private const val CURRENT_MAX = 72f
+private const val NEW_MAX = 1.6f
+private const val NEW_MIN = 0.6f
+private const val AREA_MAX_WIDTH = 500
+private const val FOOTER_SIZE_RATIO = 1.3f
+
 internal class SimpleScreenRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
     private val fps: Fps
 ) : ScreenRenderer {
-    private  val valueScaler = ValueScaler()
+    private val valueScaler = ValueScaler()
     private val drawingManager = DrawingManager(context, settings)
+
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let { area ->
@@ -28,190 +36,223 @@ internal class SimpleScreenRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            drawingManager.updateCanvas(canvas)
-
             val metrics = metricsCollector.metrics()
-            val rescale = valueScaler.scaleToNewRange(settings.getMaxFontSize().toFloat(),22f,72f,0.6f,1.6f )
-            val areaWidth = min(when (getMaxItemsInColumn(metrics)) {
-                1 -> area.width()
-                else -> area.width() / 2
-            }, 500)
+            val (valueTextSize, textSizeBase) = calculateFontSize(area, metrics)
 
-            val valueTextSize = (areaWidth / 10f) * rescale
-            val textSizeBase = (areaWidth / 16f) * rescale
-
-
-            if (Log.isLoggable("SimpleScreenRenderer",Log.DEBUG)) {
-                Log.d(
-                    "SimpleScreenRenderer",
-                    "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase rescale=$rescale"
-                )
-            }
-
+            drawingManager.canvas = canvas
             drawingManager.drawBackground(area)
 
-            var verticalPos = area.top + textSizeBase / 2
-            var leftMargin =  drawingManager.getMarginLeft (area)
+            var top = area.top + textSizeBase / 2
+            var left = drawingManager.getMarginLeft(area)
 
             if (settings.isStatusPanelEnabled()) {
-                verticalPos = drawingManager.drawStatusBar(area, fps.get()) + 18
-                drawingManager.drawDivider(leftMargin, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
+                top = drawingManager.drawStatusBar(area, fps.get()) + 18
+                drawingManager.drawDivider(left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
-            val verticalPosCpy = verticalPos
-            var valueHorizontalPos = initialValueHorizontalPos(area, metrics)
-
-            val infoDiv = 1.3f
+            val topCpy = top
+            var valueTop = initialValueTop(area, metrics)
 
             val maxItemsInColumn = getMaxItemsInColumn(metrics)
 
             metrics.chunked(maxItemsInColumn).forEach { chunk ->
 
                 chunk.forEach lit@{ metric ->
-
-                    val footerValueTextSize = textSizeBase / infoDiv
-                    val footerTitleTextSize = textSizeBase / infoDiv / 1.3f
-                    var horizontalPos = leftMargin
-
-                    drawingManager.drawTitle(
-                        metric, horizontalPos, verticalPos,
-                        textSizeBase,
-                        getMaxItemsInColumn(metrics)
+                    top = drawMetric(
+                        area = area,
+                        metric = metric,
+                        metrics = metrics,
+                        textSizeBase = textSizeBase,
+                        valueTextSize = valueTextSize,
+                        left = left,
+                        top = top,
+                        valueTop = valueTop
                     )
-
-                    drawingManager.drawValue(
-                        metric,
-                        valueHorizontalPos,
-                        verticalPos + 10,
-                        valueTextSize
-                    )
-
-                    if (settings.isHistoryEnabled()) {
-                        verticalPos += textSizeBase/ infoDiv
-                        horizontalPos = drawingManager.drawText(
-                            "min",
-                            leftMargin,
-                            verticalPos,
-                            Color.DKGRAY,
-                            footerTitleTextSize
-                        )
-                        horizontalPos = drawingManager.drawText(
-                            metric.toNumber(metric.min),
-                            horizontalPos,
-                            verticalPos,
-                            Color.LTGRAY,
-                            footerValueTextSize
-                        )
-
-                        horizontalPos = drawingManager.drawText(
-                            "max",
-                            horizontalPos,
-                            verticalPos,
-                            Color.DKGRAY,
-                            footerTitleTextSize
-                        )
-                        horizontalPos = drawingManager.drawText(
-                            metric.toNumber(metric.max),
-                            horizontalPos,
-                            verticalPos,
-                            Color.LTGRAY,
-                            footerValueTextSize
-                        )
-
-                        if (metric.source.command.pid.historgam.isAvgEnabled) {
-                            horizontalPos = drawingManager.drawText(
-                                "avg",
-                                horizontalPos,
-                                verticalPos,
-                                Color.DKGRAY,
-                                footerTitleTextSize
-                            )
-
-                            horizontalPos = drawingManager.drawText(
-                                metric.toNumber(metric.mean),
-                                horizontalPos,
-                                verticalPos,
-                                Color.LTGRAY,
-                                footerValueTextSize
-                            )
-                        }
-
-                        drawingManager.drawAlertingLegend(metric, horizontalPos, verticalPos)
-
-                    } else {
-                        verticalPos += 12
-                    }
-
-                    verticalPos += 6f
-
-                    drawingManager.drawProgressBar(
-                        leftMargin,
-                        itemWidth(area, metrics).toFloat(), verticalPos, metric,
-                        color = settings.colorTheme().progressColor
-                    )
-
-                    verticalPos += calculateDividerSpacing(metrics)
-
-                    drawingManager.drawDivider(
-                        leftMargin, itemWidth(area, metrics).toFloat(), verticalPos,
-                        color = settings.colorTheme().dividerColor
-                    )
-
-                    verticalPos += (textSizeBase * 1.7).toInt()
-
-                    if (verticalPos > area.height()) {
-                        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                            Log.v(LOG_KEY, "Skipping entry to display verticalPos=$verticalPos},area.height=${area.height()}")
-                        }
-                        return@lit
-                    }
                 }
 
                 if (getMaxItemsInColumn(metrics) > 1) {
-                    valueHorizontalPos += area.width() / 2 - 18
+                    valueTop += area.width() / 2 - 18
                 }
 
-                leftMargin += calculateMargin(area, metrics)
-                verticalPos = calculateVerticalPos(textSizeBase, verticalPos, verticalPosCpy, metrics)
+                left += calculateLeftMargin(area, metrics)
+                top = calculateTop(textSizeBase, top, topCpy, metrics)
             }
         }
     }
 
-    private fun calculateDividerSpacing(metrics: Collection<CarMetric>) = when (getMaxItemsInColumn(metrics)) {
+    private inline fun drawMetric(
+        area: Rect,
+        metric: CarMetric,
+        metrics: List<CarMetric>,
+        textSizeBase: Float,
+        valueTextSize: Float,
+        left: Float,
+        top: Float,
+        valueTop: Float,
+    ): Float {
+
+        var top1 = top
+        val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
+        val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
+        var left1 = left
+
+        drawingManager.drawTitle(
+            metric, left1, top1,
+            textSizeBase,
+            getMaxItemsInColumn(metrics)
+        )
+
+        drawingManager.drawValue(
+            metric,
+            valueTop,
+            top1 + 10,
+            valueTextSize
+        )
+
+        if (settings.isHistoryEnabled()) {
+            top1 += textSizeBase / FOOTER_SIZE_RATIO
+            left1 = drawingManager.drawText(
+                "min",
+                left,
+                top1,
+                Color.DKGRAY,
+                footerTitleTextSize
+            )
+            left1 = drawingManager.drawText(
+                metric.toNumber(metric.min),
+                left1,
+                top1,
+                Color.LTGRAY,
+                footerValueTextSize
+            )
+
+            left1 = drawingManager.drawText(
+                "max",
+                left1,
+                top1,
+                Color.DKGRAY,
+                footerTitleTextSize
+            )
+            left1 = drawingManager.drawText(
+                metric.toNumber(metric.max),
+                left1,
+                top1,
+                Color.LTGRAY,
+                footerValueTextSize
+            )
+
+            if (metric.source.command.pid.historgam.isAvgEnabled) {
+                left1 = drawingManager.drawText(
+                    "avg",
+                    left1,
+                    top1,
+                    Color.DKGRAY,
+                    footerTitleTextSize
+                )
+
+                left1 = drawingManager.drawText(
+                    metric.toNumber(metric.mean),
+                    left1,
+                    top1,
+                    Color.LTGRAY,
+                    footerValueTextSize
+                )
+            }
+
+            drawingManager.drawAlertingLegend(metric, left1, top1)
+
+        } else {
+            top1 += 12
+        }
+
+        top1 += 6f
+
+        drawingManager.drawProgressBar(
+            left,
+            itemWidth(area, metrics).toFloat(), top1, metric,
+            color = settings.colorTheme().progressColor
+        )
+
+        top1 += calculateDividerSpacing(metrics)
+
+        drawingManager.drawDivider(
+            left, itemWidth(area, metrics).toFloat(), top1,
+            color = settings.colorTheme().dividerColor
+        )
+
+        top1 += (textSizeBase * 1.7).toInt()
+
+        if (top1 > area.height()) {
+            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                Log.v(LOG_KEY, "Skipping entry to display verticalPos=$top1},area.height=${area.height()}")
+            }
+            return top1
+        }
+
+        return top1
+    }
+
+    private inline fun calculateFontSize(
+        area: Rect,
+        metrics: List<CarMetric>,
+    ): Pair<Float, Float> {
+
+        val scaleRatio = valueScaler.scaleToNewRange(settings.getMaxFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+
+        val areaWidth = min(
+            when (getMaxItemsInColumn(metrics)) {
+                1 -> area.width()
+                else -> area.width() / 2
+            }, AREA_MAX_WIDTH
+        )
+
+        val valueTextSize = (areaWidth / 10f) * scaleRatio
+        val textSizeBase = (areaWidth / 16f) * scaleRatio
+
+        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+            Log.v(
+                LOG_KEY,
+                "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio"
+            )
+        }
+        return Pair(valueTextSize, textSizeBase)
+    }
+
+    private inline fun calculateDividerSpacing(metrics: Collection<CarMetric>) = when (getMaxItemsInColumn(metrics)) {
         1 -> 14
         else -> 8
     }
 
 
-    private fun initialValueHorizontalPos(area: Rect, metrics: Collection<CarMetric>): Float =
+    private inline fun initialValueTop(area: Rect, metrics: Collection<CarMetric>): Float =
         when (getMaxItemsInColumn(metrics)) {
             1 -> area.left + ((area.width()) - 42).toFloat()
-            else -> area.left +  ((area.width() / 2) - 32).toFloat()
+            else -> area.left + ((area.width() / 2) - 32).toFloat()
         }
 
-    private fun calculateVerticalPos(
+    private inline fun calculateTop(
         textHeight: Float,
-        verticalPos: Float,
-        verticalPosCpy: Float,
+        top: Float,
+        topCpy: Float,
         metrics: Collection<CarMetric>
     ): Float = when (getMaxItemsInColumn(metrics)) {
-        1 -> verticalPos + (textHeight / 3) - 10
-        else -> verticalPosCpy
+        1 -> top + (textHeight / 3) - 10
+        else -> topCpy
     }
 
-    private fun calculateMargin(area: Rect, metrics: Collection<CarMetric>): Int =
+    private inline fun calculateLeftMargin(area: Rect, metrics: Collection<CarMetric>): Int =
         when (getMaxItemsInColumn(metrics)) {
             1 -> 0
             else -> (area.width() / 2)
         }
 
-    private fun itemWidth(area: Rect, metrics: Collection<CarMetric>): Int =
+    private inline fun itemWidth(area: Rect, metrics: Collection<CarMetric>): Int =
         when (getMaxItemsInColumn(metrics)) {
             1 -> area.width()
             else -> area.width() / 2
         }
 
-    private fun getMaxItemsInColumn(metrics: Collection<CarMetric>): Int =
+    private inline fun getMaxItemsInColumn(metrics: Collection<CarMetric>): Int =
         if (metrics.size < settings.getMaxAllowedItemsInColumn()) {
             1
         } else {

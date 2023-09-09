@@ -23,7 +23,8 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     private val statusPaint = Paint()
     private val valuePaint = Paint()
     private val backgroundPaint = Paint()
-    private var canvas: Canvas? = null
+
+    var canvas: Canvas? = null
 
     private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
@@ -54,10 +55,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         statusLabel = context.resources.getString(R.string.status_bar_status)
     }
 
-    fun updateCanvas(canvas: Canvas) {
-        this.canvas = canvas
-    }
-
     fun drawBackground(area: Rect) {
         canvas?.let {
             it.drawRect(area, paint)
@@ -70,17 +67,17 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
 
     fun drawText(
         text: String,
-        horizontalPos: Float,
-        verticalPos: Float,
+        left: Float,
+        top: Float,
         color: Int,
         textSize: Float
 
-    ): Float = drawText(text, horizontalPos, verticalPos, color, textSize, paint)
+    ): Float = drawText(text, left, top, color, textSize, paint)
 
     fun drawProgressBar(
-        start: Float,
+        left: Float,
         width: Float,
-        verticalPos: Float,
+        top: Float,
         it: CarMetric,
         color: Int
     ) {
@@ -88,19 +85,19 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
 
         val progress = valueScaler.scaleToNewRange(
             it.source.value?.toFloat()?:it.source.command.pid.min.toFloat(),
-            it.source.command.pid.min.toFloat(),  it.source.command.pid.max.toFloat(), start, start + width - MARGIN_END
+            it.source.command.pid.min.toFloat(),  it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )
 
         canvas?.drawRect(
-            start - 6,
-            verticalPos + 4,
+            left - 6,
+            top + 4,
             progress,
-            verticalPos + calculateProgressBarHeight(),
+            top + calculateProgressBarHeight(),
             paint
         )
     }
 
-    fun drawAlertingLegend(metric: CarMetric, horizontalPos: Float, verticalPos: Float) {
+    fun drawAlertingLegend(metric: CarMetric, left: Float, top: Float) {
         if (settings.isAlertLegendEnabled() && (metric.source.command.pid.alertLowerThreshold != null ||
                     metric.source.command.pid.alertUpperThreshold != null)
         ) {
@@ -108,14 +105,14 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             val text = "  alerting "
             drawText(
                 text,
-                horizontalPos,
-                verticalPos,
+                left,
+                top,
                 Color.LTGRAY,
                 12f,
                 alertingLegendPaint
             )
 
-            val hPos = horizontalPos  + getTextWidth(text, alertingLegendPaint) + 2f
+            val hPos = left  + getTextWidth(text, alertingLegendPaint) + 2f
 
             var label = ""
             if (metric.source.command.pid.alertLowerThreshold != null) {
@@ -129,7 +126,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             drawText(
                 label,
                 hPos + 4,
-                verticalPos,
+                top,
                 Color.YELLOW,
                 14f,
                 alertingLegendPaint
@@ -138,20 +135,20 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     }
 
     fun drawStatusBar(area: Rect, fps: Double): Float {
-        val statusVerticalPos = area.top + 6f
+        val top = area.top + 6f
         var text = statusLabel
-        var horizontalAlignment = getMarginLeft(area)
+        var left = getMarginLeft(area)
 
         drawText(
             text,
-            horizontalAlignment,
-            statusVerticalPos,
+            left,
+            top,
             Color.LTGRAY,
             12f,
             statusPaint
         )
 
-        horizontalAlignment += getTextWidth(text, statusPaint) + 2f
+        left += getTextWidth(text, statusPaint) + 2f
 
         val color: Int
         val colorTheme = settings.colorTheme()
@@ -169,54 +166,54 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
 
         drawText(
             text,
-            horizontalAlignment,
-            statusVerticalPos,
+            left,
+            top,
             color,
             18f,
             statusPaint
         )
 
-        horizontalAlignment += getTextWidth(text, statusPaint) + 12F
+        left += getTextWidth(text, statusPaint) + 12F
 
         text = profileLabel
         drawText(
             text,
-            horizontalAlignment,
-            statusVerticalPos,
+            left,
+            top,
             Color.LTGRAY,
             12f,
             statusPaint
         )
 
-        horizontalAlignment += getTextWidth(text, statusPaint) + 4F
+        left += getTextWidth(text, statusPaint) + 4F
         text = Prefs.getString("$PROFILE_NAME_PREFIX.${getSelectedProfile()}", "")!!
 
         drawText(
             text,
-            horizontalAlignment,
-            statusVerticalPos,
+            left,
+            top,
             colorTheme.currentProfileColor,
             18f,
             statusPaint
         )
 
         if (settings.isFpsCounterEnabled()) {
-            horizontalAlignment += getTextWidth(text, statusPaint) + 12F
+            left += getTextWidth(text, statusPaint) + 12F
             text = fpsLabel
             drawText(
                 text,
-                horizontalAlignment,
-                statusVerticalPos,
+                left,
+                top,
                 Color.WHITE,
                 12f,
                 statusPaint
             )
 
-            horizontalAlignment += getTextWidth(text, statusPaint) + 4F
+            left += getTextWidth(text, statusPaint) + 4F
             drawText(
                 fps.toString(),
-                horizontalAlignment,
-                statusVerticalPos,
+                left,
+                top,
                 Color.YELLOW,
                 16f,
                 statusPaint
@@ -228,8 +225,8 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
 
     fun drawValue(
         metric: CarMetric,
-        horizontalPos: Float,
-        verticalPos: Float,
+        left: Float,
+        top: Float,
         textSize: Float
     ) {
         val colorTheme = settings.colorTheme()
@@ -242,18 +239,18 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()
-        canvas?.drawText(text, horizontalPos, verticalPos, valuePaint)
+        canvas?.drawText(text, left, top, valuePaint)
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textAlign = Paint.Align.LEFT
         valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas?.drawText(metric.source.command.pid.units, (horizontalPos + 2), verticalPos, valuePaint)
+        canvas?.drawText(metric.source.command.pid.units, (left + 2), top, valuePaint)
     }
 
     fun drawTitle(
         metric: CarMetric,
-        horizontalPos: Float,
-        verticalPos: Float,
+        left: Float,
+        top: Float,
         textSize: Float,
         maxItemsInColumn: Int
     ) {
@@ -265,8 +262,8 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             val text = metric.source.command.pid.description.replace("\n", " ")
             canvas?.drawText(
                 text,
-                horizontalPos,
-                verticalPos,
+                left,
+                top,
                 paint
             )
         } else {
@@ -274,17 +271,17 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
             if (text.size == 1) {
                 canvas?.drawText(
                     text[0],
-                    horizontalPos,
-                    verticalPos,
+                    left,
+                    top,
                     paint
                 )
             } else {
                 paint.textSize = textSize * 0.8f
-                var vPos = verticalPos - 12
+                var vPos = top - 12
                 text.forEach {
                     canvas?.drawText(
                         it,
-                        horizontalPos,
+                        left,
                         vPos,
                         paint
                     )
@@ -295,27 +292,27 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     }
 
     fun drawDivider(
-        start: Float,
+        left: Float,
         width: Float,
-        verticalPos: Float,
+        top: Float,
         color: Int
     ) {
 
         paint.color = color
         paint.strokeWidth = 2f
         canvas?.drawLine(
-            start - 6,
-            verticalPos + 4,
-            start + width - MARGIN_END,
-            verticalPos + 4,
+            left - 6,
+            top + 4,
+            left + width - MARGIN_END,
+            top + 4,
             paint
         )
     }
 
     private fun drawText(
         text: String,
-        horizontalPos: Float,
-        verticalPos: Float,
+        left: Float,
+        top: Float,
         color: Int,
         textSize: Float,
         paint1: Paint
@@ -323,8 +320,8 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         paint1.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
         paint1.color = color
         paint1.textSize = textSize
-        canvas?.drawText(text, horizontalPos, verticalPos, paint1)
-        return (horizontalPos + getTextWidth(text, paint1) * 1.25f)
+        canvas?.drawText(text, left, top, paint1)
+        return (left + getTextWidth(text, paint1) * 1.25f)
     }
 
     private fun getStatusBarSpacing(area: Rect): Float = area.top - paint.fontMetrics.ascent + 12

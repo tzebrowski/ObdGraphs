@@ -29,7 +29,6 @@ private const val PREF_THEME_VIRTUAL_SCREEN_COLOR= "pref.aa.theme.btn.virtual-sc
 private const val PREF_CURRENT_VIRTUAL_SCREEN = "pref.aa.pids.vs.current"
 private const val PREF_SELECTED_PIDS = "pref.aa.pids.selected"
 private const val PREF_MAX_PIDS_IN_COLUMN = "pref.aa.max_pids_in_column"
-private const val PREF_SCREEN_FONT_SIZE = "pref.aa.screen_font_size"
 private const val PREF_SURFACE_FRAME_RATE = "pref.aa.surface.fps"
 private const val PREF_STATUS_FPS_VISIBLE = "pref.aa.status.fps.enabled"
 
@@ -98,7 +97,14 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     override fun isFpsCounterEnabled(): Boolean  = Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
-    override fun getMaxFontSize(): Int =  Prefs.getS(PREF_SCREEN_FONT_SIZE, DEFAULT_FONT_SIZE).toInt()
+    override fun getMaxFontSize(): Int   = when (getCurrentVirtualScreen()) {
+            VIRTUAL_SCREEN_1 -> Prefs.getS("pref.aa.screen_font_size.1", DEFAULT_FONT_SIZE).toInt()
+            VIRTUAL_SCREEN_2 -> Prefs.getS("pref.aa.screen_font_size.2", DEFAULT_FONT_SIZE).toInt()
+            VIRTUAL_SCREEN_3 -> Prefs.getS("pref.aa.screen_font_size.3", DEFAULT_FONT_SIZE).toInt()
+            VIRTUAL_SCREEN_4 -> Prefs.getS("pref.aa.screen_font_size.4", DEFAULT_FONT_SIZE).toInt()
+            else -> 32
+        }
+
 
     override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
 

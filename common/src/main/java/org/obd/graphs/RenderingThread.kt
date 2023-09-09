@@ -31,7 +31,7 @@ class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> 
     }
 
     fun isRunning(): Boolean {
-        return tasks != null && !tasks!!.isDone
+        return tasks != null && running
     }
 
     fun start() {
