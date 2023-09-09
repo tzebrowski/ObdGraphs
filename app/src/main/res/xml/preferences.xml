@@ -861,13 +861,13 @@
 
                     <ListPreference
                         app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_1_10"
-                        android:entryValues="@array/pref.numbers_1_10"
+                        android:entries="@array/pref.numbers_1_25"
+                        android:entryValues="@array/pref.numbers_1_25"
                         android:defaultValue="5"
-                        android:dialogTitle="@string/pref.aa.number_of_items_in_column"
+                        android:dialogTitle="@string/pref.screen.fps"
                         android:inputType="number"
-                        android:key="pref.aa.max_pids_in_column"
-                        android:title="@string/pref.aa.number_of_items_in_column"
+                        android:key="pref.aa.surface.fps"
+                        android:title="@string/pref.screen.fps"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
 
