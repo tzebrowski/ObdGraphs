@@ -4,60 +4,56 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.util.Log
+import java.util.*
 import java.util.concurrent.*
 
 
 private const val LOG_KEY = "RenderingThread"
 private const val MSG_RENDER_FRAME = 1
 
-class RenderingThread(renderAction: () -> Unit,private val perfFrameRate: () -> Int) {
+class RenderingThread(private val id: String = UUID.randomUUID().toString(), renderAction: () -> Unit, private val perfFrameRate: () -> Int) {
 
-    private val singleTaskPool: ExecutorService = ThreadPoolExecutor(
-        1, 1, 0L, TimeUnit.MILLISECONDS,
-        LinkedBlockingQueue(1), ThreadPoolExecutor.DiscardPolicy()
-    )
+    private val singleTaskPool: ExecutorService = ThreadPoolExecutor(1, 1, 1L, TimeUnit.SECONDS, SynchronousQueue())
 
     private val handler = Handler(Looper.getMainLooper(), HandlerCallback(renderAction))
     private var tasks: Future<*>? = null
-    private var running = false
     internal class HandlerCallback(private val renderAction: () -> Unit) : Handler.Callback {
         override fun handleMessage(msg: Message): Boolean {
             if (msg.what == MSG_RENDER_FRAME) {
                 renderAction()
                 return true
             }
-            return true
+            return false
         }
     }
 
-    fun isRunning(): Boolean {
-        return tasks != null && !tasks!!.isDone
-    }
+    fun isRunning():Boolean = tasks != null && !tasks!!.isDone
 
     fun start() {
-        Log.d(LOG_KEY, "Submitting rendering task")
-        tasks = singleTaskPool.submit(getRenderingTask())
-        running = true
-        Log.d(LOG_KEY, "Rendering task is submitted")
+        try {
+            Log.i(LOG_KEY, "[${id}] Submitting rendering task")
+            tasks = singleTaskPool.submit(getRenderingTask())
+            Log.i(LOG_KEY, "[${id}] Rendering task is submitted")
+        }catch (e: RejectedExecutionException){
+            Log.w(LOG_KEY, "[${id}] Task was rejected. Something is already running.")
+        }
     }
 
     fun stop() {
-        Log.e(LOG_KEY, "Shutdown rendering task")
+        Log.i(LOG_KEY, "[${id}] Shutdown rendering task")
         val res = tasks?.cancel(true)
-        running = false
         handler.removeMessages(MSG_RENDER_FRAME)
-        Log.e(LOG_KEY, "Rendering task is now shutdown, result=$res")
+        Log.i(LOG_KEY, "[${id}] Rendering task is now shutdown, result=$res")
     }
 
     private fun getRenderingTask(): Runnable = Runnable {
         val fps =  perfFrameRate()
-        Log.d(LOG_KEY, "Expected surface FPS $fps")
+        Log.d(LOG_KEY, "[${id}] Expected surface FPS $fps")
         val targetDelay = 1000 / fps
         while (!Thread.currentThread().isInterrupted) {
             var ts = System.currentTimeMillis()
             handler.sendEmptyMessage(MSG_RENDER_FRAME)
             ts = System.currentTimeMillis() - ts
-
             if (targetDelay > ts && (targetDelay - ts) > 0) {
                 Thread.sleep(targetDelay - ts)
             }
