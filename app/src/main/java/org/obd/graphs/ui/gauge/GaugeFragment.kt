@@ -34,6 +34,7 @@ class GaugeFragment : RefreshableFragment() {
 
     private val metricsCollector = CarMetricsCollector()
     private val renderingThread: RenderingThread = RenderingThread(
+        id = "GaugeFragmentRenderingThread",
         renderAction = {
             refreshRecyclerView(metricsCollector, R.id.recycler_view)
         },

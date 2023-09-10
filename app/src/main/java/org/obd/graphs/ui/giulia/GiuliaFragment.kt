@@ -18,7 +18,6 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
-import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenRenderer
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -34,6 +33,7 @@ open class GiuliaFragment : Fragment() {
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
+        id = "GiuliaFragmentRenderingThread",
         renderAction = {
             surfaceController.renderFrame()
         },

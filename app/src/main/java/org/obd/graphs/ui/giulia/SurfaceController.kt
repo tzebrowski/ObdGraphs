@@ -21,14 +21,19 @@ class SurfaceController(private val renderer: ScreenRenderer) : SurfaceHolder.Ca
         surfaceHolder = holder
         surfaceHolder.addCallback(this)
         visibleArea = Rect()
-        visibleArea?.set(holder.surfaceFrame.left+10, holder.surfaceFrame.top + 10, holder.surfaceFrame.right+10, holder.surfaceFrame.bottom)
+        visibleArea?.set(
+            holder.surfaceFrame.left + 10,
+            holder.surfaceFrame.top + 10,
+            holder.surfaceFrame.right + 10,
+            holder.surfaceFrame.bottom
+        )
         surface = surfaceHolder.surface
         renderFrame()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         surface = surfaceHolder.surface
-        visibleArea?.set(holder.surfaceFrame.left+10, holder.surfaceFrame.top + 10, width, height)
+        visibleArea?.set(holder.surfaceFrame.left + 10, holder.surfaceFrame.top + 10, width, height)
         renderFrame()
     }
 

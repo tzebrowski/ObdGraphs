@@ -44,7 +44,10 @@ internal class CarScreen(
     DefaultLifecycleObserver {
 
     private val renderingThread: RenderingThread = RenderingThread(
-        renderAction = { surfaceController.renderFrame() },
+        id = "AARenderingThread",
+        renderAction = {
+            surfaceController.renderFrame()
+        },
         perfFrameRate = {
             settings.getSurfaceFrameRate()
         }
@@ -77,10 +80,7 @@ internal class CarScreen(
                     fps.stop()
                 }
                 SURFACE_AREA_CHANGED_EVENT -> {
-                    if (!renderingThread.isRunning() && dataLogger.isRunning()) {
-                        renderingThread.start()
-                        fps.start()
-                    }
+                    submitRenderingTask()
                 }
 
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
@@ -168,6 +168,8 @@ internal class CarScreen(
             }
         }
     }
+
+
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
@@ -305,6 +307,13 @@ internal class CarScreen(
         dataLogger.stop()
     }
 
+    private fun submitRenderingTask() {
+        if (!renderingThread.isRunning() && dataLogger.status() == WorkflowStatus.Connected) {
+            renderingThread.start()
+            fps.start()
+        }
+    }
+
     init {
 
         lifecycle.addObserver(this)
@@ -312,12 +321,7 @@ internal class CarScreen(
             metricsCollector.append(it)
         }
 
-        if (dataLogger.isRunning()) {
-            Log.i(LOG_KEY, "Data logger is running, connecting....")
-            renderingThread.start()
-        } else {
-            Log.i(LOG_KEY, "Data logger is not running.")
-        }
+        submitRenderingTask()
 
         navigationManager().setNavigationManagerCallback(
             object : NavigationManagerCallback {
