@@ -26,6 +26,7 @@ internal class SimpleScreenRenderer(
     private val metricsCollector: CarMetricsCollector,
     private val fps: Fps
 ) : ScreenRenderer {
+
     private val valueScaler = ValueScaler()
     private val drawingManager = DrawingManager(context, settings)
 
@@ -54,7 +55,7 @@ internal class SimpleScreenRenderer(
             val topCpy = top
             var valueTop = initialValueTop(area)
 
-            metrics.chunked(max(metrics.size / settings.getMaxColumns(),1)).forEach { chunk ->
+            splitIntoChunks(metrics).forEach { chunk ->
                 chunk.forEach lit@{ metric ->
                     top = drawMetric(
                         area = area,
@@ -75,6 +76,16 @@ internal class SimpleScreenRenderer(
                 top = calculateTop(textSizeBase, top, topCpy)
             }
         }
+    }
+
+    private inline fun splitIntoChunks(metrics: List<CarMetric>): MutableList<List<CarMetric>> {
+        val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
+        if (lists.size == 3) {
+            lists[0] = lists[0]
+            lists[1] = lists[1] + lists[2]
+            lists.removeAt(2)
+        }
+        return lists
     }
 
     private inline fun drawMetric(
@@ -244,5 +255,4 @@ internal class SimpleScreenRenderer(
             1 -> area.width()
             else -> area.width() / 2
         }
-
 }
