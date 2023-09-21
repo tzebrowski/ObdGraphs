@@ -56,4 +56,8 @@ Application offers few configurable screens which visualize vehicle telemetry da
 
 ## Road map
 * Performance optimization
-* Support for PIDs creation through application  
+* Support for PIDs creation through application
+
+## Instructions
+
+* [Adding new PIDs to query and displaying on AA virtual screen](./doc/instruction/Instruction.md)
