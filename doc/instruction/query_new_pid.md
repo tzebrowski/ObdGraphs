@@ -1,36 +1,26 @@
 #  Adding new PIDs to query and displaying on AA virtual screen 
 
 ## Step.1: Open `Manage OBD2 PIDs settings` screen 
-
-![Alt text](./Step_1.png?raw=true "Step 1")
+<img src="./Step_1.png" alt="image" width="40%" height="auto">
 
 ## Step.2: Select either `High priority or Low priority OBD2 PIDs/Sensors` item
-
-![Alt text](./Step_2.png?raw=true "Step 2")
-
+<img src="./Step_2.png" alt="image" width="40%" height="auto">
 
 ## Step.3: Select interesting PIDs and hit `Save` button
-
-![Alt text](./Step_3.png?raw=true "Step 3")
-
+<img src="./Step_3.png" alt="image" width="40%" height="auto">
 
 ## Step.4: Open `Android Auto` screen
-
-![Alt text](./Step_4.png?raw=true "Step 4")
-
+<img src="./Step_4.png" alt="image" width="40%" height="auto">
 
 ## Step.5: Select `Edit displayed OBD2 PIDs ` screen
-
-![Alt text](./Step_5.png?raw=true "Step 5")
+<img src="./Step_5.png" alt="image" width="40%" height="auto">
 
 
 ## Step.6: Select Virtual screen you would like to alter
-
-![Alt text](./Step_6.png?raw=true "Step 6")
+<img src="./Step_6.png" alt="image" width="40%" height="auto">
 
 
 ## Step.7: Select interesting PIDs you would like to see on AA virtual screen and hit `Save` button
-
-![Alt text](./Step_7.png?raw=true "Step 7")
+<img src="./Step_7.png" alt="image" width="40%" height="auto">
 
 

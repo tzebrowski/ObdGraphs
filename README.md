@@ -60,4 +60,4 @@ Application offers few configurable screens which visualize vehicle telemetry da
 
 ## Instructions
 
-* [Adding new PIDs to query and displaying on AA virtual screen](./doc/instruction/Instruction.md)
+* [Adding new PIDs to query and displaying on AA virtual screen](./doc/instruction/query_new_pid.md)
