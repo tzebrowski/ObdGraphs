@@ -41,11 +41,15 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     private val statusPaint = Paint()
     private val valuePaint = Paint()
     private val backgroundPaint = Paint()
+    private val titlePaint = Paint()
 
     var canvas: Canvas? = null
 
     private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
+
+    private val regularFont: Typeface = Typeface.createFromAsset(context.assets, "fonts/Roboto-Regular.ttf")
+    private val italicFont = Typeface.createFromAsset(context.assets, "fonts/Roboto-LightItalic.ttf")
 
     private val statusLabel: String
     private val profileLabel: String
@@ -56,10 +60,18 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         valuePaint.color = Color.WHITE
         valuePaint.isAntiAlias = true
         valuePaint.style = Paint.Style.FILL
+        valuePaint.typeface = regularFont
+
+
+        titlePaint.isAntiAlias = true
+        titlePaint.style = Paint.Style.FILL
+        titlePaint.typeface = italicFont
+        titlePaint.color = Color.LTGRAY
 
         statusPaint.color = Color.WHITE
         statusPaint.isAntiAlias = true
         statusPaint.style = Paint.Style.FILL
+        statusPaint.typeface = regularFont
 
         paint.color = Color.BLACK
         paint.isAntiAlias = true
@@ -272,9 +284,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         textSize: Float
     ) {
 
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-        paint.color = Color.LTGRAY
-        paint.textSize = textSize
+        titlePaint.textSize = textSize
         if (settings.isBreakLabelTextEnabled()) {
             val text = metric.source.command.pid.description.split("\n")
             if (text.size == 1) {
@@ -282,7 +292,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
                     text[0],
                     left,
                     top,
-                    paint
+                    titlePaint
                 )
             } else {
                 paint.textSize = textSize * 0.8f
@@ -292,9 +302,9 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
                         it,
                         left,
                         vPos,
-                        paint
+                        titlePaint
                     )
-                    vPos += paint.textSize
+                    vPos += titlePaint.textSize
                 }
             }
         } else {
@@ -303,7 +313,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
                 text,
                 left,
                 top,
-                paint
+                titlePaint
             )
 
         }
@@ -335,7 +345,6 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         textSize: Float,
         paint1: Paint
     ): Float {
-        paint1.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
         paint1.color = color
         paint1.textSize = textSize
         canvas?.drawText(text, left, top, paint1)
