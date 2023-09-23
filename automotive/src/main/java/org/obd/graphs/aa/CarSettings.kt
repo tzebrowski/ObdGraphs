@@ -108,6 +108,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
     override fun getFontSize(): Int   = Prefs.getS("pref.aa.screen_font_size.${getCurrentVirtualScreenId()}", DEFAULT_FONT_SIZE).toInt()
 
+    override fun isBreakLabelTextEnabled(): Boolean  =  Prefs.getBoolean("pref.aa.break_label.${getCurrentVirtualScreenId()}", true)
 
     override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
 

@@ -106,6 +106,12 @@
     <string name="pref.aa.theme.inalert_value_color">In alert value color</string>
     <string name="pref.aa.theme.virtual_screen_color">Virtual screen buttons color</string>
 
+    <string name="pref.aa.split_pids_labels">Split PIDs label</string>
+    <string name="pref.aa.split_pids_labels.1">Split PIDs label into 2 lines for screen 1</string>
+    <string name="pref.aa.split_pids_labels.2">Split PIDs label for screen 2</string>
+    <string name="pref.aa.split_pids_labels.3">Split PIDs label for screen 3</string>
+    <string name="pref.aa.split_pids_labels.4">Split PIDs label for screen 4</string>
+
 
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
     <string name="pref.aa.number_of_items_in_column">Number of columns on the screen</string>
@@ -119,6 +125,8 @@
     <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>
     <string name="pref.aa.font_size.category">Font size</string>
     <string name="pref.aa.number_of_items_in_column.category">Number of items in the column</string>
+    <string name="pref.aa.labels.category">PIDs labels settings</string>
+
     <string name="pref.aa.font_size.1">Font size of the displayed OBD2 PIDs/Sensors for screen 1</string>
     <string name="pref.aa.font_size.2">Font size of the displayed OBD2 PIDs/Sensors for screen 2</string>
     <string name="pref.aa.font_size.3">Font size of the displayed OBD2 PIDs/Sensors for screen 3</string>

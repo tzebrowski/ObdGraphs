@@ -123,8 +123,7 @@ internal class SimpleScreenRenderer(
 
         drawingManager.drawTitle(
             metric, left1, top1,
-            textSizeBase,
-            settings.getMaxColumns()
+            textSizeBase
         )
 
         drawingManager.drawValue(

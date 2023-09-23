@@ -269,22 +269,13 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         metric: CarMetric,
         left: Float,
         top: Float,
-        textSize: Float,
-        maxItemsInColumn: Int
+        textSize: Float
     ) {
 
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
         paint.color = Color.LTGRAY
         paint.textSize = textSize
-        if (maxItemsInColumn == 1) {
-            val text = metric.source.command.pid.description.replace("\n", " ")
-            canvas?.drawText(
-                text,
-                left,
-                top,
-                paint
-            )
-        } else {
+        if (settings.isBreakLabelTextEnabled()) {
             val text = metric.source.command.pid.description.split("\n")
             if (text.size == 1) {
                 canvas?.drawText(
@@ -306,6 +297,15 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
                     vPos += paint.textSize
                 }
             }
+        } else {
+            val text = metric.source.command.pid.description.replace("\n", " ")
+            canvas?.drawText(
+                text,
+                left,
+                top,
+                paint
+            )
+
         }
     }
 

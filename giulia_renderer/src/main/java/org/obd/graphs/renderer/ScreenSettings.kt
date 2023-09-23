@@ -44,6 +44,7 @@ interface ScreenSettings {
 
     fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode){}
 
+    fun isBreakLabelTextEnabled (): Boolean = true
 
     fun isBackgroundDrawingEnabled (): Boolean = true
 
