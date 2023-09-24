@@ -88,11 +88,11 @@ internal class CarScreen(
                     carContext.finishCarApp()
                 }
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
-                    Log.d(LOG_KEY, "Main activity has been destroyed.")
+                    Log.v(LOG_KEY, "Main activity has been destroyed.")
                     invalidate()
                 }
                 MAIN_ACTIVITY_EVENT_PAUSE -> {
-                    Log.d(LOG_KEY, "Main activity is going to the background.")
+                    Log.v(LOG_KEY, "Main activity is going to the background.")
                     invalidate()
                 }
                 SURFACE_DESTROYED_EVENT -> {
@@ -100,6 +100,8 @@ internal class CarScreen(
                     fps.stop()
                 }
                 SURFACE_AREA_CHANGED_EVENT -> {
+                    Log.v(LOG_KEY,"Surface area changed")
+                    invalidate()
                     submitRenderingTask()
                 }
 
@@ -284,6 +286,7 @@ internal class CarScreen(
         }
 
         if (settings.isVirtualScreenEnabled(3)) {
+
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen3()
