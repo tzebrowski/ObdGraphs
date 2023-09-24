@@ -128,7 +128,7 @@
     <string name="pref.aa.virtual_screens.number_of_items_in_column.6">Number of columns for screen 6</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.7">Number ofs columns for screen 7</string>
 
-    <string name="pref.aa.virtual_screens.category">Individual virtual screens preferences</string>
+    <string name="pref.aa.virtual_screens.category">Virtual screens individual preferences</string>
 
     <string name="pref.aa.virtual_screens.visibility.category">Visibility</string>
     <string name="pref.aa.virtual_screens.visibility.category.summary">Choose how many virtual screens should be rendered</string>

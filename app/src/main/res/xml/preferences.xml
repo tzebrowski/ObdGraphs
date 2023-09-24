@@ -798,8 +798,29 @@
 
                 <PreferenceCategory
                     app:singleLineTitle="false"
-                    android:title="@string/pref.aa_category"
-                    android:summary="@string/pref.aa_category_summary">
+                    android:title="@string/pref.aa.general_category">
+
+                    <CheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="false"
+                        android:key="pref.aa.pids.history.enabled"
+                        android:title="@string/pref.aa.display_pid_history" />
+
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.numbers_1_25"
+                        android:entryValues="@array/pref.numbers_1_25"
+                        android:defaultValue="5"
+                        android:dialogTitle="@string/pref.screen.fps"
+                        android:inputType="number"
+                        android:key="pref.aa.surface.fps"
+                        android:title="@string/pref.screen.fps"
+                        app:useSimpleSummaryProvider="true" />
+                </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.aa.virtual_screens.category"
+                    app:singleLineTitle="false">
+
 
                     <PreferenceScreen
                         app:singleLineTitle="false"
@@ -846,32 +867,6 @@
                                 android:title="@string/pref.aa.profile_4.displayed_parameter_ids" />
                         </PreferenceCategory>
                     </PreferenceScreen>
-                </PreferenceCategory>
-
-                <PreferenceCategory
-                    app:singleLineTitle="false"
-                    android:title="@string/pref.aa.general_category">
-
-                    <CheckBoxPreference
-                        app:singleLineTitle="false"
-                        android:defaultValue="false"
-                        android:key="pref.aa.pids.history.enabled"
-                        android:title="@string/pref.aa.display_pid_history" />
-
-                    <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_1_25"
-                        android:entryValues="@array/pref.numbers_1_25"
-                        android:defaultValue="5"
-                        android:dialogTitle="@string/pref.screen.fps"
-                        android:inputType="number"
-                        android:key="pref.aa.surface.fps"
-                        android:title="@string/pref.screen.fps"
-                        app:useSimpleSummaryProvider="true" />
-                </PreferenceCategory>
-
-                <PreferenceCategory android:title="@string/pref.aa.virtual_screens.category"
-                    app:singleLineTitle="false">
 
                     <PreferenceScreen
                         android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
