@@ -16,14 +16,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs
+package org.obd.graphs.preferences.aa
 
-const val TRIP_LOAD_EVENT = "trip.load.event"
-const val SCREEN_LOCK_PROGRESS_EVENT = "screen.block.event"
-const val SCREEN_UNLOCK_PROGRESS_EVENT = "screen.unlock.event"
-const val AA_EDIT_PREF_SCREEN = "pref.aa.edit"
+import android.content.Context
+import android.util.AttributeSet
+import androidx.preference.CheckBoxPreference
+import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT
+import org.obd.graphs.sendBroadcastEvent
 
-const val MAIN_ACTIVITY_EVENT_DESTROYED = "main_activity.on_destroy"
-const val MAIN_ACTIVITY_EVENT_PAUSE = "main_activity.on_pause"
 
-const val VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT = "pref.aa.virtual_screens.visibility.changed"
+class VirtualScreenEnable(
+    context: Context?,
+    attrs: AttributeSet?
+) :
+    CheckBoxPreference(context, attrs) {
+    init {
+        onPreferenceChangeListener = OnPreferenceChangeListener { _, _ ->
+            sendBroadcastEvent(VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
+            true
+        }
+    }
+}

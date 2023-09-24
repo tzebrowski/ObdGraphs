@@ -59,7 +59,6 @@ const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
-
     override fun colorTheme(): ColorTheme {
         return ColorTheme(
             progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
@@ -70,9 +69,9 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         )
     }
 
-    override fun dynamicSelectorChangedEvent(dynamicSelectorMode: DynamicSelectorMode) {
+    override fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode) {
         if (isDynamicSelectorThemeEnabled()) {
-            when (dynamicSelectorMode) {
+            when (mode) {
                 DynamicSelectorMode.NORMAL -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_NORMAL)
                 DynamicSelectorMode.SPORT -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
                 DynamicSelectorMode.ECO -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_ECO)
@@ -116,5 +115,9 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         Prefs.updateString(PREF_CURRENT_VIRTUAL_SCREEN, key)
         Prefs.updateStringSet(PREF_SELECTED_PIDS, Prefs.getStringSet(key).toList())
     }
+
+    fun isVirtualScreenEnabled(id: Int): Boolean =  Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
+
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
+
 }

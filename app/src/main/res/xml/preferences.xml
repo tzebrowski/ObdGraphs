@@ -593,19 +593,20 @@
                     </PreferenceScreen>
                 </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/pref.aa.number_of_items_in_column.category" app:singleLineTitle="false">
-                    <PreferenceScreen  android:title="@string/pref.aa.number_of_items_in_column" app:singleLineTitle="false"
+                <PreferenceCategory android:title="@string/pref.giulia.virtual_screens.number_of_items_in_column.category"
+                    app:singleLineTitle="false">
+                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category" app:singleLineTitle="false"
                         android:key="pref.aa.number_of_items_in_column.category">
-                        <PreferenceCategory android:title="@string/pref.aa.number_of_items_in_column" app:singleLineTitle="false">
+                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category" app:singleLineTitle="false">
                             <ListPreference
                                 app:singleLineTitle="false"
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.1"
-                                android:title="@string/pref.aa.number_of_items_in_column.1"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
@@ -613,10 +614,10 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.2"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.2"
-                                android:title="@string/pref.aa.number_of_items_in_column.2"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 app:useSimpleSummaryProvider="true" />
 
 
@@ -625,10 +626,10 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.3"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.3"
-                                android:title="@string/pref.aa.number_of_items_in_column.3"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 app:useSimpleSummaryProvider="true" />
 
 
@@ -637,10 +638,10 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.4"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.4"
-                                android:title="@string/pref.aa.number_of_items_in_column.4"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
@@ -648,10 +649,10 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.5"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.5"
-                                android:title="@string/pref.aa.number_of_items_in_column.5"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
@@ -659,10 +660,10 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.6"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.6"
-                                android:title="@string/pref.aa.number_of_items_in_column.6"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
@@ -670,20 +671,20 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.7"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
                                 android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.7"
-                                android:title="@string/pref.aa.number_of_items_in_column.7"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
                                 app:useSimpleSummaryProvider="true" />
 
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/pref.aa.font_size.category" app:singleLineTitle="false">
-                    <PreferenceScreen  android:title="@string/pref.aa.font_size" app:singleLineTitle="false"
+                <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category.summary" app:singleLineTitle="false">
+                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false"
                         android:key="pref.giulia.screen.font_size.category">
-                        <PreferenceCategory android:title="@string/pref.aa.font_size" app:singleLineTitle="false">
+                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false">
                             <ListPreference
                                 app:singleLineTitle="false"
                                 android:entries="@array/pref.numbers_28_34"
@@ -869,22 +870,27 @@
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/pref.aa.number_of_items_in_column"
+                <PreferenceCategory android:title="@string/pref.aa.virtual_screens.category"
                     app:singleLineTitle="false">
 
-                    <PreferenceScreen  android:title="@string/pref.aa.number_of_items_in_column"
+                    <PreferenceScreen
+                        android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
+                        android:summary="@string/pref.aa.virtual_screens.number_of_items_in_column.category.summary"
                         app:singleLineTitle="false"
                         android:key="pref.aa.screen.columns.category">
 
-                        <PreferenceCategory android:title="@string/pref.aa.number_of_items_in_column" app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
+
+                            app:singleLineTitle="false">
                             <ListPreference
                                 app:singleLineTitle="false"
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 android:key="pref.aa.max_pids_in_column.1"
-                                android:title="@string/pref.aa.number_of_items_in_column.1"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
@@ -892,9 +898,9 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.2"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 android:key="pref.aa.max_pids_in_column.2"
-                                android:title="@string/pref.aa.number_of_items_in_column.2"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
@@ -902,9 +908,9 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.3"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 android:key="pref.aa.max_pids_in_column.3"
-                                android:title="@string/pref.aa.number_of_items_in_column.3"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 app:useSimpleSummaryProvider="true" />
 
 
@@ -913,60 +919,58 @@
                                 android:entries="@array/pref.numbers_1_2"
                                 android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.number_of_items_in_column.4"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 android:key="pref.aa.max_pids_in_column.4"
-                                android:title="@string/pref.aa.number_of_items_in_column.4"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
-                </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/pref.aa.labels.category"
-                    app:singleLineTitle="false">
-
-                    <PreferenceScreen  android:title="@string/pref.aa.split_pids_labels"
+                    <PreferenceScreen
+                        android:title="@string/pref.aa.virtual_screens.split_pids_labels.category"
+                        android:summary="@string/pref.aa.virtual_screens.split_pids_labels.category.summary"
                         app:singleLineTitle="false"
-                        android:key="pref.aa.screen.break_label.category">
+                        android:key="pref.aa.virtual_screens.split_pids_labels.category">
 
-                        <PreferenceCategory android:title="@string/pref.aa.split_pids_labels" app:singleLineTitle="false">
+                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.split_pids_labels.category" app:singleLineTitle="false">
 
                             <CheckBoxPreference
                                 app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.1"
-                                android:summary="@string/pref.aa.split_pids_labels.1"
-                                android:title="@string/pref.aa.split_pids_labels.1" />
+                                android:summary="@string/pref.aa.virtual_screens.split_pids_labels.1"
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.1" />
 
                             <CheckBoxPreference
                                 app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.2"
-                                android:summary="@string/pref.aa.split_pids_labels.2"
-                                android:title="@string/pref.aa.split_pids_labels.2" />
+                                android:summary="@string/pref.aa.virtual_screens.split_pids_labels.2"
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.2" />
 
 
                             <CheckBoxPreference
                                 app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.3"
-                                android:summary="@string/pref.aa.split_pids_labels.3"
-                                android:title="@string/pref.aa.split_pids_labels.3" />
+                                android:summary="@string/pref.aa.virtual_screens.split_pids_labels.3"
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.3" />
 
 
                             <CheckBoxPreference
                                 app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.4"
-                                android:summary="@string/pref.aa.split_pids_labels.4"
-                                android:title="@string/pref.aa.split_pids_labels.4" />
+                                android:summary="@string/pref.aa.virtual_screens.split_pids_labels.4"
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.4" />
                         </PreferenceCategory>
                     </PreferenceScreen>
-                </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/pref.aa.font_size.category" app:singleLineTitle="false">
-                    <PreferenceScreen  android:title="@string/pref.aa.font_size" app:singleLineTitle="false"
+                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        android:summary="@string/pref.aa.virtual_screens.font_size.category.summary"
+                        app:singleLineTitle="false"
                         android:key="pref.aa.screen.font_size.category">
-                        <PreferenceCategory android:title="@string/pref.aa.font_size" app:singleLineTitle="false">
+                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false">
                             <ListPreference
                                 app:singleLineTitle="false"
                                 android:entries="@array/pref.numbers_28_34"
@@ -1010,7 +1014,46 @@
 
                         </PreferenceCategory>
                     </PreferenceScreen>
+
+                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.visibility.category"
+                        android:summary="@string/pref.aa.virtual_screens.visibility.category.summary"
+                        app:singleLineTitle="false"
+                        android:key="pref.aa.virtual_screens_category_visibility">
+
+                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.visibility.category"
+                            app:singleLineTitle="false">
+
+                            <org.obd.graphs.preferences.aa.VirtualScreenEnable
+                                app:singleLineTitle="false"
+                                android:defaultValue="true"
+                                android:key="pref.aa.virtual_screens.enabled.1"
+                                android:summary="@string/pref.aa.virtual_screens.visibility.1"
+                                android:title="@string/pref.aa.virtual_screens.visibility.1" />
+
+                            <org.obd.graphs.preferences.aa.VirtualScreenEnable
+                                app:singleLineTitle="false"
+                                android:defaultValue="true"
+                                android:key="pref.aa.virtual_screens.enabled.2"
+                                android:summary="@string/pref.aa.virtual_screens.visibility.2"
+                                android:title="@string/pref.aa.virtual_screens.visibility.2" />
+
+                            <org.obd.graphs.preferences.aa.VirtualScreenEnable
+                                app:singleLineTitle="false"
+                                android:defaultValue="true"
+                                android:key="pref.aa.virtual_screens.enabled.3"
+                                android:summary="@string/pref.aa.virtual_screens.visibility.3"
+                                android:title="@string/pref.aa.virtual_screens.visibility.3" />
+
+                            <org.obd.graphs.preferences.aa.VirtualScreenEnable
+                                app:singleLineTitle="false"
+                                android:defaultValue="true"
+                                android:key="pref.aa.virtual_screens.enabled.4"
+                                android:summary="@string/pref.aa.virtual_screens.visibility.4"
+                                android:title="@string/pref.aa.virtual_screens.visibility.4" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
                 </PreferenceCategory>
+
 
                 <PreferenceCategory
                     app:singleLineTitle="false"

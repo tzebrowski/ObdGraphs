@@ -38,7 +38,6 @@ import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.ScreenSettings
 
 
 private const val LOG_KEY = "CarScreen"
@@ -54,7 +53,7 @@ const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 internal class CarScreen(
     carContext: CarContext,
     private val surfaceController: SurfaceController,
-    private val settings: ScreenSettings,
+    private val settings: CarSettings,
     private val metricsCollector: CarMetricsCollector,
     private val fps: Fps
 ) :
@@ -79,6 +78,8 @@ internal class CarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
+
+                VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
 
                 SURFACE_BROKEN_EVENT -> {
                     Log.d(LOG_KEY, "Received event about ")
@@ -189,7 +190,6 @@ internal class CarScreen(
     }
 
 
-
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
@@ -216,6 +216,8 @@ internal class CarScreen(
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
+
+            addAction(VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
         })
     }
 
@@ -228,15 +230,17 @@ internal class CarScreen(
         return try {
             return if (dataLogger.status() == WorkflowStatus.Connecting) {
                 NavigationTemplate.Builder()
-                    .setMapActionStrip(profilesActionStrip())
                     .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
                     .setActionStrip(actions())
                     .build()
             } else {
-                NavigationTemplate.Builder()
-                    .setMapActionStrip(profilesActionStrip())
-                    .setActionStrip(actions())
-                    .build()
+                var template = NavigationTemplate.Builder()
+
+                profilesActionStrip()?.let {
+                    template = template.setMapActionStrip(it)
+                }
+
+                template.setActionStrip(actions()).build()
             }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)
@@ -261,45 +265,65 @@ internal class CarScreen(
                 func()
             }.build()
 
-    private fun profilesActionStrip(): ActionStrip = ActionStrip.Builder()
-        .addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-            settings.applyVirtualScreen1()
-            metricsCollector.applyFilter(settings.getSelectedPIDs())
-            surfaceController.renderFrame()
-        })
-        .addAction(createAction(R.drawable.action_virtual_screen_2, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-            settings.applyVirtualScreen2()
-            metricsCollector.applyFilter(settings.getSelectedPIDs())
-            surfaceController.renderFrame()
-        })
+    private fun profilesActionStrip(): ActionStrip? {
 
-        .addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-            settings.applyVirtualScreen3()
-            metricsCollector.applyFilter(settings.getSelectedPIDs())
-            surfaceController.renderFrame()
-        })
-        .addAction(createAction(R.drawable.action_virtual_screen_4, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-            settings.applyVirtualScreen4()
-            metricsCollector.applyFilter(settings.getSelectedPIDs())
-            surfaceController.renderFrame()
-        }).build()
+        var added  = false
+        var builder = ActionStrip.Builder()
 
+        if (settings.isVirtualScreenEnabled(1)) {
+            added = true
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
+                settings.applyVirtualScreen1()
+                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                surfaceController.renderFrame()
+            })
+        }
+
+        if (settings.isVirtualScreenEnabled(2)) {
+            added = true
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_2, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
+                settings.applyVirtualScreen2()
+                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                surfaceController.renderFrame()
+            })
+        }
+
+        if (settings.isVirtualScreenEnabled(3)) {
+            added = true
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
+                settings.applyVirtualScreen3()
+                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                surfaceController.renderFrame()
+            })
+        }
+
+        if (settings.isVirtualScreenEnabled(4)) {
+            added = true
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_4, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
+                settings.applyVirtualScreen4()
+                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                surfaceController.renderFrame()
+            })
+        }
+        return if (added) {
+            builder.build()
+        } else {
+            null
+        }
+    }
 
     private fun actions(): ActionStrip {
         var builder = ActionStrip.Builder()
 
-        if (!dataLogger.isRunning()) {
-            builder = builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
+        builder = if (dataLogger.isRunning()) {
+            builder.addAction(createAction(R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
+                stopDataLogging()
+                toast.show(carContext, R.string.toast_connection_disconnect)
+            })
+        } else {
+            builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
                 dataLogger.start()
             })
-        }
-
-        if (dataLogger.isRunning()) {
-            builder =
-                builder.addAction(createAction(R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
-                    toast.show(carContext, R.string.toast_connection_disconnect)
-                    stopDataLogging()
-                })
         }
 
         builder = builder.addAction(createAction(R.drawable.config, CarColor.BLUE) {
@@ -321,9 +345,9 @@ internal class CarScreen(
 
     private fun stopDataLogging() {
         Log.i(LOG_KEY, "Stopping data logging process")
+        dataLogger.stop()
         fps.stop()
         renderingThread.stop()
-        dataLogger.stop()
     }
 
     private fun submitRenderingTask() {

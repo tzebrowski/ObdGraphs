@@ -106,27 +106,40 @@
     <string name="pref.aa.theme.inalert_value_color">In alert value color</string>
     <string name="pref.aa.theme.virtual_screen_color">Virtual screen buttons color</string>
 
-    <string name="pref.aa.split_pids_labels">Split PIDs label</string>
-    <string name="pref.aa.split_pids_labels.1">Split PIDs label into 2 lines for screen 1</string>
-    <string name="pref.aa.split_pids_labels.2">Split PIDs label for screen 2</string>
-    <string name="pref.aa.split_pids_labels.3">Split PIDs label for screen 3</string>
-    <string name="pref.aa.split_pids_labels.4">Split PIDs label for screen 4</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.category">Split PIDs label</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.category.summary">Choose splitting PIDs label into 2 lines for each virtual screen individually</string>
+
+    <string name="pref.aa.virtual_screens.split_pids_labels.1">Split PIDs label into 2 lines for screen 1</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.2">Split PIDs label into 2 lines for screen 2</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.3">Split PIDs label into 2 lines for screen 3</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.4">Split PIDs label into 2 lines for screen 4</string>
 
 
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
-    <string name="pref.aa.number_of_items_in_column">Number of columns on the screen</string>
-    <string name="pref.aa.number_of_items_in_column.1">Number of columns for screen 1</string>
-    <string name="pref.aa.number_of_items_in_column.2">Number of columns for screen 2</string>
-    <string name="pref.aa.number_of_items_in_column.3">Number of columns for screen 3</string>
-    <string name="pref.aa.number_of_items_in_column.4">Number of columns for screen 4</string>
-    <string name="pref.aa.number_of_items_in_column.5">Number of columns for screen 5</string>
-    <string name="pref.aa.number_of_items_in_column.6">Number of columns for screen 6</string>
-    <string name="pref.aa.number_of_items_in_column.7">Number ofs columns for screen 7</string>
-    <string name="pref.aa.font_size">Font size of the displayed OBD2 PIDs/Sensors</string>
-    <string name="pref.aa.font_size.category">Font size</string>
-    <string name="pref.aa.number_of_items_in_column.category">Number of items in the column</string>
-    <string name="pref.aa.labels.category">PIDs labels settings</string>
 
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Number of columns</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.category.summary">Choose number of columns for each individual virtual screen</string>
+
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.1">Number of columns for screen 1</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.2">Number of columns for screen 2</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.3">Number of columns for screen 3</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.4">Number of columns for screen 4</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.5">Number of columns for screen 5</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.6">Number of columns for screen 6</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.7">Number ofs columns for screen 7</string>
+
+    <string name="pref.aa.virtual_screens.category">Individual virtual screens preferences</string>
+
+    <string name="pref.aa.virtual_screens.visibility.category">Visibility</string>
+    <string name="pref.aa.virtual_screens.visibility.category.summary">Choose how many virtual screens should be rendered</string>
+    <string name="pref.aa.virtual_screens.visibility.1">Enable screen 1</string>
+    <string name="pref.aa.virtual_screens.visibility.2">Enable screen 2</string>
+    <string name="pref.aa.virtual_screens.visibility.3">Enable screen 3</string>
+    <string name="pref.aa.virtual_screens.visibility.4">Enable screen 4</string>
+
+
+    <string name="pref.aa.virtual_screens.font_size.category">Font size</string>
+    <string name="pref.aa.virtual_screens.font_size.category.summary">Choose font size for each individual virtual screen</string>
     <string name="pref.aa.font_size.1">Font size of the displayed OBD2 PIDs/Sensors for screen 1</string>
     <string name="pref.aa.font_size.2">Font size of the displayed OBD2 PIDs/Sensors for screen 2</string>
     <string name="pref.aa.font_size.3">Font size of the displayed OBD2 PIDs/Sensors for screen 3</string>
@@ -174,6 +187,7 @@
     <string name="pref.pids_category">OBD2 PIDs/Sensors</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.giulia_category">Giulia view configuration</string>
+    <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
 
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
