@@ -267,7 +267,6 @@ internal fun MainActivity.registerReceiver() {
         addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
         addAction(DATA_LOGGER_CONNECTING_EVENT)
         addAction(DATA_LOGGER_STOPPED_EVENT)
-        addAction(DATA_LOGGER_STOPPING_EVENT)
         addAction(DATA_LOGGER_ERROR_EVENT)
         addAction(DATA_LOGGER_CONNECTED_EVENT)
         addAction(DATA_LOGGER_NO_NETWORK_EVENT)

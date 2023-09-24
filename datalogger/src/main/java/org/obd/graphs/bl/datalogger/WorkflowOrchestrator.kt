@@ -102,13 +102,7 @@ internal class WorkflowOrchestrator internal constructor() {
             )
             sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
         }
-
-        override fun onStopping() {
-            status = WorkflowStatus.Stopping
-            Log.i(LOGGER_TAG, "Stopping collecting process...")
-            sendBroadcastEvent(DATA_LOGGER_STOPPING_EVENT)
-        }
-    }
+   }
 
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected

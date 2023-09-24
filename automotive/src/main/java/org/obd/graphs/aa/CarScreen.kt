@@ -171,11 +171,6 @@ internal class CarScreen(
                     navigationManager().navigationStarted()
                 }
 
-                DATA_LOGGER_STOPPING_EVENT -> {
-                    surfaceController.renderFrame()
-                    invalidate()
-                }
-
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
                     invalidate()
                     toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
@@ -196,7 +191,6 @@ internal class CarScreen(
             addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             addAction(DATA_LOGGER_CONNECTING_EVENT)
             addAction(DATA_LOGGER_STOPPED_EVENT)
-            addAction(DATA_LOGGER_STOPPING_EVENT)
             addAction(DATA_LOGGER_ERROR_EVENT)
             addAction(DATA_LOGGER_CONNECTED_EVENT)
             addAction(DATA_LOGGER_NO_NETWORK_EVENT)

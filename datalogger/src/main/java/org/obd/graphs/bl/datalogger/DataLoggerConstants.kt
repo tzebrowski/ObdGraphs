@@ -29,10 +29,8 @@ const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
 const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
 const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
-const val DATA_LOGGER_STOPPING_EVENT = "data.logger.stopping"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
-
 
 const val EVENT_DYNAMIC_SELECTOR_MODE_NORMAL = "event.dynamic.selector.mode.normal"
 const val EVENT_DYNAMIC_SELECTOR_MODE_ECO = "event.dynamic.selector.mode.eco"
