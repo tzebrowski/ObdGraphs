@@ -138,6 +138,7 @@ internal class CarScreen(
                 PROFILE_CHANGED_EVENT -> {
                     metricsCollector.applyFilter(settings.getSelectedPIDs())
                     surfaceController.renderFrame()
+                    invalidate()
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
