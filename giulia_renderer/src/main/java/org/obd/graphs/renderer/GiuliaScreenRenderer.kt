@@ -8,7 +8,6 @@ import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import kotlin.math.max
 import kotlin.math.min
 
 
@@ -24,10 +23,10 @@ private const val FOOTER_SIZE_RATIO = 1.3f
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaScreenRenderer(
     context: Context,
-    private val settings: ScreenSettings,
+    settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
-    private val fps: Fps
-) : ScreenRenderer {
+    fps: Fps
+) : AbstractRenderer(settings,context, fps) {
 
     private val valueScaler = ValueScaler()
     private val drawingManager = DrawingManager(context, settings)
@@ -80,15 +79,6 @@ internal class GiuliaScreenRenderer(
         }
     }
 
-    private inline fun splitIntoChunks(metrics: List<CarMetric>): MutableList<List<CarMetric>> {
-        val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
-        if (lists.size == 3) {
-            lists[0] = lists[0]
-            lists[1] = lists[1] + lists[2]
-            lists.removeAt(2)
-        }
-        return lists
-    }
 
     private inline fun drawMetric(
         area: Rect,
@@ -229,12 +219,6 @@ internal class GiuliaScreenRenderer(
         1 -> 14
         else -> 8
     }
-
-    private inline fun initialValueTop(area: Rect): Float =
-        when (settings.getMaxColumns()) {
-            1 -> area.left + ((area.width()) - 42).toFloat()
-            else -> area.left + ((area.width() / 2) - 32).toFloat()
-        }
 
     private inline fun calculateTop(
         textHeight: Float,

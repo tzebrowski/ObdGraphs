@@ -23,12 +23,22 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
 
+enum class Type {
+    GIULIA, GAUGE
+}
+
 interface ScreenRenderer {
     fun onDraw(canvas: Canvas, drawArea: Rect?)
 
     companion object {
-        fun of(context: Context, settings: ScreenSettings, metricsCollector: CarMetricsCollector, fps: Fps): ScreenRenderer {
-            return GiuliaScreenRenderer(context, settings, metricsCollector, fps)
-        }
+        fun of(context: Context,
+               settings: ScreenSettings,
+               metricsCollector: CarMetricsCollector,
+               fps: Fps,
+               type: Type = Type.GIULIA): ScreenRenderer =
+             when (type){
+                Type.GAUGE ->  GaugeScreenRenderer(context, settings, metricsCollector, fps)
+                Type.GIULIA -> GiuliaScreenRenderer(context, settings, metricsCollector, fps)
+             }
     }
 }
