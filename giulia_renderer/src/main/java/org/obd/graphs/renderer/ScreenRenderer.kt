@@ -28,7 +28,7 @@ interface ScreenRenderer {
 
     companion object {
         fun of(context: Context, settings: ScreenSettings, metricsCollector: CarMetricsCollector, fps: Fps): ScreenRenderer {
-            return SimpleScreenRenderer(context, settings, metricsCollector, fps)
+            return GiuliaScreenRenderer(context, settings, metricsCollector, fps)
         }
     }
 }
