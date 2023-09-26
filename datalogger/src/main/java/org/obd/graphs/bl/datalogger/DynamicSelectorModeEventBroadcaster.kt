@@ -18,15 +18,20 @@
  **/
 package org.obd.graphs.bl.datalogger
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import org.obd.graphs.datalogger.BuildConfig
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.Lifecycle
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.obd.ObdCommand
+import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.ValueType
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 private const val LOG_KEY = "DynamicSelectorModeEventEmitter"
@@ -41,10 +46,12 @@ private class FakeMetricsBroadcaster (private val emitter: DynamicSelectorModeEv
     fun onRunning() {
         if (!broadcasterLaunched){
             broadcasterLaunched = true
-            val pid = dataLogger.getPidDefinitionRegistry().findBy(DYNAMIC_SELECTOR_PID_ID)
+            val pid = PidDefinition(DYNAMIC_SELECTOR_PID_ID,1,"A","22","18F0","","",-1,10, ValueType.INT)
             var cnt = 0
+            val executor: ExecutorService = Executors.newSingleThreadExecutor()
+            val handler = Handler(Looper.getMainLooper())
 
-            runAsync {
+            executor.execute {
                 while (broadcasterLaunched){
                     Thread.sleep(3000)
                     if (cnt == values.size){
@@ -54,7 +61,9 @@ private class FakeMetricsBroadcaster (private val emitter: DynamicSelectorModeEv
                     emitter.postValue(metric)
                     cnt++
                 }
+                handler.post {}
             }
+
         }
     }
 }
