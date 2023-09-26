@@ -24,7 +24,6 @@ import android.text.TextUtils
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.commons.R
-import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_LIGHT_SHADE_GRAY
 import org.obd.graphs.ui.common.COLOR_WHITE
 import org.obd.graphs.ui.common.color
@@ -39,6 +38,7 @@ private const val startAngle = 180
 private const val sweepAngle = 180
 private const val padding = 10f
 private const val dividersCount = 10
+private const val dividerStepAngle = sweepAngle / dividersCount
 
 class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
     private val valueScaler = ValueScaler()
@@ -92,7 +92,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         val dividerSize = min(sweepAngle / abs(endValue - startValue), MAX_DIVIDER_SIZE)
 
-        val dividerStepAngle = sweepAngle / dividersCount
+
 
         if (TextUtils.isEmpty(strokeCap)) {
             paint.strokeCap = Paint.Cap.BUTT
@@ -108,7 +108,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         val rect = calculateRect(left, width, top)
 
         val rescaleValue = scaleRation(rect,screenArea)
-        val decorLineOffset = 12 * rescaleValue
+        val decorLineOffset = 8 * rescaleValue
         strokeWidth *= rescaleValue
 
         paint.style = Paint.Style.STROKE
@@ -131,7 +131,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         canvas.drawArc(decorRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
         paint.strokeWidth = strokeWidth
-        paint.color = COLOR_DYNAMIC_SELECTOR_SPORT
+        paint.color = settings.colorTheme().progressColor
 
         if (pointSize > 0) {
 
@@ -161,17 +161,12 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
             drawDivider(
                 canvas,
                 rect,
-                isDividerDrawFirst,
-                isDividerDrawLast,
-                dividersCount,
-                startAngle,
-                dividerStepAngle,
                 dividerSize
             )
         }
         if (gaugeDrawScale) {
             drawNumbers(
-                canvas, dividersCount, startValue,
+                canvas, startValue,
                 radius,
                 endValue,
                 decorRect,
@@ -217,8 +212,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
     private fun drawDivider(
         canvas: Canvas, rect: RectF,
-        isDividerDrawFirst: Boolean, isDividerDrawLast: Boolean, dividersCount: Int,
-        startAngle: Int, dividerStepAngle: Int, dividerSize: Float
+        dividerSize: Float
     ) {
         paint.color = COLOR_WHITE
         paint.shader = null
@@ -255,14 +249,14 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         screenArea: Rect
     ) {
 
-        valuePaint.textSize = 40f * scaleRation(area, screenArea)
+        valuePaint.textSize = 46f * scaleRation(area, screenArea)
         val textRect = Rect()
         valuePaint.getTextBounds(text, 0, text.length, textRect)
         canvas.drawText(text, area.centerX() - (textRect.width()/2),area.centerY() - textRect.height(), valuePaint)
     }
 
     private fun drawNumbers(
-        canvas: Canvas, dividersCount: Int,
+        canvas: Canvas,
         startValue: Float,
         radius: Float,
         endValue: Float,
@@ -284,7 +278,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
             numbersPaint.textSize = 12f *  scaleRation
             val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
             val x = area.left  + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
-            var y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
+            val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
             canvas.drawText(text, x, y, numbersPaint)
         }
