@@ -38,6 +38,7 @@ private const val MAX_DIVIDER_SIZE = 1.8f
 private const val startAngle = 180
 private const val sweepAngle = 180
 private const val padding = 10f
+private const val dividersCount = 10
 
 class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
     private val valueScaler = ValueScaler()
@@ -86,30 +87,18 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         var strokeWidth = 10f
 
-        val dividerStep = 10
-
         val pointAngle = abs(sweepAngle).toDouble() / (endValue - startValue)
         val point = (startAngle + (value - startValue) * pointAngle).toInt()
 
-        var dividerStepAngle = 0
-        var dividersCount = 0
+        val dividerSize = min(sweepAngle / abs(endValue - startValue), MAX_DIVIDER_SIZE)
 
-        var dividerSize = 1f
-        dividerSize = min(sweepAngle / (abs(endValue - startValue) / dividerSize), MAX_DIVIDER_SIZE)
-        dividersCount = 100 / dividerStep
-        dividerStepAngle = sweepAngle / dividersCount
-
-        paint.color = strokeColor
-        paint.strokeWidth = strokeWidth
+        val dividerStepAngle = sweepAngle / dividersCount
 
         if (TextUtils.isEmpty(strokeCap)) {
             paint.strokeCap = Paint.Cap.BUTT
         } else {
             paint.strokeCap = Paint.Cap.valueOf(strokeCap)
         }
-
-        paint.style = Paint.Style.STROKE
-
 
         val calculatedWidth = width - 2 * padding
         val height = width - 2 * padding
@@ -121,6 +110,10 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         val rescaleValue = scaleRation(rect,screenArea)
         val decorLineOffset = 12 * rescaleValue
         strokeWidth *= rescaleValue
+
+        paint.style = Paint.Style.STROKE
+        paint.color = strokeColor
+        paint.strokeWidth = strokeWidth
 
         val decorRect = RectF()
         decorRect[rect.left - decorLineOffset,
@@ -134,7 +127,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         paint.color = COLOR_LIGHT_SHADE_GRAY
         paint.strokeWidth = 2f
-        paint.isAntiAlias = true
+
         canvas.drawArc(decorRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
         paint.strokeWidth = strokeWidth

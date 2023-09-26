@@ -40,11 +40,11 @@ private const val LOG_KEY = "SurfaceController"
 internal class SurfaceController(private val carContext: CarContext,
                                  private val settings: CarSettings,
                                  private val metricsCollector: CarMetricsCollector,
-                                 fps: Fps
+                                 private val fps: Fps
 ) :
     DefaultLifecycleObserver {
 
-    private val renderer: ScreenRenderer = ScreenRenderer.of(carContext, settings, metricsCollector, fps)
+    private var renderer: ScreenRenderer = ScreenRenderer.of(carContext, settings, metricsCollector, fps, settings.getScreenRenderer())
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -93,6 +93,7 @@ internal class SurfaceController(private val carContext: CarContext,
         }
     }
 
+
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         Log.i(LOG_KEY, "SurfaceRenderer created")
@@ -117,6 +118,11 @@ internal class SurfaceController(private val carContext: CarContext,
     }
 
     fun onCarConfigurationChanged() {
+        renderFrame()
+    }
+
+    fun updateScreenRender(){
+        renderer = ScreenRenderer.of(carContext, settings, metricsCollector, fps, screenRendererType = settings.getScreenRenderer())
         renderFrame()
     }
 

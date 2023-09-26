@@ -79,7 +79,9 @@ internal class CarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
 
-                VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
+                AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
+
+                AA_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.updateScreenRender()
 
                 SURFACE_BROKEN_EVENT -> {
                     Log.d(LOG_KEY, "Received event about ")
@@ -214,7 +216,8 @@ internal class CarScreen(
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
 
-            addAction(VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
+            addAction(AA_SCREEN_RENDERER_CHANGED_EVENT)
+            addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
         })
     }
 

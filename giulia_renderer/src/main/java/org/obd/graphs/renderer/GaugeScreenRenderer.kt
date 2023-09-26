@@ -50,6 +50,7 @@ internal class GaugeScreenRenderer (
             val left = area.left.toFloat() + margin
 
             when (metrics.size){
+                0 -> {}
                 1 -> {
                     gaugeRenderer.drawGauge(canvas,
                         left = left + margin,

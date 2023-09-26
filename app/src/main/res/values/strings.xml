@@ -117,6 +117,8 @@
 
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
 
+    <string name="pref.aa.renderer_type">Screen renderer type</string>
+
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Number of columns</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category.summary">Choose number of columns for each individual virtual screen</string>
 
@@ -433,6 +435,11 @@
     <string-array name="pref.numbers_1_2">
         <item name="1">1</item>
         <item name="2">2</item>
+    </string-array>
+
+    <string-array name="pref.aa_renderer_type">
+        <item name="GIULIA">GIULIA</item>
+        <item name="GAUGE">GAUGE</item>
     </string-array>
 
     <string-array name="pref.numbers_1_10">

@@ -23,7 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
 
-enum class Type {
+enum class ScreenRendererType {
     GIULIA, GAUGE
 }
 
@@ -35,10 +35,10 @@ interface ScreenRenderer {
                settings: ScreenSettings,
                metricsCollector: CarMetricsCollector,
                fps: Fps,
-               type: Type = Type.GIULIA): ScreenRenderer =
-             when (type){
-                Type.GAUGE ->  GaugeScreenRenderer(context, settings, metricsCollector, fps)
-                Type.GIULIA -> GiuliaScreenRenderer(context, settings, metricsCollector, fps)
+               screenRendererType: ScreenRendererType = ScreenRendererType.GIULIA): ScreenRenderer =
+             when (screenRendererType){
+                ScreenRendererType.GAUGE ->  GaugeScreenRenderer(context, settings, metricsCollector, fps)
+                ScreenRendererType.GIULIA -> GiuliaScreenRenderer(context, settings, metricsCollector, fps)
              }
     }
 }

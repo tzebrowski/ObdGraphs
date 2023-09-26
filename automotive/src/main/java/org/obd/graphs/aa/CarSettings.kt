@@ -24,6 +24,7 @@ import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
 import org.obd.graphs.renderer.DynamicSelectorMode
+import org.obd.graphs.renderer.ScreenRendererType
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_RACE
@@ -117,6 +118,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     }
 
     fun isVirtualScreenEnabled(id: Int): Boolean =  Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
+
+    fun getScreenRenderer() : ScreenRendererType = ScreenRendererType.valueOf(Prefs.getS("pref.aa.pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
 
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
 
