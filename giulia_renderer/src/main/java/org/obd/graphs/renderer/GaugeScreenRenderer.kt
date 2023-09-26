@@ -53,7 +53,7 @@ internal class GaugeScreenRenderer (
                 0 -> {}
                 1 -> {
                     gaugeRenderer.drawGauge(canvas,
-                        left = left + margin,
+                        left = left + 3 * margin,
                         top = area.top.toFloat() + margin,
                         width = area.width()  * 0.8f, metrics[0], screenArea = area)
                 }
@@ -81,7 +81,7 @@ internal class GaugeScreenRenderer (
                         metrics[2], screenArea = area)
                 }
                 4 -> {
-                    val width = (area.width() / 2) - 3 * margin
+                    val width = (area.width() / 2) - 2 * margin
                     val height = (area.height() / 2)
                     gaugeRenderer.drawGauge(canvas, left = left, top = area.top.toFloat(), width = width,
                         metrics[0], screenArea = area)
@@ -96,7 +96,7 @@ internal class GaugeScreenRenderer (
                         metrics[3], screenArea = area)
                 }
                 5 -> {
-                    val width = (area.width() / 3) - 3 * margin
+                    val width = (area.width() / 3) - 2f * margin
                     val height = (area.height() / 2)
                     gaugeRenderer.drawGauge(canvas, left = left, top = area.top.toFloat(), width = width,
                         metrics[0], screenArea = area)
@@ -132,7 +132,7 @@ internal class GaugeScreenRenderer (
         left: Float,
         metrics: List<CarMetric>
     ) {
-        val width = (area.width() / 3) - 3 * margin
+        val width = (area.width() / 3) - margin
         val height = (area.height() / 2)
         gaugeRenderer.drawGauge(
             canvas, left = left, top = area.top.toFloat(), width = width,
