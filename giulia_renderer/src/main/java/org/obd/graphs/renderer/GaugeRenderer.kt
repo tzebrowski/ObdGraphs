@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.renderer
 
+import android.content.Context
 import android.graphics.*
 import android.text.TextUtils
 import org.obd.graphs.ValueScaler
@@ -38,12 +39,16 @@ private const val startAngle = 180
 private const val sweepAngle = 180
 private const val padding = 10f
 
-class GaugeRenderer(private val settings: ScreenSettings) {
+class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
     private val valueScaler = ValueScaler()
 
     private val isDividerDrawFirst = true
     private val isDividerDrawLast = true
     private val strokeColor = Color.parseColor("#0D000000")
+    private val backgroundPaint = Paint()
+
+    private val background: Bitmap =
+        BitmapFactory.decodeResource(context.resources, R.drawable.background)
 
     private val numbersPaint = Paint().apply {
         color = color(R.color.gray)
@@ -64,7 +69,7 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         isAntiAlias = true
     }
 
-    fun onDraw(
+    fun drawGauge(
         canvas: Canvas, left: Float, top: Float, width: Float,
         metric: CarMetric,
         gaugeDrawScale: Boolean = true,
@@ -80,7 +85,7 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         val strokeCap: String = Paint.Cap.BUTT.name
 
         var strokeWidth = 10f
-        var dividerSize = 1f
+
         val dividerStep = 10
 
         val pointAngle = abs(sweepAngle).toDouble() / (endValue - startValue)
@@ -88,11 +93,11 @@ class GaugeRenderer(private val settings: ScreenSettings) {
 
         var dividerStepAngle = 0
         var dividersCount = 0
-        if (dividerSize > 0) {
-            dividerSize = min(sweepAngle / (abs(endValue - startValue) / dividerSize), MAX_DIVIDER_SIZE)
-            dividersCount = 100 / dividerStep
-            dividerStepAngle = sweepAngle / dividersCount
-        }
+
+        var dividerSize = 1f
+        dividerSize = min(sweepAngle / (abs(endValue - startValue) / dividerSize), MAX_DIVIDER_SIZE)
+        dividersCount = 100 / dividerStep
+        dividerStepAngle = sweepAngle / dividersCount
 
         paint.color = strokeColor
         paint.strokeWidth = strokeWidth
@@ -185,10 +190,14 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         drawLabel(canvas,  area = rect, label = metric.source.command.pid.description, screenArea)
     }
 
-    fun reset(canvas: Canvas, rect: Rect) {
+    fun drawBackground(canvas: Canvas, rect: Rect) {
         canvas.drawRect(rect, paint)
         canvas.drawColor(settings.getBackgroundColor())
+        if (settings.isBackgroundDrawingEnabled()) {
+            canvas.drawBitmap(background, rect.left.toFloat(), rect.top.toFloat(), backgroundPaint)
+        }
     }
+
 
     private fun calculateRect(
         left: Float,
