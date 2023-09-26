@@ -143,7 +143,7 @@ class GaugeAdapter(
 
         holder.value.run {
             val units = (metric.source.command as ObdCommand).pid.units
-            val txt = "${metric.valueToStringExt()} $units"
+            val txt = "${metric.valueToString()} $units"
             text = txt
 
             highLightText(

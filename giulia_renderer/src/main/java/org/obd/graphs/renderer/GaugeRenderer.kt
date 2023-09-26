@@ -18,37 +18,35 @@
  **/
 package org.obd.graphs.renderer
 
-import android.content.res.Resources
 import android.graphics.*
 import android.text.TextUtils
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.commons.R
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_LIGHT_SHADE_GRAY
 import org.obd.graphs.ui.common.COLOR_WHITE
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.round
-import kotlin.math.sin
+import org.obd.graphs.ui.common.color
+import kotlin.math.*
 
 
 private const val DEFAULT_LONG_POINTER_SIZE = 1f
 private const val SCALE_STEP = 2
 
+private const val MAX_DIVIDER_SIZE = 1.8f
+private const val startAngle = 180
+private const val sweepAngle = 180
+private const val padding = 10f
+
 class GaugeRenderer(private val settings: ScreenSettings) {
     private val valueScaler = ValueScaler()
-    private val padding = 10f
 
     private val isDividerDrawFirst = true
     private val isDividerDrawLast = true
-
-    private val startAngle = 180
-    private val sweepAngle = 180
-
     private val strokeColor = Color.parseColor("#0D000000")
 
     private val numbersPaint = Paint().apply {
-        color = COLOR_WHITE
+        color = color(R.color.gray)
         isAntiAlias = true
     }
 
@@ -57,16 +55,22 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         isAntiAlias = true
     }
 
+    private val labelPaint = Paint().apply {
+        color = color(R.color.gray)
+        isAntiAlias = true
+    }
+
     private val paint = Paint().apply {
         isAntiAlias = true
     }
 
     fun onDraw(
-        canvas: Canvas, left: Float, top: Float, width: Float, pHeight: Float,
+        canvas: Canvas, left: Float, top: Float, width: Float,
         metric: CarMetric,
         gaugeDrawScale: Boolean = true,
         screenArea: Rect
     ) {
+
 
         val startValue = metric.source.command.pid.min.toFloat()
         val endValue = metric.source.command.pid.max.toFloat()
@@ -85,13 +89,10 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         var dividerStepAngle = 0
         var dividersCount = 0
         if (dividerSize > 0) {
-            dividerSize = sweepAngle / (abs(endValue - startValue) / dividerSize)
+            dividerSize = min(sweepAngle / (abs(endValue - startValue) / dividerSize), MAX_DIVIDER_SIZE)
             dividersCount = 100 / dividerStep
             dividerStepAngle = sweepAngle / dividersCount
         }
-
-        val rescaleValue = calculateRescaleValue(width, pHeight)
-        val decorLineOffset = 12 * rescaleValue
 
         paint.color = strokeColor
         paint.strokeWidth = strokeWidth
@@ -103,17 +104,18 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         }
 
         paint.style = Paint.Style.STROKE
-        strokeWidth *= rescaleValue
+
 
         val calculatedWidth = width - 2 * padding
         val height = width - 2 * padding
 
-        val calculatedHeight =
-            if (width > height) width else height
-
         val radius = if (calculatedWidth < height) calculatedWidth / 2 else height / 2
 
         val rect = calculateRect(left, width, top)
+
+        val rescaleValue = scaleRation(rect,screenArea)
+        val decorLineOffset = 12 * rescaleValue
+        strokeWidth *= rescaleValue
 
         val decorRect = RectF()
         decorRect[rect.left - decorLineOffset,
@@ -122,6 +124,7 @@ class GaugeRenderer(private val settings: ScreenSettings) {
             rect.bottom + decorLineOffset
 
         paint.color = strokeColor
+
         canvas.drawArc(rect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
         paint.color = COLOR_LIGHT_SHADE_GRAY
@@ -170,18 +173,16 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         }
         if (gaugeDrawScale) {
             drawNumbers(
-                canvas, width, height, dividersCount, startValue,
+                canvas, dividersCount, startValue,
                 radius,
-                calculatedHeight,
                 endValue,
-                rect,
+                decorRect,
                 screenArea,
-
             )
         }
 
-        drawValue(canvas,  area = rect, value = metric.source.value,screenArea, pHeight)
-        drawLabel(canvas,  area = rect, label = metric.source.command.pid.description,screenArea,pHeight)
+        drawValue(canvas,  area = rect, text = metric.valueToString(), screenArea)
+        drawLabel(canvas,  area = rect, label = metric.source.command.pid.description, screenArea)
     }
 
     fun reset(canvas: Canvas, rect: Rect) {
@@ -206,7 +207,7 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         val rectLeft = left + (pWidth - 2 * padding) / 2 - radius + padding
         val rectTop = top + (calculatedHeight - 2 * padding) / 2 - radius + padding
         val rectRight = left + (pWidth - 2 * padding) / 2 - radius + padding + calculatedWidth
-        val rectBottom = (height - 2 * padding) / 2 - radius + padding + height
+        val rectBottom = top + (height - 2 * padding) / 2 - radius + padding + height
         val rect = RectF()
         rect[rectLeft, rectTop, rectRight] = rectBottom
         return rect
@@ -236,36 +237,32 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         canvas: Canvas,
         area: RectF,
         label: String,
-        screenArea: Rect,
-        height: Float,
+        screenArea: Rect
     ) {
 
-       valuePaint.textSize = 16f * scaleRation(area, height, screenArea)
+        labelPaint.textSize = 14f * scaleRation(area, screenArea)
         val textRect = Rect()
-        valuePaint.getTextBounds(label, 0, label.length, textRect)
-        canvas.drawText(label, area.centerX() - (textRect.width() / 2), area.centerY(), valuePaint)
+        labelPaint.getTextBounds(label, 0, label.length, textRect)
+        canvas.drawText(label, area.centerX() - (textRect.width() / 2), area.centerY(), labelPaint)
     }
 
     private fun drawValue(
         canvas: Canvas,
         area: RectF,
-        value: Number?,
-        screenArea: Rect,
-        height: Float,
+        text: String,
+        screenArea: Rect
     ) {
 
-        valuePaint.textSize = 44f * scaleRation(area, height, screenArea)
-        val text = (value ?: "No Data").toString()
+        valuePaint.textSize = 40f * scaleRation(area, screenArea)
         val textRect = Rect()
         valuePaint.getTextBounds(text, 0, text.length, textRect)
         canvas.drawText(text, area.centerX() - (textRect.width()/2),area.centerY() - textRect.height(), valuePaint)
     }
 
     private fun drawNumbers(
-        canvas: Canvas, width: Float, height: Float, dividersCount: Int,
+        canvas: Canvas, dividersCount: Int,
         startValue: Float,
         radius: Float,
-        calculatedHeight: Float,
         endValue: Float,
         area: RectF,
         screenArea: Rect,
@@ -274,8 +271,7 @@ class GaugeRenderer(private val settings: ScreenSettings) {
         val numberOfItems = (dividersCount / SCALE_STEP)
         val radiusFactor = 0.80f
 
-
-        val scaleRation = scaleRation(area, calculatedHeight, screenArea)
+        val scaleRation = scaleRation(area, screenArea)
         val stepValue = round((endValue - startValue) / numberOfItems)
         val baseRadius = radius * radiusFactor
 
@@ -283,35 +279,20 @@ class GaugeRenderer(private val settings: ScreenSettings) {
             val text = (round(startValue + stepValue * i)).toInt().toString()
             val rect = Rect()
             numbersPaint.getTextBounds(text, 0, text.length, rect)
-            numbersPaint.textSize = 14f *  scaleRation
+            numbersPaint.textSize = 12f *  scaleRation
             val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
-            val x = area.left - 10 + (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
-            var y = area.top + (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
-
-            if (width > height) {
-                y *= radiusFactor
-            }
+            val x = area.left  + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
+            var y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
             canvas.drawText(text, x, y, numbersPaint)
         }
     }
 
-    private fun scaleRation(area: RectF, calculatedHeight: Float, screenArea: Rect): Float = valueScaler.scaleToNewRange(
-            area.width() * calculatedHeight,
+    private fun scaleRation(area: RectF, screenArea: Rect): Float = valueScaler.scaleToNewRange(
+            area.width() * area.height(),
             0.0f,
             screenArea.width().toFloat() * screenArea.height(),
             0.5f,
             2f
         )
-
-
-    private fun calculateRescaleValue(width: Float, height: Float): Float = (valueScaler.scaleToNewRange(
-        width * height,
-        0.0f,
-        Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat(),
-        1f,
-        3f
-    ).apply {
-        return this * 0.85f
-    })
 }

@@ -43,7 +43,7 @@ data class CarMetric(
     fun isInAlert() : Boolean = source.isAlert
 
 
-    fun valueToStringExt(): String =
+    fun valueToString(): String =
          if (source.value == null) {
             "No data"
         } else {
