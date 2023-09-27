@@ -20,11 +20,9 @@ package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.commons.R
-import org.obd.graphs.ui.common.COLOR_LIGHT_SHADE_GRAY
 import org.obd.graphs.ui.common.COLOR_WHITE
 import org.obd.graphs.ui.common.color
 import kotlin.math.*
@@ -96,8 +94,6 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         val endValue = metric.source.command.pid.max.toFloat()
         val value = metric.source.value?.toFloat() ?: metric.source.command.pid.min.toFloat()
 
-        var strokeWidth = 14f
-
         val pointAngle = abs(sweepAngle).toDouble() / (endValue - startValue)
         val point = (startAngle + (value - startValue) * pointAngle).toInt()
 
@@ -105,7 +101,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         val rescaleValue = scaleRationBasedOnScreenSize(rect)
         val decorLineOffset = 8 * rescaleValue
-        strokeWidth *= rescaleValue
+        val strokeWidth = 8f * rescaleValue
 
         paint.style = Paint.Style.STROKE
         paint.color = strokeColor
@@ -121,7 +117,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         canvas.drawArc(rect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
 
-        paint.color = COLOR_LIGHT_SHADE_GRAY
+        paint.color = color(R.color.gray_dark)
         paint.strokeWidth = 2f
 
         canvas.drawArc(decorRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
@@ -216,7 +212,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         canvas: Canvas, rect: RectF,
         dividerSize: Float
     ) {
-        paint.color = COLOR_WHITE
+        paint.color = color(R.color.gray_light)
         val i = if (isDividerDrawFirst) 0 else 1
         val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
         for (j in i..max step SCALE_STEP) {
