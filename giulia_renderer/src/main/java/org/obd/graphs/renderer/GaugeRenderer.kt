@@ -241,7 +241,9 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         valuePaint.textSize = VALUE_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
-        canvas.drawText(value, area.centerX() - (textRect.width() / 2), area.centerY() - textRect.height() - 10, valuePaint)
+
+        val centerY = area.centerY() - 26
+        canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - textRect.height() , valuePaint)
 
 
         val label = metric.source.command.pid.description
@@ -250,7 +252,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         val labelRect = Rect()
         labelPaint.getTextBounds(label, 0, label.length, labelRect)
 
-        val labelY = area.centerY() - 10 - textRect.height() / 2
+        val labelY = centerY - textRect.height() / 2
         canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
 
         if (settings.isHistoryEnabled()) {
