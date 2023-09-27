@@ -24,7 +24,7 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 
-private const val margin = 15f
+private const val margin = 10f
 
 
 internal class GaugeScreenRenderer (
@@ -96,73 +96,59 @@ internal class GaugeScreenRenderer (
                         metrics[3], screenArea = area)
                 }
                 5 -> {
-                    val width = (area.width() / 3) - 2f * margin
-                    val height = (area.height() / 2)
-                    gaugeRenderer.drawGauge(canvas, left = left, top = area.top.toFloat(), width = width,
-                        metrics[0], screenArea = area)
-
-                    gaugeRenderer.drawGauge(canvas, left = left + width + margin, top = area.top.toFloat(), width = width,
-                        metrics[1], screenArea = area)
-
-                    gaugeRenderer.drawGauge(canvas, left = left  + (2 * width) + (2 * margin), top = area.top.toFloat(), width = width,
-                        metrics[2], screenArea = area)
-
-                    gaugeRenderer.drawGauge(canvas, left = left, top = area.top.toFloat() + height, width = width,
-                        metrics[3], screenArea = area)
-
-                    gaugeRenderer.drawGauge(canvas, left = left + width + margin, top = area.top.toFloat() + height, width = width,
-                        metrics[4], screenArea = area)
+                    draw(area, canvas, metrics, 5)
                 }
                 6 -> {
-                    draw6(area, canvas, left, metrics)
+                    draw(area, canvas, metrics)
 
                 }
                 else -> {
-                    draw6(area, canvas, left, metrics)
+                    draw(area, canvas, metrics)
                 }
-
             }
-
         }
     }
 
-    private fun draw6(
+    private fun draw(
         area: Rect,
         canvas: Canvas,
-        left: Float,
-        metrics: List<CarMetric>
+        metrics: List<CarMetric>,
+        size: Int = 6
     ) {
-        val width = (area.width() / 3) - margin
+        val width = (area.width() / 3f)
         val height = (area.height() / 2)
+
         gaugeRenderer.drawGauge(
-            canvas, left = left, top = area.top.toFloat(), width = width,
+            canvas, left = 0f, top = area.top.toFloat(), width = width,
             metrics[0], screenArea = area
         )
 
         gaugeRenderer.drawGauge(
-            canvas, left = left + width + margin, top = area.top.toFloat(), width = width,
+            canvas, left = width, top = area.top.toFloat(), width = width,
             metrics[1], screenArea = area
         )
 
         gaugeRenderer.drawGauge(
-            canvas, left = left + (2 * width) + (2 * margin), top = area.top.toFloat(), width = width,
+            canvas, left = (2 * width), top = area.top.toFloat(), width = width,
             metrics[2], screenArea = area
         )
 
         gaugeRenderer.drawGauge(
-            canvas, left = left, top = area.top.toFloat() + height, width = width,
+            canvas, left = 0f, top = area.top.toFloat() + height, width = width,
             metrics[3], screenArea = area
         )
 
         gaugeRenderer.drawGauge(
-            canvas, left = left + width + margin, top = area.top.toFloat() + height, width = width,
+            canvas, left = width, top = area.top.toFloat() + height, width = width,
             metrics[4], screenArea = area
         )
 
-        gaugeRenderer.drawGauge(
-            canvas, left = left + 2 * width + (2 * margin), top = area.top.toFloat() + height, width = width,
-            metrics[5], screenArea = area
-        )
+        if (size > 5) {
+            gaugeRenderer.drawGauge(
+                canvas, left = 2 * width, top = area.top.toFloat() + height, width = width,
+                metrics[5], screenArea = area
+            )
+        }
     }
 
 }
