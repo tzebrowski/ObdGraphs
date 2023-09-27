@@ -79,25 +79,33 @@ internal class GaugeScreenRenderer (
         }
 
         val width = ((area.width()) / widthDivider).toFloat() * widthScaleRatio(metrics)
-        var left = 0f
+        val padding = padding(metrics)
+        var left = padding
         firstHalf.forEach {
             gaugeRenderer.drawGauge(
                 canvas, left =  area.left +  left, top = area.top.toFloat(), width = width,
                 it
             )
-            left += width
+            left += width + padding
         }
         if (size > 1) {
-            left = 0f
+            left = padding
 
             secondHalf.forEach {
                 gaugeRenderer.drawGauge(
                     canvas, left =  area.left + left, top = area.top.toFloat() + height, width = width,
                     it
                 )
-                left += width
+                left += width + padding
             }
         }
+    }
+
+    private fun padding(metrics: List<CarMetric>): Float  = when (metrics.size) {
+        2 -> 14f
+        3 -> 14f
+        4 -> 14f
+        else -> 0f
     }
 
     private fun widthScaleRatio(metrics: List<CarMetric>): Float  = when (metrics.size) {
