@@ -20,20 +20,20 @@ package org.obd.graphs.preferences.aa
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.preference.ListPreference
+import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
+import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
 
-class ScreenRendererTypeList(
+class AACheckBoxPreference(
     context: Context?,
     attrs: AttributeSet?
 ) :
-    ListPreference(context, attrs) {
+    CheckBoxPreference(context, attrs) {
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, _ ->
-            sendBroadcastEvent(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
+            sendBroadcastEvent(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             true
         }
     }

@@ -41,6 +41,8 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
 
 interface ScreenSettings {
 
+    fun isScaleEnabled(): Boolean = true
+
     fun getHeightPixels(): Int = getContext()!!.resources.displayMetrics.heightPixels
 
     fun getWidthPixels(): Int = getContext()!!.resources.displayMetrics.widthPixels

@@ -806,11 +806,17 @@
                         android:entryValues="@array/pref.aa_renderer_type"
                         android:defaultValue="GIULIA"
                         android:dialogTitle="@string/pref.aa.renderer_type"
-                        android:key="pref.aa.pref.aa.virtual_screens.screen.renderer_type"
+                        android:key="pref.aa.virtual_screens.screen.renderer_type"
                         android:title="@string/pref.aa.renderer_type"
                         app:useSimpleSummaryProvider="true" />
 
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.aa.virtual_screens.scale.enabled"
+                        android:title="@string/pref.aa.display_pid_scale" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.pids.history.enabled"

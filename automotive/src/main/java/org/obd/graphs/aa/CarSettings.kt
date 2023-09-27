@@ -82,6 +82,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         }
     }
 
+    override fun isScaleEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.scale.enabled", true)
+
     override fun getHeightPixels(): Int  = carContext.resources.displayMetrics.heightPixels
     override fun getWidthPixels(): Int  =  carContext.resources.displayMetrics.widthPixels
 
@@ -123,7 +125,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     fun isVirtualScreenEnabled(id: Int): Boolean =  Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
 
-    fun getScreenRenderer() : ScreenRendererType = ScreenRendererType.valueOf(Prefs.getS("pref.aa.pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
+    fun getScreenRenderer() : ScreenRendererType = ScreenRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
 
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
 

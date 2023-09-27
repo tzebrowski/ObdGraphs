@@ -86,8 +86,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
     fun drawGauge(
         canvas: Canvas, left: Float, top: Float, width: Float,
-        metric: CarMetric,
-        gaugeDrawScale: Boolean = true
+        metric: CarMetric
     ) {
         paint.shader = null
         val startValue = metric.source.command.pid.min.toFloat()
@@ -143,19 +142,20 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         paint.shader = null
 
-        val dividerWidth = min(sweepAngle / abs(endValue - startValue), MAX_DIVIDER_WIDTH)
-        drawDivider(
-            canvas,
-            rect,
-            dividerWidth
-        )
+        if (settings.isScaleEnabled()) {
 
-        if (gaugeDrawScale) {
+            val dividerWidth = min(sweepAngle / abs(endValue - startValue), MAX_DIVIDER_WIDTH)
+            drawDivider(
+                canvas,
+                rect,
+                dividerWidth
+            )
+
             val calculatedWidth = width - 2 * padding
             val height = width - 2 * padding
             val radius = if (calculatedWidth < height) calculatedWidth / 2 else height / 2
 
-            drawNumbers(
+            drawScale(
                 canvas, startValue,
                 radius,
                 endValue,
@@ -269,7 +269,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         valueScaler.scaleToNewRange(settings.getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
 
-    private fun drawNumbers(
+    private fun drawScale(
         canvas: Canvas,
         startValue: Float,
         radius: Float,
