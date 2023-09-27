@@ -201,7 +201,6 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         return rect
     }
 
-
     private fun setProgressGradient(rect: RectF) {
         val colors = intArrayOf(COLOR_WHITE, settings.colorTheme().progressColor)
         val gradient = SweepGradient(rect.centerY(), rect.centerX(), colors, null)
@@ -242,21 +241,23 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         valuePaint.textSize = VALUE_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
-        canvas.drawText(value, area.centerX() - (textRect.width()/2),area.centerY() - textRect.height() - 10, valuePaint)
+        canvas.drawText(value, area.centerX() - (textRect.width() / 2), area.centerY() - textRect.height() - 10, valuePaint)
 
 
         val label = metric.source.command.pid.description
         labelPaint.textSize = 16f * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
         val textRect1 = Rect()
         labelPaint.getTextBounds(label, 0, label.length, textRect1)
-        val bb = area.centerY() - 10 - textRect.height()/2
+        val bb = area.centerY() - 10 - textRect.height() / 2
         canvas.drawText(label, area.centerX() - (textRect1.width() / 2), bb, labelPaint)
 
-        val hists  = "${metric.toNumber(metric.min)}    ${metric.toNumber(metric.mean)}     ${metric.toNumber(metric.max)}"
-        histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
-        val textRect2 = Rect()
-        histogramPaint.getTextBounds(hists, 0, hists.length, textRect2)
-        canvas.drawText(hists, area.centerX() - (textRect2.width() / 2), bb + textRect1.height() + 8, histogramPaint)
+        if (settings.isHistoryEnabled()) {
+            val hists = "${metric.toNumber(metric.min)}    ${metric.toNumber(metric.mean)}     ${metric.toNumber(metric.max)}"
+            histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
+            val textRect2 = Rect()
+            histogramPaint.getTextBounds(hists, 0, hists.length, textRect2)
+            canvas.drawText(hists, area.centerX() - (textRect2.width() / 2), bb + textRect1.height() + 8, histogramPaint)
+        }
     }
 
     private fun userScaleRatio() =
