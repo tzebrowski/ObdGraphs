@@ -45,7 +45,7 @@ data class CarMetric(
 
     fun valueToString(): String =
          if (source.value == null) {
-            "No data"
+            "----"
         } else {
             toNumber(source.valueToDouble())
         }

@@ -40,6 +40,8 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
 
 interface ScreenSettings {
 
+    fun isProgressGradientEnabled (): Boolean = false
+
     fun getBackgroundColor(): Int = Color.BLACK
 
     fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode){}
