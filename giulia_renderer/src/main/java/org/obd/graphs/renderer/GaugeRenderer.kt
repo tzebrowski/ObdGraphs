@@ -79,7 +79,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
     private val paint = Paint().apply {
         isAntiAlias = true
-        strokeCap =  Paint.Cap.BUTT
+        strokeCap = Paint.Cap.BUTT
     }
 
     fun drawGauge(
@@ -100,7 +100,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         val rect = calculateRect(left, width, top)
 
-        val rescaleValue = scaleRationBasedOnScreenSize(rect,screenArea)
+        val rescaleValue = scaleRationBasedOnScreenSize(rect, screenArea)
         val decorLineOffset = 8 * rescaleValue
         strokeWidth *= rescaleValue
 
@@ -165,7 +165,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
             )
         }
 
-        drawMetric(canvas,  area = rect,metric = metric, screenArea =  screenArea)
+        drawMetric(canvas, area = rect, metric = metric, screenArea = screenArea)
     }
 
 
@@ -246,17 +246,22 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         val label = metric.source.command.pid.description
         labelPaint.textSize = 16f * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
-        val textRect1 = Rect()
-        labelPaint.getTextBounds(label, 0, label.length, textRect1)
-        val bb = area.centerY() - 10 - textRect.height() / 2
-        canvas.drawText(label, area.centerX() - (textRect1.width() / 2), bb, labelPaint)
+
+        val labelRect = Rect()
+        labelPaint.getTextBounds(label, 0, label.length, labelRect)
+
+        val labelY = area.centerY() - 10 - textRect.height() / 2
+        canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
 
         if (settings.isHistoryEnabled()) {
-            val hists = "${metric.toNumber(metric.min)}    ${metric.toNumber(metric.mean)}     ${metric.toNumber(metric.max)}"
+            val hists =
+                "${metric.toNumber(metric.min)}    ${if (metric.source.command.pid.historgam.isAvgEnabled) metric.toNumber(metric.mean) else ""}     ${
+                    metric.toNumber(metric.max)
+                }"
             histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
-            val textRect2 = Rect()
-            histogramPaint.getTextBounds(hists, 0, hists.length, textRect2)
-            canvas.drawText(hists, area.centerX() - (textRect2.width() / 2), bb + textRect1.height() + 8, histogramPaint)
+            val histsRect = Rect()
+            histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
+            canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), labelY + labelRect.height() + 8, histogramPaint)
         }
     }
 
@@ -272,7 +277,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         area: RectF,
         screenArea: Rect,
 
-    ) {
+        ) {
         val numberOfItems = (dividersCount / SCALE_STEP)
         val radiusFactor = 0.80f
 
@@ -284,9 +289,9 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
             val text = (round(startValue + stepValue * i)).toInt().toString()
             val rect = Rect()
             numbersPaint.getTextBounds(text, 0, text.length, rect)
-            numbersPaint.textSize = 12f *  scaleRation
+            numbersPaint.textSize = 12f * scaleRation
             val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
-            val x = area.left  + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
+            val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
             canvas.drawText(text, x, y, numbersPaint)
@@ -294,10 +299,10 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
     }
 
     private fun scaleRationBasedOnScreenSize(area: RectF, screenArea: Rect): Float = valueScaler.scaleToNewRange(
-            area.width() * area.height(),
-            0.0f,
-            screenArea.width().toFloat() * screenArea.height(),
-            0.5f,
-            2f
-        )
+        area.width() * area.height(),
+        0.0f,
+        screenArea.width().toFloat() * screenArea.height(),
+        0.5f,
+        2f
+    )
 }
