@@ -20,6 +20,7 @@ package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.commons.R
@@ -38,13 +39,16 @@ private const val sweepAngle = 180
 private const val padding = 10f
 private const val dividersCount = 10
 private const val dividerStepAngle = sweepAngle / dividersCount
+
 private const val VALUE_TEXT_SIZE_BASE = 46f
+private const val LABEL_TEXT_SIZE_BASE = 16f
 
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
+
 
 class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
     private val valueScaler = ValueScaler()
@@ -85,8 +89,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
     fun drawGauge(
         canvas: Canvas, left: Float, top: Float, width: Float,
         metric: CarMetric,
-        gaugeDrawScale: Boolean = true,
-        screenArea: Rect
+        gaugeDrawScale: Boolean = true
     ) {
         paint.shader = null
         val startValue = metric.source.command.pid.min.toFloat()
@@ -100,7 +103,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
 
         val rect = calculateRect(left, width, top)
 
-        val rescaleValue = scaleRationBasedOnScreenSize(rect, screenArea)
+        val rescaleValue = scaleRationBasedOnScreenSize(rect)
         val decorLineOffset = 8 * rescaleValue
         strokeWidth *= rescaleValue
 
@@ -161,11 +164,10 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
                 radius,
                 endValue,
                 decorRect,
-                screenArea,
             )
         }
 
-        drawMetric(canvas, area = rect, metric = metric, screenArea = screenArea)
+        drawMetric(canvas, area = rect, metric = metric)
     }
 
 
@@ -232,27 +234,27 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         canvas: Canvas,
         area: RectF,
         metric: CarMetric,
-        screenArea: Rect
+
     ) {
 
         val userScaleRatio = userScaleRatio()
 
         val value = metric.valueToString()
-        valuePaint.textSize = VALUE_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
+        valuePaint.textSize = VALUE_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area) * userScaleRatio
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-        val centerY = area.centerY() - 26
-        canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - textRect.height() , valuePaint)
-
+        val centerY = area.centerY() - 8 * scaleRationBasedOnScreenSize(area)
+        val valueHeight = max(textRect.height(),30)
+        canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight , valuePaint)
 
         val label = metric.source.command.pid.description
-        labelPaint.textSize = 16f * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
+        labelPaint.textSize = LABEL_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area) * userScaleRatio
 
         val labelRect = Rect()
         labelPaint.getTextBounds(label, 0, label.length, labelRect)
 
-        val labelY = centerY - textRect.height() / 2
+        val labelY = centerY - valueHeight / 2
         canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
 
         if (settings.isHistoryEnabled()) {
@@ -260,7 +262,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
                 "${metric.toNumber(metric.min)}    ${if (metric.source.command.pid.historgam.isAvgEnabled) metric.toNumber(metric.mean) else ""}     ${
                     metric.toNumber(metric.max)
                 }"
-            histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area, screenArea) * userScaleRatio
+            histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area) * userScaleRatio
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
             canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), labelY + labelRect.height() + 8, histogramPaint)
@@ -277,13 +279,11 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         radius: Float,
         endValue: Float,
         area: RectF,
-        screenArea: Rect,
-
         ) {
         val numberOfItems = (dividersCount / SCALE_STEP)
         val radiusFactor = 0.80f
 
-        val scaleRation = scaleRationBasedOnScreenSize(area, screenArea)
+        val scaleRation = scaleRationBasedOnScreenSize(area)
         val stepValue = round((endValue - startValue) / numberOfItems)
         val baseRadius = radius * radiusFactor
 
@@ -300,11 +300,11 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         }
     }
 
-    private fun scaleRationBasedOnScreenSize(area: RectF, screenArea: Rect): Float = valueScaler.scaleToNewRange(
+    private fun scaleRationBasedOnScreenSize(area: RectF): Float = valueScaler.scaleToNewRange(
         area.width() * area.height(),
         0.0f,
-        screenArea.width().toFloat() * screenArea.height(),
-        0.5f,
-        2f
+        (settings.getHeightPixels() * settings.getWidthPixels()).toFloat(),
+        0.9f,
+        2.4f
     )
 }

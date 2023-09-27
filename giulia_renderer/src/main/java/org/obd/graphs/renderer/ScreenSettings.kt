@@ -19,6 +19,7 @@
 package org.obd.graphs.renderer
 
 import android.graphics.Color
+import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
@@ -39,6 +40,10 @@ data class ColorTheme(val dividerColor: Int = Color.WHITE,
                       val actionsBtnVirtualScreensColor: Int = Color.WHITE)
 
 interface ScreenSettings {
+
+    fun getHeightPixels(): Int = getContext()!!.resources.displayMetrics.heightPixels
+
+    fun getWidthPixels(): Int = getContext()!!.resources.displayMetrics.widthPixels
 
     fun isProgressGradientEnabled (): Boolean = false
 

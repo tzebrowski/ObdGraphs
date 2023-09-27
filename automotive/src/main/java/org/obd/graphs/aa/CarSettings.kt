@@ -20,6 +20,7 @@ package org.obd.graphs.aa
 
 import android.graphics.Color
 import androidx.car.app.CarContext
+import org.obd.graphs.getContext
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
@@ -80,6 +81,9 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
             }
         }
     }
+
+    override fun getHeightPixels(): Int  = carContext.resources.displayMetrics.heightPixels
+    override fun getWidthPixels(): Int  =  carContext.resources.displayMetrics.widthPixels
 
     override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
     override fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)

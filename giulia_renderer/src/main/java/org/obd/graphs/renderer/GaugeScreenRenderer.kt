@@ -51,7 +51,7 @@ internal class GaugeScreenRenderer (
                 1 -> {
                     gaugeRenderer.drawGauge(
                         canvas, left = area.left + 80f, top = area.top.toFloat(), width = area.width() * widthScaleRatio(metrics),
-                        metrics[0], screenArea = area
+                        metrics[0],
                     )
                 }
                 else -> {
@@ -83,7 +83,7 @@ internal class GaugeScreenRenderer (
         firstHalf.forEach {
             gaugeRenderer.drawGauge(
                 canvas, left =  area.left +  left, top = area.top.toFloat(), width = width,
-                it, screenArea = area
+                it
             )
             left += width
         }
@@ -93,7 +93,7 @@ internal class GaugeScreenRenderer (
             secondHalf.forEach {
                 gaugeRenderer.drawGauge(
                     canvas, left =  area.left + left, top = area.top.toFloat() + height, width = width,
-                    it, screenArea = area
+                    it
                 )
                 left += width
             }
