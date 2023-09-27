@@ -240,7 +240,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-        val centerY = area.centerY() - 8 * scaleRationBasedOnScreenSize(area)
+        val centerY = area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)
         val valueHeight = max(textRect.height(),30)
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight , valuePaint)
 
