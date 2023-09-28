@@ -43,7 +43,7 @@ android {
 }
 
 dependencies {
-    implementation project(':giulia_renderer')
+    implementation project(':screen_renderer')
     implementation project(":common")
     implementation project(":datalogger")
     implementation "androidx.car.app:app:1.2.0"
