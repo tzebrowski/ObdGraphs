@@ -22,6 +22,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.renderer.gauge.GaugeScreenRenderer
+import org.obd.graphs.renderer.giulia.GiuliaScreenRenderer
 
 enum class ScreenRendererType {
     GIULIA, GAUGE

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.renderer
+package org.obd.graphs.renderer.giulia
 
 import android.content.Context
 import android.graphics.Canvas
@@ -26,6 +26,9 @@ import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.renderer.AbstractRenderer
+import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.min
 
 
@@ -47,7 +50,7 @@ internal class GiuliaScreenRenderer(
 ) : AbstractRenderer(settings, context, fps) {
 
     private val valueScaler = ValueScaler()
-    private val drawer = GiuliaDrawer(context, settings)
+    private val drawer = Drawer(context, settings)
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 

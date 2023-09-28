@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.renderer
+package org.obd.graphs.renderer.giulia
 
 import android.content.Context
 import android.graphics.*
@@ -28,11 +28,12 @@ import org.obd.graphs.commons.R
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.profile.getSelectedProfile
+import org.obd.graphs.renderer.ScreenSettings
 
 
 const val MARGIN_END = 30
 
-internal class GiuliaDrawer(context: Context, private val settings: ScreenSettings) {
+internal class Drawer(context: Context, private val settings: ScreenSettings) {
 
     private val valueScaler: ValueScaler = ValueScaler()
 
