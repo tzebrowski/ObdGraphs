@@ -80,7 +80,7 @@ internal class CarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
 
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
-                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.updateScreenRender()
+                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateRender()
 
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> surfaceController.renderFrame()
 
@@ -142,7 +142,7 @@ internal class CarScreen(
 
                 PROFILE_CHANGED_EVENT -> {
                     metricsCollector.applyFilter(settings.getSelectedPIDs())
-                    surfaceController.updateScreenRender()
+                    surfaceController.allocateRender()
                     invalidate()
                 }
 

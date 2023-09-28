@@ -44,7 +44,7 @@ internal class SurfaceController(private val carContext: CarContext,
 ) :
     DefaultLifecycleObserver {
 
-    private var renderer: ScreenRenderer = ScreenRenderer.of(carContext, settings, metricsCollector, fps, settings.getScreenRenderer())
+    private var renderer: ScreenRenderer = ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, settings.getScreenRendererType())
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -121,8 +121,9 @@ internal class SurfaceController(private val carContext: CarContext,
         renderFrame()
     }
 
-    fun updateScreenRender(){
-        renderer = ScreenRenderer.of(carContext, settings, metricsCollector, fps, screenRendererType = settings.getScreenRenderer())
+    fun allocateRender(){
+        renderer.release()
+        renderer = ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, screenRendererType = settings.getScreenRendererType())
         renderFrame()
     }
 

@@ -48,7 +48,7 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 
 
-class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
+internal class GaugeDrawer(private val settings: ScreenSettings, context: Context) {
     private val valueScaler = ValueScaler()
 
     private val isDividerDrawFirst = true
@@ -82,6 +82,10 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
     private val paint = Paint().apply {
         isAntiAlias = true
         strokeCap = Paint.Cap.BUTT
+    }
+
+    fun recycle() {
+        background.recycle()
     }
 
     fun drawGauge(
@@ -231,7 +235,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         area: RectF,
         metric: CarMetric,
 
-    ) {
+        ) {
 
         val userScaleRatio = userScaleRatio()
 
@@ -241,8 +245,8 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
         val centerY = area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)
-        val valueHeight = max(textRect.height(),30)
-        canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight , valuePaint)
+        val valueHeight = max(textRect.height(), 30)
+        canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
         val label = metric.source.command.pid.description
         labelPaint.textSize = LABEL_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area) * userScaleRatio
@@ -275,7 +279,7 @@ class GaugeRenderer(private val settings: ScreenSettings, context: Context) {
         radius: Float,
         endValue: Float,
         area: RectF,
-        ) {
+    ) {
         val numberOfItems = (dividersCount / SCALE_STEP)
         val radiusFactor = 0.80f
 

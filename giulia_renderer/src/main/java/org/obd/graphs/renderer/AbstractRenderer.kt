@@ -24,7 +24,8 @@ import org.obd.graphs.bl.collector.CarMetric
 import kotlin.math.max
 
 @Suppress("NOTHING_TO_INLINE")
-abstract class AbstractRenderer(protected val settings: ScreenSettings, protected val context: Context, protected val fps: Fps)  : ScreenRenderer {
+internal abstract class AbstractRenderer(protected val settings: ScreenSettings, protected val context: Context, protected val fps: Fps) :
+    ScreenRenderer {
 
     protected inline fun splitIntoChunks(metrics: List<CarMetric>): MutableList<List<CarMetric>> {
         val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()

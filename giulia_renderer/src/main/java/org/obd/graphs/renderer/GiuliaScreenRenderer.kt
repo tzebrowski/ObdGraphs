@@ -44,10 +44,10 @@ internal class GiuliaScreenRenderer(
     settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
     fps: Fps
-) : AbstractRenderer(settings,context, fps) {
+) : AbstractRenderer(settings, context, fps) {
 
     private val valueScaler = ValueScaler()
-    private val drawingManager = DrawingManager(context, settings)
+    private val drawer = GiuliaDrawer(context, settings)
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -60,15 +60,15 @@ internal class GiuliaScreenRenderer(
             val metrics = metricsCollector.metrics()
             val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
-            drawingManager.canvas = canvas
-            drawingManager.drawBackground(area)
+            drawer.canvas = canvas
+            drawer.drawBackground(area)
 
             var top = area.top + textSizeBase / 2
-            var left = drawingManager.getMarginLeft(area)
+            var left = drawer.getMarginLeft(area)
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawingManager.drawStatusBar(area, fps.get()) + 18
-                drawingManager.drawDivider(left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
+                top = drawer.drawStatusBar(area, fps.get()) + 18
+                drawer.drawDivider(left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
             val topCpy = top
@@ -97,6 +97,10 @@ internal class GiuliaScreenRenderer(
         }
     }
 
+    override fun release() {
+        drawer.recycle()
+    }
+
 
     private inline fun drawMetric(
         area: Rect,
@@ -113,12 +117,12 @@ internal class GiuliaScreenRenderer(
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        drawingManager.drawTitle(
+        drawer.drawTitle(
             metric, left1, top1,
             textSizeBase
         )
 
-        drawingManager.drawValue(
+        drawer.drawValue(
             metric,
             valueTop,
             top1 + 10,
@@ -127,14 +131,14 @@ internal class GiuliaScreenRenderer(
 
         if (settings.isHistoryEnabled()) {
             top1 += textSizeBase / FOOTER_SIZE_RATIO
-            left1 = drawingManager.drawText(
+            left1 = drawer.drawText(
                 "min",
                 left,
                 top1,
                 Color.DKGRAY,
                 footerTitleTextSize
             )
-            left1 = drawingManager.drawText(
+            left1 = drawer.drawText(
                 metric.toNumber(metric.min),
                 left1,
                 top1,
@@ -142,14 +146,14 @@ internal class GiuliaScreenRenderer(
                 footerValueTextSize
             )
 
-            left1 = drawingManager.drawText(
+            left1 = drawer.drawText(
                 "max",
                 left1,
                 top1,
                 Color.DKGRAY,
                 footerTitleTextSize
             )
-            left1 = drawingManager.drawText(
+            left1 = drawer.drawText(
                 metric.toNumber(metric.max),
                 left1,
                 top1,
@@ -158,7 +162,7 @@ internal class GiuliaScreenRenderer(
             )
 
             if (metric.source.command.pid.historgam.isAvgEnabled) {
-                left1 = drawingManager.drawText(
+                left1 = drawer.drawText(
                     "avg",
                     left1,
                     top1,
@@ -166,7 +170,7 @@ internal class GiuliaScreenRenderer(
                     footerTitleTextSize
                 )
 
-                left1 = drawingManager.drawText(
+                left1 = drawer.drawText(
                     metric.toNumber(metric.mean),
                     left1,
                     top1,
@@ -175,7 +179,7 @@ internal class GiuliaScreenRenderer(
                 )
             }
 
-            drawingManager.drawAlertingLegend(metric, left1, top1)
+            drawer.drawAlertingLegend(metric, left1, top1)
 
         } else {
             top1 += 12
@@ -183,7 +187,7 @@ internal class GiuliaScreenRenderer(
 
         top1 += 6f
 
-        drawingManager.drawProgressBar(
+        drawer.drawProgressBar(
             left,
             itemWidth(area).toFloat(), top1, metric,
             color = settings.colorTheme().progressColor
@@ -191,7 +195,7 @@ internal class GiuliaScreenRenderer(
 
         top1 += calculateDividerSpacing()
 
-        drawingManager.drawDivider(
+        drawer.drawDivider(
             left, itemWidth(area).toFloat(), top1,
             color = settings.colorTheme().dividerColor
         )

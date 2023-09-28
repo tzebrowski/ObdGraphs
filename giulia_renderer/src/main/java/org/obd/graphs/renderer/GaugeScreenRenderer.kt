@@ -26,14 +26,14 @@ import org.obd.graphs.bl.collector.CarMetricsCollector
 import kotlin.math.min
 
 
-internal class GaugeScreenRenderer (
+internal class GaugeScreenRenderer(
     context: Context,
     settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
     fps: Fps
 ) : AbstractRenderer(settings, context, fps) {
 
-    private val gaugeRenderer = GaugeRenderer(settings, context)
+    private val drawer = GaugeDrawer(settings, context)
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -44,12 +44,12 @@ internal class GaugeScreenRenderer (
             }
 
             val metrics = metricsCollector.metrics()
-            gaugeRenderer.drawBackground(canvas, area)
+            drawer.drawBackground(canvas, area)
 
-            when (metrics.size){
+            when (metrics.size) {
                 0 -> {}
                 1 -> {
-                    gaugeRenderer.drawGauge(
+                    drawer.drawGauge(
                         canvas, left = area.left + 80f, top = area.top.toFloat(), width = area.width() * widthScaleRatio(metrics),
                         metrics[0],
                     )
@@ -61,18 +61,22 @@ internal class GaugeScreenRenderer (
         }
     }
 
+    override fun release() {
+        drawer.recycle()
+    }
+
     private fun draw(
         area: Rect,
         canvas: Canvas,
         metrics: List<CarMetric>
     ) {
 
-        val size = min(metrics.size,6)
+        val size = min(metrics.size, 6)
         val firstHalf = metrics.subList(0, size / 2)
         val secondHalf = metrics.subList(size / 2, size)
         val height = (area.height() / 2)
 
-        val widthDivider  = when (size) {
+        val widthDivider = when (size) {
             2 -> 2
             1 -> 1
             else -> secondHalf.size
@@ -82,8 +86,8 @@ internal class GaugeScreenRenderer (
         val padding = padding(metrics)
         var left = padding
         firstHalf.forEach {
-            gaugeRenderer.drawGauge(
-                canvas, left =  area.left +  left, top = area.top.toFloat(), width = width,
+            drawer.drawGauge(
+                canvas, left = area.left + left, top = area.top.toFloat(), width = width,
                 it
             )
             left += width + padding
@@ -92,8 +96,8 @@ internal class GaugeScreenRenderer (
             left = padding
 
             secondHalf.forEach {
-                gaugeRenderer.drawGauge(
-                    canvas, left =  area.left + left, top = area.top.toFloat() + height, width = width,
+                drawer.drawGauge(
+                    canvas, left = area.left + left, top = area.top.toFloat() + height, width = width,
                     it
                 )
                 left += width + padding
@@ -101,14 +105,14 @@ internal class GaugeScreenRenderer (
         }
     }
 
-    private fun padding(metrics: List<CarMetric>): Float  = when (metrics.size) {
+    private fun padding(metrics: List<CarMetric>): Float = when (metrics.size) {
         2 -> 14f
         3 -> 14f
         4 -> 14f
         else -> 0f
     }
 
-    private fun widthScaleRatio(metrics: List<CarMetric>): Float  = when (metrics.size) {
+    private fun widthScaleRatio(metrics: List<CarMetric>): Float = when (metrics.size) {
         1 -> 0.8f
         2 -> 0.9f
         3 -> 0.9f

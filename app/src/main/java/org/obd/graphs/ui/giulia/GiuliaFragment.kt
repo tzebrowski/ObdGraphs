@@ -109,7 +109,7 @@ open class GiuliaFragment : Fragment() {
         root  = inflater.inflate(R.layout.fragment_giulia, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         setupVirtualViewPanel()
-        surfaceController = SurfaceController(ScreenRenderer.of(requireContext(), settings, metricsCollector, fps))
+        surfaceController = SurfaceController(ScreenRenderer.allocate(requireContext(), settings, metricsCollector, fps))
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))

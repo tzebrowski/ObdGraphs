@@ -30,15 +30,19 @@ enum class ScreenRendererType {
 interface ScreenRenderer {
     fun onDraw(canvas: Canvas, drawArea: Rect?)
 
+    fun release()
+
     companion object {
-        fun of(context: Context,
-               settings: ScreenSettings,
-               metricsCollector: CarMetricsCollector,
-               fps: Fps,
-               screenRendererType: ScreenRendererType = ScreenRendererType.GIULIA): ScreenRenderer =
-             when (screenRendererType){
-                ScreenRendererType.GAUGE ->  GaugeScreenRenderer(context, settings, metricsCollector, fps)
+        fun allocate(
+            context: Context,
+            settings: ScreenSettings,
+            metricsCollector: CarMetricsCollector,
+            fps: Fps,
+            screenRendererType: ScreenRendererType = ScreenRendererType.GIULIA
+        ): ScreenRenderer =
+            when (screenRendererType) {
+                ScreenRendererType.GAUGE -> GaugeScreenRenderer(context, settings, metricsCollector, fps)
                 ScreenRendererType.GIULIA -> GiuliaScreenRenderer(context, settings, metricsCollector, fps)
-             }
+            }
     }
 }

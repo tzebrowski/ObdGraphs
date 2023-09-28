@@ -20,8 +20,8 @@ package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
@@ -32,7 +32,7 @@ import org.obd.graphs.profile.getSelectedProfile
 
 const val MARGIN_END = 30
 
-internal class DrawingManager(context: Context,  private val settings: ScreenSettings) {
+internal class GiuliaDrawer(context: Context, private val settings: ScreenSettings) {
 
     private val valueScaler: ValueScaler = ValueScaler()
 
@@ -85,6 +85,10 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         statusLabel = context.resources.getString(R.string.status_bar_status)
     }
 
+    fun recycle() {
+        background.recycle()
+    }
+
     fun drawBackground(area: Rect) {
         canvas?.let {
             it.drawRect(area, paint)
@@ -114,8 +118,8 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         paint.color = color
 
         val progress = valueScaler.scaleToNewRange(
-            it.source.value?.toFloat()?:it.source.command.pid.min.toFloat(),
-            it.source.command.pid.min.toFloat(),  it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
+            it.source.value?.toFloat() ?: it.source.command.pid.min.toFloat(),
+            it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )
 
         canvas?.drawRect(
@@ -142,7 +146,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
                 alertingLegendPaint
             )
 
-            val hPos = left  + getTextWidth(text, alertingLegendPaint) + 2f
+            val hPos = left + getTextWidth(text, alertingLegendPaint) + 2f
 
             var label = ""
             if (metric.source.command.pid.alertLowerThreshold != null) {
@@ -260,7 +264,7 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
         textSize: Float
     ) {
         val colorTheme = settings.colorTheme()
-        valuePaint.color = if (inAlert(metric)){
+        valuePaint.color = if (inAlert(metric)) {
             colorTheme.currentValueInAlertColor
         } else {
             colorTheme.currentValueColor
@@ -367,5 +371,5 @@ internal class DrawingManager(context: Context,  private val settings: ScreenSet
     private fun inAlert(metric: CarMetric) = settings.isAlertingEnabled() && metric.isInAlert()
 
 
-    fun getMarginLeft( drawArea: Rect): Float = 12 + drawArea.left.toFloat()
+    fun getMarginLeft(drawArea: Rect): Float = 12 + drawArea.left.toFloat()
 }

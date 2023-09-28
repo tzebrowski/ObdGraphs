@@ -20,7 +20,6 @@ package org.obd.graphs.aa
 
 import android.graphics.Color
 import androidx.car.app.CarContext
-import org.obd.graphs.getContext
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
@@ -125,7 +124,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     fun isVirtualScreenEnabled(id: Int): Boolean =  Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
 
-    fun getScreenRenderer() : ScreenRendererType = ScreenRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
+    fun getScreenRendererType() : ScreenRendererType = ScreenRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
 
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
 
