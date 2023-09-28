@@ -32,6 +32,8 @@ private const val DIVIDER_WIDTH = 1f
 
 private const val DIVIDER_HIGHLIGHT_START = 8
 
+private const val MIN_TEXT_VALUE_HEIGHT = 30
+
 internal class Drawer(private val settings: ScreenSettings, context: Context) {
     private val valueScaler = ValueScaler()
 
@@ -41,28 +43,23 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
     private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
 
-    private val numbersPaint = Paint().apply {
+    private val numbersPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = color(R.color.gray)
-        isAntiAlias = true
     }
 
-    private val valuePaint = Paint().apply {
+    private val valuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = COLOR_WHITE
-        isAntiAlias = true
     }
 
-    private val labelPaint = Paint().apply {
+    private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = color(R.color.gray)
-        isAntiAlias = true
     }
 
-    private val histogramPaint = Paint().apply {
+    private val histogramPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = COLOR_WHITE
-        isAntiAlias = true
     }
 
     private val paint = Paint().apply {
-        isAntiAlias = true
         strokeCap = Paint.Cap.BUTT
     }
 
@@ -196,17 +193,24 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
 
         val value = metric.valueToString()
         valuePaint.textSize = VALUE_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area) * userScaleRatio
+        valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
+        valuePaint.color = COLOR_WHITE
+
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
         val centerY = area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)
-        val valueHeight = max(textRect.height(), 30)
-        valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
+        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
 
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
+        valuePaint.textSize = VALUE_TEXT_SIZE_BASE / 3 * scaleRationBasedOnScreenSize(area) * userScaleRatio
+        valuePaint.color = color(R.color.gray)
+        canvas.drawText(metric.source.command.pid.units, area.centerX() + textRect.width() / 2 + 6, centerY - valueHeight, valuePaint)
+
         val label = metric.source.command.pid.description
         labelPaint.textSize = LABEL_TEXT_SIZE_BASE * scaleRationBasedOnScreenSize(area) * userScaleRatio
+        labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
         val labelRect = Rect()
         labelPaint.getTextBounds(label, 0, label.length, labelRect)
