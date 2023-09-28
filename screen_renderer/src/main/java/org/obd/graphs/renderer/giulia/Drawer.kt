@@ -271,6 +271,8 @@ internal class Drawer(context: Context, private val settings: ScreenSettings) {
             colorTheme.currentValueColor
         }
 
+        valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
+
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()
@@ -290,6 +292,7 @@ internal class Drawer(context: Context, private val settings: ScreenSettings) {
     ) {
 
         titlePaint.textSize = textSize
+
         if (settings.isBreakLabelTextEnabled()) {
             val text = metric.source.command.pid.description.split("\n")
             if (text.size == 1) {

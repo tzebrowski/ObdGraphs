@@ -1106,7 +1106,7 @@
                         android:title="@string/pref.aa.theme.dynamic_selector.enabled" />
 
                     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="0xffff0000"
+                        android:defaultValue="-4053450"
                         android:key="pref.aa.theme.progressColor"
                         android:title="@string/pref.aa.theme.progress_bar_color" />
 

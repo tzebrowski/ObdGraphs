@@ -5,7 +5,7 @@ import android.graphics.*
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.commons.R
-import org.obd.graphs.renderer.*
+import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.ui.common.COLOR_WHITE
 import org.obd.graphs.ui.common.color
 import kotlin.math.*
@@ -13,27 +13,28 @@ import kotlin.math.*
 private const val DEFAULT_LONG_POINTER_SIZE = 1f
 private const val SCALE_STEP = 2
 
-private const val MAX_DIVIDER_WIDTH = 1.8f
-private const val startAngle = 180
-private const val sweepAngle = 180
-private const val padding = 10f
-private const val dividersCount = 10
-private const val dividerStepAngle = sweepAngle / dividersCount
+private const val START_ANGLE = 180
+private const val SWEEP_ANGLE = 180
+private const val PADDING = 10f
+private const val DIVIDERS_COUNT = 10
+private const val DIVIDER_STEP_ANGLE = SWEEP_ANGLE / DIVIDERS_COUNT
 
 private const val VALUE_TEXT_SIZE_BASE = 46f
 private const val LABEL_TEXT_SIZE_BASE = 16f
-
+private const val SCALE_NUMBERS_TEXT_SIZE_BASE = 12f
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 
+private const val DIVIDER_WIDTH = 1f
+
+private const val DIVIDER_HIGHLIGHT_START = 8
+
 internal class Drawer(private val settings: ScreenSettings, context: Context) {
     private val valueScaler = ValueScaler()
 
-    private val isDividerDrawFirst = true
-    private val isDividerDrawLast = true
     private val strokeColor = Color.parseColor("#0D000000")
     private val backgroundPaint = Paint()
 
@@ -69,6 +70,7 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         background.recycle()
     }
 
+
     fun drawGauge(
         canvas: Canvas, left: Float, top: Float, width: Float,
         metric: CarMetric
@@ -78,8 +80,8 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         val endValue = metric.source.command.pid.max.toFloat()
         val value = metric.source.value?.toFloat() ?: metric.source.command.pid.min.toFloat()
 
-        val pointAngle = abs(sweepAngle).toDouble() / (endValue - startValue)
-        val point = (startAngle + (value - startValue) * pointAngle).toInt()
+        val pointAngle = abs(SWEEP_ANGLE).toDouble() / (endValue - startValue)
+        val point = (START_ANGLE + (value - startValue) * pointAngle).toInt()
 
         val rect = calculateRect(left, width, top)
 
@@ -99,12 +101,12 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
 
         paint.color = strokeColor
 
-        canvas.drawArc(rect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
+        canvas.drawArc(rect, START_ANGLE.toFloat(), SWEEP_ANGLE.toFloat(), false, paint)
 
         paint.color = color(R.color.gray_dark)
         paint.strokeWidth = 2f
 
-        canvas.drawArc(decorRect, startAngle.toFloat(), sweepAngle.toFloat(), false, paint)
+        canvas.drawArc(decorRect, START_ANGLE.toFloat(), SWEEP_ANGLE.toFloat(), false, paint)
 
         paint.strokeWidth = strokeWidth
         paint.color = settings.colorTheme().progressColor
@@ -115,12 +117,12 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
 
         if (value == startValue) {
             canvas.drawArc(
-                rect, startAngle.toFloat(), DEFAULT_LONG_POINTER_SIZE, false,
+                rect, START_ANGLE.toFloat(), DEFAULT_LONG_POINTER_SIZE, false,
                 paint
             )
         } else {
             canvas.drawArc(
-                rect, startAngle.toFloat(), (point - startAngle).toFloat(), false,
+                rect, START_ANGLE.toFloat(), (point - START_ANGLE).toFloat(), false,
                 paint
             )
         }
@@ -128,29 +130,21 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         paint.shader = null
 
         if (settings.isScaleEnabled()) {
-
-            val dividerWidth = min(sweepAngle / abs(endValue - startValue), MAX_DIVIDER_WIDTH)
-            drawDivider(
+            drawScale(
                 canvas,
-                rect,
-                dividerWidth
+                rect, false
             )
 
-            val calculatedWidth = width - 2 * padding
-            val height = width - 2 * padding
-            val radius = if (calculatedWidth < height) calculatedWidth / 2 else height / 2
-
-            drawScale(
+            drawScaleNumbers(
                 canvas, startValue,
-                radius,
+                calculateRadius(width),
                 endValue,
                 decorRect,
             )
         }
 
-        drawMetric(canvas, area = rect, metric = metric)
+        drawMetric(canvas, area = rect, metric = metric, radius = calculateRadius(width))
     }
-
 
     fun drawBackground(canvas: Canvas, rect: Rect) {
         canvas.drawRect(rect, paint)
@@ -163,22 +157,19 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
 
     private fun calculateRect(
         left: Float,
-        pWidth: Float,
+        width: Float,
         top: Float
     ): RectF {
 
-        val height = pWidth - 2 * padding
-        val calculatedHeight =
-            if (pWidth > height) pWidth else height
+        val height = width - 2 * PADDING
+        val calculatedHeight = if (width > height) width else height
+        val calculatedWidth = width - 2 * PADDING
+        val radius = calculateRadius(width)
 
-        val calculatedWidth = pWidth - 2 * padding
-
-        val radius = if (calculatedWidth < height) calculatedWidth / 2 else height / 2
-
-        val rectLeft = left + (pWidth - 2 * padding) / 2 - radius + padding
-        val rectTop = top + (calculatedHeight - 2 * padding) / 2 - radius + padding
-        val rectRight = left + (pWidth - 2 * padding) / 2 - radius + padding + calculatedWidth
-        val rectBottom = top + (height - 2 * padding) / 2 - radius + padding + height
+        val rectLeft = left + (width - 2 * PADDING) / 2 - radius + PADDING
+        val rectTop = top + (calculatedHeight - 2 * PADDING) / 2 - radius + PADDING
+        val rectRight = left + (width - 2 * PADDING) / 2 - radius + PADDING + calculatedWidth
+        val rectBottom = top + (height - 2 * PADDING) / 2 - radius + PADDING + height
         val rect = RectF()
         rect[rectLeft, rectTop, rectRight] = rectBottom
         return rect
@@ -193,30 +184,13 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         paint.shader = gradient
     }
 
-    private fun drawDivider(
-        canvas: Canvas, rect: RectF,
-        dividerSize: Float
-    ) {
-        paint.color = color(R.color.gray_light)
-        val i = if (isDividerDrawFirst) 0 else 1
-        val max = if (isDividerDrawLast) dividersCount + 1 else dividersCount
-        for (j in i..max step SCALE_STEP) {
-            canvas.drawArc(
-                rect,
-                (startAngle + j * dividerStepAngle).toFloat(),
-                dividerSize,
-                false,
-                paint
-            )
-        }
-    }
 
     private fun drawMetric(
         canvas: Canvas,
         area: RectF,
         metric: CarMetric,
-
-        ) {
+        radius: Float
+    ) {
 
         val userScaleRatio = userScaleRatio()
 
@@ -227,6 +201,8 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
 
         val centerY = area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)
         val valueHeight = max(textRect.height(), 30)
+        valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
+
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
         val label = metric.source.command.pid.description
@@ -255,27 +231,100 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
 
 
     private fun drawScale(
+        canvas: Canvas, rect: RectF, drawDetailedScale: Boolean = false
+    ) {
+        val decorLineOffset = 8
+        val r1 = RectF()
+
+
+        r1[rect.left + decorLineOffset,
+                rect.top + decorLineOffset,
+                rect.right - decorLineOffset] =
+            rect.bottom - decorLineOffset
+
+        drawScale(canvas, r1)
+        drawScale(canvas, rect)
+
+        if (drawDetailedScale) {
+            paint.color = color(R.color.gray_light)
+
+            val i = 0
+            val max = DIVIDER_STEP_ANGLE * DIVIDER_HIGHLIGHT_START
+            for (j in i..max step SCALE_STEP) {
+                canvas.drawArc(
+                    rect,
+                    (START_ANGLE + j).toFloat(),
+                    DIVIDER_WIDTH,
+                    false,
+                    paint
+                )
+            }
+        }
+        paint.color = settings.colorTheme().progressColor
+        val i = DIVIDER_STEP_ANGLE * DIVIDER_HIGHLIGHT_START
+        val max = DIVIDER_STEP_ANGLE * DIVIDERS_COUNT
+        for (j in i..max step SCALE_STEP) {
+            canvas.drawArc(
+                rect,
+                (START_ANGLE + j).toFloat(),
+                DIVIDER_WIDTH,
+                false,
+                paint
+            )
+        }
+
+    }
+
+    private fun drawScale(canvas: Canvas, rect: RectF) {
+
+        val i = 0
+        val max = DIVIDERS_COUNT + 1
+        for (j in i..max step SCALE_STEP) {
+
+            paint.color = if (j == DIVIDER_HIGHLIGHT_START || j == DIVIDERS_COUNT) {
+                settings.colorTheme().progressColor
+            } else {
+                color(R.color.gray_light)
+            }
+
+            canvas.drawArc(
+                rect,
+                (START_ANGLE + j * DIVIDER_STEP_ANGLE).toFloat(),
+                DIVIDER_WIDTH,
+                false,
+                paint
+            )
+        }
+
+    }
+
+    private fun drawScaleNumbers(
         canvas: Canvas,
         startValue: Float,
         radius: Float,
         endValue: Float,
         area: RectF,
     ) {
-        val numberOfItems = (dividersCount / SCALE_STEP)
+        val numberOfItems = (DIVIDERS_COUNT / SCALE_STEP)
         val radiusFactor = 0.80f
 
         val scaleRation = scaleRationBasedOnScreenSize(area)
         val stepValue = round((endValue - startValue) / numberOfItems)
         val baseRadius = radius * radiusFactor
-
         for (i in 0..numberOfItems) {
             val text = (round(startValue + stepValue * i)).toInt().toString()
             val rect = Rect()
             numbersPaint.getTextBounds(text, 0, text.length, rect)
-            numbersPaint.textSize = 12f * scaleRation
+            numbersPaint.textSize = SCALE_NUMBERS_TEXT_SIZE_BASE * scaleRation
             val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
             val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
+
+            numbersPaint.color = if (i == numberOfItems - 1 || i == numberOfItems) {
+                settings.colorTheme().progressColor
+            } else {
+                color(R.color.gray)
+            }
 
             canvas.drawText(text, x, y, numbersPaint)
         }
@@ -288,4 +337,11 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         0.9f,
         2.4f
     )
+
+
+    private fun calculateRadius(width: Float): Float {
+        val calculatedWidth = width - 2 * PADDING
+        val height = width - 2 * PADDING
+        return if (calculatedWidth < height) calculatedWidth / 2 else height / 2
+    }
 }

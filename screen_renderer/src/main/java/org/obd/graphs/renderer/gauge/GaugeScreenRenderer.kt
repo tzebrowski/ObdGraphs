@@ -10,6 +10,8 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.min
 
+private const val MAX_ITEMS = 6
+
 internal class GaugeScreenRenderer(
     context: Context,
     settings: ScreenSettings,
@@ -55,12 +57,12 @@ internal class GaugeScreenRenderer(
         metrics: List<CarMetric>
     ) {
 
-        val size = min(metrics.size, 6)
-        val firstHalf = metrics.subList(0, size / 2)
-        val secondHalf = metrics.subList(size / 2, size)
+        val maxItems = min(metrics.size, MAX_ITEMS)
+        val firstHalf = metrics.subList(0, maxItems / 2)
+        val secondHalf = metrics.subList(maxItems / 2, maxItems)
         val height = (area.height() / 2)
 
-        val widthDivider = when (size) {
+        val widthDivider = when (maxItems) {
             2 -> 2
             1 -> 1
             else -> secondHalf.size
@@ -76,7 +78,7 @@ internal class GaugeScreenRenderer(
             )
             left += width + padding
         }
-        if (size > 1) {
+        if (maxItems > 1) {
             left = padding
 
             secondHalf.forEach {
@@ -89,14 +91,14 @@ internal class GaugeScreenRenderer(
         }
     }
 
-    private fun padding(metrics: List<CarMetric>): Float = when (metrics.size) {
+    private inline fun padding(metrics: List<CarMetric>): Float = when (metrics.size) {
         2 -> 14f
         3 -> 14f
         4 -> 14f
         else -> 0f
     }
 
-    private fun widthScaleRatio(metrics: List<CarMetric>): Float = when (metrics.size) {
+    private inline fun widthScaleRatio(metrics: List<CarMetric>): Float = when (metrics.size) {
         1 -> 0.8f
         2 -> 0.9f
         3 -> 0.9f

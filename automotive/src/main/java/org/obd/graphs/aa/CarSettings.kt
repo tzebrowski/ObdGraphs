@@ -25,10 +25,7 @@ import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.ColorTheme
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.ScreenRendererType
-import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
-import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
-import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_RACE
-import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
+import org.obd.graphs.ui.common.*
 
 
 private const val PREF_PIDS_HISTORY_ENABLED= "pref.aa.pids.history.enabled"
@@ -62,7 +59,7 @@ const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun colorTheme(): ColorTheme {
         return ColorTheme(
-            progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
+            progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_CARDINAL),
             dividerColor =  Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE),
             currentValueColor =  Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE),
             currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),

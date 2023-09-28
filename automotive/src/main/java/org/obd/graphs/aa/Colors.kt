@@ -29,6 +29,7 @@ internal fun mapColor(color: Int): CarColor {
         -6697984 -> CarColor.GREEN
         -17613 -> CarColor.YELLOW
         -16737844 -> CarColor.BLUE
+        -4053450 -> CarColor.RED
 
         COLOR_WHITE -> CarColor.PRIMARY
         Color.RED -> CarColor.RED
