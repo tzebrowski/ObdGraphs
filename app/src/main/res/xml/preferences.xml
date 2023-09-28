@@ -813,6 +813,12 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"
                         android:defaultValue="true"
+                        android:key="pref.aa.virtual_screens.status_panel.enabled"
+                        android:title="@string/pref.aa.display_status_panel" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
                         android:key="pref.aa.virtual_screens.scale.enabled"
                         android:title="@string/pref.aa.display_pid_scale" />
 

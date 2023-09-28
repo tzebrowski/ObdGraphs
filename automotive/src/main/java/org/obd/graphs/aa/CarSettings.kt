@@ -81,6 +81,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         }
     }
 
+    override fun isStatusPanelEnabled(): Boolean  =  Prefs.getBoolean("pref.aa.virtual_screens.status_panel.enabled", true)
+
     override fun isScaleEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.scale.enabled", true)
 
     override fun getHeightPixels(): Int  = carContext.resources.displayMetrics.heightPixels
@@ -95,6 +97,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
 
     override fun getMaxColumns(): Int = Prefs.getS("pref.aa.max_pids_in_column.${getCurrentVirtualScreenId()}", DEFAULT_ITEMS_IN_COLUMN).toInt()
+
 
     override fun getBackgroundColor(): Int =  if (carContext.isDarkMode)  Color.BLACK else Color.BLACK
 
