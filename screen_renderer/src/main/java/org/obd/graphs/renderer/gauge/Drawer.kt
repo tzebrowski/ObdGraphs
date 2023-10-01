@@ -247,7 +247,7 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
 
-        val centerY = area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)
+        val centerY = (area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)) + 12
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
