@@ -11,6 +11,7 @@ import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.min
 
 private const val MAX_ITEMS = 6
+
 @Suppress("NOTHING_TO_INLINE")
 internal class GaugeScreenRenderer(
     context: Context,
@@ -19,7 +20,7 @@ internal class GaugeScreenRenderer(
     fps: Fps
 ) : AbstractRenderer(settings, context, fps) {
 
-    private val drawer = Drawer(settings, context)
+    private val drawer = Drawer(settings = settings, context = context)
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -49,13 +50,13 @@ internal class GaugeScreenRenderer(
                     drawer.drawGauge(
                         canvas,
                         left = area.left.toFloat(),
-                        top = area.top.toFloat() +  area.height() / 6,
-                        width = area.width() / 2  * widthScaleRatio(metrics),
+                        top = area.top.toFloat() + area.height() / 6,
+                        width = area.width() / 2 * widthScaleRatio(metrics),
                         metrics[0],
                     )
 
                     drawer.drawGauge(
-                        canvas, left = (area.left +  area.width() / 2f ) - 10,
+                        canvas, left = (area.left + area.width() / 2f) - 10,
                         top = area.top.toFloat() + area.height() / 6,
                         width = area.width() / 2 * widthScaleRatio(metrics),
                         metrics[1],
@@ -104,7 +105,7 @@ internal class GaugeScreenRenderer(
                 canvas, left = area.left + left, top = area.top.toFloat(), width = width,
                 it
             )
-            left += width  - padding
+            left += width - padding
         }
         if (maxItems > 1) {
             left = marginLeft
@@ -113,7 +114,7 @@ internal class GaugeScreenRenderer(
                     canvas, left = area.left + left, top = area.top.toFloat() + height, width = width,
                     it
                 )
-                left += width  - padding
+                left += width - padding
             }
         }
     }
