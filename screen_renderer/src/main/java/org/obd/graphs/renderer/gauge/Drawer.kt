@@ -70,7 +70,7 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeCap = Paint.Cap.BUTT
         style = Paint.Style.STROKE
-        color = COLOR_DYNAMIC_SELECTOR_ECO
+        color = COLOR_WHITE
     }
 
     private val pp = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -159,7 +159,7 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         canvas: Canvas,
         rect: RectF,
         strokeWidth: Float
-        ) {
+    ) {
 
         progressPaint.strokeWidth = strokeWidth
 
@@ -301,29 +301,29 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
 
         drawScale(canvas, scaleRect, start, end, paintColor = {
             if (it == 10 || it == 12) {
-              settings.colorTheme().progressColor
+                settings.colorTheme().progressColor
             } else {
                 color(R.color.gray_light)
             }
         }) {
-           START_ANGLE + it * DIVIDER_STEP_ANGLE
+            START_ANGLE + it * DIVIDER_STEP_ANGLE
         }
 
-        drawScale(canvas, scaleRect, start,  DIVIDERS_COUNT + 2) {
+        drawScale(canvas, scaleRect, start, DIVIDERS_COUNT + 2) {
             START_ANGLE + it * DIVIDER_STEP_ANGLE * 0.5f
         }
 
         drawScale(canvas, rect, start, end, paintColor = { scaleColor(it) }) {
-           START_ANGLE + it * DIVIDER_STEP_ANGLE
+            START_ANGLE + it * DIVIDER_STEP_ANGLE
         }
 
         drawScale(canvas, rect, (DIVIDER_STEP_ANGLE * DIVIDER_HIGHLIGHT_START + 3).toInt(),
             (DIVIDER_STEP_ANGLE * (DIVIDERS_COUNT - 1)).toInt(),
-            paintColor = {settings.colorTheme().progressColor}) {
-           START_ANGLE + it
+            paintColor = { settings.colorTheme().progressColor }) {
+            START_ANGLE + it
         }
 
-        val width =  (START_ANGLE + DIVIDERS_COUNT * (DIVIDER_STEP_ANGLE - 1)) -
+        val width = (START_ANGLE + DIVIDERS_COUNT * (DIVIDER_STEP_ANGLE - 1)) -
                 (START_ANGLE + DIVIDERS_COUNT * (DIVIDER_STEP_ANGLE - 3))
 
         canvas.drawArc(
@@ -378,8 +378,8 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
         val end = DIVIDERS_COUNT + 1
 
         for (j in start..end step SCALE_STEP) {
-            val angle  =  (START_ANGLE + j * DIVIDER_STEP_ANGLE) * (Math.PI / 180)
-            val text = valueAsString(metric, value =   (startValue + stepValue * j/SCALE_STEP).round(1))
+            val angle = (START_ANGLE + j * DIVIDER_STEP_ANGLE) * (Math.PI / 180)
+            val text = valueAsString(metric, value = (startValue + stepValue * j / SCALE_STEP).round(1))
             val rect = Rect()
             numbersPaint.getTextBounds(text, 0, text.length, rect)
             numbersPaint.textSize = SCALE_NUMBERS_TEXT_SIZE_BASE * scaleRation
@@ -387,8 +387,8 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
             val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
-            numbersPaint.color = if (j == (numberOfItems -  1) * SCALE_STEP   || j == numberOfItems  * SCALE_STEP) {
-                COLOR_CARDINAL
+            numbersPaint.color = if (j == (numberOfItems - 1) * SCALE_STEP || j == numberOfItems * SCALE_STEP) {
+                settings.colorTheme().progressColor
             } else {
                 color(R.color.gray)
             }
@@ -398,10 +398,10 @@ internal class Drawer(private val settings: ScreenSettings, context: Context) {
     }
 
     private inline fun valueAsString(metric: CarMetric, value: Double): String = if (metric.source.command.pid.max.toInt() > 20) {
-            value.toInt().toString()
-        } else {
-            value.toString()
-        }
+        value.toInt().toString()
+    } else {
+        value.toString()
+    }
 
     private fun scaleRationBasedOnScreenSize(area: RectF): Float = valueScaler.scaleToNewRange(
         area.width() * area.height(),
