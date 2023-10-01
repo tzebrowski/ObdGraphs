@@ -64,6 +64,9 @@ internal class GaugeScreenRenderer(
                 4 -> {
                     draw(area, canvas, metrics, marginLeft = area.width() / 8f)
                 }
+                3 -> {
+                    draw(area, canvas, metrics, marginLeft = area.width() / 8f)
+                }
                 else -> {
                     draw(area, canvas, metrics)
                 }
