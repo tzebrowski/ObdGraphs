@@ -43,10 +43,10 @@ fun SharedPreferences.updateInt(key: String, value: Int){
 }
 
 fun SharedPreferences.updateStringSet(key: String, list: List<String>) {
-    return edit().putStringSet(key, list.map { l -> l }.toSet()).apply()
+    edit().putStringSet(key, list.map { l -> l }.toSet()).commit()
 }
 fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
-    return edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).apply()
+    edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).commit()
 }
 
 fun SharedPreferences.getLongSet(key: String): Set<Long> {
