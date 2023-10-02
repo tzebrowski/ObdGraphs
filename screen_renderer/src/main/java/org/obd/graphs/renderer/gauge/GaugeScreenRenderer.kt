@@ -1,3 +1,21 @@
+/**
+ * Copyright 2019-2023, Tomasz Żebrowski
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 package org.obd.graphs.renderer.gauge
 
 import android.content.Context
@@ -31,45 +49,52 @@ internal class GaugeScreenRenderer(
             }
 
             val metrics = metricsCollector.metrics()
+
             drawer.drawBackground(canvas, area)
 
+            var top = area.top.toFloat() + 4
+
+            if (settings.isStatusPanelEnabled()) {
+                top = drawer.drawStatusBar(canvas = canvas, top = top, left = area.left.toFloat(), fps = fps.get())
+            }
             when (metrics.size) {
                 0 -> {}
                 1 -> {
                     drawer.drawGauge(
-                        canvas,
+                        canvas = canvas,
                         left = area.left + area.width() / 6f,
-                        top = area.top.toFloat(),
+                        top = top,
                         width = area.width() * widthScaleRatio(metrics),
-                        metrics[0],
+                        metric = metrics[0]
                     )
                 }
 
                 2 -> {
 
                     drawer.drawGauge(
-                        canvas,
+                        canvas = canvas,
                         left = area.left.toFloat(),
-                        top = area.top.toFloat() + area.height() / 6,
+                        top = top + area.height() / 6,
                         width = area.width() / 2 * widthScaleRatio(metrics),
-                        metrics[0],
+                        metric = metrics[0],
                     )
 
                     drawer.drawGauge(
-                        canvas, left = (area.left + area.width() / 2f) - 10,
-                        top = area.top.toFloat() + area.height() / 6,
+                        canvas = canvas,
+                        left = (area.left + area.width() / 2f) - 10,
+                        top = top + area.height() / 6,
                         width = area.width() / 2 * widthScaleRatio(metrics),
-                        metrics[1],
+                        metric = metrics[1],
                     )
                 }
                 4 -> {
-                    draw(area, canvas, metrics, marginLeft = area.width() / 8f)
+                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top)
                 }
                 3 -> {
-                    draw(area, canvas, metrics, marginLeft = area.width() / 8f)
+                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top)
                 }
                 else -> {
-                    draw(area, canvas, metrics)
+                    draw(canvas, area, metrics, top = top)
                 }
             }
         }
@@ -80,10 +105,11 @@ internal class GaugeScreenRenderer(
     }
 
     private fun draw(
-        area: Rect,
         canvas: Canvas,
+        area: Rect,
         metrics: List<CarMetric>,
-        marginLeft: Float = 5f
+        marginLeft: Float = 5f,
+        top: Float,
     ) {
 
         val maxItems = min(metrics.size, MAX_ITEMS)
@@ -102,8 +128,11 @@ internal class GaugeScreenRenderer(
         val padding = 10f
         firstHalf.forEach {
             drawer.drawGauge(
-                canvas, left = area.left + left, top = area.top.toFloat(), width = width,
-                it
+                canvas = canvas,
+                left = area.left + left,
+                top = top,
+                width = width,
+                metric = it
             )
             left += width - padding
         }
@@ -111,8 +140,11 @@ internal class GaugeScreenRenderer(
             left = marginLeft
             secondHalf.forEach {
                 drawer.drawGauge(
-                    canvas, left = area.left + left, top = area.top.toFloat() + height, width = width,
-                    it
+                    canvas = canvas,
+                    left = area.left + left,
+                    top = top + height,
+                    width = width,
+                    metric = it
                 )
                 left += width - padding
             }

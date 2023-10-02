@@ -24,7 +24,6 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.renderer.AbstractRenderer
 import org.obd.graphs.renderer.Fps
@@ -39,7 +38,7 @@ private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 private const val AREA_MAX_WIDTH = 500
-private const val FOOTER_SIZE_RATIO = 1.3f
+
 
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaScreenRenderer(
@@ -63,15 +62,14 @@ internal class GiuliaScreenRenderer(
             val metrics = metricsCollector.metrics()
             val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
-            drawer.canvas = canvas
-            drawer.drawBackground(area)
+            drawer.drawBackground(canvas, area)
 
             var top = area.top + textSizeBase / 2
-            var left = drawer.getMarginLeft(area)
+            var left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawer.drawStatusBar(area, fps.get()) + 18
-                drawer.drawDivider(left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
+                top = drawer.drawStatusBar(canvas,area.top.toFloat() + 6f, area.left.toFloat(), fps.get()) + 18
+                drawer.drawDivider(canvas, left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
             val topCpy = top
@@ -79,7 +77,8 @@ internal class GiuliaScreenRenderer(
 
             splitIntoChunks(metrics).forEach { chunk ->
                 chunk.forEach lit@{ metric ->
-                    top = drawMetric(
+                    top = drawer.drawMetric(
+                        canvas = canvas,
                         area = area,
                         metric = metric,
                         textSizeBase = textSizeBase,
@@ -102,117 +101,6 @@ internal class GiuliaScreenRenderer(
 
     override fun release() {
         drawer.recycle()
-    }
-
-
-    private inline fun drawMetric(
-        area: Rect,
-        metric: CarMetric,
-        textSizeBase: Float,
-        valueTextSize: Float,
-        left: Float,
-        top: Float,
-        valueTop: Float,
-    ): Float {
-
-        var top1 = top
-        val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
-        val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
-        var left1 = left
-
-        drawer.drawTitle(
-            metric, left1, top1,
-            textSizeBase
-        )
-
-        drawer.drawValue(
-            metric,
-            valueTop,
-            top1 + 10,
-            valueTextSize
-        )
-
-        if (settings.isHistoryEnabled()) {
-            top1 += textSizeBase / FOOTER_SIZE_RATIO
-            left1 = drawer.drawText(
-                "min",
-                left,
-                top1,
-                Color.DKGRAY,
-                footerTitleTextSize
-            )
-            left1 = drawer.drawText(
-                metric.toNumber(metric.min),
-                left1,
-                top1,
-                Color.LTGRAY,
-                footerValueTextSize
-            )
-
-            left1 = drawer.drawText(
-                "max",
-                left1,
-                top1,
-                Color.DKGRAY,
-                footerTitleTextSize
-            )
-            left1 = drawer.drawText(
-                metric.toNumber(metric.max),
-                left1,
-                top1,
-                Color.LTGRAY,
-                footerValueTextSize
-            )
-
-            if (metric.source.command.pid.historgam.isAvgEnabled) {
-                left1 = drawer.drawText(
-                    "avg",
-                    left1,
-                    top1,
-                    Color.DKGRAY,
-                    footerTitleTextSize
-                )
-
-                left1 = drawer.drawText(
-                    metric.toNumber(metric.mean),
-                    left1,
-                    top1,
-                    Color.LTGRAY,
-                    footerValueTextSize
-                )
-            }
-
-            drawer.drawAlertingLegend(metric, left1, top1)
-
-        } else {
-            top1 += 12
-        }
-
-        top1 += 6f
-
-        drawer.drawProgressBar(
-            left,
-            itemWidth(area).toFloat(), top1, metric,
-            color = settings.colorTheme().progressColor
-        )
-
-        top1 += calculateDividerSpacing()
-
-        drawer.drawDivider(
-            left, itemWidth(area).toFloat(), top1,
-            color = settings.colorTheme().dividerColor
-        )
-
-        top1 += (textSizeBase * 1.7).toInt()
-
-        if (top1 > area.height()) {
-            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                Log.v(LOG_KEY, "Skipping entry to display verticalPos=$top1},area.height=${area.height()}")
-            }
-            return top1
-        }
-
-        return top1
     }
 
     private inline fun calculateFontSize(
@@ -240,11 +128,6 @@ internal class GiuliaScreenRenderer(
         return Pair(valueTextSize, textSizeBase)
     }
 
-    private inline fun calculateDividerSpacing() = when (settings.getMaxColumns()) {
-        1 -> 14
-        else -> 8
-    }
-
     private inline fun calculateTop(
         textHeight: Float,
         top: Float,
@@ -260,9 +143,4 @@ internal class GiuliaScreenRenderer(
             else -> (area.width() / 2)
         }
 
-    private inline fun itemWidth(area: Rect): Int =
-        when (settings.getMaxColumns()) {
-            1 -> area.width()
-            else -> area.width() / 2
-        }
 }

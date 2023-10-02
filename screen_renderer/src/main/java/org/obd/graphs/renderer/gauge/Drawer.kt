@@ -1,10 +1,28 @@
+/**
+ * Copyright 2019-2023, Tomasz Żebrowski
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 package org.obd.graphs.renderer.gauge
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.commons.R
+import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.*
@@ -15,6 +33,7 @@ private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 private const val MIN_TEXT_VALUE_HEIGHT = 30
+private const val NUMERALS_RADIUS_SCALE_FACTOR = 0.75f
 
 data class DrawerSettings(
     val startAngle: Float = 200f,
@@ -32,27 +51,17 @@ data class DrawerSettings(
     val dividerHighlightStart: Int = 9,
 )
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(
-    private val settings: ScreenSettings,
+    settings: ScreenSettings,
     context: Context,
     private val drawerSettings: DrawerSettings = DrawerSettings(),
-) {
-    private val valueScaler = ValueScaler()
+): AbstractDrawer(context, settings) {
 
     private val strokeColor = Color.parseColor("#0D000000")
-    private val backgroundPaint = Paint()
-
-    private val background: Bitmap =
-        BitmapFactory.decodeResource(context.resources, R.drawable.background)
 
     private val numbersPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = color(R.color.gray)
-    }
-
-    private val valuePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = COLOR_WHITE
     }
 
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -61,10 +70,6 @@ internal class Drawer(
 
     private val histogramPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = COLOR_WHITE
-    }
-
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        strokeCap = Paint.Cap.BUTT
     }
 
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -77,11 +82,7 @@ internal class Drawer(
         strokeCap = Paint.Cap.BUTT
     }
 
-    fun recycle() {
-        background.recycle()
-    }
-
-    fun drawGauge(canvas: Canvas, left: Float, top: Float, width: Float, metric: CarMetric) {
+    fun drawGauge(canvas: Canvas, metric: CarMetric,left: Float, top: Float, width: Float) {
         paint.shader = null
 
         val rect = calculateRect(left, width, top)
@@ -138,7 +139,7 @@ internal class Drawer(
                 rect
             )
 
-            drawScaleNumbers(
+            drawNumerals(
                 metric,
                 canvas,
                 calculateRadius(width),
@@ -186,13 +187,6 @@ internal class Drawer(
         paint.shader = null
     }
 
-    fun drawBackground(canvas: Canvas, rect: Rect) {
-        canvas.drawRect(rect, paint)
-        canvas.drawColor(settings.getBackgroundColor())
-        if (settings.isBackgroundDrawingEnabled()) {
-            canvas.drawBitmap(background, rect.left.toFloat(), rect.top.toFloat(), backgroundPaint)
-        }
-    }
 
     private fun calculateRect(
         left: Float,
@@ -352,7 +346,7 @@ internal class Drawer(
         }
     }
 
-    private fun drawScaleNumbers(
+    private fun drawNumerals(
         metric: CarMetric,
         canvas: Canvas,
         radius: Float,
@@ -363,11 +357,10 @@ internal class Drawer(
         val endValue = metric.source.command.pid.max.toDouble()
 
         val numberOfItems = (drawerSettings.dividersCount / drawerSettings.scaleStep)
-        val radiusFactor = 0.75f
 
         val scaleRation = scaleRationBasedOnScreenSize(area)
         val stepValue = (endValue - startValue) / numberOfItems
-        val baseRadius = radius * radiusFactor
+        val baseRadius = radius * NUMERALS_RADIUS_SCALE_FACTOR
 
         val start = 0
         val end = drawerSettings.dividersCount + 1
