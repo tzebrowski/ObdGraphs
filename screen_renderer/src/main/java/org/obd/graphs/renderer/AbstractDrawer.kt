@@ -89,7 +89,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         }
     }
 
-    fun drawStatusBar(canvas: Canvas,top: Float, left: Float, fps: Double): Float {
+    fun drawStatusBar(canvas: Canvas,top: Float, left: Float, fps: Fps): Float {
 
         var text = statusLabel
         var marginLeft = getMarginLeft(left)
@@ -180,7 +180,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
             marginLeft += getTextWidth(text, statusPaint) + 4F
             drawText(
                 canvas,
-                fps.toString(),
+                fps.get().toString(),
                 marginLeft,
                 top,
                 Color.YELLOW,

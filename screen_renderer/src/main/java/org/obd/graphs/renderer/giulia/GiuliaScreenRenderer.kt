@@ -68,7 +68,7 @@ internal class GiuliaScreenRenderer(
             var left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawer.drawStatusBar(canvas,area.top.toFloat() + 6f, area.left.toFloat(), fps.get()) + 18
+                top = drawer.drawStatusBar(canvas,area.top.toFloat() + 6f, area.left.toFloat(), fps) + 18
                 drawer.drawDivider(canvas, left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 

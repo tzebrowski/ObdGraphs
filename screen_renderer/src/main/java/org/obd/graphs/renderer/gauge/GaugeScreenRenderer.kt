@@ -55,7 +55,7 @@ internal class GaugeScreenRenderer(
             var top = area.top.toFloat() + 4
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawer.drawStatusBar(canvas = canvas, top = top, left = area.left.toFloat(), fps = fps.get())
+                top = drawer.drawStatusBar(canvas = canvas, top = top, left = area.left.toFloat(), fps = fps)
             }
             when (metrics.size) {
                 0 -> {}
@@ -74,7 +74,7 @@ internal class GaugeScreenRenderer(
                     drawer.drawGauge(
                         canvas = canvas,
                         left = area.left.toFloat(),
-                        top = top + area.height() / 6,
+                        top = top + area.height() / 7,
                         width = area.width() / 2 * widthScaleRatio(metrics),
                         metric = metrics[0],
                     )
@@ -82,7 +82,7 @@ internal class GaugeScreenRenderer(
                     drawer.drawGauge(
                         canvas = canvas,
                         left = (area.left + area.width() / 2f) - 10,
-                        top = top + area.height() / 6,
+                        top = top + area.height() / 7,
                         width = area.width() / 2 * widthScaleRatio(metrics),
                         metric = metrics[1],
                     )
@@ -142,7 +142,7 @@ internal class GaugeScreenRenderer(
                 drawer.drawGauge(
                     canvas = canvas,
                     left = area.left + left,
-                    top = top + height,
+                    top = top + height - 8f,
                     width = width,
                     metric = it
                 )
