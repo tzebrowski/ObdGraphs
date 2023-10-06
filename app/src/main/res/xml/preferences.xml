@@ -329,35 +329,25 @@
             android:summary="@string/pref_vehicle_profile_settings_summary"
             android:key="pref.profiles"
             android:title="@string/pref.settings">
-            <org.obd.graphs.preferences.profile.ProfileListPreference
+            <org.obd.graphs.preferences.profile.VehicleProfileListPreference
                 android:key="pref.profile.id"
                 android:title="@string/pref.profile.available_list"
                 app:useSimpleSummaryProvider="true" />
 
-            <org.obd.graphs.preferences.profile.ProfileResetPreferenceAction
+            <org.obd.graphs.preferences.profile.VehicleProfileResetPreferenceAction
                 android:key="pref.profile.reset"
                 android:summary="@string/pref.profile.reset_summary"
                 android:title="@string/pref.profile.reset" />
 
-            <org.obd.graphs.preferences.profile.ProfileSavePreferenceAction
+            <org.obd.graphs.preferences.profile.VehicleProfileSavePreferenceAction
                 android:key="pref.profile.save_current"
                 android:summary="@string/pref.profile.save_user_settings_summary"
                 android:title="@string/pref.profile.save_user_settings" />
 
-            <org.obd.graphs.preferences.profile.ProfileNamePreference
+            <org.obd.graphs.preferences.profile.VehicleProfileNamePreference
                 android:dialogTitle="@string/pref.profile.update_name"
                 android:key="pref.profile.current_name"
                 android:title="@string/pref.profile.update_name"
-                app:useSimpleSummaryProvider="true" />
-
-            <ListPreference
-                android:entries="@array/pref.numbers_1_10"
-                android:entryValues="@array/pref.numbers_1_10"
-                android:defaultValue="5"
-                android:dialogTitle="@string/pref.profile.max_profiles"
-                android:inputType="number"
-                android:key="pref.profile.max_profiles"
-                android:title="@string/pref.profile.max_profiles"
                 app:useSimpleSummaryProvider="true" />
 
             <EditTextPreference

@@ -28,7 +28,7 @@ import org.obd.graphs.preferences.updateToolbar
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 
-class ProfileListPreference(
+class VehicleProfileListPreference(
     context: Context?,
     attrs: AttributeSet?
 ) : ListPreference(context, attrs) {
@@ -46,6 +46,7 @@ class ProfileListPreference(
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, newValue ->
+                vehicleProfile.saveCurrentProfile()
                 vehicleProfile.loadProfile(newValue.toString())
                 updateToolbar()
                 navigateToPreferencesScreen(PROFILES_PREF)

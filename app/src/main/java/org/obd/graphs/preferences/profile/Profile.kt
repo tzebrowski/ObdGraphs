@@ -44,7 +44,8 @@ class VehicleProfile {
         setupProfiles()
     }
 
-    fun getProfileList() = getProfiles()
+
+    fun getProfileList() = getVehicleProfiles()
 
     fun setupProfiles() {
         val profileInstallationKey = getProfileInstallationKey()
@@ -94,7 +95,7 @@ class VehicleProfile {
         }
     }
 
-    internal fun getCurrentProfile(): String = getSelectedProfile()
+    internal fun getCurrentProfile(): String = getSelectedVehicleProfile()
 
     internal fun saveCurrentProfile() {
         Prefs.edit().let {

@@ -27,7 +27,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.preference.*
 import org.obd.graphs.R
-import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
@@ -115,21 +114,17 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
         } else {
-
             requireArguments().getString(PREFERENCE_SCREEN_KEY)?.let {
-
                 Log.d(LOG_KEY, "Loading Pref Screen for key=$it")
 
                 setPreferencesFromResource(
                     R.xml.preferences,
                     it
                 )
-
                 openPreferenceDialogFor(it)
             }
         }
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -166,13 +161,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun registerListeners() {
         registerConnectionTypeListener()
         registerViewsPreferenceChangeListeners()
-
-        findPreference<ListPreference>("pref.profile.max_profiles")?.let {
-            it.setOnPreferenceChangeListener { _, _ ->
-                navigateToPreferencesScreen("pref.profiles")
-                true
-            }
-        }
     }
 
     private fun registerConnectionTypeListener() {

@@ -22,7 +22,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.Preference
 
-class ProfileResetPreferenceAction(
+class VehicleProfileResetPreferenceAction(
     context: Context?,
     attrs: AttributeSet?
 ) : Preference(context, attrs) {

@@ -24,9 +24,7 @@ import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.profile.PROFILE_NAME_PREFIX
-import org.obd.graphs.profile.getSelectedProfile
+import org.obd.graphs.profile.getSelectedVehicleProfileName
 
 internal abstract class AbstractDrawer (context: Context, protected val settings: ScreenSettings) {
 
@@ -152,7 +150,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         )
 
         marginLeft += getTextWidth(text, statusPaint) + 4F
-        text = Prefs.getString("$PROFILE_NAME_PREFIX.${getSelectedProfile()}", "")!!
+        text = getSelectedVehicleProfileName()!!
 
         drawText(
             canvas,

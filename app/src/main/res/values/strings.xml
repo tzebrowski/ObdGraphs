@@ -262,7 +262,6 @@
 
     <string name="pref.settings">Settings</string>
     <string name="pref.profile.about_title">Vehicle profile description</string>
-    <string name="pref.profile.max_profiles">Max vehicle profiles available</string>
     <string name="pref.profile.update_name">Vehicle profile name</string>
     <string name="pref.profile.category">Vehicle Profiles</string>
     <string name="pref.profile.available_list">Available vehicle profiles</string>
