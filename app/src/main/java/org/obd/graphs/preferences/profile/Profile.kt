@@ -25,10 +25,13 @@ import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updateToolbar
-import org.obd.graphs.profile.*
+import org.obd.graphs.profile.PROFILE_ID_PREF
+import org.obd.graphs.profile.PROFILE_NAME_PREFIX
+import org.obd.graphs.profile.getSelectedVehicleProfile
+import org.obd.graphs.profile.getVehicleProfiles
 import java.util.*
 
-const val LOG_KEY = "Profile"
+const val LOG_KEY = "VehicleProfile"
 const val PROFILES_PREF = "pref.profiles"
 
 private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
@@ -41,51 +44,63 @@ class VehicleProfile {
     fun reset(){
         Prefs.updateBoolean(getProfileInstallationKey(), false)
         resetCurrentProfile()
-        setupProfiles()
+        setupProfiles(forceOverride = true)
     }
 
 
     fun getProfileList() = getVehicleProfiles()
 
-    fun setupProfiles() {
-        val profileInstallationKey = getProfileInstallationKey()
-        Log.i(LOG_KEY, "Setup profiles. Installation key='$profileInstallationKey', enabled='${Prefs.getBoolean(profileInstallationKey, false)}'")
+    fun setupProfiles(forceOverride:Boolean=true) {
 
-        if (!Prefs.getBoolean(profileInstallationKey, false)) {
-            val profiles = findProfiles()
+        val installationKey = getProfileInstallationKey()
+        val setupDisabled = Prefs.getBoolean(installationKey, false)
+        Log.i(LOG_KEY, "Setup profiles. Installation key='$installationKey', setupEnabled='$setupDisabled', forceOverride=$forceOverride")
+
+        if (!setupDisabled) {
+            val profiles = findProfileFiles()
             Log.i(LOG_KEY, "Found following profiles: $profiles for installation.")
+            val allPrefs = Prefs.all
 
             Prefs.edit().let { editor ->
-                // clear all preferences
-                editor.clear()
-                profiles?.forEach { fileName ->
-                    Log.i(LOG_KEY, "Loading profile file='$fileName'")
+                if (forceOverride) {
+                    Log.i(LOG_KEY, "Removing all preferences.")
+                    // clear all preferences
+                    editor.clear()
+                }
 
-                    openProperties(fileName).forEach { t, u ->
+                profiles?.forEach { profileFile ->
+                    Log.i(LOG_KEY, "Loading profile file='$profileFile'")
+
+                    openProfileFile(profileFile).forEach { t, u ->
                         val value = u.toString()
                         val key = t.toString()
 
-                        Log.i(LOG_KEY, "Inserting $key=$value")
+                        if (forceOverride || !allPrefs.keys.contains(key)) {
+                            Log.i(LOG_KEY, "Updating profile.key=`$key=$value`")
 
-                        when {
-                            value.isBoolean() -> {
-                                editor.putBoolean(key, value.toBoolean())
+                            when {
+                                value.isBoolean() -> {
+                                    editor.putBoolean(key, value.toBoolean())
+                                }
+                                value.isArray() -> {
+                                    editor.putStringSet(key, stringToStringSet(value))
+                                }
+                                value.isNumeric() -> {
+                                    editor.putInt(key, value.toInt())
+                                }
+                                else -> {
+                                    editor.putString(key, value.replace("\"", "").replace("\"", ""))
+                                }
                             }
-                            value.isArray() -> {
-                                editor.putStringSet(key, stringToStringSet(value))
-                            }
-                            value.isNumeric() -> {
-                                editor.putInt(key, value.toInt())
-                            }
-                            else -> {
-                                editor.putString(key, value.replace("\"", "").replace("\"", ""))
-                            }
+                        } else{
+                            Log.i(LOG_KEY, "Skipping profile.key=`$key=$value`")
                         }
+
                     }
                 }
                 editor.putString(PROFILE_ID_PREF, getDefaultProfile())
-                Log.i(LOG_KEY,"Updating profile installation key $profileInstallationKey to true")
-                editor.putBoolean(profileInstallationKey, true)
+                Log.i(LOG_KEY,"Updating profile installation key $installationKey to true")
+                editor.putBoolean(installationKey, true)
                 editor.apply()
             }
             val defaultProfile = getDefaultProfile()
@@ -211,9 +226,9 @@ class VehicleProfile {
         .filter { it.isNotEmpty() }
         .toMutableSet()
 
-    private fun findProfiles(): List<String>?  =  getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
+    private fun findProfileFiles(): List<String>?  =  getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
 
-    private fun openProperties(fileName: String): Properties {
+    private fun openProfileFile(fileName: String): Properties {
         val prop = Properties()
         prop.load(getContext()!!.assets.open(fileName))
         return prop

@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         registerReceiver()
 
         setupExceptionHandler()
-        vehicleProfile.setupProfiles()
+        vehicleProfile.setupProfiles(forceOverride = false)
         setupStatusPanel()
         setupPreferences()
 
