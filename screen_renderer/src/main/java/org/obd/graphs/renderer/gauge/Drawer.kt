@@ -23,6 +23,7 @@ import android.graphics.*
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.commons.R
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.*
@@ -35,7 +36,11 @@ private const val NEW_MIN = 0.6f
 private const val MIN_TEXT_VALUE_HEIGHT = 30
 private const val NUMERALS_RADIUS_SCALE_FACTOR = 0.75f
 
+
+
 data class DrawerSettings(
+    val gaugeProgressWidth: Float = 1.5f,
+    val gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.SHORT,
     val startAngle: Float = 200f,
     val sweepAngle: Float = 180f,
     val scaleStep: Int = 2,
@@ -157,7 +162,12 @@ internal class Drawer(
         strokeWidth: Float
     ) {
 
-        progressPaint.strokeWidth = strokeWidth
+        val progressRect = RectF()
+        val progressRectOffset = 2f
+        progressRect[rect.left + progressRectOffset,
+                rect.top + progressRectOffset,
+                rect.right - progressRectOffset] =
+            rect.bottom - progressRectOffset
 
         if (settings.isProgressGradientEnabled()) {
             setProgressGradient(rect)
@@ -170,18 +180,31 @@ internal class Drawer(
         if (value == startValue) {
 
             canvas.drawArc(
-                rect, drawerSettings.startAngle, drawerSettings.longPointerSize, false,
+                progressRect, drawerSettings.startAngle, drawerSettings.longPointerSize, false,
                 progressPaint
             )
         } else {
 
             val pointAngle = abs(drawerSettings.sweepAngle).toDouble() / (endValue - startValue)
             val point = (drawerSettings.startAngle + (value - startValue) * pointAngle).toInt()
-            val width = 3f
-            canvas.drawArc(
-                rect, drawerSettings.startAngle + (point - drawerSettings.startAngle), width, false,
-                progressPaint
-            )
+            when (drawerSettings.gaugeProgressBarType){
+                GaugeProgressBarType.SHORT -> {
+                    progressPaint.strokeWidth = strokeWidth
+
+                    canvas.drawArc(
+                        progressRect, drawerSettings.startAngle + (point - drawerSettings.startAngle),
+                        drawerSettings.gaugeProgressWidth, false,
+                        progressPaint
+                    )
+                }
+                GaugeProgressBarType.LONG -> {
+                    progressPaint.strokeWidth = strokeWidth/2f
+                    canvas.drawArc(
+                        progressRect, drawerSettings.startAngle, (point - drawerSettings.startAngle), false,
+                        progressPaint
+                    )
+                }
+            }
         }
 
         paint.shader = null

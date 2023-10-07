@@ -20,11 +20,8 @@ package org.obd.graphs.aa
 
 import android.graphics.Color
 import androidx.car.app.CarContext
-import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.preferences.*
-import org.obd.graphs.renderer.ColorTheme
-import org.obd.graphs.renderer.DynamicSelectorMode
-import org.obd.graphs.renderer.ScreenRendererType
+import org.obd.graphs.renderer.*
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_RACE
@@ -80,6 +77,9 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
             }
         }
     }
+
+    override fun getGaugeProgressBarType(): GaugeProgressBarType =
+        GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
 
     override fun isStatusPanelEnabled(): Boolean  =  Prefs.getBoolean("pref.aa.virtual_screens.status_panel.enabled", true)
 

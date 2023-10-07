@@ -38,7 +38,8 @@ internal class GaugeScreenRenderer(
     fps: Fps
 ) : AbstractRenderer(settings, context, fps) {
 
-    private val drawer = Drawer(settings = settings, context = context)
+    private val drawer = Drawer(settings = settings, context = context,
+        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeProgressBarType()))
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 

@@ -119,6 +119,7 @@
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
 
     <string name="pref.aa.renderer_type">Screen renderer type</string>
+    <string name="pref.aa.renderer.gauge.progress_type">Screen renderer type</string>
 
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Number of columns</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category.summary">Choose number of columns for each individual virtual screen</string>
@@ -159,6 +160,7 @@
     <string name="pref.aa.alerting_category">Alerting</string>
     <string name="pref.aa.debug_category">Debug</string>
     <string name="pref.aa.general_category">General</string>
+    <string name="pref.aa.renderer.gauge.category">Gauge Renderer</string>
 
     <string name="pref.aa.alerting.enabled">Enable Alerting</string>
     <string name="pref.aa.alerting.enabled_summary">When enabled, additional information appears on the screen if upper or lower threshold of given PIDs overflow: OIL_TEMP > 110</string>
@@ -445,6 +447,12 @@
         <item name="GIULIA">GIULIA</item>
         <item name="GAUGE">GAUGE</item>
     </string-array>
+
+    <string-array name="pref.aa.gauge.progress_type">
+        <item name="SHORT">SHORT</item>
+        <item name="LONG">LONG</item>
+    </string-array>
+
 
     <string-array name="pref.numbers_1_10">
         <item name="1">1</item>

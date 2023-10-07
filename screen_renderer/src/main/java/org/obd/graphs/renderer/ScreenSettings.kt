@@ -23,6 +23,10 @@ import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
+enum class GaugeProgressBarType {
+    LONG,SHORT
+}
+
 enum class DynamicSelectorMode {
     NORMAL, ECO, SPORT, RACE
 }
@@ -42,6 +46,8 @@ data class ColorTheme(
 )
 
 interface ScreenSettings {
+
+    fun getGaugeProgressBarType(): GaugeProgressBarType = GaugeProgressBarType.SHORT
 
     fun isScaleEnabled(): Boolean = true
 

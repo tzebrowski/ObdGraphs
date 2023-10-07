@@ -797,11 +797,13 @@
                 android:title="@string/navigation.title_aa"
                 app:key="pref.aa">
 
+
+
                 <PreferenceCategory
                     app:singleLineTitle="false"
                     android:title="@string/pref.aa.general_category">
 
-                    <org.obd.graphs.preferences.aa.ScreenRendererTypeList
+                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                         app:singleLineTitle="false"
                         android:entries="@array/pref.aa_renderer_type"
                         android:entryValues="@array/pref.aa_renderer_type"
@@ -810,6 +812,7 @@
                         android:key="pref.aa.virtual_screens.screen.renderer_type"
                         android:title="@string/pref.aa.renderer_type"
                         app:useSimpleSummaryProvider="true" />
+
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"
@@ -840,6 +843,22 @@
                         android:title="@string/pref.screen.fps"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
+
+                <PreferenceCategory
+                    app:singleLineTitle="false"
+                    android:title="@string/pref.aa.renderer.gauge.category">
+
+                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.aa.gauge.progress_type"
+                        android:entryValues="@array/pref.aa.gauge.progress_type"
+                        android:defaultValue="SHORT"
+                        android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
+                        android:key="pref.aa.virtual_screens.screen.gauge.progress_type"
+                        android:title="@string/pref.aa.renderer.gauge.progress_type"
+                        app:useSimpleSummaryProvider="true" />
+                </PreferenceCategory>
+
 
                 <PreferenceCategory android:title="@string/pref.aa.virtual_screens.category"
                     app:singleLineTitle="false">
