@@ -42,6 +42,7 @@ data class DataLoggerPreferences(
     var stnExtensionsEnabled: Boolean,
     var batchEnabled: Boolean,
     var mode22BatchSize: Int?,
+    var mode01BatchSize: Int?,
     var reconnectWhenError: Boolean,
     var adapterId: String,
     var commandFrequency: Long,
@@ -96,7 +97,9 @@ class DataLoggerPreferencesManager {
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
         val wifiSSID = Prefs.getS("pref.adapter.connection.tcp.ssid", "")
 
-        val batchSize = Prefs.getString("pref.adapter.batch.size", null)
+        val mode22batchSize = Prefs.getString("pref.adapter.batch.size", null)
+        val mode01batchSize = Prefs.getString("pref.adapter.batch_01.size", null)
+
         val debugLogging = Prefs.getBoolean("pref.debug.logging.enabled", false)
 
         val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
@@ -131,7 +134,8 @@ class DataLoggerPreferencesManager {
         val dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
 
         val dataLoggerPreferences = DataLoggerPreferences(
-            mode22BatchSize = batchSize?.toInt(),
+            mode22BatchSize = mode22batchSize?.toInt(),
+            mode01BatchSize = mode01batchSize?.toInt(),
             stnExtensionsEnabled = stnEnabled,
             pids = getPIDsToQuery(),
             connectionType = connectionType,

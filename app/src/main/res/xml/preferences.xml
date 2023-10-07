@@ -251,6 +251,36 @@
                 </PreferenceScreen>
             </PreferenceCategory>
 
+            <PreferenceCategory android:title="@string/pref.adapter.batch_settings">
+                <CheckBoxPreference
+                    app:singleLineTitle="false"
+                    android:defaultValue="true"
+                    android:dialogTitle="@string/pref.adapter_batch_enabled"
+                    android:key="pref.adapter.batch.enabled"
+                    android:summary="@string/pref.adapter_batch_enabled_summary"
+                    android:title="@string/pref.adapter_batch_enabled" />
+
+                <ListPreference
+                    android:summary="Batch Size for Mode 22"
+                    app:singleLineTitle="false"
+                    android:entries="@array/pref.numbers_1_20"
+                    android:entryValues="@array/pref.numbers_1_20"
+                    android:inputType="number"
+                    android:key="pref.adapter.batch.size"
+                    android:title="@string/prefs.adapter_batch_mode_22_batch_size"
+                    app:useSimpleSummaryProvider="true" />
+
+                <ListPreference
+                    android:summary="Batch Size for Mode 01"
+                    app:singleLineTitle="false"
+                    android:entries="@array/pref.numbers_1_20"
+                    android:entryValues="@array/pref.numbers_1_20"
+                    android:inputType="number"
+                    android:key="pref.adapter.batch_01.size"
+                    android:title="@string/prefs.adapter_batch_mode_01_batch_size"
+                    app:useSimpleSummaryProvider="true" />
+            </PreferenceCategory>
+
             <PreferenceCategory android:title="@string/pref.adapter.general_settings">
 
                 <CheckBoxPreference
@@ -267,25 +297,6 @@
                     android:summary="@string/pref.experimental_result_cache_enabled"
                     android:title="@string/pref.adapter_cache_result_enabled"
                     app:enabled="@bool/FF_RESULT_CACHE_ENABLED" />
-
-                <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:defaultValue="true"
-                    android:dialogTitle="@string/pref.adapter_batch_enabled"
-                    android:key="pref.adapter.batch.enabled"
-                    android:summary="@string/pref.adapter_batch_enabled_summary"
-                    android:title="@string/pref.adapter_batch_enabled" />
-
-
-                <ListPreference
-                    android:summary="Batch Size for Mode 22"
-                    app:singleLineTitle="false"
-                    android:entries="@array/pref.numbers_1_20"
-                    android:entryValues="@array/pref.numbers_1_20"
-                    android:inputType="number"
-                    android:key="pref.adapter.batch.size"
-                    android:title="@string/prefs.adapter_batch_mode_22_batch_size"
-                    app:useSimpleSummaryProvider="true" />
 
                 <CheckBoxPreference
                     app:singleLineTitle="false"
