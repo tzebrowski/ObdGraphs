@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.bl.datalogger
 
+import android.util.Log
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -37,8 +38,23 @@ class VehicleCapabilitiesManager {
     }
 
     internal fun updateCapabilities(vehicleCapabilities: VehicleCapabilities) {
+
         Prefs.edit().apply {
-            putStringSet(PREF_VEHICLE_CAPABILITIES, vehicleCapabilities.capabilities)
+
+            Log.i(
+                LOGGER_TAG,
+                "Property `vehicleCapabilitiesReadingEnabled` is " +
+                        "`${dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled}`"
+            )
+            if (dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled) {
+                if (vehicleCapabilities.capabilities.isEmpty()) {
+                    Log.i(LOGGER_TAG, "Did not receive Vehicle Capabilities. Do not update preferences.")
+                } else {
+                    Log.i(LOGGER_TAG, "Received Vehicle Capabilities. Updating preferences with=${vehicleCapabilities.capabilities}")
+                    putStringSet(PREF_VEHICLE_CAPABILITIES, vehicleCapabilities.capabilities)
+                }
+            }
+
             putString(PREF_VEHICLE_METADATA, mapper.writeValueAsString(vehicleCapabilities.metadata))
             putStringSet(PREF_DTC, vehicleCapabilities.dtc.map { it.code }.toHashSet())
             apply()
@@ -48,7 +64,7 @@ class VehicleCapabilitiesManager {
     fun getCapabilities(): MutableList<String> {
         val pidList = dataLogger.getPidDefinitionRegistry().findAll()
         return Prefs.getStringSet(PREF_VEHICLE_CAPABILITIES, emptySet())!!.toMutableList()
-            .sortedWith(compareBy{t -> pidList.firstOrNull { a -> a.pid == t.uppercase() } }).toMutableList()
+            .sortedWith(compareBy { t -> pidList.firstOrNull { a -> a.pid == t.uppercase() } }).toMutableList()
     }
 
     fun getDTC(): MutableList<String> {
@@ -58,10 +74,10 @@ class VehicleCapabilitiesManager {
     fun getVehicleCapabilities(): MutableList<VehicleMetadata> {
         val it = Prefs.getString(PREF_VEHICLE_METADATA, "")!!
         return if (it.isEmpty()) mutableListOf() else {
-            val map: Map<String,String> = mapper.readValue(it)
-            return map.map { (k,v) -> VehicleMetadata(k,v) }.toMutableList()
+            val map: Map<String, String> = mapper.readValue(it)
+            return map.map { (k, v) -> VehicleMetadata(k, v) }.toMutableList()
         }
     }
 }
 
-val vehicleCapabilitiesManager =  VehicleCapabilitiesManager()
+val vehicleCapabilitiesManager = VehicleCapabilitiesManager()
