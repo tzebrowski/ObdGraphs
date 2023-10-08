@@ -25,7 +25,7 @@ const val PROFILE_ID_PREF = "pref.profile.id"
 const val PROFILE_NAME_PREFIX = "pref.profile.names"
 private const val DEFAULT_MAX_PROFILES = 12
 
-fun getVehicleProfiles() =
+fun getProfiles() =
     (1..DEFAULT_MAX_PROFILES)
         .associate {
             "profile_$it" to Prefs.getString(
@@ -35,6 +35,6 @@ fun getVehicleProfiles() =
         }
 
 
-fun getSelectedVehicleProfile(): String = Prefs.getString(PROFILE_ID_PREF)!!
+fun getSelectedProfile(): String = Prefs.getString(PROFILE_ID_PREF)!!
 
-fun getSelectedVehicleProfileName(): String? = Prefs.getString("$PROFILE_NAME_PREFIX.${getSelectedVehicleProfile()}", "")
+fun getSelectedProfileName(): String? = Prefs.getString("$PROFILE_NAME_PREFIX.${getSelectedProfile()}", "")

@@ -113,6 +113,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
 
         setupLockScreenDialog()
+
+        Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
     }
 
     override fun onResume() {

@@ -28,6 +28,26 @@ val Prefs: SharedPreferences by lazy {
     )
 }
 
+fun SharedPreferences.Editor.updatePreference(
+    prefName: String,
+    value: Any?
+) {
+    when (value) {
+        is String -> {
+            putString(prefName, value)
+        }
+        is Set<*> -> {
+            putStringSet(prefName, value as MutableSet<String>?)
+        }
+        is Int -> {
+            putInt(prefName, value)
+        }
+        is Boolean -> {
+            putBoolean(prefName, value)
+        }
+    }
+}
+
 fun SharedPreferences.updateBoolean(key: String, value: Boolean): SharedPreferences.Editor {
     edit().putBoolean(key, value).apply()
     return edit()

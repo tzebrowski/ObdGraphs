@@ -26,8 +26,8 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
-import org.obd.graphs.profile.getSelectedVehicleProfile
-import org.obd.graphs.profile.getVehicleProfiles
+import org.obd.graphs.profile.getSelectedProfile
+import org.obd.graphs.profile.getProfiles
 import org.obd.metrics.api.model.ObdMetric
 import java.io.File
 import java.io.FileNotFoundException
@@ -110,7 +110,7 @@ internal class DefaultTripManager : TripManager {
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val tripStartTs = trip.startTs
 
-                val filter = "trip-${getSelectedVehicleProfile()}-${tripStartTs}"
+                val filter = "trip-${getSelectedProfile()}-${tripStartTs}"
                 val alreadySaved = findAllTripsBy(filter)
 
                 if (alreadySaved.isNotEmpty()) {
@@ -138,7 +138,7 @@ internal class DefaultTripManager : TripManager {
                             tripModelSerializer.serializer.writeValueAsString(trip)
 
                         val fileName =
-                            "trip-${getSelectedVehicleProfile()}-${tripStartTs}-${tripLength}.json"
+                            "trip-${getSelectedProfile()}-${tripStartTs}-${tripLength}.json"
                         Log.i(
                             LOGGER_TAG,
                             "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
@@ -161,7 +161,7 @@ internal class DefaultTripManager : TripManager {
     override fun findAllTripsBy(filter: String): MutableCollection<TripFileDesc> {
         Log.i(LOGGER_TAG, "Find all trips by filter: '$filter'")
 
-        val profiles = getVehicleProfiles()
+        val profiles = getProfiles()
         val files = File(getTripsDirectory(getContext()!!)).list()
         if (files == null) {
             Log.i(LOGGER_TAG, "Find all trips by filter: '${filter}'. Result size: 0")
@@ -171,7 +171,7 @@ internal class DefaultTripManager : TripManager {
                 .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
                 .filter { it.startsWith("trip_") || it.contains("") }
                 .filter { it.substring(0, it.length - 5).split("-").size > 3 }
-                .filter { it.contains(getSelectedVehicleProfile()) }
+                .filter { it.contains(getSelectedProfile()) }
                 .mapNotNull { fileName ->
                     val p = fileName.substring(0, fileName.length - 5).split("-")
                     val profileId = p[1]

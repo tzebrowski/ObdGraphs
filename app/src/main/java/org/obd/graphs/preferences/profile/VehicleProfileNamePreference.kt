@@ -35,7 +35,7 @@ class VehicleProfileNamePreference(
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
 
-            Log.d(LOG_KEY, "Updating profile value: ${vehicleProfile.getCurrentProfile()}=$newValue")
+            Log.d(PROFILE_LOG_TAG, "Updating profile value: ${vehicleProfile.getCurrentProfile()}=$newValue")
 
             Prefs.edit()
                 .putString("$PROFILE_NAME_PREFIX.${vehicleProfile.getCurrentProfile()}", newValue.toString())

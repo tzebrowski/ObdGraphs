@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.*
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.profile.getVehicleProfiles
+import org.obd.graphs.profile.getProfiles
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
 import java.text.SimpleDateFormat
@@ -51,7 +51,7 @@ class TripsViewAdapter internal constructor(
 
     private val profileColors = mutableMapOf<String, Int>().apply {
         val colors = Colors().generate()
-        getVehicleProfiles().forEach { (s, _) ->
+        getProfiles().forEach { (s, _) ->
             put(s, colors.nextInt())
         }
     }
