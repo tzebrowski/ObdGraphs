@@ -27,7 +27,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 const val TOGGLE_TOOLBAR_ACTION: String = "TOGGLE_TOOLBAR"
 
-private class DoubleClickGestureListener(val context: Context) :
+private class DoubleClickGestureListener :
     GestureDetector.SimpleOnGestureListener() {
     override fun onDoubleTap(e: MotionEvent): Boolean {
         sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
@@ -61,7 +61,7 @@ open class ToggleToolbarDoubleClickListener(
 }
 
 fun onDoubleClickListener(context: Context): View.OnTouchListener {
-    val gestureDetector = GestureDetector(context, DoubleClickGestureListener(context))
+    val gestureDetector = GestureDetector(context, DoubleClickGestureListener())
     return View.OnTouchListener { v, event ->
         if (event.action == MotionEvent.ACTION_UP) v.performClick()
 

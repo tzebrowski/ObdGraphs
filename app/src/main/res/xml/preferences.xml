@@ -66,8 +66,6 @@
                     android:title="@string/pref.pids.registry.resource.external_storage"
                     app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED" />
 
-
-
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -340,32 +338,48 @@
             android:summary="@string/pref_vehicle_profile_settings_summary"
             android:key="pref.profiles"
             android:title="@string/pref.settings">
-            <org.obd.graphs.preferences.profile.VehicleProfileListPreference
+            <PreferenceCategory android:title="@string/pref.general_settings">
+                <org.obd.graphs.preferences.profile.VehicleProfileListPreference
                 android:key="pref.profile.id"
                 android:title="@string/pref.profile.available_list"
                 app:useSimpleSummaryProvider="true" />
 
-            <org.obd.graphs.preferences.profile.VehicleProfileResetPreferenceAction
-                android:key="pref.profile.reset"
-                android:summary="@string/pref.profile.reset_summary"
-                android:title="@string/pref.profile.reset" />
+                <org.obd.graphs.preferences.profile.VehicleProfileResetPreferenceAction
+                    android:key="pref.profile.reset"
+                    android:summary="@string/pref.profile.reset_summary"
+                    android:title="@string/pref.profile.reset" />
 
-            <org.obd.graphs.preferences.profile.VehicleProfileSavePreferenceAction
-                android:key="pref.profile.save_current"
-                android:summary="@string/pref.profile.save_user_settings_summary"
-                android:title="@string/pref.profile.save_user_settings" />
+                <org.obd.graphs.preferences.profile.VehicleProfileSavePreferenceAction
+                    android:key="pref.profile.save_current"
+                    android:summary="@string/pref.profile.save_user_settings_summary"
+                    android:title="@string/pref.profile.save_user_settings" />
 
-            <org.obd.graphs.preferences.profile.VehicleProfileNamePreference
-                android:dialogTitle="@string/pref.profile.update_name"
-                android:key="pref.profile.current_name"
-                android:title="@string/pref.profile.update_name"
-                app:useSimpleSummaryProvider="true" />
+                <org.obd.graphs.preferences.profile.VehicleProfileNamePreference
+                    android:dialogTitle="@string/pref.profile.update_name"
+                    android:key="pref.profile.current_name"
+                    android:title="@string/pref.profile.update_name"
+                    app:useSimpleSummaryProvider="true" />
 
-            <EditTextPreference
-                android:title="@string/pref.profile.about_title"
-                android:key="pref.profile.about"
-                app:enabled="false"
-                app:useSimpleSummaryProvider="true"/>
+                <EditTextPreference
+                    android:title="@string/pref.profile.about_title"
+                    android:key="pref.profile.about"
+                    app:enabled="false"
+                    app:useSimpleSummaryProvider="true"/>
+            </PreferenceCategory>
+            <PreferenceCategory android:title="@string/pref.profile.backup.category">
+                <org.obd.graphs.preferences.profile.VehicleProfileExportAction
+                    app:singleLineTitle="false"
+                    android:key="pref.profile.export"
+                    android:summary="@string/pref.profile.export_summary"
+                    android:title="@string/pref.profile.export" />
+
+                <org.obd.graphs.preferences.profile.VehicleProfileImportAction
+                    app:singleLineTitle="false"
+                    android:key="pref.profile.import"
+                    android:summary="@string/pref.profile.import_summary"
+                    android:title="@string/pref.profile.import" />
+            </PreferenceCategory>
+
         </PreferenceScreen>
     </PreferenceCategory>
 

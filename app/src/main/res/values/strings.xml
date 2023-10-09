@@ -268,7 +268,16 @@
     <string name="pref.profile.about_title">Vehicle profile description</string>
     <string name="pref.profile.update_name">Vehicle profile name</string>
     <string name="pref.profile.category">Vehicle Profiles</string>
+    <string name="pref.profile.backup.category">Backup</string>
+
+
     <string name="pref.profile.available_list">Available vehicle profiles</string>
+
+    <string name="pref.profile.import">Import user preferences from backup</string>
+    <string name="pref.profile.import_summary">This operation imports a user preferences from backup</string>
+
+    <string name="pref.profile.export">Make a backup from user preferences</string>
+    <string name="pref.profile.export_summary">This operation makes a backup from user preferences</string>
 
     <string name="pref.profile.reset">Reset to factory settings</string>
     <string name="pref.profile.save_user_settings">Save current vehicle profile preferences</string>

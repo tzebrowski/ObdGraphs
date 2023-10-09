@@ -20,6 +20,7 @@ package org.obd.graphs.preferences.profile
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Environment
 import android.util.Log
 import androidx.core.content.edit
 import org.obd.graphs.*
@@ -32,25 +33,70 @@ import org.obd.graphs.profile.PROFILE_ID_PREF
 import org.obd.graphs.profile.PROFILE_NAME_PREFIX
 import org.obd.graphs.profile.getSelectedProfile
 import org.obd.graphs.profile.getProfiles
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.util.*
 
-const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
-const val PROFILE_LOG_TAG = "VehicleProfile"
 const val PROFILES_PREF = "pref.profiles"
-
+private const val PROFILE_LOG_TAG = "VehicleProfile"
+private const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
 private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
 private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
 private const val DEFAULT_PROFILE = "profile_1"
+private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 
 val vehicleProfile = VehicleProfile()
 
 class VehicleProfile : OnSharedPreferenceChangeListener {
 
+    @Volatile
     private var bulkActionEnabled = false
 
     internal fun getCurrentProfile(): String = getSelectedProfile()
     fun getProfileList() = getProfiles()
 
+    fun importBackup(){
+        runAsync {
+            try {
+
+                Log.i(PROFILE_LOG_TAG, "Start importing backup file")
+                val backupFile = getBackupFile()
+
+                loadProfileFilesIntoPreferences(
+                    forceOverride = true,
+                    files = mutableListOf(backupFile.absolutePath),
+                    installationKey = getProfileInstallationKey()
+                ){
+                    val prop = Properties()
+                    prop.load(FileInputStream(it))
+                    prop
+                }
+
+                Log.i(PROFILE_LOG_TAG, "Exporting backup file completed")
+            } catch (e: Throwable){
+                Log.e(PROFILE_LOG_TAG, "Failed to load backup file",e)
+            } finally {
+                bulkActionEnabled = false
+            }
+        }
+    }
+
+    fun exportBackup(){
+        runAsync {
+            try {
+                Log.i(PROFILE_LOG_TAG, "Start exporting backup file")
+                val data = createExportBackupData()
+                val backupFile = getBackupFile()
+                data.store(FileOutputStream(backupFile), "Backup file")
+                Log.i(PROFILE_LOG_TAG, "Exporting backup file completed")
+            } catch (e: Throwable) {
+                Log.e(PROFILE_LOG_TAG, "Failed to store backup file", e)
+            } finally {
+                bulkActionEnabled = false
+            }
+        }
+    }
 
     fun reset() {
         try {
@@ -95,50 +141,11 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
             if (!setupDisabled) {
                 val profiles = findProfileFiles()
                 Log.i(PROFILE_LOG_TAG, "Found following profiles: $profiles for installation.")
-                val allPrefs = Prefs.all
 
-                Prefs.edit().let { editor ->
-                    if (forceOverride) {
-                        Log.i(PROFILE_LOG_TAG, "Removing all preferences.")
-                        // clear all preferences
-                        editor.clear()
-                    }
-
-                    profiles?.forEach { profileFile ->
-                        Log.i(PROFILE_LOG_TAG, "Loading profile file='$profileFile'")
-
-                        openProfileFile(profileFile).forEach { t, u ->
-                            val value = u.toString()
-                            val key = t.toString()
-
-                            if (forceOverride || !allPrefs.keys.contains(key)) {
-                                Log.i(PROFILE_LOG_TAG, "Updating profile.key=`$key=$value`")
-
-                                when {
-                                    value.isBoolean() -> {
-                                        editor.putBoolean(key, value.toBoolean())
-                                    }
-                                    value.isArray() -> {
-                                        editor.putStringSet(key, stringToStringSet(value))
-                                    }
-                                    value.isNumeric() -> {
-                                        editor.putInt(key, value.toInt())
-                                    }
-                                    else -> {
-                                        editor.putString(key, value.replace("\"", "").replace("\"", ""))
-                                    }
-                                }
-                            } else {
-                                Log.i(PROFILE_LOG_TAG, "Skipping profile.key=`$key=$value`")
-                            }
-
-                        }
-                    }
-                    editor.putString(PROFILE_ID_PREF, getDefaultProfile())
-                    Log.i(PROFILE_LOG_TAG, "Updating profile installation key $installationKey to true")
-                    editor.putBoolean(installationKey, true)
-                    editor.apply()
+                loadProfileFilesIntoPreferences(forceOverride, profiles, installationKey){
+                    loadFile(it)
                 }
+
                 val defaultProfile = getDefaultProfile()
                 Log.i(PROFILE_LOG_TAG, "Setting default profile to: $defaultProfile")
                 loadProfile(getDefaultProfile())
@@ -148,6 +155,8 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
             bulkActionEnabled = false
         }
     }
+
+
 
 
     internal fun saveCurrentProfile() {
@@ -255,7 +264,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
 
     private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
 
-    private fun openProfileFile(fileName: String): Properties {
+    private fun loadFile(fileName: String): Properties {
         val prop = Properties()
         prop.load(getContext()!!.assets.open(fileName))
         return prop
@@ -264,4 +273,86 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
     private fun getDefaultProfile(): String =
         getContext()?.resources?.getString(R.string.DEFAULT_PROFILE) ?: DEFAULT_PROFILE
 
+
+    private fun loadProfileFilesIntoPreferences(
+        forceOverride: Boolean,
+        files: List<String>?,
+        installationKey: String,
+        func: (p: String) -> Properties
+    ) {
+        val allPrefs = Prefs.all
+
+        Prefs.edit().let { editor ->
+            if (forceOverride) {
+                Log.i(PROFILE_LOG_TAG, "Removing all preferences.")
+                // clear all preferences
+                editor.clear()
+            }
+
+            files?.forEach { profileFile ->
+                Log.i(PROFILE_LOG_TAG, "Loading profile file='$profileFile'")
+
+                func(profileFile).forEach { t, u ->
+                    val value = u.toString()
+                    val key = t.toString()
+
+                    if (forceOverride || !allPrefs.keys.contains(key)) {
+                        Log.i(PROFILE_LOG_TAG, "Updating profile.key=`$key=$value`")
+
+                        when {
+                            value.isBoolean() -> {
+                                editor.putBoolean(key, value.toBoolean())
+                            }
+                            value.isArray() -> {
+                                editor.putStringSet(key, stringToStringSet(value))
+                            }
+                            value.isNumeric() -> {
+                                editor.putInt(key, value.toInt())
+                            }
+                            else -> {
+                                editor.putString(key, value.replace("\"", "").replace("\"", ""))
+                            }
+                        }
+                    } else {
+                        Log.i(PROFILE_LOG_TAG, "Skipping profile.key=`$key=$value`")
+                    }
+                }
+            }
+            editor.putString(PROFILE_ID_PREF, getDefaultProfile())
+            Log.i(PROFILE_LOG_TAG, "Updating profile installation key $installationKey to true")
+            editor.putBoolean(installationKey, true)
+            editor.apply()
+        }
+    }
+    private fun getBackupFile(): File =
+        File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)
+
+
+    private fun createExportBackupData(): Properties {
+        val data = Properties()
+        val mm = mutableMapOf<String, String>()
+
+        Prefs.all.forEach {
+            when (it.value) {
+                is String -> {
+                    mm[it.key] = "\"${it.value}\""
+                }
+                is Boolean -> {
+                    mm[it.key] = it.value.toString()
+                }
+                is Int -> {
+                    mm[it.key] = it.value.toString()
+                }
+                is Set<*> -> {
+                    mm[it.key] = (it.value as Set<*>).toString()
+                }
+                else -> {
+                    Log.e(PROFILE_LOG_TAG, "Unknown type for key ${it.key}, skipping")
+                }
+            }
+        }
+
+        data.putAll(mm)
+        return data
+    }
 }
