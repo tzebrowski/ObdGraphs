@@ -28,6 +28,8 @@ class GiuliaSettings: ScreenSettings {
         return dataLoggerPreferences.getPIDsToQuery()
     }
 
+    override fun isBreakLabelTextEnabled(): Boolean = false
+
     override fun getMaxColumns(): Int = giuliaVirtualScreen.getMaxItemsInColumn()
     override fun isHistoryEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
