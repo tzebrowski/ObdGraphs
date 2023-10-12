@@ -188,8 +188,8 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
     }
 
     fun drawAlertingLegend(canvas: Canvas, metric: CarMetric, left: Float, top: Float) {
-        if (settings.isAlertLegendEnabled() && (metric.source.command.pid.alertLowerThreshold != null ||
-                    metric.source.command.pid.alertUpperThreshold != null)
+        if (settings.isAlertLegendEnabled() && (metric.source.command.pid.alert.lowerThreshold != null ||
+                    metric.source.command.pid.alert.upperThreshold != null)
         ) {
 
             val text = "  alerting "
@@ -206,12 +206,12 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
             val hPos = left + getTextWidth(text, alertingLegendPaint) + 2f
 
             var label = ""
-            if (metric.source.command.pid.alertLowerThreshold != null) {
-                label += "X<${metric.source.command.pid.alertLowerThreshold}"
+            if (metric.source.command.pid.alert.lowerThreshold != null) {
+                label += "X<${metric.source.command.pid.alert.lowerThreshold}"
             }
 
-            if (metric.source.command.pid.alertUpperThreshold != null) {
-                label += " X>${metric.source.command.pid.alertUpperThreshold}"
+            if (metric.source.command.pid.alert.upperThreshold != null) {
+                label += " X>${metric.source.command.pid.alert.upperThreshold}"
             }
 
             drawText(

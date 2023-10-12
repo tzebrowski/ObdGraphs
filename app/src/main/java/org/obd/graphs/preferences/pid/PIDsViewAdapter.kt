@@ -74,14 +74,16 @@ class PIDsViewAdapter internal constructor(
                     checked = isChecked
                 }
             }
-            if (source.alertLowerThreshold != null || source.alertUpperThreshold != null){
+            val lowerThreshold = source.alert.lowerThreshold
+            val upperThreshold = source.alert.upperThreshold
+            if (lowerThreshold != null || upperThreshold != null){
                 var text =  ""
-                if (source.alertLowerThreshold != null){
-                    text += " x<"  + source.alertLowerThreshold
+                if (lowerThreshold != null){
+                    text += " x<$lowerThreshold"
                 }
 
-                if (source.alertUpperThreshold != null){
-                    text += " x>"  + source.alertUpperThreshold
+                if (upperThreshold != null){
+                    text += " x>$upperThreshold"
                 }
 
                 holder.alert.setText(text, Color.GRAY, Typeface.NORMAL, 0.6f)
