@@ -42,6 +42,7 @@ android {
         }
 
 
+
         play {
             storeFile file(System.getenv("ANDROID_RELEASE_KEYSTORE"))
             storePassword System.getenv("ANDROID_RELEASE_STORE_PASSWORD")
@@ -57,14 +58,21 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 64
+            versionCode 72
+        }
+
+        giuliaPerformanceMonitor {
+            dimension "version"
+            resValue "string", "DEFAULT_PROFILE", "profile_8"
+            applicationId "org.obd.graphs.my.giulia.performance_monitor"
+            versionCode 5
         }
 
         giulia {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 49
+            versionCode 54
         }
     }
 
