@@ -30,6 +30,7 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 
+
 fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
     func(findViewById(R.id.connect_btn))
 }
@@ -57,6 +58,12 @@ fun MainActivity.navController(func: (p: NavController) -> Unit) {
 
 fun MainActivity.lockScreenDialogShow(func: (dialogTitle: TextView) -> Unit) {
 
+    lockScreenDialog?.let {
+        if (it.isShowing){
+            it.dismiss()
+        }
+    }
+
     AlertDialog.Builder(this).run {
         setCancelable(false)
         val dialogView: View = layoutInflater.inflate(R.layout.dialog_screen_lock, null)
@@ -67,3 +74,5 @@ fun MainActivity.lockScreenDialogShow(func: (dialogTitle: TextView) -> Unit) {
         lockScreenDialog.show()
     }
 }
+
+

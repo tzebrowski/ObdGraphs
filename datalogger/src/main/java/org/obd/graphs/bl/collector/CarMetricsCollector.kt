@@ -41,7 +41,9 @@ class CarMetricsCollector {
             u.enabled = selectedPIDs.contains(t)
         }
 
-        Log.d(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
+        if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
+            Log.v(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
+        }
     }
 
     fun append(input: ObdMetric?) {

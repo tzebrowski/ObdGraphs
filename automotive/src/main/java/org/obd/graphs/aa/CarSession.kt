@@ -45,29 +45,37 @@ internal class CarSession : Session(), DefaultLifecycleObserver {
         setCarContext(carContext)
         surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
         lifecycle.addObserver(surfaceController)
-        return CarScreen(carContext, surfaceController, settings, metricsCollector, fps)
+
+        return if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
+            NavTemplateCarScreen(carContext, surfaceController, settings, metricsCollector, fps) else
+            IotTemplateCarScreen(carContext, settings, metricsCollector)
     }
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
         super.onCarConfigurationChanged(newConfiguration)
-        surfaceController.onCarConfigurationChanged()
+        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
+            surfaceController.onCarConfigurationChanged()
+
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         Log.d(LOG_TAG, "Received onResume event")
-        lifecycle.addObserver(surfaceController)
+        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
+            lifecycle.addObserver(surfaceController)
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
         Log.d(LOG_TAG, "Received onPause event")
-        lifecycle.removeObserver(surfaceController)
+        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
+            lifecycle.removeObserver(surfaceController)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         Log.d(LOG_TAG, "Received onDestroy event")
-        lifecycle.removeObserver(surfaceController)
+        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
+            lifecycle.removeObserver(surfaceController)
     }
 }

@@ -56,6 +56,10 @@ const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
 const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
+enum class ScreenTemplateType {
+    NAV,IOT
+}
+
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun colorTheme(): ColorTheme {
         return ColorTheme(
@@ -77,6 +81,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
             }
         }
     }
+
+    fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
 
     override fun getGaugeProgressBarType(): GaugeProgressBarType =
         GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
