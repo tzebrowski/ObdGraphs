@@ -43,12 +43,14 @@ internal class CarSession : Session(), DefaultLifecycleObserver {
     override fun onCreateScreen(intent: Intent): Screen {
         lifecycle.addObserver(this)
         setCarContext(carContext)
-        surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
-        lifecycle.addObserver(surfaceController)
 
-        return if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
-            NavTemplateCarScreen(carContext, surfaceController, settings, metricsCollector, fps) else
+        return if (settings.getScreenTemplate() == ScreenTemplateType.NAV) {
+            surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
+            lifecycle.addObserver(surfaceController)
+            NavTemplateCarScreen(carContext, surfaceController, settings, metricsCollector, fps)
+        } else {
             IotTemplateCarScreen(carContext, settings, metricsCollector)
+        }
     }
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
