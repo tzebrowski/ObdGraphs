@@ -9,30 +9,30 @@ import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import androidx.car.app.model.CarIcon
 import androidx.core.graphics.drawable.IconCompat
-import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
 
 private const val DEFAULT_TEXT_SIZE = 16
 
-fun valueToIcon(carContext: Context, value: String): CarIcon {
-    val drawable = TextDrawable(carContext, value)
+fun valueToIcon(carContext: Context, value: String, color: Int): CarIcon {
+    val drawable = TextDrawable(carContext, value, color)
+
     val bitmap = if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
         Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
     } else {
         Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
     }
     val canvas = Canvas(bitmap)
-    drawable.setBounds(0, canvas.height/2, canvas.width, canvas.height)
+    drawable.setBounds(0, canvas.height, canvas.width, canvas.height)
     drawable.draw(canvas)
     return CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
 }
 
-private class TextDrawable(context: Context, private val text: CharSequence) : Drawable() {
+private class TextDrawable(context: Context, private val text: CharSequence, color: Int) : Drawable() {
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val intrinsicWidth: Int
     private val intrinsicHeight: Int
 
     init {
-        paint.color = COLOR_DYNAMIC_SELECTOR_NORMAL
+        paint.color = color
         paint.textAlign = Paint.Align.CENTER
         val textSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_SP,
@@ -51,6 +51,7 @@ private class TextDrawable(context: Context, private val text: CharSequence) : D
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int {
         return paint.alpha
     }

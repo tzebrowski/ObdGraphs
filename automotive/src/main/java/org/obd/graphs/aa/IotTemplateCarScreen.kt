@@ -233,9 +233,10 @@ internal class IotTemplateCarScreen(
                 metricsCollector.metrics().forEach {
                     paneBuilder.addRow(Row
                         .Builder()
-                        .setImage(valueToIcon(carContext,it.valueToString()),Row.IMAGE_TYPE_LARGE)
+                        .setImage(valueToIcon(carContext,it.valueToString(),settings.colorTheme().progressColor),
+                            Row.IMAGE_TYPE_LARGE)
                         .setMetadata(Metadata.Builder().build())
-                        .setTitle(title(it))
+                        .setTitle(getTitleFor(it))
                         .build())
                 }
 
@@ -245,7 +246,7 @@ internal class IotTemplateCarScreen(
                     .build()
             }
 
-    private fun title(metric: CarMetric): SpannableString {
+    private fun getTitleFor(metric: CarMetric): SpannableString {
         val title = StringBuilder()
         title.append(metric.source.command.pid.description.replace("\n",""))
         title.append("\n")
