@@ -24,6 +24,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
 import androidx.car.app.CarContext
+import androidx.car.app.connection.CarConnection
 import androidx.car.app.model.*
 import androidx.car.app.navigation.NavigationManager
 import androidx.car.app.navigation.NavigationManagerCallback
@@ -55,11 +56,11 @@ internal class NavTemplateCarScreen(
     fps: Fps
 ) : AbstractCarScreen(carContext, settings, metricsCollector, fps) {
 
-
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
             when (intent?.action) {
+
                 EVENT_DYNAMIC_SELECTOR_MODE_NORMAL -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.NORMAL)
                 EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
@@ -67,7 +68,6 @@ internal class NavTemplateCarScreen(
 
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateRender()
-
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> surfaceController.renderFrame()
 
                 SURFACE_BROKEN_EVENT -> {
@@ -206,6 +206,7 @@ internal class NavTemplateCarScreen(
             addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
+            addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
         })
     }
 
@@ -290,6 +291,7 @@ internal class NavTemplateCarScreen(
         }
     }
 
+
     init {
 
         lifecycle.addObserver(this)
@@ -317,6 +319,8 @@ internal class NavTemplateCarScreen(
 
                 }
             })
+
+        registerConnectionStateReceiver()
     }
 
     private fun navigationManager() = carContext.getCarService(NavigationManager::class.java)

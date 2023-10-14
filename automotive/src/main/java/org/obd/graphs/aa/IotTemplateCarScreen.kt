@@ -263,5 +263,6 @@ internal class IotTemplateCarScreen(
         }
 
         submitRenderingTask()
+        registerConnectionStateReceiver()
     }
 }

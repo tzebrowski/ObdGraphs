@@ -82,6 +82,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         }
     }
 
+    fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
+
     fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
 
     override fun getGaugeProgressBarType(): GaugeProgressBarType =

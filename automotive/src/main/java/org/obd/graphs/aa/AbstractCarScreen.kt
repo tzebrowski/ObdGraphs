@@ -3,6 +3,7 @@ package org.obd.graphs.aa
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import androidx.car.app.connection.CarConnection
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarColor
@@ -28,6 +29,7 @@ internal abstract class AbstractCarScreen(
 
     abstract  fun  renderAction()
 
+
     protected val renderingThread: RenderingThread = RenderingThread(
         id = "CarScreenRenderingThread",
         renderAction = {
@@ -37,6 +39,10 @@ internal abstract class AbstractCarScreen(
             settings.getSurfaceFrameRate()
         }
     )
+
+    protected fun registerConnectionStateReceiver() {
+        CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
+    }
 
     protected fun getActionStrip(prefsEnabled: Boolean = true): ActionStrip {
         var builder = ActionStrip.Builder()
@@ -80,13 +86,6 @@ internal abstract class AbstractCarScreen(
     }
 
 
-    private fun stopDataLogging() {
-        Log.i(LOG_KEY, "Stopping data logging process")
-        dataLogger.stop()
-        fps.stop()
-        renderingThread.stop()
-    }
-
     protected fun createAction(iconResId: Int, iconColorTint: CarColor, func: () -> Unit): Action =
         Action.Builder()
             .setIcon(
@@ -100,4 +99,21 @@ internal abstract class AbstractCarScreen(
             .setOnClickListener {
                 func()
             }.build()
+
+    private fun onConnectionStateUpdated(connectionState: Int) {
+        when (connectionState){
+            CarConnection.CONNECTION_TYPE_PROJECTION -> {
+                if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()){
+                    dataLogger.start()
+                }
+            }
+        }
+    }
+
+    private fun stopDataLogging() {
+        Log.i(LOG_KEY, "Stopping data logging process")
+        dataLogger.stop()
+        fps.stop()
+        renderingThread.stop()
+    }
 }

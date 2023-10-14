@@ -153,8 +153,9 @@
     <string name="pref.aa.font_size.7">Font size of the displayed OBD2 PIDs/Sensors for screen 7</string>
     <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
     <string name="pref.aa.display_pid_scale">Display PIDs scale</string>
-    <string name="pref.aa.display_status_panel">Display status panel</string>
 
+    <string name="pref.aa.display_status_panel">Display status panel</string>
+    <string name="pref.aa.connection_auto">Automatically connect OBD adapter when enter AA</string>
     <string name="pref.aa.title">Android Auto</string>
 
     <string name="pref.aa.alerting_category">Alerting</string>
