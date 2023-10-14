@@ -28,7 +28,7 @@ import androidx.car.app.CarContext
 import androidx.car.app.model.*
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
-import org.obd.graphs.aa.iot.valueToIcon
+import org.obd.graphs.aa.iot.ValueDrawable
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
@@ -48,6 +48,7 @@ internal class IotTemplateCarScreen(
     metricsCollector: CarMetricsCollector,
 ) : AbstractCarScreen(carContext, settings, metricsCollector) {
 
+    private val valueDrawable = ValueDrawable(carContext)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -233,7 +234,7 @@ internal class IotTemplateCarScreen(
                 metricsCollector.metrics().forEach {
                     paneBuilder.addRow(Row
                         .Builder()
-                        .setImage(valueToIcon(carContext,it.valueToString(),settings.colorTheme().progressColor),
+                        .setImage(valueDrawable.draw(it.valueToString(),settings.colorTheme().progressColor),
                             Row.IMAGE_TYPE_LARGE)
                         .setMetadata(Metadata.Builder().build())
                         .setTitle(getTitleFor(it))

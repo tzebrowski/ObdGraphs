@@ -2,4 +2,5 @@
     <string name="toast.connection.disconnect">Stopping connection with the Adapter</string>
     <string name="pref.aa.car_error">An error occurred during OBD2 PIDs/Sensors loading</string>
     <string name="pref.aa.get_to_app_conf">AA preferences are opened in the mobile app\n Go there to edit App settings</string>
+    <string name="app_name">Giulia IOT Monitor</string>
 </resources>
