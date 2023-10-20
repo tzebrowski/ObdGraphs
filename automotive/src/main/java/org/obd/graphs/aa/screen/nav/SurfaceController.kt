@@ -128,7 +128,7 @@ internal class SurfaceController(
 
     fun toggleSurfaceRenderer() {
         surfaceRenderer.release()
-        surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG) {
+        surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE) {
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         } else {
@@ -136,7 +136,7 @@ internal class SurfaceController(
                 selectedPIDs = setOf(VEHICLE_SPEED_PID_ID),
                 pidsToQuery = setOf(VEHICLE_SPEED_PID_ID)
             )
-            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG)
+            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACE)
         }
     }
 
@@ -146,9 +146,9 @@ internal class SurfaceController(
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         renderFrame()
     }
-    fun hasDragMeterLoggingEnabled() : Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG
+    fun hasDragMeterLoggingEnabled() : Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE
 
-    fun hasVirtualScreensEnabled(): Boolean = surfaceRenderer.getType() != SurfaceRendererType.DRAG
+    fun hasVirtualScreensEnabled(): Boolean = surfaceRenderer.getType() != SurfaceRendererType.DRAG_RACE
 
     @MainThread
     fun renderFrame() {

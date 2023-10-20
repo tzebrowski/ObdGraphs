@@ -22,12 +22,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.renderer.drag.DragSurfaceRenderer
+import org.obd.graphs.renderer.drag.DragRaceSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
 
 enum class SurfaceRendererType {
-    GIULIA, GAUGE, DRAG
+    GIULIA, GAUGE, DRAG_RACE
 }
 
 interface SurfaceRenderer {
@@ -48,7 +48,7 @@ interface SurfaceRenderer {
             when (surfaceRendererType) {
                 SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps)
                 SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps)
-                SurfaceRendererType.DRAG -> DragSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.DRAG_RACE -> DragRaceSurfaceRenderer(context, settings, metricsCollector, fps)
             }
     }
 }

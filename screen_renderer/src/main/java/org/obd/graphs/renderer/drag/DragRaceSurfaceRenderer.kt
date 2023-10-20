@@ -36,7 +36,7 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
-internal class DragSurfaceRenderer(
+internal class DragRaceSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
@@ -46,7 +46,7 @@ internal class DragSurfaceRenderer(
     private val valueScaler = ValueScaler()
     private val drawer = Drawer(context, settings)
 
-    override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG
+    override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACE
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 

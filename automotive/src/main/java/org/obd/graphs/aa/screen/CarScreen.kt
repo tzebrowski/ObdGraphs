@@ -147,8 +147,6 @@ internal abstract class CarScreen(
         }
     }
 
-
-
     private fun stopDataLogging() {
         Log.i(LOG_KEY, "Stopping data logging process")
         dataLogger.stop()
