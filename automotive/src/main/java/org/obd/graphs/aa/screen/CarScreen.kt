@@ -70,7 +70,7 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
-    protected fun getActionStrip(preferences: Boolean = true): ActionStrip {
+    protected fun getActionStrip(preferencesEnabled: Boolean = true, dragMeteringEnabled: Boolean = false): ActionStrip {
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.isRunning()) {
@@ -80,7 +80,11 @@ internal abstract class CarScreen(
             })
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-                dataLogger.start()
+                if (dragMeteringEnabled){
+                    dataLogger.startDragMetering()
+                } else {
+                    dataLogger.start()
+                }
             })
         }
 
@@ -88,7 +92,7 @@ internal abstract class CarScreen(
             sendBroadcastEvent(AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT)
         })
 
-        if (preferences) {
+        if (preferencesEnabled) {
             builder = builder.addAction(createAction(R.drawable.config, CarColor.BLUE) {
                 sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
                 toast.show(carContext, R.string.pref_aa_get_to_app_conf)

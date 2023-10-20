@@ -60,7 +60,7 @@ internal class DragSurfaceRenderer(
 
             drawer.drawBackground(canvas, area)
 
-            var top = area.top + textSizeBase / 2
+            var top = area.top + textSizeBase / 1.5f
             val left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
@@ -97,8 +97,8 @@ internal class DragSurfaceRenderer(
 
         val areaWidth = area.width()
 
-        val valueTextSize = (areaWidth / 10f) * scaleRatio
-        val textSizeBase = (areaWidth / 16f) * scaleRatio
+        val valueTextSize = (areaWidth / 20f) * scaleRatio
+        val textSizeBase = (areaWidth / 26f) * scaleRatio
         return Pair(valueTextSize, textSizeBase)
     }
 

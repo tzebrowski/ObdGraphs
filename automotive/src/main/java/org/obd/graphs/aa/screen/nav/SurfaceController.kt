@@ -146,8 +146,9 @@ internal class SurfaceController(
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         renderFrame()
     }
+    fun hasDragMeterLoggingEnabled() : Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG
 
-    fun isVirtualScreensEnabled(): Boolean = surfaceRenderer.getType() != SurfaceRendererType.DRAG
+    fun hasVirtualScreensEnabled(): Boolean = surfaceRenderer.getType() != SurfaceRendererType.DRAG
 
     @MainThread
     fun renderFrame() {

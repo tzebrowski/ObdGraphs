@@ -38,7 +38,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         valueTextSize: Float,
         left: Float,
         top: Float,
-        valueTop: Float,
+        valueTop: Float
     ): Float {
 
         var top1 = top
@@ -127,7 +127,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         drawProgressBar(
             canvas,
             left,
-            itemWidth(area).toFloat(), top1, metric,
+            getAreaWidth(area), top1, metric,
             color = settings.colorTheme().progressColor
         )
 
@@ -135,7 +135,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
 
         drawDivider(
             canvas,
-            left, itemWidth(area).toFloat(), top1,
+            left, getAreaWidth(area), top1,
             color = settings.colorTheme().dividerColor
         )
 
@@ -148,10 +148,6 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         return top1
     }
 
-    private inline fun calculateDividerSpacing() = when (settings.getMaxColumns()) {
-        1 -> 14
-        else -> 8
-    }
 
     fun drawText(
         canvas: Canvas,
@@ -317,16 +313,12 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         )
     }
 
-    private fun calculateProgressBarHeight() = when (settings.getMaxColumns()) {
-        1 -> 16
-        else -> 10
-    }
+    private fun calculateProgressBarHeight() = 16
 
     private fun inAlert(metric: CarMetric) = settings.isAlertingEnabled() && metric.isInAlert()
 
-    private inline fun itemWidth(area: Rect): Int =
-        when (settings.getMaxColumns()) {
-            1 -> area.width()
-            else -> area.width() / 2
-        }
+    private inline fun getAreaWidth(area: Rect): Float = area.width().toFloat()
+
+    private inline fun calculateDividerSpacing(): Int = 14
+
 }

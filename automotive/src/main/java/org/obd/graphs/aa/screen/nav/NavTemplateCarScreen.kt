@@ -244,13 +244,13 @@ internal class NavTemplateCarScreen(
             } else {
                 var template = NavigationTemplate.Builder()
 
-                if (surfaceController.isVirtualScreensEnabled()) {
+                if (surfaceController.hasVirtualScreensEnabled()) {
                     getVirtualScreensActionStrip()?.let {
                         template = template.setMapActionStrip(it)
                     }
                 }
 
-                template.setActionStrip(getActionStrip()).build()
+                template.setActionStrip(getActionStrip(dragMeteringEnabled = surfaceController.hasDragMeterLoggingEnabled())).build()
             }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)

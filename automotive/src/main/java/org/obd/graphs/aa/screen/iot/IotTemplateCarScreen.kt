@@ -189,7 +189,7 @@ internal class IotTemplateCarScreen(
                 GridTemplate.Builder()
                     .setTitle(carContext.resources.getString(R.string.app_name))
                     .setLoading(true)
-                    .setActionStrip(getActionStrip(preferences = false))
+                    .setActionStrip(getActionStrip(preferencesEnabled = false))
                     .setHeaderAction(Action.APP_ICON)
                     .build()
             } else {
@@ -230,7 +230,7 @@ internal class IotTemplateCarScreen(
 
                 PaneTemplate.Builder(paneBuilder.build())
                     .setTitle(carContext.resources.getString(R.string.app_name))
-                    .setActionStrip(getActionStrip(preferences = false))
+                    .setActionStrip(getActionStrip(preferencesEnabled = false))
                     .build()
             }
 
