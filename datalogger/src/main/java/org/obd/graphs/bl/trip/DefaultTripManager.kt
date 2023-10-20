@@ -51,7 +51,7 @@ internal class DefaultTripManager : TripManager {
     private val tripModelSerializer = TripModelSerializer()
     private val tripCache = TripCache()
 
-    override fun addTripEntry(metric: ObdMetric) {
+    override fun postValue(metric: ObdMetric) {
         try {
             tripCache.getTrip { trip ->
                 val ts = (System.currentTimeMillis() - trip.startTs).toFloat()

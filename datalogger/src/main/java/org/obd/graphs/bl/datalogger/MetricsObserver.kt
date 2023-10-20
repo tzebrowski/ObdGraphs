@@ -27,14 +27,17 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     private val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
     private val dynamicSelectorModeEventsBroadcaster = DynamicSelectorModeEventBroadcaster()
+    private val dragRaceResultBroadcaster = DragRaceResultBroadcaster()
 
     override fun onStopped() {
         metrics.postValue(null)
         dynamicSelectorModeEventsBroadcaster.onStopped()
+        dragRaceResultBroadcaster.onStopped()
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
         dynamicSelectorModeEventsBroadcaster.onRunning(vehicleCapabilities)
+        dragRaceResultBroadcaster.onRunning(vehicleCapabilities)
     }
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
@@ -48,9 +51,11 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
         if (reply is ObdMetric) {
             reply.command.pid?.let {
-                dynamicSelectorModeEventsBroadcaster.postValue(reply)
                 metrics.postValue(reply)
-                tripManager.addTripEntry(reply)
+                tripManager.postValue(reply)
+
+                dynamicSelectorModeEventsBroadcaster.postValue(reply)
+                dragRaceResultBroadcaster.postValue(reply)
             }
         }
     }

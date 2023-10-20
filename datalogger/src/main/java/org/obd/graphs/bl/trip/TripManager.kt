@@ -21,7 +21,7 @@ package org.obd.graphs.bl.trip
 import org.obd.metrics.api.model.ObdMetric
 
 interface TripManager {
-    fun addTripEntry(metric: ObdMetric)
+    fun postValue(metric: ObdMetric)
     fun getCurrentTrip(): Trip
     fun startNewTrip(newTs: Long)
     fun saveCurrentTrip(f: () -> Unit)

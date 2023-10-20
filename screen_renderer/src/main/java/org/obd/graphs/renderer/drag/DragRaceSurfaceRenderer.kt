@@ -83,6 +83,7 @@ internal class DragRaceSurfaceRenderer(
                     top = top,
                 )
             }
+
             top += 8
             drawer.drawDragRaceResults(
                 canvas = canvas,

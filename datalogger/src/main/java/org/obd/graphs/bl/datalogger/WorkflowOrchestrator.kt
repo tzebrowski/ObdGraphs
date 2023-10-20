@@ -315,7 +315,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 .builder()
                 .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
                 .checkInterval(5000)
-                .commandFrequency(15)
+                .commandFrequency(10)
                 .minimumTimeout(10)
                 .build()
         ).build()
