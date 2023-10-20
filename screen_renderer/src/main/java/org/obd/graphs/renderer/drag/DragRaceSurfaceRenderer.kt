@@ -69,6 +69,8 @@ internal class DragRaceSurfaceRenderer(
                 drawer.drawDivider(canvas, left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
+            top += 8
+
             val metric = metricsCollector.metrics().firstOrNull { it.source.command.pid.id == VEHICLE_SPEED_PID_ID }
             metric?.let {
                 top = drawer.drawMetric(
@@ -81,8 +83,14 @@ internal class DragRaceSurfaceRenderer(
                     top = top,
                 )
             }
-
-            drawer.drawDragRaceResults(canvas = canvas, area = area, left = left, top = top, dataLogger.getDragRaceResults())
+            top += 8
+            drawer.drawDragRaceResults(
+                canvas = canvas,
+                area = area,
+                left = left,
+                top = top,
+                textSizeBase = textSizeBase,
+                dragRaceResults = dataLogger.getDragRaceResults())
         }
     }
 

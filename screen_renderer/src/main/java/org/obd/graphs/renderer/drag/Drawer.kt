@@ -29,17 +29,39 @@ private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
-internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawer(context, settings) {
+internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     inline fun drawDragRaceResults(
         canvas: Canvas,
         area: Rect,
         left: Float,
         top: Float,
+        textSizeBase: Float,
         dragRaceResults: DragRaceResults
     ) {
 
+        val currentXPos = area.centerX() / 1.5f
+        val lastXPos = area.centerX().toFloat()
+        val bestXPos = area.centerX() * 1.5f
 
+        drawText(canvas, "Current", currentXPos, top, textSizeBase)
+        drawText(canvas, "Last", lastXPos, top, textSizeBase)
+        drawText(canvas, "Best", bestXPos, top, textSizeBase)
+
+        drawText(canvas, "0-100 km/h", left, top + textSizeBase, textSizeBase)
+        drawText(canvas, dragRaceResults.current._0_100val.toString(), currentXPos, top + textSizeBase, textSizeBase)
+        drawText(canvas, dragRaceResults.last._0_100val.toString(), lastXPos, top + textSizeBase, textSizeBase)
+        drawText(canvas, dragRaceResults.best._0_100val.toString(), bestXPos, top + textSizeBase, textSizeBase)
+
+        drawText(canvas, "0-160 km/h", left, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, dragRaceResults.current._0_160val.toString(), currentXPos, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, dragRaceResults.last._0_160val.toString(), lastXPos, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, dragRaceResults.best._0_160val.toString(), bestXPos, top + (3 * textSizeBase), textSizeBase)
+
+        drawText(canvas, "100-200 km/h", left, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas, dragRaceResults.current._100_200val.toString(), currentXPos, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas,  dragRaceResults.last._100_200val.toString(), lastXPos, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas, dragRaceResults.best._100_200val.toString(), bestXPos, top + (5 * textSizeBase), textSizeBase)
     }
 
     inline fun drawMetric(
@@ -57,9 +79,11 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        drawTitle(
+        drawText(
             canvas,
-            metric, left1, top1,
+            metric.source.command.pid.description,
+            left1,
+            top1,
             textSizeBase
         )
 
@@ -261,21 +285,20 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         canvas.drawText(metric.source.command.pid.units, (x + 2), top, valuePaint)
     }
 
-    fun drawTitle(
+    fun drawText(
         canvas: Canvas,
-        metric: CarMetric,
+        text: String,
         left: Float,
         top: Float,
         textSize: Float
     ) {
-
         titlePaint.textSize = textSize
 
         if (settings.isBreakLabelTextEnabled()) {
-            val text = metric.source.command.pid.description.split("\n")
-            if (text.size == 1) {
+            val split = text.split("\n")
+            if (split.size == 1) {
                 canvas.drawText(
-                    text[0],
+                    split[0],
                     left,
                     top,
                     titlePaint
@@ -283,7 +306,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
             } else {
                 paint.textSize = textSize * 0.8f
                 var vPos = top - 12
-                text.forEach {
+                split.forEach {
                     canvas.drawText(
                         it,
                         left,
@@ -294,9 +317,8 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
                 }
             }
         } else {
-            val text = metric.source.command.pid.description.replace("\n", " ")
             canvas.drawText(
-                text,
+                text.replace("\n", " "),
                 left,
                 top,
                 titlePaint
