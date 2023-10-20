@@ -22,20 +22,20 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.renderer.drag.DragScreenRenderer
-import org.obd.graphs.renderer.gauge.GaugeScreenRenderer
-import org.obd.graphs.renderer.giulia.GiuliaScreenRenderer
+import org.obd.graphs.renderer.drag.DragSurfaceRenderer
+import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
+import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
 
-enum class ScreenRendererType {
+enum class SurfaceRendererType {
     GIULIA, GAUGE, DRAG
 }
 
-interface ScreenRenderer {
+interface SurfaceRenderer {
     fun onDraw(canvas: Canvas, drawArea: Rect?)
 
     fun release()
 
-    fun getType(): ScreenRendererType
+    fun getType(): SurfaceRendererType
 
     companion object {
         fun allocate(
@@ -43,12 +43,12 @@ interface ScreenRenderer {
             settings: ScreenSettings,
             metricsCollector: CarMetricsCollector,
             fps: Fps,
-            screenRendererType: ScreenRendererType = ScreenRendererType.GIULIA
-        ): ScreenRenderer =
-            when (screenRendererType) {
-                ScreenRendererType.GAUGE -> GaugeScreenRenderer(context, settings, metricsCollector, fps)
-                ScreenRendererType.GIULIA -> GiuliaScreenRenderer(context, settings, metricsCollector, fps)
-                ScreenRendererType.DRAG -> DragScreenRenderer(context, settings, metricsCollector, fps)
+            surfaceRendererType: SurfaceRendererType = SurfaceRendererType.GIULIA
+        ): SurfaceRenderer =
+            when (surfaceRendererType) {
+                SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.DRAG -> DragSurfaceRenderer(context, settings, metricsCollector, fps)
             }
     }
 }

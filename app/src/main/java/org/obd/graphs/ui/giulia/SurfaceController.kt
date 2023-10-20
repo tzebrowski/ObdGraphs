@@ -24,11 +24,11 @@ import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.annotation.MainThread
-import org.obd.graphs.renderer.ScreenRenderer
+import org.obd.graphs.renderer.SurfaceRenderer
 
 private const val LOG_KEY = "SurfaceController"
 
-class SurfaceController(private val renderer: ScreenRenderer) : SurfaceHolder.Callback {
+class SurfaceController(private val renderer: SurfaceRenderer) : SurfaceHolder.Callback {
 
     private lateinit var surfaceHolder: SurfaceHolder
     private var surface: Surface? = null

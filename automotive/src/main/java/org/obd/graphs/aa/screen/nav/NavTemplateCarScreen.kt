@@ -65,10 +65,10 @@ internal class NavTemplateCarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
-                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateRender()
+                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateSurfaceRender()
 
                 AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> {
-                    surfaceController.toggleRenderer()
+                    surfaceController.toggleSurfaceRenderer()
                     invalidate()
                 }
 
@@ -130,7 +130,7 @@ internal class NavTemplateCarScreen(
 
                 PROFILE_CHANGED_EVENT -> {
                     metricsCollector.applyFilter(settings.getSelectedPIDs())
-                    surfaceController.allocateRender()
+                    surfaceController.allocateSurfaceRender()
                     invalidate()
                 }
 

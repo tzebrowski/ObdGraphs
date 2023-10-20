@@ -23,26 +23,28 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.renderer.AbstractRenderer
+import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.ScreenRendererType
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.SurfaceRendererType
 import kotlin.math.min
 
 private const val MAX_ITEMS = 6
 
 @Suppress("NOTHING_TO_INLINE")
-internal class GaugeScreenRenderer(
+internal class GaugeSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
     fps: Fps,
-) : AbstractRenderer(settings, context, fps) {
+) : AbstractSurfaceRenderer(settings, context, fps) {
 
-    private val drawer = Drawer(settings = settings, context = context,
-        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeProgressBarType()))
+    private val drawer = Drawer(
+        settings = settings, context = context,
+        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeProgressBarType())
+    )
 
-    override fun getType(): ScreenRendererType = ScreenRendererType.GAUGE
+    override fun getType(): SurfaceRendererType = SurfaceRendererType.GAUGE
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
