@@ -27,7 +27,6 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.bl.datalogger.drag.DragRaceResults
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
@@ -109,7 +108,6 @@ internal class WorkflowOrchestrator internal constructor() {
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
 
-    fun getDragRaceResults(): DragRaceResults = DragRaceResults()
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)  =
         metricsObserver.observe(lifecycleOwner){
@@ -152,7 +150,7 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    fun startDragMetering() {
+    fun startDragRaceMetering() {
         connection()?.run {
             Log.i(LOGGER_TAG, "Start drag metering process")
 

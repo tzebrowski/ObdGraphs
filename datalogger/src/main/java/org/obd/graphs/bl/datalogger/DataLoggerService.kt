@@ -23,7 +23,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.bl.datalogger.drag.DragRaceResults
 import org.obd.graphs.getContext
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
@@ -45,7 +44,7 @@ class DataLoggerService : JobIntentService(), DataLogger {
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
             ACTION_START_DRAG_METERING -> {
-                workflowOrchestrator.startDragMetering()
+                workflowOrchestrator.startDragRaceMetering()
             }
             ACTION_START -> {
                 workflowOrchestrator.start()
@@ -88,8 +87,6 @@ class DataLoggerService : JobIntentService(), DataLogger {
     override fun stop() {
         enqueueWork(ACTION_STOP)
     }
-
-    override fun getDragRaceResults(): DragRaceResults =  workflowOrchestrator.getDragRaceResults()
 
     override val eventsReceiver: BroadcastReceiver
         get() = workflowOrchestrator.eventsReceiver

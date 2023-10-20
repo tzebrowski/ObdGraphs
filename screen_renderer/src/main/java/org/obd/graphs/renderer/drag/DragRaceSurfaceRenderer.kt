@@ -25,7 +25,7 @@ import android.graphics.Rect
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.drag.dragRaceRegistry
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
@@ -91,7 +91,7 @@ internal class DragRaceSurfaceRenderer(
                 left = left,
                 top = top,
                 textSizeBase = textSizeBase,
-                dragRaceResults = dataLogger.getDragRaceResults())
+                dragRaceResults = dragRaceRegistry.getResult())
         }
     }
 
