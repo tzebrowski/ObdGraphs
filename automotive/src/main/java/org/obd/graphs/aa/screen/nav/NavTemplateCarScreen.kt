@@ -46,7 +46,6 @@ const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 
-
 internal class NavTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
@@ -55,7 +54,6 @@ internal class NavTemplateCarScreen(
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
     private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
-
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -68,13 +66,17 @@ internal class NavTemplateCarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateRender()
-                AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> surfaceController.toggleRenderer()
+
+                AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> {
+                    surfaceController.toggleRenderer()
+                    invalidate()
+                }
+
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> surfaceController.renderFrame()
 
                 SURFACE_BROKEN_EVENT -> {
                     Log.d(LOG_KEY, "Received event about ")
-                    renderingThread.stop()
-                    fps.stop()
+                    cancelRenderingTask()
                     carContext.finishCarApp()
                 }
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
@@ -86,8 +88,7 @@ internal class NavTemplateCarScreen(
                     invalidate()
                 }
                 SURFACE_DESTROYED_EVENT -> {
-                    renderingThread.stop()
-                    fps.stop()
+                    cancelRenderingTask()
                 }
                 SURFACE_AREA_CHANGED_EVENT -> {
                     Log.v(LOG_KEY,"Surface area changed")
@@ -149,10 +150,9 @@ internal class NavTemplateCarScreen(
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     toast.show(carContext, R.string.main_activity_toast_connection_stopped)
-                    renderingThread.stop()
-                    surfaceController.renderFrame()
-                    fps.stop()
+                    cancelRenderingTask()
                     invalidate()
+                    surfaceController.renderFrame()
                     navigationManager().navigationEnded()
                 }
 
@@ -176,7 +176,6 @@ internal class NavTemplateCarScreen(
             }
         }
     }
-
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
@@ -245,8 +244,10 @@ internal class NavTemplateCarScreen(
             } else {
                 var template = NavigationTemplate.Builder()
 
-                profilesActionStrip()?.let {
-                    template = template.setMapActionStrip(it)
+                if (surfaceController.isVirtualScreensEnabled()) {
+                    getVirtualScreensActionStrip()?.let {
+                        template = template.setMapActionStrip(it)
+                    }
                 }
 
                 template.setActionStrip(getActionStrip()).build()
@@ -260,7 +261,7 @@ internal class NavTemplateCarScreen(
         }
 
 
-    private fun profilesActionStrip(): ActionStrip? {
+    private fun getVirtualScreensActionStrip(): ActionStrip? {
 
         var added  = false
         var builder = ActionStrip.Builder()

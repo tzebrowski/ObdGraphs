@@ -43,7 +43,6 @@ internal class CarSession : Session() {
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
         super.onCarConfigurationChanged(newConfiguration)
-
         screen.onCarConfigurationChanged()
     }
 }

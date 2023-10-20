@@ -22,7 +22,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
@@ -30,17 +29,11 @@ import org.obd.graphs.renderer.AbstractRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenRendererType
 import org.obd.graphs.renderer.ScreenSettings
-import kotlin.math.min
-
-
-private const val LOG_KEY = "GiuliaScreenRenderer"
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
-private const val AREA_MAX_WIDTH = 500
-
 
 @Suppress("NOTHING_TO_INLINE")
 internal class DragScreenRenderer(
@@ -102,22 +95,10 @@ internal class DragScreenRenderer(
 
         val scaleRatio = valueScaler.scaleToNewRange(settings.getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
-        val areaWidth = min(
-            when (settings.getMaxColumns()) {
-                1 -> area.width()
-                else -> area.width() / 2
-            }, AREA_MAX_WIDTH
-        )
+        val areaWidth = area.width()
 
         val valueTextSize = (areaWidth / 10f) * scaleRatio
         val textSizeBase = (areaWidth / 16f) * scaleRatio
-
-        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-            Log.v(
-                LOG_KEY,
-                "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio"
-            )
-        }
         return Pair(valueTextSize, textSizeBase)
     }
 
