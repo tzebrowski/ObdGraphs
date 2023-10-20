@@ -30,8 +30,7 @@ class CarMetricsCollector {
 
     fun metrics(enabled: Boolean = true) = metrics.values.filter { it.enabled == enabled }
 
-    fun applyFilter(selectedPIDs: Set<Long>) {
-        val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
+    fun applyFilter(selectedPIDs: Set<Long>, pidsToQuery: Set<Long> = dataLoggerPreferences.getPIDsToQuery()) {
 
         if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
             Log.d(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")

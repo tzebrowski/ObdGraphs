@@ -20,64 +20,30 @@ package org.obd.graphs.aa
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.util.Log
 import androidx.car.app.Screen
 import androidx.car.app.Session
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.aa.screen.CarScreen
+import org.obd.graphs.aa.screen.CarScreenFactory
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.setCarContext
 
+internal class CarSession : Session() {
 
-private const val LOG_TAG = "CarSession"
-
-
-internal class CarSession : Session(), DefaultLifecycleObserver {
-
-    private lateinit var surfaceController: SurfaceController
     private val settings by lazy {  CarSettings(carContext) }
     private val metricsCollector = CarMetricsCollector()
     private val fps: Fps = Fps()
+    private lateinit var screen: CarScreen
 
     override fun onCreateScreen(intent: Intent): Screen {
-        lifecycle.addObserver(this)
         setCarContext(carContext)
-
-        return if (settings.getScreenTemplate() == ScreenTemplateType.NAV) {
-            surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
-            lifecycle.addObserver(surfaceController)
-            NavTemplateCarScreen(carContext, surfaceController, settings, metricsCollector, fps)
-        } else {
-            IotTemplateCarScreen(carContext, settings, metricsCollector)
-        }
+        screen =  CarScreenFactory.instance(carContext,settings,metricsCollector,fps)
+        return screen
     }
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
         super.onCarConfigurationChanged(newConfiguration)
-        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
-            surfaceController.onCarConfigurationChanged()
 
-    }
-
-    override fun onResume(owner: LifecycleOwner) {
-        super.onResume(owner)
-        Log.d(LOG_TAG, "Received onResume event")
-        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
-            lifecycle.addObserver(surfaceController)
-    }
-
-    override fun onPause(owner: LifecycleOwner) {
-        super.onPause(owner)
-        Log.d(LOG_TAG, "Received onPause event")
-        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
-            lifecycle.removeObserver(surfaceController)
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        super.onDestroy(owner)
-        Log.d(LOG_TAG, "Received onDestroy event")
-        if (settings.getScreenTemplate() == ScreenTemplateType.NAV)
-            lifecycle.removeObserver(surfaceController)
+        screen.onCarConfigurationChanged()
     }
 }

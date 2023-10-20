@@ -18,6 +18,8 @@
  **/
 package org.obd.graphs.activity
 
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.MenuItem
 import androidx.core.os.bundleOf
@@ -29,6 +31,8 @@ import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.*
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+
 
 fun navigateToPreferencesScreen(prefKey: String) {
     (getContext() as MainActivity).navController {
@@ -78,7 +82,16 @@ internal fun MainActivity.setupNavigationBar() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
-                it.menu.findItem(R.id.ctx_menu_android_auto).isVisible = resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)
+
+                val aaMenuItem = it.menu.findItem(R.id.ctx_menu_android_auto)
+                if (resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)){
+                    val spanString = SpannableString(aaMenuItem.title.toString())
+                    spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
+                    aaMenuItem.title = spanString
+                    aaMenuItem.isVisible = true
+                } else {
+                    aaMenuItem.isVisible = false
+                }
 
                 when (destination.label.toString()) {
                     resources.getString(R.string.navigation_title_graph) -> {

@@ -1,4 +1,4 @@
-package org.obd.graphs.aa.iot
+package org.obd.graphs.aa.screen.iot
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -48,5 +48,4 @@ class ValueDrawable(private val carContext: Context) {
         } else {
             Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
         }
-
 }

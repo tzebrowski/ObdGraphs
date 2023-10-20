@@ -138,5 +138,4 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     fun getScreenRendererType() : ScreenRendererType = ScreenRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
 
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
-
 }

@@ -148,6 +148,16 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
+    fun startDragMetering() {
+        connection()?.run {
+            Log.i(LOGGER_TAG, "Start drag metering process")
+
+            workflow.startDragMeter(
+                this,  dragMeteringAdjustments(), init(), VEHICLE_SPEED_PID_ID
+            )
+        }
+    }
+
     fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
     private fun connection(): AdapterConnection? =
@@ -267,6 +277,44 @@ internal class WorkflowOrchestrator internal constructor() {
                 .minimumTimeout(10)
                 .build()
 
+        ).build()
+
+    private fun dragMeteringAdjustments() = Adjustments.builder()
+        .debugEnabled(dataLoggerPreferences.instance.debugLogging)
+        .errorsPolicy(ErrorsPolicy.builder()
+            .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
+            .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build())
+        .batchPolicy(BatchPolicy.builder()
+            .enabled(false).build())
+        .collectRawConnectorResponseEnabled(false)
+        .stNxx(STNxxExtensions.builder()
+            .enabled(false)
+            .build())
+        .vehicleMetadataReadingEnabled(false)
+        .vehicleCapabilitiesReadingEnabled(false)
+        .vehicleDtcReadingEnabled(false)
+        .vehicleDtcCleaningEnabled(false)
+        .cachePolicy(
+            CachePolicy.builder()
+                .resultCacheEnabled(false).build()
+        )
+        .producerPolicy(ProducerPolicy
+            .builder()
+            .conditionalSleepEnabled(false)
+            .build())
+        .generatorPolicy(
+            GeneratorPolicy
+                .builder()
+                .enabled(dataLoggerPreferences.instance.generatorEnabled)
+                .increment(0.5).build()
+        ).adaptiveTimeoutPolicy(
+            AdaptiveTimeoutPolicy
+                .builder()
+                .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
+                .checkInterval(5000)
+                .commandFrequency(15)
+                .minimumTimeout(10)
+                .build()
         ).build()
 
     private fun workflow() = Workflow.instance()

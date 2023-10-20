@@ -1,22 +1,4 @@
-/**
- * Copyright 2019-2023, Tomasz Żebrowski
- *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- **/
-package org.obd.graphs.aa
+package org.obd.graphs.aa.screen.nav
 
 import android.graphics.Canvas
 import android.graphics.Rect
@@ -30,21 +12,26 @@ import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenRenderer
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.renderer.ScreenRendererType
 import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"
 
-internal class SurfaceController(private val carContext: CarContext,
-                                 private val settings: CarSettings,
-                                 private val metricsCollector: CarMetricsCollector,
-                                 private val fps: Fps
+internal class SurfaceController(
+    private val carContext: CarContext,
+    private val settings: CarSettings,
+    private val metricsCollector: CarMetricsCollector,
+    private val fps: Fps
 ) :
     DefaultLifecycleObserver {
 
-    private var renderer: ScreenRenderer = ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, settings.getScreenRendererType())
+    private var renderer: ScreenRenderer =
+        ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, settings.getScreenRendererType())
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -121,9 +108,25 @@ internal class SurfaceController(private val carContext: CarContext,
         renderFrame()
     }
 
-    fun allocateRender(){
+    fun toggleRenderer() {
         renderer.release()
-        renderer = ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, screenRendererType = settings.getScreenRendererType())
+        renderer = if (renderer.getType() == ScreenRendererType.DRAG) {
+            metricsCollector.applyFilter(settings.getSelectedPIDs())
+            ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, screenRendererType = settings.getScreenRendererType())
+        } else {
+            metricsCollector.applyFilter(
+                selectedPIDs = setOf(VEHICLE_SPEED_PID_ID),
+                pidsToQuery = setOf(VEHICLE_SPEED_PID_ID)
+            )
+            ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, screenRendererType = ScreenRendererType.DRAG)
+        }
+        renderFrame()
+    }
+
+    fun allocateRender() {
+        renderer.release()
+        renderer =
+            ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, screenRendererType = settings.getScreenRendererType())
         renderFrame()
     }
 

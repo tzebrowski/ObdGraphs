@@ -38,3 +38,5 @@ const val EVENT_DYNAMIC_SELECTOR_MODE_SPORT = "event.dynamic.selector.mode.sport
 const val EVENT_DYNAMIC_SELECTOR_MODE_RACE = "event.dynamic.selector.mode.race"
 
 internal const val LOGGER_TAG = "DataLogger"
+
+const val VEHICLE_SPEED_PID_ID = 14L

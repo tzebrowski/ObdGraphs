@@ -25,6 +25,7 @@ import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.renderer.AbstractRenderer
 import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.ScreenRendererType
 import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.min
 
@@ -35,11 +36,13 @@ internal class GaugeScreenRenderer(
     context: Context,
     settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
-    fps: Fps
+    fps: Fps,
 ) : AbstractRenderer(settings, context, fps) {
 
     private val drawer = Drawer(settings = settings, context = context,
         drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeProgressBarType()))
+
+    override fun getType(): ScreenRendererType = ScreenRendererType.GAUGE
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 

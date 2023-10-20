@@ -32,6 +32,7 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
 private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
 private const val ACTION_START = "org.obd.graphs.logger.START"
+private const val ACTION_START_DRAG_METERING = "org.obd.graphs.logger.START_DRAG_METERING"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay"
 
@@ -42,6 +43,9 @@ class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
+            ACTION_START_DRAG_METERING -> {
+                workflowOrchestrator.startDragMetering()
+            }
             ACTION_START -> {
                 workflowOrchestrator.start()
             }
@@ -74,6 +78,10 @@ class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun start() {
         enqueueWork(ACTION_START)
+    }
+
+    override fun startDragMetering() {
+        enqueueWork(ACTION_START_DRAG_METERING)
     }
 
     override fun stop() {

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.renderer.giulia
+package org.obd.graphs.renderer.drag
 
 import android.content.Context
 import android.graphics.Canvas
@@ -25,6 +25,7 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
 import org.obd.graphs.renderer.AbstractRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenRendererType
@@ -42,7 +43,7 @@ private const val AREA_MAX_WIDTH = 500
 
 
 @Suppress("NOTHING_TO_INLINE")
-internal class GiuliaScreenRenderer(
+internal class DragScreenRenderer(
     context: Context,
     settings: ScreenSettings,
     private val metricsCollector: CarMetricsCollector,
@@ -52,7 +53,7 @@ internal class GiuliaScreenRenderer(
     private val valueScaler = ValueScaler()
     private val drawer = Drawer(context, settings)
 
-    override fun getType(): ScreenRendererType = ScreenRendererType.GIULIA
+    override fun getType(): ScreenRendererType = ScreenRendererType.DRAG
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -62,42 +63,31 @@ internal class GiuliaScreenRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            val metrics = metricsCollector.metrics()
             val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
             drawer.drawBackground(canvas, area)
 
             var top = area.top + textSizeBase / 2
-            var left = drawer.getMarginLeft(area.left.toFloat())
+            val left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawer.drawStatusBar(canvas,area.top.toFloat() + 6f, area.left.toFloat(), fps) + 18
+                top = drawer.drawStatusBar(canvas, area.top.toFloat() + 6f, area.left.toFloat(), fps) + 18
                 drawer.drawDivider(canvas, left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
-            val topCpy = top
-            var valueTop = initialValueTop(area)
-
-            splitIntoChunks(metrics).forEach { chunk ->
-                chunk.forEach lit@{ metric ->
-                    top = drawer.drawMetric(
-                        canvas = canvas,
-                        area = area,
-                        metric = metric,
-                        textSizeBase = textSizeBase,
-                        valueTextSize = valueTextSize,
-                        left = left,
-                        top = top,
-                        valueTop = valueTop
-                    )
-                }
-
-                if (settings.getMaxColumns() > 1) {
-                    valueTop += area.width() / 2 - 18
-                }
-
-                left += calculateLeftMargin(area)
-                top = calculateTop(textSizeBase, top, topCpy)
+            val valueTop = initialValueTop(area)
+            val metric = metricsCollector.metrics().firstOrNull { it.source.command.pid.id == VEHICLE_SPEED_PID_ID }
+            metric?.let {
+                drawer.drawMetric(
+                    canvas = canvas,
+                    area = area,
+                    metric = metric,
+                    textSizeBase = textSizeBase,
+                    valueTextSize = valueTextSize,
+                    left = left,
+                    top = top,
+                    valueTop = valueTop
+                )
             }
         }
     }
@@ -131,19 +121,10 @@ internal class GiuliaScreenRenderer(
         return Pair(valueTextSize, textSizeBase)
     }
 
-    private inline fun calculateTop(
-        textHeight: Float,
-        top: Float,
-        topCpy: Float
-    ): Float = when (settings.getMaxColumns()) {
-        1 -> top + (textHeight / 3) - 10
-        else -> topCpy
+    init {
+        metricsCollector.applyFilter(
+            selectedPIDs = setOf(VEHICLE_SPEED_PID_ID),
+            pidsToQuery = setOf(VEHICLE_SPEED_PID_ID)
+        )
     }
-
-    private inline fun calculateLeftMargin(area: Rect): Int =
-        when (settings.getMaxColumns()) {
-            1 -> 0
-            else -> (area.width() / 2)
-        }
-
 }

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.aa
+package org.obd.graphs.aa.screen.nav
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -32,17 +32,16 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.car.app.navigation.model.RoutingInfo
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
+import org.obd.graphs.aa.*
+import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.aa.screen.*
+import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 
 
-private const val LOG_KEY = "CarScreen"
-private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
-private const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
-private const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
-private const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
@@ -50,11 +49,13 @@ const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 
 internal class NavTemplateCarScreen(
     carContext: CarContext,
-    private val surfaceController: SurfaceController,
     settings: CarSettings,
     metricsCollector: CarMetricsCollector,
     fps: Fps
-) : AbstractCarScreen(carContext, settings, metricsCollector, fps) {
+) : CarScreen(carContext, settings, metricsCollector, fps) {
+
+    private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
+
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -65,9 +66,9 @@ internal class NavTemplateCarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
-
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateRender()
+                AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> surfaceController.toggleRenderer()
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> surfaceController.renderFrame()
 
                 SURFACE_BROKEN_EVENT -> {
@@ -207,16 +208,32 @@ internal class NavTemplateCarScreen(
             addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
             addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
+            addAction(AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT)
         })
     }
 
-    override fun renderAction() {
-        surfaceController.renderFrame()
+    override fun onCarConfigurationChanged() {
+        surfaceController.onCarConfigurationChanged()
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        lifecycle.addObserver(surfaceController)
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        lifecycle.removeObserver(surfaceController)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
+        lifecycle.removeObserver(surfaceController)
         carContext.unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun renderAction() {
+        surfaceController.renderFrame()
     }
 
     override fun onGetTemplate(): Template  = try {
@@ -291,10 +308,11 @@ internal class NavTemplateCarScreen(
         }
     }
 
-
     init {
 
         lifecycle.addObserver(this)
+        lifecycle.addObserver(surfaceController)
+
         dataLogger.observe(this) {
             metricsCollector.append(it)
         }

@@ -22,17 +22,20 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.renderer.drag.DragScreenRenderer
 import org.obd.graphs.renderer.gauge.GaugeScreenRenderer
 import org.obd.graphs.renderer.giulia.GiuliaScreenRenderer
 
 enum class ScreenRendererType {
-    GIULIA, GAUGE
+    GIULIA, GAUGE, DRAG
 }
 
 interface ScreenRenderer {
     fun onDraw(canvas: Canvas, drawArea: Rect?)
 
     fun release()
+
+    fun getType(): ScreenRendererType
 
     companion object {
         fun allocate(
@@ -45,6 +48,7 @@ interface ScreenRenderer {
             when (screenRendererType) {
                 ScreenRendererType.GAUGE -> GaugeScreenRenderer(context, settings, metricsCollector, fps)
                 ScreenRendererType.GIULIA -> GiuliaScreenRenderer(context, settings, metricsCollector, fps)
+                ScreenRendererType.DRAG -> DragScreenRenderer(context, settings, metricsCollector, fps)
             }
     }
 }

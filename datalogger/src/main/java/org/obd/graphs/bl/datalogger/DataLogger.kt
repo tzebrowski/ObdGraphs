@@ -38,5 +38,6 @@ interface DataLogger {
     fun scheduleStart(delay: Long)
     fun scheduledStop()
     fun start()
+    fun startDragMetering()
     fun stop()
 }
