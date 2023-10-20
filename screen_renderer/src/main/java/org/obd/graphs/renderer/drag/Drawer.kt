@@ -21,6 +21,7 @@ package org.obd.graphs.renderer.drag
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.datalogger.DragRaceResults
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 
@@ -30,6 +31,17 @@ const val MARGIN_END = 30
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawer(context, settings) {
 
+    inline fun drawDragRaceResults(
+        canvas: Canvas,
+        area: Rect,
+        left: Float,
+        top: Float,
+        dragRaceResults: DragRaceResults
+    ) {
+
+
+    }
+
     inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
@@ -37,8 +49,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         textSizeBase: Float,
         valueTextSize: Float,
         left: Float,
-        top: Float,
-        valueTop: Float
+        top: Float
     ): Float {
 
         var top1 = top
@@ -55,7 +66,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         drawValue(
             canvas,
             metric,
-            valueTop,
+            area,
             top1 + 10,
             valueTextSize
         )
@@ -226,7 +237,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
     fun drawValue(
         canvas: Canvas,
         metric: CarMetric,
-        left: Float,
+        area: Rect,
         top: Float,
         textSize: Float
     ) {
@@ -236,18 +247,18 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         } else {
             colorTheme.currentValueColor
         }
-
+        val x = area.right - 50f
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
 
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()
-        canvas.drawText(text, left, top, valuePaint)
+        canvas.drawText(text, x, top, valuePaint)
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textAlign = Paint.Align.LEFT
         valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas.drawText(metric.source.command.pid.units, (left + 2), top, valuePaint)
+        canvas.drawText(metric.source.command.pid.units, (x + 2), top, valuePaint)
     }
 
     fun drawTitle(

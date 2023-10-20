@@ -28,7 +28,6 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 interface DataLogger {
     val eventsReceiver: BroadcastReceiver
     fun status(): WorkflowStatus
-
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)
     fun isRunning(): Boolean
     fun getDiagnostics(): Diagnostics
@@ -40,4 +39,5 @@ interface DataLogger {
     fun start()
     fun startDragMetering()
     fun stop()
+    fun getDragRaceResults(): DragRaceResults
 }

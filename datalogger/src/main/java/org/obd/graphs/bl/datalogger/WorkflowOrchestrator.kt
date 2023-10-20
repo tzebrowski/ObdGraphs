@@ -40,6 +40,7 @@ import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import java.io.File
 
+
 internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
     runAsync { WorkflowOrchestrator()  }
 }
@@ -106,6 +107,8 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
+
+    fun getDragRaceResults(): DragRaceResults = DragRaceResults()
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)  =
         metricsObserver.observe(lifecycleOwner){

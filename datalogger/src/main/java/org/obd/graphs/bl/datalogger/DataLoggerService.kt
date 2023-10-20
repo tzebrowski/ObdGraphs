@@ -88,6 +88,8 @@ class DataLoggerService : JobIntentService(), DataLogger {
         enqueueWork(ACTION_STOP)
     }
 
+    override fun getDragRaceResults(): DragRaceResults =  workflowOrchestrator.getDragRaceResults()
+
     override val eventsReceiver: BroadcastReceiver
         get() = workflowOrchestrator.eventsReceiver
 

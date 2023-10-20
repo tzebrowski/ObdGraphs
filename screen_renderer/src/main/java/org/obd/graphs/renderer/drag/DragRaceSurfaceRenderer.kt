@@ -25,10 +25,11 @@ import android.graphics.Rect
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.SurfaceRendererType
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
@@ -60,7 +61,7 @@ internal class DragRaceSurfaceRenderer(
 
             drawer.drawBackground(canvas, area)
 
-            var top = area.top + textSizeBase / 1.5f
+            var top = area.top + textSizeBase
             val left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
@@ -68,10 +69,9 @@ internal class DragRaceSurfaceRenderer(
                 drawer.drawDivider(canvas, left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
             }
 
-            val valueTop = initialValueTop(area)
             val metric = metricsCollector.metrics().firstOrNull { it.source.command.pid.id == VEHICLE_SPEED_PID_ID }
             metric?.let {
-                drawer.drawMetric(
+                top = drawer.drawMetric(
                     canvas = canvas,
                     area = area,
                     metric = metric,
@@ -79,9 +79,10 @@ internal class DragRaceSurfaceRenderer(
                     valueTextSize = valueTextSize,
                     left = left,
                     top = top,
-                    valueTop = valueTop
                 )
             }
+
+            drawer.drawDragRaceResults(canvas = canvas, area = area, left = left, top = top, dataLogger.getDragRaceResults())
         }
     }
 
