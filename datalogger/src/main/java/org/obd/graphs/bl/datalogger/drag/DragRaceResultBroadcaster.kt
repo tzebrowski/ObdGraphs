@@ -1,3 +1,21 @@
+/**
+ * Copyright 2019-2023, Tomasz Żebrowski
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 package org.obd.graphs.bl.datalogger.drag
 
 import android.util.Log
@@ -18,7 +36,6 @@ internal class DragRaceResultBroadcaster : Lifecycle {
 
     private var _0_ts: Long? = null
     private var _100_ts: Long? = null
-
     private var result0_100: Long? = null
     private var result0_160: Long? = null
     private var result100_200: Long? = null
@@ -34,7 +51,7 @@ internal class DragRaceResultBroadcaster : Lifecycle {
         if (isVehicleSpeedPID(obdMetric)) {
             if (obdMetric.value.toInt() == SPEED_0_KM_H) {
                 reset()
-                Log.e(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
+                Log.i(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
                 _0_ts = obdMetric.timestamp
             }
 
@@ -42,24 +59,24 @@ internal class DragRaceResultBroadcaster : Lifecycle {
                 _100_ts = obdMetric.timestamp
                 _0_ts?.let { _0_ts ->
                     result0_100 = obdMetric.timestamp - _0_ts
-                    dragRaceRegistry.update0_100(result0_100!!)
-                    Log.e(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
+                    dragRaceRegistry.update0100(result0_100!!)
+                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
                 }
             }
 
             if (result0_160 == null && min(obdMetric.value.toInt(), SPEED_160_KM_H) == SPEED_160_KM_H) {
                 _0_ts?.let { _0_ts ->
                     result0_160 = obdMetric.timestamp - _0_ts
-                    dragRaceRegistry.update_160(result0_160!!)
-                    Log.e(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
+                    dragRaceRegistry.update0160(result0_160!!)
+                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
                 }
             }
 
             if (result100_200 == null && _100_ts != null && min(obdMetric.value.toInt(), SPEED_200_KM_H) == SPEED_200_KM_H) {
                 _100_ts?.let { _100_ts ->
                     result100_200 = obdMetric.timestamp - _100_ts
-                    dragRaceRegistry.update_100_200(result100_200!!)
-                    Log.e(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
+                    dragRaceRegistry.update100200(result100_200!!)
+                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
                 }
             }
         }

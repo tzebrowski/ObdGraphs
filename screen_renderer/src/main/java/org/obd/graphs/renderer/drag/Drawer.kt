@@ -22,6 +22,7 @@ import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.datalogger.drag.DragRaceResults
+import org.obd.graphs.bl.datalogger.drag.VALUE_NOT_SET
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 
@@ -41,28 +42,30 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
     ) {
 
         val currentXPos = area.centerX() / 1.5f
-        val lastXPos = area.centerX().toFloat()
+        val lastXPos = area.centerX() + 20f
         val bestXPos = area.centerX() * 1.5f
 
-        drawText(canvas, "Current", currentXPos, top, textSizeBase)
-        drawText(canvas, "Last", lastXPos, top, textSizeBase)
-        drawText(canvas, "Best", bestXPos, top, textSizeBase)
+        drawText(canvas, "Current (ms)", currentXPos, top, textSizeBase)
+        drawText(canvas, "Last (ms)", lastXPos, top, textSizeBase)
+        drawText(canvas, "Best (ms)", bestXPos, top, textSizeBase)
 
         drawText(canvas, "0-100 km/h", left, top + textSizeBase, textSizeBase)
-        drawText(canvas, dragRaceResults.current._0_100val.toString(), currentXPos, top + textSizeBase, textSizeBase)
-        drawText(canvas, dragRaceResults.last._0_100val.toString(), lastXPos, top + textSizeBase, textSizeBase)
-        drawText(canvas, dragRaceResults.best._0_100val.toString(), bestXPos, top + textSizeBase, textSizeBase)
+        drawText(canvas, toString(dragRaceResults.current._0_100val), currentXPos, top + textSizeBase, textSizeBase)
+        drawText(canvas, toString(dragRaceResults.last._0_100val), lastXPos, top + textSizeBase, textSizeBase)
+        drawText(canvas, toString(dragRaceResults.best._0_100val), bestXPos, top + textSizeBase, textSizeBase)
 
         drawText(canvas, "0-160 km/h", left, top + (3 * textSizeBase), textSizeBase)
-        drawText(canvas, dragRaceResults.current._0_160val.toString(), currentXPos, top + (3 * textSizeBase), textSizeBase)
-        drawText(canvas, dragRaceResults.last._0_160val.toString(), lastXPos, top + (3 * textSizeBase), textSizeBase)
-        drawText(canvas, dragRaceResults.best._0_160val.toString(), bestXPos, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, toString(dragRaceResults.current._0_160val), currentXPos, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, toString(dragRaceResults.last._0_160val), lastXPos, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, toString(dragRaceResults.best._0_160val), bestXPos, top + (3 * textSizeBase), textSizeBase)
 
         drawText(canvas, "100-200 km/h", left, top + (5 * textSizeBase), textSizeBase)
-        drawText(canvas, dragRaceResults.current._100_200val.toString(), currentXPos, top + (5 * textSizeBase), textSizeBase)
-        drawText(canvas,  dragRaceResults.last._100_200val.toString(), lastXPos, top + (5 * textSizeBase), textSizeBase)
-        drawText(canvas, dragRaceResults.best._100_200val.toString(), bestXPos, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas, toString(dragRaceResults.current._100_200val), currentXPos, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas,  toString(dragRaceResults.last._100_200val), lastXPos, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas, toString(dragRaceResults.best._100_200val), bestXPos, top + (5 * textSizeBase), textSizeBase)
     }
+
+    inline fun toString(value: Long): String = if (value == VALUE_NOT_SET) "---" else value.toString()
 
     inline fun drawMetric(
         canvas: Canvas,
@@ -151,8 +154,6 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
                 )
             }
 
-            drawAlertingLegend(canvas, metric, left1, top1)
-
         } else {
             top1 += 12
         }
@@ -218,44 +219,6 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         )
     }
 
-    fun drawAlertingLegend(canvas: Canvas, metric: CarMetric, left: Float, top: Float) {
-        if (settings.isAlertLegendEnabled() && (metric.source.command.pid.alert.lowerThreshold != null ||
-                    metric.source.command.pid.alert.upperThreshold != null)
-        ) {
-
-            val text = "  alerting "
-            drawText(
-                canvas,
-                text,
-                left,
-                top,
-                Color.LTGRAY,
-                12f,
-                alertingLegendPaint
-            )
-
-            val hPos = left + getTextWidth(text, alertingLegendPaint) + 2f
-
-            var label = ""
-            if (metric.source.command.pid.alert.lowerThreshold != null) {
-                label += "X<${metric.source.command.pid.alert.lowerThreshold}"
-            }
-
-            if (metric.source.command.pid.alert.upperThreshold != null) {
-                label += " X>${metric.source.command.pid.alert.upperThreshold}"
-            }
-
-            drawText(
-                canvas,
-                label,
-                hPos + 4,
-                top,
-                Color.YELLOW,
-                14f,
-                alertingLegendPaint
-            )
-        }
-    }
 
 
     fun drawValue(
