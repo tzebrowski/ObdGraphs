@@ -20,6 +20,7 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.BroadcastReceiver
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.bl.datalogger.drag.DragRaceResults
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram

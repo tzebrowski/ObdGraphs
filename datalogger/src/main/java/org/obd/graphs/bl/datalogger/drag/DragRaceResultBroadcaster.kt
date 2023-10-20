@@ -1,6 +1,7 @@
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs.bl.datalogger.drag
 
 import android.util.Log
+import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
 import org.obd.metrics.api.model.Lifecycle
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities

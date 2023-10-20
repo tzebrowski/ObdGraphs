@@ -21,7 +21,7 @@ package org.obd.graphs.renderer.drag
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.datalogger.DragRaceResults
+import org.obd.graphs.bl.datalogger.drag.DragRaceResults
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 
