@@ -18,7 +18,6 @@
  **/
 package org.obd.graphs.aa.screen
 
-import android.graphics.Color
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -70,7 +69,7 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
-    protected fun getActionStrip(preferencesEnabled: Boolean = true, dragMeteringEnabled: Boolean = false): ActionStrip {
+    protected fun getActionStrip(preferencesEnabled: Boolean = true, dragMeteringEnabled: Boolean = false, toggleBtnColor: Int): ActionStrip {
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.isRunning()) {
@@ -88,7 +87,7 @@ internal abstract class CarScreen(
             })
         }
 
-        builder = builder.addAction(createAction(R.drawable.action_drag_race_screen, mapColor(Color.RED)) {
+        builder = builder.addAction(createAction(R.drawable.action_drag_race_screen, mapColor(toggleBtnColor)) {
             sendBroadcastEvent(AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT)
         })
 

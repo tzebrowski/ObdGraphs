@@ -19,6 +19,7 @@
 package org.obd.graphs.aa.screen.nav
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.util.Log
@@ -126,6 +127,9 @@ internal class SurfaceController(
         renderFrame()
     }
 
+    fun getToggleSurfaceRendererBtnColor(): Int = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE)
+        Color.RED else Color.WHITE
+
     fun toggleSurfaceRenderer() {
         surfaceRenderer.release()
         surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE) {
@@ -146,9 +150,10 @@ internal class SurfaceController(
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         renderFrame()
     }
-    fun hasDragMeterLoggingEnabled() : Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE
 
-    fun hasVirtualScreensEnabled(): Boolean = surfaceRenderer.getType() != SurfaceRendererType.DRAG_RACE
+    fun isDragRaceEnabled(): Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE
+
+    fun isVirtualScreensEnabled(): Boolean = !isDragRaceEnabled()
 
     @MainThread
     fun renderFrame() {

@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.text.SpannableString
 import android.util.Log
 import androidx.car.app.CarContext
@@ -189,7 +190,7 @@ internal class IotTemplateCarScreen(
                 GridTemplate.Builder()
                     .setTitle(carContext.resources.getString(R.string.app_name))
                     .setLoading(true)
-                    .setActionStrip(getActionStrip(preferencesEnabled = false))
+                    .setActionStrip(getActionStrip(preferencesEnabled = false, toggleBtnColor = Color.WHITE))
                     .setHeaderAction(Action.APP_ICON)
                     .build()
             } else {
@@ -230,7 +231,7 @@ internal class IotTemplateCarScreen(
 
                 PaneTemplate.Builder(paneBuilder.build())
                     .setTitle(carContext.resources.getString(R.string.app_name))
-                    .setActionStrip(getActionStrip(preferencesEnabled = false))
+                    .setActionStrip(getActionStrip(preferencesEnabled = false, toggleBtnColor = Color.WHITE))
                     .build()
             }
 

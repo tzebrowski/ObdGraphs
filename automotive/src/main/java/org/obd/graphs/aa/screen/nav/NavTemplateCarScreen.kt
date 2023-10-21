@@ -239,18 +239,20 @@ internal class NavTemplateCarScreen(
             if (dataLogger.status() == WorkflowStatus.Connecting) {
                 NavigationTemplate.Builder()
                     .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
-                    .setActionStrip(getActionStrip())
+                    .setActionStrip(getActionStrip(toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor()))
                     .build()
             } else {
                 var template = NavigationTemplate.Builder()
 
-                if (surfaceController.hasVirtualScreensEnabled()) {
+                if (surfaceController.isVirtualScreensEnabled()) {
                     getVirtualScreensActionStrip()?.let {
                         template = template.setMapActionStrip(it)
                     }
                 }
 
-                template.setActionStrip(getActionStrip(dragMeteringEnabled = surfaceController.hasDragMeterLoggingEnabled())).build()
+                template.setActionStrip(getActionStrip(
+                    dragMeteringEnabled = surfaceController.isDragRaceEnabled(),
+                    toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())).build()
             }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)
@@ -259,7 +261,6 @@ internal class NavTemplateCarScreen(
                 .setTitle(carContext.getString(R.string.pref_aa_car_error))
                 .build()
         }
-
 
     private fun getVirtualScreensActionStrip(): ActionStrip? {
 
