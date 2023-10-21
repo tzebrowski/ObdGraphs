@@ -46,7 +46,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
     ) {
 
         val currentXPos = area.centerX() / 1.5f
-        val lastXPos = area.centerX() + 20f
+        val lastXPos = area.centerX() + 40f
         val bestXPos = area.centerX() * 1.5f
 
         // legend
@@ -77,7 +77,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         drawText(canvas, timeToString(dragRaceResults.best._100_200ms), bestXPos, top + (5 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
     }
 
-    inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).toString()
+    inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).round(2).toString()
     inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "--" else "$value km/h"
 
     inline fun drawMetric(
