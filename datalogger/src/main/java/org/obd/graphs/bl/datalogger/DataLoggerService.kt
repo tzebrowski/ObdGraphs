@@ -27,7 +27,9 @@ import org.obd.graphs.getContext
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
+import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
+import java.util.*
 
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
 private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
@@ -100,6 +102,8 @@ class DataLoggerService : JobIntentService(), DataLogger {
     override fun getDiagnostics(): Diagnostics  = workflowOrchestrator.diagnostics()
 
     override fun findHistogramFor(metric: ObdMetric): Histogram  = workflowOrchestrator.findHistogramFor(metric)
+
+    override fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
 
     override fun getPidDefinitionRegistry(): PidDefinitionRegistry  = workflowOrchestrator.pidDefinitionRegistry()
     override fun isDTCEnabled(): Boolean  = workflowOrchestrator.isDTCEnabled()

@@ -53,6 +53,11 @@ class CarMetricsCollector {
 
                 it.value = metric.valueToDouble()
                 val hist = dataLogger.findHistogramFor(metric)
+                val rate = dataLogger.findRateFor(metric)
+
+                rate.ifPresent { r ->
+                    it.rate = r.value
+                }
 
                 hist.mean?.let { mean ->
                     it.mean = mean

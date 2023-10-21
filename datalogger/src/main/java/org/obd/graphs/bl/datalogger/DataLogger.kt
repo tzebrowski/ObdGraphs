@@ -23,7 +23,9 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
+import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
+import java.util.*
 
 interface DataLogger {
     val eventsReceiver: BroadcastReceiver
@@ -32,6 +34,8 @@ interface DataLogger {
     fun isRunning(): Boolean
     fun getDiagnostics(): Diagnostics
     fun findHistogramFor(metric: ObdMetric): Histogram
+    fun findRateFor(metric: ObdMetric): Optional<Rate>
+
     fun getPidDefinitionRegistry(): PidDefinitionRegistry
     fun isDTCEnabled(): Boolean
     fun scheduleStart(delay: Long)

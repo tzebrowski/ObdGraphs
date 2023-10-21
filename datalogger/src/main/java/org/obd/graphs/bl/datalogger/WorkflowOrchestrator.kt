@@ -34,11 +34,14 @@ import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
+import org.obd.metrics.diagnostic.Rate
+import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import java.io.File
+import java.util.Optional
 
 
 internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
@@ -123,6 +126,8 @@ internal class WorkflowOrchestrator internal constructor() {
     fun diagnostics(): Diagnostics = workflow.diagnostics
 
     fun findHistogramFor(metric: ObdMetric): Histogram = workflow.diagnostics.histogram().findBy(metric.command.pid)
+
+    fun findRateFor(metric: ObdMetric): Optional<Rate> = workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
 
     fun pidDefinitionRegistry(): PidDefinitionRegistry  = workflow.pidRegistry
 
