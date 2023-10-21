@@ -16,16 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.trip
+package org.obd.graphs.bl.datalogger.drag
 
-import org.obd.metrics.api.model.ObdMetric
+const val VALUE_NOT_SET = -1L
 
-interface TripManager {
-    fun postValue(metric: ObdMetric)
-    fun getCurrentTrip(): Trip
-    fun startNewTrip(newTs: Long)
-    fun saveCurrentTrip(f: () -> Unit)
-    fun findAllTripsBy(filter: String = ""): MutableCollection<TripFileDesc>
-    fun deleteTrip(trip: TripFileDesc)
-    fun loadTrip(tripName: String)
-}
+data class DragRaceEntry(
+    var _0_100ms: Long = VALUE_NOT_SET, var _0_160ms: Long = VALUE_NOT_SET, var _100_200ms: Long = VALUE_NOT_SET,
+    var _0_100speed: Int = VALUE_NOT_SET.toInt(), var _0_160speed: Int = VALUE_NOT_SET.toInt(), var _100_200speed: Int = VALUE_NOT_SET.toInt()
+)
+
+data class DragRaceResults(
+    val current: DragRaceEntry = DragRaceEntry(),
+    val last: DragRaceEntry = DragRaceEntry(),
+    val best: DragRaceEntry = DragRaceEntry()
+)

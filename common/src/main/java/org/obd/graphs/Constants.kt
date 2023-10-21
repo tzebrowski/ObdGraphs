@@ -26,6 +26,7 @@ const val AA_EDIT_PREF_SCREEN = "pref.aa.edit"
 const val MAIN_ACTIVITY_EVENT_DESTROYED = "main_activity.on_destroy"
 const val MAIN_ACTIVITY_EVENT_PAUSE = "main_activity.on_pause"
 
+const val AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT = "pref.aa.screen_renderer.toggle"
 const val AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT = "pref.aa.virtual_screens.visibility.changed"
 const val AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT = "pref.aa.screen_renderer.changed"
 const val AA_VIRTUAL_SCREEN_REFRESH_EVENT = "pref.aa.screen_refresh.event"

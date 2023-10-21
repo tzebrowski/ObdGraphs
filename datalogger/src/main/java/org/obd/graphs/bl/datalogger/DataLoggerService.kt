@@ -27,11 +27,14 @@ import org.obd.graphs.getContext
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
+import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
+import java.util.*
 
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
 private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
 private const val ACTION_START = "org.obd.graphs.logger.START"
+private const val ACTION_START_DRAG_METERING = "org.obd.graphs.logger.START_DRAG_METERING"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay"
 
@@ -42,6 +45,9 @@ class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
+            ACTION_START_DRAG_METERING -> {
+                workflowOrchestrator.startDragRaceMetering()
+            }
             ACTION_START -> {
                 workflowOrchestrator.start()
             }
@@ -76,6 +82,10 @@ class DataLoggerService : JobIntentService(), DataLogger {
         enqueueWork(ACTION_START)
     }
 
+    override fun startDragMetering() {
+        enqueueWork(ACTION_START_DRAG_METERING)
+    }
+
     override fun stop() {
         enqueueWork(ACTION_STOP)
     }
@@ -92,6 +102,8 @@ class DataLoggerService : JobIntentService(), DataLogger {
     override fun getDiagnostics(): Diagnostics  = workflowOrchestrator.diagnostics()
 
     override fun findHistogramFor(metric: ObdMetric): Histogram  = workflowOrchestrator.findHistogramFor(metric)
+
+    override fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
 
     override fun getPidDefinitionRegistry(): PidDefinitionRegistry  = workflowOrchestrator.pidDefinitionRegistry()
     override fun isDTCEnabled(): Boolean  = workflowOrchestrator.isDTCEnabled()

@@ -16,66 +16,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.aa
+package org.obd.graphs.aa.screen.iot
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
+import android.text.SpannableString
 import android.util.Log
 import androidx.car.app.CarContext
-import androidx.car.app.connection.CarConnection
 import androidx.car.app.model.*
-import androidx.car.app.navigation.NavigationManager
-import androidx.car.app.navigation.NavigationManagerCallback
-import androidx.car.app.navigation.model.NavigationTemplate
-import androidx.car.app.navigation.model.RoutingInfo
+import androidx.car.app.model.Metadata
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
+import org.obd.graphs.aa.*
+import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.aa.mapColor
+import org.obd.graphs.aa.screen.*
+import org.obd.graphs.aa.screen.CarScreen
+import org.obd.graphs.aa.toast
+import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
-import org.obd.graphs.renderer.Fps
-
-
-private const val LOG_KEY = "CarScreen"
-private const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
-private const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
-private const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
-private const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
-const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
-const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
-const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
-
-
-internal class NavTemplateCarScreen(
+internal class IotTemplateCarScreen(
     carContext: CarContext,
-    private val surfaceController: SurfaceController,
     settings: CarSettings,
     metricsCollector: CarMetricsCollector,
-    fps: Fps
-) : AbstractCarScreen(carContext, settings, metricsCollector, fps) {
+) : CarScreen(carContext, settings, metricsCollector) {
+
+    private val valueDrawable = ValueDrawable(carContext)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
             when (intent?.action) {
-
                 EVENT_DYNAMIC_SELECTOR_MODE_NORMAL -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.NORMAL)
                 EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
 
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
-                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateRender()
-                AA_VIRTUAL_SCREEN_REFRESH_EVENT -> surfaceController.renderFrame()
+                AA_VIRTUAL_SCREEN_REFRESH_EVENT -> invalidate()
 
-                SURFACE_BROKEN_EVENT -> {
-                    Log.d(LOG_KEY, "Received event about ")
-                    renderingThread.stop()
-                    fps.stop()
-                    carContext.finishCarApp()
-                }
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
                     Log.v(LOG_KEY, "Main activity has been destroyed.")
                     invalidate()
@@ -84,21 +68,12 @@ internal class NavTemplateCarScreen(
                     Log.v(LOG_KEY, "Main activity is going to the background.")
                     invalidate()
                 }
-                SURFACE_DESTROYED_EVENT -> {
-                    renderingThread.stop()
-                    fps.stop()
-                }
-                SURFACE_AREA_CHANGED_EVENT -> {
-                    Log.v(LOG_KEY,"Surface area changed")
-                    invalidate()
-                    submitRenderingTask()
-                }
 
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         settings.applyVirtualScreen1()
                         metricsCollector.applyFilter(settings.getSelectedPIDs())
-                        surfaceController.renderFrame()
+                        invalidate()
                     }
                 }
 
@@ -106,7 +81,7 @@ internal class NavTemplateCarScreen(
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         settings.applyVirtualScreen2()
                         metricsCollector.applyFilter(settings.getSelectedPIDs())
-                        surfaceController.renderFrame()
+                        invalidate()
                     }
                 }
 
@@ -114,7 +89,7 @@ internal class NavTemplateCarScreen(
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         settings.applyVirtualScreen3()
                         metricsCollector.applyFilter(settings.getSelectedPIDs())
-                        surfaceController.renderFrame()
+                        invalidate()
                     }
                 }
 
@@ -122,18 +97,16 @@ internal class NavTemplateCarScreen(
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         settings.applyVirtualScreen4()
                         metricsCollector.applyFilter(settings.getSelectedPIDs())
-                        surfaceController.renderFrame()
+                        invalidate()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
                     metricsCollector.applyFilter(settings.getSelectedPIDs())
-                    surfaceController.allocateRender()
                     invalidate()
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    surfaceController.renderFrame()
                     invalidate()
                 }
 
@@ -149,18 +122,13 @@ internal class NavTemplateCarScreen(
                 DATA_LOGGER_STOPPED_EVENT -> {
                     toast.show(carContext, R.string.main_activity_toast_connection_stopped)
                     renderingThread.stop()
-                    surfaceController.renderFrame()
-                    fps.stop()
                     invalidate()
-                    navigationManager().navigationEnded()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
                     toast.show(carContext, R.string.main_activity_toast_connection_established)
                     renderingThread.start()
-                    fps.start()
                     invalidate()
-                    navigationManager().navigationStarted()
                 }
 
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
@@ -175,7 +143,6 @@ internal class NavTemplateCarScreen(
             }
         }
     }
-
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
@@ -192,11 +159,8 @@ internal class NavTemplateCarScreen(
             addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
-            addAction(SURFACE_DESTROYED_EVENT)
-            addAction(SURFACE_AREA_CHANGED_EVENT)
             addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
             addAction(MAIN_ACTIVITY_EVENT_PAUSE)
-            addAction(SURFACE_BROKEN_EVENT)
 
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
@@ -206,12 +170,14 @@ internal class NavTemplateCarScreen(
             addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
-            addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
         })
     }
 
     override fun renderAction() {
-        surfaceController.renderFrame()
+        invalidate()
+    }
+
+    override fun onCarConfigurationChanged() {
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -219,78 +185,63 @@ internal class NavTemplateCarScreen(
         carContext.unregisterReceiver(broadcastReceiver)
     }
 
-    override fun onGetTemplate(): Template  = try {
+    override fun onGetTemplate(): Template =
             if (dataLogger.status() == WorkflowStatus.Connecting) {
-                NavigationTemplate.Builder()
-                    .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
-                    .setActionStrip(getActionStrip())
+                GridTemplate.Builder()
+                    .setTitle(carContext.resources.getString(R.string.app_name))
+                    .setLoading(true)
+                    .setActionStrip(getActionStrip(preferencesEnabled = false, toggleBtnColor = Color.WHITE))
+                    .setHeaderAction(Action.APP_ICON)
                     .build()
             } else {
-                var template = NavigationTemplate.Builder()
 
-                profilesActionStrip()?.let {
-                    template = template.setMapActionStrip(it)
+                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                var paneBuilder = Pane.Builder()
+
+                paneBuilder = paneBuilder.addAction(createAction(
+                    R.drawable.action_virtual_screen_1,
+                    mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
+                ) {
+
+                    settings.applyVirtualScreen1()
+                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    invalidate()
+                })
+
+                paneBuilder = paneBuilder.addAction(createAction(
+                    R.drawable.action_virtual_screen_2,
+                    mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
+                ) {
+
+                    settings.applyVirtualScreen2()
+                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    invalidate()
+                })
+
+                metricsCollector.metrics().forEach {
+                    paneBuilder.addRow(
+                        Row.Builder()
+                        .setImage(valueDrawable.draw(it.valueToString(),settings.colorTheme().progressColor),
+                            Row.IMAGE_TYPE_LARGE
+                        )
+                        .setMetadata(Metadata.Builder().build())
+                        .setTitle(getTitleFor(it))
+                        .build())
                 }
 
-                template.setActionStrip(getActionStrip()).build()
+                PaneTemplate.Builder(paneBuilder.build())
+                    .setTitle(carContext.resources.getString(R.string.app_name))
+                    .setActionStrip(getActionStrip(preferencesEnabled = false, toggleBtnColor = Color.WHITE))
+                    .build()
             }
-        } catch (e: Exception) {
-            Log.e(LOG_KEY, "Failed to build template", e)
-            PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
-                .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getString(R.string.pref_aa_car_error))
-                .build()
-        }
 
-
-    private fun profilesActionStrip(): ActionStrip? {
-
-        var added  = false
-        var builder = ActionStrip.Builder()
-
-        if (settings.isVirtualScreenEnabled(1)) {
-            added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-                settings.applyVirtualScreen1()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
-                surfaceController.renderFrame()
-            })
-        }
-
-        if (settings.isVirtualScreenEnabled(2)) {
-            added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_2, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-                settings.applyVirtualScreen2()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
-                surfaceController.renderFrame()
-            })
-        }
-
-        if (settings.isVirtualScreenEnabled(3)) {
-
-            added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-                settings.applyVirtualScreen3()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
-                surfaceController.renderFrame()
-            })
-        }
-
-        if (settings.isVirtualScreenEnabled(4)) {
-            added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_4, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-                settings.applyVirtualScreen4()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
-                surfaceController.renderFrame()
-            })
-        }
-        return if (added) {
-            builder.build()
-        } else {
-            null
-        }
+    private fun getTitleFor(metric: CarMetric): SpannableString {
+        val title = StringBuilder()
+        title.append(metric.source.command.pid.description.replace("\n",""))
+        title.append("\n")
+        title.append("· min:${metric.toNumber(metric.min)} avg: ${metric.toNumber(metric.mean)} max: ${metric.toNumber(metric.max)}")
+        return SpannableString(title)
     }
-
 
     init {
 
@@ -300,28 +251,6 @@ internal class NavTemplateCarScreen(
         }
 
         submitRenderingTask()
-
-        navigationManager().setNavigationManagerCallback(
-            object : NavigationManagerCallback {
-                override fun onStopNavigation() {
-
-                    try {
-                        renderingThread.stop()
-                        surfaceController.renderFrame()
-                        fps.stop()
-                        invalidate()
-                    } catch (e: Throwable) {
-                        Log.e(LOG_KEY, "Failed to stop DL threads", e)
-                    }
-                }
-
-                override fun onAutoDriveEnabled() {
-
-                }
-            })
-
         registerConnectionStateReceiver()
     }
-
-    private fun navigationManager() = carContext.getCarService(NavigationManager::class.java)
 }

@@ -16,9 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.aa
+package org.obd.graphs.aa.screen.nav
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.util.Log
@@ -30,21 +31,26 @@ import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.ScreenRenderer
+import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
+import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.SurfaceRenderer
+import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"
 
-internal class SurfaceController(private val carContext: CarContext,
-                                 private val settings: CarSettings,
-                                 private val metricsCollector: CarMetricsCollector,
-                                 private val fps: Fps
+internal class SurfaceController(
+    private val carContext: CarContext,
+    private val settings: CarSettings,
+    private val metricsCollector: CarMetricsCollector,
+    private val fps: Fps
 ) :
     DefaultLifecycleObserver {
 
-    private var renderer: ScreenRenderer = ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, settings.getScreenRendererType())
+    private var surfaceRenderer: SurfaceRenderer =
+        SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, settings.getSurfaceRendererType())
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -61,7 +67,7 @@ internal class SurfaceController(private val carContext: CarContext,
                     Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
                     surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                surfaceRenderer.applyMetricsFilter()
             }
         }
 
@@ -121,11 +127,33 @@ internal class SurfaceController(private val carContext: CarContext,
         renderFrame()
     }
 
-    fun allocateRender(){
-        renderer.release()
-        renderer = ScreenRenderer.allocate(carContext, settings, metricsCollector, fps, screenRendererType = settings.getScreenRendererType())
+    fun getToggleSurfaceRendererBtnColor(): Int = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE)
+        Color.RED else Color.WHITE
+
+    fun toggleSurfaceRenderer() {
+        surfaceRenderer.release()
+        surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE) {
+            metricsCollector.applyFilter(settings.getSelectedPIDs())
+            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
+        } else {
+            metricsCollector.applyFilter(
+                selectedPIDs = setOf(VEHICLE_SPEED_PID_ID),
+                pidsToQuery = setOf(VEHICLE_SPEED_PID_ID)
+            )
+            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACE)
+        }
+    }
+
+    fun allocateSurfaceRender() {
+        surfaceRenderer.release()
+        surfaceRenderer =
+            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         renderFrame()
     }
+
+    fun isDragRaceEnabled(): Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE
+
+    fun isVirtualScreensEnabled(): Boolean = !isDragRaceEnabled()
 
     @MainThread
     fun renderFrame() {
@@ -136,7 +164,7 @@ internal class SurfaceController(private val carContext: CarContext,
                 try {
                     canvas = it.lockHardwareCanvas()
                     surfaceLocked = true
-                    renderer.onDraw(
+                    surfaceRenderer.onDraw(
                         canvas = canvas,
                         drawArea = visibleArea
                     )

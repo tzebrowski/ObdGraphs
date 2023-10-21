@@ -25,8 +25,9 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.renderer.AbstractRenderer
+import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.min
 
@@ -41,15 +42,17 @@ private const val AREA_MAX_WIDTH = 500
 
 
 @Suppress("NOTHING_TO_INLINE")
-internal class GiuliaScreenRenderer(
+internal class GiuliaSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
-    private val metricsCollector: CarMetricsCollector,
+    metricsCollector: CarMetricsCollector,
     fps: Fps
-) : AbstractRenderer(settings, context, fps) {
+) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
 
     private val valueScaler = ValueScaler()
     private val drawer = Drawer(context, settings)
+
+    override fun getType(): SurfaceRendererType = SurfaceRendererType.GIULIA
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 

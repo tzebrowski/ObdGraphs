@@ -43,10 +43,10 @@
     <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors you would like to see on the screen</string>
 
-    <string name="pref.pids_generic_high">High priority OBD2 PIDs/Sensors</string>
-    <string name="pref.pids_generic_high_summary">Choose High priority OBD2 PIDs/Sensors you would like to query from ECU</string>
-    <string name="pref.pids_generic_low">Low priority OBD2 PIDs/Sensors</string>
-    <string name="pref.pids_generic_low_summary">Choose Low priority OBD2 PIDs/Sensors you would like to query from ECU</string>
+    <string name="pref.pids_generic_high">High frequency OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_generic_high_summary">Choose High frequency OBD2 PIDs/Sensors you would like to query from ECU</string>
+    <string name="pref.pids_generic_low">Low frequency OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_generic_low_summary">Choose Low frequency OBD2 PIDs/Sensors you would like to query from ECU</string>
 
     <string name="prefs.adapter_batch_mode_01_batch_size">Batch Size for Mode 01</string>
     <string name="prefs.adapter_batch_mode_22_batch_size">Batch Size for Mode 22</string>
@@ -118,7 +118,7 @@
 
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
 
-    <string name="pref.aa.renderer_type">Screen renderer type</string>
+    <string name="pref.aa.renderer_type">Screen type</string>
     <string name="pref.aa.renderer.gauge.progress_type">Gauge progress-bar type</string>
 
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Number of columns</string>
@@ -155,7 +155,7 @@
     <string name="pref.aa.display_pid_scale">Display PIDs scale</string>
 
     <string name="pref.aa.display_status_panel">Display status panel</string>
-    <string name="pref.aa.connection_auto">Automatically connect OBD adapter when enter AA</string>
+    <string name="pref.aa.connection_auto">Automatic connection to the OBD2 adapter when enter AA mode</string>
     <string name="pref.aa.title">Android Auto</string>
 
     <string name="pref.aa.alerting_category">Alerting</string>
@@ -217,6 +217,8 @@
     <string name="pref.adapter_connection_tcp_port">Port</string>
     <string name="pref.adapter_command_freq_summary">This parameter allows to set target OBD commands frequency. This is just desired frequency which is limited by the hardware capabilities. This option typically should be conducted with adaptive timeout.</string>
     <string name="pref.adapter_command_freq">Desired refresh rate(PIDs/second)</string>
+    <string name="pref.drag_race.adapter_command_freq">Drag Race Desired refresh rate(PIDs/second)</string>
+
     <string name="pref.adapter_power_connect_adapter">Connect adapter on power</string>
     <string name="pref.adapter_power_screen_off">Screen off when disconnected</string>
     <string name="pref.adapter_power_bt_off">Switch network Off/On</string>

@@ -34,11 +34,15 @@ import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
+import org.obd.metrics.diagnostic.Rate
+import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import java.io.File
+import java.util.Optional
+
 
 internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
     runAsync { WorkflowOrchestrator()  }
@@ -107,6 +111,7 @@ internal class WorkflowOrchestrator internal constructor() {
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
 
+
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)  =
         metricsObserver.observe(lifecycleOwner){
             it?.let {
@@ -121,6 +126,8 @@ internal class WorkflowOrchestrator internal constructor() {
     fun diagnostics(): Diagnostics = workflow.diagnostics
 
     fun findHistogramFor(metric: ObdMetric): Histogram = workflow.diagnostics.histogram().findBy(metric.command.pid)
+
+    fun findRateFor(metric: ObdMetric): Optional<Rate> = workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
 
     fun pidDefinitionRegistry(): PidDefinitionRegistry  = workflow.pidRegistry
 
@@ -145,6 +152,16 @@ internal class WorkflowOrchestrator internal constructor() {
                 adjustments()
             )
             Log.i(LOGGER_TAG, "Start collecting process")
+        }
+    }
+
+    fun startDragRaceMetering() {
+        connection()?.run {
+            Log.i(LOGGER_TAG, "Start drag metering process")
+
+            workflow.startDragMeter(
+                this,  dragMeteringAdjustments(), init(), VEHICLE_SPEED_PID_ID
+            )
         }
     }
 
@@ -267,6 +284,44 @@ internal class WorkflowOrchestrator internal constructor() {
                 .minimumTimeout(10)
                 .build()
 
+        ).build()
+
+    private fun dragMeteringAdjustments() = Adjustments.builder()
+        .debugEnabled(dataLoggerPreferences.instance.debugLogging)
+        .errorsPolicy(ErrorsPolicy.builder()
+            .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
+            .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build())
+        .batchPolicy(BatchPolicy.builder()
+            .enabled(false).build())
+        .collectRawConnectorResponseEnabled(false)
+        .stNxx(STNxxExtensions.builder()
+            .enabled(false)
+            .build())
+        .vehicleMetadataReadingEnabled(false)
+        .vehicleCapabilitiesReadingEnabled(false)
+        .vehicleDtcReadingEnabled(false)
+        .vehicleDtcCleaningEnabled(false)
+        .cachePolicy(
+            CachePolicy.builder()
+                .resultCacheEnabled(false).build()
+        )
+        .producerPolicy(ProducerPolicy
+            .builder()
+            .conditionalSleepEnabled(false)
+            .build())
+        .generatorPolicy(
+            GeneratorPolicy
+                .builder()
+                .enabled(dataLoggerPreferences.instance.generatorEnabled)
+                .increment(0.5).build()
+        ).adaptiveTimeoutPolicy(
+            AdaptiveTimeoutPolicy
+                .builder()
+                .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
+                .checkInterval(5000)
+                .commandFrequency(dataLoggerPreferences.instance.dragRaceCommandFrequency)
+                .minimumTimeout(10)
+                .build()
         ).build()
 
     private fun workflow() = Workflow.instance()

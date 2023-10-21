@@ -29,11 +29,12 @@ data class CarMetric(
     var min: Double,
     var max: Double,
     var mean: Double,
-    var enabled: Boolean = true
+    var enabled: Boolean = true,
+    var rate: Double?
 ) {
     companion object {
         fun newInstance(source: ObdMetric, value: Number, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0)
-        = CarMetric(source, value = value, min = min, max = max, mean = mean, enabled = true)
+        = CarMetric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 
     fun toNumber(value: Double?): String {

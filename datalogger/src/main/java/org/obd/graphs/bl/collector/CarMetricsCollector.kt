@@ -30,8 +30,7 @@ class CarMetricsCollector {
 
     fun metrics(enabled: Boolean = true) = metrics.values.filter { it.enabled == enabled }
 
-    fun applyFilter(selectedPIDs: Set<Long>) {
-        val pidsToQuery = dataLoggerPreferences.getPIDsToQuery()
+    fun applyFilter(selectedPIDs: Set<Long>, pidsToQuery: Set<Long> = dataLoggerPreferences.getPIDsToQuery()) {
 
         if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
             Log.d(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
@@ -54,6 +53,11 @@ class CarMetricsCollector {
 
                 it.value = metric.valueToDouble()
                 val hist = dataLogger.findHistogramFor(metric)
+                val rate = dataLogger.findRateFor(metric)
+
+                rate.ifPresent { r ->
+                    it.rate = r.value
+                }
 
                 hist.mean?.let { mean ->
                     it.mean = mean

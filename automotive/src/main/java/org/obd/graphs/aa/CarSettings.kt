@@ -84,8 +84,6 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
 
-    fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
-
     override fun getGaugeProgressBarType(): GaugeProgressBarType =
         GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
 
@@ -135,8 +133,9 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     fun isVirtualScreenEnabled(id: Int): Boolean =  Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
 
-    fun getScreenRendererType() : ScreenRendererType = ScreenRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
+    fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
+
+    fun getSurfaceRendererType() : SurfaceRendererType = SurfaceRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
 
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
-
 }
