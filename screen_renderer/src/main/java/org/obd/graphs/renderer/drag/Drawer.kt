@@ -55,29 +55,30 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         drawText(canvas, "Best (sec)", bestXPos, top, textSizeBase, color = Color.LTGRAY)
 
         drawText(canvas, "0-100 km/h", left, top + textSizeBase + 6f, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, toString(dragRaceResults.current._0_100ms), currentXPos, top + textSizeBase + 4f, textSizeBase)
-        var ll = getTextWidth( toString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
-        drawText(canvas, "${dragRaceResults.current._0_100speed} km/h", currentXPos + ll, top + textSizeBase + 4f, textSizeBase/1.5f, color = Color.LTGRAY)
-        drawText(canvas, toString(dragRaceResults.last._0_100ms), lastXPos, top + textSizeBase + 4f, textSizeBase)
-        drawText(canvas, toString(dragRaceResults.best._0_100ms), bestXPos, top + textSizeBase + 4f, textSizeBase, color = COLOR_CARDINAL)
+        drawText(canvas, timeToString(dragRaceResults.current._0_100ms), currentXPos, top + textSizeBase + 4f, textSizeBase)
+        var ll = getTextWidth( timeToString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
+        drawText(canvas, speedToString(dragRaceResults.current._0_100speed), currentXPos + ll, top + textSizeBase + 4f, textSizeBase/1.5f, color = Color.LTGRAY)
+        drawText(canvas, timeToString(dragRaceResults.last._0_100ms), lastXPos, top + textSizeBase + 4f, textSizeBase)
+        drawText(canvas, timeToString(dragRaceResults.best._0_100ms), bestXPos, top + textSizeBase + 4f, textSizeBase, color = COLOR_CARDINAL)
 
         drawText(canvas, "0-160 km/h", left, top + (3 * textSizeBase), textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, toString(dragRaceResults.current._0_160ms), currentXPos, top + (3 * textSizeBase), textSizeBase)
-        ll = getTextWidth( toString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
-        drawText(canvas, "${dragRaceResults.current._0_160speed} km/h", currentXPos  + ll, top + (3 * textSizeBase), textSizeBase/1.5f)
-        drawText(canvas, toString(dragRaceResults.last._0_160ms), lastXPos, top + (3 * textSizeBase), textSizeBase)
-        drawText(canvas, toString(dragRaceResults.best._0_160ms), bestXPos, top + (3 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
+        drawText(canvas, timeToString(dragRaceResults.current._0_160ms), currentXPos, top + (3 * textSizeBase), textSizeBase)
+        ll = getTextWidth( timeToString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
+        drawText(canvas, speedToString(dragRaceResults.current._0_160speed), currentXPos  + ll, top + (3 * textSizeBase), textSizeBase/1.5f)
+        drawText(canvas, timeToString(dragRaceResults.last._0_160ms), lastXPos, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, timeToString(dragRaceResults.best._0_160ms), bestXPos, top + (3 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
 
         drawText(canvas, "100-200 km/h", left, top + (5 * textSizeBase), textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, toString(dragRaceResults.current._100_200ms), currentXPos, top + (5 * textSizeBase), textSizeBase)
-        ll = getTextWidth( toString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
-        drawText(canvas, "${dragRaceResults.current._100_200speed} km/h", currentXPos + ll, top + (5 * textSizeBase), textSizeBase/1.5f)
+        drawText(canvas, timeToString(dragRaceResults.current._100_200ms), currentXPos, top + (5 * textSizeBase), textSizeBase)
+        ll = getTextWidth( timeToString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
+        drawText(canvas, speedToString(dragRaceResults.current._100_200speed), currentXPos + ll, top + (5 * textSizeBase), textSizeBase/1.5f)
 
-        drawText(canvas, toString(dragRaceResults.last._100_200ms), lastXPos, top + (5 * textSizeBase), textSizeBase)
-        drawText(canvas, toString(dragRaceResults.best._100_200ms), bestXPos, top + (5 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
+        drawText(canvas, timeToString(dragRaceResults.last._100_200ms), lastXPos, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas, timeToString(dragRaceResults.best._100_200ms), bestXPos, top + (5 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
     }
 
-    inline fun toString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).toString()
+    inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).toString()
+    inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "--" else "$value km/h"
 
     inline fun drawMetric(
         canvas: Canvas,
