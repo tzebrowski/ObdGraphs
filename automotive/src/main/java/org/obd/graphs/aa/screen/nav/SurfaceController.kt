@@ -66,7 +66,7 @@ internal class SurfaceController(
                     Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
                     surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                surfaceRenderer.applyMetricsFilter()
             }
         }
 

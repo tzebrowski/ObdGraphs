@@ -35,9 +35,9 @@ private const val MAX_ITEMS = 6
 internal class GaugeSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
-    private val metricsCollector: CarMetricsCollector,
+    metricsCollector: CarMetricsCollector,
     fps: Fps,
-) : AbstractSurfaceRenderer(settings, context, fps) {
+) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
 
     private val drawer = Drawer(
         settings = settings, context = context,

@@ -21,15 +21,21 @@ package org.obd.graphs.renderer
 import android.content.Context
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import kotlin.math.max
 
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractSurfaceRenderer(
     protected val settings: ScreenSettings,
     protected val context: Context,
-    protected val fps: Fps
+    protected val fps: Fps,
+    protected val metricsCollector: CarMetricsCollector,
 ) :
     SurfaceRenderer {
+
+    override fun applyMetricsFilter() {
+        metricsCollector.applyFilter(settings.getSelectedPIDs())
+    }
 
     protected inline fun splitIntoChunks(metrics: List<CarMetric>): MutableList<List<CarMetric>> {
         val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()

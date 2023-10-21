@@ -40,14 +40,21 @@ private const val NEW_MIN = 0.6f
 internal class DragRaceSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
-    private val metricsCollector: CarMetricsCollector,
+    metricsCollector: CarMetricsCollector,
     fps: Fps
-) : AbstractSurfaceRenderer(settings, context, fps) {
+) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
 
     private val valueScaler = ValueScaler()
     private val drawer = Drawer(context, settings)
 
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACE
+
+    override fun applyMetricsFilter() {
+        metricsCollector.applyFilter(
+            selectedPIDs = setOf(VEHICLE_SPEED_PID_ID),
+            pidsToQuery = setOf(VEHICLE_SPEED_PID_ID)
+        )
+    }
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -113,9 +120,6 @@ internal class DragRaceSurfaceRenderer(
     }
 
     init {
-        metricsCollector.applyFilter(
-            selectedPIDs = setOf(VEHICLE_SPEED_PID_ID),
-            pidsToQuery = setOf(VEHICLE_SPEED_PID_ID)
-        )
+        applyMetricsFilter()
     }
 }

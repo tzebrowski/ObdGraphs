@@ -31,6 +31,8 @@ enum class SurfaceRendererType {
 }
 
 interface SurfaceRenderer {
+    fun applyMetricsFilter()
+
     fun onDraw(canvas: Canvas, drawArea: Rect?)
 
     fun release()

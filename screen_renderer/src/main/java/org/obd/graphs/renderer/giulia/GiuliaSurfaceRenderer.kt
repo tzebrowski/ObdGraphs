@@ -45,9 +45,9 @@ private const val AREA_MAX_WIDTH = 500
 internal class GiuliaSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
-    private val metricsCollector: CarMetricsCollector,
+    metricsCollector: CarMetricsCollector,
     fps: Fps
-) : AbstractSurfaceRenderer(settings, context, fps) {
+) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
 
     private val valueScaler = ValueScaler()
     private val drawer = Drawer(context, settings)
