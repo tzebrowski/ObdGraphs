@@ -19,12 +19,35 @@
 package org.obd.graphs.bl.datalogger.drag
 
 import android.util.Log
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.updateString
 
 private const val LOG_KEY = "DragRaceRegistry"
+private const val PERF_0_100_BEST = "pref.drag_race.best.0_100"
+private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
+private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
+
 
 internal class DragRaceRegistryImpl : DragRaceRegistry {
 
     private val results = DragRaceResults()
+
+    init {
+
+        Prefs.getString(PERF_0_100_BEST, null)?.let {
+            results.best._0_100val = it.toLong()
+        }
+
+        Prefs.getString(PERF_0_160_BEST, null)?.let {
+            results.best._0_160val = it.toLong()
+        }
+
+
+        Prefs.getString(PERF_100_200_BEST, null)?.let {
+            results.best._100_200val = it.toLong()
+        }
+
+    }
 
     override fun update0100(value: Long) {
         if (value == 0L) {
@@ -40,6 +63,7 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
 
             if (results.best._0_100val > value || results.best._0_100val == VALUE_NOT_SET) {
                 results.best._0_100val = value
+                Prefs.updateString(PERF_0_100_BEST, value.toString())
             }
         }
     }
@@ -58,6 +82,7 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
 
             if (results.best._0_160val > value || results.best._0_160val == VALUE_NOT_SET) {
                 results.best._0_160val = value
+                Prefs.updateString(PERF_0_160_BEST, value.toString())
             }
         }
     }
@@ -77,6 +102,7 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
 
             if (results.best._100_200val > value || results.best._100_200val == VALUE_NOT_SET) {
                 results.best._100_200val = value
+                Prefs.updateString(PERF_100_200_BEST, value.toString())
             }
         }
     }
