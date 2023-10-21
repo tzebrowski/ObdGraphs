@@ -35,74 +35,77 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
     init {
 
         Prefs.getString(PERF_0_100_BEST, null)?.let {
-            results.best._0_100val = it.toLong()
+            results.best._0_100ms = it.toLong()
         }
 
         Prefs.getString(PERF_0_160_BEST, null)?.let {
-            results.best._0_160val = it.toLong()
+            results.best._0_160ms = it.toLong()
         }
 
 
         Prefs.getString(PERF_100_200_BEST, null)?.let {
-            results.best._100_200val = it.toLong()
+            results.best._100_200ms = it.toLong()
         }
 
     }
 
-    override fun update0100(value: Long) {
-        if (value == 0L) {
+    override fun update0100(time: Long, speed: Int) {
+        if (time == 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
-            results.last._0_100val = if (results.last._0_100val == VALUE_NOT_SET) {
-                value
+            results.last._0_100ms = if (results.last._0_100ms == VALUE_NOT_SET) {
+                time
             } else {
-                results.current._0_100val
+                results.current._0_100ms
             }
 
-            results.current._0_100val = value
+            results.current._0_100ms = time
+            results.current._0_100speed = speed
 
-            if (results.best._0_100val > value || results.best._0_100val == VALUE_NOT_SET) {
-                results.best._0_100val = value
-                Prefs.updateString(PERF_0_100_BEST, value.toString())
+            if (results.best._0_100ms > time || results.best._0_100ms == VALUE_NOT_SET) {
+                results.best._0_100ms = time
+                Prefs.updateString(PERF_0_100_BEST, time.toString())
             }
         }
     }
 
-    override fun update0160(value: Long) {
-        if (value == 0L) {
+    override fun update0160(time: Long, speed: Int) {
+        if (time == 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
-            results.last._0_160val = if (results.last._0_160val == VALUE_NOT_SET) {
-                value
+            results.last._0_160ms = if (results.last._0_160ms == VALUE_NOT_SET) {
+                time
             } else {
-                results.current._0_160val
+                results.current._0_160ms
             }
 
-            results.current._0_160val = value
+            results.current._0_160ms = time
+            results.current._0_160speed = speed
 
-            if (results.best._0_160val > value || results.best._0_160val == VALUE_NOT_SET) {
-                results.best._0_160val = value
-                Prefs.updateString(PERF_0_160_BEST, value.toString())
+            if (results.best._0_160ms > time || results.best._0_160ms == VALUE_NOT_SET) {
+                results.best._0_160ms = time
+                Prefs.updateString(PERF_0_160_BEST, time.toString())
             }
         }
     }
 
-    override fun update100200(value: Long) {
-        if (value == 0L) {
+    override fun update100200(time: Long, speed: Int) {
+        if (time == 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
 
-            results.last._100_200val = if (results.last._100_200val == VALUE_NOT_SET) {
-                value
+            results.last._100_200ms = if (results.last._100_200ms == VALUE_NOT_SET) {
+                time
             } else {
-                results.current._100_200val
+                results.current._100_200ms
             }
 
-            results.current._100_200val = value
+            results.current._100_200ms = time
+            results.current._100_200speed = speed
 
-            if (results.best._100_200val > value || results.best._100_200val == VALUE_NOT_SET) {
-                results.best._100_200val = value
-                Prefs.updateString(PERF_100_200_BEST, value.toString())
+            if (results.best._100_200ms > time || results.best._100_200ms == VALUE_NOT_SET) {
+                results.best._100_200ms = time
+                Prefs.updateString(PERF_100_200_BEST, time.toString())
             }
         }
     }

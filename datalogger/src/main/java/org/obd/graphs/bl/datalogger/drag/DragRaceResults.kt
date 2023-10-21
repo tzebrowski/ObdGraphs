@@ -20,9 +20,13 @@ package org.obd.graphs.bl.datalogger.drag
 
 const val VALUE_NOT_SET = -1L
 
-data class DragRaceEntry(var _0_100val: Long = VALUE_NOT_SET, var _0_160val: Long = VALUE_NOT_SET, var _100_200val: Long = VALUE_NOT_SET)
+data class DragRaceEntry(
+    var _0_100ms: Long = VALUE_NOT_SET, var _0_160ms: Long = VALUE_NOT_SET, var _100_200ms: Long = VALUE_NOT_SET,
+    var _0_100speed: Int = VALUE_NOT_SET.toInt(), var _0_160speed: Int = VALUE_NOT_SET.toInt(), var _100_200speed: Int = VALUE_NOT_SET.toInt()
+)
 
-data class DragRaceResults(val current: DragRaceEntry = DragRaceEntry(),
-                           val last: DragRaceEntry = DragRaceEntry(),
-                           val best: DragRaceEntry = DragRaceEntry()
+data class DragRaceResults(
+    val current: DragRaceEntry = DragRaceEntry(),
+    val last: DragRaceEntry = DragRaceEntry(),
+    val best: DragRaceEntry = DragRaceEntry()
 )

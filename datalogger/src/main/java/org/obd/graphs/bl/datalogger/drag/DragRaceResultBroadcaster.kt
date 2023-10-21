@@ -59,7 +59,7 @@ internal class DragRaceResultBroadcaster : Lifecycle {
                 _100_ts = obdMetric.timestamp
                 _0_ts?.let { _0_ts ->
                     result0_100 = obdMetric.timestamp - _0_ts
-                    dragRaceRegistry.update0100(result0_100!!)
+                    dragRaceRegistry.update0100(result0_100!!, obdMetric.value.toInt())
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
                 }
             }
@@ -67,7 +67,7 @@ internal class DragRaceResultBroadcaster : Lifecycle {
             if (result0_160 == null && min(obdMetric.value.toInt(), SPEED_160_KM_H) == SPEED_160_KM_H) {
                 _0_ts?.let { _0_ts ->
                     result0_160 = obdMetric.timestamp - _0_ts
-                    dragRaceRegistry.update0160(result0_160!!)
+                    dragRaceRegistry.update0160(result0_160!!, obdMetric.value.toInt())
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
                 }
             }
@@ -75,7 +75,7 @@ internal class DragRaceResultBroadcaster : Lifecycle {
             if (result100_200 == null && _100_ts != null && min(obdMetric.value.toInt(), SPEED_200_KM_H) == SPEED_200_KM_H) {
                 _100_ts?.let { _100_ts ->
                     result100_200 = obdMetric.timestamp - _100_ts
-                    dragRaceRegistry.update100200(result100_200!!)
+                    dragRaceRegistry.update100200(result100_200!!, obdMetric.value.toInt())
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
                 }
             }

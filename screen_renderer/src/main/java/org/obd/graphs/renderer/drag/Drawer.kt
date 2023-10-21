@@ -27,6 +27,8 @@ import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_WHITE
 
 private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
@@ -48,27 +50,34 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         val bestXPos = area.centerX() * 1.5f
 
         // legend
-        drawText(canvas, "Current (ms)", currentXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Last (ms)", lastXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Best (ms)", bestXPos, top, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, "Current (sec)", currentXPos, top, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, "Last (sec)", lastXPos, top, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, "Best (sec)", bestXPos, top, textSizeBase, color = Color.LTGRAY)
 
         drawText(canvas, "0-100 km/h", left, top + textSizeBase + 6f, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, toString(dragRaceResults.current._0_100val), currentXPos, top + textSizeBase + 4f, textSizeBase)
-        drawText(canvas, toString(dragRaceResults.last._0_100val), lastXPos, top + textSizeBase + 4f, textSizeBase)
-        drawText(canvas, toString(dragRaceResults.best._0_100val), bestXPos, top + textSizeBase + 4f, textSizeBase, color = COLOR_CARDINAL)
+        drawText(canvas, toString(dragRaceResults.current._0_100ms), currentXPos, top + textSizeBase + 4f, textSizeBase)
+        var ll = getTextWidth( toString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
+        drawText(canvas, "${dragRaceResults.current._0_100speed} km/h", currentXPos + ll, top + textSizeBase + 4f, textSizeBase/1.5f, color = Color.LTGRAY)
+        drawText(canvas, toString(dragRaceResults.last._0_100ms), lastXPos, top + textSizeBase + 4f, textSizeBase)
+        drawText(canvas, toString(dragRaceResults.best._0_100ms), bestXPos, top + textSizeBase + 4f, textSizeBase, color = COLOR_CARDINAL)
 
         drawText(canvas, "0-160 km/h", left, top + (3 * textSizeBase), textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, toString(dragRaceResults.current._0_160val), currentXPos, top + (3 * textSizeBase), textSizeBase)
-        drawText(canvas, toString(dragRaceResults.last._0_160val), lastXPos, top + (3 * textSizeBase), textSizeBase)
-        drawText(canvas, toString(dragRaceResults.best._0_160val), bestXPos, top + (3 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
+        drawText(canvas, toString(dragRaceResults.current._0_160ms), currentXPos, top + (3 * textSizeBase), textSizeBase)
+        ll = getTextWidth( toString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
+        drawText(canvas, "${dragRaceResults.current._0_160speed} km/h", currentXPos  + ll, top + (3 * textSizeBase), textSizeBase/1.5f)
+        drawText(canvas, toString(dragRaceResults.last._0_160ms), lastXPos, top + (3 * textSizeBase), textSizeBase)
+        drawText(canvas, toString(dragRaceResults.best._0_160ms), bestXPos, top + (3 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
 
         drawText(canvas, "100-200 km/h", left, top + (5 * textSizeBase), textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, toString(dragRaceResults.current._100_200val), currentXPos, top + (5 * textSizeBase), textSizeBase)
-        drawText(canvas, toString(dragRaceResults.last._100_200val), lastXPos, top + (5 * textSizeBase), textSizeBase)
-        drawText(canvas, toString(dragRaceResults.best._100_200val), bestXPos, top + (5 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
+        drawText(canvas, toString(dragRaceResults.current._100_200ms), currentXPos, top + (5 * textSizeBase), textSizeBase)
+        ll = getTextWidth( toString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
+        drawText(canvas, "${dragRaceResults.current._100_200speed} km/h", currentXPos + ll, top + (5 * textSizeBase), textSizeBase/1.5f)
+
+        drawText(canvas, toString(dragRaceResults.last._100_200ms), lastXPos, top + (5 * textSizeBase), textSizeBase)
+        drawText(canvas, toString(dragRaceResults.best._100_200ms), bestXPos, top + (5 * textSizeBase), textSizeBase, color = COLOR_CARDINAL)
     }
 
-    inline fun toString(value: Long): String = if (value == VALUE_NOT_SET) "---" else value.toString()
+    inline fun toString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).toString()
 
     inline fun drawMetric(
         canvas: Canvas,
@@ -81,7 +90,6 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
     ): Float {
 
         var top1 = top
-        val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
@@ -112,7 +120,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         )
         drawText(
             canvas,
-            metric.rate?.round(2).toString(),
+           "${metric.rate?.round(2)} req/sec",
             left1,
             top1,
             Color.WHITE,
@@ -188,15 +196,15 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         top: Float,
         textSize: Float
     ) {
-        val colorTheme = settings.colorTheme()
-        valuePaint.color = if (inAlert(metric)) {
-            colorTheme.currentValueInAlertColor
+
+        valuePaint.color = if (metric.value?.toInt() == 0) {
+            COLOR_PHILIPPINE_GREEN
         } else {
-            colorTheme.currentValueColor
+            COLOR_WHITE
         }
         val x = area.right - 50f
-        valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
 
+        valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()
@@ -273,8 +281,6 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
     }
 
     private fun calculateProgressBarHeight() = 16
-
-    private fun inAlert(metric: CarMetric) = settings.isAlertingEnabled() && metric.isInAlert()
 
     private inline fun getAreaWidth(area: Rect): Float = area.width().toFloat()
 
