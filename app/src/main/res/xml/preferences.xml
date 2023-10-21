@@ -328,6 +328,18 @@
                     android:key="pref.adapter.command.freq"
                     android:title="@string/pref.adapter_command_freq"
                     app:useSimpleSummaryProvider="true" />
+
+                <ListPreference
+                    android:summary="@string/pref.drag_race.adapter_command_freq"
+                    app:singleLineTitle="false"
+                    android:defaultValue="10"
+                    android:entries="@array/pref.numbers_1_20"
+                    android:entryValues="@array/pref.numbers_1_20"
+                    android:inputType="number"
+                    android:key="pref.drag_race.vehicle_speed.freq"
+                    android:title="@string/pref.drag_race.adapter_command_freq"
+                    app:useSimpleSummaryProvider="true" />
+
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>

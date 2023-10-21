@@ -319,7 +319,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 .builder()
                 .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
                 .checkInterval(5000)
-                .commandFrequency(10)
+                .commandFrequency(dataLoggerPreferences.instance.dragRaceCommandFrequency)
                 .minimumTimeout(10)
                 .build()
         ).build()
