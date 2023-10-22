@@ -19,7 +19,6 @@
 package org.obd.graphs.bl.datalogger.drag
 
 import android.util.Log
-import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
 import org.obd.metrics.api.model.Lifecycle
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
@@ -114,5 +113,5 @@ internal class DragRaceResultsUpdater : Lifecycle {
         result100_200 = null
     }
 
-    private fun isVehicleSpeedPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == VEHICLE_SPEED_PID_ID
+    private fun isVehicleSpeedPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == dragRaceRegistry.getVehicleSpeedPID()
 }

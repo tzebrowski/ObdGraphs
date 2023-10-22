@@ -27,6 +27,7 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
+import org.obd.graphs.bl.datalogger.drag.dragRaceRegistry
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
@@ -160,7 +161,9 @@ internal class WorkflowOrchestrator internal constructor() {
             Log.i(LOGGER_TAG, "Start drag metering process")
 
             workflow.startDragMeter(
-                this,  dragMeteringAdjustments(), init(), VEHICLE_SPEED_PID_ID
+                this,  dragRaceAdjustments(),
+                init(),
+                dragRaceRegistry.getVehicleSpeedPID()
             )
         }
     }
@@ -286,7 +289,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
-    private fun dragMeteringAdjustments() = Adjustments.builder()
+    private fun dragRaceAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
         .errorsPolicy(ErrorsPolicy.builder()
             .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)

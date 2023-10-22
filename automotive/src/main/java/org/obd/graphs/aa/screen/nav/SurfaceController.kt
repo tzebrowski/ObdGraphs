@@ -33,7 +33,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -99,7 +98,6 @@ internal class SurfaceController(
         }
     }
 
-
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         Log.i(LOG_KEY, "SurfaceRenderer created")
@@ -136,12 +134,9 @@ internal class SurfaceController(
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         } else {
-            metricsCollector.applyFilter(
-                selectedPIDs = setOf(VEHICLE_SPEED_PID_ID),
-                pidsToQuery = setOf(VEHICLE_SPEED_PID_ID)
-            )
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACE)
         }
+        surfaceRenderer.applyMetricsFilter()
     }
 
     fun allocateSurfaceRender() {
