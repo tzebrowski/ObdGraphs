@@ -78,7 +78,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
     }
 
     inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).round(2).toString()
-    inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "--" else "$value km/h"
+    inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "" else "$value km/h"
 
     inline fun drawMetric(
         canvas: Canvas,
@@ -121,7 +121,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         )
         drawText(
             canvas,
-           "${metric.rate?.round(2)} req/sec",
+           "${metric.rate?.round(2)} read/sec",
             left1,
             top1,
             Color.WHITE,

@@ -72,18 +72,17 @@ internal class DragRaceSurfaceRenderer(
             val left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawer.drawStatusBar(canvas, area.top.toFloat() + 6f, area.left.toFloat(), fps) + 18
-                drawer.drawDivider(canvas, left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
+                drawer.drawStatusBar(canvas, top, left, fps)
+                top += 6
+                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                top += 32
             }
 
-            top += 8
-
-            val metric = metricsCollector.metrics().firstOrNull { it.source.command.pid.id == VEHICLE_SPEED_PID_ID }
-            metric?.let {
+            metricsCollector.findById( VEHICLE_SPEED_PID_ID )?.let {
                 top = drawer.drawMetric(
                     canvas = canvas,
                     area = area,
-                    metric = metric,
+                    metric = it,
                     textSizeBase = textSizeBase,
                     valueTextSize = valueTextSize,
                     left = left,

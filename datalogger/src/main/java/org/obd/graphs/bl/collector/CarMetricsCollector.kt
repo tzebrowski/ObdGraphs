@@ -30,6 +30,8 @@ class CarMetricsCollector {
 
     fun metrics(enabled: Boolean = true) = metrics.values.filter { it.enabled == enabled }
 
+    fun findById(id: Long): CarMetric? = metrics().firstOrNull{it.source.command.pid.id == id }
+
     fun applyFilter(selectedPIDs: Set<Long>, pidsToQuery: Set<Long> = dataLoggerPreferences.getPIDsToQuery()) {
 
         if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
