@@ -87,7 +87,8 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         textSizeBase: Float,
         valueTextSize: Float,
         left: Float,
-        top: Float
+        top: Float,
+        dragRaceResults: DragRaceResults
     ): Float {
 
         var top1 = top
@@ -107,7 +108,8 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             metric,
             area,
             top1 + 10,
-            valueTextSize
+            valueTextSize,
+            dragRaceResults
         )
 
         top1 += textSizeBase / FOOTER_SIZE_RATIO
@@ -195,10 +197,11 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         metric: CarMetric,
         area: Rect,
         top: Float,
-        textSize: Float
+        textSize: Float,
+        dragRaceResults: DragRaceResults
     ) {
 
-        valuePaint.color = if (metric.value?.toInt() == 0) {
+        valuePaint.color = if (dragRaceResults.readyToRace) {
             COLOR_PHILIPPINE_GREEN
         } else {
             COLOR_WHITE

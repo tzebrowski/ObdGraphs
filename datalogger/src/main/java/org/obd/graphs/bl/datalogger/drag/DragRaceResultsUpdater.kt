@@ -30,7 +30,7 @@ private const val SPEED_100_KM_H = 100
 private const val SPEED_160_KM_H = 160
 private const val SPEED_200_KM_H = 200
 
-private const val LOG_KEY = "DragRaceResultBroadcaster"
+private const val LOG_KEY = "DragRaceResult"
 
 internal class DragRaceResultsUpdater : Lifecycle {
 
@@ -51,8 +51,16 @@ internal class DragRaceResultsUpdater : Lifecycle {
         if (isVehicleSpeedPID(obdMetric)) {
             if (obdMetric.value.toInt() == SPEED_0_KM_H) {
                 reset()
-                Log.i(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
+
+                if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
+                    Log.v(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
+                }
+
+                dragRaceRegistry.readyToRace(true)
                 _0_ts = obdMetric.timestamp
+
+            } else {
+                dragRaceRegistry.readyToRace(false)
             }
 
             if (result0_100 == null && min(obdMetric.value.toInt(), SPEED_100_KM_H) == SPEED_100_KM_H) {
@@ -60,7 +68,10 @@ internal class DragRaceResultsUpdater : Lifecycle {
                 _0_ts?.let { _0_ts ->
                     result0_100 = obdMetric.timestamp - _0_ts
                     dragRaceRegistry.update0100(result0_100!!, obdMetric.value.toInt())
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
+
+                    if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
+                        Log.v(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
+                    }
                 }
             }
 

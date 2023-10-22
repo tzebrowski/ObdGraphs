@@ -26,6 +26,7 @@ data class DragRaceEntry(
 )
 
 data class DragRaceResults(
+    var readyToRace:Boolean = false,
     val current: DragRaceEntry = DragRaceEntry(),
     val last: DragRaceEntry = DragRaceEntry(),
     val best: DragRaceEntry = DragRaceEntry()

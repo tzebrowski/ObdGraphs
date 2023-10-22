@@ -46,8 +46,12 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
         Prefs.getString(PERF_100_200_BEST, null)?.let {
             results.best._100_200ms = it.toLong()
         }
-
     }
+
+    override fun readyToRace(value: Boolean) {
+        results.readyToRace = value
+    }
+
 
     override fun update0100(time: Long, speed: Int) {
         if (time == 0L) {

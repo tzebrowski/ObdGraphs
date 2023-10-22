@@ -78,6 +78,8 @@ internal class DragRaceSurfaceRenderer(
                 top += 32
             }
 
+            val dragRaceResults = dragRaceRegistry.getResult()
+
             metricsCollector.findById( VEHICLE_SPEED_PID_ID )?.let {
                 top = drawer.drawMetric(
                     canvas = canvas,
@@ -87,17 +89,18 @@ internal class DragRaceSurfaceRenderer(
                     valueTextSize = valueTextSize,
                     left = left,
                     top = top,
+                    dragRaceResults = dragRaceResults
                 )
             }
 
-            top += 16
+            top += 6
             drawer.drawDragRaceResults(
                 canvas = canvas,
                 area = area,
                 left = left,
                 top = top,
                 textSizeBase = textSizeBase,
-                dragRaceResults = dragRaceRegistry.getResult())
+                dragRaceResults = dragRaceResults)
         }
     }
 
