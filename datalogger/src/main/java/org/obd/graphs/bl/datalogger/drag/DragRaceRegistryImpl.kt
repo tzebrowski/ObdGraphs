@@ -23,6 +23,7 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
 
 private const val LOG_KEY = "DragRaceRegistry"
+private const val PERF_0_60_BEST = "pref.drag_race.best.0_60"
 private const val PERF_0_100_BEST = "pref.drag_race.best.0_100"
 private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
 private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
@@ -69,6 +70,26 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
             if (results.best._0_100ms > time || results.best._0_100ms == VALUE_NOT_SET) {
                 results.best._0_100ms = time
                 Prefs.updateString(PERF_0_100_BEST, time.toString())
+            }
+        }
+    }
+
+    override fun update060(time: Long, speed: Int) {
+        if (time == 0L) {
+            Log.v(LOG_KEY, "Invalid value")
+        } else {
+            results.last._0_60ms = if (results.last._0_60ms == VALUE_NOT_SET) {
+                time
+            } else {
+                results.current._0_60ms
+            }
+
+            results.current._0_60ms = time
+            results.current._0_60speed = speed
+
+            if (results.best._0_60ms > time || results.best._0_60ms == VALUE_NOT_SET) {
+                results.best._0_60ms = time
+                Prefs.updateString(PERF_0_60_BEST, time.toString())
             }
         }
     }

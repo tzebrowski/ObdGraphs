@@ -25,7 +25,9 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
 import kotlin.math.min
 
+
 private const val SPEED_0_KM_H = 0
+private const val SPEED_60_KM_H = 60
 private const val SPEED_100_KM_H = 100
 private const val SPEED_160_KM_H = 160
 private const val SPEED_200_KM_H = 200
@@ -36,6 +38,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
 
     private var _0_ts: Long? = null
     private var _100_ts: Long? = null
+    private var result0_60: Long? = null
     private var result0_100: Long? = null
     private var result0_160: Long? = null
     private var result100_200: Long? = null
@@ -62,6 +65,14 @@ internal class DragRaceResultsUpdater : Lifecycle {
 
             } else {
                 dragRaceRegistry.readyToRace(false)
+            }
+
+            if (result0_60 == null && min(obdMetric.value.toInt(), SPEED_60_KM_H) == SPEED_60_KM_H) {
+                _0_ts?.let { _0_ts ->
+                    result0_60 = obdMetric.timestamp - _0_ts
+                    dragRaceRegistry.update060(result0_60!!, obdMetric.value.toInt())
+                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
+                }
             }
 
             if (result0_100 == null && min(obdMetric.value.toInt(), SPEED_100_KM_H) == SPEED_100_KM_H) {
@@ -97,6 +108,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
     private fun reset() {
         _0_ts = null
         _100_ts = null
+        result0_60 = null
         result0_100 = null
         result0_160 = null
         result100_200 = null
