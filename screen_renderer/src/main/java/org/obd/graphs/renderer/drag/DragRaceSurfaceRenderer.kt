@@ -23,7 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.datalogger.drag.dragRaceRegistry
+import org.obd.graphs.bl.datalogger.drag.dragRaceResultRegistry
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
@@ -45,8 +45,8 @@ internal class DragRaceSurfaceRenderer(
 
     override fun applyMetricsFilter() {
         metricsCollector.applyFilter(
-            selectedPIDs = setOf(dragRaceRegistry.getVehicleSpeedPID()),
-            pidsToQuery = setOf(dragRaceRegistry.getVehicleSpeedPID())
+            selectedPIDs = setOf(dragRaceResultRegistry.getVehicleSpeedPID()),
+            pidsToQuery = setOf(dragRaceResultRegistry.getVehicleSpeedPID())
         )
     }
 
@@ -70,9 +70,9 @@ internal class DragRaceSurfaceRenderer(
                 top += 32
             }
 
-            val dragRaceResults = dragRaceRegistry.getResult()
+            val dragRaceResults = dragRaceResultRegistry.getResult()
 
-            metricsCollector.findById(dragRaceRegistry.getVehicleSpeedPID())?.let {
+            metricsCollector.findById(dragRaceResultRegistry.getVehicleSpeedPID())?.let {
                 top = drawer.drawMetric(
                     canvas = canvas,
                     area = area,

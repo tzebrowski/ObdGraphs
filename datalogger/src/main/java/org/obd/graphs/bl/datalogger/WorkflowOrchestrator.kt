@@ -27,7 +27,7 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.bl.datalogger.drag.dragRaceRegistry
+import org.obd.graphs.bl.datalogger.drag.dragRaceResultRegistry
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
@@ -163,7 +163,7 @@ internal class WorkflowOrchestrator internal constructor() {
             workflow.startDragMeter(
                 this,  dragRaceAdjustments(),
                 init(),
-                dragRaceRegistry.getVehicleSpeedPID()
+                dragRaceResultRegistry.getVehicleSpeedPID()
             )
         }
     }

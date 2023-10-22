@@ -29,30 +29,51 @@ private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
 private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
 
 
-internal class DragRaceRegistryImpl : DragRaceRegistry {
+private const val PERF_0_60_LAST = "pref.drag_race.last.0_60"
+private const val PERF_0_100_LAST = "pref.drag_race.last.0_100"
+private const val PERF_0_160_LAST = "pref.drag_race.last.0_160"
+private const val PERF_100_200_LAST = "pref.drag_race.last.100_200"
+
+
+internal class DragRaceResultRegistryImpl : DragRaceResultRegistry {
 
     private val results = DragRaceResults()
 
     init {
 
+        Prefs.getString(PERF_0_60_BEST, null)?.let {
+            results.best._0_60ms = it.toLong()
+        }
         Prefs.getString(PERF_0_100_BEST, null)?.let {
             results.best._0_100ms = it.toLong()
         }
-
         Prefs.getString(PERF_0_160_BEST, null)?.let {
             results.best._0_160ms = it.toLong()
         }
 
-
         Prefs.getString(PERF_100_200_BEST, null)?.let {
             results.best._100_200ms = it.toLong()
+        }
+
+        Prefs.getString(PERF_0_60_LAST, null)?.let {
+            results.last._0_60ms = it.toLong()
+        }
+        Prefs.getString(PERF_0_100_LAST, null)?.let {
+            results.last._0_100ms = it.toLong()
+        }
+
+        Prefs.getString(PERF_0_160_LAST, null)?.let {
+            results.last._0_160ms = it.toLong()
+        }
+
+        Prefs.getString(PERF_100_200_LAST, null)?.let {
+            results.last._100_200ms = it.toLong()
         }
     }
 
     override fun readyToRace(value: Boolean) {
         results.readyToRace = value
     }
-
 
     override fun update0100(time: Long, speed: Int) {
         if (time == 0L) {
@@ -63,6 +84,8 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
             } else {
                 results.current._0_100ms
             }
+
+            Prefs.updateString(PERF_0_100_LAST, results.last._0_100ms.toString())
 
             results.current._0_100ms = time
             results.current._0_100speed = speed
@@ -84,6 +107,8 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
                 results.current._0_60ms
             }
 
+            Prefs.updateString(PERF_0_60_LAST, results.last._0_60ms.toString())
+
             results.current._0_60ms = time
             results.current._0_60speed = speed
 
@@ -103,6 +128,8 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
             } else {
                 results.current._0_160ms
             }
+
+            Prefs.updateString(PERF_0_160_LAST, results.last._0_160ms.toString())
 
             results.current._0_160ms = time
             results.current._0_160speed = speed
@@ -124,6 +151,8 @@ internal class DragRaceRegistryImpl : DragRaceRegistry {
             } else {
                 results.current._100_200ms
             }
+
+            Prefs.updateString(PERF_100_200_LAST, results.last._100_200ms.toString())
 
             results.current._100_200ms = time
             results.current._100_200speed = speed
