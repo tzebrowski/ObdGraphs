@@ -24,7 +24,7 @@ import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import kotlin.math.max
 
-private const val MARGIN_TOP = 10f
+private const val MARGIN_TOP = 20f
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractSurfaceRenderer(
     protected val settings: ScreenSettings,

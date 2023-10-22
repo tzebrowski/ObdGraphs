@@ -35,6 +35,8 @@ private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 const val MARGIN_END = 30
+private const val readyToStartText =  "Ready to start"
+
 
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
@@ -62,7 +64,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         var rowTop = top + textSizeBase + 12f
         drawText(canvas, "0-60 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._0_60ms), currentXPos, rowTop, textSizeBase)
-        var ll = getTextWidth( timeToString(dragRaceResults.current._0_60ms), titlePaint) * 1.25f
+        var ll = getTextWidth(timeToString(dragRaceResults.current._0_60ms), titlePaint) * 1.25f
         drawText(canvas, speedToString(dragRaceResults.current._0_60speed), currentXPos + ll, rowTop, textSizeBase/1.5f, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.last._0_60ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._0_60ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
@@ -70,7 +72,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         rowTop = top + (2 * textSizeBase) + 24f
         drawText(canvas, "0-100 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._0_100ms), currentXPos, rowTop, textSizeBase)
-        ll = getTextWidth( timeToString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
+        ll = getTextWidth(timeToString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
         drawText(canvas, speedToString(dragRaceResults.current._0_100speed), currentXPos + ll, rowTop, textSizeBase/1.5f, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.last._0_100ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._0_100ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
@@ -78,7 +80,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         rowTop = top + (3 * textSizeBase) + 36f
         drawText(canvas, "0-160 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._0_160ms), currentXPos, rowTop, textSizeBase)
-        ll = getTextWidth( timeToString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
+        ll = getTextWidth(timeToString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
         drawText(canvas, speedToString(dragRaceResults.current._0_160speed), currentXPos  + ll, rowTop, textSizeBase/1.5f)
         drawText(canvas, timeToString(dragRaceResults.last._0_160ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._0_160ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
@@ -86,7 +88,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         rowTop = top + (4 * textSizeBase) + 48f
         drawText(canvas, "100-200 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._100_200ms), currentXPos, rowTop, textSizeBase)
-        ll = getTextWidth( timeToString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
+        ll = getTextWidth(timeToString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
         drawText(canvas, speedToString(dragRaceResults.current._100_200speed), currentXPos + ll, rowTop, textSizeBase/1.5f)
         drawText(canvas, timeToString(dragRaceResults.last._100_200ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._100_200ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
@@ -119,11 +121,12 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
 
         if (dragRaceResults.readyToRace){
             if (screenRefreshCounter%4 == 0) {
+                val ll = getTextWidth(readyToStartText, titlePaint)
                 drawText(
                     canvas,
-                    "Ready to start",
-                    area.exactCenterX() - 70f,
-                    top1 + 20f,
+                    readyToStartText,
+                    area.exactCenterX() - ll,
+                    top1 + 36f,
                     textSizeBase * 1.8f,
                     color = Color.GREEN
                 )
@@ -145,7 +148,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         top1 += textSizeBase / FOOTER_SIZE_RATIO
         left1 = drawText(
             canvas,
-            "frequency:",
+            "freq:",
             left,
             top1,
             Color.DKGRAY,
