@@ -100,9 +100,9 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
     }
 
 
-    fun drawBackground(canvas: Canvas, rect: Rect) {
+    fun drawBackground(canvas: Canvas, rect: Rect, color: Int = settings.getBackgroundColor()) {
         canvas.drawRect(rect, paint)
-        canvas.drawColor(settings.getBackgroundColor())
+        canvas.drawColor(color)
         if (settings.isBackgroundDrawingEnabled()) {
             canvas.drawBitmap(background, rect.left.toFloat(), rect.top.toFloat(), backgroundPaint)
         }

@@ -41,6 +41,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
     private var result100_200: Long? = null
 
     override fun onStopped() {
+        dragRaceRegistry.readyToRace(false)
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {

@@ -1,5 +1,6 @@
 package org.obd.graphs.bl.datalogger.drag
 
+
 val dragRaceRegistry: DragRaceRegistry by lazy { DragRaceRegistryImpl() }
 
 interface DragRaceRegistry {

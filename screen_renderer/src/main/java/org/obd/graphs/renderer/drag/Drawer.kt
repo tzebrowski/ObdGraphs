@@ -27,7 +27,6 @@ import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.COLOR_CARDINAL
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_WHITE
 
 private const val FOOTER_SIZE_RATIO = 1.3f
@@ -39,6 +38,7 @@ const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+    var screenRefreshCounter = 0
 
     inline fun drawDragRaceResults(
         canvas: Canvas,
@@ -97,7 +97,6 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
         var top1 = top
-        val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
         drawText(
@@ -108,15 +107,31 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             textSizeBase
         )
 
+        if (dragRaceResults.readyToRace){
+            if (screenRefreshCounter%4 == 0) {
+                drawText(
+                    canvas,
+                    "Ready to start",
+                    area.exactCenterX() - 70f,
+                    top1 + 20f,
+                    textSizeBase * 1.8f,
+                    color = Color.GREEN
+                )
+            }
+            screenRefreshCounter++
+        } else {
+            screenRefreshCounter = 0
+        }
+
         drawValue(
             canvas,
             metric,
             area,
             top1 + 10,
-            valueTextSize,
-            dragRaceResults
+            valueTextSize
         )
 
+        val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         top1 += textSizeBase / FOOTER_SIZE_RATIO
         left1 = drawText(
             canvas,
@@ -124,7 +139,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             left,
             top1,
             Color.DKGRAY,
-            footerTitleTextSize
+            frequencyTextSize
         )
         drawText(
             canvas,
@@ -132,7 +147,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             left1,
             top1,
             Color.WHITE,
-            footerTitleTextSize
+            frequencyTextSize
         )
 
         top1 += 12f
@@ -202,15 +217,10 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         metric: CarMetric,
         area: Rect,
         top: Float,
-        textSize: Float,
-        dragRaceResults: DragRaceResults
+        textSize: Float
     ) {
 
-        valuePaint.color = if (dragRaceResults.readyToRace) {
-            COLOR_PHILIPPINE_GREEN
-        } else {
-            COLOR_WHITE
-        }
+        valuePaint.color = COLOR_WHITE
         val x = area.right - 50f
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
@@ -237,37 +247,12 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         titlePaint.textSize = textSize
         titlePaint.typeface = typeface
         titlePaint.color = color
-
-        if (settings.isBreakLabelTextEnabled()) {
-            val split = text.split("\n")
-            if (split.size == 1) {
-                canvas.drawText(
-                    split[0],
-                    left,
-                    top,
-                    titlePaint
-                )
-            } else {
-                paint.textSize = textSize * 0.8f
-                var vPos = top - 12
-                split.forEach {
-                    canvas.drawText(
-                        it,
-                        left,
-                        vPos,
-                        titlePaint
-                    )
-                    vPos += titlePaint.textSize
-                }
-            }
-        } else {
-            canvas.drawText(
-                text.replace("\n", " "),
-                left,
-                top,
-                titlePaint
-            )
-        }
+        canvas.drawText(
+            text.replace("\n", " "),
+            left,
+            top,
+            titlePaint
+        )
     }
 
     private fun calculateProgressBarHeight() = 16
