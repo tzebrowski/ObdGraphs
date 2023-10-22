@@ -24,6 +24,7 @@ import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import kotlin.math.max
 
+private const val MARGIN_TOP = 10f
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractSurfaceRenderer(
     protected val settings: ScreenSettings,
@@ -32,6 +33,8 @@ internal abstract class AbstractSurfaceRenderer(
     protected val metricsCollector: CarMetricsCollector,
 ) :
     SurfaceRenderer {
+
+    fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP
 
     override fun applyMetricsFilter() {
         metricsCollector.applyFilter(settings.getSelectedPIDs())

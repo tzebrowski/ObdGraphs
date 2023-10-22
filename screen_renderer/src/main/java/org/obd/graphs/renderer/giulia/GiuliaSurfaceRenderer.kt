@@ -25,10 +25,8 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.renderer.*
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.SurfaceRendererType
-import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.min
 
 
@@ -67,12 +65,14 @@ internal class GiuliaSurfaceRenderer(
 
             drawer.drawBackground(canvas, area)
 
-            var top = area.top + textSizeBase / 2
+            var top = getDrawTop(area)
             var left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawer.drawStatusBar(canvas,area.top.toFloat() + 6f, area.left.toFloat(), fps) + 18
-                drawer.drawDivider(canvas, left, area.width().toFloat(), area.top + 10f, Color.DKGRAY)
+                drawer.drawStatusBar(canvas,top, area.left.toFloat(), fps)
+                top += 4
+                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                top += 32
             }
 
             val topCpy = top

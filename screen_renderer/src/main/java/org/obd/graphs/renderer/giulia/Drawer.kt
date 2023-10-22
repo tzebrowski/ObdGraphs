@@ -298,25 +298,6 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         }
     }
 
-    fun drawDivider(
-        canvas: Canvas,
-        left: Float,
-        width: Float,
-        top: Float,
-        color: Int
-    ) {
-
-        paint.color = color
-        paint.strokeWidth = 2f
-        canvas.drawLine(
-            left - 6,
-            top + 4,
-            left + width - MARGIN_END,
-            top + 4,
-            paint
-        )
-    }
-
     private fun calculateProgressBarHeight() = when (settings.getMaxColumns()) {
         1 -> 16
         else -> 10

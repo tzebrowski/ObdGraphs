@@ -22,7 +22,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.VEHICLE_SPEED_PID_ID
 import org.obd.graphs.bl.datalogger.drag.dragRaceRegistry
@@ -31,10 +30,6 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRendererType
 
-private const val CURRENT_MIN = 22f
-private const val CURRENT_MAX = 72f
-private const val NEW_MAX = 1.6f
-private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRaceSurfaceRenderer(
@@ -44,7 +39,7 @@ internal class DragRaceSurfaceRenderer(
     fps: Fps
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
 
-    private val valueScaler = ValueScaler()
+
     private val drawer = Drawer(context, settings)
 
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACE
@@ -64,16 +59,14 @@ internal class DragRaceSurfaceRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            val (valueTextSize, textSizeBase) = calculateFontSize(area)
-
             drawer.drawBackground(canvas, area)
 
-            var top = area.top + textSizeBase
+            var top = getDrawTop(area)
             val left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                drawer.drawStatusBar(canvas, top, left, fps)
-                top += 6
+                drawer.drawStatusBar(canvas, top, area.left.toFloat(), fps)
+                top += 4
                 drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 32
             }
@@ -85,21 +78,17 @@ internal class DragRaceSurfaceRenderer(
                     canvas = canvas,
                     area = area,
                     metric = it,
-                    textSizeBase = textSizeBase,
-                    valueTextSize = valueTextSize,
                     left = left,
                     top = top,
                     dragRaceResults = dragRaceResults
                 )
             }
 
-            top += 6
             drawer.drawDragRaceResults(
                 canvas = canvas,
                 area = area,
                 left = left,
                 top = top,
-                textSizeBase = textSizeBase,
                 dragRaceResults = dragRaceResults)
         }
     }
@@ -108,18 +97,6 @@ internal class DragRaceSurfaceRenderer(
         drawer.recycle()
     }
 
-    private inline fun calculateFontSize(
-        area: Rect
-    ): Pair<Float, Float> {
-
-        val scaleRatio = valueScaler.scaleToNewRange(30f, CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
-
-        val areaWidth = area.width()
-
-        val valueTextSize = (areaWidth / 18f) * scaleRatio
-        val textSizeBase = (areaWidth / 21f) * scaleRatio
-        return Pair(valueTextSize, textSizeBase)
-    }
 
     init {
         applyMetricsFilter()

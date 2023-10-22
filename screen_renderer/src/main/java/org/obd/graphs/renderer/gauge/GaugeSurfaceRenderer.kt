@@ -20,6 +20,7 @@ package org.obd.graphs.renderer.gauge
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
@@ -58,10 +59,14 @@ internal class GaugeSurfaceRenderer(
 
             drawer.drawBackground(canvas, area)
 
-            var top = area.top.toFloat() + 4
+            var top = getDrawTop(area)
+            val left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                top = drawer.drawStatusBar(canvas = canvas, top = top, left = area.left.toFloat(), fps = fps)
+                drawer.drawStatusBar(canvas,top, area.left.toFloat(), fps)
+                top += 4
+                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                top += 10
             }
             when (metrics.size) {
                 0 -> {}

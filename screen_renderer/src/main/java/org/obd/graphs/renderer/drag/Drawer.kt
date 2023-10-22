@@ -31,6 +31,10 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_WHITE
 
 private const val FOOTER_SIZE_RATIO = 1.3f
+private const val CURRENT_MIN = 22f
+private const val CURRENT_MAX = 72f
+private const val NEW_MAX = 1.6f
+private const val NEW_MIN = 0.6f
 const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
@@ -41,9 +45,10 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         area: Rect,
         left: Float,
         top: Float,
-        textSizeBase: Float,
         dragRaceResults: DragRaceResults
     ) {
+
+        val (_, textSizeBase) = calculateFontSize(area)
 
         val currentXPos = area.centerX() / 1.5f
         val lastXPos = area.centerX() + 40f
@@ -84,12 +89,12 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         canvas: Canvas,
         area: Rect,
         metric: CarMetric,
-        textSizeBase: Float,
-        valueTextSize: Float,
-        left: Float,
+       left: Float,
         top: Float,
         dragRaceResults: DragRaceResults
     ): Float {
+
+        val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
         var top1 = top
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
@@ -265,29 +270,22 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         }
     }
 
-    fun drawDivider(
-        canvas: Canvas,
-        left: Float,
-        width: Float,
-        top: Float,
-        color: Int
-    ) {
-
-        paint.color = color
-        paint.strokeWidth = 2f
-        canvas.drawLine(
-            left - 6,
-            top + 4,
-            left + width - MARGIN_END,
-            top + 4,
-            paint
-        )
-    }
-
     private fun calculateProgressBarHeight() = 16
 
     private inline fun getAreaWidth(area: Rect): Float = area.width().toFloat()
 
     private inline fun calculateDividerSpacing(): Int = 14
 
+    private inline fun calculateFontSize(
+        area: Rect
+    ): Pair<Float, Float> {
+
+        val scaleRatio = valueScaler.scaleToNewRange(30f, CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+
+        val areaWidth = area.width()
+
+        val valueTextSize = (areaWidth / 18f) * scaleRatio
+        val textSizeBase = (areaWidth / 21f) * scaleRatio
+        return Pair(valueTextSize, textSizeBase)
+    }
 }

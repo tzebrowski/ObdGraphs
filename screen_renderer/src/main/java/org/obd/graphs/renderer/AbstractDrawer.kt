@@ -25,6 +25,7 @@ import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.getSelectedProfileName
+import org.obd.graphs.renderer.drag.MARGIN_END
 
 internal abstract class AbstractDrawer (context: Context, protected val settings: ScreenSettings) {
 
@@ -78,6 +79,26 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
     fun recycle() {
         background.recycle()
     }
+
+    fun drawDivider(
+        canvas: Canvas,
+        left: Float,
+        width: Float,
+        top: Float,
+        color: Int
+    ) {
+
+        paint.color = color
+        paint.strokeWidth = 2f
+        canvas.drawLine(
+            left - 6,
+            top + 4,
+            left + width - MARGIN_END,
+            top + 4,
+            paint
+        )
+    }
+
 
     fun drawBackground(canvas: Canvas, rect: Rect) {
         canvas.drawRect(rect, paint)
