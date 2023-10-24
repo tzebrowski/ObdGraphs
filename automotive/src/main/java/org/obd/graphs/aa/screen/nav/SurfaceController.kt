@@ -33,6 +33,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.datalogger.QueryType
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -131,9 +133,11 @@ internal class SurfaceController(
     fun toggleSurfaceRenderer() {
         surfaceRenderer.release()
         surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE) {
+            dataLogger.updateQuery(QueryType.METRICS)
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         } else {
+            dataLogger.updateQuery(QueryType.PERFORMANCE)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACE)
         }
         surfaceRenderer.applyMetricsFilter()

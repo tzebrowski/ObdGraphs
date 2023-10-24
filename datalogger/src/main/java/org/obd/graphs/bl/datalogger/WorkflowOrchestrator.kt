@@ -56,7 +56,7 @@ internal class WorkflowOrchestrator internal constructor() {
     inner class EventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             if (intent.action === PROFILE_CHANGED_EVENT) {
-                Log.i(LOGGER_TAG,"Received profile changed event")
+                Log.i(LOG_TAG,"Received profile changed event")
                 updatePidRegistry()
             }
 
@@ -73,13 +73,13 @@ internal class WorkflowOrchestrator internal constructor() {
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
             status = WorkflowStatus.Connecting
-            Log.i(LOGGER_TAG, "Start collecting process")
+            Log.i(LOG_TAG, "Start collecting process")
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
             status = WorkflowStatus.Connected
-            Log.i(LOGGER_TAG, "We are connected to the vehicle: $vehicleCapabilities")
+            Log.i(LOG_TAG, "We are connected to the vehicle: $vehicleCapabilities")
             vehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
 
@@ -91,7 +91,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         override fun onError(msg: String, tr: Throwable?) {
             Log.i(
-                LOGGER_TAG,
+                LOG_TAG,
                 "An error occurred during interaction with the device. Msg: $msg"
             )
 
@@ -102,7 +102,7 @@ internal class WorkflowOrchestrator internal constructor() {
         override fun onStopped() {
             status = WorkflowStatus.Disconnected
             Log.i(
-                LOGGER_TAG,
+                LOG_TAG,
                 "Collecting process is completed."
             )
             sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
@@ -133,38 +133,54 @@ internal class WorkflowOrchestrator internal constructor() {
     fun pidDefinitionRegistry(): PidDefinitionRegistry  = workflow.pidRegistry
 
     fun stop() {
-        Log.i(LOGGER_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
+        Log.i(
+            LOG_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
                 "${dataLoggerPreferences.instance.gracefulStop}")
         try {
             workflow.stop(dataLoggerPreferences.instance.gracefulStop)
-            Log.i(LOGGER_TAG, "After send the STOP. Workflow is running ${workflow.isRunning}")
+            Log.i(LOG_TAG, "After send the STOP. Workflow is running ${workflow.isRunning}")
         }catch (e: Exception){
-            Log.e(LOGGER_TAG, "Failed to stop the workflow", e)
+            Log.e(LOG_TAG, "Failed to stop the workflow", e)
         }
     }
 
     fun start() {
         connection()?.run {
             val query = query()
-            Log.i(LOGGER_TAG, "Selected PIDs: ${query.pids}")
+            Log.i(LOG_TAG, "Selected PIDs: ${query.pids}")
 
-            workflow.start(
+            val status = workflow.start(
                 this, query, init(),
                 adjustments()
             )
-            Log.i(LOGGER_TAG, "Start collecting process")
+            Log.i(LOG_TAG, "Start collecting process. Status=$status")
         }
     }
 
-    fun startDragRaceMetering() {
+    fun startPerformanceMetering() {
         connection()?.run {
-            Log.i(LOGGER_TAG, "Start drag metering process")
-
-            workflow.startDragMeter(
-                this,  dragRaceAdjustments(),
+            val status = workflow.start(
+                this,
+                Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),
                 init(),
-                dragRaceResultRegistry.getVehicleSpeedPID()
-            )
+                performanceMetersAdjustments())
+
+            Log.i(LOG_TAG, "Start collecting process. Status=$status")
+        }
+    }
+
+    fun updateQuery(queryType: QueryType){
+        when (queryType){
+            QueryType.PERFORMANCE -> {
+                val result = workflow.updateQuery(Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),
+                    init(), performanceMetersAdjustments())
+                Log.i(LOG_TAG, "Query update result=$result")
+            }
+
+            QueryType.METRICS -> {
+                val result =  workflow.updateQuery(query(),init(),adjustments())
+                Log.i(LOG_TAG, "Query update result=$result")
+            }
         }
     }
 
@@ -182,14 +198,14 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun bluetoothConnection(): AdapterConnection? = try {
         val deviceName = dataLoggerPreferences.instance.adapterId
-        Log.i(LOGGER_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
+        Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
 
         if (deviceName.isEmpty()) {
             sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
             null
         } else {
             if (network.findBluetoothAdapterByName(deviceName) == null) {
-                Log.e(LOGGER_TAG, "Did not find Bluetooth Adapter: $deviceName")
+                Log.e(LOG_TAG, "Did not find Bluetooth Adapter: $deviceName")
                 sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                 null
             } else {
@@ -197,7 +213,7 @@ internal class WorkflowOrchestrator internal constructor() {
             }
         }
     } catch (e: Exception) {
-        Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
+        Log.e(LOG_TAG, "Error occurred during establishing the connection $e")
         sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
         null
     }
@@ -206,21 +222,21 @@ internal class WorkflowOrchestrator internal constructor() {
         try {
 
             Log.i(
-                LOGGER_TAG,
+                LOG_TAG,
                 "Creating TCP connection to: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
             )
 
-            Log.i(LOGGER_TAG, "Selected WIFI SSID in preferences: ${dataLoggerPreferences.instance.wifiSSID}")
-            Log.i(LOGGER_TAG, "Current connected WIFI SSID ${network.currentSSID}")
+            Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${dataLoggerPreferences.instance.wifiSSID}")
+            Log.i(LOG_TAG, "Current connected WIFI SSID ${network.currentSSID}")
 
             if (dataLoggerPreferences.instance.wifiSSID.isEmpty()) {
-                Log.d(LOGGER_TAG, "Target WIFI SSID is not specified in the prefs section. Connecting to the default one.")
+                Log.d(LOG_TAG, "Target WIFI SSID is not specified in the prefs section. Connecting to the default one.")
             } else if (network.currentSSID.isNullOrBlank()) {
                 sendBroadcastEvent(DATA_LOGGER_WIFI_NOT_CONNECTED)
                 return null
             }  else if (dataLoggerPreferences.instance.wifiSSID != network.currentSSID) {
                 Log.w(
-                    LOGGER_TAG,
+                    LOG_TAG,
                     "Preferences selected WIFI SSID ${dataLoggerPreferences.instance.wifiSSID} " +
                             "is different than current connected ${network.currentSSID}"
                 )
@@ -230,7 +246,7 @@ internal class WorkflowOrchestrator internal constructor() {
             return WifiConnection.of()
 
         } catch (e: Exception) {
-            Log.e(LOGGER_TAG, "Error occurred during establishing the connection $e")
+            Log.e(LOG_TAG, "Error occurred during establishing the connection $e")
             sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
         }
         return null
@@ -289,7 +305,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
-    private fun dragRaceAdjustments() = Adjustments.builder()
+    private fun performanceMetersAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
         .errorsPolicy(ErrorsPolicy.builder()
             .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)

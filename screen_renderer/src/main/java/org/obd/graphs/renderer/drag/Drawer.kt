@@ -53,13 +53,13 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         val (_, textSizeBase) = calculateFontSize(area)
 
         val currentXPos = area.centerX() / 1.5f
-        val lastXPos = area.centerX() + 40f
-        val bestXPos = area.centerX() * 1.5f
+        val lastXPos = area.centerX() + 70f
+        val bestXPos = area.centerX() * 1.65f
 
         // legend
-        drawText(canvas, "Current (sec)", currentXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Last (sec)", lastXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Best (sec)", bestXPos, top, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, "Current", currentXPos, top, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, "Last", lastXPos, top, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, "Best", bestXPos, top, textSizeBase, color = Color.LTGRAY)
 
         var rowTop = top + textSizeBase + 12f
         drawText(canvas, "0-60 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
@@ -180,12 +180,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             color = settings.colorTheme().dividerColor
         )
 
-        top1 += (textSizeBase * 1.7).toInt()
-
-        if (top1 > area.height()) {
-            return top1
-        }
-
+        top1 += 10f + (textSizeBase).toInt()
         return top1
     }
 

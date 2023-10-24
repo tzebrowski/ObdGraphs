@@ -34,9 +34,12 @@ import java.util.*
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
 private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
 private const val ACTION_START = "org.obd.graphs.logger.START"
-private const val ACTION_START_DRAG_METERING = "org.obd.graphs.logger.START_DRAG_METERING"
+private const val ACTION_START_PERFORMANCE_METERING = "org.obd.graphs.logger.START_DRAG_METERING"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay"
+
+private const val UPDATE_QUERY_METRICS = "org.obd.graphs.logger.UPDATE_QUERY_METRICS"
+private const val UPDATE_QUERY_PERFORMANCE_METER = "org.obd.graphs.logger.UPDATE_QUERY_PERFORMANCE_METER"
 
 val dataLogger = DataLoggerService()
 
@@ -45,24 +48,31 @@ class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
-            ACTION_START_DRAG_METERING -> {
-                workflowOrchestrator.startDragRaceMetering()
-            }
-            ACTION_START -> {
-                workflowOrchestrator.start()
-            }
-            ACTION_STOP -> {
-                workflowOrchestrator.stop()
-            }
 
-            SCHEDULED_ACTION_STOP -> {
-                jobScheduler.stop()
-            }
+            UPDATE_QUERY_METRICS -> workflowOrchestrator.updateQuery(queryType = QueryType.METRICS)
+
+            UPDATE_QUERY_PERFORMANCE_METER -> workflowOrchestrator.updateQuery(queryType = QueryType.PERFORMANCE)
+
+            ACTION_START_PERFORMANCE_METERING -> workflowOrchestrator.startPerformanceMetering()
+
+            ACTION_START -> workflowOrchestrator.start()
+
+            ACTION_STOP -> workflowOrchestrator.stop()
+
+            SCHEDULED_ACTION_STOP ->  jobScheduler.stop()
+
 
             SCHEDULED_ACTION_START -> {
                 val delay = intent.extras?.getLong(SCHEDULED_START_DELAY)
                 jobScheduler.schedule(delay as Long)
             }
+        }
+    }
+
+    override fun updateQuery(queryType: QueryType) {
+        when (queryType){
+            QueryType.METRICS ->  enqueueWork(UPDATE_QUERY_METRICS)
+            QueryType.PERFORMANCE ->  enqueueWork(UPDATE_QUERY_PERFORMANCE_METER)
         }
     }
 
@@ -82,8 +92,8 @@ class DataLoggerService : JobIntentService(), DataLogger {
         enqueueWork(ACTION_START)
     }
 
-    override fun startDragMetering() {
-        enqueueWork(ACTION_START_DRAG_METERING)
+    override fun startPerformanceMetering() {
+        enqueueWork(ACTION_START_PERFORMANCE_METERING)
     }
 
     override fun stop() {

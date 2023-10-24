@@ -58,14 +58,14 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 73
+            versionCode 74
         }
 
         giuliaPerformanceMonitor {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.performance_monitor"
-            versionCode 15
+            versionCode 18
         }
 
         giulia {

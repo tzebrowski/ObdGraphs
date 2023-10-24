@@ -24,7 +24,6 @@ import org.obd.graphs.preferences.Prefs
 import java.io.File
 
 private const val STORAGE_FILE_CODING_KEY = "storage:"
-private const val LOG_TAG = "PidResourceListPreferences"
 const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
 
 val pidResources = PIDsResources()

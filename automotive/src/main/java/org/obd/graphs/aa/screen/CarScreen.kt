@@ -80,7 +80,7 @@ internal abstract class CarScreen(
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
                 if (dragMeteringEnabled){
-                    dataLogger.startDragMetering()
+                    dataLogger.startPerformanceMetering()
                 } else {
                     dataLogger.start()
                 }

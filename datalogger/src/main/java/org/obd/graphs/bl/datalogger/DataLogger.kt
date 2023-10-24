@@ -27,6 +27,10 @@ import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
 import java.util.*
 
+enum class QueryType {
+    PERFORMANCE, METRICS
+}
+
 interface DataLogger {
     val eventsReceiver: BroadcastReceiver
     fun status(): WorkflowStatus
@@ -35,12 +39,14 @@ interface DataLogger {
     fun getDiagnostics(): Diagnostics
     fun findHistogramFor(metric: ObdMetric): Histogram
     fun findRateFor(metric: ObdMetric): Optional<Rate>
-
     fun getPidDefinitionRegistry(): PidDefinitionRegistry
     fun isDTCEnabled(): Boolean
     fun scheduleStart(delay: Long)
     fun scheduledStop()
     fun start()
-    fun startDragMetering()
+    fun startPerformanceMetering()
     fun stop()
+
+    fun updateQuery(queryType: QueryType)
+
 }

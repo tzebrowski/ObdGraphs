@@ -70,8 +70,8 @@ class DataLoggerPreferencesManager {
     private inner class SharedPreferenceChangeListener :
         SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-            if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
-                Log.v(LOGGER_TAG, "Key to update $key")
+            if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {
+                Log.v(LOG_TAG, "Key to update $key")
             }
             instance = loadPreferences()
         }
@@ -171,8 +171,8 @@ class DataLoggerPreferencesManager {
             debugLogging = debugLogging
         )
 
-        if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
-            Log.v(LOGGER_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
+        if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {
+            Log.v(LOG_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
         }
 
         return dataLoggerPreferences

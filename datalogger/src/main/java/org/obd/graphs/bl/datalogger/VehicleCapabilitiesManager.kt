@@ -42,15 +42,15 @@ class VehicleCapabilitiesManager {
         Prefs.edit().apply {
 
             Log.i(
-                LOGGER_TAG,
+                LOG_TAG,
                 "Property `vehicleCapabilitiesReadingEnabled` is " +
                         "`${dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled}`"
             )
             if (dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled) {
                 if (vehicleCapabilities.capabilities.isEmpty()) {
-                    Log.i(LOGGER_TAG, "Did not receive Vehicle Capabilities. Do not update preferences.")
+                    Log.i(LOG_TAG, "Did not receive Vehicle Capabilities. Do not update preferences.")
                 } else {
-                    Log.i(LOGGER_TAG, "Received Vehicle Capabilities. Updating preferences with=${vehicleCapabilities.capabilities}")
+                    Log.i(LOG_TAG, "Received Vehicle Capabilities. Updating preferences with=${vehicleCapabilities.capabilities}")
                     putStringSet(PREF_VEHICLE_CAPABILITIES, vehicleCapabilities.capabilities)
                 }
             }

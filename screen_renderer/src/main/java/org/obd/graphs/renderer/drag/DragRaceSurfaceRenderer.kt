@@ -67,7 +67,7 @@ internal class DragRaceSurfaceRenderer(
                 drawer.drawStatusBar(canvas, top, area.left.toFloat(), fps)
                 top += 4
                 drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
-                top += 32
+                top += 40
             }
 
             val dragRaceResults = dragRaceResultRegistry.getResult()
