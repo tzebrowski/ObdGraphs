@@ -119,7 +119,7 @@
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
 
     <string name="pref.aa.renderer_type">Screen type</string>
-    <string name="pref.aa.renderer.gauge.progress_type">Gauge progress-bar type</string>
+    <string name="pref.aa.renderer.gauge.progress_type">Gauge screen progress-bar type</string>
 
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Number of columns</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category.summary">Choose number of columns for each individual virtual screen</string>
@@ -166,7 +166,7 @@
     <string name="pref.aa.performance_meter.display_frequency">Display vehicle speed read frequency</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Display vehicle speed at which measurement was done</string>
 
-    <string name="pref.aa.renderer.gauge.category">Gauge Renderer</string>
+    <string name="pref.aa.renderer.category">Screen settings</string>
 
     <string name="pref.aa.alerting.enabled">Enable Alerting</string>
     <string name="pref.aa.alerting.enabled_summary">When enabled, additional information appears on the screen if upper or lower threshold of given PIDs overflow: OIL_TEMP > 110</string>

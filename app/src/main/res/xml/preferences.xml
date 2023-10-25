@@ -811,7 +811,6 @@
                 android:title="@string/navigation.title_aa"
                 app:key="pref.aa">
 
-
                 <PreferenceCategory
                     app:singleLineTitle="false"
                     android:title="@string/pref.aa.performance_meter.category">
@@ -844,15 +843,7 @@
                     app:singleLineTitle="false"
                     android:title="@string/pref.aa.general_category">
 
-                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.aa_renderer_type"
-                        android:entryValues="@array/pref.aa_renderer_type"
-                        android:defaultValue="GIULIA"
-                        android:dialogTitle="@string/pref.aa.renderer_type"
-                        android:key="pref.aa.virtual_screens.screen.renderer_type"
-                        android:title="@string/pref.aa.renderer_type"
-                        app:useSimpleSummaryProvider="true" />
+
 
                     <CheckBoxPreference
                         app:singleLineTitle="false"
@@ -892,7 +883,17 @@
 
                 <PreferenceCategory
                     app:singleLineTitle="false"
-                    android:title="@string/pref.aa.renderer.gauge.category">
+                    android:title="@string/pref.aa.renderer.category">
+
+                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.aa_renderer_type"
+                        android:entryValues="@array/pref.aa_renderer_type"
+                        android:defaultValue="GIULIA"
+                        android:dialogTitle="@string/pref.aa.renderer_type"
+                        android:key="pref.aa.virtual_screens.screen.renderer_type"
+                        android:title="@string/pref.aa.renderer_type"
+                        app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                         app:singleLineTitle="false"
@@ -908,7 +909,6 @@
 
                 <PreferenceCategory android:title="@string/pref.aa.virtual_screens.category"
                     app:singleLineTitle="false">
-
 
                     <PreferenceScreen
                         app:singleLineTitle="false"
