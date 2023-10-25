@@ -32,17 +32,17 @@ enum class DynamicSelectorMode {
 }
 
 data class ColorTheme(
-    val dividerColor: Int = Color.WHITE,
+    var dividerColor: Int = Color.WHITE,
     var progressColor: Int = COLOR_CARDINAL,
-    val statusConnectingColor: Int = Color.YELLOW,
-    val statusConnectedColor: Int = Color.GREEN,
-    val statusDisconnectedColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
-    val currentValueColor: Int = Color.WHITE,
-    val currentValueInAlertColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
-    val currentProfileColor: Int = Color.WHITE,
-    val actionsBtnConnectColor: Int = Color.GREEN,
-    val actionsBtnDisconnectColor: Int = Color.RED,
-    val actionsBtnVirtualScreensColor: Int = Color.WHITE
+    var statusConnectingColor: Int = Color.YELLOW,
+    var statusConnectedColor: Int = Color.GREEN,
+    var statusDisconnectedColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
+    var currentValueColor: Int = Color.WHITE,
+    var currentValueInAlertColor: Int = COLOR_DYNAMIC_SELECTOR_SPORT,
+    var currentProfileColor: Int = Color.WHITE,
+    var actionsBtnConnectColor: Int = Color.GREEN,
+    var actionsBtnDisconnectColor: Int = Color.RED,
+    var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
 data class DragRacingSettings(var vehicleSpeedFrequencyReadEnabled: Boolean = true, var vehicleSpeedDisplayDebugEnabled: Boolean = true)

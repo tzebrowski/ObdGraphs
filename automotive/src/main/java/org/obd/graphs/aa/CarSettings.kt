@@ -28,19 +28,19 @@ import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_RACE
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
 
-private const val PREF_PIDS_HISTORY_ENABLED= "pref.aa.pids.history.enabled"
+private const val PREF_PIDS_HISTORY_ENABLED = "pref.aa.pids.history.enabled"
 
-private const val PREF_THEME_IN_ALLERT_VALUE_COLOR= "pref.aa.theme.inAlertValueColor"
-private const val PREF_DYNAMIC_SELECTOR_ENABLED= "pref.aa.theme.dynamic-selector.enabled"
+private const val PREF_THEME_IN_ALLERT_VALUE_COLOR = "pref.aa.theme.inAlertValueColor"
+private const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
 
-private const val BACKGROUND_ENABLED= "pref.aa.theme.background.enabled"
+private const val BACKGROUND_ENABLED = "pref.aa.theme.background.enabled"
 
-private const val PREF_ALERT_LEGEND_ENABLED= "pref.aa.alerting.legend.enabled"
-private const val PREF_ALERTING_ENABLED= "pref.aa.alerting.enabled"
-private const val PREF_THEME_PROGRESS_BAR_COLOR= "pref.aa.theme.progressColor"
-private const val PREF_THEME_DIVIDER_COLOR= "pref.aa.theme.dividerColor"
-private const val PREF_THEME_CURR_VALUE_COLOR= "pref.aa.theme.currentValueColor"
-private const val PREF_THEME_VIRTUAL_SCREEN_COLOR= "pref.aa.theme.btn.virtual-screen.color"
+private const val PREF_ALERT_LEGEND_ENABLED = "pref.aa.alerting.legend.enabled"
+private const val PREF_ALERTING_ENABLED = "pref.aa.alerting.enabled"
+private const val PREF_THEME_PROGRESS_BAR_COLOR = "pref.aa.theme.progressColor"
+private const val PREF_THEME_DIVIDER_COLOR = "pref.aa.theme.dividerColor"
+private const val PREF_THEME_CURR_VALUE_COLOR = "pref.aa.theme.currentValueColor"
+private const val PREF_THEME_VIRTUAL_SCREEN_COLOR = "pref.aa.theme.btn.virtual-screen.color"
 
 private const val PREF_CURRENT_VIRTUAL_SCREEN = "pref.aa.pids.vs.current"
 private const val PREF_SELECTED_PIDS = "pref.aa.pids.selected"
@@ -57,25 +57,26 @@ const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
 const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 
 enum class ScreenTemplateType {
-    NAV,IOT
+    NAV, IOT
 }
 
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     private val dragRacingSettings = DragRacingSettings()
+    private val colorTheme = ColorTheme()
 
-    override fun getDragRacingSettings(): DragRacingSettings  = dragRacingSettings.apply {
-        vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency",  true)
+    override fun getDragRacingSettings(): DragRacingSettings = dragRacingSettings.apply {
+        vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.vehicle_speed_measurement", true)
     }
 
-    override fun colorTheme(): ColorTheme = ColorTheme(
-            progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
-            dividerColor =  Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE),
-            currentValueColor =  Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE),
-            currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
-            actionsBtnVirtualScreensColor = Prefs.getInt(PREF_THEME_VIRTUAL_SCREEN_COLOR, Color.WHITE)
-        )
+    override fun colorTheme(): ColorTheme = colorTheme.apply {
+        progressColor = Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
+        dividerColor = Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE)
+        currentValueColor = Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE)
+        currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
+        actionsBtnVirtualScreensColor = Prefs.getInt(PREF_THEME_VIRTUAL_SCREEN_COLOR, Color.WHITE)
+    }
 
 
     override fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode) {
@@ -94,12 +95,12 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     override fun getGaugeProgressBarType(): GaugeProgressBarType =
         GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
 
-    override fun isStatusPanelEnabled(): Boolean  =  Prefs.getBoolean("pref.aa.virtual_screens.status_panel.enabled", true)
+    override fun isStatusPanelEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.status_panel.enabled", true)
 
     override fun isScaleEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.scale.enabled", true)
 
-    override fun getHeightPixels(): Int  = carContext.resources.displayMetrics.heightPixels
-    override fun getWidthPixels(): Int  =  carContext.resources.displayMetrics.widthPixels
+    override fun getHeightPixels(): Int = carContext.resources.displayMetrics.heightPixels
+    override fun getWidthPixels(): Int = carContext.resources.displayMetrics.widthPixels
 
     override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
     override fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
@@ -109,14 +110,15 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     override fun getSelectedPIDs() =
         Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
 
-    override fun getMaxColumns(): Int = Prefs.getS("pref.aa.max_pids_in_column.${getCurrentVirtualScreenId()}", DEFAULT_ITEMS_IN_COLUMN).toInt()
+    override fun getMaxColumns(): Int =
+        Prefs.getS("pref.aa.max_pids_in_column.${getCurrentVirtualScreenId()}", DEFAULT_ITEMS_IN_COLUMN).toInt()
 
 
-    override fun getBackgroundColor(): Int =  if (carContext.isDarkMode)  Color.BLACK else Color.BLACK
+    override fun getBackgroundColor(): Int = if (carContext.isDarkMode) Color.BLACK else Color.BLACK
 
-    override fun isBackgroundDrawingEnabled(): Boolean  = Prefs.getBoolean(BACKGROUND_ENABLED, true)
+    override fun isBackgroundDrawingEnabled(): Boolean = Prefs.getBoolean(BACKGROUND_ENABLED, true)
 
-    override fun isDynamicSelectorThemeEnabled(): Boolean =  Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)
+    override fun isDynamicSelectorThemeEnabled(): Boolean = Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)
 
     override fun isAlertingEnabled(): Boolean = Prefs.getBoolean(PREF_ALERTING_ENABLED, false)
 
@@ -124,12 +126,12 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     override fun isHistoryEnabled(): Boolean = Prefs.getBoolean(PREF_PIDS_HISTORY_ENABLED, true)
 
-    override fun isFpsCounterEnabled(): Boolean  = Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
+    override fun isFpsCounterEnabled(): Boolean = Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
-    override fun getFontSize(): Int   = Prefs.getS("pref.aa.screen_font_size.${getCurrentVirtualScreenId()}", DEFAULT_FONT_SIZE).toInt()
+    override fun getFontSize(): Int = Prefs.getS("pref.aa.screen_font_size.${getCurrentVirtualScreenId()}", DEFAULT_FONT_SIZE).toInt()
 
-    override fun isBreakLabelTextEnabled(): Boolean  =  Prefs.getBoolean("pref.aa.break_label.${getCurrentVirtualScreenId()}", true)
+    override fun isBreakLabelTextEnabled(): Boolean = Prefs.getBoolean("pref.aa.break_label.${getCurrentVirtualScreenId()}", true)
 
     override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
 
@@ -138,11 +140,12 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         Prefs.updateStringSet(PREF_SELECTED_PIDS, Prefs.getStringSet(key).toList())
     }
 
-    fun isVirtualScreenEnabled(id: Int): Boolean =  Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
+    fun isVirtualScreenEnabled(id: Int): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
 
     fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
 
-    fun getSurfaceRendererType() : SurfaceRendererType = SurfaceRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type","GIULIA"))
+    fun getSurfaceRendererType(): SurfaceRendererType =
+        SurfaceRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type", "GIULIA"))
 
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
 }
