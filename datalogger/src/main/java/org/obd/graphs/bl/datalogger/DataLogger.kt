@@ -43,8 +43,7 @@ interface DataLogger {
     fun isDTCEnabled(): Boolean
     fun scheduleStart(delay: Long)
     fun scheduledStop()
-    fun start()
-    fun startPerformanceMetering()
+    fun start(queryType: QueryType = QueryType.METRICS)
     fun stop()
 
     fun updateQuery(queryType: QueryType)

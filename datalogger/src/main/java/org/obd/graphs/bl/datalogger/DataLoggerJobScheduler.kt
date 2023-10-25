@@ -31,7 +31,7 @@ internal class DataLoggerJobScheduler {
 
     private val task = Runnable {
         Log.i(LOG_TAG, "Starting data logger task....")
-        dataLogger.start()
+        dataLogger.start(queryType = QueryType.METRICS)
     }
     fun stop() {
         Log.i(

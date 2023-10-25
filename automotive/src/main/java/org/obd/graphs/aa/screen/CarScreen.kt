@@ -33,6 +33,7 @@ import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.*
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.datalogger.QueryType
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.Fps
@@ -80,9 +81,9 @@ internal abstract class CarScreen(
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
                 if (dragMeteringEnabled){
-                    dataLogger.startPerformanceMetering()
+                    dataLogger.start(queryType = QueryType.PERFORMANCE)
                 } else {
-                    dataLogger.start()
+                    dataLogger.start(queryType = QueryType.METRICS)
                 }
             })
         }

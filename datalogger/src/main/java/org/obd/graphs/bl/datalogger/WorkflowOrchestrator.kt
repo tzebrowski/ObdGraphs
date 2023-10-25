@@ -42,11 +42,11 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import java.io.File
-import java.util.Optional
+import java.util.*
 
 
 internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
-    runAsync { WorkflowOrchestrator()  }
+    runAsync { WorkflowOrchestrator() }
 }
 
 /**
@@ -56,7 +56,7 @@ internal class WorkflowOrchestrator internal constructor() {
     inner class EventsReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             if (intent.action === PROFILE_CHANGED_EVENT) {
-                Log.i(LOG_TAG,"Received profile changed event")
+                Log.i(LOG_TAG, "Received profile changed event")
                 updatePidRegistry()
             }
 
@@ -84,7 +84,7 @@ internal class WorkflowOrchestrator internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
 
             // notify about DTC
-            if (vehicleCapabilities.dtc.isNotEmpty()){
+            if (vehicleCapabilities.dtc.isNotEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
             }
         }
@@ -107,22 +107,22 @@ internal class WorkflowOrchestrator internal constructor() {
             )
             sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
         }
-   }
+    }
 
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
 
 
-    fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)  =
-        metricsObserver.observe(lifecycleOwner){
-            it?.let {
+    fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) =
+        metricsObserver.observe(lifecycleOwner) {
+            it.let {
                 observer(it)
             }
         }
 
     fun status(): WorkflowStatus = status
 
-    fun isRunning(): Boolean  =  workflow.isRunning
+    fun isRunning(): Boolean = workflow.isRunning
 
     fun diagnostics(): Diagnostics = workflow.diagnostics
 
@@ -130,64 +130,49 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun findRateFor(metric: ObdMetric): Optional<Rate> = workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
 
-    fun pidDefinitionRegistry(): PidDefinitionRegistry  = workflow.pidRegistry
+    fun pidDefinitionRegistry(): PidDefinitionRegistry = workflow.pidRegistry
 
     fun stop() {
         Log.i(
             LOG_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
-                "${dataLoggerPreferences.instance.gracefulStop}")
+                    "${dataLoggerPreferences.instance.gracefulStop}"
+        )
         try {
             workflow.stop(dataLoggerPreferences.instance.gracefulStop)
             Log.i(LOG_TAG, "After send the STOP. Workflow is running ${workflow.isRunning}")
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.e(LOG_TAG, "Failed to stop the workflow", e)
         }
     }
 
-    fun start() {
+    fun start(queryType: QueryType = QueryType.METRICS) {
+
+        val (query, adjustments) = getSettings(queryType)
+
         connection()?.run {
-            val query = query()
             Log.i(LOG_TAG, "Selected PIDs: ${query.pids}")
 
             val status = workflow.start(
                 this, query, init(),
-                adjustments()
+                adjustments
             )
-            Log.i(LOG_TAG, "Start collecting process. Status=$status")
+            Log.i(LOG_TAG, "Start collecting process ($queryType). Status=$status")
         }
     }
 
-    fun startPerformanceMetering() {
-        connection()?.run {
-            val status = workflow.start(
-                this,
-                Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),
-                init(),
-                performanceMetersAdjustments())
-
-            Log.i(LOG_TAG, "Start collecting process. Status=$status")
+    fun updateQuery(queryType: QueryType) {
+        getSettings(queryType).let {
+            val result = workflow.updateQuery(
+                it.first,
+                init(), it.second)
+            Log.i(LOG_TAG, "Query update result=$result")
         }
     }
 
-    fun updateQuery(queryType: QueryType){
-        when (queryType){
-            QueryType.PERFORMANCE -> {
-                val result = workflow.updateQuery(Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),
-                    init(), performanceMetersAdjustments())
-                Log.i(LOG_TAG, "Query update result=$result")
-            }
-
-            QueryType.METRICS -> {
-                val result =  workflow.updateQuery(query(),init(),adjustments())
-                Log.i(LOG_TAG, "Query update result=$result")
-            }
-        }
-    }
-
-    fun isDTCEnabled(): Boolean =  workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
+    fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
     private fun connection(): AdapterConnection? =
-         when (dataLoggerPreferences.instance.connectionType){
+        when (dataLoggerPreferences.instance.connectionType) {
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
             "usb" -> getContext()?.let { UsbConnection.of(context = it) }
@@ -234,7 +219,7 @@ internal class WorkflowOrchestrator internal constructor() {
             } else if (network.currentSSID.isNullOrBlank()) {
                 sendBroadcastEvent(DATA_LOGGER_WIFI_NOT_CONNECTED)
                 return null
-            }  else if (dataLoggerPreferences.instance.wifiSSID != network.currentSSID) {
+            } else if (dataLoggerPreferences.instance.wifiSSID != network.currentSSID) {
                 Log.w(
                     LOG_TAG,
                     "Preferences selected WIFI SSID ${dataLoggerPreferences.instance.wifiSSID} " +
@@ -261,21 +246,27 @@ internal class WorkflowOrchestrator internal constructor() {
         .protocol(Init.Protocol.valueOf(dataLoggerPreferences.instance.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
-    private fun adjustments() = Adjustments.builder()
+    private fun getMetricsAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
-        .errorsPolicy(ErrorsPolicy.builder()
-            .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
-            .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build())
-        .batchPolicy(BatchPolicy.builder()
-            .enabled(dataLoggerPreferences.instance.batchEnabled)
-            .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
-            .mode01BatchSize(dataLoggerPreferences.instance.mode01BatchSize)
-            .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize).build())
+        .errorsPolicy(
+            ErrorsPolicy.builder()
+                .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
+                .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build()
+        )
+        .batchPolicy(
+            BatchPolicy.builder()
+                .enabled(dataLoggerPreferences.instance.batchEnabled)
+                .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
+                .mode01BatchSize(dataLoggerPreferences.instance.mode01BatchSize)
+                .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize).build()
+        )
         .collectRawConnectorResponseEnabled(dataLoggerPreferences.instance.dumpRawConnectorResponse)
-        .stNxx(STNxxExtensions.builder()
-            .promoteSlowGroupsEnabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
-            .enabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
-            .build())
+        .stNxx(
+            STNxxExtensions.builder()
+                .promoteSlowGroupsEnabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
+                .enabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
+                .build()
+        )
         .vehicleMetadataReadingEnabled(dataLoggerPreferences.instance.vehicleMetadataReadingEnabled)
         .vehicleCapabilitiesReadingEnabled(dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled)
         .vehicleDtcReadingEnabled(dataLoggerPreferences.instance.vehicleDTCReadingEnabled)
@@ -285,10 +276,12 @@ internal class WorkflowOrchestrator internal constructor() {
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
                 .resultCacheEnabled(dataLoggerPreferences.instance.resultsCacheEnabled).build()
         )
-        .producerPolicy(ProducerPolicy
-            .builder()
-            .conditionalSleepEnabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
-            .conditionalSleepSliceSize(10).build())
+        .producerPolicy(
+            ProducerPolicy
+                .builder()
+                .conditionalSleepEnabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
+                .conditionalSleepSliceSize(10).build()
+        )
         .generatorPolicy(
             GeneratorPolicy
                 .builder()
@@ -305,17 +298,23 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
-    private fun performanceMetersAdjustments() = Adjustments.builder()
+    private fun getPerformanceMeterAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
-        .errorsPolicy(ErrorsPolicy.builder()
-            .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
-            .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build())
-        .batchPolicy(BatchPolicy.builder()
-            .enabled(false).build())
+        .errorsPolicy(
+            ErrorsPolicy.builder()
+                .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
+                .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build()
+        )
+        .batchPolicy(
+            BatchPolicy.builder()
+                .enabled(false).build()
+        )
         .collectRawConnectorResponseEnabled(false)
-        .stNxx(STNxxExtensions.builder()
-            .enabled(false)
-            .build())
+        .stNxx(
+            STNxxExtensions.builder()
+                .enabled(false)
+                .build()
+        )
         .vehicleMetadataReadingEnabled(false)
         .vehicleCapabilitiesReadingEnabled(false)
         .vehicleDtcReadingEnabled(false)
@@ -324,10 +323,12 @@ internal class WorkflowOrchestrator internal constructor() {
             CachePolicy.builder()
                 .resultCacheEnabled(false).build()
         )
-        .producerPolicy(ProducerPolicy
-            .builder()
-            .conditionalSleepEnabled(false)
-            .build())
+        .producerPolicy(
+            ProducerPolicy
+                .builder()
+                .conditionalSleepEnabled(false)
+                .build()
+        )
         .generatorPolicy(
             GeneratorPolicy
                 .builder()
@@ -356,9 +357,11 @@ internal class WorkflowOrchestrator internal constructor() {
         .initialize()
 
     private fun updatePidRegistry() = runAsync {
-        workflow.updatePidRegistry(Pids.builder().resources(
-            getSelectedPIDsResources()
-        ).build())
+        workflow.updatePidRegistry(
+            Pids.builder().resources(
+                getSelectedPIDsResources()
+            ).build()
+        )
     }
 
     private fun getSelectedPIDsResources() = dataLoggerPreferences.instance.resources.map {
@@ -369,5 +372,11 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }.toMutableList()
 
-    private fun query() = Query.builder().pids(dataLoggerPreferences.instance.pids).build()
+    private fun getSettings(queryType: QueryType ): Pair<Query, Adjustments>  = when (queryType) {
+        QueryType.METRICS ->
+            Pair( Query.builder().pids(dataLoggerPreferences.instance.pids).build(),getMetricsAdjustments())
+
+        QueryType.PERFORMANCE ->
+            Pair( Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),getPerformanceMeterAdjustments())
+    }
 }

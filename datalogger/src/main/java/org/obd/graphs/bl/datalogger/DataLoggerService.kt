@@ -34,12 +34,11 @@ import java.util.*
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
 private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
 private const val ACTION_START = "org.obd.graphs.logger.START"
-private const val ACTION_START_PERFORMANCE_METERING = "org.obd.graphs.logger.START_DRAG_METERING"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay"
 
-private const val UPDATE_QUERY_METRICS = "org.obd.graphs.logger.UPDATE_QUERY_METRICS"
-private const val UPDATE_QUERY_PERFORMANCE_METER = "org.obd.graphs.logger.UPDATE_QUERY_PERFORMANCE_METER"
+private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
+private const val QUERY_TYPE = "org.obd.graphs.logger.QUERY_TYPE"
 
 val dataLogger = DataLoggerService()
 
@@ -49,18 +48,19 @@ class DataLoggerService : JobIntentService(), DataLogger {
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
 
-            UPDATE_QUERY_METRICS -> workflowOrchestrator.updateQuery(queryType = QueryType.METRICS)
+            UPDATE_QUERY -> {
+                val queryType = intent.extras?.get(QUERY_TYPE) as QueryType
+                workflowOrchestrator.updateQuery(queryType = queryType)
+            }
 
-            UPDATE_QUERY_PERFORMANCE_METER -> workflowOrchestrator.updateQuery(queryType = QueryType.PERFORMANCE)
-
-            ACTION_START_PERFORMANCE_METERING -> workflowOrchestrator.startPerformanceMetering()
-
-            ACTION_START -> workflowOrchestrator.start()
+            ACTION_START -> {
+                val queryType = intent.extras?.get(QUERY_TYPE) as QueryType
+                workflowOrchestrator.start(queryType)
+            }
 
             ACTION_STOP -> workflowOrchestrator.stop()
 
-            SCHEDULED_ACTION_STOP ->  jobScheduler.stop()
-
+            SCHEDULED_ACTION_STOP -> jobScheduler.stop()
 
             SCHEDULED_ACTION_START -> {
                 val delay = intent.extras?.getLong(SCHEDULED_START_DELAY)
@@ -70,13 +70,12 @@ class DataLoggerService : JobIntentService(), DataLogger {
     }
 
     override fun updateQuery(queryType: QueryType) {
-        when (queryType){
-            QueryType.METRICS ->  enqueueWork(UPDATE_QUERY_METRICS)
-            QueryType.PERFORMANCE ->  enqueueWork(UPDATE_QUERY_PERFORMANCE_METER)
+        enqueueWork(UPDATE_QUERY) {
+            it.putExtra(QUERY_TYPE, queryType)
         }
     }
 
-    override fun status(): WorkflowStatus  = workflowOrchestrator.status()
+    override fun status(): WorkflowStatus = workflowOrchestrator.status()
 
     override fun scheduleStart(delay: Long) {
         enqueueWork(SCHEDULED_ACTION_START) {
@@ -88,12 +87,10 @@ class DataLoggerService : JobIntentService(), DataLogger {
         enqueueWork(SCHEDULED_ACTION_STOP)
     }
 
-    override fun start() {
-        enqueueWork(ACTION_START)
-    }
-
-    override fun startPerformanceMetering() {
-        enqueueWork(ACTION_START_PERFORMANCE_METERING)
+    override fun start(queryType: QueryType) {
+        enqueueWork(ACTION_START) {
+            it.putExtra(QUERY_TYPE, queryType)
+        }
     }
 
     override fun stop() {
@@ -104,19 +101,19 @@ class DataLoggerService : JobIntentService(), DataLogger {
         get() = workflowOrchestrator.eventsReceiver
 
     override fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
-        workflowOrchestrator.observe(lifecycleOwner,observer)
+        workflowOrchestrator.observe(lifecycleOwner, observer)
     }
 
-    override fun isRunning(): Boolean  = workflowOrchestrator.isRunning()
+    override fun isRunning(): Boolean = workflowOrchestrator.isRunning()
 
-    override fun getDiagnostics(): Diagnostics  = workflowOrchestrator.diagnostics()
+    override fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
 
-    override fun findHistogramFor(metric: ObdMetric): Histogram  = workflowOrchestrator.findHistogramFor(metric)
+    override fun findHistogramFor(metric: ObdMetric): Histogram = workflowOrchestrator.findHistogramFor(metric)
 
     override fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
 
-    override fun getPidDefinitionRegistry(): PidDefinitionRegistry  = workflowOrchestrator.pidDefinitionRegistry()
-    override fun isDTCEnabled(): Boolean  = workflowOrchestrator.isDTCEnabled()
+    override fun getPidDefinitionRegistry(): PidDefinitionRegistry = workflowOrchestrator.pidDefinitionRegistry()
+    override fun isDTCEnabled(): Boolean = workflowOrchestrator.isDTCEnabled()
 
     private fun enqueueWork(intentAction: String, func: (p: Intent) -> Unit = {}) {
         try {

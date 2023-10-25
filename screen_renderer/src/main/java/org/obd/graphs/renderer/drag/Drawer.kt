@@ -53,8 +53,8 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         val (_, textSizeBase) = calculateFontSize(area)
 
         val currentXPos = area.centerX() / 1.5f
-        val lastXPos = area.centerX() + 70f
-        val bestXPos = area.centerX() * 1.65f
+        val lastXPos = area.centerX() + 60f
+        val bestXPos = area.centerX() * 1.60f
 
         // legend
         drawText(canvas, "Current", currentXPos, top, textSizeBase, color = Color.LTGRAY)
