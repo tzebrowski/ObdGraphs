@@ -328,18 +328,6 @@
                     android:key="pref.adapter.command.freq"
                     android:title="@string/pref.adapter_command_freq"
                     app:useSimpleSummaryProvider="true" />
-
-                <ListPreference
-                    android:summary="@string/pref.drag_race.adapter_command_freq"
-                    app:singleLineTitle="false"
-                    android:defaultValue="10"
-                    android:entries="@array/pref.numbers_1_20"
-                    android:entryValues="@array/pref.numbers_1_20"
-                    android:inputType="number"
-                    android:key="pref.drag_race.vehicle_speed.freq"
-                    android:title="@string/pref.drag_race.adapter_command_freq"
-                    app:useSimpleSummaryProvider="true" />
-
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
@@ -831,12 +819,26 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"
                         android:defaultValue="true"
-                        android:key="pref.aa.performance_meter.debug.display_frequency"
+                        android:key="pref.aa.drag_race.debug.display_frequency"
                         android:title="@string/pref.aa.performance_meter.display_frequency" />
 
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.aa.drag_race.debug.vehicle_speed_measurement"
+                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed_measurement" />
 
+                    <ListPreference
+                        android:summary="@string/pref.adapter_command_freq"
+                        app:singleLineTitle="false"
+                        android:defaultValue="10"
+                        android:entries="@array/pref.numbers_1_20"
+                        android:entryValues="@array/pref.numbers_1_20"
+                        android:inputType="number"
+                        android:key="pref.drag_race.vehicle_speed.freq"
+                        android:title="@string/pref.adapter_command_freq"
+                        app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
-
 
                 <PreferenceCategory
                     app:singleLineTitle="false"

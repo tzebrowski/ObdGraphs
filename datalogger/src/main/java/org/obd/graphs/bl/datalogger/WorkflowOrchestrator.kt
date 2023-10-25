@@ -338,7 +338,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 .builder()
                 .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
                 .checkInterval(5000)
-                .commandFrequency(dataLoggerPreferences.instance.dragRaceCommandFrequency)
+                .commandFrequency(dataLoggerPreferences.instance.dragRacingCommandFrequency)
                 .minimumTimeout(10)
                 .build()
         ).build()
@@ -373,9 +373,9 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun getSettings(queryType: QueryType ): Pair<Query, Adjustments>  = when (queryType) {
         QueryType.METRICS ->
-            Pair( Query.builder().pids(dataLoggerPreferences.instance.pids).build(),getMetricsAdjustments())
+            Pair( Query.builder().pids(dataLoggerPreferences.instance.pids).build(), getMetricsAdjustments())
 
         QueryType.DRAG_RACING ->
-            Pair( Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),getDragRacingAdjustments())
+            Pair( Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(), getDragRacingAdjustments())
     }
 }

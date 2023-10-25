@@ -164,6 +164,7 @@
 
     <string name="pref.aa.performance_meter.category">Drag Racing</string>
     <string name="pref.aa.performance_meter.display_frequency">Display vehicle speed read frequency</string>
+    <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Display vehicle speed at which measurement was done</string>
 
     <string name="pref.aa.renderer.gauge.category">Gauge Renderer</string>
 
@@ -221,7 +222,6 @@
     <string name="pref.adapter_connection_tcp_port">Port</string>
     <string name="pref.adapter_command_freq_summary">This parameter allows to set target OBD commands frequency. This is just desired frequency which is limited by the hardware capabilities. This option typically should be conducted with adaptive timeout.</string>
     <string name="pref.adapter_command_freq">Desired refresh rate(PIDs/second)</string>
-    <string name="pref.drag_race.adapter_command_freq">Drag Race Desired refresh rate(PIDs/second)</string>
 
     <string name="pref.adapter_power_connect_adapter">Connect adapter on power</string>
     <string name="pref.adapter_power_screen_off">Screen off when disconnected</string>

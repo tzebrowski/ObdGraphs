@@ -45,13 +45,11 @@ data class ColorTheme(
     val actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
-data class DragRacingSettings(val vehicleSpeedFrequencyReadEnabled: Boolean = true)
+data class DragRacingSettings(var vehicleSpeedFrequencyReadEnabled: Boolean = true, var vehicleSpeedDisplayDebugEnabled: Boolean = true)
 
 interface ScreenSettings {
 
-
     fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
-
 
     fun getGaugeProgressBarType(): GaugeProgressBarType = GaugeProgressBarType.SHORT
 

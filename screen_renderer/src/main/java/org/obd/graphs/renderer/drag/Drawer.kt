@@ -64,32 +64,57 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         var rowTop = top + textSizeBase + 12f
         drawText(canvas, "0-60 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._0_60ms), currentXPos, rowTop, textSizeBase)
-        var ll = getTextWidth(timeToString(dragRaceResults.current._0_60ms), titlePaint) * 1.25f
-        drawText(canvas, speedToString(dragRaceResults.current._0_60speed), currentXPos + ll, rowTop, textSizeBase/1.5f, color = Color.LTGRAY)
+
+        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
+            val ll = getTextWidth(timeToString(dragRaceResults.current._0_60ms), titlePaint) * 1.25f
+            drawText(
+                canvas,
+                speedToString(dragRaceResults.current._0_60speed),
+                currentXPos + ll,
+                rowTop,
+                textSizeBase / 1.5f,
+                color = Color.LTGRAY
+            )
+        }
+
         drawText(canvas, timeToString(dragRaceResults.last._0_60ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._0_60ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
 
         rowTop = top + (2 * textSizeBase) + 24f
         drawText(canvas, "0-100 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._0_100ms), currentXPos, rowTop, textSizeBase)
-        ll = getTextWidth(timeToString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
-        drawText(canvas, speedToString(dragRaceResults.current._0_100speed), currentXPos + ll, rowTop, textSizeBase/1.5f, color = Color.LTGRAY)
+        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
+            val ll = getTextWidth(timeToString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
+            drawText(
+                canvas,
+                speedToString(dragRaceResults.current._0_100speed),
+                currentXPos + ll,
+                rowTop,
+                textSizeBase / 1.5f,
+                color = Color.LTGRAY
+            )
+        }
         drawText(canvas, timeToString(dragRaceResults.last._0_100ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._0_100ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
 
         rowTop = top + (3 * textSizeBase) + 36f
         drawText(canvas, "0-160 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._0_160ms), currentXPos, rowTop, textSizeBase)
-        ll = getTextWidth(timeToString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
-        drawText(canvas, speedToString(dragRaceResults.current._0_160speed), currentXPos  + ll, rowTop, textSizeBase/1.5f)
+
+        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
+            val ll = getTextWidth(timeToString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
+            drawText(canvas, speedToString(dragRaceResults.current._0_160speed), currentXPos + ll, rowTop, textSizeBase / 1.5f)
+        }
         drawText(canvas, timeToString(dragRaceResults.last._0_160ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._0_160ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
 
         rowTop = top + (4 * textSizeBase) + 48f
         drawText(canvas, "100-200 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._100_200ms), currentXPos, rowTop, textSizeBase)
-        ll = getTextWidth(timeToString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
-        drawText(canvas, speedToString(dragRaceResults.current._100_200speed), currentXPos + ll, rowTop, textSizeBase/1.5f)
+        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
+            val ll = getTextWidth(timeToString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
+            drawText(canvas, speedToString(dragRaceResults.current._100_200speed), currentXPos + ll, rowTop, textSizeBase / 1.5f)
+        }
         drawText(canvas, timeToString(dragRaceResults.last._100_200ms), lastXPos, rowTop, textSizeBase)
         drawText(canvas, timeToString(dragRaceResults.best._100_200ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
     }

@@ -46,7 +46,7 @@ data class DataLoggerPreferences(
     var reconnectWhenError: Boolean,
     var adapterId: String,
     var commandFrequency: Long,
-    var dragRaceCommandFrequency: Long,
+    var dragRacingCommandFrequency: Long,
     var initDelay: Long,
     var mode: String,
     var generatorEnabled: Boolean,
@@ -107,7 +107,7 @@ class DataLoggerPreferencesManager {
         val reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
         val adapterId = Prefs.getS("pref.adapter.id", "OBDII")
         val commandFrequency = Prefs.getS("pref.adapter.command.freq", "6").toLong()
-        val dragRaceCommandFrequency = Prefs.getS("pref.drag_race.vehicle_speed.freq", "10").toLong()
+        val dragRacingCommandFrequency = Prefs.getS("pref.drag_race.vehicle_speed.freq", "10").toLong()
 
 
         val initDelay = Prefs.getS("pref.adapter.init.delay", "500").toLong()
@@ -138,7 +138,7 @@ class DataLoggerPreferencesManager {
         val dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
 
         val dataLoggerPreferences = DataLoggerPreferences(
-            dragRaceCommandFrequency = dragRaceCommandFrequency,
+            dragRacingCommandFrequency = dragRacingCommandFrequency,
             mode22BatchSize = mode22batchSize?.toInt(),
             mode01BatchSize = mode01batchSize?.toInt(),
             stnExtensionsEnabled = stnEnabled,

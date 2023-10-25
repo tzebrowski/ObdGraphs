@@ -61,9 +61,13 @@ enum class ScreenTemplateType {
 }
 
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
-    override fun getDragRacingSettings(): DragRacingSettings  = DragRacingSettings(
-        vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.performance_meter.debug.display_frequency", true)
-    )
+
+    private val dragRacingSettings = DragRacingSettings()
+
+    override fun getDragRacingSettings(): DragRacingSettings  = dragRacingSettings.apply {
+        vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency",  true)
+        vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.vehicle_speed_measurement", true)
+    }
 
     override fun colorTheme(): ColorTheme = ColorTheme(
             progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
