@@ -823,6 +823,21 @@
                 android:title="@string/navigation.title_aa"
                 app:key="pref.aa">
 
+
+                <PreferenceCategory
+                    app:singleLineTitle="false"
+                    android:title="@string/pref.aa.performance_meter.category">
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
+                        android:key="pref.aa.performance_meter.debug.display_frequency"
+                        android:title="@string/pref.aa.performance_meter.display_frequency" />
+
+
+                </PreferenceCategory>
+
+
                 <PreferenceCategory
                     app:singleLineTitle="false"
                     android:title="@string/pref.aa.general_category">

@@ -38,7 +38,6 @@ internal class DragRaceSurfaceRenderer(
     fps: Fps
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
 
-
     private val drawer = Drawer(context, settings)
 
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACE

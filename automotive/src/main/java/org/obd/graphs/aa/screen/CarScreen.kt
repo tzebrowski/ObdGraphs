@@ -81,7 +81,7 @@ internal abstract class CarScreen(
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
                 if (dragMeteringEnabled){
-                    dataLogger.start(queryType = QueryType.PERFORMANCE)
+                    dataLogger.start(queryType = QueryType.DRAG_RACING)
                 } else {
                     dataLogger.start(queryType = QueryType.METRICS)
                 }

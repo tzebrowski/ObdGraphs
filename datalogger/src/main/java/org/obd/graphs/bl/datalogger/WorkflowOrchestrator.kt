@@ -298,7 +298,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
-    private fun getPerformanceMeterAdjustments() = Adjustments.builder()
+    private fun getDragRaceAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
         .errorsPolicy(
             ErrorsPolicy.builder()
@@ -376,7 +376,7 @@ internal class WorkflowOrchestrator internal constructor() {
         QueryType.METRICS ->
             Pair( Query.builder().pids(dataLoggerPreferences.instance.pids).build(),getMetricsAdjustments())
 
-        QueryType.PERFORMANCE ->
-            Pair( Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),getPerformanceMeterAdjustments())
+        QueryType.DRAG_RACING ->
+            Pair( Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),getDragRaceAdjustments())
     }
 }

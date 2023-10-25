@@ -4,8 +4,6 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
-
-
     <TableLayout android:background="@color/white"
         android:id="@+id/tablelayout"
         android:layout_width="fill_parent"
@@ -21,8 +19,6 @@
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-
 
         <TableRow
             android:layout_width="fill_parent"

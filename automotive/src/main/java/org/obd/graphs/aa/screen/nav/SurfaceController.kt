@@ -137,7 +137,7 @@ internal class SurfaceController(
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         } else {
-            dataLogger.updateQuery(QueryType.PERFORMANCE)
+            dataLogger.updateQuery(QueryType.DRAG_RACING)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACE)
         }
         surfaceRenderer.applyMetricsFilter()

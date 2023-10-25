@@ -28,7 +28,7 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 import java.util.*
 
 enum class QueryType {
-    PERFORMANCE, METRICS
+    DRAG_RACING, METRICS
 }
 
 interface DataLogger {
@@ -45,7 +45,5 @@ interface DataLogger {
     fun scheduledStop()
     fun start(queryType: QueryType = QueryType.METRICS)
     fun stop()
-
     fun updateQuery(queryType: QueryType)
-
 }

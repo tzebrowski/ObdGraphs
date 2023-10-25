@@ -61,15 +61,18 @@ enum class ScreenTemplateType {
 }
 
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
-    override fun colorTheme(): ColorTheme {
-        return ColorTheme(
+    override fun getDragRaceSettings(): DragRaceSettings  = DragRaceSettings(
+        vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.performance_meter.debug.display_frequency", true)
+    )
+
+    override fun colorTheme(): ColorTheme = ColorTheme(
             progressColor =  Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
             dividerColor =  Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE),
             currentValueColor =  Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE),
             currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT),
             actionsBtnVirtualScreensColor = Prefs.getInt(PREF_THEME_VIRTUAL_SCREEN_COLOR, Color.WHITE)
         )
-    }
+
 
     override fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode) {
         if (isDynamicSelectorThemeEnabled()) {

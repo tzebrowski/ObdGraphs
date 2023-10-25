@@ -144,24 +144,27 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             valueTextSize
         )
 
-        val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
-        top1 += textSizeBase / FOOTER_SIZE_RATIO
-        left1 = drawText(
-            canvas,
-            "freq:",
-            left,
-            top1,
-            Color.DKGRAY,
-            frequencyTextSize
-        )
-        drawText(
-            canvas,
-           "${metric.rate?.round(2)} read/sec",
-            left1,
-            top1,
-            Color.WHITE,
-            frequencyTextSize
-        )
+        if (settings.getDragRaceSettings().vehicleSpeedFrequencyReadEnabled) {
+
+            val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
+            top1 += textSizeBase / FOOTER_SIZE_RATIO
+            left1 = drawText(
+                canvas,
+                "freq:",
+                left,
+                top1,
+                Color.DKGRAY,
+                frequencyTextSize
+            )
+            drawText(
+                canvas,
+                "${metric.rate?.round(2)} read/sec",
+                left1,
+                top1,
+                Color.WHITE,
+                frequencyTextSize
+            )
+        }
 
         top1 += 12f
 
