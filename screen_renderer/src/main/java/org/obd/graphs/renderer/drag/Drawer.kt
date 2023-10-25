@@ -144,7 +144,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             valueTextSize
         )
 
-        if (settings.getDragRaceSettings().vehicleSpeedFrequencyReadEnabled) {
+        if (settings.getDragRacingSettings().vehicleSpeedFrequencyReadEnabled) {
 
             val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
             top1 += textSizeBase / FOOTER_SIZE_RATIO

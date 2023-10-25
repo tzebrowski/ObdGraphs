@@ -148,7 +148,6 @@ internal class WorkflowOrchestrator internal constructor() {
     fun start(queryType: QueryType = QueryType.METRICS) {
 
         val (query, adjustments) = getSettings(queryType)
-
         connection()?.run {
             Log.i(LOG_TAG, "Selected PIDs: ${query.pids}")
 
@@ -298,7 +297,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
-    private fun getDragRaceAdjustments() = Adjustments.builder()
+    private fun getDragRacingAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
         .errorsPolicy(
             ErrorsPolicy.builder()
@@ -377,6 +376,6 @@ internal class WorkflowOrchestrator internal constructor() {
             Pair( Query.builder().pids(dataLoggerPreferences.instance.pids).build(),getMetricsAdjustments())
 
         QueryType.DRAG_RACING ->
-            Pair( Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),getDragRaceAdjustments())
+            Pair( Query.builder().pid(dragRaceResultRegistry.getVehicleSpeedPID()).build(),getDragRacingAdjustments())
     }
 }

@@ -61,7 +61,7 @@ enum class ScreenTemplateType {
 }
 
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
-    override fun getDragRaceSettings(): DragRaceSettings  = DragRaceSettings(
+    override fun getDragRacingSettings(): DragRacingSettings  = DragRacingSettings(
         vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.performance_meter.debug.display_frequency", true)
     )
 

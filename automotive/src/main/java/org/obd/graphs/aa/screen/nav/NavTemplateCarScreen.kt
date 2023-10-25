@@ -251,7 +251,7 @@ internal class NavTemplateCarScreen(
                 }
 
                 template.setActionStrip(getActionStrip(
-                    dragMeteringEnabled = surfaceController.isDragRaceEnabled(),
+                    dragMeteringEnabled = surfaceController.isDragRacingEnabled(),
                     toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())).build()
             }
         } catch (e: Exception) {

@@ -24,7 +24,7 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
 enum class GaugeProgressBarType {
-    LONG,SHORT
+    LONG, SHORT
 }
 
 enum class DynamicSelectorMode {
@@ -45,12 +45,12 @@ data class ColorTheme(
     val actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
-data class DragRaceSettings(val vehicleSpeedFrequencyReadEnabled:Boolean = true)
+data class DragRacingSettings(val vehicleSpeedFrequencyReadEnabled: Boolean = true)
 
 interface ScreenSettings {
 
 
-    fun getDragRaceSettings(): DragRaceSettings = DragRaceSettings()
+    fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
 
 
     fun getGaugeProgressBarType(): GaugeProgressBarType = GaugeProgressBarType.SHORT

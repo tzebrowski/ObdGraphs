@@ -31,7 +31,7 @@ import org.obd.graphs.renderer.SurfaceRendererType
 
 
 @Suppress("NOTHING_TO_INLINE")
-internal class DragRaceSurfaceRenderer(
+internal class DragRacingSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
     metricsCollector: CarMetricsCollector,
@@ -40,7 +40,7 @@ internal class DragRaceSurfaceRenderer(
 
     private val drawer = Drawer(context, settings)
 
-    override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACE
+    override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACING
 
     override fun applyMetricsFilter() {
         metricsCollector.applyFilter(

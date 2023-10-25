@@ -127,18 +127,18 @@ internal class SurfaceController(
         renderFrame()
     }
 
-    fun getToggleSurfaceRendererBtnColor(): Int = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE)
+    fun getToggleSurfaceRendererBtnColor(): Int = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING)
         Color.RED else Color.WHITE
 
     fun toggleSurfaceRenderer() {
         surfaceRenderer.release()
-        surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE) {
+        surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING) {
             dataLogger.updateQuery(QueryType.METRICS)
             metricsCollector.applyFilter(settings.getSelectedPIDs())
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         } else {
             dataLogger.updateQuery(QueryType.DRAG_RACING)
-            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACE)
+            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
         }
         surfaceRenderer.applyMetricsFilter()
     }
@@ -150,9 +150,9 @@ internal class SurfaceController(
         renderFrame()
     }
 
-    fun isDragRaceEnabled(): Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACE
+    fun isDragRacingEnabled(): Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING
 
-    fun isVirtualScreensEnabled(): Boolean = !isDragRaceEnabled()
+    fun isVirtualScreensEnabled(): Boolean = !isDragRacingEnabled()
 
     @MainThread
     fun renderFrame() {
