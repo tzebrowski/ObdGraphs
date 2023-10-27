@@ -23,7 +23,7 @@ import org.obd.graphs.preferences.getString
 
 const val PROFILE_ID_PREF = "pref.profile.id"
 const val PROFILE_NAME_PREFIX = "pref.profile.names"
-private const val DEFAULT_MAX_PROFILES = 12
+private const val DEFAULT_MAX_PROFILES = 13
 
 fun getProfiles() =
     (1..DEFAULT_MAX_PROFILES)
