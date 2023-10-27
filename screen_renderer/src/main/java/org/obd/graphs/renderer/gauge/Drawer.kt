@@ -267,15 +267,52 @@ internal class Drawer(
         valuePaint.color = color(R.color.gray)
         canvas.drawText(metric.source.command.pid.units, area.centerX() + textRect.width() / 2 + 6, centerY - valueHeight, valuePaint)
 
-        val label = metric.source.command.pid.description
         labelPaint.textSize = drawerSettings.labelTextSize * scaleRationBasedOnScreenSize(area) * userScaleRatio
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
-        val labelRect = Rect()
-        labelPaint.getTextBounds(label, 0, label.length, labelRect)
+        var labelRect = Rect()
+        var labelY = 0f
+        var singleLineLabel = false
 
-        val labelY = centerY - valueHeight / 2
-        canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
+        if (settings.isBreakLabelTextEnabled()) {
+            labelY = centerY - valueHeight / 2
+            val text = metric.source.command.pid.description.split("\n")
+            if (text.size == 1) {
+                singleLineLabel = true
+            } else {
+
+                labelY = centerY - valueHeight / 2
+                var vPos = labelY
+                labelPaint.textSize *= 0.8f
+
+                text.forEach {
+                    labelRect = Rect()
+                    labelPaint.getTextBounds( it, 0,  it.length, labelRect)
+                    canvas.drawText(
+                        it,
+                        area.centerX() - (labelRect.width() / 2),
+                        vPos,
+                        labelPaint
+                    )
+                    vPos += labelPaint.textSize
+                }
+                labelY = vPos
+                labelY -= 14f
+            }
+
+        } else {
+           singleLineLabel = true
+        }
+
+        if (singleLineLabel){
+            val label = metric.source.command.pid.description
+
+            labelRect = Rect()
+            labelPaint.getTextBounds(label, 0, label.length, labelRect)
+
+            labelY = centerY - valueHeight / 2
+            canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
+        }
 
         if (settings.isHistoryEnabled()) {
             val hists =
