@@ -46,6 +46,9 @@ const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 
+private const val HIGH_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.high.event.changed"
+private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.event.changed"
+
 internal class NavTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
@@ -66,6 +69,17 @@ internal class NavTemplateCarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateSurfaceRender()
+
+
+                HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
+                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    surfaceController.renderFrame()
+                }
+
+                LOW_FREQ_PID_SELECTION_CHANGED_EVENT -> {
+                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    surfaceController.renderFrame()
+                }
 
                 AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> {
                     surfaceController.toggleSurfaceRenderer()
@@ -208,6 +222,9 @@ internal class NavTemplateCarScreen(
             addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
             addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
             addAction(AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT)
+            addAction(HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
+            addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
+
         })
     }
 
