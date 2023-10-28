@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.ui.recycler
 
+import android.util.Log
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -34,10 +35,14 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
         mapper.registerModule(KotlinModule())
     }
 
-    internal fun getItemsSortOrder(): Map<Long, Int>? =
+    internal fun getItemsSortOrder(): Map<Long, Int>? = try {
         load()?.associate {
             it.id to it.position
         }
+    } catch (e: Throwable){
+        Log.e("RecycleViewPreferences","Failed to parse property $prefName",e)
+        null
+    }
 
     internal fun store(
         data: MutableList<CarMetric>
