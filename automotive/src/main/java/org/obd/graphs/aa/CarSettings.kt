@@ -141,11 +141,11 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     override fun applyVirtualScreen(key: String) {
         Prefs.updateString(PREF_CURRENT_VIRTUAL_SCREEN, key)
         Prefs.updateStringSet(PREF_SELECTED_PIDS, Prefs.getStringSet(key).toList())
-        itemsSortOrder = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
+        itemsSortOrder = loadItemsSortOrder(key)
     }
 
     fun initItemsSortOrder() {
-        itemsSortOrder = ViewPreferencesSerializer("${getCurrentVirtualScreen()}.view.settings").getItemsSortOrder()
+        itemsSortOrder = loadItemsSortOrder(getCurrentVirtualScreen())
     }
 
     fun isVirtualScreenEnabled(id: Int): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
@@ -154,6 +154,6 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     fun getSurfaceRendererType(): SurfaceRendererType =
         SurfaceRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type", "GIULIA"))
-
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
+    private fun loadItemsSortOrder(key: String) = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
 }

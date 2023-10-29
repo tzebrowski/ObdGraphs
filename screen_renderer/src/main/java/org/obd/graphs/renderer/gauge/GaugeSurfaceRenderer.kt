@@ -54,7 +54,7 @@ internal class GaugeSurfaceRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            val metrics = metricsCollector.metrics(sortOrder = settings.getMetricsSortOrder())
+            val metrics = metricsCollector.metrics()
 
             drawer.drawBackground(canvas, area)
 

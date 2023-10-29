@@ -27,29 +27,14 @@ private const val LOG_KEY = "CarMetricsCollector"
 
 class CarMetricsCollector {
 
-    private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
+    private var metrics: MutableMap<Long, CarMetric> = sortedMapOf()
 
-    fun metrics(enabled: Boolean = true, sortOrder: Map<Long, Int>? = emptyMap()): List<CarMetric> {
-        val filteredList = metrics.values.filter { it.enabled == enabled }.toMutableList()
-        sortOrder?.let { order ->
-            filteredList.sortWith { m1: CarMetric, m2: CarMetric ->
-                if (order.containsKey(m1.source.command.pid.id) && order.containsKey(
-                        m2.source.command.pid.id
-                    )
-                ) {
-                    order[m1.source.command.pid.id]!!
-                        .compareTo(order[m2.source.command.pid.id]!!)
-                } else {
-                    -1
-                }
-            }
-        }
-        return filteredList
-    }
+    fun metrics(enabled: Boolean = true): List<CarMetric> = metrics.values.filter { it.enabled == enabled }
 
     fun findById(id: Long): CarMetric? = metrics().firstOrNull { it.source.command.pid.id == id }
 
-    fun applyFilter(selectedPIDs: Set<Long>, pidsToQuery: Set<Long> = dataLoggerPreferences.getPIDsToQuery()) {
+    fun applyFilter(selectedPIDs: Set<Long>, pidsToQuery: Set<Long> = dataLoggerPreferences.getPIDsToQuery(),
+                    sortOrder: Map<Long, Int>? = null) {
 
         if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
             Log.d(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
@@ -61,6 +46,25 @@ class CarMetricsCollector {
 
         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
             Log.v(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
+        }
+
+        sortOrder?.let {
+            if (sortOrder.isNotEmpty()) {
+                val mComparator = Comparator<Long> { m1, m2 ->
+                    if (it.containsKey(m1) && it.containsKey(
+                            m2
+                        )
+                    ) {
+                        it[m1]!!
+                            .compareTo(it[m2]!!)
+                    } else {
+                        -1
+                    }
+                }
+
+                metrics = metrics.toSortedMap(mComparator)
+                Log.e(LOG_KEY, "Applied metrics sort order=$metrics")
+            }
         }
     }
 

@@ -71,12 +71,12 @@ internal class NavTemplateCarScreen(
 
 
                 HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     surfaceController.renderFrame()
                 }
 
                 LOW_FREQ_PID_SELECTION_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     surfaceController.renderFrame()
                 }
 
@@ -112,7 +112,7 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         settings.applyVirtualScreen1()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
@@ -120,7 +120,7 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         settings.applyVirtualScreen2()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
@@ -128,7 +128,7 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         settings.applyVirtualScreen3()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
@@ -136,19 +136,19 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         settings.applyVirtualScreen4()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     surfaceController.allocateSurfaceRender()
                     invalidate()
                 }
 
                 PROFILE_RESET_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     surfaceController.allocateSurfaceRender()
                     invalidate()
                 }
@@ -296,7 +296,7 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen1()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -305,7 +305,7 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_2, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen2()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -315,7 +315,7 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen3()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -324,7 +324,8 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_4, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen4()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -333,6 +334,10 @@ internal class NavTemplateCarScreen(
         } else {
             null
         }
+    }
+
+    private fun applyMetricsFilter() {
+        metricsCollector.applyFilter(settings.getSelectedPIDs(), sortOrder = settings.getMetricsSortOrder())
     }
 
     init {
