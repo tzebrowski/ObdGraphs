@@ -19,6 +19,7 @@
 package org.obd.graphs.ui.recycler
 
 import android.util.Log
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -28,8 +29,13 @@ import org.obd.metrics.api.model.ObdMetric
 
 internal class ItemPreference(var id: Long, var position: Int)
 
+private const val LOG_TAG = "RecycleViewPreferences"
+
 internal class RecycleViewPreferences constructor(private val prefName: String) {
-    private var mapper = ObjectMapper()
+    private var mapper = ObjectMapper().apply {
+        configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+        configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
+    }
 
     init {
         mapper.registerModule(KotlinModule())
@@ -39,8 +45,8 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
         load()?.associate {
             it.id to it.position
         }
-    } catch (e: Throwable){
-        Log.e("RecycleViewPreferences","Failed to parse property $prefName",e)
+    } catch (e: Throwable) {
+        Log.e(LOG_TAG, "Failed to parse property $prefName", e)
         null
     }
 
@@ -60,18 +66,19 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
         }
     }
 
-    private fun load(): List<ItemPreference>? {
-        val it = Prefs.getString(prefName, "")
-        val listType: CollectionType =
-            mapper.typeFactory.constructCollectionType(
-                ArrayList::class.java,
-                ItemPreference::class.java
+    private fun load(): List<ItemPreference>? =
+        Prefs.getString(prefName, "")?.let {
+            Log.i(LOG_TAG, "Loading JSON from prefs='$it'")
+            val listType: CollectionType =
+                mapper.typeFactory.constructCollectionType(
+                    ArrayList::class.java,
+                    ItemPreference::class.java
+                )
+            return if (it.isEmpty()) listOf() else mapper.readValue(
+                it, listType
             )
+        }
 
-        return if (it!!.isEmpty()) listOf() else mapper.readValue(
-            it, listType
-        )
-    }
 
     private fun map(m: ObdMetric, index: Int): ItemPreference {
         return ItemPreference(m.command.pid.id, index)
