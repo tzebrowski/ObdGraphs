@@ -24,7 +24,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 interface SwappableAdapter {
     fun swapItems(fromPosition: Int, toPosition: Int)
-    fun deleteItems(fromPosition: Int)
+    fun deleteItems(fromPosition: Int){
+
+    }
     fun storePreferences(context: Context)
 }
 

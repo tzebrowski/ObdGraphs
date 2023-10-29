@@ -283,7 +283,7 @@ internal class Drawer(
 
                 labelY = centerY - valueHeight / 2
                 var vPos = labelY
-                labelPaint.textSize *= 0.8f
+                labelPaint.textSize *= 0.95f
 
                 text.forEach {
                     labelRect = Rect()

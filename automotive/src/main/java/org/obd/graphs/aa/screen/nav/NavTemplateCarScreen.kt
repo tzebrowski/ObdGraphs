@@ -41,7 +41,6 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 
-
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
@@ -148,6 +147,12 @@ internal class NavTemplateCarScreen(
                     invalidate()
                 }
 
+                PROFILE_RESET_EVENT -> {
+                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    surfaceController.allocateSurfaceRender()
+                    invalidate()
+                }
+
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     surfaceController.renderFrame()
                     invalidate()
@@ -202,6 +207,7 @@ internal class NavTemplateCarScreen(
             addAction(DATA_LOGGER_NO_NETWORK_EVENT)
             addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
             addAction(PROFILE_CHANGED_EVENT)
+            addAction(PROFILE_RESET_EVENT)
             addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
@@ -253,6 +259,8 @@ internal class NavTemplateCarScreen(
     }
 
     override fun onGetTemplate(): Template  = try {
+            settings.initItemsSortOrder()
+
             if (dataLogger.status() == WorkflowStatus.Connecting) {
                 NavigationTemplate.Builder()
                     .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())

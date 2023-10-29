@@ -23,14 +23,31 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.metrics.api.model.ObdMetric
 
-private const val  LOG_KEY = "CarMetricsCollector"
+private const val LOG_KEY = "CarMetricsCollector"
+
 class CarMetricsCollector {
 
     private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
 
-    fun metrics(enabled: Boolean = true) = metrics.values.filter { it.enabled == enabled }
+    fun metrics(enabled: Boolean = true, sortOrder: Map<Long, Int>? = emptyMap()): List<CarMetric> {
+        val filteredList = metrics.values.filter { it.enabled == enabled }.toMutableList()
+        sortOrder?.let { order ->
+            filteredList.sortWith { m1: CarMetric, m2: CarMetric ->
+                if (order.containsKey(m1.source.command.pid.id) && order.containsKey(
+                        m2.source.command.pid.id
+                    )
+                ) {
+                    order[m1.source.command.pid.id]!!
+                        .compareTo(order[m2.source.command.pid.id]!!)
+                } else {
+                    -1
+                }
+            }
+        }
+        return filteredList
+    }
 
-    fun findById(id: Long): CarMetric? = metrics().firstOrNull{it.source.command.pid.id == id }
+    fun findById(id: Long): CarMetric? = metrics().firstOrNull { it.source.command.pid.id == id }
 
     fun applyFilter(selectedPIDs: Set<Long>, pidsToQuery: Set<Long> = dataLoggerPreferences.getPIDsToQuery()) {
 
@@ -42,7 +59,7 @@ class CarMetricsCollector {
             u.enabled = selectedPIDs.contains(t)
         }
 
-        if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
+        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
             Log.v(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
         }
     }

@@ -20,6 +20,7 @@ package org.obd.graphs.aa
 
 import android.graphics.Color
 import androidx.car.app.CarContext
+import org.obd.graphs.bl.ViewPreferencesSerializer
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.*
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
@@ -61,7 +62,7 @@ enum class ScreenTemplateType {
 }
 
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
-
+    private var itemsSortOrder: Map<Long, Int>? = emptyMap()
     private val dragRacingSettings = DragRacingSettings()
     private val colorTheme = ColorTheme()
 
@@ -135,9 +136,16 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
 
+    override fun getMetricsSortOrder(): Map<Long, Int>? = itemsSortOrder
+
     override fun applyVirtualScreen(key: String) {
         Prefs.updateString(PREF_CURRENT_VIRTUAL_SCREEN, key)
         Prefs.updateStringSet(PREF_SELECTED_PIDS, Prefs.getStringSet(key).toList())
+        itemsSortOrder = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
+    }
+
+    fun initItemsSortOrder() {
+        itemsSortOrder = ViewPreferencesSerializer("${getCurrentVirtualScreen()}.view.settings").getItemsSortOrder()
     }
 
     fun isVirtualScreenEnabled(id: Int): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)

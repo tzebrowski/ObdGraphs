@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.bl.ViewPreferencesSerializer
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.collector.CarMetricsBuilder
@@ -62,7 +63,7 @@ open class RefreshableFragment : Fragment() {
         metricsIdsPref: String,
         metricsSerializerPref: String
     ): MutableList<CarMetric> {
-        val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
+        val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
         return CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
     }
@@ -85,7 +86,7 @@ open class RefreshableFragment : Fragment() {
         metricsSerializerPref: String
     ) {
 
-        val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
+        val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
         val metrics = CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
 
@@ -117,7 +118,7 @@ open class RefreshableFragment : Fragment() {
         configureChangeEventId: String,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewSerializer: RecycleViewPreferences
+        viewSerializer: ViewPreferencesSerializer
     ): SwappableAdapter = object : SwappableAdapter {
         override fun swapItems(fromPosition: Int, toPosition: Int) {
             adapter(recyclerView).swapItems(
@@ -164,7 +165,7 @@ open class RefreshableFragment : Fragment() {
         enableSwipeToDelete: Boolean = false,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewPreferences: RecycleViewPreferences
+        viewPreferences: ViewPreferencesSerializer
     ) {
         if (enableDragManager) {
             val swappableAdapter = createSwappableAdapter(configureChangeEventId, recyclerView, metricsIdsPref, viewPreferences)
