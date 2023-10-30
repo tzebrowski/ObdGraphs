@@ -19,6 +19,7 @@
 package org.obd.graphs.preferences.pid
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -32,33 +33,35 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.ui.common.DragManageAdapter
+import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
-
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
+private const val LOG_KEY = "PIDsDialog"
 
 data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean = true)
-
-private const val LOG_KEY = "PIDsListPreferenceDialog"
 
 class PIDsListPreferenceDialog(private val key: String, private val source: String, private val onDialogCloseListener: (() -> Unit) = {}) :
     DialogFragment() {
 
     private lateinit var root: View
-    private lateinit var listOfItems: List<PidDefinitionDetails>
+    private lateinit var listOfItems: MutableList<PidDefinitionDetails>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         dialog?.let {
@@ -84,24 +87,31 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                Log.d(LOG_KEY, "OnQueryTextSubmit newText=$query")
+                if (Log.isLoggable(LOG_KEY,Log.DEBUG)) {
+                    Log.d(LOG_KEY, "OnQueryTextSubmit newText=$query")
+                }
                 filterListOfItems(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                Log.d(LOG_KEY, "OnQueryTextChange newText=$newText")
+                if (Log.isLoggable(LOG_KEY,Log.DEBUG)) {
+                    Log.d(LOG_KEY, "OnQueryTextChange newText=$newText")
+                }
                 filterListOfItems(newText)
                 return false
             }
         })
 
-        listOfItems = buildInitialList()
+        val viewSerializer = ViewPreferencesSerializer("$key.view.settings")
+        listOfItems = buildInitialList(viewSerializer)
 
         val adapter = PIDsViewAdapter(context, listOfItems)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
+
+        attachDragManager(viewSerializer, recyclerView)
 
         root.findViewById<Button>(R.id.pid_list_close_window).apply {
             setOnClickListener {
@@ -135,9 +145,41 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
                 adapter.notifyDataSetChanged()
             }
         }
-
         return root
     }
+
+    private fun attachDragManager(
+        viewSerializer: ViewPreferencesSerializer,
+        recyclerView: RecyclerView
+    ) {
+        val swappableAdapter: SwappableAdapter = object : SwappableAdapter {
+            override fun swapItems(fromPosition: Int, toPosition: Int) {
+                if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
+                    Log.v(LOG_KEY, "swappableAdapter fromPosition=$fromPosition toPosition=$toPosition")
+                }
+                getAdapter().swapItems(fromPosition, toPosition)
+            }
+
+            override fun storePreferences(context: Context) {
+                if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
+                    Log.v(LOG_KEY, "storePreferences for $key")
+                }
+
+                viewSerializer.store(getAdapter().data.map {it.source.id})
+                notifyListChanged()
+            }
+        }
+
+        val callback = DragManageAdapter(
+            requireContext(),
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.ACTION_STATE_DRAG, swappableAdapter
+        )
+
+
+        ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
+    }
+
 
     private fun persistSelection() {
         val newList = getAdapter().data
@@ -147,10 +189,14 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
         Log.i(LOG_KEY, "Key=$key, selected PIDs=$newList")
 
         if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
-            sendBroadcastEvent("${key}.event.changed")
+            notifyListChanged()
         }
 
         Prefs.updateStringSet(key, newList)
+    }
+
+    private fun notifyListChanged() {
+        sendBroadcastEvent("${key}.event.changed")
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -170,7 +216,7 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
 
     private fun getAdapter() = (getRecyclerView(root).adapter as PIDsViewAdapter)
 
-    private fun buildInitialList(): List<PidDefinitionDetails> {
+    private fun buildInitialList(viewSerializer: ViewPreferencesSerializer): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()
 
         val list = when (source) {
@@ -207,7 +253,23 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
                 }
             }
         }
-        return list
+
+        val toSort = list.toMutableList()
+
+        viewSerializer.getItemsSortOrder()?.let { order ->
+            toSort.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
+                if (order.containsKey(m1.source.id) && order.containsKey(
+                        m2.source.id
+                    )
+                ) {
+                    order[m1.source.id]!!
+                        .compareTo(order[m2.source.id]!!)
+                } else {
+                    -1
+                }
+            }
+        }
+        return toSort
     }
 
     private fun buildListFromSource(all: MutableCollection<PidDefinition>): List<PidDefinitionDetails> {

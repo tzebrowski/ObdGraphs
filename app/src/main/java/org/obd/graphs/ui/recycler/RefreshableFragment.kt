@@ -25,9 +25,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.collector.CarMetricsBuilder
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -46,7 +47,7 @@ open class RefreshableFragment : Fragment() {
         if (::root.isInitialized){
             val adapter = ((root.findViewById(recyclerViewId) as RecyclerView).adapter) as RecyclerViewAdapter<RecyclerView.ViewHolder>
             val data = adapter.data
-            metricsCollector.metrics().forEach {
+            metricsCollector.getMetrics().forEach {
                 it.run {
                     val indexOf = data.indexOf(it)
                     if (indexOf > -1) {
@@ -62,7 +63,7 @@ open class RefreshableFragment : Fragment() {
         metricsIdsPref: String,
         metricsSerializerPref: String
     ): MutableList<CarMetric> {
-        val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
+        val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
         return CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
     }
@@ -85,7 +86,7 @@ open class RefreshableFragment : Fragment() {
         metricsSerializerPref: String
     ) {
 
-        val viewPreferences = RecycleViewPreferences(metricsSerializerPref)
+        val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = getVisiblePIDsList(metricsIdsPref)
         val metrics = CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
 
@@ -117,7 +118,7 @@ open class RefreshableFragment : Fragment() {
         configureChangeEventId: String,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewSerializer: RecycleViewPreferences
+        viewSerializer: ViewPreferencesSerializer
     ): SwappableAdapter = object : SwappableAdapter {
         override fun swapItems(fromPosition: Int, toPosition: Int) {
             adapter(recyclerView).swapItems(
@@ -127,9 +128,7 @@ open class RefreshableFragment : Fragment() {
         }
 
         override fun storePreferences(context: Context) {
-            viewSerializer.store(
-                adapter(recyclerView).data
-            )
+            viewSerializer.store(adapter(recyclerView).data.map { it.source.command.pid.id })
         }
 
         override fun deleteItems(fromPosition: Int) {
@@ -164,7 +163,7 @@ open class RefreshableFragment : Fragment() {
         enableSwipeToDelete: Boolean = false,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewPreferences: RecycleViewPreferences
+        viewPreferences: ViewPreferencesSerializer
     ) {
         if (enableDragManager) {
             val swappableAdapter = createSwappableAdapter(configureChangeEventId, recyclerView, metricsIdsPref, viewPreferences)

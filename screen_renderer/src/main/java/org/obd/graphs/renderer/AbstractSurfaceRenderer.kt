@@ -37,7 +37,7 @@ internal abstract class AbstractSurfaceRenderer(
     fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP
 
     override fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs())
+        metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
     }
 
     protected inline fun splitIntoChunks(metrics: List<CarMetric>): MutableList<List<CarMetric>> {

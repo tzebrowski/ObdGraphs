@@ -25,6 +25,7 @@ import android.util.Log
 import androidx.core.content.edit
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
+import org.obd.graphs.bl.datalogger.PROFILE_RESET_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updatePreference
@@ -74,6 +75,9 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                 }
 
                 Log.i(PROFILE_LOG_TAG, "Exporting backup file completed")
+
+                sendBroadcastEvent(PROFILE_CHANGED_EVENT)
+
             } catch (e: Throwable){
                 Log.e(PROFILE_LOG_TAG, "Failed to load backup file",e)
             } finally {
@@ -104,6 +108,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
             Prefs.updateBoolean(getProfileInstallationKey(), false)
             resetCurrentProfile()
             setupProfiles(forceOverride = true)
+            sendBroadcastEvent(PROFILE_RESET_EVENT)
         } finally {
             bulkActionEnabled = false
         }

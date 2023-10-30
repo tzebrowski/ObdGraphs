@@ -18,61 +18,21 @@
  **/
 package org.obd.graphs.bl.collector
 
-import android.util.Log
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.metrics.api.model.ObdMetric
 
-private const val  LOG_KEY = "CarMetricsCollector"
-class CarMetricsCollector {
+interface CarMetricsCollector {
 
-    private var metrics: MutableMap<Long, CarMetric> = mutableMapOf()
+    fun getMetrics(enabled: Boolean = true): List<CarMetric>
 
-    fun metrics(enabled: Boolean = true) = metrics.values.filter { it.enabled == enabled }
+    fun findById(id: Long): CarMetric?
 
-    fun findById(id: Long): CarMetric? = metrics().firstOrNull{it.source.command.pid.id == id }
+    fun applyFilter(enabled: Set<Long>, query: Set<Long> = dataLoggerPreferences.getPIDsToQuery(),
+                    order: Map<Long, Int>? = null)
 
-    fun applyFilter(selectedPIDs: Set<Long>, pidsToQuery: Set<Long> = dataLoggerPreferences.getPIDsToQuery()) {
+    fun append(input: ObdMetric?)
 
-        if (metrics.isEmpty() || metrics.size != pidsToQuery.size) {
-            Log.d(LOG_KEY, "Rebuilding metrics configuration for: $pidsToQuery")
-            metrics = CarMetricsBuilder().buildFor(pidsToQuery).associateBy { it.source.command.pid.id }.toMutableMap()
-        }
-        metrics.forEach { (t, u) ->
-            u.enabled = selectedPIDs.contains(t)
-        }
-
-        if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
-            Log.v(LOG_KEY, "Updating visible metrics for: $selectedPIDs")
-        }
-    }
-
-    fun append(input: ObdMetric?) {
-        input?.let { metric ->
-
-            metrics[metric.command.pid.id]?.let {
-                it.source = metric
-
-                it.value = metric.valueToDouble()
-                val hist = dataLogger.findHistogramFor(metric)
-                val rate = dataLogger.findRateFor(metric)
-
-                rate.ifPresent { r ->
-                    it.rate = r.value
-                }
-
-                hist.mean?.let { mean ->
-                    it.mean = mean
-                }
-
-                hist.max.let { max ->
-                    it.max = max
-                }
-
-                hist.min.let { min ->
-                    it.min = min
-                }
-            }
-        }
+    companion object {
+        fun instance () : CarMetricsCollector = InMemoryCarMetricsCollector()
     }
 }

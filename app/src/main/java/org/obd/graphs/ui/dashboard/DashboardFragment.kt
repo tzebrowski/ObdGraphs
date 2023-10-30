@@ -45,7 +45,7 @@ import org.obd.graphs.ui.gauge.AdapterContext
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 class DashboardFragment : RefreshableFragment() {
 
-    private val metricsCollector = CarMetricsCollector()
+    private val metricsCollector = CarMetricsCollector.instance()
 
     private val renderingThread: RenderingThread = RenderingThread(
         renderAction = {

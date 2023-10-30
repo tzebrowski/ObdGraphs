@@ -50,7 +50,7 @@ private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : RefreshableFragment() {
 
-    private val metricsCollector = CarMetricsCollector()
+    private val metricsCollector = CarMetricsCollector.instance()
     private val renderingThread: RenderingThread = RenderingThread(
         id = "GaugeFragmentRenderingThread",
         renderAction = {

@@ -45,7 +45,7 @@ import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
-    private val metricsCollector = CarMetricsCollector()
+    private val metricsCollector = CarMetricsCollector.instance()
     private val fps = Fps()
     private val settings = GiuliaSettings()
     private lateinit var surfaceController: SurfaceController

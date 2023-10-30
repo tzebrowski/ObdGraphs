@@ -49,6 +49,8 @@ data class DragRacingSettings(var vehicleSpeedFrequencyReadEnabled: Boolean = tr
 
 interface ScreenSettings {
 
+    fun getMetricsSortOrder(): Map<Long, Int>? = emptyMap()
+
     fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
 
     fun getGaugeProgressBarType(): GaugeProgressBarType = GaugeProgressBarType.SHORT

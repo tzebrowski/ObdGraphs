@@ -41,7 +41,6 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 
-
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
@@ -72,12 +71,12 @@ internal class NavTemplateCarScreen(
 
 
                 HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     surfaceController.renderFrame()
                 }
 
                 LOW_FREQ_PID_SELECTION_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     surfaceController.renderFrame()
                 }
 
@@ -113,7 +112,7 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         settings.applyVirtualScreen1()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
@@ -121,7 +120,7 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         settings.applyVirtualScreen2()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
@@ -129,7 +128,7 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         settings.applyVirtualScreen3()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
@@ -137,13 +136,19 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         settings.applyVirtualScreen4()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         surfaceController.renderFrame()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
+                    surfaceController.allocateSurfaceRender()
+                    invalidate()
+                }
+
+                PROFILE_RESET_EVENT -> {
+                    applyMetricsFilter()
                     surfaceController.allocateSurfaceRender()
                     invalidate()
                 }
@@ -202,6 +207,7 @@ internal class NavTemplateCarScreen(
             addAction(DATA_LOGGER_NO_NETWORK_EVENT)
             addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
             addAction(PROFILE_CHANGED_EVENT)
+            addAction(PROFILE_RESET_EVENT)
             addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
@@ -253,6 +259,8 @@ internal class NavTemplateCarScreen(
     }
 
     override fun onGetTemplate(): Template  = try {
+            settings.initItemsSortOrder()
+
             if (dataLogger.status() == WorkflowStatus.Connecting) {
                 NavigationTemplate.Builder()
                     .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
@@ -288,7 +296,7 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen1()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -297,7 +305,7 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_2, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen2()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -307,7 +315,7 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen3()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -316,7 +324,8 @@ internal class NavTemplateCarScreen(
             added = true
             builder = builder.addAction(createAction(R.drawable.action_virtual_screen_4, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
                 settings.applyVirtualScreen4()
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+
+                applyMetricsFilter()
                 surfaceController.renderFrame()
             })
         }
@@ -325,6 +334,10 @@ internal class NavTemplateCarScreen(
         } else {
             null
         }
+    }
+
+    private fun applyMetricsFilter() {
+        metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
     }
 
     init {

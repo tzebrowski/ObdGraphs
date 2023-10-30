@@ -16,22 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.ui.recycler
+package org.obd.graphs
 
 import android.util.Log
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.preferences.Prefs
-import org.obd.metrics.api.model.ObdMetric
 
 internal class ItemPreference(var id: Long, var position: Int)
 
 private const val LOG_TAG = "RecycleViewPreferences"
 
-internal class RecycleViewPreferences constructor(private val prefName: String) {
+class ViewPreferencesSerializer constructor(private val prefName: String) {
+
     private var mapper = ObjectMapper().apply {
         configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
         configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
@@ -41,34 +40,41 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
         mapper.registerModule(KotlinModule())
     }
 
-    internal fun getItemsSortOrder(): Map<Long, Int>? = try {
+    fun getItemsSortOrder(): Map<Long, Int>? = try {
         load()?.associate {
             it.id to it.position
         }
     } catch (e: Throwable) {
-        Log.e(LOG_TAG, "Failed to parse property $prefName", e)
+        Log.e(LOG_TAG, "Failed to load preferences for $prefName", e)
         null
     }
 
-    internal fun store(
-        data: MutableList<CarMetric>
+    fun  store(
+        data: List<Long>
     ) {
+        try {
+            val mapIndexed = data.mapIndexed { index, item ->
+                map(item, index)
+            }
 
-        val mapIndexed = data.mapIndexed { index, metric ->
-            map(metric.source, index)
-        }
+            val writeValueAsString = mapper.writeValueAsString(mapIndexed)
 
-        val writeValueAsString = mapper.writeValueAsString(mapIndexed)
-
-        Prefs.edit().run {
-            putString(prefName, writeValueAsString)
-            apply()
+            Prefs.edit().run {
+                putString(prefName, writeValueAsString)
+                apply()
+            }
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to store preferences for $prefName", e)
         }
     }
 
     private fun load(): List<ItemPreference>? =
         Prefs.getString(prefName, "")?.let {
-            Log.i(LOG_TAG, "Loading JSON from prefs='$it'")
+
+            if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+                Log.d(LOG_TAG, "Loading JSON from prefs=$prefName")
+            }
+
             val listType: CollectionType =
                 mapper.typeFactory.constructCollectionType(
                     ArrayList::class.java,
@@ -79,8 +85,5 @@ internal class RecycleViewPreferences constructor(private val prefName: String) 
             )
         }
 
-
-    private fun map(m: ObdMetric, index: Int): ItemPreference {
-        return ItemPreference(m.command.pid.id, index)
-    }
+    private fun  map(m: Long, index: Int): ItemPreference =  ItemPreference(m, index)
 }

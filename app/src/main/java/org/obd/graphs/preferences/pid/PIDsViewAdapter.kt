@@ -33,6 +33,7 @@ import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.setText
+import java.util.*
 
 class PIDsViewAdapter internal constructor(
     context: Context?,
@@ -40,6 +41,11 @@ class PIDsViewAdapter internal constructor(
 ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
+
+    fun swapItems(fromPosition: Int, toPosition: Int){
+        Collections.swap(data, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

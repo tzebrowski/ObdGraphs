@@ -218,7 +218,7 @@ internal class IotTemplateCarScreen(
                     invalidate()
                 })
 
-                metricsCollector.metrics().forEach {
+                metricsCollector.getMetrics().forEach {
                     paneBuilder.addRow(
                         Row.Builder()
                         .setImage(valueDrawable.draw(it.valueToString(),settings.colorTheme().progressColor),
