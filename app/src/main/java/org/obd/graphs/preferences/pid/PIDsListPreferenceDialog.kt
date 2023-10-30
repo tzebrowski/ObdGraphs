@@ -36,8 +36,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.ViewPreferencesSerializer
-import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.preferences.Prefs
@@ -46,8 +45,6 @@ import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
-import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
@@ -168,20 +165,7 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
                     Log.v(LOG_KEY, "storePreferences for $key")
                 }
 
-                viewSerializer.store(
-                    getAdapter().data.map {
-                        CarMetric(
-                            ObdMetric.builder().command(ObdCommand(it.source)).build(),
-                            0f,
-                            0.0,
-                            0.0,
-                            0.0,
-                            true,
-                            0.0
-                        )
-                    }
-                )
-
+                viewSerializer.store(getAdapter().data.map {it.source.id})
                 notifyListChanged()
             }
         }

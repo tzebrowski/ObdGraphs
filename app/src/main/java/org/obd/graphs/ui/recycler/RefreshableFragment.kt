@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.bl.ViewPreferencesSerializer
+import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.collector.CarMetricsBuilder
@@ -128,9 +128,7 @@ open class RefreshableFragment : Fragment() {
         }
 
         override fun storePreferences(context: Context) {
-            viewSerializer.store(
-                adapter(recyclerView).data
-            )
+            viewSerializer.store(adapter(recyclerView).data.map { it.source.command.pid.id })
         }
 
         override fun deleteItems(fromPosition: Int) {

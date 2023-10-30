@@ -63,7 +63,7 @@ class CarMetricsCollector {
                 }
 
                 metrics = metrics.toSortedMap(mComparator)
-                Log.e(LOG_KEY, "Applied metrics sort order=$metrics")
+                Log.i(LOG_KEY, "Applied metrics sort order=$metrics")
             }
         }
     }

@@ -16,22 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl
+package org.obd.graphs
 
 import android.util.Log
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.preferences.Prefs
-import org.obd.metrics.api.model.ObdMetric
 
 internal class ItemPreference(var id: Long, var position: Int)
 
 private const val LOG_TAG = "RecycleViewPreferences"
 
 class ViewPreferencesSerializer constructor(private val prefName: String) {
+
     private var mapper = ObjectMapper().apply {
         configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
         configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
@@ -50,12 +49,12 @@ class ViewPreferencesSerializer constructor(private val prefName: String) {
         null
     }
 
-    fun store(
-        data: List<CarMetric>
+    fun  store(
+        data: List<Long>
     ) {
         try {
-            val mapIndexed = data.mapIndexed { index, metric ->
-                map(metric.source, index)
+            val mapIndexed = data.mapIndexed { index, item ->
+                map(item, index)
             }
 
             val writeValueAsString = mapper.writeValueAsString(mapIndexed)
@@ -86,5 +85,5 @@ class ViewPreferencesSerializer constructor(private val prefName: String) {
             )
         }
 
-    private fun map(m: ObdMetric, index: Int): ItemPreference =  ItemPreference(m.command.pid.id, index)
+    private fun  map(m: Long, index: Int): ItemPreference =  ItemPreference(m, index)
 }
