@@ -337,7 +337,7 @@ internal class NavTemplateCarScreen(
     }
 
     private fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs(), sortOrder = settings.getMetricsSortOrder())
+        metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
     }
 
     init {

@@ -60,7 +60,7 @@ internal class GiuliaSurfaceRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            val metrics = metricsCollector.metrics()
+            val metrics = metricsCollector.getMetrics()
 
             val (valueTextSize, textSizeBase) = calculateFontSize(area)
 

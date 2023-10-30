@@ -27,8 +27,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.collector.CarMetricsBuilder
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -47,7 +47,7 @@ open class RefreshableFragment : Fragment() {
         if (::root.isInitialized){
             val adapter = ((root.findViewById(recyclerViewId) as RecyclerView).adapter) as RecyclerViewAdapter<RecyclerView.ViewHolder>
             val data = adapter.data
-            metricsCollector.metrics().forEach {
+            metricsCollector.getMetrics().forEach {
                 it.run {
                     val indexOf = data.indexOf(it)
                     if (indexOf > -1) {

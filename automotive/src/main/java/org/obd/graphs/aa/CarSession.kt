@@ -31,7 +31,7 @@ import org.obd.graphs.setCarContext
 internal class CarSession : Session() {
 
     private val settings by lazy {  CarSettings(carContext) }
-    private val metricsCollector = CarMetricsCollector()
+    private val metricsCollector = CarMetricsCollector.instance()
     private val fps: Fps = Fps()
     private lateinit var screen: CarScreen
 

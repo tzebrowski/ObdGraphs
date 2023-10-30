@@ -42,8 +42,8 @@ internal class DragRacingSurfaceRenderer(
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACING
     override fun applyMetricsFilter() {
         metricsCollector.applyFilter(
-            selectedPIDs = setOf(dragRaceResultRegistry.getVehicleSpeedPID()),
-            pidsToQuery = setOf(dragRaceResultRegistry.getVehicleSpeedPID())
+            enabled = setOf(dragRaceResultRegistry.getVehicleSpeedPID()),
+            query = setOf(dragRaceResultRegistry.getVehicleSpeedPID())
         )
     }
 
