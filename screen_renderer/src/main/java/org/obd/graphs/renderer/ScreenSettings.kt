@@ -45,7 +45,11 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
-data class DragRacingSettings(var vehicleSpeedFrequencyReadEnabled: Boolean = true, var vehicleSpeedDisplayDebugEnabled: Boolean = true)
+data class DragRacingSettings(
+    var vehicleSpeedEnabled: Boolean = true,
+    var vehicleSpeedFrequencyReadEnabled: Boolean = true,
+    var vehicleSpeedDisplayDebugEnabled: Boolean = true
+)
 
 interface ScreenSettings {
 

@@ -69,6 +69,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     override fun getDragRacingSettings(): DragRacingSettings = dragRacingSettings.apply {
         vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.vehicle_speed_measurement", true)
+        vehicleSpeedEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
     }
 
     override fun colorTheme(): ColorTheme = colorTheme.apply {

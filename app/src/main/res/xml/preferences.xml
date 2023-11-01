@@ -818,6 +818,12 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"
                         android:defaultValue="true"
+                        android:key="pref.aa.drag_race.vehicle_speed.enabled"
+                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed_measurement" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        app:singleLineTitle="false"
+                        android:defaultValue="true"
                         android:key="pref.aa.drag_race.debug.display_frequency"
                         android:title="@string/pref.aa.performance_meter.display_frequency" />
 

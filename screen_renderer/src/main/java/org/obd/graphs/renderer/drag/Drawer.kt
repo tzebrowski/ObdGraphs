@@ -75,6 +75,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
                 textSizeBase / 1.5f,
                 color = Color.LTGRAY
             )
+
         }
 
         drawText(canvas, timeToString(dragRaceResults.last._0_60ms), lastXPos, rowTop, textSizeBase)
@@ -83,6 +84,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         rowTop = top + (2 * textSizeBase) + 24f
         drawText(canvas, "0-100 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRaceResults.current._0_100ms), currentXPos, rowTop, textSizeBase)
+
         if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
             val ll = getTextWidth(timeToString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
             drawText(
@@ -136,77 +138,85 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         var top1 = top
         var left1 = left
 
-        drawText(
-            canvas,
-            metric.source.command.pid.description,
-            left1,
-            top1,
-            textSizeBase
-        )
+        if (settings.getDragRacingSettings().vehicleSpeedEnabled) {
+            drawText(
+                canvas,
+                metric.source.command.pid.description,
+                left1,
+                top1,
+                textSizeBase
+            )
+        }
 
         if (dragRaceResults.readyToRace){
             if (screenRefreshCounter%4 == 0) {
+                val tt = if (settings.getDragRacingSettings().vehicleSpeedEnabled) 24f else 12f
                 val ll = getTextWidth(readyToStartText, titlePaint)
                 drawText(
                     canvas,
                     readyToStartText,
                     area.exactCenterX() - ll,
-                    top1 + 36f,
-                    textSizeBase * 1.8f,
+                    top1 + tt,
+                    textSizeBase * 1.6f,
                     color = Color.GREEN
                 )
             }
+            top1 += if (settings.getDragRacingSettings().vehicleSpeedEnabled) 0 else 20
+
             screenRefreshCounter++
         } else {
             screenRefreshCounter = 0
         }
 
-        drawValue(
-            canvas,
-            metric,
-            area,
-            top1 + 10,
-            valueTextSize
-        )
+        if (settings.getDragRacingSettings().vehicleSpeedEnabled) {
 
-        if (settings.getDragRacingSettings().vehicleSpeedFrequencyReadEnabled) {
-
-            val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
-            top1 += textSizeBase / FOOTER_SIZE_RATIO
-            left1 = drawText(
+            drawValue(
                 canvas,
-                "freq:",
-                left,
-                top1,
-                Color.DKGRAY,
-                frequencyTextSize
+                metric,
+                area,
+                top1 + 10,
+                valueTextSize
             )
-            drawText(
+
+            if (settings.getDragRacingSettings().vehicleSpeedFrequencyReadEnabled) {
+
+                val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
+                top1 += textSizeBase / FOOTER_SIZE_RATIO
+                left1 = drawText(
+                    canvas,
+                    "freq:",
+                    left,
+                    top1,
+                    Color.DKGRAY,
+                    frequencyTextSize
+                )
+                drawText(
+                    canvas,
+                    "${metric.rate?.round(2)} read/sec",
+                    left1,
+                    top1,
+                    Color.WHITE,
+                    frequencyTextSize
+                )
+            }
+
+            top1 += 12f
+
+            drawProgressBar(
                 canvas,
-                "${metric.rate?.round(2)} read/sec",
-                left1,
-                top1,
-                Color.WHITE,
-                frequencyTextSize
+                left,
+                getAreaWidth(area), top1, metric,
+                color = settings.colorTheme().progressColor
+            )
+
+            top1 += calculateDividerSpacing()
+
+            drawDivider(
+                canvas,
+                left, getAreaWidth(area), top1,
+                color = settings.colorTheme().dividerColor
             )
         }
-
-        top1 += 12f
-
-        drawProgressBar(
-            canvas,
-            left,
-            getAreaWidth(area), top1, metric,
-            color = settings.colorTheme().progressColor
-        )
-
-        top1 += calculateDividerSpacing()
-
-        drawDivider(
-            canvas,
-            left, getAreaWidth(area), top1,
-            color = settings.colorTheme().dividerColor
-        )
 
         top1 += 10f + (textSizeBase).toInt()
         return top1
