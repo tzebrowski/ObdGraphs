@@ -61,68 +61,33 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         drawText(canvas, "Last", lastXPos, top, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, "Best", bestXPos, top, textSizeBase, color = Color.LTGRAY)
 
+        // 0-60
         var rowTop = top + textSizeBase + 12f
-        drawText(canvas, "0-60 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, timeToString(dragRaceResults.current._0_60ms), currentXPos, rowTop, textSizeBase)
+        drawItem("0-60 km/h", dragRaceResults.last._0_60ms, dragRaceResults.best._0_60ms, dragRaceResults.current._0_60ms,
+            dragRaceResults.current._0_60speed, currentXPos, rowTop, left, lastXPos,bestXPos, canvas, textSizeBase)
 
-        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
-            val ll = getTextWidth(timeToString(dragRaceResults.current._0_60ms), titlePaint) * 1.25f
-            drawText(
-                canvas,
-                speedToString(dragRaceResults.current._0_60speed),
-                currentXPos + ll,
-                rowTop,
-                textSizeBase / 1.5f,
-                color = Color.LTGRAY
-            )
-
-        }
-
-        drawText(canvas, timeToString(dragRaceResults.last._0_60ms), lastXPos, rowTop, textSizeBase)
-        drawText(canvas, timeToString(dragRaceResults.best._0_60ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
-
+        // 0 - 100
         rowTop = top + (2 * textSizeBase) + 24f
-        drawText(canvas, "0-100 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, timeToString(dragRaceResults.current._0_100ms), currentXPos, rowTop, textSizeBase)
+        drawItem("0-100 km/h", dragRaceResults.last._0_100ms, dragRaceResults.best._0_100ms, dragRaceResults.current._0_100ms,
+            dragRaceResults.current._0_100speed, currentXPos, rowTop, left, lastXPos,bestXPos, canvas, textSizeBase)
 
-        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
-            val ll = getTextWidth(timeToString(dragRaceResults.current._0_100ms), titlePaint) * 1.25f
-            drawText(
-                canvas,
-                speedToString(dragRaceResults.current._0_100speed),
-                currentXPos + ll,
-                rowTop,
-                textSizeBase / 1.5f,
-                color = Color.LTGRAY
-            )
-        }
-        drawText(canvas, timeToString(dragRaceResults.last._0_100ms), lastXPos, rowTop, textSizeBase)
-        drawText(canvas, timeToString(dragRaceResults.best._0_100ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
-
+        // 60 - 140
         rowTop = top + (3 * textSizeBase) + 36f
-        drawText(canvas, "0-160 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, timeToString(dragRaceResults.current._0_160ms), currentXPos, rowTop, textSizeBase)
+        drawItem("60-140 km/h", dragRaceResults.last._60_140ms, dragRaceResults.best._60_140ms, dragRaceResults.current._60_140ms,
+            dragRaceResults.current._60_140speed, currentXPos, rowTop, left, lastXPos,bestXPos, canvas, textSizeBase)
 
-        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
-            val ll = getTextWidth(timeToString(dragRaceResults.current._0_160ms), titlePaint) * 1.25f
-            drawText(canvas, speedToString(dragRaceResults.current._0_160speed), currentXPos + ll, rowTop, textSizeBase / 1.5f)
-        }
-        drawText(canvas, timeToString(dragRaceResults.last._0_160ms), lastXPos, rowTop, textSizeBase)
-        drawText(canvas, timeToString(dragRaceResults.best._0_160ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
-
+        // 0 - 160
         rowTop = top + (4 * textSizeBase) + 48f
-        drawText(canvas, "100-200 km/h", left, rowTop, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, timeToString(dragRaceResults.current._100_200ms), currentXPos, rowTop, textSizeBase)
-        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
-            val ll = getTextWidth(timeToString(dragRaceResults.current._100_200ms), titlePaint) * 1.25f
-            drawText(canvas, speedToString(dragRaceResults.current._100_200speed), currentXPos + ll, rowTop, textSizeBase / 1.5f)
-        }
-        drawText(canvas, timeToString(dragRaceResults.last._100_200ms), lastXPos, rowTop, textSizeBase)
-        drawText(canvas, timeToString(dragRaceResults.best._100_200ms), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
+        drawItem("0-160 km/h", dragRaceResults.last._0_160ms, dragRaceResults.best._0_160ms, dragRaceResults.current._0_160ms,
+            dragRaceResults.current._0_160speed, currentXPos, rowTop, left, lastXPos,bestXPos, canvas, textSizeBase)
+
+        // 100 - 200
+        rowTop = top + (5 * textSizeBase) + 60f
+        drawItem("100-200 km/h", dragRaceResults.last._100_200ms, dragRaceResults.best._100_200ms, dragRaceResults.current._100_200ms,
+            dragRaceResults.current._100_200speed, currentXPos, rowTop, left, lastXPos,bestXPos, canvas, textSizeBase)
     }
 
-    inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).round(2).toString()
-    inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "" else "$value km/h"
+
 
     inline fun drawMetric(
         canvas: Canvas,
@@ -319,4 +284,22 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         val textSizeBase = (areaWidth / 21f) * scaleRatio
         return Pair(valueTextSize, textSizeBase)
     }
+
+
+    private inline fun drawItem(label: String, last: Long, best: Long, current: Long, currentSpeed: Int,currentXPos: Float,
+                                rowTop: Float, left:Float, lastXPos: Float,bestXPos: Float, canvas: Canvas, textSizeBase: Float) {
+        drawText(canvas, label, left, rowTop, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, timeToString(current), currentXPos, rowTop, textSizeBase)
+        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
+            val ll = getTextWidth(timeToString(current), titlePaint) * 1.25f
+            drawText(canvas, speedToString(currentSpeed), currentXPos + ll, rowTop, textSizeBase / 1.5f)
+        }
+        drawText(canvas, timeToString(last), lastXPos, rowTop, textSizeBase)
+        drawText(canvas, timeToString(best), bestXPos, rowTop, textSizeBase, color = COLOR_CARDINAL)
+
+    }
+
+
+    private inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).round(2).toString()
+    private inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "" else "$value km/h"
 }

@@ -28,6 +28,8 @@ interface DragRaceResultRegistry {
     fun update0160(time: Long, speed: Int)
     fun update060(time: Long, speed: Int)
     fun update100200(time: Long, speed: Int)
+    fun update60140(time: Long, speed: Int)
+
     fun readyToRace(value: Boolean)
     fun getVehicleSpeedPID(): Long = VEHICLE_SPEED_PID_ID
 }

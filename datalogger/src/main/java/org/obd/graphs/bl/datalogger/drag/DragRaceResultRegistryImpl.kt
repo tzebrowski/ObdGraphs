@@ -27,11 +27,14 @@ private const val PERF_0_60_BEST = "pref.drag_race.best.0_60"
 private const val PERF_0_100_BEST = "pref.drag_race.best.0_100"
 private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
 private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
+private const val PERF_60_140_BEST = "pref.drag_race.best.60_140"
 
 
 private const val PERF_0_60_LAST = "pref.drag_race.last.0_60"
 private const val PERF_0_100_LAST = "pref.drag_race.last.0_100"
 private const val PERF_0_160_LAST = "pref.drag_race.last.0_160"
+private const val PERF_60_140_LAST = "pref.drag_race.last.60_140"
+
 private const val PERF_100_200_LAST = "pref.drag_race.last.100_200"
 
 
@@ -75,8 +78,30 @@ internal class DragRaceResultRegistryImpl : DragRaceResultRegistry {
         results.readyToRace = value
     }
 
+    override fun update60140(time: Long, speed: Int) {
+        if (time <= 0L) {
+            Log.v(LOG_KEY, "Invalid value")
+        } else {
+            results.last._60_140ms = if (results.last._60_140ms == VALUE_NOT_SET) {
+                time
+            } else {
+                results.current._60_140ms
+            }
+
+            Prefs.updateString(PERF_60_140_LAST, results.last._60_140ms.toString())
+
+            results.current._60_140ms = time
+            results.current._60_140speed = speed
+
+            if (results.best._60_140ms > time || results.best._60_140ms == VALUE_NOT_SET) {
+                results.best._60_140ms = time
+                Prefs.updateString(PERF_60_140_BEST, time.toString())
+            }
+        }
+    }
+
     override fun update0100(time: Long, speed: Int) {
-        if (time == 0L) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
             results.last._0_100ms = if (results.last._0_100ms == VALUE_NOT_SET) {
@@ -98,7 +123,7 @@ internal class DragRaceResultRegistryImpl : DragRaceResultRegistry {
     }
 
     override fun update060(time: Long, speed: Int) {
-        if (time == 0L) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
             results.last._0_60ms = if (results.last._0_60ms == VALUE_NOT_SET) {
@@ -120,7 +145,7 @@ internal class DragRaceResultRegistryImpl : DragRaceResultRegistry {
     }
 
     override fun update0160(time: Long, speed: Int) {
-        if (time == 0L) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
             results.last._0_160ms = if (results.last._0_160ms == VALUE_NOT_SET) {
@@ -142,7 +167,7 @@ internal class DragRaceResultRegistryImpl : DragRaceResultRegistry {
     }
 
     override fun update100200(time: Long, speed: Int) {
-        if (time == 0L) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
 

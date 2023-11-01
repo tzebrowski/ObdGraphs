@@ -27,6 +27,8 @@ data class DragRaceEntry(
     var _0_160ms: Long = VALUE_NOT_SET,
     var _100_200ms: Long = VALUE_NOT_SET,
     var _0_100speed: Int = VALUE_NOT_SET.toInt(),
+    var _60_140ms: Long = VALUE_NOT_SET,
+    var _60_140speed: Int = VALUE_NOT_SET.toInt(),
     var _0_160speed: Int = VALUE_NOT_SET.toInt(),
     var _100_200speed: Int = VALUE_NOT_SET.toInt()
 )
