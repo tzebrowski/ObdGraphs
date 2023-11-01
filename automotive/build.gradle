@@ -46,8 +46,9 @@ dependencies {
     implementation project(':screen_renderer')
     implementation project(":common")
     implementation project(":datalogger")
-    implementation "androidx.car.app:app:1.2.0"
+    implementation project(":dragracing")
 
+    implementation "androidx.car.app:app:1.2.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.core:core-ktx:1.2.0'

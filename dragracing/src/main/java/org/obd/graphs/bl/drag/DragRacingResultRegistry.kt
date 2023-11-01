@@ -19,7 +19,7 @@
 package org.obd.graphs.bl.drag
 
 
-val dragRacingResultRegistry: DragRacingResultRegistry by lazy { DragRacingResultRegistryImpl() }
+val dragRacingResultRegistry: DragRacingResultRegistry by lazy { InMemoryDragRacingRegistry() }
 
 private const val VEHICLE_SPEED_PID_ID = 14L
 interface DragRacingResultRegistry {

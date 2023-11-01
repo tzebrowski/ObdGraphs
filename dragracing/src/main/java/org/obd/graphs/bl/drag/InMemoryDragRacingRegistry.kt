@@ -28,17 +28,13 @@ private const val PERF_0_100_BEST = "pref.drag_race.best.0_100"
 private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
 private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
 private const val PERF_60_140_BEST = "pref.drag_race.best.60_140"
-
-
 private const val PERF_0_60_LAST = "pref.drag_race.last.0_60"
 private const val PERF_0_100_LAST = "pref.drag_race.last.0_100"
 private const val PERF_0_160_LAST = "pref.drag_race.last.0_160"
 private const val PERF_60_140_LAST = "pref.drag_race.last.60_140"
-
 private const val PERF_100_200_LAST = "pref.drag_race.last.100_200"
 
-
-internal class DragRacingResultRegistryImpl : DragRacingResultRegistry {
+internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
     private val results = DragRacingResults()
 

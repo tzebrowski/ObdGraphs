@@ -34,7 +34,7 @@ private const val SPEED_200_KM_H = 200
 
 private const val LOG_KEY = "DragRaceResult"
 
-internal class DragRacingResultsUpdater : Lifecycle {
+class DragRacingResultsUpdater : Lifecycle {
 
     private var _0_ts: Long? = null
     private var _100_ts: Long? = null
