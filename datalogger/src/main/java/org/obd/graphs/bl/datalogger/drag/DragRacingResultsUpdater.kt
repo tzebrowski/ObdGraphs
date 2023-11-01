@@ -34,7 +34,7 @@ private const val SPEED_200_KM_H = 200
 
 private const val LOG_KEY = "DragRaceResult"
 
-internal class DragRaceResultsUpdater : Lifecycle {
+internal class DragRacingResultsUpdater : Lifecycle {
 
     private var _0_ts: Long? = null
     private var _100_ts: Long? = null
@@ -46,7 +46,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
     private var result100_200: Long? = null
 
     override fun onStopped() {
-        dragRaceResultRegistry.readyToRace(false)
+        dragRacingResultRegistry.readyToRace(false)
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
@@ -62,11 +62,11 @@ internal class DragRaceResultsUpdater : Lifecycle {
                     Log.v(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
                 }
 
-                dragRaceResultRegistry.readyToRace(true)
+                dragRacingResultRegistry.readyToRace(true)
                 _0_ts = obdMetric.timestamp
 
             } else {
-                dragRaceResultRegistry.readyToRace(false)
+                dragRacingResultRegistry.readyToRace(false)
             }
 
             if (isGivenSpeed(obdMetric, SPEED_60_KM_H)) {
@@ -75,7 +75,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
 
                     _0_ts?.let { _0_ts ->
                         result0_60 = obdMetric.timestamp - _0_ts
-                        dragRaceResultRegistry.update060(result0_60!!, obdMetric.value.toInt())
+                        dragRacingResultRegistry.update060(result0_60!!, obdMetric.value.toInt())
                         Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
                     }
                 }
@@ -87,7 +87,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
                     _100_ts = obdMetric.timestamp
                     _0_ts?.let { _0_ts ->
                         result0_100 = obdMetric.timestamp - _0_ts
-                        dragRaceResultRegistry.update0100(result0_100!!, obdMetric.value.toInt())
+                        dragRacingResultRegistry.update0100(result0_100!!, obdMetric.value.toInt())
 
                         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
                             Log.v(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
@@ -99,7 +99,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
             if (result0_160 == null && isGivenSpeed(obdMetric, SPEED_160_KM_H)) {
                 _0_ts?.let { _0_ts ->
                     result0_160 = obdMetric.timestamp - _0_ts
-                    dragRaceResultRegistry.update0160(result0_160!!, obdMetric.value.toInt())
+                    dragRacingResultRegistry.update0160(result0_160!!, obdMetric.value.toInt())
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
                 }
             }
@@ -107,7 +107,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
             if (result100_200 == null && _100_ts != null && isGivenSpeed(obdMetric, SPEED_200_KM_H)) {
                 _100_ts?.let { _100_ts ->
                     result100_200 = obdMetric.timestamp - _100_ts
-                    dragRaceResultRegistry.update100200(result100_200!!, obdMetric.value.toInt())
+                    dragRacingResultRegistry.update100200(result100_200!!, obdMetric.value.toInt())
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
                 }
             }
@@ -115,7 +115,7 @@ internal class DragRaceResultsUpdater : Lifecycle {
             if (result60_140 == null && _60_ts != null && isGivenSpeed(obdMetric, SPEED_140_KM_H)) {
                 _60_ts?.let { _60_ts ->
                     result60_140 = obdMetric.timestamp - _60_ts
-                    dragRaceResultRegistry.update60140(result60_140!!, obdMetric.value.toInt())
+                    dragRacingResultRegistry.update60140(result60_140!!, obdMetric.value.toInt())
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 60-140 ${result60_140}ms")
                 }
             }
@@ -136,5 +136,5 @@ internal class DragRaceResultsUpdater : Lifecycle {
         result100_200 = null
     }
 
-    private fun isVehicleSpeedPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == dragRaceResultRegistry.getVehicleSpeedPID()
+    private fun isVehicleSpeedPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == dragRacingResultRegistry.getVehicleSpeedPID()
 }

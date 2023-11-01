@@ -19,11 +19,11 @@
 package org.obd.graphs.bl.datalogger.drag
 
 
-val dragRaceResultRegistry: DragRaceResultRegistry by lazy { DragRaceResultRegistryImpl() }
+val dragRacingResultRegistry: DragRacingResultRegistry by lazy { DragRacingResultRegistryImpl() }
 
 private const val VEHICLE_SPEED_PID_ID = 14L
-interface DragRaceResultRegistry {
-    fun getResult(): DragRaceResults
+interface DragRacingResultRegistry {
+    fun getResult(): DragRacingResults
     fun update0100(time: Long, speed: Int)
     fun update0160(time: Long, speed: Int)
     fun update060(time: Long, speed: Int)
