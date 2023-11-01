@@ -20,7 +20,7 @@ package org.obd.graphs.bl.datalogger
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import org.obd.graphs.bl.datalogger.drag.DragRacingResultsUpdater
+import org.obd.graphs.bl.drag.DragRacingResultsUpdater
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.metrics.api.model.*
 

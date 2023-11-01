@@ -23,7 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.datalogger.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings

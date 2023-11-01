@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.datalogger.drag
+package org.obd.graphs.bl.drag
 
 const val VALUE_NOT_SET = -1L
 
