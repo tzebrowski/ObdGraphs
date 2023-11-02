@@ -19,7 +19,7 @@
 package org.obd.graphs.bl.drag
 
 import android.util.Log
-import org.obd.metrics.api.model.Lifecycle
+import org.obd.graphs.MetricsProcessor
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
 import kotlin.math.min
@@ -34,7 +34,9 @@ private const val SPEED_200_KM_H = 200
 
 private const val LOG_KEY = "DragRaceResult"
 
-class DragRacingResultsUpdater : Lifecycle {
+val dragRacingResultsUpdater: MetricsProcessor = DragRacingResultsUpdater()
+
+internal class DragRacingResultsUpdater : MetricsProcessor {
 
     private var _0_ts: Long? = null
     private var _100_ts: Long? = null
@@ -53,7 +55,7 @@ class DragRacingResultsUpdater : Lifecycle {
         reset()
     }
 
-    fun postValue(obdMetric: ObdMetric) {
+    override fun postValue(obdMetric: ObdMetric) {
         if (isVehicleSpeedPID(obdMetric)) {
             if (obdMetric.value.toInt() == SPEED_0_KM_H) {
                 reset()
