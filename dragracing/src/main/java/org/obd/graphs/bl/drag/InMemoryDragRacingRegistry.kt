@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.datalogger.drag
+package org.obd.graphs.bl.drag
 
 import android.util.Log
 import org.obd.graphs.preferences.Prefs
@@ -27,47 +27,46 @@ private const val PERF_0_60_BEST = "pref.drag_race.best.0_60"
 private const val PERF_0_100_BEST = "pref.drag_race.best.0_100"
 private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
 private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
-
-
+private const val PERF_60_140_BEST = "pref.drag_race.best.60_140"
 private const val PERF_0_60_LAST = "pref.drag_race.last.0_60"
 private const val PERF_0_100_LAST = "pref.drag_race.last.0_100"
 private const val PERF_0_160_LAST = "pref.drag_race.last.0_160"
+private const val PERF_60_140_LAST = "pref.drag_race.last.60_140"
 private const val PERF_100_200_LAST = "pref.drag_race.last.100_200"
 
+internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
-internal class DragRaceResultRegistryImpl : DragRaceResultRegistry {
-
-    private val results = DragRaceResults()
+    private val results = DragRacingResults()
 
     init {
 
         Prefs.getString(PERF_0_60_BEST, null)?.let {
-            results.best._0_60ms = it.toLong()
+            results._0_60.best = it.toLong()
         }
         Prefs.getString(PERF_0_100_BEST, null)?.let {
-            results.best._0_100ms = it.toLong()
+            results._0_100.best = it.toLong()
         }
         Prefs.getString(PERF_0_160_BEST, null)?.let {
-            results.best._0_160ms = it.toLong()
+            results._0_160.best = it.toLong()
         }
 
         Prefs.getString(PERF_100_200_BEST, null)?.let {
-            results.best._100_200ms = it.toLong()
+            results._100_200.best = it.toLong()
         }
 
         Prefs.getString(PERF_0_60_LAST, null)?.let {
-            results.last._0_60ms = it.toLong()
+            results._0_60.last = it.toLong()
         }
         Prefs.getString(PERF_0_100_LAST, null)?.let {
-            results.last._0_100ms = it.toLong()
+            results._0_100.last = it.toLong()
         }
 
         Prefs.getString(PERF_0_160_LAST, null)?.let {
-            results.last._0_160ms = it.toLong()
+            results._0_160.last = it.toLong()
         }
 
         Prefs.getString(PERF_100_200_LAST, null)?.let {
-            results.last._100_200ms = it.toLong()
+            results._100_200.last = it.toLong()
         }
     }
 
@@ -75,94 +74,116 @@ internal class DragRaceResultRegistryImpl : DragRaceResultRegistry {
         results.readyToRace = value
     }
 
-    override fun update0100(time: Long, speed: Int) {
-        if (time == 0L) {
+    override fun update60140(time: Long, speed: Int) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
-            results.last._0_100ms = if (results.last._0_100ms == VALUE_NOT_SET) {
+            results._60_140.last = if (results._60_140.last == VALUE_NOT_SET) {
                 time
             } else {
-                results.current._0_100ms
+                results._60_140.current
             }
 
-            Prefs.updateString(PERF_0_100_LAST, results.last._0_100ms.toString())
+            Prefs.updateString(PERF_60_140_LAST, results._60_140.last.toString())
 
-            results.current._0_100ms = time
-            results.current._0_100speed = speed
+            results._60_140.current = time
+            results._60_140.currentSpeed = speed
 
-            if (results.best._0_100ms > time || results.best._0_100ms == VALUE_NOT_SET) {
-                results.best._0_100ms = time
+            if (results._60_140.best > time || results._60_140.best == VALUE_NOT_SET) {
+                results._60_140.best = time
+                Prefs.updateString(PERF_60_140_BEST, time.toString())
+            }
+        }
+    }
+
+    override fun update0100(time: Long, speed: Int) {
+        if (time <= 0L) {
+            Log.v(LOG_KEY, "Invalid value")
+        } else {
+            results._0_100.last = if (results._0_100.last == VALUE_NOT_SET) {
+                time
+            } else {
+                results._0_100.current
+            }
+
+            Prefs.updateString(PERF_0_100_LAST, results._0_100.last.toString())
+
+            results._0_100.current = time
+            results._0_100.currentSpeed = speed
+
+            if (results._0_100.best > time || results._0_100.best == VALUE_NOT_SET) {
+                results._0_100.best = time
                 Prefs.updateString(PERF_0_100_BEST, time.toString())
             }
         }
     }
 
     override fun update060(time: Long, speed: Int) {
-        if (time == 0L) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
-            results.last._0_60ms = if (results.last._0_60ms == VALUE_NOT_SET) {
+            results._0_60.last = if (results._0_60.last == VALUE_NOT_SET) {
                 time
             } else {
-                results.current._0_60ms
+                results._0_60.current
             }
 
-            Prefs.updateString(PERF_0_60_LAST, results.last._0_60ms.toString())
+            Prefs.updateString(PERF_0_60_LAST, results._0_60.last.toString())
 
-            results.current._0_60ms = time
-            results.current._0_60speed = speed
+            results._0_60.current = time
+            results._0_60.currentSpeed = speed
 
-            if (results.best._0_60ms > time || results.best._0_60ms == VALUE_NOT_SET) {
-                results.best._0_60ms = time
+            if (results._0_60.best > time || results._0_60.best == VALUE_NOT_SET) {
+                results._0_60.best = time
                 Prefs.updateString(PERF_0_60_BEST, time.toString())
             }
         }
     }
 
     override fun update0160(time: Long, speed: Int) {
-        if (time == 0L) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
-            results.last._0_160ms = if (results.last._0_160ms == VALUE_NOT_SET) {
+            results._0_160.last = if (results._0_160.last == VALUE_NOT_SET) {
                 time
             } else {
-                results.current._0_160ms
+                results._0_160.current
             }
 
-            Prefs.updateString(PERF_0_160_LAST, results.last._0_160ms.toString())
+            Prefs.updateString(PERF_0_160_LAST, results._0_160.last.toString())
 
-            results.current._0_160ms = time
-            results.current._0_160speed = speed
+            results._0_160.current = time
+            results._0_160.currentSpeed = speed
 
-            if (results.best._0_160ms > time || results.best._0_160ms == VALUE_NOT_SET) {
-                results.best._0_160ms = time
+            if (results._0_160.best > time || results._0_160.best == VALUE_NOT_SET) {
+                results._0_160.best = time
                 Prefs.updateString(PERF_0_160_BEST, time.toString())
             }
         }
     }
 
     override fun update100200(time: Long, speed: Int) {
-        if (time == 0L) {
+        if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
 
-            results.last._100_200ms = if (results.last._100_200ms == VALUE_NOT_SET) {
+            results._100_200.last = if (results._100_200.last == VALUE_NOT_SET) {
                 time
             } else {
-                results.current._100_200ms
+                results._100_200.current
             }
 
-            Prefs.updateString(PERF_100_200_LAST, results.last._100_200ms.toString())
+            Prefs.updateString(PERF_100_200_LAST, results._100_200.last.toString())
 
-            results.current._100_200ms = time
-            results.current._100_200speed = speed
+            results._100_200.current = time
+            results._100_200.currentSpeed = speed
 
-            if (results.best._100_200ms > time || results.best._100_200ms == VALUE_NOT_SET) {
-                results.best._100_200ms = time
+            if (results._100_200.best > time || results._100_200.best == VALUE_NOT_SET) {
+                results._100_200.best = time
                 Prefs.updateString(PERF_100_200_BEST, time.toString())
             }
         }
     }
 
-    override fun getResult(): DragRaceResults = results
+    override fun getResult(): DragRacingResults = results
 }

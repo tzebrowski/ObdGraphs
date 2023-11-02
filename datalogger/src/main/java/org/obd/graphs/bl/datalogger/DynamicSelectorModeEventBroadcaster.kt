@@ -21,10 +21,10 @@ package org.obd.graphs.bl.datalogger
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import org.obd.graphs.MetricsProcessor
 import org.obd.graphs.datalogger.BuildConfig
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
-import org.obd.metrics.api.model.Lifecycle
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.obd.ObdCommand
@@ -69,7 +69,7 @@ private class FakeMetricsBroadcaster (private val emitter: DynamicSelectorModeEv
 }
 
 
-internal class DynamicSelectorModeEventBroadcaster: Lifecycle {
+internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
     private var currentMode = -1
     private val fakeEventsBroadcaster = FakeMetricsBroadcaster(this)
     
@@ -85,7 +85,7 @@ internal class DynamicSelectorModeEventBroadcaster: Lifecycle {
         }
     }
 
-    fun postValue(obdMetric: ObdMetric) {
+    override fun postValue(obdMetric: ObdMetric) {
         if (isDynamicSelectorPID(obdMetric)) {
             Log.d(LOG_KEY,"Received=${obdMetric.value.toInt()}, current=${currentMode} ")
             if (currentMode != obdMetric.value) {

@@ -16,18 +16,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.datalogger.drag
+package org.obd.graphs.bl.drag
 
 
-val dragRaceResultRegistry: DragRaceResultRegistry by lazy { DragRaceResultRegistryImpl() }
+val dragRacingResultRegistry: DragRacingResultRegistry by lazy { InMemoryDragRacingRegistry() }
 
 private const val VEHICLE_SPEED_PID_ID = 14L
-interface DragRaceResultRegistry {
-    fun getResult(): DragRaceResults
+interface DragRacingResultRegistry {
+    fun getResult(): DragRacingResults
     fun update0100(time: Long, speed: Int)
     fun update0160(time: Long, speed: Int)
     fun update060(time: Long, speed: Int)
     fun update100200(time: Long, speed: Int)
+    fun update60140(time: Long, speed: Int)
     fun readyToRace(value: Boolean)
     fun getVehicleSpeedPID(): Long = VEHICLE_SPEED_PID_ID
 }

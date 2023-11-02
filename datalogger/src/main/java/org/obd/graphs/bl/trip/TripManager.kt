@@ -18,10 +18,9 @@
  **/
 package org.obd.graphs.bl.trip
 
-import org.obd.metrics.api.model.ObdMetric
+import org.obd.graphs.MetricsProcessor
 
-interface TripManager {
-    fun postValue(metric: ObdMetric)
+interface TripManager : MetricsProcessor {
     fun getCurrentTrip(): Trip
     fun startNewTrip(newTs: Long)
     fun saveCurrentTrip(f: () -> Unit)
