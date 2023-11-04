@@ -122,7 +122,7 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
 
         root.findViewById<Button>(R.id.pid_list_save).apply {
             setOnClickListener {
-                persistSelection()
+                persistSelection(getAdapter().data)
                 dialog?.dismiss()
                 onDialogCloseListener.invoke()
             }
@@ -181,12 +181,11 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
     }
 
 
-    private fun persistSelection() {
-        val newList = getAdapter().data
-            .filter { it.checked }
+    private fun persistSelection(list: List<PidDefinitionDetails>) {
+        val newList = list.filter { it.checked }
             .map { it.source.id.toString() }.toList()
 
-        Log.i(LOG_KEY, "Key=$key, selected PIDs=$newList")
+        Log.e(LOG_KEY, "Key=$key, selected PIDs=$newList")
 
         if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
             notifyListChanged()
@@ -209,8 +208,8 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
             }
         }
 
-        val ccc = listOfItems.filter { it.source.description.lowercase(Locale.getDefault()).contains(newText) }
-        adapter.updateData(ccc)
+        val filtered = listOfItems.filter { it.source.description.lowercase(Locale.getDefault()).contains(newText) }
+        adapter.updateData(filtered)
         adapter.notifyDataSetChanged()
     }
 
@@ -254,18 +253,23 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
             }
         }
 
-        val toSort = list.toMutableList()
-
+        var toSort = list.toMutableList()
         viewSerializer.getItemsSortOrder()?.let { order ->
-            toSort.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
-                if (order.containsKey(m1.source.id) && order.containsKey(
-                        m2.source.id
-                    )
-                ) {
-                    order[m1.source.id]!!
-                        .compareTo(order[m2.source.id]!!)
-                } else {
-                    -1
+            if (order.isEmpty()){
+                toSort = toSort.sortedBy { !it.checked }.toMutableList()
+                viewSerializer.store(toSort.map {it.source.id})
+                notifyListChanged()
+            }else {
+                toSort.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
+                    if (order.containsKey(m1.source.id) && order.containsKey(
+                            m2.source.id
+                        )
+                    ) {
+                        order[m1.source.id]!!
+                            .compareTo(order[m2.source.id]!!)
+                    } else {
+                        -1
+                    }
                 }
             }
         }
