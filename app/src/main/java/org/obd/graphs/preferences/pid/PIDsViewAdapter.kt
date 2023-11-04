@@ -59,19 +59,20 @@ class PIDsViewAdapter internal constructor(
         position: Int
     ) {
         data.elementAt(position).run {
-            holder.mode.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
+            holder.file.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
+            holder.module.setText(source.module, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
             holder.name.setText(source.description, COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 1f)
 
             if (source.stable) {
-                holder.status.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.8f)
+                holder.status.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.7f)
             } else {
-                holder.status.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.8f)
+                holder.status.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
             }
 
             if (supported) {
-                holder.supported.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.8f)
+                holder.supported.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.7f)
             } else {
-                holder.supported.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.8f)
+                holder.supported.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
             }
 
             holder.selected.isChecked = checked
@@ -108,7 +109,8 @@ class PIDsViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mode: TextView = itemView.findViewById(R.id.pid_file)
+        val file: TextView = itemView.findViewById(R.id.pid_file)
+        val module: TextView = itemView.findViewById(R.id.pid_module)
         val name: TextView = itemView.findViewById(R.id.pid_name)
         val status: TextView = itemView.findViewById(R.id.pid_status)
         val selected: CheckBox = itemView.findViewById(R.id.pid_selected)

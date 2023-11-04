@@ -32,28 +32,41 @@
                 android:paddingEnd="0dp"
                 android:text=""
                 android:textColor="@color/gray_dark"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
+
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1.0"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_module"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
                 android:text="@string/pids_file"
                 android:textColor="@color/gray_dark"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1.0"
+                android:layout_weight="1.5"
                 android:gravity="start"
                 android:text="@string/pids_name"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_dark"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -63,7 +76,7 @@
                 android:text="@string/pids_stable"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_dark"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -73,7 +86,7 @@
                 android:text="@string/pids_supported"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_dark"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
 
@@ -84,7 +97,7 @@
                 android:text="@string/pids_alert"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_dark"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </TableRow>
         <TableRow

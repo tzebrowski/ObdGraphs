@@ -343,8 +343,10 @@
 
     <string name="pids_stable">Stable</string>
     <string name="pids_alert">Alert\nrule</string>
-    <string name="pids_name">Name</string>
+    <string name="pids_name">PID Name</string>
     <string name="pids_file">File</string>
+    <string name="pids_module">Module</string>
+
     <string name="pref.usb_event_receiver_activity_label">Grant permissions to access USB device</string>
     <string name="virtual_screen_1">1</string>
     <string name="virtual_screen_2">2</string>

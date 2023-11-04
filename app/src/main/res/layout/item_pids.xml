@@ -31,9 +31,20 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/pid_module"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_module"
+                android:textColor="@color/gray_dark"
+                android:textSize="14sp" />
+
+            <TextView
                 android:id="@+id/pid_file"
                 android:layout_width="0dp"
-                android:layout_weight="1.0"
+                android:layout_weight="0.5"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
@@ -44,7 +55,7 @@
             <TextView
                 android:id="@+id/pid_name"
                 android:layout_width="0dp"
-                android:layout_weight="1.0"
+                android:layout_weight="1.5"
                 android:gravity="start"
                 android:text="@string/pids_name"
                 android:textAllCaps="false"
