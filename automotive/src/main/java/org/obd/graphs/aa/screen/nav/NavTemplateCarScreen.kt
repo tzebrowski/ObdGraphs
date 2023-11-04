@@ -69,7 +69,6 @@ internal class NavTemplateCarScreen(
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateSurfaceRender()
 
-
                 HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
                     applyMetricsFilter()
                     surfaceController.renderFrame()
@@ -92,17 +91,21 @@ internal class NavTemplateCarScreen(
                     cancelRenderingTask()
                     carContext.finishCarApp()
                 }
+
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
                     Log.v(LOG_KEY, "Main activity has been destroyed.")
                     invalidate()
                 }
+
                 MAIN_ACTIVITY_EVENT_PAUSE -> {
                     Log.v(LOG_KEY, "Main activity is going to the background.")
                     invalidate()
                 }
+
                 SURFACE_DESTROYED_EVENT -> {
                     cancelRenderingTask()
                 }
+
                 SURFACE_AREA_CHANGED_EVENT -> {
                     Log.v(LOG_KEY,"Surface area changed")
                     invalidate()
@@ -144,13 +147,13 @@ internal class NavTemplateCarScreen(
                 PROFILE_CHANGED_EVENT -> {
                     applyMetricsFilter()
                     surfaceController.allocateSurfaceRender()
-                    invalidate()
+                    surfaceController.renderFrame()
                 }
 
                 PROFILE_RESET_EVENT -> {
                     applyMetricsFilter()
                     surfaceController.allocateSurfaceRender()
-                    invalidate()
+                    surfaceController.renderFrame()
                 }
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
