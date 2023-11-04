@@ -38,7 +38,7 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="0.5"
+                android:layout_weight="0.7"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
@@ -50,7 +50,7 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="0.5"
+                android:layout_weight="0.7"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
