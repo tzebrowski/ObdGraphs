@@ -249,7 +249,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
         val detailsViewVisible = source == "low" || source == "high"
         PIDsListPreferenceDialog(key = key, source = source,
-            detailsViewVisible = detailsViewVisible,
+            detailsViewEnabled = detailsViewVisible,
             onDialogCloseListener = onDialogCloseListener)
             .show(parentFragmentManager, null)
     }

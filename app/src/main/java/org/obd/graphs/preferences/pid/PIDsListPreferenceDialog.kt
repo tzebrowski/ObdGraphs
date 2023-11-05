@@ -55,7 +55,7 @@ private const val LOG_KEY = "PIDsDialog"
 
 data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean = true)
 
-class PIDsListPreferenceDialog(private val key: String, private val detailsViewVisible: Boolean = false,
+class PIDsListPreferenceDialog(private val key: String, private val detailsViewEnabled: Boolean = false,
                                private val source: String, private val onDialogCloseListener: (() -> Unit) = {}) :
     DialogFragment() {
 
@@ -105,7 +105,7 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewV
         val viewSerializer = ViewPreferencesSerializer("$key.view.settings")
         listOfItems = buildInitialList(viewSerializer)
 
-        val adapter = PIDsViewAdapter(root, context, listOfItems, detailsViewVisible)
+        val adapter = PIDsViewAdapter(root, context, listOfItems, detailsViewEnabled)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -113,7 +113,7 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewV
         attachDragManager(viewSerializer, recyclerView)
 
         root.findViewById<TableLayout>(R.id.details_view).apply {
-            visibility = if (detailsViewVisible) View.VISIBLE else View.GONE
+            visibility = if (detailsViewEnabled) View.VISIBLE else View.GONE
         }
 
         root.findViewById<Button>(R.id.pid_list_close_window).apply {
