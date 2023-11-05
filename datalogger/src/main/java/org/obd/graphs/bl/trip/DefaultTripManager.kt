@@ -41,6 +41,8 @@ private const val LOGGER_TAG = "TripManager"
 private const val MIN_TRIP_LENGTH = 5
 private const val TRIP_DIRECTORY = "trips"
 
+private const val TRIP_FILE_PREFIX = "trip"
+
 internal class DefaultTripManager : TripManager {
 
     private val valueScaler = ValueScaler()
@@ -110,7 +112,7 @@ internal class DefaultTripManager : TripManager {
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val tripStartTs = trip.startTs
 
-                val filter = "trip-${getSelectedProfile()}-${tripStartTs}"
+                val filter = "$TRIP_FILE_PREFIX-${getSelectedProfile()}-${tripStartTs}"
                 val alreadySaved = findAllTripsBy(filter)
 
                 if (alreadySaved.isNotEmpty()) {
@@ -138,7 +140,7 @@ internal class DefaultTripManager : TripManager {
                             tripModelSerializer.serializer.writeValueAsString(trip)
 
                         val fileName =
-                            "trip-${getSelectedProfile()}-${tripStartTs}-${tripLength}.json"
+                            "$TRIP_FILE_PREFIX-${getSelectedProfile()}-${tripStartTs}-${tripLength}.json"
                         Log.i(
                             LOGGER_TAG,
                             "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
@@ -159,21 +161,29 @@ internal class DefaultTripManager : TripManager {
     }
 
     override fun findAllTripsBy(filter: String): MutableCollection<TripFileDesc> {
-        Log.i(LOGGER_TAG, "Find all trips by filter: '$filter'")
+        Log.i(LOGGER_TAG, "Finds all trips by filter: '$filter' and profile=${getSelectedProfile()}")
 
         val profiles = getProfiles()
         val files = File(getTripsDirectory(getContext()!!)).list()
         if (files == null) {
-            Log.i(LOGGER_TAG, "Find all trips by filter: '${filter}'. Result size: 0")
+            Log.i(LOGGER_TAG, "No files were found in the trips directory.")
             return mutableListOf()
         } else {
             val result = files
                 .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
-                .filter { it.startsWith("trip_") || it.contains("") }
-                .filter { it.substring(0, it.length - 5).split("-").size > 3 }
-                .filter { it.contains(getSelectedProfile()) }
+                .filter { it.startsWith("${TRIP_FILE_PREFIX}_") || it.startsWith("$TRIP_FILE_PREFIX-") }
+                .filter {
+                    it.contains("${getSelectedProfile()}-") }
+                .filter {
+                    try {
+                        decodeTripName(it).size > 3
+                    }catch (e: Throwable){
+                        false
+                    }
+                }
                 .mapNotNull { fileName ->
-                    val p = fileName.substring(0, fileName.length - 5).split("-")
+                    Log.d(LOGGER_TAG,"Found trip which fits the conditions: $fileName")
+                    val p = decodeTripName(fileName)
                     val profileId = p[1]
                     val profileLabel = profiles[profileId]!!
 
@@ -187,10 +197,12 @@ internal class DefaultTripManager : TripManager {
                 }
                 .sortedByDescending { it.startTime.toLongOrNull() }
                 .toMutableList()
-            Log.i(LOGGER_TAG, "Find all trips by filter: '${filter}'. Result size: ${result.size}")
+            Log.i(LOGGER_TAG, "Found trips by filter: '${filter}' for profile=${getSelectedProfile()}. Result size: ${result.size}")
             return result
         }
     }
+
+    private fun decodeTripName(fileName: String) = fileName.substring(0, fileName.length - 5).split("-")
 
     override fun deleteTrip(trip: TripFileDesc) {
         Log.i(LOGGER_TAG, "Deleting '${trip.fileName}' from the storage.")
