@@ -343,6 +343,8 @@
 
     <string name="pids_stable">Stable</string>
     <string name="pids_alert">Alert\nrule</string>
+    <string name="pids_formula">Calculation\nformula</string>
+
     <string name="pids_name">PID Name</string>
     <string name="pids_file">File</string>
     <string name="pids_module">Module</string>

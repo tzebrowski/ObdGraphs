@@ -22,10 +22,14 @@ package org.obd.graphs.preferences.pid
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
@@ -36,9 +40,11 @@ import org.obd.graphs.ui.common.setText
 import java.util.*
 
 class PIDsViewAdapter internal constructor(
+    private val root: View,
     context: Context?,
-    var data: List<PidDefinitionDetails>
-) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>() {
+    var data: List<PidDefinitionDetails>,
+    private val detailsViewVisible: Boolean
+    ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>(){
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -60,7 +66,6 @@ class PIDsViewAdapter internal constructor(
     ) {
         data.elementAt(position).run {
             holder.file.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
-            holder.module.setText(source.module, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
             holder.name.setText(source.description, COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 1f)
 
             if (source.stable) {
@@ -81,22 +86,7 @@ class PIDsViewAdapter internal constructor(
                     checked = isChecked
                 }
             }
-            val lowerThreshold = source.alert.lowerThreshold
-            val upperThreshold = source.alert.upperThreshold
-            if (lowerThreshold != null || upperThreshold != null){
-                var text =  ""
-                if (lowerThreshold != null){
-                    text += " x<$lowerThreshold"
-                }
 
-                if (upperThreshold != null){
-                    text += " x>$upperThreshold"
-                }
-
-                holder.alert.setText(text, Color.GRAY, Typeface.NORMAL, 0.6f)
-            } else {
-                holder.alert.setText("", Color.GRAY, Typeface.NORMAL, 0.6f)
-            }
         }
     }
 
@@ -108,14 +98,75 @@ class PIDsViewAdapter internal constructor(
         return data.size
     }
 
+   private val formulaTextWatcher =  object: TextWatcher {
+        var pid: PidDefinitionDetails? = null
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+            pid?.let {
+                it.source.formula  = editable.toString()
+                Log.e("TextWatcher", "Setting new formula=${editable.toString()}")
+            }
+        }
+    }
+
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val file: TextView = itemView.findViewById(R.id.pid_file)
-        val module: TextView = itemView.findViewById(R.id.pid_module)
         val name: TextView = itemView.findViewById(R.id.pid_name)
         val status: TextView = itemView.findViewById(R.id.pid_status)
         val selected: CheckBox = itemView.findViewById(R.id.pid_selected)
-        val alert: TextView = itemView.findViewById(R.id.pid_alert)
         val supported: TextView = itemView.findViewById(R.id.pid_supported)
 
+        init {
+            if (detailsViewVisible) {
+                name.setOnClickListener {
+
+                    val item = data[adapterPosition]
+                    notifyItemChanged(adapterPosition)
+
+                    itemView.isSelected = true
+
+                    val pidDetailsModule = root.findViewById<TextView>(R.id.pid_details_module)
+                    pidDetailsModule.text = item.source.module
+
+                    val pidDetailsDescription = root.findViewById<TextView>(R.id.pid_details_name)
+                    pidDetailsDescription.text = item.source.description
+
+                    val pidDetailsCalculationFormula = root.findViewById<EditText>(R.id.pid_details_calculation_formula)
+                    pidDetailsCalculationFormula.removeTextChangedListener(formulaTextWatcher)
+                    pidDetailsCalculationFormula.setText(item.source.formula)
+                    pidDetailsCalculationFormula.clearFocus()
+                    formulaTextWatcher.pid = item
+                    pidDetailsCalculationFormula.addTextChangedListener(formulaTextWatcher)
+
+                    val pidDetailsFile = root.findViewById<TextView>(R.id.pid_details_file)
+                    pidDetailsFile.text = item.source.resourceFile
+                    val pidDetailsAlert = root.findViewById<TextView>(R.id.pid_details_alert_rule)
+
+                    val lowerThreshold = item.source.alert.lowerThreshold
+                    val upperThreshold = item.source.alert.upperThreshold
+                    if (lowerThreshold != null || upperThreshold != null) {
+                        var text = ""
+                        if (lowerThreshold != null) {
+                            text += " x<$lowerThreshold"
+                        }
+
+                        if (upperThreshold != null) {
+                            text += " x>$upperThreshold"
+                        }
+                        pidDetailsAlert.text = text
+                    } else {
+                        pidDetailsAlert.text = ""
+                    }
+
+                }
+            }
+        }
     }
 }

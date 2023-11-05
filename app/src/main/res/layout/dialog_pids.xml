@@ -4,19 +4,17 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
-    <TableLayout android:background="@color/white"
+    <TableLayout
+        android:layout_marginBottom="2dp"
         android:id="@+id/tablelayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/white">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/custom_dialog_layout_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -34,19 +32,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="0.7"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text="@string/pids_module"
-                android:textColor="@color/gray_dark"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
 
             <TextView
                 android:layout_width="0dp"
@@ -88,22 +73,13 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:text="@string/pids_alert"
-                android:textAllCaps="false"
-                android:textColor="@color/gray_dark"
-                android:textSize="12sp"
-                android:textStyle="bold" />
         </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-             <View
+            android:layout_height="wrap_content">
+
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="2dip"
                 android:layout_weight="2"
@@ -116,48 +92,193 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/button_panel"
-        android:layout_below="@id/tablelayout"/>
+        android:layout_height="400dp"
+        android:layout_below="@id/tablelayout"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="2dp" />
 
+    <TableLayout
+        android:background="@color/white"
+        android:id="@+id/details_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recycler_view">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_module"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pid_details_module"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/gray_dark"
+                android:textSize="14sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_file"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pid_details_file"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/gray_dark"
+                android:textSize="14sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_name"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pid_details_name"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/rainbow_indigo"
+                android:textSize="14sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_formula"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/pid_details_calculation_formula"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/gray_dark"
+                android:textSize="14sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_alert"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pid_details_alert_rule"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp" />
+        </TableRow>
+    </TableLayout>
 
     <LinearLayout
         android:id="@+id/button_panel"
-        android:gravity="end"
-        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/details_view"
+        android:gravity="end"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/pid_list_select_all"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_select_all_action"
-            android:textSize="12sp"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/pid_list_deselect_all"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_deselect_all_action"
-            android:textSize="12sp"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/pid_list_close_window"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_close_window_action"
-            android:textSize="12sp"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/pid_list_save"
@@ -168,8 +289,5 @@
             android:text="@string/dialog_save_action"
             android:textSize="12sp" />
     </LinearLayout>
-
-
-
 </RelativeLayout>
 

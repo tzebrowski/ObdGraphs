@@ -63,6 +63,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onDisplayPreferenceDialog(preference: Preference?) {
 
+
         when (preference) {
             is TripsListPreferences -> {
                 TripsPreferenceDialog().show(parentFragmentManager, null)
@@ -246,7 +247,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
-        PIDsListPreferenceDialog(key = key, source = source, onDialogCloseListener = onDialogCloseListener)
+        val detailsViewVisible = source == "low" || source == "high"
+        PIDsListPreferenceDialog(key = key, source = source,
+            detailsViewVisible = detailsViewVisible,
+            onDialogCloseListener = onDialogCloseListener)
             .show(parentFragmentManager, null)
     }
 }

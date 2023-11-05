@@ -30,16 +30,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/pid_module"
-                android:layout_width="0dp"
-                android:layout_weight="0.7"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text="@string/pids_module"
-                android:textColor="@color/gray_dark"
-                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/pid_file"
@@ -82,16 +72,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="14sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/pid_alert"
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:textAllCaps="false"
-                android:textColor="@color/gray_light"
-                android:textSize="14sp"/>
-
         </TableRow>
 
         <TableRow

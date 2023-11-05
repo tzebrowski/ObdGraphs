@@ -24,11 +24,9 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.Button
+import android.widget.TableLayout
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
@@ -57,7 +55,8 @@ private const val LOG_KEY = "PIDsDialog"
 
 data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean = true)
 
-class PIDsListPreferenceDialog(private val key: String, private val source: String, private val onDialogCloseListener: (() -> Unit) = {}) :
+class PIDsListPreferenceDialog(private val key: String, private val detailsViewVisible: Boolean = false,
+                               private val source: String, private val onDialogCloseListener: (() -> Unit) = {}) :
     DialogFragment() {
 
     private lateinit var root: View
@@ -106,12 +105,16 @@ class PIDsListPreferenceDialog(private val key: String, private val source: Stri
         val viewSerializer = ViewPreferencesSerializer("$key.view.settings")
         listOfItems = buildInitialList(viewSerializer)
 
-        val adapter = PIDsViewAdapter(context, listOfItems)
+        val adapter = PIDsViewAdapter(root, context, listOfItems, detailsViewVisible)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
         attachDragManager(viewSerializer, recyclerView)
+
+        root.findViewById<TableLayout>(R.id.details_view).apply {
+            visibility = if (detailsViewVisible) View.VISIBLE else View.GONE
+        }
 
         root.findViewById<Button>(R.id.pid_list_close_window).apply {
             setOnClickListener {
