@@ -263,16 +263,20 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewV
                 viewSerializer.store(toSort.map {it.source.id})
                 notifyListChanged()
             }else {
-                toSort.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
-                    if (order.containsKey(m1.source.id) && order.containsKey(
-                            m2.source.id
-                        )
-                    ) {
-                        order[m1.source.id]!!
-                            .compareTo(order[m2.source.id]!!)
-                    } else {
-                        -1
+                try {
+                    toSort.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
+                        if (order.containsKey(m1.source.id) && order.containsKey(
+                                m2.source.id
+                            )
+                        ) {
+                            order[m1.source.id]!!
+                                .compareTo(order[m2.source.id]!!)
+                        } else {
+                            -1
+                        }
                     }
+                }catch (e: java.lang.IllegalArgumentException){
+                    Log.e(LOG_KEY, "Failed to sort PIDs",e)
                 }
             }
         }
