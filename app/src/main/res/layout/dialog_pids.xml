@@ -64,15 +64,7 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:text="@string/pids_supported"
-                android:textAllCaps="false"
-                android:textColor="@color/gray_dark"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+
         </TableRow>
 
         <TableRow
@@ -107,9 +99,7 @@
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-
             <TextView
-
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="start"
@@ -202,6 +192,7 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:inputType="text"
                 android:id="@+id/pid_details_calculation_formula"
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -230,6 +221,33 @@
 
             <TextView
                 android:id="@+id/pid_details_alert_rule"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_supported"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pid_details_supported"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="start"

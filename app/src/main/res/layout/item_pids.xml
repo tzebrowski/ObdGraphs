@@ -61,17 +61,6 @@
                 android:textAllCaps="false"
                 android:textColor="@color/gray_light"
                 android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/pid_supported"
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:text="@string/pids_supported"
-                android:textAllCaps="false"
-                android:textColor="@color/gray_dark"
-                android:textSize="14sp"
-                android:textStyle="bold" />
         </TableRow>
 
         <TableRow

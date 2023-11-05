@@ -74,19 +74,12 @@ class PIDsViewAdapter internal constructor(
                 holder.status.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
             }
 
-            if (supported) {
-                holder.supported.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.7f)
-            } else {
-                holder.supported.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
-            }
-
             holder.selected.isChecked = checked
             holder.selected.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (buttonView.isShown) {
                     checked = isChecked
                 }
             }
-
         }
     }
 
@@ -121,7 +114,6 @@ class PIDsViewAdapter internal constructor(
         val name: TextView = itemView.findViewById(R.id.pid_name)
         val status: TextView = itemView.findViewById(R.id.pid_status)
         val selected: CheckBox = itemView.findViewById(R.id.pid_selected)
-        val supported: TextView = itemView.findViewById(R.id.pid_supported)
 
         init {
             if (detailsViewVisible) {
@@ -165,6 +157,12 @@ class PIDsViewAdapter internal constructor(
                         pidDetailsAlert.text = ""
                     }
 
+                    val pidDetailsSortedMap = root.findViewById<TextView>(R.id.pid_details_supported)
+                    if (item.supported){
+                        pidDetailsSortedMap.text = "Yes"
+                    } else {
+                        pidDetailsSortedMap.text = "No"
+                    }
                 }
             }
         }
