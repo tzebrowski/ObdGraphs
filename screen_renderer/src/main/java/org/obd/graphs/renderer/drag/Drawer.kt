@@ -41,7 +41,7 @@ private const val readyToStartText =  "Ready to start"
 
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
-    var screenRefreshCounter = 0
+    var readyToRaceScreenRefreshCounter = 0
 
     inline fun drawDragRaceResults(
         canvas: Canvas,
@@ -107,8 +107,9 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             )
         }
 
+
         if (dragRacingResults.readyToRace){
-            if (screenRefreshCounter%4 == 0) {
+            if (readyToRaceScreenRefreshCounter%4 == 0) {
                 val tt = if (settings.getDragRacingSettings().vehicleSpeedEnabled) 24f else 12f
                 val ll = getTextWidth(readyToStartText, titlePaint)
                 drawText(
@@ -122,9 +123,9 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             }
             top1 += if (settings.getDragRacingSettings().vehicleSpeedEnabled) 0 else 20
 
-            screenRefreshCounter++
+            readyToRaceScreenRefreshCounter++
         } else {
-            screenRefreshCounter = 0
+            readyToRaceScreenRefreshCounter = 0
         }
 
         if (settings.getDragRacingSettings().vehicleSpeedEnabled) {

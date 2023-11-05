@@ -817,9 +817,15 @@
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"
+                        android:defaultValue="false"
+                        android:key="pref.aa.drag_race.shift_lights.enabled"
+                        android:title="@string/pref.aa.performance_meter.shift_lights_enabled" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.aa.drag_race.vehicle_speed.enabled"
-                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed_measurement" />
+                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"

@@ -28,6 +28,7 @@ data class DragRacingEntry(
 )
 
 data class DragRacingResults(
+    var enableShiftLights: Boolean = false,
     var readyToRace: Boolean = false,
     var _0_100: DragRacingEntry = DragRacingEntry(),
     var _0_60: DragRacingEntry = DragRacingEntry(),

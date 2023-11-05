@@ -111,7 +111,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
     fun drawStatusBar(canvas: Canvas,top: Float, left: Float, fps: Fps): Float {
 
         var text = statusLabel
-        var marginLeft = getMarginLeft(left)
+        var marginLeft = left
 
         drawText(
             canvas,

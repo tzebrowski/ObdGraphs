@@ -36,6 +36,8 @@ private const val LOG_KEY = "DragRaceResult"
 
 val dragRacingResultsUpdater: MetricsProcessor = DragRacingResultsUpdater()
 
+private const val SHIFT_LIGHTS_THRESHOLD = 2000
+
 internal class DragRacingResultsUpdater : MetricsProcessor {
 
     private var _0_ts: Long? = null
@@ -49,6 +51,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
 
     override fun onStopped() {
         dragRacingResultRegistry.readyToRace(false)
+        dragRacingResultRegistry.enableShiftLights(false)
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
@@ -56,72 +59,77 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
     }
 
     override fun postValue(obdMetric: ObdMetric) {
-        if (isVehicleSpeedPID(obdMetric)) {
-            if (obdMetric.value.toInt() == SPEED_0_KM_H) {
-                reset()
 
-                if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
-                    Log.v(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
-                }
+        if (isEngineRpmPID(obdMetric)){
+            dragRacingResultRegistry.enableShiftLights(obdMetric.value.toInt() > SHIFT_LIGHTS_THRESHOLD)
+        } else {
+            if (isVehicleSpeedPID(obdMetric)) {
+                if (obdMetric.value.toInt() == SPEED_0_KM_H) {
+                    reset()
 
-                dragRacingResultRegistry.readyToRace(true)
-                _0_ts = obdMetric.timestamp
-
-            } else {
-                dragRacingResultRegistry.readyToRace(false)
-            }
-
-            if (isGivenSpeed(obdMetric, SPEED_60_KM_H)) {
-                if (result0_60 == null) {
-                    _60_ts = obdMetric.timestamp
-
-                    _0_ts?.let { _0_ts ->
-                        result0_60 = obdMetric.timestamp - _0_ts
-                        dragRacingResultRegistry.update060(result0_60!!, obdMetric.value.toInt())
-                        Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
+                    if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                        Log.v(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
                     }
+
+                    dragRacingResultRegistry.readyToRace(true)
+                    _0_ts = obdMetric.timestamp
+
+                } else {
+                    dragRacingResultRegistry.readyToRace(false)
                 }
-            }
 
+                if (isGivenSpeed(obdMetric, SPEED_60_KM_H)) {
+                    if (result0_60 == null) {
+                        _60_ts = obdMetric.timestamp
 
-            if (isGivenSpeed(obdMetric, SPEED_100_KM_H)) {
-                if (result0_100 == null) {
-                    _100_ts = obdMetric.timestamp
-                    _0_ts?.let { _0_ts ->
-                        result0_100 = obdMetric.timestamp - _0_ts
-                        dragRacingResultRegistry.update0100(result0_100!!, obdMetric.value.toInt())
-
-                        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                            Log.v(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
+                        _0_ts?.let { _0_ts ->
+                            result0_60 = obdMetric.timestamp - _0_ts
+                            dragRacingResultRegistry.update060(result0_60!!, obdMetric.value.toInt())
+                            Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
                         }
                     }
                 }
-            }
 
-            if (result0_160 == null && isGivenSpeed(obdMetric, SPEED_160_KM_H)) {
-                _0_ts?.let { _0_ts ->
-                    result0_160 = obdMetric.timestamp - _0_ts
-                    dragRacingResultRegistry.update0160(result0_160!!, obdMetric.value.toInt())
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
+
+                if (isGivenSpeed(obdMetric, SPEED_100_KM_H)) {
+                    if (result0_100 == null) {
+                        _100_ts = obdMetric.timestamp
+                        _0_ts?.let { _0_ts ->
+                            result0_100 = obdMetric.timestamp - _0_ts
+                            dragRacingResultRegistry.update0100(result0_100!!, obdMetric.value.toInt())
+
+                            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                                Log.v(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
+                            }
+                        }
+                    }
                 }
-            }
 
-            if (result100_200 == null && _100_ts != null && isGivenSpeed(obdMetric, SPEED_200_KM_H)) {
-                _100_ts?.let { _100_ts ->
-                    result100_200 = obdMetric.timestamp - _100_ts
-                    dragRacingResultRegistry.update100200(result100_200!!, obdMetric.value.toInt())
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
+                if (result0_160 == null && isGivenSpeed(obdMetric, SPEED_160_KM_H)) {
+                    _0_ts?.let { _0_ts ->
+                        result0_160 = obdMetric.timestamp - _0_ts
+                        dragRacingResultRegistry.update0160(result0_160!!, obdMetric.value.toInt())
+                        Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
+                    }
                 }
-            }
 
-            if (result60_140 == null && _60_ts != null && isGivenSpeed(obdMetric, SPEED_140_KM_H)) {
-                _60_ts?.let { _60_ts ->
-                    result60_140 = obdMetric.timestamp - _60_ts
-                    dragRacingResultRegistry.update60140(result60_140!!, obdMetric.value.toInt())
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 60-140 ${result60_140}ms")
+                if (result100_200 == null && _100_ts != null && isGivenSpeed(obdMetric, SPEED_200_KM_H)) {
+                    _100_ts?.let { _100_ts ->
+                        result100_200 = obdMetric.timestamp - _100_ts
+                        dragRacingResultRegistry.update100200(result100_200!!, obdMetric.value.toInt())
+                        Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
+                    }
                 }
-            }
 
+                if (result60_140 == null && _60_ts != null && isGivenSpeed(obdMetric, SPEED_140_KM_H)) {
+                    _60_ts?.let { _60_ts ->
+                        result60_140 = obdMetric.timestamp - _60_ts
+                        dragRacingResultRegistry.update60140(result60_140!!, obdMetric.value.toInt())
+                        Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 60-140 ${result60_140}ms")
+                    }
+                }
+
+            }
         }
     }
 
@@ -139,4 +147,6 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
     }
 
     private fun isVehicleSpeedPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == dragRacingResultRegistry.getVehicleSpeedPID()
+    private fun isEngineRpmPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == dragRacingResultRegistry.getEngineRpmPID()
+
 }

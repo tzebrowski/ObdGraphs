@@ -61,10 +61,10 @@ internal class GaugeSurfaceRenderer(
             var top = getDrawTop(area)
 
             if (settings.isStatusPanelEnabled()) {
-                drawer.drawStatusBar(canvas,top, area.left.toFloat(), fps)
-                top += 4
                 val left = drawer.getMarginLeft(area.left.toFloat())
-                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                drawer.drawStatusBar(canvas,top, left, fps)
+                top += 4
+               drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 10
             }
             when (metrics.size) {
