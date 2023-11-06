@@ -74,6 +74,10 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         results.readyToRace = value
     }
 
+    override fun enableShiftLights(value: Boolean) {
+        results.enableShiftLights  = value
+    }
+
     override fun update60140(time: Long, speed: Int) {
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
