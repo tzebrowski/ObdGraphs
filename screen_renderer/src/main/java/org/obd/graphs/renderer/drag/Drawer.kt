@@ -38,7 +38,7 @@ private const val NEW_MIN = 0.6f
 const val MARGIN_END = 30
 
 private const val SHIFT_LIGHTS_MAX_SEGMENTS = 12
-const val SHIFT_LIGHTS_WIDTH = 50
+const val SHIFT_LIGHTS_WIDTH = 30
 
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
@@ -50,48 +50,52 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         canvas: Canvas,
         area: Rect,
         color: Int = settings.colorTheme().progressColor,
-        shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH
+        shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH,
+        blinking: Boolean = false
     ) {
         val segmentHeight = area.height().toFloat() / SHIFT_LIGHTS_MAX_SEGMENTS
         val leftMargin = 4f
         val topMargin = 10f
 
         shiftLightPaint.color = Color.WHITE
-
         for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {
 
             val top = area.top + (i * segmentHeight)
             val bottom = top + segmentHeight - topMargin
 
-            canvas.drawRect(leftMargin, top, area.left.toFloat(), bottom, shiftLightPaint)
-            val left = area.width().toFloat() + shiftLightsWidth - leftMargin
+            canvas.drawRect(area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                bottom, shiftLightPaint)
 
+            val left = area.left +  area.width().toFloat() - leftMargin
             canvas.drawRect(
                 left, top, left + shiftLightsWidth,
                 bottom, shiftLightPaint
             )
         }
+        if (blinking) {
+            shiftLightPaint.color = color
 
-        shiftLightPaint.color = color
+            for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
 
-        for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
+                val top = area.top + (i * segmentHeight)
+                val bottom = top + segmentHeight - topMargin
 
-            val top = area.top + (i * segmentHeight)
-            val bottom = top + segmentHeight - topMargin
+                canvas.drawRect(area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                    bottom, shiftLightPaint)
 
-            canvas.drawRect(leftMargin, top, area.left.toFloat(), bottom, shiftLightPaint)
-            val left = area.width().toFloat() + shiftLightsWidth - leftMargin
+                val left = area.left +  area.width().toFloat() - leftMargin
 
-            canvas.drawRect(
-                left, top, left + shiftLightsWidth,
-                bottom, shiftLightPaint
-            )
-        }
+                canvas.drawRect(
+                    left, top, left + shiftLightsWidth,
+                    bottom, shiftLightPaint
+                )
+            }
 
-        segmentCounter--
+            segmentCounter--
 
-        if (segmentCounter == 0){
-            segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
+            if (segmentCounter == 0) {
+                segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
+            }
         }
     }
 

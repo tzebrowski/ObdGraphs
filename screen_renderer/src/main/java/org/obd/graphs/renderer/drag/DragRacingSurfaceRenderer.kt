@@ -54,21 +54,24 @@ internal class DragRacingSurfaceRenderer(
         drawArea?.let { it ->
 
             val dragRaceResults = dragRacingResultRegistry.getResult()
-
             drawer.drawBackground(canvas, it)
 
-            val shiftLight = isShiftLight(dragRaceResults)
-
-            val area = getArea(it, canvas, if (shiftLight || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0)
+            val margin = if (settings.getDragRacingSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
+            val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
             var left = drawer.getMarginLeft(area.left.toFloat())
 
-            if (shiftLight) {
-                drawer.drawShiftLights(canvas, area)
+            if (settings.getDragRacingSettings().shiftLightsEnabled) {
+                // permanent white boxes
+                drawer.drawShiftLights(canvas, area, blinking = false)
+            }
+
+            if (isShiftLight(dragRaceResults)) {
+                drawer.drawShiftLights(canvas, area, blinking = true)
             }
 
             if (dragRaceResults.readyToRace){
-                drawer.drawShiftLights(canvas, area, color = Color.GREEN)
+                drawer.drawShiftLights(canvas, area, color = Color.GREEN, blinking = true)
             }
 
             left += 5
