@@ -39,13 +39,16 @@ const val MARGIN_END = 30
 private const val readyToStartText =  "Ready to start"
 const val SHIFT_LIGHTS_WIDTH = 40
 
+private const val MAX_SEGMENTS = 6
+
 
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
     private var readyToRaceScreenRefreshCounter = 0
-
     private val shiftLightPaint = Paint()
     private var shiftLghtsCounter = 0
+
+    private var segmentCounter = 1
 
 
     inline fun drawShiftLights(
@@ -59,12 +62,31 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             shiftLightPaint.color = settings.colorTheme().progressColor
         }
 
-        canvas.drawRect(0f, area.top.toFloat(), area.left.toFloat(), area.bottom.toFloat(), shiftLightPaint)
-        val left = area.width().toFloat() + SHIFT_LIGHTS_WIDTH
-        canvas.drawRect(
-            left , area.top.toFloat(), left + SHIFT_LIGHTS_WIDTH,
-            area.bottom.toFloat(), shiftLightPaint
-        )
+        val segmentHeight = area.height().toFloat() / 5
+        val leftMargin = 2f
+        val topMargin = 12f
+
+
+        segmentCounter++
+
+        for (i in segmentCounter..MAX_SEGMENTS) {
+
+            val top = (i * segmentHeight)
+            val bottom = top + segmentHeight - topMargin
+
+            canvas.drawRect(leftMargin, top, area.left.toFloat(), bottom, shiftLightPaint)
+            val left = area.width().toFloat() + SHIFT_LIGHTS_WIDTH - leftMargin
+
+            canvas.drawRect(
+                left, top, left + SHIFT_LIGHTS_WIDTH,
+                bottom, shiftLightPaint
+            )
+        }
+
+        if (segmentCounter == MAX_SEGMENTS){
+            segmentCounter = 0
+        }
+
         shiftLghtsCounter++
     }
 
