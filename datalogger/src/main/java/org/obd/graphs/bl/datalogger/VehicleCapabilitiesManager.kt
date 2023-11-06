@@ -19,6 +19,7 @@
 package org.obd.graphs.bl.datalogger
 
 import android.util.Log
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -35,6 +36,8 @@ class VehicleCapabilitiesManager {
 
     private val mapper = ObjectMapper().apply {
         registerModule(KotlinModule())
+        configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+        configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
     }
 
     internal fun updateCapabilities(vehicleCapabilities: VehicleCapabilities) {
@@ -72,11 +75,17 @@ class VehicleCapabilitiesManager {
     }
 
     fun getVehicleCapabilities(): MutableList<VehicleMetadata> {
-        val it = Prefs.getString(PREF_VEHICLE_METADATA, "")!!
-        return if (it.isEmpty()) mutableListOf() else {
-            val map: Map<String, String> = mapper.readValue(it)
-            return map.map { (k, v) -> VehicleMetadata(k, v) }.toMutableList()
+        val preferences = Prefs.getString(PREF_VEHICLE_METADATA, "")!!
+
+        try {
+            return if (preferences.isEmpty()) mutableListOf() else {
+                val map: Map<String, String> = mapper.readValue(preferences)
+                return map.map { (k, v) -> VehicleMetadata(k, v) }.toMutableList()
+            }
+        } catch (e: Throwable){
+            Log.e(LOG_TAG, "Failed to read vehicle capabilities from prefs: '${preferences}'",e)
         }
+        return mutableListOf()
     }
 }
 

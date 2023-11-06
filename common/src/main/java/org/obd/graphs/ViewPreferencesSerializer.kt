@@ -32,12 +32,9 @@ private const val LOG_TAG = "RecycleViewPreferences"
 class ViewPreferencesSerializer constructor(private val prefName: String) {
 
     private var mapper = ObjectMapper().apply {
+        registerModule(KotlinModule())
         configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
         configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
-    }
-
-    init {
-        mapper.registerModule(KotlinModule())
     }
 
     fun getItemsSortOrder(): Map<Long, Int>? = try {
