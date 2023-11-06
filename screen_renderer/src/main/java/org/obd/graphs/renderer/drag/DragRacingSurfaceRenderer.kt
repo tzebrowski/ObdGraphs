@@ -59,12 +59,16 @@ internal class DragRacingSurfaceRenderer(
 
             val shiftLight = isShiftLight(dragRaceResults)
 
-            val area = getArea(it, canvas, if (shiftLight) SHIFT_LIGHTS_WIDTH else 0)
+            val area = getArea(it, canvas, if (shiftLight || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0)
             var top = getDrawTop(area)
             var left = drawer.getMarginLeft(area.left.toFloat())
 
             if (shiftLight) {
                 drawer.drawShiftLights(canvas, area)
+            }
+
+            if (dragRaceResults.readyToRace){
+                drawer.drawShiftLights(canvas, area, color = Color.GREEN)
             }
 
             left += 5
@@ -82,8 +86,7 @@ internal class DragRacingSurfaceRenderer(
                     area = area,
                     metric = it,
                     left = left,
-                    top = top,
-                    dragRacingResults = dragRaceResults
+                    top = top
                 )
             }
 
