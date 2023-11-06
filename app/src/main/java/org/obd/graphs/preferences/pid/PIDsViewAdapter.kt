@@ -43,7 +43,7 @@ class PIDsViewAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
-    private val detailsViewVisible: Boolean
+    private val detailsViewEnabled: Boolean
     ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>(){
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -116,13 +116,12 @@ class PIDsViewAdapter internal constructor(
         val selected: CheckBox = itemView.findViewById(R.id.pid_selected)
 
         init {
-            if (detailsViewVisible) {
-                name.setOnClickListener {
+            if (detailsViewEnabled) {
+                itemView.setOnClickListener {
 
                     val item = data[adapterPosition]
-                    notifyItemChanged(adapterPosition)
-
                     itemView.isSelected = true
+                    notifyItemChanged(adapterPosition)
 
                     val pidDetailsModule = root.findViewById<TextView>(R.id.pid_details_module)
                     pidDetailsModule.text = item.source.module

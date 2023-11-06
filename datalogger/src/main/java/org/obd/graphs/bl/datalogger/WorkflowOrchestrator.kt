@@ -306,7 +306,7 @@ internal class WorkflowOrchestrator internal constructor() {
         )
         .batchPolicy(
             BatchPolicy.builder()
-                .enabled(false).build()
+                .enabled(true).build()
         )
         .collectRawConnectorResponseEnabled(false)
         .stNxx(
@@ -376,6 +376,10 @@ internal class WorkflowOrchestrator internal constructor() {
             Pair( Query.builder().pids(dataLoggerPreferences.instance.pids).build(), getMetricsAdjustments())
 
         QueryType.DRAG_RACING ->
-            Pair( Query.builder().pid(dragRacingResultRegistry.getVehicleSpeedPID()).build(), getDragRacingAdjustments())
+            Pair( Query
+                .builder()
+                .pid(dragRacingResultRegistry.getEngineRpmPID())
+                .pid(dragRacingResultRegistry.getVehicleSpeedPID())
+                .build(), getDragRacingAdjustments())
     }
 }

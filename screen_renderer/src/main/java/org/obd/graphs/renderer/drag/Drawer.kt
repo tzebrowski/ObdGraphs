@@ -38,10 +38,63 @@ private const val NEW_MIN = 0.6f
 const val MARGIN_END = 30
 private const val readyToStartText =  "Ready to start"
 
+const val SHIFT_LIGHTS_WIDTH = 50
+private const val SHIFT_LIGHTS_MAX_SEGMENTS = 12
+
 
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
-    var screenRefreshCounter = 0
+    private var readyToRaceScreenRefreshCounter = 0
+    private val shiftLightPaint = Paint()
+    private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
+
+
+    inline fun drawShiftLights(
+        canvas: Canvas,
+        area: Rect
+    ) {
+        val segmentHeight = area.height().toFloat() / SHIFT_LIGHTS_MAX_SEGMENTS
+        val leftMargin = 4f
+        val topMargin = 10f
+
+        shiftLightPaint.color = Color.WHITE
+
+        for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {
+
+            val top = area.top + (i * segmentHeight)
+            val bottom = top + segmentHeight - topMargin
+
+            canvas.drawRect(leftMargin, top, area.left.toFloat(), bottom, shiftLightPaint)
+            val left = area.width().toFloat() + SHIFT_LIGHTS_WIDTH - leftMargin
+
+            canvas.drawRect(
+                left, top, left + SHIFT_LIGHTS_WIDTH,
+                bottom, shiftLightPaint
+            )
+        }
+
+        shiftLightPaint.color = settings.colorTheme().progressColor
+
+        for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
+
+            val top = area.top + (i * segmentHeight)
+            val bottom = top + segmentHeight - topMargin
+
+            canvas.drawRect(leftMargin, top, area.left.toFloat(), bottom, shiftLightPaint)
+            val left = area.width().toFloat() + SHIFT_LIGHTS_WIDTH - leftMargin
+
+            canvas.drawRect(
+                left, top, left + SHIFT_LIGHTS_WIDTH,
+                bottom, shiftLightPaint
+            )
+        }
+
+        segmentCounter--
+
+        if (segmentCounter == 0){
+            segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
+        }
+    }
 
     inline fun drawDragRaceResults(
         canvas: Canvas,
@@ -107,8 +160,9 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             )
         }
 
+
         if (dragRacingResults.readyToRace){
-            if (screenRefreshCounter%4 == 0) {
+            if (readyToRaceScreenRefreshCounter%4 == 0) {
                 val tt = if (settings.getDragRacingSettings().vehicleSpeedEnabled) 24f else 12f
                 val ll = getTextWidth(readyToStartText, titlePaint)
                 drawText(
@@ -122,9 +176,9 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
             }
             top1 += if (settings.getDragRacingSettings().vehicleSpeedEnabled) 0 else 20
 
-            screenRefreshCounter++
+            readyToRaceScreenRefreshCounter++
         } else {
-            screenRefreshCounter = 0
+            readyToRaceScreenRefreshCounter = 0
         }
 
         if (settings.getDragRacingSettings().vehicleSpeedEnabled) {

@@ -22,6 +22,8 @@ package org.obd.graphs.bl.drag
 val dragRacingResultRegistry: DragRacingResultRegistry by lazy { InMemoryDragRacingRegistry() }
 
 private const val VEHICLE_SPEED_PID_ID = 14L
+private const val ENGINE_RPM_PID_ID = 13L
+
 interface DragRacingResultRegistry {
     fun getResult(): DragRacingResults
     fun update0100(time: Long, speed: Int)
@@ -30,5 +32,8 @@ interface DragRacingResultRegistry {
     fun update100200(time: Long, speed: Int)
     fun update60140(time: Long, speed: Int)
     fun readyToRace(value: Boolean)
+    fun enableShiftLights(value: Boolean)
     fun getVehicleSpeedPID(): Long = VEHICLE_SPEED_PID_ID
+
+    fun getEngineRpmPID(): Long = ENGINE_RPM_PID_ID
 }
