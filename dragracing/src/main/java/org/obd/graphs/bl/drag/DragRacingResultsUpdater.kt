@@ -38,6 +38,10 @@ val dragRacingResultsUpdater: MetricsProcessor = DragRacingResultsUpdater()
 
 private const val SHIFT_LIGHTS_THRESHOLD = 2000
 
+fun ObdMetric.isVehicleSpeedPID(): Boolean =  command.pid.id == dragRacingResultRegistry.getVehicleSpeedPID()
+fun ObdMetric.isEngineRpmPID(): Boolean =  command.pid.id == dragRacingResultRegistry.getEngineRpmPID()
+
+
 internal class DragRacingResultsUpdater : MetricsProcessor {
 
     private var _0_ts: Long? = null
@@ -60,10 +64,10 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
 
-        if (isEngineRpmPID(obdMetric)){
+        if (obdMetric.isEngineRpmPID()){
             dragRacingResultRegistry.enableShiftLights(obdMetric.value.toInt() > SHIFT_LIGHTS_THRESHOLD)
         } else {
-            if (isVehicleSpeedPID(obdMetric)) {
+            if (obdMetric.isVehicleSpeedPID()) {
                 if (obdMetric.value.toInt() == SPEED_0_KM_H) {
                     reset()
 
@@ -145,8 +149,4 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
         result60_140 = null
         result100_200 = null
     }
-
-    private fun isVehicleSpeedPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == dragRacingResultRegistry.getVehicleSpeedPID()
-    private fun isEngineRpmPID(obdMetric: ObdMetric): Boolean = obdMetric.command.pid.id == dragRacingResultRegistry.getEngineRpmPID()
-
 }

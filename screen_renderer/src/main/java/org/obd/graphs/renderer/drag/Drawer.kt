@@ -37,11 +37,36 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 const val MARGIN_END = 30
 private const val readyToStartText =  "Ready to start"
+const val SHIFT_LIGHTS_WIDTH = 40
 
 
 @Suppress("NOTHING_TO_INLINE")
 internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
-    var readyToRaceScreenRefreshCounter = 0
+    private var readyToRaceScreenRefreshCounter = 0
+
+    private val shiftLightPaint = Paint()
+    private var shiftLghtsCounter = 0
+
+
+    inline fun drawShiftLights(
+        canvas: Canvas,
+        area: Rect
+    ) {
+
+        if (shiftLghtsCounter % 2 == 0) {
+            shiftLightPaint.color = Color.WHITE
+        } else {
+            shiftLightPaint.color = settings.colorTheme().progressColor
+        }
+
+        canvas.drawRect(0f, area.top.toFloat(), area.left.toFloat(), area.bottom.toFloat(), shiftLightPaint)
+        val left = area.width().toFloat() + SHIFT_LIGHTS_WIDTH
+        canvas.drawRect(
+            left , area.top.toFloat(), left + SHIFT_LIGHTS_WIDTH,
+            area.bottom.toFloat(), shiftLightPaint
+        )
+        shiftLghtsCounter++
+    }
 
     inline fun drawDragRaceResults(
         canvas: Canvas,
