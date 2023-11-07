@@ -11,7 +11,7 @@
     <item
         android:tooltipText="@string/navigation.title_drag_racing"
         android:id="@+id/navigation_drag_racing"
-        android:icon="@android:drawable/ic_dialog_dialer"
+        android:icon="@drawable/action_drag_race_screen"
         android:title="@string/navigation.title_drag_racing" />
 
     <item
