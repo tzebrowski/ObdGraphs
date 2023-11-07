@@ -31,6 +31,7 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.QueryType
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.Fps
@@ -119,6 +120,7 @@ open class DragRacingFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
+            dataLogger.updateQuery(QueryType.DRAG_RACING)
             renderingThread.start()
         }
 
