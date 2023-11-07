@@ -136,6 +136,7 @@ dependencies {
     implementation project(":common")
     debugImplementation project(":automotive")
     releaseImplementation project(":automotive")
+    implementation project(":dragracing")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'

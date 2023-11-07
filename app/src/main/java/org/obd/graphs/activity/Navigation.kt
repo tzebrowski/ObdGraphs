@@ -22,7 +22,9 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -43,6 +45,28 @@ fun navigateToPreferencesScreen(prefKey: String) {
 fun navigateToScreen(id: Int) {
     (getContext() as MainActivity).navController {
         it.navigate(id, null)
+    }
+}
+
+internal fun MainActivity.setupLeftNavigationPanel() {
+    val drawerLayout: DrawerLayout = findViewById(R.id.my_drawer_layout)
+    val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+    drawerLayout.addDrawerListener(actionBarDrawerToggle)
+    actionBarDrawerToggle.syncState()
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    leftAppBar {
+        it.setNavigationItemSelectedListener { item ->
+            when (item.itemId){
+                R.id.navigation_android_auto ->{
+                    navigateToPreferencesScreen("pref.aa")
+                }
+                else -> {
+                    navigateToScreen(item.itemId)
+                }
+            }
+            true
+        }
     }
 }
 

@@ -89,7 +89,7 @@ interface ScreenSettings {
     fun applyVirtualScreen3() {}
     fun applyVirtualScreen4() {}
     fun getSelectedPIDs(): Set<Long> = emptySet()
-    fun getMaxColumns(): Int
+    fun getMaxColumns(): Int = 1
     fun isHistoryEnabled(): Boolean
     fun isFpsCounterEnabled(): Boolean
     fun getSurfaceFrameRate(): Int

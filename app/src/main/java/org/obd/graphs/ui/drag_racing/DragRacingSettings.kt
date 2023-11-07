@@ -30,11 +30,11 @@ class DragRacingSettings: ScreenSettings {
 
     override fun isBreakLabelTextEnabled(): Boolean = false
 
-    override fun getMaxColumns(): Int = giuliaVirtualScreen.getMaxItemsInColumn()
     override fun isHistoryEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
-    override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.giulia.fps","5").toInt()
-    override fun getFontSize(): Int = giuliaVirtualScreen.getFontSize()
+    override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.drag_racing.fps","5").toInt()
+    override fun getFontSize(): Int =  Prefs.getS("pref.drag_racing.screen_font_size","64").toInt()
+
     override fun isStatusPanelEnabled(): Boolean = false
 
     override fun getMaxAllowedItemsInColumn(): Int  = 8
