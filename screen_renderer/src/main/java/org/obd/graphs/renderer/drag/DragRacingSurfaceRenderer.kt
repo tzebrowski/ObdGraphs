@@ -30,8 +30,6 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRendererType
 
-
-
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingSurfaceRenderer(
     context: Context,
@@ -62,6 +60,7 @@ internal class DragRacingSurfaceRenderer(
             var left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.getDragRacingSettings().shiftLightsEnabled) {
+                dragRacingResultRegistry.setShiftLightsRevThreshold(settings.getDragRacingSettings().shiftLightsRevThreshold)
                 // permanent white boxes
                 drawer.drawShiftLights(canvas, area, blinking = false)
             }

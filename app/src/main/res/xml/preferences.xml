@@ -821,6 +821,17 @@
                         android:key="pref.aa.drag_race.shift_lights.enabled"
                         android:title="@string/pref.aa.performance_meter.shift_lights_enabled" />
 
+                    <ListPreference
+                        android:summary="@string/ref.aa.performance_meter.shift_lights.rev"
+                        app:singleLineTitle="false"
+                        android:defaultValue="5000"
+                        android:entries="@array/pref.numbers_4500_5000"
+                        android:entryValues="@array/pref.numbers_4500_5000"
+                        android:inputType="number"
+                        android:key="pref.aa.drag_race.shift_lights.rev_value"
+                        android:title="@string/ref.aa.performance_meter.shift_lights.rev"
+                        app:useSimpleSummaryProvider="true" />
+
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         app:singleLineTitle="false"
                         android:defaultValue="true"

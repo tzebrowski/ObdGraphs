@@ -71,6 +71,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.vehicle_speed_measurement", true)
         vehicleSpeedEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
         shiftLightsEnabled = Prefs.getBoolean("pref.aa.drag_race.shift_lights.enabled", false)
+        shiftLightsRevThreshold = Prefs.getS("pref.aa.drag_race.shift_lights.rev_value", "5000").toInt()
     }
 
     override fun colorTheme(): ColorTheme = colorTheme.apply {
@@ -80,7 +81,6 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
         actionsBtnVirtualScreensColor = Prefs.getInt(PREF_THEME_VIRTUAL_SCREEN_COLOR, Color.WHITE)
     }
-
 
     override fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode) {
         if (isDynamicSelectorThemeEnabled()) {

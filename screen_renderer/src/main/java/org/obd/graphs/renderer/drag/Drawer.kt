@@ -37,7 +37,7 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 const val MARGIN_END = 30
 
-private const val SHIFT_LIGHTS_MAX_SEGMENTS = 12
+private const val SHIFT_LIGHTS_MAX_SEGMENTS = 14
 const val SHIFT_LIGHTS_WIDTH = 30
 
 @Suppress("NOTHING_TO_INLINE")
@@ -55,7 +55,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
     ) {
         val segmentHeight = area.height().toFloat() / SHIFT_LIGHTS_MAX_SEGMENTS
         val leftMargin = 4f
-        val topMargin = 10f
+        val topMargin = 6f
 
         shiftLightPaint.color = Color.WHITE
         for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {

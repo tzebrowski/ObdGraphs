@@ -193,6 +193,8 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:hint="e.g A+B"
+                android:importantForAutofill="no"
                 android:inputType="text"
                 android:id="@+id/pid_details_calculation_formula"
                 android:layout_width="0dp"

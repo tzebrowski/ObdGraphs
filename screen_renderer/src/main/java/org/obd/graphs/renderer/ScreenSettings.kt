@@ -46,6 +46,7 @@ data class ColorTheme(
 )
 
 data class DragRacingSettings(
+    var shiftLightsRevThreshold: Int = 5000,
     var shiftLightsEnabled: Boolean = true,
     var vehicleSpeedEnabled: Boolean = true,
     var vehicleSpeedFrequencyReadEnabled: Boolean = true,
