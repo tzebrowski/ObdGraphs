@@ -84,10 +84,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="450dp"
         android:layout_below="@id/tablelayout"
         android:layout_marginTop="0dp"
-        android:layout_marginBottom="2dp" />
+        android:layout_marginBottom="2dp"
+        android:background="@color/white" />
 
     <TableLayout
         android:background="@color/white"
