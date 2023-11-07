@@ -1,39 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Views"
+        android:id="@+id/submenu_views">
+        <menu>
+
+            <item
+                android:id="@+id/navigation_gauge"
+                android:icon="@android:drawable/ic_menu_gallery"
+                android:title="@string/navigation.title_gauge"
+                android:tooltipText="@string/navigation.tooltip_gauge" />
+
+            <item
+                android:tooltipText="@string/navigation.title_drag_racing"
+                android:id="@+id/navigation_drag_racing"
+                android:icon="@drawable/action_drag_race_screen"
+                android:title="@string/navigation.title_drag_racing" />
+
+            <item
+                android:tooltipText="@string/navigation.tooltip_giulia_dashboard"
+                android:id="@+id/navigation_giulia"
+                android:icon="@android:drawable/ic_dialog_dialer"
+                android:title="@string/navigation.title_giulia_dashboard" />
+
+            <item
+                android:tooltipText="@string/navigation.tooltip_graph"
+                android:id="@+id/navigation_graph"
+                android:icon="@android:drawable/ic_menu_gallery"
+                android:title="@string/navigation.title_graph" />
+            <item
+                android:tooltipText="@string/navigation.tooltip_dashboard"
+                android:id="@+id/navigation_dashboard"
+                android:icon="@android:drawable/ic_dialog_dialer"
+                android:title="@string/navigation.title_dashboard" />
+
+        </menu>
+
+    </item>
 
     <item
-        android:tooltipText="@string/navigation.tooltip_gauge"
-        android:id="@+id/navigation_gauge"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:title="@string/navigation.title_gauge" />
-
-
-    <item
-        android:tooltipText="@string/navigation.title_drag_racing"
-        android:id="@+id/navigation_drag_racing"
-        android:icon="@drawable/action_drag_race_screen"
-        android:title="@string/navigation.title_drag_racing" />
-
-    <item
-        android:tooltipText="@string/navigation.tooltip_giulia_dashboard"
-        android:id="@+id/navigation_giulia"
-        android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/navigation.title_giulia_dashboard" />
-
-    <item
-        android:tooltipText="@string/navigation.tooltip_graph"
-        android:id="@+id/navigation_graph"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:title="@string/navigation.title_graph" />
-    <item
-        android:tooltipText="@string/navigation.tooltip_dashboard"
-        android:id="@+id/navigation_dashboard"
-        android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/navigation.title_dashboard" />
-
+        android:id="@+id/navigation_android_auto"
+        android:icon="@drawable/android_auto_icon"
+        android:title="@string/navigation.title_aa"
+        android:tooltipText="@string/navigation.title_aa"
+        android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED" />
     <item
         android:tooltipText="@string/navigation.tooltip_preferences"
         android:id="@+id/navigation_preferences"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/navigation.title_preferences" />
+
 </menu>

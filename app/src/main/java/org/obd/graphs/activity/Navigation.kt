@@ -82,7 +82,6 @@ internal fun MainActivity.setupNavigationBar() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
-
                 val aaMenuItem = it.menu.findItem(R.id.ctx_menu_android_auto)
                 if (resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)){
                     val spanString = SpannableString(aaMenuItem.title.toString())

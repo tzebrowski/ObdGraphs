@@ -130,7 +130,14 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         leftAppBar {
             it.setNavigationItemSelectedListener { item ->
-                navigateToScreen(item.itemId)
+                when (item.itemId){
+                    R.id.navigation_android_auto ->{
+                        navigateToPreferencesScreen("pref.aa")
+                    }
+                    else -> {
+                        navigateToScreen(item.itemId)
+                    }
+                }
                 true
             }
         }
