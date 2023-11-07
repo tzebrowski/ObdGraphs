@@ -54,18 +54,18 @@ internal fun MainActivity.setupNavigationBar() {
                 R.id.navigation_graph,
                 R.id.navigation_giulia,
                 R.id.navigation_dashboard,
-                R.id.navigation_preferences
+                R.id.navigation_preferences,
             )
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        findViewById<BottomNavigationView>(R.id.nav_view).let {
+        findViewById<BottomNavigationView>(R.id.bottom_nav_view).let {
             it.setupWithNavController(navController)
             it.selectedItemId = R.id.navigation_gauge
         }
 
         val mainActivityPreferences = getMainActivityPreferences()
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.run {
+        findViewById<BottomNavigationView>(R.id.bottom_nav_view).menu.run {
             findItem(R.id.navigation_giulia).isVisible =
                 mainActivityPreferences.showGiuliaView
 
@@ -185,7 +185,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
 }
 
 private fun MainActivity.getCurrentScreenId(): Int {
-    val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
+    val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_nav_view)
     val selectedItemId: Int = bottomNavigationView.selectedItemId
     val currentView: MenuItem =
         bottomNavigationView.menu.findItem(selectedItemId)

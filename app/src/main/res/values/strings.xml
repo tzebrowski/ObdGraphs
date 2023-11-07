@@ -1,8 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+
+
     <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
-
-
     <string name="pref.experimental_switch_network_enabled">This feature is in the experimental phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
     <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
     <string name="pref.experimental_read_external_storage_enabled">This feature is in the experimental phase.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
@@ -14,6 +16,7 @@
     <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>
     <string name="navigation.title_giulia_dashboard">Giulia</string>
+    <string name="navigation.title_drag_racing">Drag Racing</string>
 
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>

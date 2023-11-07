@@ -12,6 +12,13 @@
         tools:layout="@layout/fragment_gauge" />
 
     <fragment
+        android:id="@+id/navigation_drag_racing"
+        android:name="org.obd.graphs.ui.drag_racing.DragRacingFragment"
+        android:label="@string/navigation.title_drag_racing"
+        tools:layout="@layout/fragment_drag_racing" />
+
+
+    <fragment
         android:id="@+id/navigation_giulia"
         android:name="org.obd.graphs.ui.giulia.GiuliaFragment"
         android:label="@string/navigation.title_giulia_dashboard"

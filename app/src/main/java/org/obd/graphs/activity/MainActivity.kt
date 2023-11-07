@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.activity
 
+
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -27,14 +28,14 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import android.view.View
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import org.obd.graphs.*
-import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.*
 import org.obd.graphs.preferences.profile.vehicleProfile
-import org.obd.graphs.preferences.updateBoolean
-import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
@@ -88,6 +89,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         sendBroadcastEvent(MAIN_ACTIVITY_EVENT_PAUSE)
     }
 
+    private lateinit var  actionBarDrawerToggle: ActionBarDrawerToggle
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setupStrictMode()
         super.onCreate(savedInstanceState)
@@ -113,9 +117,25 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
 
         setupLockScreenDialog()
-
         Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
+        setupLeftNavigationPanel()
     }
+
+    private fun setupLeftNavigationPanel() {
+        val drawerLayout: DrawerLayout = findViewById(R.id.my_drawer_layout)
+        actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+        drawerLayout.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        leftAppBar {
+            it.setNavigationItemSelectedListener { item ->
+                navigateToScreen(item.itemId)
+                true
+            }
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()

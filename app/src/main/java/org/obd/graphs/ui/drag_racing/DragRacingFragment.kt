@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.ui.giulia
+package org.obd.graphs.ui.drag_racing
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -43,12 +43,12 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 
 
-open class GiuliaFragment : Fragment() {
+open class DragRacingFragment : Fragment() {
     private lateinit var root: View
 
     private val metricsCollector = CarMetricsCollector.instance()
     private val fps = Fps()
-    private val settings = GiuliaSettings()
+    private val settings = DragRacingSettings()
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
@@ -111,7 +111,7 @@ open class GiuliaFragment : Fragment() {
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         setupVirtualViewPanel()
         surfaceController = SurfaceController(SurfaceRenderer.allocate(requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.GIULIA))
+            surfaceRendererType = SurfaceRendererType.DRAG_RACING))
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
