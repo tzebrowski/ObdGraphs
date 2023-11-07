@@ -41,8 +41,6 @@ import java.util.*
 
 
 const val LOG_TAG = "MainActivity"
-
-
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
 

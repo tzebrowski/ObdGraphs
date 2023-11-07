@@ -204,7 +204,6 @@ internal fun MainActivity.setupNavigationBarButtons() {
             true
         }
     }
-
 }
 
 private fun MainActivity.getCurrentScreenId(): Int {

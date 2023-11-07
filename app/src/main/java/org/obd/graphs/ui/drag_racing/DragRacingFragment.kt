@@ -61,6 +61,7 @@ open class DragRacingFragment : Fragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
+                    dataLogger.updateQuery(QueryType.DRAG_RACING)
                     renderingThread.start()
                 }
 
