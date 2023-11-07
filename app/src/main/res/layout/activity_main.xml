@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+    <ProgressBar
+        android:id="@+id/p_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="14dp"
+        android:layout_marginTop="20dp"
+        android:indeterminate="true"
+        android:max="100"
+        android:progress="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.drawerlayout.widget.DrawerLayout xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/my_drawer_layout"
@@ -71,17 +82,7 @@
                 app:srcCompat="?attr/actionModeCopyDrawable" />
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/p_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="14dp"
-            android:layout_marginTop="20dp"
-            android:indeterminate="true"
-            android:max="100"
-            android:progress="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
 
         <fragment
             android:id="@+id/nav_host_fragment"
@@ -138,17 +139,12 @@
                 app:fabSize="mini"
                 app:layout_anchor="@id/bottomAppBar" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
-        <!-- this the navigation view which draws and shows the navigation drawer -->
-        <!-- include the menu created in the menu folder -->
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/leftNavView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             app:menu="@menu/left_nav_menu" />
-
     </androidx.drawerlayout.widget.DrawerLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
