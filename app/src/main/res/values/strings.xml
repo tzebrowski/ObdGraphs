@@ -423,7 +423,21 @@
     </string-array>
 
 
+    <string-array name="pref.numbers_20000_60000">
+        <item name="20000">20000</item>
+        <item name="25000">25000</item>
+        <item name="30000">30000</item>
+        <item name="35000">35000</item>
+        <item name="40000">40000</item>
+        <item name="45000">45000</item>
+        <item name="50000">50000</item>
+        <item name="60000">60000</item>
+    </string-array>
+
+
     <string-array name="pref.numbers_28_34">
+        <item name="20">20</item>
+        <item name="21">21</item>
         <item name="22">22</item>
         <item name="24">24</item>
         <item name="26">26</item>

@@ -20,6 +20,7 @@ package org.obd.graphs.ui.graph
 
 import android.util.Log
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
 
 data class GraphPreferences(
     val xAxisStartMovingAfter: Float,
@@ -34,10 +35,10 @@ class GraphPreferencesReader {
         val prefixKey = "pref.graph"
 
         val xAxisStartMovingAfter =
-            Prefs.getString("$prefixKey.x-axis.start-moving-after.time", "20000")!!.toFloat()
+            Prefs.getS("$prefixKey.x-axis.start-moving-after.time", "20000").toFloat()
 
         val xAxisMinimumShift =
-            Prefs.getString("$prefixKey.x-axis.minimum-shift.time", "20")!!.toFloat()
+            Prefs.getS("$prefixKey.x-axis.minimum-shift.time", "20").toFloat()
 
         val cacheEnabled = Prefs.getBoolean("$prefixKey.cache.enabled", true)
 

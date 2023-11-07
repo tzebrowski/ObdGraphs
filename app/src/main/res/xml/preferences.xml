@@ -1276,7 +1276,11 @@
                         android:key="pref.graph.toggle_virtual_screens_double_click"
                         android:title="@string/pref.gauge_toggle_virtual_screens" />
 
-                    <EditTextPreference
+
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.numbers_28_34"
+                        android:entryValues="@array/pref.numbers_28_34"
                         android:defaultValue="20"
                         android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
                         android:inputType="number"
@@ -1284,7 +1288,10 @@
                         android:title="@string/pref.graph_x_axis_minimum_shift_time"
                         app:useSimpleSummaryProvider="true" />
 
-                    <EditTextPreference
+                    <ListPreference
+                        app:singleLineTitle="false"
+                        android:entries="@array/pref.numbers_20000_60000"
+                        android:entryValues="@array/pref.numbers_20000_60000"
                         android:defaultValue="20000"
                         android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
                         android:inputType="number"
