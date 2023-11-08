@@ -24,6 +24,7 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -49,14 +50,14 @@ fun navigateToScreen(id: Int) {
 }
 
 internal fun MainActivity.setupLeftNavigationPanel() {
-    val drawerLayout: DrawerLayout = findViewById(R.id.my_drawer_layout)
+    val drawerLayout: DrawerLayout = getDrawer()
     val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
     drawerLayout.addDrawerListener(actionBarDrawerToggle)
     actionBarDrawerToggle.syncState()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    leftAppBar {
-        it.setNavigationItemSelectedListener { item ->
+    leftAppBar { navigationView  ->
+        navigationView .setNavigationItemSelectedListener { item ->
             when (item.itemId){
                 R.id.navigation_android_auto ->{
                     navigateToPreferencesScreen("pref.aa")
@@ -65,6 +66,8 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                     navigateToScreen(item.itemId)
                 }
             }
+
+            drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
     }

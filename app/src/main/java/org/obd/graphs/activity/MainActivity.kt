@@ -30,7 +30,9 @@ import android.os.StrictMode.VmPolicy
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import org.obd.graphs.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.preferences.profile.vehicleProfile
@@ -79,6 +81,16 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
+    override fun onBackPressed() {
+        val drawer = getDrawer()
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    fun getDrawer() = findViewById<View>(R.id.drawer_layout) as DrawerLayout
 
     override fun onPause() {
         super.onPause()

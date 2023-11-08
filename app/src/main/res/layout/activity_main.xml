@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.drawerlayout.widget.DrawerLayout xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/my_drawer_layout"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
@@ -82,8 +82,6 @@
                 app:srcCompat="?attr/actionModeCopyDrawable" />
         </LinearLayout>
 
-
-
         <fragment
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -140,10 +138,12 @@
                 app:layout_anchor="@id/bottomAppBar" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
         <com.google.android.material.navigation.NavigationView
+            app:itemBackground="@drawable/nav_view_item_background"
             android:id="@+id/leftNavView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            android:fitsSystemWindows="true"
             app:menu="@menu/left_nav_menu" />
     </androidx.drawerlayout.widget.DrawerLayout>
 
