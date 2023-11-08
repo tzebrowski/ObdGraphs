@@ -4,17 +4,16 @@
 
 
     <item
-        android:id="@+id/ctx_menu_view_profiles"
-        android:checkable="true"
-        android:icon="@drawable/config"
-        android:title="@string/context_menu.profiles" />
-
-    <item
         android:id="@+id/ctx_menu_dtc"
         android:checkable="true"
         android:icon="@android:drawable/ic_menu_preferences"
         android:title="@string/pref.dtc.title" />
 
+    <item
+        android:id="@+id/ctx_menu_view_profiles"
+        android:checkable="true"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:title="@string/context_menu.profiles" />
     <item
         android:icon="@android:drawable/ic_lock_idle_low_battery"
         android:checkable="true"
@@ -24,7 +23,7 @@
     <item
         android:id="@+id/ctx_menu_about"
         android:checkable="true"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@android:drawable/ic_dialog_info"
         android:title="@string/context_menu.about" />
 
     <item android:title="@string/navigation.title_aa" android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED">
