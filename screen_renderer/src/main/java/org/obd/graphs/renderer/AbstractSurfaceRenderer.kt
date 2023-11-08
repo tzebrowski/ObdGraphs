@@ -35,7 +35,7 @@ internal abstract class AbstractSurfaceRenderer(
 ) :
     SurfaceRenderer {
 
-    fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP
+    fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP + viewSettings.marginTop
 
     override fun applyMetricsFilter() {
         metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())

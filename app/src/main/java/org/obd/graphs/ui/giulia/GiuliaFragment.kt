@@ -36,6 +36,7 @@ import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
@@ -109,7 +110,8 @@ open class GiuliaFragment : Fragment() {
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         setupVirtualViewPanel()
         surfaceController = SurfaceController(SurfaceRenderer.allocate(requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.GIULIA))
+            surfaceRendererType = SurfaceRendererType.GIULIA, viewSettings = ViewSettings(marginTop = 40)
+        ))
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
