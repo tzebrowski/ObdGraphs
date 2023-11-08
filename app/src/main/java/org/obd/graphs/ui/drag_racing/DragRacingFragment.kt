@@ -37,6 +37,7 @@ import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.ui.common.SurfaceController
 
 open class DragRacingFragment : Fragment() {
     private lateinit var root: View
@@ -75,6 +76,7 @@ open class DragRacingFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         surfaceController.renderFrame()
+
     }
 
 

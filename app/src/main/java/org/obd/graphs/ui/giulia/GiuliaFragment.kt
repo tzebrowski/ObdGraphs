@@ -38,6 +38,7 @@ import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
+import org.obd.graphs.ui.common.SurfaceController
 
 
 open class GiuliaFragment : Fragment() {
