@@ -111,7 +111,7 @@ open class DragRacingFragment : Fragment() {
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         val renderer = SurfaceRenderer.allocate(
             requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.DRAG_RACING, viewSettings = ViewSettings(marginTop = 80)
+            surfaceRendererType = SurfaceRendererType.DRAG_RACING, viewSettings = ViewSettings(marginTop = 40)
         )
 
         surfaceController = SurfaceController(renderer)

@@ -21,9 +21,21 @@ package org.obd.graphs.ui.drag_racing
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.renderer.DragRacingSettings
 import org.obd.graphs.renderer.ScreenSettings
 
 class DragRacingSettings: ScreenSettings {
+
+    private val dragRacingSettings = DragRacingSettings()
+
+    override fun getDragRacingSettings(): DragRacingSettings  = dragRacingSettings.apply {
+        vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.drag_racing.debug.display_frequency", true)
+        vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.drag_racing.debug.vehicle_speed_measurement", false)
+        vehicleSpeedEnabled = Prefs.getBoolean("pref.drag_racing.vehicle_speed.enabled", true)
+        shiftLightsEnabled = Prefs.getBoolean("pref.drag_racing.shift_lights.enabled", false)
+        shiftLightsRevThreshold = Prefs.getS("pref.drag_racing.shift_lights.rev_value", "5000").toInt()
+    }
+
     override fun getSelectedPIDs(): Set<Long> {
         return dataLoggerPreferences.getPIDsToQuery()
     }

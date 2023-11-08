@@ -597,6 +597,32 @@
                 android:key="pref.drag_racing.screen_font_size"
                 android:title="@string/pref.drag_racing.font_size"
                 app:useSimpleSummaryProvider="true" />
+
+            <CheckBoxPreference
+                app:singleLineTitle="false"
+                android:defaultValue="false"
+                android:key="pref.drag_racing.shift_lights.enabled"
+                android:title="@string/pref.aa.performance_meter.shift_lights_enabled" />
+
+            <ListPreference
+                android:summary="@string/ref.aa.performance_meter.shift_lights.rev"
+                app:singleLineTitle="false"
+                android:defaultValue="5000"
+                android:entries="@array/pref.numbers_4500_5000"
+                android:entryValues="@array/pref.numbers_4500_5000"
+                android:inputType="number"
+                android:key="pref.drag_racing.shift_lights.rev_value"
+                android:title="@string/ref.aa.performance_meter.shift_lights.rev"
+                app:useSimpleSummaryProvider="true" />
+
+            <CheckBoxPreference
+                app:singleLineTitle="false"
+                android:defaultValue="true"
+                android:key="pref.drag_racing.vehicle_speed.enabled"
+                android:title="@string/pref.aa.performance_meter.display_vehicle_speed" />
+
+
+
         </PreferenceScreen>
 
         <PreferenceScreen
