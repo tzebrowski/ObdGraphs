@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.ui.giulia
+package org.obd.graphs.ui.drag_racing
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -25,33 +25,31 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.QueryType
+import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
-import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
 
-
-open class GiuliaFragment : Fragment() {
+open class DragRacingFragment : Fragment() {
     private lateinit var root: View
 
     private val metricsCollector = CarMetricsCollector.instance()
     private val fps = Fps()
-    private val settings = GiuliaSettings()
+    private val settings = DragRacingSettings()
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
-        id = "GiuliaFragmentRenderingThread",
+        id = "DragRacingRenderingThread",
         renderAction = {
             surfaceController.renderFrame()
         },
@@ -65,6 +63,7 @@ open class GiuliaFragment : Fragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
+                    dataLogger.updateQuery(QueryType.DRAG_RACING)
                     renderingThread.start()
                 }
 
@@ -78,8 +77,8 @@ open class GiuliaFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         surfaceController.renderFrame()
-    }
 
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -106,15 +105,21 @@ open class GiuliaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        root  = inflater.inflate(R.layout.fragment_giulia, container, false)
+        root  = inflater.inflate(R.layout.fragment_drag_racing, container, false)
+
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
-        setupVirtualViewPanel()
-        surfaceController = SurfaceController(SurfaceRenderer.allocate(requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.GIULIA, viewSettings = ViewSettings(marginTop = 40)
-        ))
+        val renderer = SurfaceRenderer.allocate(
+            requireContext(), settings, metricsCollector, fps,
+            surfaceRendererType = SurfaceRendererType.DRAG_RACING, viewSettings = ViewSettings(marginTop = 40)
+        )
+
+        surfaceController = SurfaceController(renderer)
         surfaceView.holder.addCallback(surfaceController)
 
-        metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+        metricsCollector.applyFilter(
+            enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID()),
+            query = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
+        )
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
@@ -123,43 +128,10 @@ open class GiuliaFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.METRICS)
+            dataLogger.updateQuery(QueryType.DRAG_RACING)
             renderingThread.start()
         }
 
         return root
-    }
-
-    private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
-        (root.findViewById<Button>(btnId)).let {
-            if (selection == viewId) {
-                it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
-            } else {
-                it.setBackgroundColor(COLOR_TRANSPARENT)
-            }
-
-            it.setOnClickListener {
-                giuliaVirtualScreen.updateVirtualScreen(viewId)
-                metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
-                setupVirtualViewPanel()
-                surfaceController.renderFrame()
-            }
-        }
-    }
-
-    private fun setupVirtualViewPanel() {
-        val currentVirtualScreen = giuliaVirtualScreen.getCurrentVirtualScreen()
-        setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
-        setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
-        setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")
-        setVirtualViewBtn(R.id.virtual_view_4, currentVirtualScreen, "4")
-        setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
-        setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
-        setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
-    }
-
-    private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
-        val query = dataLoggerPreferences.getPIDsToQuery()
-        return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
 }

@@ -22,7 +22,10 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -46,26 +49,63 @@ fun navigateToScreen(id: Int) {
     }
 }
 
+internal fun MainActivity.setupLeftNavigationPanel() {
+    val drawerLayout: DrawerLayout = getDrawer()
+    val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
+    drawerLayout.addDrawerListener(actionBarDrawerToggle)
+    actionBarDrawerToggle.syncState()
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    leftAppBar { navigationView  ->
+
+        navigationView .setNavigationItemSelectedListener { item ->
+            when (item.itemId){
+                R.id.navigation_drag_racing_prefs ->  navigateToPreferencesScreen("pref.title_drag_racing")
+                R.id.navigation_graph_prefs -> navigateToPreferencesScreen("pref.graph")
+                R.id.navigation_dashboard_prefs -> navigateToPreferencesScreen("pref.dashboard")
+                R.id.navigation_giulia_prefs -> navigateToPreferencesScreen("pref.giulia")
+                R.id.navigation_gauge_prefs -> navigateToPreferencesScreen("pref.gauge")
+                R.id.navigation_android_auto -> navigateToPreferencesScreen("pref.aa")
+                R.id.ctx_menu_vehicle_properties -> navigateToPreferencesScreen("pref.vehicle.properties")
+                R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
+                R.id.ctx_menu_view_profiles -> navigateToPreferencesScreen("pref.profiles")
+                R.id.ctx_menu_dtc -> navigateToPreferencesScreen("pref.dtc")
+                R.id.navigation_android_auto_pids -> navigateToPreferencesScreen("pref.aa.displayed.pids")
+                R.id.navigation_gauge_pids -> navigateToPreferencesScreen(PREF_GAUGE_DISPLAYED_PARAMETERS_IDS)
+                R.id.navigation_graph_pids -> navigateToPreferencesScreen(PREF_GRAPH_DISPLAYED_PARAMETERS_IDS)
+                R.id.navigation_giulia_pids -> navigateToPreferencesScreen(PREF_GIULIA_DISPLAYED_PARAMETERS_IDS)
+                R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
+
+                else -> navigateToScreen(item.itemId)
+            }
+
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+    }
+}
+
 internal fun MainActivity.setupNavigationBar() {
     navController { navController ->
+
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_gauge,
                 R.id.navigation_graph,
                 R.id.navigation_giulia,
                 R.id.navigation_dashboard,
-                R.id.navigation_preferences
+                R.id.navigation_preferences,
             )
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        findViewById<BottomNavigationView>(R.id.nav_view).let {
+        findViewById<BottomNavigationView>(R.id.bottom_nav_view).let {
             it.setupWithNavController(navController)
             it.selectedItemId = R.id.navigation_gauge
         }
 
         val mainActivityPreferences = getMainActivityPreferences()
-        findViewById<BottomNavigationView>(R.id.nav_view).menu.run {
+        findViewById<BottomNavigationView>(R.id.bottom_nav_view).menu.run {
             findItem(R.id.navigation_giulia).isVisible =
                 mainActivityPreferences.showGiuliaView
 
@@ -82,7 +122,6 @@ internal fun MainActivity.setupNavigationBar() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
-
                 val aaMenuItem = it.menu.findItem(R.id.ctx_menu_android_auto)
                 if (resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)){
                     val spanString = SpannableString(aaMenuItem.title.toString())
@@ -181,11 +220,10 @@ internal fun MainActivity.setupNavigationBarButtons() {
             true
         }
     }
-
 }
 
 private fun MainActivity.getCurrentScreenId(): Int {
-    val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
+    val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_nav_view)
     val selectedItemId: Int = bottomNavigationView.selectedItemId
     val currentView: MenuItem =
         bottomNavigationView.menu.findItem(selectedItemId)

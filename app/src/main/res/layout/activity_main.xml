@@ -1,134 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <LinearLayout
-        android:layout_height="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="match_parent"
-        android:layout_marginStart="1sp"
-        android:layout_marginEnd="1sp"
-        android:orientation="horizontal"
-        android:weightSum="4">
-
-        <TextView
-            android:id="@+id/connection_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.1"
-            android:gravity="start"
-            android:paddingEnd="0dp"
-            android:paddingStart="6dp"
-            android:paddingTop="4sp"
-            android:text="@string/adapter_connection_type"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/vehicle_profile"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.8"
-            android:gravity="start"
-            android:paddingTop="4sp"
-            android:text="@string/vehicle_profile"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-        <Chronometer
-            android:textSize="12sp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:textColor="@color/white"
-            android:id="@+id/timer" />
-
-        <ImageView
-            android:tooltipText="@string/main_activity.toggle_toolbar"
-            android:contentDescription="@string/main_activity.toggle_toolbar"
-            android:id="@+id/toggle_fullscreen"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_weight="0.4"
-            android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            app:srcCompat="?attr/actionModeCopyDrawable" />
-    </LinearLayout>
-
     <ProgressBar
-        android:layout_marginTop="20dp"
         android:id="@+id/p_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="fill_parent"
         android:layout_height="14dp"
+        android:layout_marginTop="20dp"
         android:indeterminate="true"
         android:max="100"
         android:progress="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <fragment
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <androidx.drawerlayout.widget.DrawerLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="34dp"
-        app:defaultNavHost="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/coordinator_Layout"
-        app:layout_constraintTop_toBottomOf="@id/p_bar"
-        app:navGraph="@navigation/mobile_navigation"/>
+        tools:context=".MainActivity"
+        tools:ignore="HardcodedText">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinator_Layout"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/bottomAppBar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_gravity="bottom"
-            android:backgroundTint="@color/gray"
-            app:contentInsetStart="0dp"
-            app:fabAlignmentMode="center"
-            app:menu="@menu/context_menu">
+            android:layout_height="30dp"
+            android:layout_marginStart="1sp"
+            android:layout_marginEnd="1sp"
+            android:orientation="horizontal"
+            android:weightSum="4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/nav_view"
+            <TextView
+                android:id="@+id/connection_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.1"
+                android:gravity="start"
+                android:paddingStart="6dp"
+                android:paddingTop="4sp"
+                android:paddingEnd="0dp"
+                android:text="@string/adapter_connection_type"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/vehicle_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.8"
+                android:gravity="start"
+                android:paddingTop="4sp"
+                android:text="@string/vehicle_profile"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <Chronometer
+                android:id="@+id/timer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/toggle_fullscreen"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="0.4"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/main_activity.toggle_toolbar"
+                android:focusable="true"
+                android:tooltipText="@string/main_activity.toggle_toolbar"
+                app:srcCompat="?attr/actionModeCopyDrawable"
+                tools:targetApi="o" />
+        </LinearLayout>
+
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="34dp"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toTopOf="@id/coordinator_Layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/p_bar"
+            app:navGraph="@navigation/mobile_navigation" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinator_Layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <com.google.android.material.bottomappbar.BottomAppBar
+                android:id="@+id/bottomAppBar"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="0dp"
-                android:background="@color/gray"
-                app:labelVisibilityMode="labeled"
-                app:menu="@menu/bottom_nav_menu" />
-        </com.google.android.material.bottomappbar.BottomAppBar>
+                android:layout_height="130dp"
+                android:layout_gravity="bottom"
+                android:backgroundTint="@color/gray"
+                app:contentInsetStart="0dp"
+                app:fabAlignmentMode="center"
+                app:menu="@menu/context_menu">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:tooltipText="@string/main_activity.btn_start"
-            android:id="@+id/connect_btn"
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/bottom_nav_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@color/gray"
+                    app:labelVisibilityMode="labeled"
+                    app:menu="@menu/bottom_nav_menu" />
+            </com.google.android.material.bottomappbar.BottomAppBar>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/connect_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/main_activity.btn_start"
+                android:src="@android:drawable/ic_lock_idle_charging"
+                android:tooltipText="@string/main_activity.btn_start"
+                app:backgroundTint="#01804F"
+                app:fabSize="mini"
+                app:layout_anchor="@id/bottomAppBar" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <com.google.android.material.navigation.NavigationView
+            app:headerLayout="@layout/header_navigation_drawer"
+            android:id="@+id/leftNavView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/main_activity.btn_start"
-            android:src="@android:drawable/ic_lock_idle_charging"
-            app:backgroundTint="#01804F"
-            app:fabSize="mini"
-            app:layout_anchor="@id/bottomAppBar" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:menu="@menu/left_nav_menu" />
+    </androidx.drawerlayout.widget.DrawerLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

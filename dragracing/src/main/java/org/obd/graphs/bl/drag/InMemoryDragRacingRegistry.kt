@@ -34,6 +34,8 @@ private const val PERF_0_160_LAST = "pref.drag_race.last.0_160"
 private const val PERF_60_140_LAST = "pref.drag_race.last.60_140"
 private const val PERF_100_200_LAST = "pref.drag_race.last.100_200"
 
+private const val DEFAULT_SHIFT_LIGHT_THRESHOLD = 5000
+
 internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
     private val results = DragRacingResults()
@@ -68,6 +70,12 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         Prefs.getString(PERF_100_200_LAST, null)?.let {
             results._100_200.last = it.toLong()
         }
+    }
+
+    private var shiftLightThresholdValue = DEFAULT_SHIFT_LIGHT_THRESHOLD
+    override fun getShiftLightsRevThreshold(): Int  = shiftLightThresholdValue
+    override fun setShiftLightsRevThreshold(newThresholdValue: Int) {
+        shiftLightThresholdValue = newThresholdValue
     }
 
     override fun readyToRace(value: Boolean) {

@@ -25,20 +25,17 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.renderer.*
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.SurfaceRendererType
-
-
 
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
     metricsCollector: CarMetricsCollector,
-    fps: Fps
-) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
+    fps: Fps,
+    viewSettings: ViewSettings
+) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
     private val drawer = Drawer(context, settings)
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACING
@@ -62,6 +59,7 @@ internal class DragRacingSurfaceRenderer(
             var left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.getDragRacingSettings().shiftLightsEnabled) {
+                dragRacingResultRegistry.setShiftLightsRevThreshold(settings.getDragRacingSettings().shiftLightsRevThreshold)
                 // permanent white boxes
                 drawer.drawShiftLights(canvas, area, blinking = false)
             }
@@ -105,10 +103,10 @@ internal class DragRacingSurfaceRenderer(
     private fun getArea(area: Rect, canvas: Canvas, margin: Int) : Rect {
         val newArea = Rect()
         if (area.isEmpty) {
-            newArea[0 + margin, 0, canvas.width - 1 - margin] = canvas.height - 1
+            newArea[0 + margin, viewSettings.marginTop, canvas.width - 1 - margin] = canvas.height - 1
         } else {
             val width = canvas.width - 1 - (margin)
-            newArea[area.left + margin, area.top, width] = canvas.height
+            newArea[area.left + margin, area.top + viewSettings.marginTop, width] = canvas.height
         }
         return newArea
     }

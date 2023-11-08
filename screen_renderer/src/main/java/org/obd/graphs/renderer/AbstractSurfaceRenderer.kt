@@ -31,10 +31,11 @@ internal abstract class AbstractSurfaceRenderer(
     protected val context: Context,
     protected val fps: Fps,
     protected val metricsCollector: CarMetricsCollector,
+    protected val viewSettings: ViewSettings
 ) :
     SurfaceRenderer {
 
-    fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP
+    fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP + viewSettings.marginTop
 
     override fun applyMetricsFilter() {
         metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())

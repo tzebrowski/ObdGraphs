@@ -1,8 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+
+
     <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
-
-
     <string name="pref.experimental_switch_network_enabled">This feature is in the experimental phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
     <string name="pref.experimental_result_cache_enabled">This feature is in the experimental phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
     <string name="pref.experimental_read_external_storage_enabled">This feature is in the experimental phase.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
@@ -13,7 +15,8 @@
     <string name="navigation.title_gauge">Gauge</string>
     <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>
-    <string name="navigation.title_giulia_dashboard">Giulia</string>
+    <string name="navigation.title_giulia">Giulia</string>
+    <string name="navigation.title_drag_racing">Drag Racing</string>
 
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>
@@ -168,6 +171,8 @@
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed">Display vehicle speed</string>
 
+    <string name="ref.aa.performance_meter.shift_lights.rev">Shift lights revs threshold</string>
+
     <string name="pref.aa.renderer.category">Screen settings</string>
 
     <string name="pref.aa.alerting.enabled">Enable Alerting</string>
@@ -205,6 +210,11 @@
     <string name="pref.dashboard_category">Dashboard view configuration</string>
     <string name="pref.giulia_category">Giulia view configuration</string>
     <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
+
+
+    <string name="pref.drag_racing_category">Drag racing view configuration</string>
+    <string name="pref.drag_racing.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
+    <string name="pref.drag_racing.font_size">Font size of items on the screen</string>
 
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
@@ -434,8 +444,22 @@
         <item name="60000">60000</item>
     </string-array>
 
+    <string-array name="pref.numbers_4500_5000">
+        <item name="4500">4500</item>
+        <item name="4600">4600</item>
+        <item name="4700">4700</item>
+        <item name="4800">4800</item>
+        <item name="4900">4900</item>
+        <item name="5000">5000</item>
+        <item name="5100">5100</item>
+        <item name="5200">5200</item>
+        <item name="5300">5300</item>
+        <item name="5400">5400</item>
+        <item name="5500">5500</item>
+    </string-array>
 
-    <string-array name="pref.numbers_28_34">
+
+    <string-array name="pref.numbers_20_74">
         <item name="20">20</item>
         <item name="21">21</item>
         <item name="22">22</item>

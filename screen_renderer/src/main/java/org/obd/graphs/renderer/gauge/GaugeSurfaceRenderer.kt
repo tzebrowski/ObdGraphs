@@ -24,10 +24,8 @@ import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.renderer.*
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.SurfaceRendererType
 import kotlin.math.min
 
 private const val MAX_ITEMS = 6
@@ -38,7 +36,8 @@ internal class GaugeSurfaceRenderer(
     settings: ScreenSettings,
     metricsCollector: CarMetricsCollector,
     fps: Fps,
-) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
+    viewSettings: ViewSettings
+) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
     private val drawer = Drawer(
         settings = settings, context = context,

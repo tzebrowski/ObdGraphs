@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import org.obd.graphs.R
 
 
@@ -49,6 +50,11 @@ fun MainActivity.timer(func: (p: Chronometer) -> Unit) {
 
 fun MainActivity.bottomAppBar(func: (p: BottomAppBar) -> Unit) {
     func(findViewById(R.id.bottomAppBar))
+}
+
+
+fun MainActivity.leftAppBar(func: (p: NavigationView) -> Unit) {
+    func(findViewById(R.id.leftNavView))
 }
 
 fun MainActivity.navController(func: (p: NavController) -> Unit) {

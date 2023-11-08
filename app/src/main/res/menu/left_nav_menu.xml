@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/ctx_menu_view_profiles"
+        android:checkable="true"
+        android:icon="@drawable/config"
+        android:title="@string/context_menu.profiles" />
+
+    <item
+        android:id="@+id/ctx_menu_dtc"
+        android:checkable="true"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/pref.dtc.title" />
+
+    <item
+        android:icon="@android:drawable/ic_lock_idle_low_battery"
+        android:checkable="true"
+        android:id="@+id/ctx_menu_vehicle_properties"
+        android:title="@string/pref.vehicle.metadata_title" />
+
+    <item
+        android:id="@+id/ctx_menu_about"
+        android:checkable="true"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/context_menu.about" />
+
+    <item android:title="@string/navigation.title_aa" android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED">
+        <menu>
+            <item
+                android:id="@+id/navigation_android_auto"
+                android:icon="@drawable/android_auto_icon"
+                android:title="@string/context_menu.view_configuration"
+                android:tooltipText="@string/context_menu.view_configuration"
+                android:checkable="true"
+                android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED"
+                tools:targetApi="o" />
+
+            <item
+                android:id="@+id/navigation_android_auto_pids"
+                android:checkable="true"
+                android:title="@string/context_menu.parameters_id_to_display"
+                tools:targetApi="o"/>
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/navigation.title_drag_racing">
+        <menu>
+            <item
+               android:id="@+id/navigation_drag_racing"
+               android:icon="@drawable/action_drag_race_screen"
+               android:checkable="true"
+               android:title="@string/navigation.title_drag_racing">
+            </item>
+            <item
+                android:tooltipText="@string/navigation.title_drag_racing"
+                android:id="@+id/navigation_drag_racing_prefs"
+                android:checkable="true"
+                android:title="@string/context_menu.view_configuration"
+                tools:targetApi="o"/>
+
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/navigation.title_gauge">
+        <menu>
+            <item
+                android:id="@+id/navigation_gauge"
+                android:icon="@android:drawable/ic_menu_gallery"
+                android:title="@string/navigation.title_gauge"
+                android:checkable="true"
+                android:tooltipText="@string/navigation.tooltip_gauge"
+                tools:targetApi="o" />
+            <item
+                android:id="@+id/navigation_gauge_prefs"
+                android:checkable="true"
+                android:title="@string/context_menu.view_configuration"
+                tools:targetApi="o"/>
+
+            <item
+                android:id="@+id/navigation_gauge_pids"
+                android:checkable="true"
+                android:title="@string/context_menu.parameters_id_to_display"
+                tools:targetApi="o"/>
+
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/navigation.title_giulia">
+        <menu>
+            <item
+                android:id="@+id/navigation_giulia"
+                android:icon="@android:drawable/ic_dialog_dialer"
+                android:checkable="true"
+                android:title="@string/navigation.title_giulia"
+                tools:targetApi="o" />
+            <item
+                android:id="@+id/navigation_giulia_prefs"
+                android:checkable="true"
+                android:title="@string/context_menu.view_configuration"
+                tools:targetApi="o"/>
+
+            <item
+                android:id="@+id/navigation_giulia_pids"
+                android:checkable="true"
+                android:title="@string/context_menu.parameters_id_to_display"
+                tools:targetApi="o"/>
+
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/navigation.title_graph">
+        <menu>
+            <item
+                android:id="@+id/navigation_graph"
+                android:icon="@android:drawable/ic_menu_gallery"
+                android:checkable="true"
+                android:title="@string/navigation.title_graph" />
+            <item
+                android:id="@+id/navigation_graph_prefs"
+                android:checkable="true"
+                android:title="@string/context_menu.view_configuration"/>
+
+            <item
+                android:id="@+id/navigation_graph_tripe"
+                android:checkable="true"
+                android:title="@string/pref.trips_recordings" />
+
+            <item
+                android:id="@+id/navigation_graph_pids"
+                android:checkable="true"
+                android:title="@string/context_menu.parameters_id_to_display"/>
+        </menu>
+    </item>
+
+    <item
+        android:title="@string/navigation.title_dashboard">
+        <menu>
+            <item
+                android:id="@+id/navigation_dashboard"
+                android:icon="@android:drawable/ic_dialog_dialer"
+                android:checkable="true"
+                android:title="@string/navigation.title_dashboard"
+                tools:targetApi="o" />
+            <item
+                android:id="@+id/navigation_dashboard_prefs"
+                android:checkable="true"
+                android:title="@string/context_menu.view_configuration"
+                tools:targetApi="o"/>
+        </menu>
+    </item>
+
+
+
+</menu>

@@ -11,7 +11,7 @@
         android:tooltipText="@string/navigation.tooltip_giulia_dashboard"
         android:id="@+id/navigation_giulia"
         android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/navigation.title_giulia_dashboard" />
+        android:title="@string/navigation.title_giulia" />
 
     <item
         android:tooltipText="@string/navigation.tooltip_graph"

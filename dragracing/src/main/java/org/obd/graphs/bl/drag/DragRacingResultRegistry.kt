@@ -34,6 +34,7 @@ interface DragRacingResultRegistry {
     fun readyToRace(value: Boolean)
     fun enableShiftLights(value: Boolean)
     fun getVehicleSpeedPID(): Long = VEHICLE_SPEED_PID_ID
-
     fun getEngineRpmPID(): Long = ENGINE_RPM_PID_ID
+    fun getShiftLightsRevThreshold(): Int
+    fun setShiftLightsRevThreshold(newThresholdValue: Int)
 }

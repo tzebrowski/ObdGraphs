@@ -249,7 +249,7 @@ private fun MainActivity.handleStop() {
 }
 
 internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
-    findViewById<BottomNavigationView>(R.id.nav_view).menu.findItem(id)?.run {
+    findViewById<BottomNavigationView>(R.id.bottom_nav_view).menu.findItem(id)?.run {
         this.isVisible = Prefs.getBoolean(prefKey, true)
     }
 }
