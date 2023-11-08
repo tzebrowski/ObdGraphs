@@ -47,7 +47,7 @@ open class DragRacingFragment : Fragment() {
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
-        id = "GiuliaFragmentRenderingThread",
+        id = "DragRacingRenderingThread",
         renderAction = {
             surfaceController.renderFrame()
         },
@@ -104,9 +104,14 @@ open class DragRacingFragment : Fragment() {
     ): View {
 
         root  = inflater.inflate(R.layout.fragment_drag_racing, container, false)
+
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
-        surfaceController = SurfaceController(SurfaceRenderer.allocate(requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.DRAG_RACING))
+        val renderer = SurfaceRenderer.allocate(
+            requireContext(), settings, metricsCollector, fps,
+            surfaceRendererType = SurfaceRendererType.DRAG_RACING
+        )
+
+        surfaceController = SurfaceController(renderer)
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(

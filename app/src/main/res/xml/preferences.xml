@@ -569,7 +569,6 @@
                         android:key="pref.gauge.toggle_virtual_screens_double_click"
                         android:title="@string/pref.gauge_toggle_virtual_screens" />
 
-
                     <ListPreference
                         app:singleLineTitle="false"
                         android:entries="@array/pref.numbers_1_25"
@@ -580,12 +579,27 @@
                         android:key="pref.gauge.fps"
                         android:title="@string/pref.screen.fps"
                         app:useSimpleSummaryProvider="true" />
-
                 </PreferenceCategory>
             </PreferenceScreen>
 
+        <PreferenceScreen
+            android:summary="@string/pref.drag_racing_category"
+            android:title="@string/navigation.title_drag_racing"
+            app:key="pref.title_drag_racing">
 
-            <PreferenceScreen
+            <ListPreference
+                app:singleLineTitle="false"
+                android:entries="@array/pref.numbers_20_74"
+                android:entryValues="@array/pref.numbers_20_74"
+                android:defaultValue="30"
+                android:dialogTitle="@string/pref.drag_racing.font_size"
+                android:inputType="number"
+                android:key="pref.drag_racing.screen_font_size"
+                android:title="@string/pref.drag_racing.font_size"
+                app:useSimpleSummaryProvider="true" />
+        </PreferenceScreen>
+
+        <PreferenceScreen
                 android:summary="@string/pref.giulia_category"
                 android:title="@string/navigation.title_giulia_dashboard"
                 app:key="pref.giulia">
@@ -702,8 +716,8 @@
                         <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false">
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
                                 android:inputType="number"
@@ -713,8 +727,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
                                 android:inputType="number"
@@ -724,8 +738,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
                                 android:inputType="number"
@@ -736,8 +750,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
                                 android:inputType="number"
@@ -748,8 +762,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.5"
                                 android:inputType="number"
@@ -759,8 +773,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.6"
                                 android:inputType="number"
@@ -770,8 +784,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.7"
                                 android:inputType="number"
@@ -1079,8 +1093,8 @@
                         <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false">
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
                                 android:key="pref.aa.screen_font_size.1"
@@ -1089,8 +1103,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
                                 android:key="pref.aa.screen_font_size.2"
@@ -1099,8 +1113,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
                                 android:key="pref.aa.screen_font_size.3"
@@ -1110,8 +1124,8 @@
 
                             <ListPreference
                                 app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_28_34"
-                                android:entryValues="@array/pref.numbers_28_34"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
                                 android:key="pref.aa.screen_font_size.4"
@@ -1290,8 +1304,8 @@
 
                     <ListPreference
                         app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_28_34"
-                        android:entryValues="@array/pref.numbers_28_34"
+                        android:entries="@array/pref.numbers_20_74"
+                        android:entryValues="@array/pref.numbers_20_74"
                         android:defaultValue="20"
                         android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
                         android:inputType="number"

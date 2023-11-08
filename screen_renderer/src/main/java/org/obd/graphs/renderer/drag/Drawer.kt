@@ -305,10 +305,10 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(30f, CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        val scaleRatio = valueScaler.scaleToNewRange(settings.getFontSize().toFloat(),
+            CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = area.width()
-
         val valueTextSize = (areaWidth / 18f) * scaleRatio
         val textSizeBase = (areaWidth / 21f) * scaleRatio
         return Pair(valueTextSize, textSizeBase)

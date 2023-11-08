@@ -33,7 +33,7 @@ class DragRacingSettings: ScreenSettings {
     override fun isHistoryEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
     override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.drag_racing.fps","5").toInt()
-    override fun getFontSize(): Int =  Prefs.getS("pref.drag_racing.screen_font_size","64").toInt()
+    override fun getFontSize(): Int =  Prefs.getS("pref.drag_racing.screen_font_size","30").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
 

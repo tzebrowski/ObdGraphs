@@ -211,6 +211,11 @@
     <string name="pref.giulia_category">Giulia view configuration</string>
     <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
 
+
+    <string name="pref.drag_racing_category">Drag racing view configuration</string>
+    <string name="pref.drag_racing.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
+    <string name="pref.drag_racing.font_size">Font size of items on the screen</string>
+
     <string name="pref.graph_category">Graph view configuration</string>
     <string name="pref.gauge_category">Gauge view configuration</string>
     <string name="pref.aa_category">Android Auto view configuration</string>
@@ -454,7 +459,7 @@
     </string-array>
 
 
-    <string-array name="pref.numbers_28_34">
+    <string-array name="pref.numbers_20_74">
         <item name="20">20</item>
         <item name="21">21</item>
         <item name="22">22</item>
