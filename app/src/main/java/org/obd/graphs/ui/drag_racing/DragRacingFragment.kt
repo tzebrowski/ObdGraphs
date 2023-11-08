@@ -37,6 +37,7 @@ import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.common.SurfaceController
 
 open class DragRacingFragment : Fragment() {
@@ -110,7 +111,7 @@ open class DragRacingFragment : Fragment() {
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         val renderer = SurfaceRenderer.allocate(
             requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.DRAG_RACING
+            surfaceRendererType = SurfaceRendererType.DRAG_RACING, viewSettings = ViewSettings(marginTop = 80)
         )
 
         surfaceController = SurfaceController(renderer)

@@ -31,6 +31,7 @@ internal abstract class AbstractSurfaceRenderer(
     protected val context: Context,
     protected val fps: Fps,
     protected val metricsCollector: CarMetricsCollector,
+    protected val viewSettings: ViewSettings
 ) :
     SurfaceRenderer {
 
