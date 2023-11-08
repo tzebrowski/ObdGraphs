@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.activity
 
+
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -29,12 +30,12 @@ import android.os.StrictMode.VmPolicy
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import org.obd.graphs.*
-import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.*
 import org.obd.graphs.preferences.profile.vehicleProfile
-import org.obd.graphs.preferences.updateBoolean
-import org.obd.graphs.preferences.updateString
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
@@ -42,8 +43,6 @@ import java.util.*
 
 
 const val LOG_TAG = "MainActivity"
-
-
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
 
@@ -82,6 +81,16 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
+    override fun onBackPressed() {
+        val drawer = getDrawer()
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    fun getDrawer() = findViewById<View>(R.id.drawer_layout) as DrawerLayout
 
     override fun onPause() {
         super.onPause()
@@ -113,8 +122,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
 
         setupLockScreenDialog()
-
         Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
+        setupLeftNavigationPanel()
     }
 
     override fun onResume() {

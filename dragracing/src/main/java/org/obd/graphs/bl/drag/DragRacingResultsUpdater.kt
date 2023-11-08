@@ -36,11 +36,8 @@ private const val LOG_KEY = "DragRaceResult"
 
 val dragRacingResultsUpdater: MetricsProcessor = DragRacingResultsUpdater()
 
-private const val SHIFT_LIGHTS_THRESHOLD = 2000
-
 fun ObdMetric.isVehicleSpeedPID(): Boolean =  command.pid.id == dragRacingResultRegistry.getVehicleSpeedPID()
 fun ObdMetric.isEngineRpmPID(): Boolean =  command.pid.id == dragRacingResultRegistry.getEngineRpmPID()
-
 
 internal class DragRacingResultsUpdater : MetricsProcessor {
 
@@ -65,7 +62,13 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
     override fun postValue(obdMetric: ObdMetric) {
 
         if (obdMetric.isEngineRpmPID()){
-            dragRacingResultRegistry.enableShiftLights(obdMetric.value.toInt() > SHIFT_LIGHTS_THRESHOLD)
+            if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
+                Log.v(
+                    LOG_KEY, "Current revLimit='${dragRacingResultRegistry.getShiftLightsRevThreshold()}', " +
+                            "current rev: ${obdMetric.value.toInt()}, rising: ${obdMetric.value.toInt() > dragRacingResultRegistry.getShiftLightsRevThreshold()}"
+                )
+            }
+            dragRacingResultRegistry.enableShiftLights(obdMetric.value.toInt() > dragRacingResultRegistry.getShiftLightsRevThreshold())
         } else {
             if (obdMetric.isVehicleSpeedPID()) {
                 if (obdMetric.value.toInt() == SPEED_0_KM_H) {

@@ -44,8 +44,9 @@ internal class GiuliaSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
     metricsCollector: CarMetricsCollector,
-    fps: Fps
-) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector) {
+    fps: Fps,
+    viewSettings: ViewSettings
+) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
     private val valueScaler = ValueScaler()
     private val drawer = Drawer(context, settings)

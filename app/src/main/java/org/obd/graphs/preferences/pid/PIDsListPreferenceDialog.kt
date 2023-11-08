@@ -78,30 +78,6 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewE
     ): View {
 
         root = inflater.inflate(R.layout.dialog_pids, container, false)
-        val toolbar = root.findViewById<Toolbar>(R.id.custom_dialog_layout_toolbar)
-        toolbar.inflateMenu(R.menu.pids_dialog_menu)
-
-        val searchView = toolbar.menu.findItem(R.id.menu_searchview).actionView as SearchView
-        searchView.setIconifiedByDefault(false)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                if (Log.isLoggable(LOG_KEY,Log.DEBUG)) {
-                    Log.d(LOG_KEY, "OnQueryTextSubmit newText=$query")
-                }
-                filterListOfItems(query)
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (Log.isLoggable(LOG_KEY,Log.DEBUG)) {
-                    Log.d(LOG_KEY, "OnQueryTextChange newText=$newText")
-                }
-                filterListOfItems(newText)
-                return false
-            }
-        })
-
         val viewSerializer = ViewPreferencesSerializer("$key.view.settings")
         listOfItems = buildInitialList(viewSerializer)
 
@@ -110,11 +86,47 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewE
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
+        attachSearchView()
         attachDragManager(viewSerializer, recyclerView)
+        attachActionButtons()
+        adjustItemsVisibility()
 
+        return root
+    }
+
+    private fun adjustItemsVisibility() {
         root.findViewById<TableLayout>(R.id.details_view).apply {
             visibility = if (detailsViewEnabled) View.VISIBLE else View.GONE
         }
+    }
+
+    private fun attachSearchView() {
+        val toolbar = root.findViewById<Toolbar>(R.id.custom_dialog_layout_toolbar)
+        toolbar.inflateMenu(R.menu.pids_dialog_menu)
+        val searchView = toolbar.menu.findItem(R.id.menu_searchview).actionView as SearchView
+        searchView.setIconifiedByDefault(false)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
+                    Log.d(LOG_KEY, "OnQueryTextSubmit newText=$query")
+                }
+                filterListOfItems(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
+                    Log.d(LOG_KEY, "OnQueryTextChange newText=$newText")
+                }
+                filterListOfItems(newText)
+                return false
+            }
+        })
+    }
+
+    private fun attachActionButtons() {
+
 
         root.findViewById<Button>(R.id.pid_list_close_window).apply {
             setOnClickListener {
@@ -133,6 +145,8 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewE
 
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
             setOnClickListener {
+                val adapter: PIDsViewAdapter = getAdapter()
+
                 adapter.data.forEach {
                     it.checked = true
                 }
@@ -142,13 +156,14 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewE
 
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
             setOnClickListener {
+                val adapter: PIDsViewAdapter = getAdapter()
+
                 adapter.data.forEach {
                     it.checked = false
                 }
                 adapter.notifyDataSetChanged()
             }
         }
-        return root
     }
 
     private fun attachDragManager(

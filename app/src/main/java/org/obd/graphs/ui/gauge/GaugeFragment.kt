@@ -124,6 +124,7 @@ class GaugeFragment : RefreshableFragment() {
         setupVirtualViewPanel()
 
         if (dataLogger.isRunning()) {
+            dataLogger.updateQuery(QueryType.METRICS)
             renderingThread.start()
         }
 

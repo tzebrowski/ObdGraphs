@@ -30,6 +30,8 @@ enum class SurfaceRendererType {
     GIULIA, GAUGE, DRAG_RACING
 }
 
+data class ViewSettings(var marginTop: Int = 0)
+
 interface SurfaceRenderer {
     fun applyMetricsFilter()
 
@@ -45,12 +47,13 @@ interface SurfaceRenderer {
             settings: ScreenSettings,
             metricsCollector: CarMetricsCollector,
             fps: Fps,
-            surfaceRendererType: SurfaceRendererType = SurfaceRendererType.GIULIA
+            surfaceRendererType: SurfaceRendererType = SurfaceRendererType.GIULIA,
+            viewSettings: ViewSettings = ViewSettings()
         ): SurfaceRenderer =
             when (surfaceRendererType) {
-                SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps)
-                SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps)
-                SurfaceRendererType.DRAG_RACING -> DragRacingSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
+                SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
+                SurfaceRendererType.DRAG_RACING -> DragRacingSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
             }
     }
 }
