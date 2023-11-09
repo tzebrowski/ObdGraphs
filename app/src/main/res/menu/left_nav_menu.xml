@@ -26,6 +26,13 @@
         android:icon="@android:drawable/ic_dialog_info"
         android:title="@string/context_menu.about" />
 
+
+    <item
+        android:id="@+id/ctx_menu_pids_to_query"
+        android:checkable="true"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/context_menu.parameters_id_to_query" />
+
     <item android:title="@string/navigation.title_aa" android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED">
         <menu>
             <item
