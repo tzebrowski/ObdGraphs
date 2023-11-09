@@ -235,8 +235,12 @@
     <string name="pref.adapter_command_freq_summary">This parameter allows to set target OBD commands frequency. This is just desired frequency which is limited by the hardware capabilities. This option typically should be conducted with adaptive timeout.</string>
     <string name="pref.adapter_command_freq">Desired refresh rate(PIDs/second)</string>
 
-    <string name="pref.adapter_power_connect_adapter">Connect adapter on power</string>
-    <string name="pref.adapter_power_screen_off">Screen off when disconnected</string>
+    <string name="pref.adapter_power_connect_adapter">Automatically connect to the OBD adapter when external power supply</string>
+    <string name="pref.adapter_power_connect_adapter_summary">By enabling this option application automatically connects with the OBD adapter once external power supply connected</string>
+
+    <string name="pref.adapter_power_screen_off">Maintain screen brightness</string>
+    <string name="pref.adapter_power_screen_off_summary">By enabling this option, application takes responsibility for maintaining screen brightness</string>
+
     <string name="pref.adapter_power_bt_off">Switch network Off/On</string>
     <string name="pref.adapter_power_start_data_logging_after">Start data logging after specified period of time (in seconds)</string>
 

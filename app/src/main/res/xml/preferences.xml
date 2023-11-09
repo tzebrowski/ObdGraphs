@@ -460,15 +460,16 @@
             android:title="@string/pref.settings">
 
             <CheckBoxPreference
+                app:singleLineTitle="false"
                 android:defaultValue="false"
-                android:dialogTitle="@string/pref.adapter_power_connect_adapter"
+                android:summary="@string/pref.adapter_power_connect_adapter_summary"
                 android:key="pref.adapter.power.connect_adapter"
                 android:title="@string/pref.adapter_power_connect_adapter" />
 
             <CheckBoxPreference
                 app:singleLineTitle="false"
                 android:defaultValue="false"
-                android:dialogTitle="@string/pref.adapter_power_screen_off"
+                android:summary="@string/pref.adapter_power_screen_off_summary"
                 android:key="pref.adapter.power.screen_off"
                 android:title="@string/pref.adapter_power_screen_off" />
 

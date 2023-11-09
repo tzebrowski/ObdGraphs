@@ -22,23 +22,17 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 
 data class PowerPreferences(
-    val connectOnPower: Boolean,
-    val screenOnOff: Boolean,
-    val switchNetworkOffOn: Boolean,
-    val startDataLoggingAfter: Long
+    var connectOnPower: Boolean = false,
+    var screenOnOff: Boolean = false,
+    var switchNetworkOffOn: Boolean = false,
+    var startDataLoggingAfter: Long = 10
 )
 
-fun getPowerPreferences(): PowerPreferences {
+private val powerPreferences = PowerPreferences()
 
-    val btOnOff = Prefs.isEnabled("pref.adapter.power.switch_network_on_off")
-    val screenOnOff = Prefs.isEnabled("pref.adapter.power.screen_off")
-    val connectOnPower = Prefs.isEnabled("pref.adapter.power.connect_adapter")
-    val startDataLoggingAfter =
-        Prefs.getString("pref.adapter.power.start_data_logging.after", "10")!!.toLong()
-    return PowerPreferences(
-        connectOnPower,
-        screenOnOff,
-        btOnOff,
-        startDataLoggingAfter
-    )
+fun getPowerPreferences(): PowerPreferences  = powerPreferences.apply {
+     switchNetworkOffOn = Prefs.isEnabled("pref.adapter.power.switch_network_on_off")
+     screenOnOff = Prefs.isEnabled("pref.adapter.power.screen_off")
+     connectOnPower = Prefs.isEnabled("pref.adapter.power.connect_adapter")
+     startDataLoggingAfter = Prefs.getString("pref.adapter.power.start_data_logging.after", "10")!!.toLong()
 }

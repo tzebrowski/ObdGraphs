@@ -164,7 +164,7 @@ internal class WorkflowOrchestrator internal constructor() {
             val result = workflow.updateQuery(
                 it.first,
                 init(), it.second)
-            Log.i(LOG_TAG, "Query update result=$result")
+            Log.i(LOG_TAG, "Query=$queryType update result=$result")
         }
     }
 
