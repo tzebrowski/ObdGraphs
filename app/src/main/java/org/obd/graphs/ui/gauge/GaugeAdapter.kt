@@ -25,6 +25,7 @@ import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -257,7 +258,8 @@ class GaugeAdapter(
                             else -> 3
                         }
                     }
-                view.layoutParams.height = parent.measuredHeight / x
+
+                view.layoutParams.height = ((parent.measuredHeight / x) * 1.10f).toInt()
             }
         } else {
             view.layoutParams.height = height

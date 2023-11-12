@@ -74,9 +74,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        toolbar {
+        toolbar { a, b, c ->
             if (getMainActivityPreferences().hideToolbarLandscape) {
-                it.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+                val visible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+                a.isVisible = visible
+                b.isVisible = visible
+                c.isVisible = visible
             }
         }
     }

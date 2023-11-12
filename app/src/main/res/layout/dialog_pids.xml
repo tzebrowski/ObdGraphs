@@ -263,7 +263,7 @@
     </TableLayout>
 
     <LinearLayout
-        android:id="@+id/button_panel"
+        android:id="@+id/status_panel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_view"

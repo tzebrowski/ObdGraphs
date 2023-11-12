@@ -27,6 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.preference.*
 import org.obd.graphs.R
+import org.obd.graphs.activity.RESET_TOOLBAR_ANIMATION
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
@@ -62,8 +63,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-
-
         when (preference) {
             is TripsListPreferences -> {
                 TripsPreferenceDialogFragment().show(parentFragmentManager, null)
@@ -106,6 +105,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen) {
+        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
         super.onNavigateToScreen(preferenceScreen)
         setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
         registerListeners()
@@ -146,6 +146,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
         val root = super.onCreateView(inflater, container, savedInstanceState)
         registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)

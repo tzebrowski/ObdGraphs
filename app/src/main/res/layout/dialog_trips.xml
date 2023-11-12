@@ -79,11 +79,11 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/button_panel"
+        android:layout_above="@id/status_panel"
         android:layout_below="@id/tablelayout" />
 
     <LinearLayout
-        android:id="@+id/button_panel"
+        android:id="@+id/status_panel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
