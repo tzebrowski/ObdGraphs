@@ -52,9 +52,29 @@
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/tablelayout"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tablelayout"
+        android:background="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/button_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/action_close_window"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:backgroundTint="@color/rainbow_indigo"
+            android:text="@string/dialog_close_window_action"
+            android:textSize="12sp" />
+    </LinearLayout>
 </RelativeLayout>
 

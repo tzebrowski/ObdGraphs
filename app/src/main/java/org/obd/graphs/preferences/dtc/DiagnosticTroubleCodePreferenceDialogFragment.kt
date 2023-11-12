@@ -49,6 +49,8 @@ class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
+
+        attachCloseButton(root)
         return root
     }
 }

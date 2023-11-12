@@ -91,7 +91,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/pid_list_close_window"
+            android:id="@+id/action_close_window"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
@@ -104,11 +104,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
             android:layout_marginTop="6dp"
             android:backgroundTint="@color/cardinal"
             android:text="@string/trip_dialog_delete_all_trips"
             android:textSize="12sp" />
-
     </LinearLayout>
 
 </RelativeLayout>

@@ -288,7 +288,7 @@
             android:textSize="10sp" />
 
         <Button
-            android:id="@+id/pid_list_close_window"
+            android:id="@+id/action_close_window"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"

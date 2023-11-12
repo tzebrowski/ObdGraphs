@@ -120,7 +120,7 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
     private fun attachActionButtons() {
 
 
-        root.findViewById<Button>(R.id.pid_list_close_window).apply {
+        root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
                 onDialogCloseListener.invoke()
