@@ -267,48 +267,42 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_view"
-        android:gravity="end"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/pid_list_select_all"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_select_all_action"
-            android:textSize="12sp" />
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/pid_list_deselect_all"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="2dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_deselect_all_action"
-            android:textSize="12sp" />
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/pid_list_close_window"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="2dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_close_window_action"
-            android:textSize="12sp" />
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/pid_list_save"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="2dp"
             android:text="@string/dialog_save_action"
-            android:textSize="12sp" />
+            android:textSize="10sp" />
     </LinearLayout>
 </RelativeLayout>
 

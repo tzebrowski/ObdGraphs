@@ -68,7 +68,7 @@
                     android:text="@string/trip_action_load"
                     android:textSize="10sp"
                     tools:ignore="SmallSp"
-                    style="?android:attr/buttonBarButtonStyle"
+                   
                     />
 
                 <Button
@@ -80,7 +80,7 @@
                     android:text="@string/trip_action_delete"
                     android:textSize="10sp"
                     tools:ignore="SmallSp"
-                    style="?android:attr/buttonBarButtonStyle"
+                   
                     />
 
             </LinearLayout>
