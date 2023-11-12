@@ -30,7 +30,7 @@ import org.obd.graphs.preferences.Prefs
 
 
 class HeaderNamePreference(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     EditTextPreference(context, attrs) {

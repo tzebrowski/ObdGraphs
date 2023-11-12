@@ -27,7 +27,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 
 class ScreenRendererNotifyList(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {

@@ -29,7 +29,7 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 
 class VehicleProfileListPreference(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) : ListPreference(context, attrs) {
 

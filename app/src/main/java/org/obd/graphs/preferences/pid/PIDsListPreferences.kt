@@ -23,7 +23,7 @@ import android.util.AttributeSet
 import androidx.preference.DialogPreference
 
 open class PIDsListPreferences(
-    context: Context?,
+    context: Context,
     private val attrs: AttributeSet?
 ) : DialogPreference(context, attrs) {
 

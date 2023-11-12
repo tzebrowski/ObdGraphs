@@ -28,7 +28,7 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.profile.PROFILE_NAME_PREFIX
 
 class VehicleProfileNamePreference(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ):
     EditTextPreference(context, attrs) {

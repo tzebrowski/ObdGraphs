@@ -31,7 +31,7 @@ import org.obd.graphs.getCurrentMode
 import org.obd.graphs.preferences.Prefs
 
 class HeaderListPreferences(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {

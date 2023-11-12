@@ -35,7 +35,7 @@ import java.util.*
 private class Device(val address: String, val label: Spanned)
 
 class BluetoothAdaptersListPreferences(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {

@@ -31,7 +31,7 @@ import java.util.*
 private class SSID(val name: String)
 
 class WifiSSIDListPreferences(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {
