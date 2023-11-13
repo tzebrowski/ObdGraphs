@@ -31,6 +31,7 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
     private val dynamicSelectorModeEventsBroadcaster = DynamicSelectorModeEventBroadcaster()
 
     override fun onStopped() {
+        metrics.postValue(null)
         dynamicSelectorModeEventsBroadcaster.onStopped()
         dragRacingResultsUpdater.onStopped()
     }
