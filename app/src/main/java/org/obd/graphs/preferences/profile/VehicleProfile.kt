@@ -40,7 +40,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 const val PROFILES_PREF = "pref.profiles"
-private const val PROFILE_LOG_TAG = "VehicleProfile"
+private const val LOG_TAG = "VehicleProfile"
 private const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
 private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
 private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
@@ -61,7 +61,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
         runAsync {
             try {
 
-                Log.i(PROFILE_LOG_TAG, "Start importing backup file")
+                Log.i(LOG_TAG, "Start importing backup file")
                 val backupFile = getBackupFile()
 
                 loadProfileFilesIntoPreferences(
@@ -74,12 +74,12 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                     prop
                 }
 
-                Log.i(PROFILE_LOG_TAG, "Exporting backup file completed")
+                Log.i(LOG_TAG, "Exporting backup file completed")
 
                 sendBroadcastEvent(PROFILE_CHANGED_EVENT)
 
             } catch (e: Throwable){
-                Log.e(PROFILE_LOG_TAG, "Failed to load backup file",e)
+                Log.e(LOG_TAG, "Failed to load backup file",e)
             } finally {
                 bulkActionEnabled = false
             }
@@ -89,13 +89,13 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
     fun exportBackup(){
         runAsync {
             try {
-                Log.i(PROFILE_LOG_TAG, "Start exporting backup file")
+                Log.i(LOG_TAG, "Start exporting backup file")
                 val data = createExportBackupData()
                 val backupFile = getBackupFile()
                 data.store(FileOutputStream(backupFile), "Backup file")
-                Log.i(PROFILE_LOG_TAG, "Exporting backup file completed")
+                Log.i(LOG_TAG, "Exporting backup file completed")
             } catch (e: Throwable) {
-                Log.e(PROFILE_LOG_TAG, "Failed to store backup file", e)
+                Log.e(LOG_TAG, "Failed to store backup file", e)
             } finally {
                 bulkActionEnabled = false
             }
@@ -132,28 +132,30 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
         }
     }
 
-
     fun setupProfiles(forceOverride: Boolean = true) {
         try {
             bulkActionEnabled = true
             val installationKey = getProfileInstallationKey()
             val setupDisabled = Prefs.getBoolean(installationKey, false)
             Log.i(
-                PROFILE_LOG_TAG,
+                LOG_TAG,
                 "Setup profiles. Installation key='$installationKey', setupEnabled='$setupDisabled', forceOverride=$forceOverride"
             )
 
             if (!setupDisabled) {
                 val profiles = findProfileFiles()
-                Log.i(PROFILE_LOG_TAG, "Found following profiles: $profiles for installation.")
+                Log.i(LOG_TAG, "Found following profiles: $profiles for installation.")
 
                 loadProfileFilesIntoPreferences(forceOverride, profiles, installationKey){
                     loadFile(it)
                 }
 
                 val defaultProfile = getDefaultProfile()
-                Log.i(PROFILE_LOG_TAG, "Setting default profile to: $defaultProfile")
-                loadProfile(getDefaultProfile())
+                Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
+                if (forceOverride) {
+                    loadProfile(getDefaultProfile())
+                }
+                
                 updateToolbar()
             }
         } finally {
@@ -161,22 +163,19 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
         }
     }
 
-
-
-
     internal fun saveCurrentProfile() {
         try {
             bulkActionEnabled = true
             Prefs.edit().let {
                 val profileName = getCurrentProfile()
-                Log.i(PROFILE_LOG_TAG, "Saving user preference to profile='$profileName'")
+                Log.i(LOG_TAG, "Saving user preference to profile='$profileName'")
                 Prefs.all
                     .filter { (pref, _) -> !pref.startsWith("profile_") }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                     .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                     .forEach { (pref, value) ->
-                        Log.i(PROFILE_LOG_TAG, "'$profileName.$pref'=$value")
+                        Log.i(LOG_TAG, "'$profileName.$pref'=$value")
                         it.updatePreference("$profileName.$pref", value)
                     }
                 it.apply()
@@ -189,7 +188,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
     fun loadProfile(profileName: String) {
         try {
             bulkActionEnabled = true
-            Log.i(PROFILE_LOG_TAG, "Loading user preferences from the profile='$profileName'")
+            Log.i(LOG_TAG, "Loading user preferences from the profile='$profileName'")
 
             resetCurrentProfile()
 
@@ -201,7 +200,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                     .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
                     .forEach { (pref, value) ->
                         pref.substring(profileName.length + 1).run {
-                            Log.d(PROFILE_LOG_TAG, "Loading user preference $this = $value")
+                            Log.d(LOG_TAG, "Loading user preference $this = $value")
                             it.updatePreference(this, value)
                         }
                     }
@@ -245,7 +244,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
     private fun updateCurrentProfileValue(profileName: String) {
         val prefName =
             Prefs.getString("$PROFILE_NAME_PREFIX.$profileName", profileName.toCamelCase())
-        Log.i(PROFILE_LOG_TAG, "Setting $PROFILE_CURRENT_NAME_PREF=$prefName")
+        Log.i(LOG_TAG, "Setting $PROFILE_CURRENT_NAME_PREF=$prefName")
         Prefs.edit().putString(PROFILE_CURRENT_NAME_PREF, prefName).apply()
     }
 
@@ -289,20 +288,20 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
 
         Prefs.edit().let { editor ->
             if (forceOverride) {
-                Log.i(PROFILE_LOG_TAG, "Removing all preferences.")
+                Log.i(LOG_TAG, "Removing all preferences.")
                 // clear all preferences
                 editor.clear()
             }
 
             files?.forEach { profileFile ->
-                Log.i(PROFILE_LOG_TAG, "Loading profile file='$profileFile'")
+                Log.i(LOG_TAG, "Loading profile file='$profileFile'")
 
                 func(profileFile).forEach { t, u ->
                     val value = u.toString()
                     val key = t.toString()
 
                     if (forceOverride || !allPrefs.keys.contains(key)) {
-                        Log.i(PROFILE_LOG_TAG, "Updating profile.key=`$key=$value`")
+                        Log.i(LOG_TAG, "Updating profile.key=`$key=$value`")
 
                         when {
                             value.isBoolean() -> {
@@ -319,12 +318,17 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                             }
                         }
                     } else {
-                        Log.i(PROFILE_LOG_TAG, "Skipping profile.key=`$key=$value`")
+                        Log.i(LOG_TAG, "Skipping profile.key=`$key=$value`")
                     }
                 }
             }
-            editor.putString(PROFILE_ID_PREF, getDefaultProfile())
-            Log.i(PROFILE_LOG_TAG, "Updating profile installation key $installationKey to true")
+
+            if (forceOverride) {
+                Log.i(LOG_TAG, "Updating selected profile to the default=${getDefaultProfile()}")
+                editor.putString(PROFILE_ID_PREF, getDefaultProfile())
+            }
+
+            Log.i(LOG_TAG, "Updating profile installation key $installationKey to true")
             editor.putBoolean(installationKey, true)
             editor.apply()
         }
@@ -352,7 +356,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                     mm[it.key] = (it.value as Set<*>).toString()
                 }
                 else -> {
-                    Log.e(PROFILE_LOG_TAG, "Unknown type for key ${it.key}, skipping")
+                    Log.e(LOG_TAG, "Unknown type for key ${it.key}, skipping")
                 }
             }
         }
