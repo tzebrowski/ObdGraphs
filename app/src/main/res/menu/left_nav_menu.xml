@@ -38,8 +38,8 @@
             <item
                 android:id="@+id/navigation_android_auto"
                 android:icon="@drawable/android_auto_icon"
-                android:title="@string/context_menu.view_configuration"
-                android:tooltipText="@string/context_menu.view_configuration"
+                android:title="@string/pref.settings"
+                android:tooltipText="@string/pref.settings"
                 android:checkable="true"
                 android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED"
                 tools:targetApi="o" />
@@ -65,7 +65,7 @@
                 android:tooltipText="@string/navigation.title_drag_racing"
                 android:id="@+id/navigation_drag_racing_prefs"
                 android:checkable="true"
-                android:title="@string/context_menu.view_configuration"
+                android:title="@string/pref.settings"
                 tools:targetApi="o"/>
 
         </menu>
@@ -84,7 +84,7 @@
             <item
                 android:id="@+id/navigation_gauge_prefs"
                 android:checkable="true"
-                android:title="@string/context_menu.view_configuration"
+                android:title="@string/pref.settings"
                 tools:targetApi="o"/>
 
             <item
@@ -108,7 +108,7 @@
             <item
                 android:id="@+id/navigation_giulia_prefs"
                 android:checkable="true"
-                android:title="@string/context_menu.view_configuration"
+                android:title="@string/pref.settings"
                 tools:targetApi="o"/>
 
             <item
@@ -131,7 +131,7 @@
             <item
                 android:id="@+id/navigation_graph_prefs"
                 android:checkable="true"
-                android:title="@string/context_menu.view_configuration"/>
+                android:title="@string/pref.settings"/>
 
             <item
                 android:id="@+id/navigation_graph_tripe"
@@ -145,23 +145,32 @@
         </menu>
     </item>
 
-    <item
-        android:title="@string/navigation.title_dashboard">
+    <item android:title="@string/navigation.title_dashboard">
         <menu>
             <item
                 android:id="@+id/navigation_dashboard"
                 android:icon="@android:drawable/ic_dialog_dialer"
                 android:checkable="true"
-                android:title="@string/navigation.title_dashboard"
-                tools:targetApi="o" />
+                android:title="@string/navigation.title_dashboard"/>
             <item
                 android:id="@+id/navigation_dashboard_prefs"
                 android:checkable="true"
-                android:title="@string/context_menu.view_configuration"
-                tools:targetApi="o"/>
+                android:title="@string/pref.settings" />
         </menu>
     </item>
 
+    <item android:title="@string/navigation.title_preferences">
+        <menu>
+            <item
+                android:id="@+id/navigation_preferences"
+                android:icon="@android:drawable/ic_menu_edit"
+                android:checkable="true"
+                android:title="@string/pref.settings" />
 
-
+            <item
+                android:id="@+id/navigation_preferences_adapter"
+                android:checkable="true"
+                android:title="@string/pref.connection.category" />
+        </menu>
+    </item>
 </menu>

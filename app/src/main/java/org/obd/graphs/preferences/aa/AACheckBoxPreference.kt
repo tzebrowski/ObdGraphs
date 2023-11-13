@@ -27,7 +27,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 
 class AACheckBoxPreference(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     CheckBoxPreference(context, attrs) {

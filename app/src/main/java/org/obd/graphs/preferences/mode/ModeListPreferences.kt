@@ -28,7 +28,7 @@ import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.Prefs
 
 class ModeListPreferences(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     ListPreference(context, attrs) {

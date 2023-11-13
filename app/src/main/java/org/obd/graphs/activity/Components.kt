@@ -23,10 +23,10 @@ import android.widget.Chronometer
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import org.obd.graphs.R
@@ -36,8 +36,10 @@ fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
     func(findViewById(R.id.connect_btn))
 }
 
-fun MainActivity.toolbar(func: (p: CoordinatorLayout) -> Unit) {
-    func(findViewById(R.id.coordinator_Layout))
+fun BottomNavigationView.isUp (): Boolean = translationY == 0f
+
+fun MainActivity.toolbar(func: (p: BottomNavigationView, r: BottomAppBar, c: FloatingActionButton) -> Unit) {
+    func(findViewById(R.id.bottom_nav_view), findViewById(R.id.bottom_app_bar), findViewById(R.id.connect_btn))
 }
 
 fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {
@@ -49,7 +51,7 @@ fun MainActivity.timer(func: (p: Chronometer) -> Unit) {
 }
 
 fun MainActivity.bottomAppBar(func: (p: BottomAppBar) -> Unit) {
-    func(findViewById(R.id.bottomAppBar))
+    func(findViewById(R.id.bottom_app_bar))
 }
 
 

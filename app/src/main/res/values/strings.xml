@@ -15,6 +15,7 @@
     <string name="navigation.title_gauge">Gauge</string>
     <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>
+
     <string name="navigation.title_giulia">Giulia</string>
     <string name="navigation.title_drag_racing">Drag Racing</string>
 
@@ -61,7 +62,7 @@
     <string name="pref.adapter_reconnect">Enable OBD2 Adapter automatic reconnect when connectivity errors occur</string>
     <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts</string>
 
-    <string name="pref.connection.category">Connection</string>
+    <string name="pref.connection.category">OBD2 Adapter Connection</string>
     <string name="pref.connection.category.summary">Under this section you can find preferences related to the adapter type. You can configure here WIFI or Bluetooth parameters of your adapter</string>
 
     <string name="pref.connection.connection_type">Type of connection</string>
@@ -235,8 +236,12 @@
     <string name="pref.adapter_command_freq_summary">This parameter allows to set target OBD commands frequency. This is just desired frequency which is limited by the hardware capabilities. This option typically should be conducted with adaptive timeout.</string>
     <string name="pref.adapter_command_freq">Desired refresh rate(PIDs/second)</string>
 
-    <string name="pref.adapter_power_connect_adapter">Connect adapter on power</string>
-    <string name="pref.adapter_power_screen_off">Screen off when disconnected</string>
+    <string name="pref.adapter_power_connect_adapter">Automatically connect to the OBD adapter when external power supply</string>
+    <string name="pref.adapter_power_connect_adapter_summary">By enabling this option application automatically connects with the OBD adapter once external power supply connected</string>
+
+    <string name="pref.adapter_power_screen_off">Maintain screen brightness</string>
+    <string name="pref.adapter_power_screen_off_summary">By enabling this option, application takes responsibility for maintaining screen brightness</string>
+
     <string name="pref.adapter_power_bt_off">Switch network Off/On</string>
     <string name="pref.adapter_power_start_data_logging_after">Start data logging after specified period of time (in seconds)</string>
 

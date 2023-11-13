@@ -27,16 +27,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.preference.*
 import org.obd.graphs.R
+import org.obd.graphs.activity.RESET_TOOLBAR_ANIMATION
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
-import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialog
+import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
-import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialog
-import org.obd.graphs.preferences.pid.PIDsListPreferenceDialog
+import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragment
+import org.obd.graphs.preferences.pid.PIDsListPreferenceDialogFragment
 import org.obd.graphs.preferences.pid.PIDsListPreferences
 import org.obd.graphs.preferences.trips.TripsListPreferences
-import org.obd.graphs.preferences.trips.TripsPreferenceDialog
+import org.obd.graphs.preferences.trips.TripsPreferenceDialogFragment
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
@@ -61,15 +62,13 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             Log.v(LOG_KEY, "Preference $key changed")
         }
 
-    override fun onDisplayPreferenceDialog(preference: Preference?) {
-
-
+    override fun onDisplayPreferenceDialog(preference: Preference) {
         when (preference) {
             is TripsListPreferences -> {
-                TripsPreferenceDialog().show(parentFragmentManager, null)
+                TripsPreferenceDialogFragment().show(parentFragmentManager, null)
             }
             is VehicleMetadataListPreferences -> {
-                VehicleMetadataPreferenceDialog().show(parentFragmentManager, null)
+                VehicleMetadataPreferenceDialogFragment().show(parentFragmentManager, null)
             }
 
             is PIDsListPreferences -> {
@@ -96,7 +95,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
 
             is DiagnosticTroubleCodeListPreferences -> {
-                DiagnosticTroubleCodePreferenceDialog().show(parentFragmentManager, null)
+                DiagnosticTroubleCodePreferenceDialogFragment().show(parentFragmentManager, null)
             }
 
             else -> {
@@ -105,7 +104,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         }
     }
 
-    override fun onNavigateToScreen(preferenceScreen: PreferenceScreen?) {
+    override fun onNavigateToScreen(preferenceScreen: PreferenceScreen) {
+        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
         super.onNavigateToScreen(preferenceScreen)
         setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
         registerListeners()
@@ -129,14 +129,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
+        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(
             onSharedPreferenceChangeListener
         )
     }
 
     override fun onPause() {
         super.onPause()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(
+        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(
             onSharedPreferenceChangeListener
         )
     }
@@ -145,7 +145,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
         val root = super.onCreateView(inflater, container, savedInstanceState)
         registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)
@@ -230,7 +231,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPreferenceDialogFor(preferenceKey: String) {
 
         when (preferenceKey) {
-            PREF_GAUGE_RECORDINGS -> TripsPreferenceDialog().show(parentFragmentManager, null)
+            PREF_GAUGE_RECORDINGS -> TripsPreferenceDialogFragment().show(parentFragmentManager, null)
 
             PREF_GAUGE_DISPLAYED_PARAMETERS_IDS ->
                 openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(),"gauge")
@@ -248,7 +249,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
         val detailsViewVisible = source == "low" || source == "high"
-        PIDsListPreferenceDialog(key = key, source = source,
+        PIDsListPreferenceDialogFragment(key = key, source = source,
             detailsViewEnabled = detailsViewVisible,
             onDialogCloseListener = onDialogCloseListener)
             .show(parentFragmentManager, null)

@@ -22,6 +22,8 @@ import android.content.Context
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
+
+
 interface SwappableAdapter {
     fun swapItems(fromPosition: Int, toPosition: Int)
     fun deleteItems(fromPosition: Int){

@@ -24,7 +24,7 @@ import androidx.preference.CheckBoxPreference
 import org.obd.graphs.activity.navigateToPreferencesScreen
 
 class FilterBySupportedPIDsAction(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) : CheckBoxPreference(context, attrs) {
 

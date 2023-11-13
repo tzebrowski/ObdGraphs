@@ -54,6 +54,8 @@ const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
 const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
 const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
+const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
+
 
 internal fun MainActivity.receive(intent: Intent?) {
 
@@ -109,12 +111,15 @@ internal fun MainActivity.receive(intent: Intent?) {
             permissions.requestBluetoothPermissions(this)
         }
 
+        RESET_TOOLBAR_ANIMATION ->{
+            toolbar { a, b, c ->
+                toolbarAnimate(a, b, c,false)
+            }
+        }
 
         TOGGLE_TOOLBAR_ACTION -> {
-            toolbar {
-                if (getMainActivityPreferences().hideToolbarDoubleClick) {
-                    it.isVisible = !it.isVisible
-                }
+            toolbar { a, b, c ->
+                toolbarAnimate(a, b, c, a.isUp())
             }
         }
 
@@ -201,9 +206,9 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.start()
             }
 
-            toolbar {
+            toolbar { a, b, c ->
                 if (getMainActivityPreferences().hideToolbarConnected) {
-                    it.isVisible = false
+                    toolbarAnimate(a, b, c,true)
                 }
             }
 
@@ -222,6 +227,8 @@ internal fun MainActivity.receive(intent: Intent?) {
     }
 }
 
+
+
 private fun MainActivity.handleStop() {
 
     progressBar {
@@ -237,9 +244,11 @@ private fun MainActivity.handleStop() {
         }
     }
 
-    toolbar {
+    toolbar { a, b, c ->
         if (getMainActivityPreferences().hideToolbarConnected) {
-            it.isVisible = true
+            a.isVisible = true
+            b.isVisible = true
+            c.isVisible = true
         }
     }
 
@@ -291,6 +300,7 @@ internal fun MainActivity.registerReceiver() {
         addAction(DATA_LOGGER_WIFI_INCORRECT)
         addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
         addAction(REQUEST_LOCATION_PERMISSIONS)
+        addAction(RESET_TOOLBAR_ANIMATION)
     })
 
     registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {

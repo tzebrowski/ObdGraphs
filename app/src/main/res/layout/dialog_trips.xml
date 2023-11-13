@@ -79,38 +79,36 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/button_panel"
+        android:layout_above="@id/status_panel"
         android:layout_below="@id/tablelayout" />
 
     <LinearLayout
-        android:id="@+id/button_panel"
-        android:layout_height="wrap_content"
-        android:gravity="end"
+        android:id="@+id/status_panel"
         android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:gravity="end"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/pid_list_close_window"
+            android:id="@+id/action_close_window"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_close_window_action"
-            android:textSize="12sp"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/trip_delete_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginTop="6dp"
             android:backgroundTint="@color/cardinal"
-
             android:text="@string/trip_dialog_delete_all_trips"
-            android:textSize="12sp"
-            style="?android:attr/buttonBarButtonStyle" />
-
+            android:textSize="12sp" />
     </LinearLayout>
 
 </RelativeLayout>

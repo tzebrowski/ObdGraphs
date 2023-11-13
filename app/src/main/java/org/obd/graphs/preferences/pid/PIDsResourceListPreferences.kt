@@ -31,7 +31,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 
 class PIDsResourceListPreferences(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {

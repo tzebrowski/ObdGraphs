@@ -25,7 +25,8 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.sendBroadcastEvent
 
-const val TOGGLE_TOOLBAR_ACTION: String = "TOGGLE_TOOLBAR"
+const val TOGGLE_TOOLBAR_ACTION: String = "toolbar.toggle.event"
+
 
 private class DoubleClickGestureListener :
     GestureDetector.SimpleOnGestureListener() {

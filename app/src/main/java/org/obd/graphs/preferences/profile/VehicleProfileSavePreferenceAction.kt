@@ -23,7 +23,7 @@ import android.util.AttributeSet
 import androidx.preference.Preference
 
 class VehicleProfileSavePreferenceAction(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) : Preference(context, attrs) {
 

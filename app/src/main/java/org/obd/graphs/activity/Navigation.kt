@@ -25,6 +25,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.setPadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -76,6 +77,8 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_giulia_pids -> navigateToPreferencesScreen(PREF_GIULIA_DISPLAYED_PARAMETERS_IDS)
                 R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
                 R.id.ctx_menu_pids_to_query -> navigateToPreferencesScreen("pref.registry")
+                R.id.navigation_preferences -> navigateToPreferencesScreen("pref.root")
+                R.id.navigation_preferences_adapter -> navigateToPreferencesScreen("pref.adapter.connection")
 
                 else -> navigateToScreen(item.itemId)
             }
@@ -101,6 +104,8 @@ internal fun MainActivity.setupNavigationBar() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<BottomNavigationView>(R.id.bottom_nav_view).let {
+            it.setPadding(0)
+            it.setOnApplyWindowInsetsListener(null)
             it.setupWithNavController(navController)
             it.selectedItemId = R.id.navigation_gauge
         }

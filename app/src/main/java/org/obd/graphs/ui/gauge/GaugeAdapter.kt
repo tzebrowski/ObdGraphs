@@ -257,6 +257,7 @@ class GaugeAdapter(
                             else -> 3
                         }
                     }
+
                 view.layoutParams.height = parent.measuredHeight / x
             }
         } else {

@@ -20,8 +20,6 @@ package org.obd.graphs.preferences.pid
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -29,7 +27,6 @@ import android.widget.Button
 import android.widget.TableLayout
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +34,7 @@ import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
+import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
@@ -55,20 +53,12 @@ private const val LOG_KEY = "PIDsDialog"
 
 data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean = true)
 
-class PIDsListPreferenceDialog(private val key: String, private val detailsViewEnabled: Boolean = false,
-                               private val source: String, private val onDialogCloseListener: (() -> Unit) = {}) :
-    DialogFragment() {
+class PIDsListPreferenceDialogFragment(private val key: String, private val detailsViewEnabled: Boolean = false,
+                                       private val source: String, private val onDialogCloseListener: (() -> Unit) = {}) :
+    CoreDialogFragment() {
 
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        dialog?.let {
-            it.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            it.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        }
-        super.onViewCreated(view, savedInstanceState)
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -76,6 +66,8 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewE
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        requestWindowFeatures()
 
         root = inflater.inflate(R.layout.dialog_pids, container, false)
         val viewSerializer = ViewPreferencesSerializer("$key.view.settings")
@@ -128,7 +120,7 @@ class PIDsListPreferenceDialog(private val key: String, private val detailsViewE
     private fun attachActionButtons() {
 
 
-        root.findViewById<Button>(R.id.pid_list_close_window).apply {
+        root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
                 onDialogCloseListener.invoke()

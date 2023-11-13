@@ -31,8 +31,10 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.preferences.profile.vehicleProfile
@@ -74,9 +76,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        toolbar {
+        toolbar { a, b, c ->
             if (getMainActivityPreferences().hideToolbarLandscape) {
-                it.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+                val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+                toolbarAnimate(a, b, c, hide)
             }
         }
     }
@@ -148,6 +151,28 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private fun setupExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
+
+    fun toolbarAnimate(
+        bottomNavigationView: BottomNavigationView,
+        bottomAppBar: BottomAppBar,
+        floatingActionButton: FloatingActionButton,
+        hide: Boolean
+    ) {
+        val bottomNavigationViewHeight: Float = if (hide) bottomNavigationView.height.toFloat() else 0f
+        val bottomAppBarHeight: Float = if (hide) bottomAppBar.height.toFloat() else 0f
+        val floatingActionButtonHeight: Float = if (hide) 2 * bottomAppBar.height.toFloat() else 0f
+
+        val duration = 200L
+        bottomAppBar.clearAnimation()
+        bottomAppBar.animate().translationY(bottomAppBarHeight).duration = duration
+
+        bottomNavigationView.clearAnimation()
+        bottomNavigationView.animate().translationY(bottomNavigationViewHeight).duration = duration
+
+        floatingActionButton.clearAnimation()
+        floatingActionButton.animate().translationY(floatingActionButtonHeight).duration = duration
+    }
+
 
     private fun setupPreferences() {
         runAsync {

@@ -18,48 +18,37 @@
  **/
 package org.obd.graphs.preferences.trips
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.Button
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.preferences.CoreDialogFragment
 
-class TripsPreferenceDialog : DialogFragment() {
-    override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
-        dialog?.let {
-            it.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            it.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        }
-        super.onViewCreated(view, savedInstanceState)
-    }
+class TripsPreferenceDialogFragment : CoreDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        requestWindowFeatures()
+
         val root = inflater.inflate(R.layout.dialog_trips, container, false)
         val adapter = TripsViewAdapter(context, tripManager.findAllTripsBy())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
-        root.findViewById<Button>(R.id.pid_list_close_window).apply {
-            setOnClickListener {
-                navigateToScreen(R.id.navigation_graph)
-                dialog?.dismiss()
-            }
+        attachCloseButton(root){
+            navigateToScreen(R.id.navigation_graph)
         }
 
         root.findViewById<Button>(R.id.trip_delete_all).apply {

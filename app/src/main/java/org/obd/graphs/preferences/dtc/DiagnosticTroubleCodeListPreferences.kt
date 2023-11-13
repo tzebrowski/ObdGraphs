@@ -23,7 +23,7 @@ import android.util.AttributeSet
 import androidx.preference.DialogPreference
 
 class DiagnosticTroubleCodeListPreferences(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) : DialogPreference(context, attrs)
 
