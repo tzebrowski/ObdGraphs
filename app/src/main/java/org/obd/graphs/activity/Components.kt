@@ -36,6 +36,8 @@ fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
     func(findViewById(R.id.connect_btn))
 }
 
+fun BottomNavigationView.isUp (): Boolean = translationY == 0f
+
 fun MainActivity.toolbar(func: (p: BottomNavigationView, r: BottomAppBar, c: FloatingActionButton) -> Unit) {
     func(findViewById(R.id.bottom_nav_view), findViewById(R.id.bottom_app_bar), findViewById(R.id.connect_btn))
 }

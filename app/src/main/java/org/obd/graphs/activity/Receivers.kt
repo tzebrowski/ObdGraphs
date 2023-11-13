@@ -56,6 +56,7 @@ const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
 const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 
+
 internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
@@ -112,22 +113,13 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         RESET_TOOLBAR_ANIMATION ->{
             toolbar { a, b, c ->
-                b.clearAnimation()
-                b.animate().translationY(0f).duration = 200
-                a.clearAnimation()
-                a.animate().translationY(0f).duration = 200
-                c.clearAnimation()
-                c.animate().translationY(0f).duration = 200
+                toolbarAnimate(a, b, c,false)
             }
         }
 
         TOGGLE_TOOLBAR_ACTION -> {
             toolbar { a, b, c ->
-                if (getMainActivityPreferences().hideToolbarDoubleClick) {
-                    a.isVisible = !a.isVisible
-                    b.isVisible = !b.isVisible
-                    c.isVisible = !c.isVisible
-                }
+                toolbarAnimate(a, b, c, a.isUp())
             }
         }
 
@@ -216,9 +208,7 @@ internal fun MainActivity.receive(intent: Intent?) {
 
             toolbar { a, b, c ->
                 if (getMainActivityPreferences().hideToolbarConnected) {
-                    a.isVisible = false
-                    b.isVisible = false
-                    c.isVisible = false
+                    toolbarAnimate(a, b, c,true)
                 }
             }
 
@@ -236,6 +226,8 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
     }
 }
+
+
 
 private fun MainActivity.handleStop() {
 
