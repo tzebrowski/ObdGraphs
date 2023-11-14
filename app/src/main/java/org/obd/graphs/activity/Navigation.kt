@@ -22,10 +22,8 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.MenuItem
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -50,11 +48,6 @@ fun navigateToScreen(id: Int) {
 }
 
 internal fun MainActivity.setupLeftNavigationPanel() {
-    val drawerLayout: DrawerLayout = getDrawer()
-    val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close)
-    drawerLayout.addDrawerListener(actionBarDrawerToggle)
-    actionBarDrawerToggle.syncState()
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     leftAppBar { navigationView  ->
 
@@ -82,7 +75,7 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 else -> navigateToScreen(item.itemId)
             }
 
-            drawerLayout.closeDrawer(GravityCompat.START)
+            getDrawer().closeDrawer(GravityCompat.START)
             true
         }
     }

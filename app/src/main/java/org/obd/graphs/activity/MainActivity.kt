@@ -127,6 +127,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupLockScreenDialog()
         Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
         setupLeftNavigationPanel()
+        supportActionBar?.hide()
     }
 
     override fun onResume() {
