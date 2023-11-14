@@ -109,7 +109,7 @@
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
                 android:layout_width="match_parent"
-                android:layout_height="108dp"
+                android:layout_height="118dp"
                 android:layout_gravity="bottom"
                 android:backgroundTint="@color/gray"
                 app:contentInsetStart="0dp"
@@ -120,7 +120,7 @@
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_nav_view"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="90dp"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="50dp"
