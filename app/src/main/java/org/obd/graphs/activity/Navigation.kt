@@ -25,7 +25,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
-import androidx.core.view.setPadding
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -104,7 +103,7 @@ internal fun MainActivity.setupNavigationBar() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<BottomNavigationView>(R.id.bottom_nav_view).let {
-            it.setPadding(0)
+            it.setPadding(0,0,0,20)
             it.setOnApplyWindowInsetsListener(null)
             it.setupWithNavController(navController)
             it.selectedItemId = R.id.navigation_gauge

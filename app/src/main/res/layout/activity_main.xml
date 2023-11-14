@@ -109,30 +109,28 @@
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="108dp"
                 android:layout_gravity="bottom"
                 android:backgroundTint="@color/gray"
                 app:contentInsetStart="0dp"
                 app:fabAlignmentMode="center"
                 app:hideOnScroll="true"
-                app:menu="@menu/context_menu">
-            </com.google.android.material.bottomappbar.BottomAppBar>
+                app:menu="@menu/context_menu" />
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
-                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
                 android:id="@+id/bottom_nav_view"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="80dp"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="50dp"
                 android:background="@color/gray"
                 app:itemIconSize="24dp"
                 app:labelVisibilityMode="labeled"
+                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
                 app:menu="@menu/bottom_nav_menu" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
                 android:id="@+id/connect_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,7 +139,8 @@
                 android:tooltipText="@string/main_activity.btn_start"
                 app:backgroundTint="#01804F"
                 app:fabSize="mini"
-                app:layout_anchor="@id/bottom_app_bar" />
+                app:layout_anchor="@id/bottom_app_bar"
+                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
