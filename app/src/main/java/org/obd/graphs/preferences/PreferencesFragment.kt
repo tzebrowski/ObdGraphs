@@ -27,8 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.preference.*
 import org.obd.graphs.R
-import org.obd.graphs.activity.RESET_TOOLBAR_ANIMATION
-import org.obd.graphs.activity.navigateToScreen
+import org.obd.graphs.activity.*
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
@@ -51,7 +50,7 @@ const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
 const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_ids"
 const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
 const val PREF_GIULIA_DISPLAYED_PARAMETERS_IDS = "pref.giulia.displayed_parameter_ids"
-
+const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 
 private const val LOG_KEY = "Prefs"
 
@@ -106,9 +105,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen) {
         sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
-        super.onNavigateToScreen(preferenceScreen)
-        setPreferencesFromResource(R.xml.preferences, preferenceScreen!!.key)
-        registerListeners()
+        // add to navigation chain
+        navigateToPreferencesScreen(preferenceScreen.key)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -253,5 +251,35 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             detailsViewEnabled = detailsViewVisible,
             onDialogCloseListener = onDialogCloseListener)
             .show(parentFragmentManager, null)
+    }
+
+
+    private fun registerViewsPreferenceChangeListeners() {
+        registerCheckboxListener(
+            GRAPH_VIEW_ID,
+            NOTIFICATION_GRAPH_VIEW_TOGGLE
+        )
+        registerCheckboxListener(
+            GAUGE_VIEW_ID,
+            NOTIFICATION_GAUGE_VIEW_TOGGLE
+        )
+        registerCheckboxListener(
+            DASH_VIEW_ID,
+            NOTIFICATION_DASH_VIEW_TOGGLE
+        )
+
+        registerCheckboxListener(
+            GIULIA_VIEW_ID,
+            NOTIFICATION_GIULIA_VIEW_TOGGLE
+        )
+    }
+
+    private fun registerCheckboxListener(key: String, actionName: String) {
+        val preference = findPreference<CheckBoxPreference>(key)
+        preference?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, _ ->
+                sendBroadcastEvent(actionName)
+                true
+            }
     }
 }
