@@ -250,7 +250,8 @@
     <string name="pref.toolbar_hide_doubleclick">Hide toolbar when double click</string>
     <string name="pref.toolbar_hide_connected">Hide toolbar when connected</string>
 
-    <string name="pref.enable_view">Enable view</string>
+    <string name="pref.enable_view_summary">Enabling this option will cause additionally button appear on the task bar which shortcuts to the view</string>
+    <string name="pref.enable_view">Show view shortcut on the taskbar</string>
     <string name="pref.trips_recordings_display_info">Display trip info</string>
     <string name="pref.graph_trips_selected">Manage recorded trips</string>
     <string name="pref.graph_trips_selected_summary">Manage recorded Trips.\nYou are allowed to load or delete existing trip</string>

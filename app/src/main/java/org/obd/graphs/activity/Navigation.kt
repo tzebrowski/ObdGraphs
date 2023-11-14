@@ -67,6 +67,7 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_gauge_pids -> navigateToPreferencesScreen(PREF_GAUGE_DISPLAYED_PARAMETERS_IDS)
                 R.id.navigation_graph_pids -> navigateToPreferencesScreen(PREF_GRAPH_DISPLAYED_PARAMETERS_IDS)
                 R.id.navigation_giulia_pids -> navigateToPreferencesScreen(PREF_GIULIA_DISPLAYED_PARAMETERS_IDS)
+                R.id.navigation_dashboard_pids -> navigateToPreferencesScreen(PREF_DASH_DISPLAYED_PARAMETERS_IDS)
                 R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
                 R.id.ctx_menu_pids_to_query -> navigateToPreferencesScreen("pref.registry")
                 R.id.navigation_preferences -> navigateToPreferencesScreen("pref.root")
@@ -171,7 +172,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
                         R.id.navigation_gauge -> PREF_GAUGE_DISPLAYED_PARAMETERS_IDS
                         R.id.navigation_graph -> PREF_GRAPH_DISPLAYED_PARAMETERS_IDS
                         R.id.navigation_giulia -> PREF_GIULIA_DISPLAYED_PARAMETERS_IDS
-
+                        R.id.navigation_dashboard -> PREF_DASH_DISPLAYED_PARAMETERS_IDS
                         else -> null
                     }
                     screenId?.apply {

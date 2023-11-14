@@ -47,6 +47,7 @@ const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
 const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
+const val PREF_DASH_DISPLAYED_PARAMETERS_IDS = "pref.dash.displayed_parameter_ids"
 const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_ids"
 const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
 const val PREF_GIULIA_DISPLAYED_PARAMETERS_IDS = "pref.giulia.displayed_parameter_ids"
@@ -72,7 +73,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
             is PIDsListPreferences -> {
                 when (preference.source) {
-
+                    "dash" -> {
+                        openPIDsDialog("pref.dash.pids.selected","dashboard")
+                            { navigateToScreen(R.id.navigation_dashboard) }
+                    }
                     "graph" -> {
                         openPIDsDialog(graphVirtualScreen.getVirtualScreenPrefKey(),preference.source)
                         { navigateToScreen(R.id.navigation_graph) }
@@ -230,6 +234,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
         when (preferenceKey) {
             PREF_GAUGE_RECORDINGS -> TripsPreferenceDialogFragment().show(parentFragmentManager, null)
+
+            PREF_DASH_DISPLAYED_PARAMETERS_IDS ->
+                openPIDsDialog("pref.dash.pids.selected","dashboard")
+                { navigateToScreen(R.id.navigation_dashboard) }
 
             PREF_GAUGE_DISPLAYED_PARAMETERS_IDS ->
                 openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(),"gauge")

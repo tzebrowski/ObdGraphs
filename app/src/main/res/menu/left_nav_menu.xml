@@ -156,6 +156,12 @@
                 android:id="@+id/navigation_dashboard_prefs"
                 android:checkable="true"
                 android:title="@string/pref.settings" />
+
+            <item
+                android:id="@+id/navigation_dashboard_pids"
+                android:checkable="true"
+                android:title="@string/context_menu.parameters_id_to_display"/>
+
         </menu>
     </item>
 

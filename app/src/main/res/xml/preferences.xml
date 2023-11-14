@@ -4,51 +4,51 @@
 
     <PreferenceCategory android:title="@string/pref.registry.category">
         <PreferenceScreen
-            app:singleLineTitle="false"
-            android:summary="@string/pref_pid_registry_settings_summary"
             android:key="pref.registry"
-            android:title="@string/pref.settings">
+            android:summary="@string/pref_pid_registry_settings_summary"
+            android:title="@string/pref.settings"
+            app:singleLineTitle="false">
 
             <PreferenceCategory android:title="@string/pref.registry.category">
 
                 <org.obd.graphs.preferences.pid.PIDsListPreferences
-                    app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.pids_generic_high"
                     android:key="pref.pids.generic.high"
+                    android:summary="@string/pref.pids_generic_high_summary"
                     android:title="@string/pref.pids_generic_high"
-                    app:source="high"
-                    android:summary="@string/pref.pids_generic_high_summary" />
+                    app:singleLineTitle="false"
+                    app:source="high" />
 
                 <org.obd.graphs.preferences.pid.PIDsListPreferences
                     android:dialogTitle="@string/pref.pids_generic_low"
                     android:key="pref.pids.generic.low"
+                    android:summary="@string/pref.pids_generic_low_summary"
                     android:title="@string/pref.pids_generic_low"
-                    app:source="low"
-                    android:summary="@string/pref.pids_generic_low_summary" />
+                    app:source="low" />
 
                 <CheckBoxPreference
-                    android:summary="@string/pref.pids.group.enableCapabilitiesReadings_summary"
-                    app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.pids.group.enableCapabilitiesReadings"
                     android:key="pref.adapter.init.fetchSupportedPids"
-                    android:title="@string/pref.pids.group.enableCapabilitiesReadings"/>
+                    android:summary="@string/pref.pids.group.enableCapabilitiesReadings_summary"
+                    android:title="@string/pref.pids.group.enableCapabilitiesReadings"
+                    app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.pid.FilterBySupportedPIDsAction
-                    app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids_display_only_ecu_supported"
                     android:key="pref.pids.registry.filter_pids_ecu_supported"
+                    android:summary="@string/pref.pids_display_only_ecu_supported_summary"
                     android:title="@string/pref.pids_display_only_ecu_supported"
-                    android:summary="@string/pref.pids_display_only_ecu_supported_summary"/>
+                    app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.pid.FilterByStablePIDsAction
-                    app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids_display_only_ecu_supported"
                     android:key="pref.pids.registry.filter_pids_stable"
+                    android:summary="@string/pref.pids_display_only_stable_pids_summary"
                     android:title="@string/pref.pids_display_only_stable_pids"
-                    android:summary="@string/pref.pids_display_only_stable_pids_summary"/>
+                    app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.pid.PIDsResourceListPreferences
                     android:dialogTitle="@string/pref.pids.registry.resource_list"
@@ -58,13 +58,13 @@
                     app:useSimpleSummaryProvider="true" />
 
                 <CheckBoxPreference
-                    app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids.registry.resource.external_storage"
                     android:key="pref.pids.registry.access_external_storage"
                     android:summary="@string/pref.experimental_read_external_storage_enabled"
                     android:title="@string/pref.pids.registry.resource.external_storage"
-                    app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED" />
+                    app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED"
+                    app:singleLineTitle="false" />
 
             </PreferenceCategory>
         </PreferenceScreen>
@@ -72,18 +72,18 @@
 
     <PreferenceCategory android:title="@string/pref.adapter_category">
         <PreferenceScreen
-            app:singleLineTitle="false"
             android:key="pref.adapter"
             android:summary="@string/pref_adapter_settings_summary"
-            android:title="@string/pref.settings">
+            android:title="@string/pref.settings"
+            app:singleLineTitle="false">
 
             <PreferenceCategory android:title="@string/pref.connection.category">
                 <PreferenceScreen
-                    app:singleLineTitle="false"
-                    android:summary="@string/pref.connection.category.summary"
-                    app:title="@string/pref.connection.category"
                     android:key="pref.adapter.connection"
-                    android:title="@string/pref.settings">
+                    android:summary="@string/pref.connection.category.summary"
+                    android:title="@string/pref.settings"
+                    app:singleLineTitle="false"
+                    app:title="@string/pref.connection.category">
 
                     <ListPreference
                         android:defaultValue="1000"
@@ -120,17 +120,17 @@
                         android:title="@string/pref.usb_category">
 
                         <ListPreference
-                            android:summary="@string/pref.usb.baud_rate"
-                            app:singleLineTitle="false"
                             android:defaultValue="38400"
                             android:entries="@array/pref.baud_rate_list"
                             android:entryValues="@array/pref.baud_rate_list"
                             android:inputType="number"
                             android:key="pref.adapter.connection.usb.baud_rate"
+                            android:summary="@string/pref.usb.baud_rate"
                             android:title="@string/pref.usb.baud_rate"
+                            app:singleLineTitle="false"
                             app:useSimpleSummaryProvider="true" />
 
-                     </PreferenceCategory>
+                    </PreferenceCategory>
 
                     <PreferenceCategory
                         android:key="pref.adapter.connection.type.wifi"
@@ -160,10 +160,10 @@
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.init_category">
                 <PreferenceScreen
-                    app:singleLineTitle="false"
-                    android:summary="@string/pref.init_category_summary"
                     android:key="pref.init"
-                    android:title="@string/pref.settings">
+                    android:summary="@string/pref.init_category_summary"
+                    android:title="@string/pref.settings"
+                    app:singleLineTitle="false">
 
                     <ListPreference
                         android:defaultValue="500"
@@ -207,9 +207,9 @@
                     </PreferenceCategory>
 
                     <org.obd.graphs.preferences.mode.HeaderListPreferences
-                        app:singleLineTitle="false"
                         android:key="pref.adapter.init.mode.header"
                         android:title="@string/pref.adapter_init_mode_header_selected"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                     <PreferenceCategory android:title="@string/pref.adapter_init_header_settings">
@@ -223,59 +223,59 @@
             </PreferenceCategory>
 
 
-            <PreferenceCategory
-                android:title="@string/pref.adapter_error_handling">
-                <PreferenceScreen android:title="@string/pref.settings"
+            <PreferenceCategory android:title="@string/pref.adapter_error_handling">
+                <PreferenceScreen
+                    android:key="pref.adapter.errors"
                     android:summary="@string/pref.adapter_error_handling_summary"
-                    android:key="pref.adapter.errors">
+                    android:title="@string/pref.settings">
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:dialogTitle="@string/pref.adapter_reconnect"
                         android:key="pref.adapter.reconnect"
-                        android:title="@string/pref.adapter_reconnect" />
+                        android:title="@string/pref.adapter_reconnect"
+                        app:singleLineTitle="false" />
 
                     <ListPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="6"
+                        android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
                         android:entries="@array/pref.numbers_1_20"
                         android:entryValues="@array/pref.numbers_1_20"
-                        android:dialogTitle="@string/pref.adapter_reconnect_max_retry"
                         android:inputType="number"
                         android:key="pref.adapter.reconnect.max_retry"
                         android:title="@string/pref.adapter_reconnect_max_retry"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceScreen>
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.adapter.batch_settings">
                 <CheckBoxPreference
-                    app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.adapter_batch_enabled"
                     android:key="pref.adapter.batch.enabled"
                     android:summary="@string/pref.adapter_batch_enabled_summary"
-                    android:title="@string/pref.adapter_batch_enabled" />
+                    android:title="@string/pref.adapter_batch_enabled"
+                    app:singleLineTitle="false" />
 
                 <ListPreference
-                    android:summary="Batch Size for Mode 22"
-                    app:singleLineTitle="false"
                     android:entries="@array/pref.numbers_1_20"
                     android:entryValues="@array/pref.numbers_1_20"
                     android:inputType="number"
                     android:key="pref.adapter.batch.size"
+                    android:summary="Batch Size for Mode 22"
                     android:title="@string/prefs.adapter_batch_mode_22_batch_size"
+                    app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
                 <ListPreference
-                    android:summary="Batch Size for Mode 01"
-                    app:singleLineTitle="false"
                     android:entries="@array/pref.numbers_1_20"
                     android:entryValues="@array/pref.numbers_1_20"
                     android:inputType="number"
                     android:key="pref.adapter.batch_01.size"
+                    android:summary="Batch Size for Mode 01"
                     android:title="@string/prefs.adapter_batch_mode_01_batch_size"
+                    app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
 
@@ -297,20 +297,20 @@
                     app:enabled="@bool/FF_RESULT_CACHE_ENABLED" />
 
                 <CheckBoxPreference
-                    app:singleLineTitle="false"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_response_length_enabled"
                     android:key="pref.adapter.responseLength.enabled"
                     android:summary="@string/pref.adapter_response_length_enabled_summary"
-                    android:title="@string/pref.adapter_response_length_enabled" />
+                    android:title="@string/pref.adapter_response_length_enabled"
+                    app:singleLineTitle="false" />
 
                 <CheckBoxPreference
-                    app:singleLineTitle="false"
-                    android:summary="@string/pref.adapter_graceful_stop_enabled_summary"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.adapter_graceful_stop_enabled"
                     android:key="pref.adapter.graceful_stop.enabled"
-                    android:title="@string/pref.adapter_graceful_stop_enabled" />
+                    android:summary="@string/pref.adapter_graceful_stop_enabled_summary"
+                    android:title="@string/pref.adapter_graceful_stop_enabled"
+                    app:singleLineTitle="false" />
 
                 <CheckBoxPreference
                     android:defaultValue="false"
@@ -319,14 +319,14 @@
                     android:title="@string/pref.adapter_adaptive_enabled" />
 
                 <ListPreference
-                    android:summary="@string/pref.adapter_command_freq_summary"
-                    app:singleLineTitle="false"
                     android:defaultValue="6"
                     android:entries="@array/pref.numbers_1_20"
                     android:entryValues="@array/pref.numbers_1_20"
                     android:inputType="number"
                     android:key="pref.adapter.command.freq"
+                    android:summary="@string/pref.adapter_command_freq_summary"
                     android:title="@string/pref.adapter_command_freq"
+                    app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
         </PreferenceScreen>
@@ -334,15 +334,15 @@
 
     <PreferenceCategory android:title="@string/pref.profile.category">
         <PreferenceScreen
-            app:singleLineTitle="false"
-            android:summary="@string/pref_vehicle_profile_settings_summary"
             android:key="pref.profiles"
-            android:title="@string/pref.settings">
+            android:summary="@string/pref_vehicle_profile_settings_summary"
+            android:title="@string/pref.settings"
+            app:singleLineTitle="false">
             <PreferenceCategory android:title="@string/pref.general_settings">
                 <org.obd.graphs.preferences.profile.VehicleProfileListPreference
-                android:key="pref.profile.id"
-                android:title="@string/pref.profile.available_list"
-                app:useSimpleSummaryProvider="true" />
+                    android:key="pref.profile.id"
+                    android:title="@string/pref.profile.available_list"
+                    app:useSimpleSummaryProvider="true" />
 
                 <org.obd.graphs.preferences.profile.VehicleProfileResetPreferenceAction
                     android:key="pref.profile.reset"
@@ -361,23 +361,23 @@
                     app:useSimpleSummaryProvider="true" />
 
                 <EditTextPreference
-                    android:title="@string/pref.profile.about_title"
                     android:key="pref.profile.about"
+                    android:title="@string/pref.profile.about_title"
                     app:enabled="false"
-                    app:useSimpleSummaryProvider="true"/>
+                    app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.profile.backup.category">
                 <org.obd.graphs.preferences.profile.VehicleProfileExportAction
-                    app:singleLineTitle="false"
                     android:key="pref.profile.export"
                     android:summary="@string/pref.profile.export_summary"
-                    android:title="@string/pref.profile.export" />
+                    android:title="@string/pref.profile.export"
+                    app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.profile.VehicleProfileImportAction
-                    app:singleLineTitle="false"
                     android:key="pref.profile.import"
                     android:summary="@string/pref.profile.import_summary"
-                    android:title="@string/pref.profile.import" />
+                    android:title="@string/pref.profile.import"
+                    app:singleLineTitle="false" />
             </PreferenceCategory>
 
         </PreferenceScreen>
@@ -385,93 +385,94 @@
 
     <PreferenceCategory android:title="@string/pref.vehicle.metadata_title">
         <PreferenceScreen
-            android:summary="@string/pref_vehicle_metadata_summary"
-            app:singleLineTitle="false"
             android:key="pref.vehicle.properties"
-            android:title="@string/pref.settings">
+            android:summary="@string/pref_vehicle_metadata_summary"
+            android:title="@string/pref.settings"
+            app:singleLineTitle="false">
             <PreferenceCategory android:title="@string/pref.vehicle.metadata_title">
                 <org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
-                    app:singleLineTitle="false"
                     android:dialogTitle="@string/pref.vehicle.metadata_title"
                     android:key="pref.vehicle.properties.list"
                     android:summary="@string/pref_vehicle_metadata_summary"
-                    android:title="@string/pref.vehicle.metadata_title"/>
+                    android:title="@string/pref.vehicle.metadata_title"
+                    app:singleLineTitle="false" />
 
                 <CheckBoxPreference
-                    android:summary="@string/pref.pids.group.enableMetadataReadings_summary"
-                    app:singleLineTitle="false"
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.pids.group.enableMetadataReadings"
                     android:key="pref.adapter.init.fetchDeviceProperties"
-                    android:title="@string/pref.pids.group.enableMetadataReadings"/>
-
-            </PreferenceCategory>
-        </PreferenceScreen>
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/pref.dtc.title" android:key="pref.dtc.category">
-        <PreferenceScreen
-            android:summary="@string/pref_dtc_settings_summary"
-            app:singleLineTitle="false"
-            android:key="pref.dtc"
-            android:title="@string/pref.settings">
-            <PreferenceCategory android:title="@string/pref.dtc.title">
-                <org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
-                    app:singleLineTitle="false"
-                    android:dialogTitle="@string/pref.dtc.title"
-                    android:key="pref.dtc.list"
-                    android:summary="@string/pref_dtc_settings_summary"
-                    android:title="@string/pref.dtc.title"/>
-
-                <CheckBoxPreference
-                    android:summary="@string/pref.pids.group.enableDTCCleanup_summary"
-                    app:singleLineTitle="false"
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.pids.group.enableDTCCleanup"
-                    android:key="pref.adapter.init.cleanDTC"
-                    android:title="@string/pref.pids.group.enableDTCCleanup"/>
-
-                <CheckBoxPreference
-                    android:summary="@string/pref.pids.group.enableDTCReadings_summary"
-                    app:singleLineTitle="false"
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
-                    android:key="pref.adapter.init.fetchDTC"
-                    android:title="@string/pref.pids.group.enableDTCReadings"/>
-
-                <CheckBoxPreference
-                    android:summary="@string/pref.pids.group.show_notification_summary"
-                    app:singleLineTitle="false"
-                    android:defaultValue="false"
-                    android:dialogTitle="@string/pref.pids.group.show_notification"
-                    android:key="pref.dtc.show_notification"
-                    android:title="@string/pref.pids.group.show_notification"/>
+                    android:summary="@string/pref.pids.group.enableMetadataReadings_summary"
+                    android:title="@string/pref.pids.group.enableMetadataReadings"
+                    app:singleLineTitle="false" />
 
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref.power_category">
+        android:key="pref.dtc.category"
+        android:title="@string/pref.dtc.title">
         <PreferenceScreen
-            app:singleLineTitle="false"
-            android:summary="@string/pref_power_settings_summary"
+            android:key="pref.dtc"
+            android:summary="@string/pref_dtc_settings_summary"
+            android:title="@string/pref.settings"
+            app:singleLineTitle="false">
+            <PreferenceCategory android:title="@string/pref.dtc.title">
+                <org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
+                    android:dialogTitle="@string/pref.dtc.title"
+                    android:key="pref.dtc.list"
+                    android:summary="@string/pref_dtc_settings_summary"
+                    android:title="@string/pref.dtc.title"
+                    app:singleLineTitle="false" />
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.pids.group.enableDTCCleanup"
+                    android:key="pref.adapter.init.cleanDTC"
+                    android:summary="@string/pref.pids.group.enableDTCCleanup_summary"
+                    android:title="@string/pref.pids.group.enableDTCCleanup"
+                    app:singleLineTitle="false" />
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
+                    android:key="pref.adapter.init.fetchDTC"
+                    android:summary="@string/pref.pids.group.enableDTCReadings_summary"
+                    android:title="@string/pref.pids.group.enableDTCReadings"
+                    app:singleLineTitle="false" />
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.pids.group.show_notification"
+                    android:key="pref.dtc.show_notification"
+                    android:summary="@string/pref.pids.group.show_notification_summary"
+                    android:title="@string/pref.pids.group.show_notification"
+                    app:singleLineTitle="false" />
+
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref.power_category">
+        <PreferenceScreen
             android:key="pref.power"
-            android:title="@string/pref.settings">
+            android:summary="@string/pref_power_settings_summary"
+            android:title="@string/pref.settings"
+            app:singleLineTitle="false">
 
             <CheckBoxPreference
-                app:singleLineTitle="false"
                 android:defaultValue="false"
-                android:summary="@string/pref.adapter_power_connect_adapter_summary"
                 android:key="pref.adapter.power.connect_adapter"
-                android:title="@string/pref.adapter_power_connect_adapter" />
+                android:summary="@string/pref.adapter_power_connect_adapter_summary"
+                android:title="@string/pref.adapter_power_connect_adapter"
+                app:singleLineTitle="false" />
 
             <CheckBoxPreference
-                app:singleLineTitle="false"
                 android:defaultValue="false"
-                android:summary="@string/pref.adapter_power_screen_off_summary"
                 android:key="pref.adapter.power.screen_off"
-                android:title="@string/pref.adapter_power_screen_off" />
+                android:summary="@string/pref.adapter_power_screen_off_summary"
+                android:title="@string/pref.adapter_power_screen_off"
+                app:singleLineTitle="false" />
 
             <CheckBoxPreference
                 android:defaultValue="false"
@@ -482,20 +483,21 @@
                 app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED" />
 
             <ListPreference
-                app:singleLineTitle="false"
-                android:entries="@array/pref.numbers_1_25"
-                android:entryValues="@array/pref.numbers_1_25"
                 android:defaultValue="5"
                 android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
+                android:entries="@array/pref.numbers_1_25"
+                android:entryValues="@array/pref.numbers_1_25"
                 android:inputType="number"
                 android:key="pref.adapter.power.start_data_logging.after"
                 android:title="@string/pref.adapter_power_start_data_logging_after"
+                app:singleLineTitle="false"
                 app:useSimpleSummaryProvider="true" />
         </PreferenceScreen>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref.view_category">
-        <PreferenceScreen  android:key="pref.views"
+        <PreferenceScreen
+            android:key="pref.views"
             android:summary="@string/pref.view_category_summary"
             android:title="@string/pref.settings">
             <PreferenceScreen
@@ -505,41 +507,29 @@
 
                 <PreferenceCategory android:title="@string/pref.pids_category">
                     <PreferenceScreen
+                        android:key="pref.gauge.displayed_parameter_ids"
                         android:summary="@string/pref.displayed_parameter_ids_summary"
-                        android:title="@string/pref.displayed_parameter_ids"
-                        android:key="pref.gauge.displayed_parameter_ids">
+                        android:title="@string/pref.displayed_parameter_ids">
                         <PreferenceCategory android:title="@string/pref.pids_category">
                             <org.obd.graphs.preferences.pid.PIDsListPreferences
-                                app:source="gauge"
-                                app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
                                 android:key="pref.gauge.pids.selected"
                                 android:summary="@string/pref.displayed_parameter_ids_summary"
-                                android:title="@string/pref.displayed_parameter_ids" />
+                                android:title="@string/pref.displayed_parameter_ids"
+                                app:source="gauge"
+                                app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
 
-                <PreferenceCategory android:title="@string/pref.theme">
-                    <CheckBoxPreference
-                        app:singleLineTitle="false"
-                        android:defaultValue="true"
-                        android:key="pref.gauge_display_background"
-                        android:title="@string/pref.gauge_display_background" />
-
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="@android:color/holo_red_light"
-                        android:key="pref.gauge_background_color"
-                        android:title="@string/pref.gauge_background_color" />
-                </PreferenceCategory>
-
                 <PreferenceCategory android:title="@string/pref.general_settings">
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.gauge.view.enabled"
-                        android:title="@string/pref.enable_view" />
+                        android:summary="@string/pref.enable_view_summary"
+                        android:title="@string/pref.enable_view"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
                         android:defaultValue="false"
@@ -547,693 +537,729 @@
                         android:title="@string/pref.gauge_enable_drag_and_drop" />
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.gauge.swipe_to_delete"
-                        android:title="@string/pref.dash_swipe_to_delete" />
+                        android:title="@string/pref.dash_swipe_to_delete"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.gauge_display_command_rate"
-                        android:title="@string/pref.gauge_display_refresh_rate" />
+                        android:title="@string/pref.gauge_display_refresh_rate"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.gauge_display_scale"
-                        android:title="@string/pref.gauge_display_scale" />
+                        android:title="@string/pref.gauge_display_scale"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.gauge.toggle_virtual_screens_double_click"
-                        android:title="@string/pref.gauge_toggle_virtual_screens" />
+                        android:title="@string/pref.gauge_toggle_virtual_screens"
+                        app:singleLineTitle="false" />
 
                     <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_1_25"
-                        android:entryValues="@array/pref.numbers_1_25"
                         android:defaultValue="10"
                         android:dialogTitle="@string/pref.screen.fps"
+                        android:entries="@array/pref.numbers_1_25"
+                        android:entryValues="@array/pref.numbers_1_25"
                         android:inputType="number"
                         android:key="pref.gauge.fps"
                         android:title="@string/pref.screen.fps"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
             </PreferenceScreen>
 
-        <PreferenceScreen
-            android:summary="@string/pref.drag_racing_category"
-            android:title="@string/navigation.title_drag_racing"
-            app:key="pref.title_drag_racing">
+            <PreferenceCategory android:title="@string/pref.theme">
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.gauge_display_background"
+                    android:title="@string/pref.gauge_display_background"
+                    app:singleLineTitle="false" />
 
-            <ListPreference
-                app:singleLineTitle="false"
-                android:entries="@array/pref.numbers_20_74"
-                android:entryValues="@array/pref.numbers_20_74"
-                android:defaultValue="30"
-                android:dialogTitle="@string/pref.drag_racing.font_size"
-                android:inputType="number"
-                android:key="pref.drag_racing.screen_font_size"
-                android:title="@string/pref.drag_racing.font_size"
-                app:useSimpleSummaryProvider="true" />
+                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                    android:defaultValue="@android:color/holo_red_light"
+                    android:key="pref.gauge_background_color"
+                    android:title="@string/pref.gauge_background_color" />
+            </PreferenceCategory>
 
-            <CheckBoxPreference
-                app:singleLineTitle="false"
-                android:defaultValue="false"
-                android:key="pref.drag_racing.shift_lights.enabled"
-                android:title="@string/pref.aa.performance_meter.shift_lights_enabled" />
+            <PreferenceScreen
+                android:summary="@string/pref.drag_racing_category"
+                android:title="@string/navigation.title_drag_racing"
+                app:key="pref.title_drag_racing">
 
-            <ListPreference
-                android:summary="@string/ref.aa.performance_meter.shift_lights.rev"
-                app:singleLineTitle="false"
-                android:defaultValue="5000"
-                android:entries="@array/pref.numbers_4500_5000"
-                android:entryValues="@array/pref.numbers_4500_5000"
-                android:inputType="number"
-                android:key="pref.drag_racing.shift_lights.rev_value"
-                android:title="@string/ref.aa.performance_meter.shift_lights.rev"
-                app:useSimpleSummaryProvider="true" />
+                <ListPreference
+                    android:defaultValue="30"
+                    android:dialogTitle="@string/pref.drag_racing.font_size"
+                    android:entries="@array/pref.numbers_20_74"
+                    android:entryValues="@array/pref.numbers_20_74"
+                    android:inputType="number"
+                    android:key="pref.drag_racing.screen_font_size"
+                    android:title="@string/pref.drag_racing.font_size"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
 
-            <CheckBoxPreference
-                app:singleLineTitle="false"
-                android:defaultValue="true"
-                android:key="pref.drag_racing.vehicle_speed.enabled"
-                android:title="@string/pref.aa.performance_meter.display_vehicle_speed" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.drag_racing.shift_lights.enabled"
+                    android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
+                    app:singleLineTitle="false" />
+
+                <ListPreference
+                    android:defaultValue="5000"
+                    android:entries="@array/pref.numbers_4500_5000"
+                    android:entryValues="@array/pref.numbers_4500_5000"
+                    android:inputType="number"
+                    android:key="pref.drag_racing.shift_lights.rev_value"
+                    android:summary="@string/ref.aa.performance_meter.shift_lights.rev"
+                    android:title="@string/ref.aa.performance_meter.shift_lights.rev"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
+
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.drag_racing.vehicle_speed.enabled"
+                    android:title="@string/pref.aa.performance_meter.display_vehicle_speed"
+                    app:singleLineTitle="false" />
 
 
+            </PreferenceScreen>
 
-        </PreferenceScreen>
-
-        <PreferenceScreen
+            <PreferenceScreen
                 android:summary="@string/pref.giulia_category"
                 android:title="@string/navigation.title_giulia"
                 app:key="pref.giulia">
-
-                <PreferenceCategory android:title="@string/pref.pids_category">
-                    <PreferenceScreen
-                        android:summary="@string/pref.displayed_parameter_ids_summary"
-                        android:title="@string/pref.displayed_parameter_ids"
-                        android:key="pref.giulia.displayed_parameter_ids">
-                        <PreferenceCategory android:title="@string/pref.pids_category">
-                            <org.obd.graphs.preferences.pid.PIDsListPreferences
-                                app:source="giulia"
-                                app:useSimpleSummaryProvider="true"
-                                android:defaultValue="@array/pref.empty_array"
-                                android:dialogTitle="@string/pref.displayed_parameter_ids"
-                                android:key="pref.giulia.pids.selected"
-                                android:summary="@string/pref.displayed_parameter_ids_summary"
-                                android:title="@string/pref.displayed_parameter_ids" />
-                        </PreferenceCategory>
-                    </PreferenceScreen>
-                </PreferenceCategory>
-
-                <PreferenceCategory android:title="@string/pref.giulia.virtual_screens.number_of_items_in_column.category"
-                    app:singleLineTitle="false">
-                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category" app:singleLineTitle="false"
-                        android:key="pref.aa.number_of_items_in_column.category">
-                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category" app:singleLineTitle="false">
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
-                                android:inputType="number"
-                                android:key="pref.giulia.max_pids_in_column.1"
-                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
-                                android:inputType="number"
-                                android:key="pref.giulia.max_pids_in_column.2"
-                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
-                                app:useSimpleSummaryProvider="true" />
-
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
-                                android:inputType="number"
-                                android:key="pref.giulia.max_pids_in_column.3"
-                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
-                                app:useSimpleSummaryProvider="true" />
-
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
-                                android:inputType="number"
-                                android:key="pref.giulia.max_pids_in_column.4"
-                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
-                                android:inputType="number"
-                                android:key="pref.giulia.max_pids_in_column.5"
-                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
-                                android:inputType="number"
-                                android:key="pref.giulia.max_pids_in_column.6"
-                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:defaultValue="1"
-                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
-                                android:inputType="number"
-                                android:key="pref.giulia.max_pids_in_column.7"
-                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
-                                app:useSimpleSummaryProvider="true" />
-
-                        </PreferenceCategory>
-                    </PreferenceScreen>
-                </PreferenceCategory>
-
-                <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category.summary" app:singleLineTitle="false">
-                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false"
-                        android:key="pref.giulia.screen.font_size.category">
-                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false">
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
-                                android:defaultValue="52"
-                                android:dialogTitle="@string/pref.aa.font_size.1"
-                                android:inputType="number"
-                                android:key="pref.giulia.screen_font_size.1"
-                                android:title="@string/pref.aa.font_size.1"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
-                                android:defaultValue="52"
-                                android:dialogTitle="@string/pref.aa.font_size.2"
-                                android:inputType="number"
-                                android:key="pref.giulia.screen_font_size.2"
-                                android:title="@string/pref.aa.font_size.2"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
-                                android:defaultValue="52"
-                                android:dialogTitle="@string/pref.aa.font_size.3"
-                                android:inputType="number"
-                                android:key="pref.giulia.screen_font_size.3"
-                                android:title="@string/pref.aa.font_size.3"
-                                app:useSimpleSummaryProvider="true" />
-
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
-                                android:defaultValue="52"
-                                android:dialogTitle="@string/pref.aa.font_size.4"
-                                android:inputType="number"
-                                android:key="pref.giulia.screen_font_size.4"
-                                android:title="@string/pref.aa.font_size.4"
-                                app:useSimpleSummaryProvider="true" />
-
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
-                                android:defaultValue="52"
-                                android:dialogTitle="@string/pref.aa.font_size.5"
-                                android:inputType="number"
-                                android:key="pref.giulia.screen_font_size.5"
-                                android:title="@string/pref.aa.font_size.5"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
-                                android:defaultValue="52"
-                                android:dialogTitle="@string/pref.aa.font_size.6"
-                                android:inputType="number"
-                                android:key="pref.giulia.screen_font_size.6"
-                                android:title="@string/pref.aa.font_size.6"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
-                                android:defaultValue="52"
-                                android:dialogTitle="@string/pref.aa.font_size.7"
-                                android:inputType="number"
-                                android:key="pref.giulia.screen_font_size.7"
-                                android:title="@string/pref.aa.font_size.7"
-                                app:useSimpleSummaryProvider="true" />
-
-                        </PreferenceCategory>
-                    </PreferenceScreen>
-                </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.general_settings">
 
                     <CheckBoxPreference
                         android:defaultValue="true"
+                        app:singleLineTitle="false"
                         android:key="pref.giulia.view.enabled"
+                        android:summary="@string/pref.enable_view_summary"
                         android:title="@string/pref.enable_view" />
 
                     <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_1_25"
-                        android:entryValues="@array/pref.numbers_1_25"
                         android:defaultValue="5"
                         android:dialogTitle="@string/pref.screen.fps"
+                        android:entries="@array/pref.numbers_1_25"
+                        android:entryValues="@array/pref.numbers_1_25"
                         android:inputType="number"
                         android:key="pref.giulia.fps"
                         android:title="@string/pref.screen.fps"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                 </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.pids_category">
+                    <PreferenceScreen
+                        android:key="pref.giulia.displayed_parameter_ids"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids">
+                        <PreferenceCategory android:title="@string/pref.pids_category">
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.giulia.pids.selected"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.displayed_parameter_ids"
+                                app:source="giulia"
+                                app:useSimpleSummaryProvider="true" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
+                <PreferenceCategory
+                    android:title="@string/pref.giulia.virtual_screens.number_of_items_in_column.category"
+                    app:singleLineTitle="false">
+                    <PreferenceScreen
+                        android:key="pref.aa.number_of_items_in_column.category"
+                        android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
+                        app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
+                            app:singleLineTitle="false">
+                            <ListPreference
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:inputType="number"
+                                android:key="pref.giulia.max_pids_in_column.1"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:inputType="number"
+                                android:key="pref.giulia.max_pids_in_column.2"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:inputType="number"
+                                android:key="pref.giulia.max_pids_in_column.3"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:inputType="number"
+                                android:key="pref.giulia.max_pids_in_column.4"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:inputType="number"
+                                android:key="pref.giulia.max_pids_in_column.5"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:inputType="number"
+                                android:key="pref.giulia.max_pids_in_column.6"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="1"
+                                android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
+                                android:inputType="number"
+                                android:key="pref.giulia.max_pids_in_column.7"
+                                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
+                <PreferenceCategory
+                    android:title="@string/pref.aa.virtual_screens.font_size.category.summary"
+                    app:singleLineTitle="false">
+                    <PreferenceScreen
+                        android:key="pref.giulia.screen.font_size.category"
+                        android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.font_size.category"
+                            app:singleLineTitle="false">
+                            <ListPreference
+                                android:defaultValue="52"
+                                android:dialogTitle="@string/pref.aa.font_size.1"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.1"
+                                android:title="@string/pref.aa.font_size.1"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="52"
+                                android:dialogTitle="@string/pref.aa.font_size.2"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.2"
+                                android:title="@string/pref.aa.font_size.2"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="52"
+                                android:dialogTitle="@string/pref.aa.font_size.3"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.3"
+                                android:title="@string/pref.aa.font_size.3"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                android:defaultValue="52"
+                                android:dialogTitle="@string/pref.aa.font_size.4"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.4"
+                                android:title="@string/pref.aa.font_size.4"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <ListPreference
+                                android:defaultValue="52"
+                                android:dialogTitle="@string/pref.aa.font_size.5"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.5"
+                                android:title="@string/pref.aa.font_size.5"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="52"
+                                android:dialogTitle="@string/pref.aa.font_size.6"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.6"
+                                android:title="@string/pref.aa.font_size.6"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <ListPreference
+                                android:defaultValue="52"
+                                android:dialogTitle="@string/pref.aa.font_size.7"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
+                                android:inputType="number"
+                                android:key="pref.giulia.screen_font_size.7"
+                                android:title="@string/pref.aa.font_size.7"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
+
             </PreferenceScreen>
 
 
             <PreferenceScreen
-                app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
                 android:summary="@string/pref.aa_category"
                 android:title="@string/navigation.title_aa"
+                app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
                 app:key="pref.aa">
 
                 <PreferenceCategory
-                    app:singleLineTitle="false"
-                    android:title="@string/pref.aa.performance_meter.category">
+                    android:title="@string/pref.aa.performance_meter.category"
+                    app:singleLineTitle="false">
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.drag_race.shift_lights.enabled"
-                        android:title="@string/pref.aa.performance_meter.shift_lights_enabled" />
+                        android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
+                        app:singleLineTitle="false" />
 
                     <ListPreference
-                        android:summary="@string/ref.aa.performance_meter.shift_lights.rev"
-                        app:singleLineTitle="false"
                         android:defaultValue="5000"
                         android:entries="@array/pref.numbers_4500_5000"
                         android:entryValues="@array/pref.numbers_4500_5000"
                         android:inputType="number"
                         android:key="pref.aa.drag_race.shift_lights.rev_value"
+                        android:summary="@string/ref.aa.performance_meter.shift_lights.rev"
                         android:title="@string/ref.aa.performance_meter.shift_lights.rev"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.aa.drag_race.vehicle_speed.enabled"
-                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed" />
+                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.aa.drag_race.debug.display_frequency"
-                        android:title="@string/pref.aa.performance_meter.display_frequency" />
+                        android:title="@string/pref.aa.performance_meter.display_frequency"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.aa.drag_race.debug.vehicle_speed_measurement"
-                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed_measurement" />
+                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed_measurement"
+                        app:singleLineTitle="false" />
 
                     <ListPreference
-                        android:summary="@string/pref.adapter_command_freq"
-                        app:singleLineTitle="false"
                         android:defaultValue="10"
                         android:entries="@array/pref.numbers_1_20"
                         android:entryValues="@array/pref.numbers_1_20"
                         android:inputType="number"
                         android:key="pref.drag_race.vehicle_speed.freq"
+                        android:summary="@string/pref.adapter_command_freq"
                         android:title="@string/pref.adapter_command_freq"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
 
                 <PreferenceCategory
-                    app:singleLineTitle="false"
-                    android:title="@string/pref.aa.general_category">
-
+                    android:title="@string/pref.aa.general_category"
+                    app:singleLineTitle="false">
 
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.connection.auto.enabled"
-                        android:title="@string/pref.aa.connection_auto" />
+                        android:title="@string/pref.aa.connection_auto"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.aa.virtual_screens.status_panel.enabled"
-                        android:title="@string/pref.aa.display_status_panel" />
+                        android:title="@string/pref.aa.display_status_panel"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.aa.virtual_screens.scale.enabled"
-                        android:title="@string/pref.aa.display_pid_scale" />
+                        android:title="@string/pref.aa.display_pid_scale"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.pids.history.enabled"
-                        android:title="@string/pref.aa.display_pid_history" />
+                        android:title="@string/pref.aa.display_pid_history"
+                        app:singleLineTitle="false" />
 
                     <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_1_25"
-                        android:entryValues="@array/pref.numbers_1_25"
                         android:defaultValue="5"
                         android:dialogTitle="@string/pref.screen.fps"
+                        android:entries="@array/pref.numbers_1_25"
+                        android:entryValues="@array/pref.numbers_1_25"
                         android:inputType="number"
                         android:key="pref.aa.surface.fps"
                         android:title="@string/pref.screen.fps"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
 
                 <PreferenceCategory
-                    app:singleLineTitle="false"
-                    android:title="@string/pref.aa.renderer.category">
+                    android:title="@string/pref.aa.renderer.category"
+                    app:singleLineTitle="false">
 
                     <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.aa_renderer_type"
-                        android:entryValues="@array/pref.aa_renderer_type"
                         android:defaultValue="GIULIA"
                         android:dialogTitle="@string/pref.aa.renderer_type"
+                        android:entries="@array/pref.aa_renderer_type"
+                        android:entryValues="@array/pref.aa_renderer_type"
                         android:key="pref.aa.virtual_screens.screen.renderer_type"
                         android:title="@string/pref.aa.renderer_type"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.aa.gauge.progress_type"
-                        android:entryValues="@array/pref.aa.gauge.progress_type"
                         android:defaultValue="SHORT"
                         android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
+                        android:entries="@array/pref.aa.gauge.progress_type"
+                        android:entryValues="@array/pref.aa.gauge.progress_type"
                         android:key="pref.aa.virtual_screens.screen.gauge.progress_type"
                         android:title="@string/pref.aa.renderer.gauge.progress_type"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
 
 
-                <PreferenceCategory android:title="@string/pref.aa.virtual_screens.category"
+                <PreferenceCategory
+                    android:title="@string/pref.aa.virtual_screens.category"
                     app:singleLineTitle="false">
 
                     <PreferenceScreen
-                        app:singleLineTitle="false"
-                        android:summary="@string/pref.displayed_parameter_ids_summary"
                         android:key="pref.aa.displayed.pids"
-                        android:title="@string/pref.displayed_parameter_ids">
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids"
+                        app:singleLineTitle="false">
 
-                        <PreferenceCategory android:title="@string/pref.displayed_parameter_ids_summary" app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.displayed_parameter_ids_summary"
+                            app:singleLineTitle="false">
 
                             <org.obd.graphs.preferences.pid.PIDsListPreferences
-                                app:source="aa"
-                                app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
                                 android:key="pref.aa.pids.profile_1"
                                 android:summary="@string/pref.displayed_parameter_ids_summary"
-                                android:title="@string/pref.aa.profile_1.displayed_parameter_ids" />
+                                android:title="@string/pref.aa.profile_1.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.pid.PIDsListPreferences
-                                app:source="aa"
-                                app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
                                 android:key="pref.aa.pids.profile_2"
                                 android:summary="@string/pref.displayed_parameter_ids_summary"
-                                android:title="@string/pref.aa.profile_2.displayed_parameter_ids" />
+                                android:title="@string/pref.aa.profile_2.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.pid.PIDsListPreferences
-                                app:source="aa"
-                                app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
                                 android:key="pref.aa.pids.profile_3"
                                 android:summary="@string/pref.displayed_parameter_ids_summary"
-                                android:title="@string/pref.aa.profile_3.displayed_parameter_ids" />
+                                android:title="@string/pref.aa.profile_3.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.pid.PIDsListPreferences
-                                app:source="aa"
-                                app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
                                 android:key="pref.aa.pids.profile_4"
                                 android:summary="@string/pref.displayed_parameter_ids_summary"
-                                android:title="@string/pref.aa.profile_4.displayed_parameter_ids" />
+                                android:title="@string/pref.aa.profile_4.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
 
                     <PreferenceScreen
-                        android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
+                        android:key="pref.aa.screen.columns.category"
                         android:summary="@string/pref.aa.virtual_screens.number_of_items_in_column.category.summary"
-                        app:singleLineTitle="false"
-                        android:key="pref.aa.screen.columns.category">
+                        android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
+                        app:singleLineTitle="false">
 
                         <PreferenceCategory
                             android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
 
                             app:singleLineTitle="false">
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
                                 android:key="pref.aa.max_pids_in_column.1"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
                                 android:key="pref.aa.max_pids_in_column.2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
                                 android:key="pref.aa.max_pids_in_column.3"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
+                                android:entries="@array/pref.numbers_1_2"
+                                android:entryValues="@array/pref.numbers_1_2"
                                 android:key="pref.aa.max_pids_in_column.4"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
 
                     <PreferenceScreen
-                        android:title="@string/pref.aa.virtual_screens.split_pids_labels.category"
+                        android:key="pref.aa.virtual_screens.split_pids_labels.category"
                         android:summary="@string/pref.aa.virtual_screens.split_pids_labels.category.summary"
-                        app:singleLineTitle="false"
-                        android:key="pref.aa.virtual_screens.split_pids_labels.category">
+                        android:title="@string/pref.aa.virtual_screens.split_pids_labels.category"
+                        app:singleLineTitle="false">
 
-                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.split_pids_labels.category" app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.split_pids_labels.category"
+                            app:singleLineTitle="false">
 
                             <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                                app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.1"
                                 android:summary="@string/pref.aa.virtual_screens.split_pids_labels.1"
-                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.1" />
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.1"
+                                app:singleLineTitle="false" />
 
                             <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                                app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.2"
                                 android:summary="@string/pref.aa.virtual_screens.split_pids_labels.2"
-                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.2" />
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.2"
+                                app:singleLineTitle="false" />
 
 
                             <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                                app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.3"
                                 android:summary="@string/pref.aa.virtual_screens.split_pids_labels.3"
-                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.3" />
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.3"
+                                app:singleLineTitle="false" />
 
 
                             <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                                app:singleLineTitle="false"
                                 android:defaultValue="false"
                                 android:key="pref.aa.break_label.4"
                                 android:summary="@string/pref.aa.virtual_screens.split_pids_labels.4"
-                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.4" />
+                                android:title="@string/pref.aa.virtual_screens.split_pids_labels.4"
+                                app:singleLineTitle="false" />
                         </PreferenceCategory>
                     </PreferenceScreen>
 
-                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.font_size.category"
+                    <PreferenceScreen
+                        android:key="pref.aa.screen.font_size.category"
                         android:summary="@string/pref.aa.virtual_screens.font_size.category.summary"
-                        app:singleLineTitle="false"
-                        android:key="pref.aa.screen.font_size.category">
-                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.font_size.category" app:singleLineTitle="false">
+                        android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.font_size.category"
+                            app:singleLineTitle="false">
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.1"
                                 android:title="@string/pref.aa.font_size.1"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.2"
                                 android:title="@string/pref.aa.font_size.2"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.3"
                                 android:title="@string/pref.aa.font_size.3"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <ListPreference
-                                app:singleLineTitle="false"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
+                                android:entries="@array/pref.numbers_20_74"
+                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.4"
                                 android:title="@string/pref.aa.font_size.4"
+                                app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                         </PreferenceCategory>
                     </PreferenceScreen>
 
-                    <PreferenceScreen  android:title="@string/pref.aa.virtual_screens.visibility.category"
+                    <PreferenceScreen
+                        android:key="pref.aa.virtual_screens_category_visibility"
                         android:summary="@string/pref.aa.virtual_screens.visibility.category.summary"
-                        app:singleLineTitle="false"
-                        android:key="pref.aa.virtual_screens_category_visibility">
+                        android:title="@string/pref.aa.virtual_screens.visibility.category"
+                        app:singleLineTitle="false">
 
-                        <PreferenceCategory android:title="@string/pref.aa.virtual_screens.visibility.category"
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.visibility.category"
                             app:singleLineTitle="false">
 
                             <org.obd.graphs.preferences.aa.VirtualScreenEnable
-                                app:singleLineTitle="false"
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.1"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.1"
-                                android:title="@string/pref.aa.virtual_screens.visibility.1" />
+                                android:title="@string/pref.aa.virtual_screens.visibility.1"
+                                app:singleLineTitle="false" />
 
                             <org.obd.graphs.preferences.aa.VirtualScreenEnable
-                                app:singleLineTitle="false"
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.2"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.2"
-                                android:title="@string/pref.aa.virtual_screens.visibility.2" />
+                                android:title="@string/pref.aa.virtual_screens.visibility.2"
+                                app:singleLineTitle="false" />
 
                             <org.obd.graphs.preferences.aa.VirtualScreenEnable
-                                app:singleLineTitle="false"
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.3"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.3"
-                                android:title="@string/pref.aa.virtual_screens.visibility.3" />
+                                android:title="@string/pref.aa.virtual_screens.visibility.3"
+                                app:singleLineTitle="false" />
 
                             <org.obd.graphs.preferences.aa.VirtualScreenEnable
-                                app:singleLineTitle="false"
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.4"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.4"
-                                android:title="@string/pref.aa.virtual_screens.visibility.4" />
+                                android:title="@string/pref.aa.virtual_screens.visibility.4"
+                                app:singleLineTitle="false" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
 
 
                 <PreferenceCategory
-                    app:singleLineTitle="false"
-                    android:title="@string/pref.aa.alerting_category">
+                    android:title="@string/pref.aa.alerting_category"
+                    app:singleLineTitle="false">
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.alerting.enabled"
                         android:summary="@string/pref.aa.alerting.enabled_summary"
-                        android:title="@string/pref.aa.alerting.enabled" />
+                        android:title="@string/pref.aa.alerting.enabled"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.alerting.legend.enabled"
                         android:summary="@string/pref.aa.alerting.legend.enabled_summary"
-                        android:title="@string/pref.aa.alerting.legend.enabled" />
+                        android:title="@string/pref.aa.alerting.legend.enabled"
+                        app:singleLineTitle="false" />
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.theme">
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.aa.theme.background.enabled"
-                        android:title="@string/pref.aa.theme.background.enabled" />
+                        android:title="@string/pref.aa.theme.background.enabled"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.theme.dynamic-selector.enabled"
                         android:summary="@string/pref.aa.theme.dynamic_selector.enabled_summary"
-                        android:title="@string/pref.aa.theme.dynamic_selector.enabled" />
+                        android:title="@string/pref.aa.theme.dynamic_selector.enabled"
+                        app:singleLineTitle="false" />
 
                     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
                         android:defaultValue="0xffff0000"
@@ -1256,20 +1282,20 @@
                         android:title="@string/pref.aa.theme.inalert_value_color" />
 
                     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        app:colorChoices="@array/pref.colors"
                         android:defaultValue="0xffffffff"
                         android:key="pref.aa.theme.btn.virtual-screen.color"
-                        android:title="@string/pref.aa.theme.virtual_screen_color" />
+                        android:title="@string/pref.aa.theme.virtual_screen_color"
+                        app:colorChoices="@array/pref.colors" />
 
                 </PreferenceCategory>
                 <PreferenceCategory
-                    app:singleLineTitle="false"
-                    android:title="@string/pref.aa.debug_category">
+                    android:title="@string/pref.aa.debug_category"
+                    app:singleLineTitle="false">
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="false"
                         android:key="pref.aa.status.fps.enabled"
-                        android:title="@string/pref.aa.surface.fps.display_status" />
+                        android:title="@string/pref.aa.surface.fps.display_status"
+                        app:singleLineTitle="false" />
                 </PreferenceCategory>
 
             </PreferenceScreen>
@@ -1281,17 +1307,17 @@
 
                 <PreferenceCategory android:title="@string/pref.pids_category">
                     <PreferenceScreen
+                        android:key="pref.graph.displayed_parameter_ids"
                         android:summary="@string/pref.displayed_parameter_ids_summary"
-                        android:title="@string/pref.displayed_parameter_ids"
-                        android:key="pref.graph.displayed_parameter_ids">
+                        android:title="@string/pref.displayed_parameter_ids">
                         <PreferenceCategory android:title="@string/pref.pids_category">
                             <org.obd.graphs.preferences.pid.PIDsListPreferences
-                                app:source="graph"
-                                app:useSimpleSummaryProvider="true"
                                 android:defaultValue="@array/pref.empty_array"
                                 android:dialogTitle="@string/pref.displayed_parameter_ids"
                                 android:key="pref.graph.pids.selected"
-                                android:title="@string/pref.displayed_parameter_ids" />
+                                android:title="@string/pref.displayed_parameter_ids"
+                                app:source="graph"
+                                app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
@@ -1306,15 +1332,16 @@
                                 android:defaultValue="@array/pref.empty_array"
                                 android:key="pref.graph.trips.selected"
                                 android:summary="@string/pref.graph_trips_selected_summary"
-                                android:title="@string/pref.graph_trips_selected"
-                                />
+                                android:title="@string/pref.graph_trips_selected" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
                 <PreferenceCategory android:title="@string/pref.general_settings">
                     <CheckBoxPreference
                         android:defaultValue="true"
+                        app:singleLineTitle="false"
                         android:key="pref.graph.view.enabled"
+                        android:summary="@string/pref.enable_view_summary"
                         android:title="@string/pref.enable_view" />
 
                     <CheckBoxPreference
@@ -1323,32 +1350,32 @@
                         android:title="@string/pref.graph_cache_enabled" />
 
                     <CheckBoxPreference
-                        app:singleLineTitle="false"
                         android:defaultValue="true"
                         android:key="pref.graph.toggle_virtual_screens_double_click"
-                        android:title="@string/pref.gauge_toggle_virtual_screens" />
+                        android:title="@string/pref.gauge_toggle_virtual_screens"
+                        app:singleLineTitle="false" />
 
 
                     <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_20_74"
-                        android:entryValues="@array/pref.numbers_20_74"
                         android:defaultValue="20"
                         android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
+                        android:entries="@array/pref.numbers_20_74"
+                        android:entryValues="@array/pref.numbers_20_74"
                         android:inputType="number"
                         android:key="pref.graph.x-axis.minimum-shift.time"
                         android:title="@string/pref.graph_x_axis_minimum_shift_time"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                     <ListPreference
-                        app:singleLineTitle="false"
-                        android:entries="@array/pref.numbers_20000_60000"
-                        android:entryValues="@array/pref.numbers_20000_60000"
                         android:defaultValue="20000"
                         android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
+                        android:entries="@array/pref.numbers_20000_60000"
+                        android:entryValues="@array/pref.numbers_20000_60000"
                         android:inputType="number"
                         android:key="pref.graph.x-axis.start-moving-after.time"
                         android:title="@string/pref.graph_x_axis_start_moving_after_time"
+                        app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                 </PreferenceCategory>
@@ -1362,8 +1389,8 @@
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.trips.recordings.save.short.trip"
-                        app:singleLineTitle="false"
-                        android:title="@string/pref.trips_recordings_save_short_trip" />
+                        android:title="@string/pref.trips_recordings_save_short_trip"
+                        app:singleLineTitle="false" />
                 </PreferenceCategory>
             </PreferenceScreen>
 
@@ -1372,51 +1399,64 @@
                 android:title="@string/navigation.title_dashboard"
                 app:key="pref.dashboard">
 
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref.dash.view.enabled"
-                    android:title="@string/pref.enable_view" />
+                <PreferenceCategory android:title="@string/pref.pids_category">
+                    <PreferenceScreen
+                        android:key="pref.dash.displayed_parameter_ids"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids">
+                        <PreferenceCategory android:title="@string/pref.pids_category">
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:key="pref.dash.pids.selected"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.displayed_parameter_ids"
+                                app:useSimpleSummaryProvider="true"
+                                app:singleLineTitle="false"
+                                app:source="dashboard" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
 
-                <PreferenceCategory  android:title="@string/navigation.title_dashboard">
-                    <org.obd.graphs.preferences.pid.PIDsListPreferences
-                        app:source="dashboard"
-                        android:dialogTitle="@string/pref.displayed_parameter_ids"
-                        android:key="pref.dash.pids.selected"
-                        android:title="@string/pref.displayed_parameter_ids" />
+                <PreferenceCategory android:title="@string/pref.general_settings">
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.dash.view.enabled"
+                        app:singleLineTitle="false"
+                        android:summary="@string/pref.enable_view_summary"
+                        android:title="@string/pref.enable_view" />
 
-                    <PreferenceCategory android:title="@string/pref.theme">
-                        <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                            android:defaultValue="@android:color/holo_green_light"
-                            android:key="pref.dash.background_color_1"
-                            android:title="@string/pref.dash.background_color_1" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.top.values.blink"
+                        android:title="@string/pref.dash_top_values_blink" />
 
-                        <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                            android:defaultValue="@android:color/holo_green_light"
-                            android:key="pref.dash.background_color_2"
-                            android:title="@string/pref.dash.background_color_2" />
-                    </PreferenceCategory>
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.enable_drag"
+                        android:title="@string/pref.dash_enable_drag_and_drop" />
 
-                    <PreferenceCategory android:title="@string/pref.general_settings">
-                        <CheckBoxPreference
-                            android:defaultValue="false"
-                            android:key="pref.dash.top.values.blink"
-                            android:title="@string/pref.dash_top_values_blink" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.swipe.to.delete"
+                        android:title="@string/pref.dash_swipe_to_delete" />
 
-                        <CheckBoxPreference
-                            android:defaultValue="false"
-                            android:key="pref.dash.enable_drag"
-                            android:title="@string/pref.dash_enable_drag_and_drop" />
+                    <CheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.dash.top.values.red.color"
+                        android:title="@string/pref.dash_top_values_red_color" />
 
-                        <CheckBoxPreference
-                            android:defaultValue="false"
-                            android:key="pref.dash.swipe.to.delete"
-                            android:title="@string/pref.dash_swipe_to_delete" />
+                </PreferenceCategory>
 
-                        <CheckBoxPreference
-                            android:defaultValue="false"
-                            android:key="pref.dash.top.values.red.color"
-                            android:title="@string/pref.dash_top_values_red_color" />
-                    </PreferenceCategory>
+                <PreferenceCategory android:title="@string/pref.theme">
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="@android:color/holo_green_light"
+                        android:key="pref.dash.background_color_1"
+                        android:title="@string/pref.dash.background_color_1" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="@android:color/holo_green_light"
+                        android:key="pref.dash.background_color_2"
+                        android:title="@string/pref.dash.background_color_2" />
                 </PreferenceCategory>
             </PreferenceScreen>
         </PreferenceScreen>
@@ -1428,20 +1468,20 @@
             android:title="@string/pref.settings">
 
             <CheckBoxPreference
-                app:singleLineTitle="false"
                 android:defaultValue="false"
                 android:key="pref.toolbar.hide.landscape"
-                android:title="@string/pref.toolbar_hide_landscape" />
+                android:title="@string/pref.toolbar_hide_landscape"
+                app:singleLineTitle="false" />
             <CheckBoxPreference
-                app:singleLineTitle="false"
                 android:defaultValue="true"
                 android:key="pref.toolbar.hide.doubleclick"
-                android:title="@string/pref.toolbar_hide_doubleclick" />
+                android:title="@string/pref.toolbar_hide_doubleclick"
+                app:singleLineTitle="false" />
             <CheckBoxPreference
-                app:singleLineTitle="false"
                 android:defaultValue="true"
                 android:key="pref.toolbar.hide.connected"
-                android:title="@string/pref.toolbar_hide_connected" />
+                android:title="@string/pref.toolbar_hide_connected"
+                app:singleLineTitle="false" />
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -1474,19 +1514,20 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
-   <PreferenceScreen app:key="pref.about">
-        <PreferenceCategory
-            android:title="@string/pref.about_category">
-           <Preference app:title="@string/pref.about_title"/>
-           <EditTextPreference app:enabled="false"
-               app:title="@string/pref.about_build_time"
-               android:key="pref.about.build_time"
-               app:useSimpleSummaryProvider="true"/>
+    <PreferenceScreen app:key="pref.about">
+        <PreferenceCategory android:title="@string/pref.about_category">
+            <Preference app:title="@string/pref.about_title" />
+            <EditTextPreference
+                android:key="pref.about.build_time"
+                app:enabled="false"
+                app:title="@string/pref.about_build_time"
+                app:useSimpleSummaryProvider="true" />
 
-            <EditTextPreference app:enabled="false"
-                app:title="@string/pref.about_build_version"
+            <EditTextPreference
                 android:key="pref.about.build_version"
-                app:useSimpleSummaryProvider="true"/>
+                app:enabled="false"
+                app:title="@string/pref.about_build_version"
+                app:useSimpleSummaryProvider="true" />
 
         </PreferenceCategory>
     </PreferenceScreen>
