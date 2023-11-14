@@ -24,7 +24,7 @@ import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
-import org.obd.graphs.profile.getSelectedProfileName
+import org.obd.graphs.profile.vehicleProfile
 import org.obd.graphs.renderer.drag.MARGIN_END
 
 internal abstract class AbstractDrawer (context: Context, protected val settings: ScreenSettings) {
@@ -171,7 +171,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         )
 
         marginLeft += getTextWidth(text, statusPaint) + 4F
-        text = getSelectedProfileName()!!
+        text = vehicleProfile.getSelectedProfileName()!!
 
         drawText(
             canvas,

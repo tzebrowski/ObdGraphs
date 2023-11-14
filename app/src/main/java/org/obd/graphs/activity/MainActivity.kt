@@ -37,7 +37,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.preferences.*
-import org.obd.graphs.preferences.profile.vehicleProfile
+import org.obd.graphs.profile.vehicleProfile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         registerReceiver()
 
         setupExceptionHandler()
-        vehicleProfile.setupProfiles(forceOverride = false)
+        setupVehicleProfiles()
         setupStatusPanel()
         setupPreferences()
 
@@ -129,7 +129,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupLeftNavigationPanel()
         supportActionBar?.hide()
     }
-
     override fun onResume() {
         super.onResume()
         setupWindowManager()
@@ -213,4 +212,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 .build())
         }
     }
+
+    private fun setupVehicleProfiles() {
+        vehicleProfile.updateVersionCode(BuildConfig.VERSION_CODE)
+        vehicleProfile.updateDefaultProfile(getContext()?.resources?.getString(R.string.DEFAULT_PROFILE))
+        vehicleProfile.setupProfiles(forceOverrideRecommendation = false)
+    }
+
 }

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.preferences.profile
+package org.obd.graphs.profile
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -24,38 +24,62 @@ import android.os.Environment
 import android.util.Log
 import androidx.core.content.edit
 import org.obd.graphs.*
-import org.obd.graphs.bl.datalogger.PROFILE_CHANGED_EVENT
-import org.obd.graphs.bl.datalogger.PROFILE_RESET_EVENT
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.updateBoolean
 import org.obd.graphs.preferences.updatePreference
-import org.obd.graphs.preferences.updateToolbar
-import org.obd.graphs.profile.PROFILE_ID_PREF
-import org.obd.graphs.profile.PROFILE_NAME_PREFIX
-import org.obd.graphs.profile.getSelectedProfile
-import org.obd.graphs.profile.getProfiles
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
+
+const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
+const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
 
 const val PROFILES_PREF = "pref.profiles"
 private const val LOG_TAG = "VehicleProfile"
 private const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
 private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
 private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
-private const val DEFAULT_PROFILE = "profile_1"
+
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
+
+const val PROFILE_ID_PREF = "pref.profile.id"
+const val PROFILE_NAME_PREFIX = "pref.profile.names"
+private const val DEFAULT_MAX_PROFILES = 13
+const val DEFAULT_PROFILE = "profile_1"
+
+
 
 val vehicleProfile = VehicleProfile()
 
 class VehicleProfile : OnSharedPreferenceChangeListener {
 
+    private var versionCode: Int = 0
+    private var defaultProfile: String? = null
+
+
     @Volatile
     private var bulkActionEnabled = false
 
-    internal fun getCurrentProfile(): String = getSelectedProfile()
+    fun getCurrentProfile(): String = getSelectedProfile()
     fun getProfileList() = getProfiles()
+
+
+    fun getProfiles() =
+        (1..DEFAULT_MAX_PROFILES)
+            .associate {
+                "profile_$it" to Prefs.getString(
+                    "$PROFILE_NAME_PREFIX.profile_$it",
+                    "Profile $it"
+                )
+            }
+
+
+    fun getSelectedProfile(): String = Prefs.getS(PROFILE_ID_PREF,defaultProfile?: DEFAULT_PROFILE)
+
+    fun getSelectedProfileName(): String? = Prefs.getString("$PROFILE_NAME_PREFIX.${getSelectedProfile()}", "")
+
 
     fun importBackup(){
         runAsync {
@@ -67,7 +91,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                 loadProfileFilesIntoPreferences(
                     forceOverride = true,
                     files = mutableListOf(backupFile.absolutePath),
-                    installationKey = getProfileInstallationKey()
+                    installationKey = getInstallationVersion()
                 ){
                     val prop = Properties()
                     prop.load(FileInputStream(it))
@@ -105,9 +129,9 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
     fun reset() {
         try {
             bulkActionEnabled = true
-            Prefs.updateBoolean(getProfileInstallationKey(), false)
+            Prefs.updateBoolean(getInstallationVersion(), false)
             resetCurrentProfile()
-            setupProfiles(forceOverride = true)
+            setupProfiles(forceOverrideRecommendation = true)
             sendBroadcastEvent(PROFILE_RESET_EVENT)
         } finally {
             bulkActionEnabled = false
@@ -118,7 +142,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
         if (!bulkActionEnabled) {
             pref?.let {
                 Log.d(PROFILE_AUTO_SAVER_LOG_TAG, "Receive preference change: $pref")
-                if (pref.startsWith("profile_") || pref == getProfileInstallationKey()) {
+                if (pref.startsWith("profile_") || pref == getInstallationVersion()) {
                     Log.v(PROFILE_AUTO_SAVER_LOG_TAG, "Skipping: $pref")
                 } else {
                     val profileName = getCurrentProfile()
@@ -132,38 +156,59 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
         }
     }
 
-    fun setupProfiles(forceOverride: Boolean = true) {
+    fun updateVersionCode(code: Int){
+        versionCode = code
+    }
+
+    fun updateDefaultProfile(profile: String?){
+        defaultProfile = profile
+    }
+
+
+    fun setupProfiles(forceOverrideRecommendation: Boolean = true) {
         try {
+            var forceOverride = forceOverrideRecommendation
+
+            val installationKeys = Prefs.all.filterKeys { it.startsWith("prefs.installed.profiles") }.keys.toList()
+            Log.i(LOG_TAG,"Found installation keys:  $installationKeys ")
+
+            if (installationKeys.isEmpty()){
+                Log.i(LOG_TAG,"Changing force override to true due to empty installation keys available.")
+                forceOverride = true
+            }
+
             bulkActionEnabled = true
-            val installationKey = getProfileInstallationKey()
-            val setupDisabled = Prefs.getBoolean(installationKey, false)
+            val installationVersion = getInstallationVersion()
+            val installationVersionAvailable = Prefs.getBoolean(installationVersion, false)
+
             Log.i(
                 LOG_TAG,
-                "Setup profiles. Installation key='$installationKey', setupEnabled='$setupDisabled', forceOverride=$forceOverride"
+                "Setup profiles. Installation version='$installationVersion', installationKeyAvailable='$installationVersionAvailable', forceOverride=$forceOverride"
             )
 
-            if (!setupDisabled) {
+            if (!installationVersionAvailable) {
                 val profiles = findProfileFiles()
                 Log.i(LOG_TAG, "Found following profiles: $profiles for installation.")
 
-                loadProfileFilesIntoPreferences(forceOverride, profiles, installationKey){
+                loadProfileFilesIntoPreferences(forceOverride, profiles, installationVersion){
                     loadFile(it)
                 }
 
                 val defaultProfile = getDefaultProfile()
                 Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
+
                 if (forceOverride) {
                     loadProfile(getDefaultProfile())
                 }
                 
-                updateToolbar()
+//                updateToolbar()
             }
         } finally {
             bulkActionEnabled = false
         }
     }
 
-    internal fun saveCurrentProfile() {
+    fun saveCurrentProfile() {
         try {
             bulkActionEnabled = true
             Prefs.edit().let {
@@ -173,7 +218,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                     .filter { (pref, _) -> !pref.startsWith("profile_") }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
-                    .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
+                    .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
                     .forEach { (pref, value) ->
                         Log.i(LOG_TAG, "'$profileName.$pref'=$value")
                         it.updatePreference("$profileName.$pref", value)
@@ -197,7 +242,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                     .filter { (pref, _) -> pref.startsWith(profileName) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
-                    .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
+                    .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
                     .forEach { (pref, value) ->
                         pref.substring(profileName.length + 1).run {
                             Log.d(LOG_TAG, "Loading user preference $this = $value")
@@ -231,7 +276,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_ID_PREF) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
-                .filter { (pref, _) -> !pref.startsWith(getProfileInstallationKey()) }
+                .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
                 .forEach { (pref, _) ->
                     it.remove(pref)
                 }
@@ -239,7 +284,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun getProfileInstallationKey() = "${PROFILE_INSTALLATION_KEY}.${BuildConfig.VERSION_CODE}"
+    private fun getInstallationVersion() = "${PROFILE_INSTALLATION_KEY}.${versionCode}"
 
     private fun updateCurrentProfileValue(profileName: String) {
         val prefName =
@@ -274,9 +319,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
         return prop
     }
 
-    private fun getDefaultProfile(): String =
-        getContext()?.resources?.getString(R.string.DEFAULT_PROFILE) ?: DEFAULT_PROFILE
-
+    private fun getDefaultProfile(): String = defaultProfile ?: DEFAULT_PROFILE
 
     private fun loadProfileFilesIntoPreferences(
         forceOverride: Boolean,
@@ -292,7 +335,6 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                 // clear all preferences
                 editor.clear()
             }
-
             files?.forEach { profileFile ->
                 Log.i(LOG_TAG, "Loading profile file='$profileFile'")
 

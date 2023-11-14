@@ -38,6 +38,8 @@ import org.obd.graphs.aa.screen.*
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
+import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 

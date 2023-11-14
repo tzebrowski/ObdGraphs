@@ -28,20 +28,20 @@ android {
     }
 
     signingConfigs {
+
         debug {
             storeFile file(System.getenv("ANDROID_RELEASE_KEYSTORE"))
             storePassword System.getenv("ANDROID_RELEASE_STORE_PASSWORD")
             keyAlias System.getenv("ANDROID_RELEASE_KEY_ALIAS")
             keyPassword System.getenv("ANDROID_RELEASE_KEY_PASSWORD")
         }
+
         release {
             storeFile file(System.getenv("ANDROID_RELEASE_KEYSTORE"))
             storePassword System.getenv("ANDROID_RELEASE_STORE_PASSWORD")
             keyAlias System.getenv("ANDROID_RELEASE_KEY_ALIAS")
             keyPassword System.getenv("ANDROID_RELEASE_KEY_PASSWORD")
         }
-
-
 
         play {
             storeFile file(System.getenv("ANDROID_RELEASE_KEYSTORE"))
@@ -58,21 +58,21 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 83
+            versionCode 86
         }
 
         giuliaPerformanceMonitor {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.performance_monitor"
-            versionCode 31
+            versionCode 33
         }
 
         giulia {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 54
+            versionCode 57
         }
     }
 
@@ -134,6 +134,8 @@ dependencies {
     implementation project(':screen_renderer')
     implementation project(":datalogger")
     implementation project(":common")
+    implementation project(":vehicle_profile")
+
     debugImplementation project(":automotive")
     releaseImplementation project(":automotive")
     implementation project(":dragracing")

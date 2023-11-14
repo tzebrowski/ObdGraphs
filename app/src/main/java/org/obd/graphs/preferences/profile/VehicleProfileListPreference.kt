@@ -25,6 +25,8 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.updateToolbar
+import org.obd.graphs.profile.PROFILES_PREF
+import org.obd.graphs.profile.vehicleProfile
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 

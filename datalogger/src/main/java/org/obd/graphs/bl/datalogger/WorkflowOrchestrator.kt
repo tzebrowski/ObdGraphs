@@ -28,6 +28,7 @@ import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
