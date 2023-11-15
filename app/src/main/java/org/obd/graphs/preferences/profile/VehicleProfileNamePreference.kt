@@ -24,8 +24,8 @@ import android.util.Log
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.profile.PROFILE_NAME_PREFIX
+import org.obd.graphs.profile.PROFILES_PREF
+import org.obd.graphs.profile.vehicleProfile
 
 class VehicleProfileNamePreference(
     context: Context,
@@ -37,9 +37,8 @@ class VehicleProfileNamePreference(
 
             Log.d("VehicleProfileNamePreference", "Updating profile value: ${vehicleProfile.getCurrentProfile()}=$newValue")
 
-            Prefs.edit()
-                .putString("$PROFILE_NAME_PREFIX.${vehicleProfile.getCurrentProfile()}", newValue.toString())
-                .apply()
+            vehicleProfile.updateCurrentProfileName(newName = newValue.toString())
+
             navigateToPreferencesScreen(PROFILES_PREF)
             true
         }

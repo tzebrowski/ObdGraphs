@@ -37,6 +37,7 @@ import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
@@ -126,6 +127,11 @@ internal fun MainActivity.receive(intent: Intent?) {
         PROFILE_CHANGED_EVENT -> {
             updateVehicleProfile()
             updateAdapterConnectionType()
+
+            toggleNavigationItem(GIULIA_VIEW_ID, R.id.navigation_giulia)
+            toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
+            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
+            toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
         }
         SCREEN_OFF_EVENT -> {
             lockScreen()

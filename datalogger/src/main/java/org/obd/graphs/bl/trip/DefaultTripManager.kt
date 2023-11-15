@@ -26,8 +26,7 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
-import org.obd.graphs.profile.getSelectedProfile
-import org.obd.graphs.profile.getProfiles
+import org.obd.graphs.profile.vehicleProfile
 import org.obd.metrics.api.model.ObdMetric
 import java.io.File
 import java.io.FileNotFoundException
@@ -112,7 +111,7 @@ internal class DefaultTripManager : TripManager {
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val tripStartTs = trip.startTs
 
-                val filter = "$TRIP_FILE_PREFIX-${getSelectedProfile()}-${tripStartTs}"
+                val filter = "$TRIP_FILE_PREFIX-${vehicleProfile.getCurrentProfile()}-${tripStartTs}"
                 val alreadySaved = findAllTripsBy(filter)
 
                 if (alreadySaved.isNotEmpty()) {
@@ -140,7 +139,7 @@ internal class DefaultTripManager : TripManager {
                             tripModelSerializer.serializer.writeValueAsString(trip)
 
                         val fileName =
-                            "$TRIP_FILE_PREFIX-${getSelectedProfile()}-${tripStartTs}-${tripLength}.json"
+                            "$TRIP_FILE_PREFIX-${vehicleProfile.getCurrentProfile()}-${tripStartTs}-${tripLength}.json"
                         Log.i(
                             LOGGER_TAG,
                             "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
@@ -161,9 +160,9 @@ internal class DefaultTripManager : TripManager {
     }
 
     override fun findAllTripsBy(filter: String): MutableCollection<TripFileDesc> {
-        Log.i(LOGGER_TAG, "Finds all trips by filter: '$filter' and profile=${getSelectedProfile()}")
+        Log.i(LOGGER_TAG, "Finds all trips by filter: '$filter' and profile=${vehicleProfile.getCurrentProfile()}")
 
-        val profiles = getProfiles()
+        val profiles = vehicleProfile.getAvailableProfiles()
         val files = File(getTripsDirectory(getContext()!!)).list()
         if (files == null) {
             Log.i(LOGGER_TAG, "No files were found in the trips directory.")
@@ -173,7 +172,7 @@ internal class DefaultTripManager : TripManager {
                 .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
                 .filter { it.startsWith("${TRIP_FILE_PREFIX}_") || it.startsWith("$TRIP_FILE_PREFIX-") }
                 .filter {
-                    it.contains("${getSelectedProfile()}-") }
+                    it.contains("${vehicleProfile.getCurrentProfile()}-") }
                 .filter {
                     try {
                         decodeTripName(it).size > 3
@@ -197,7 +196,7 @@ internal class DefaultTripManager : TripManager {
                 }
                 .sortedByDescending { it.startTime.toLongOrNull() }
                 .toMutableList()
-            Log.i(LOGGER_TAG, "Found trips by filter: '${filter}' for profile=${getSelectedProfile()}. Result size: ${result.size}")
+            Log.i(LOGGER_TAG, "Found trips by filter: '${filter}' for profile=${vehicleProfile.getCurrentProfile()}. Result size: ${result.size}")
             return result
         }
     }

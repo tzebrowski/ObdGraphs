@@ -24,7 +24,8 @@ import android.util.AttributeSet
 import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.preferences.updateToolbar
+import org.obd.graphs.profile.PROFILES_PREF
+import org.obd.graphs.profile.vehicleProfile
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 
@@ -35,7 +36,7 @@ class VehicleProfileListPreference(
 
     init {
 
-        vehicleProfile.getProfileList()
+        vehicleProfile.getAvailableProfiles()
             .let {
                 entries = it.values.toTypedArray()
                 entryValues = it.keys.toTypedArray()
@@ -48,7 +49,6 @@ class VehicleProfileListPreference(
             OnPreferenceChangeListener { _, newValue ->
                 vehicleProfile.saveCurrentProfile()
                 vehicleProfile.loadProfile(newValue.toString())
-                updateToolbar()
                 navigateToPreferencesScreen(PROFILES_PREF)
                 true
             }
