@@ -173,7 +173,7 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
             Log.i(LOG_TAG,"Found installation keys:  $installationKeys ")
 
             if (installationKeys.isEmpty()){
-                Log.i(LOG_TAG,"Changing force override to true due to empty installation keys available.")
+                Log.i(LOG_TAG,"Application is not installed yet.")
                 forceOverride = true
             }
 
@@ -194,19 +194,17 @@ class VehicleProfile : OnSharedPreferenceChangeListener {
                     loadFile(it)
                 }
 
-                val defaultProfile = getDefaultProfile()
-                Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
-
                 if (forceOverride) {
+                    val defaultProfile = getDefaultProfile()
+                    Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
                     loadProfile(getDefaultProfile())
                 }
-                
-//                updateToolbar()
             }
         } finally {
             bulkActionEnabled = false
         }
     }
+
 
     fun saveCurrentProfile() {
         try {

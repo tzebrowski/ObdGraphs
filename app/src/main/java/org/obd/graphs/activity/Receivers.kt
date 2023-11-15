@@ -127,6 +127,11 @@ internal fun MainActivity.receive(intent: Intent?) {
         PROFILE_CHANGED_EVENT -> {
             updateVehicleProfile()
             updateAdapterConnectionType()
+
+            toggleNavigationItem(GIULIA_VIEW_ID, R.id.navigation_giulia)
+            toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
+            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
+            toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
         }
         SCREEN_OFF_EVENT -> {
             lockScreen()
