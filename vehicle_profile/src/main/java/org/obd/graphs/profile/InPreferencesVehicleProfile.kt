@@ -284,16 +284,6 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
         Prefs.edit().putString(PROFILE_CURRENT_NAME_PREF, prefName).apply()
     }
 
-
-    private fun String.toCamelCase() =
-        split('_').joinToString(" ", transform = String::capitalize)
-
-    private fun String.isArray() = startsWith("[") || endsWith("]")
-    private fun String.isBoolean(): Boolean = startsWith("false") || startsWith("true")
-    private fun String.isNumeric(): Boolean = matches(Regex("-?\\d+"))
-    private fun String.toBoolean(): Boolean = startsWith("true")
-
-
     private fun stringToStringSet(value: String): MutableSet<String> = value
         .replace("[", "")
         .replace("]", "")
