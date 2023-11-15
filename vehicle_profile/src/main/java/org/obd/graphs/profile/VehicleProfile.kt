@@ -3,10 +3,8 @@ package org.obd.graphs.profile
 import android.content.SharedPreferences
 
 interface VehicleProfile : SharedPreferences.OnSharedPreferenceChangeListener {
-    fun getCurrentProfile(): String
-    fun getProfileList(): Map<String, String?>
     fun getProfiles(): Map<String, String?>
-    fun getSelectedProfile(): String
+    fun getCurrentProfile(): String
     fun getSelectedProfileName(): String?
     fun importBackup()
     fun exportBackup()

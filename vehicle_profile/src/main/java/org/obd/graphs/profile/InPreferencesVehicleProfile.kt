@@ -59,10 +59,6 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
     @Volatile
     private var bulkActionEnabled = false
 
-    override fun getCurrentProfile(): String = getSelectedProfile()
-    override fun getProfileList() = getProfiles()
-
-
     override fun getProfiles() =
         (1..DEFAULT_MAX_PROFILES)
             .associate {
@@ -73,9 +69,9 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
             }
 
 
-    override fun getSelectedProfile(): String = Prefs.getS(PROFILE_ID_PREF,defaultProfile?: DEFAULT_PROFILE)
+    override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF,defaultProfile?: DEFAULT_PROFILE)
 
-    override fun getSelectedProfileName(): String? = Prefs.getString("$PROFILE_NAME_PREFIX.${getSelectedProfile()}", "")
+    override fun getSelectedProfileName(): String? = Prefs.getString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
 
     override fun importBackup(){

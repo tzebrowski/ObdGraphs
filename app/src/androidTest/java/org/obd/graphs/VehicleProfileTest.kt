@@ -85,7 +85,7 @@ class VehicleProfileTest {
 
         launchActivity<MainActivity>().use {
             val expected = getExpectedProfileList()
-            val given = vehicleProfile.getProfileList()
+            val given = vehicleProfile.getProfiles()
 
             assertTrue("Default profiles does not match", expected == given)
         }
@@ -93,7 +93,7 @@ class VehicleProfileTest {
 
     private fun assertProfilesExists() {
         val expected = getExpectedProfileList()
-        val given = vehicleProfile.getProfileList()
+        val given = vehicleProfile.getProfiles()
         Log.e("assertProfilesExists", "Given profiles: $given")
         Log.e("assertProfilesExists", "Expected profiles: $expected")
 
