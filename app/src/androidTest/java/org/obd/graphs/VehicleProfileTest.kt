@@ -30,8 +30,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.preferences.updateBoolean
+import org.obd.graphs.profile.vehicleProfile
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class VehicleProfileTest {
@@ -44,7 +44,7 @@ class VehicleProfileTest {
             // lets use this profiles as default
             vehicleProfile.loadProfile("profile_5")
 
-            val propName = "pref.adapter.batch.enabled";
+            val propName = "pref.adapter.batch.enabled"
             assertEquals(Prefs.getBoolean(propName, true), true)
 
             // changing the value of property under profile_5

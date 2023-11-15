@@ -125,7 +125,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
 
         setupLockScreenDialog()
-        Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
         setupLeftNavigationPanel()
         supportActionBar?.hide()
     }
@@ -214,9 +213,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setupVehicleProfiles() {
+        Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
         vehicleProfile.updateVersionCode(BuildConfig.VERSION_CODE)
         vehicleProfile.updateDefaultProfile(getContext()?.resources?.getString(R.string.DEFAULT_PROFILE))
         vehicleProfile.setupProfiles(forceOverrideRecommendation = false)
     }
-
 }
