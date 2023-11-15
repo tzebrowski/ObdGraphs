@@ -34,19 +34,17 @@ import java.util.*
 
 
 
-const val PROFILES_PREF = "pref.profiles"
 private const val LOG_TAG = "VehicleProfile"
 private const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
 private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
 private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
-
-private const val BACKUP_FILE_NAME = "obd_graphs.backup"
-
-const val PROFILE_ID_PREF = "pref.profile.id"
-const val PROFILE_NAME_PREFIX = "pref.profile.names"
+private const val PROFILE_NAME_PREFIX = "pref.profile.names"
 private const val DEFAULT_MAX_PROFILES = 13
-const val DEFAULT_PROFILE = "profile_1"
+private const val BACKUP_FILE_NAME = "obd_graphs.backup"
+private const val DEFAULT_PROFILE = "profile_1"
 
+const val PROFILES_PREF = "pref.profiles"
+const val PROFILE_ID_PREF = "pref.profile.id"
 
 val vehicleProfile: VehicleProfile = InPreferencesVehicleProfile()
 
@@ -58,6 +56,13 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
     @Volatile
     private var bulkActionEnabled = false
 
+    override fun updateCurrentProfileName(newName: String) {
+        Prefs.edit()
+            .putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newName)
+            .apply()
+    }
+
+
     override fun getAvailableProfiles() =
         (1..DEFAULT_MAX_PROFILES)
             .associate {
@@ -66,7 +71,6 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
                     "Profile $it"
                 )
             }
-
 
     override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF, defaultProfile ?: DEFAULT_PROFILE)
 
