@@ -71,7 +71,7 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
 
     override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF, defaultProfile ?: DEFAULT_PROFILE)
 
-    override fun getSelectedProfileName(): String? = Prefs.getString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
+    override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
 
     override fun importBackup() {

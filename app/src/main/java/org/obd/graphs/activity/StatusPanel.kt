@@ -68,7 +68,7 @@ internal fun MainActivity.updateVehicleProfile() {
     updateTextField(
         R.id.vehicle_profile,
         resources.getString(R.string.vehicle_profile),
-        vehicleProfile.getSelectedProfileName()!!,
+        vehicleProfile.getCurrentProfileName(),
         COLOR_RAINBOW_INDIGO,
         1.0f
     )

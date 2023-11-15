@@ -214,12 +214,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setupVehicleProfiles() {
-        Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
-
         vehicleProfile.init(
             versionCode = BuildConfig.VERSION_CODE,
             defaultProfile = resources.getString(R.string.DEFAULT_PROFILE))
 
+        Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
         vehicleProfile.setupProfiles(forceOverrideRecommendation = false)
     }
 }

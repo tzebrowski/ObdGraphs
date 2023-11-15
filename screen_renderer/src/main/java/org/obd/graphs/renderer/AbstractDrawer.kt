@@ -171,7 +171,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         )
 
         marginLeft += getTextWidth(text, statusPaint) + 4F
-        text = vehicleProfile.getSelectedProfileName()!!
+        text = vehicleProfile.getCurrentProfileName()
 
         drawText(
             canvas,

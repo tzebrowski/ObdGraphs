@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 interface VehicleProfile : SharedPreferences.OnSharedPreferenceChangeListener {
     fun getProfiles(): Map<String, String?>
     fun getCurrentProfile(): String
-    fun getSelectedProfileName(): String?
+    fun getCurrentProfileName(): String
     fun importBackup()
     fun exportBackup()
     fun reset()
