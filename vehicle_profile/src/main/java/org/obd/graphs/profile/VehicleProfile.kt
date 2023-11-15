@@ -9,8 +9,8 @@ interface VehicleProfile : SharedPreferences.OnSharedPreferenceChangeListener {
     fun importBackup()
     fun exportBackup()
     fun reset()
-    fun updateVersionCode(code: Int)
-    fun updateDefaultProfile(profile: String?)
+    fun init(versionCode: Int, defaultProfile: String)
+
     fun setupProfiles(forceOverrideRecommendation: Boolean = true)
     fun saveCurrentProfile()
     fun loadProfile(profileName: String)

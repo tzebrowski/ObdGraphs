@@ -115,6 +115,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         setupExceptionHandler()
         setupVehicleProfiles()
+
         setupStatusPanel()
         setupPreferences()
 
@@ -214,8 +215,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     private fun setupVehicleProfiles() {
         Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
-        vehicleProfile.updateVersionCode(BuildConfig.VERSION_CODE)
-        vehicleProfile.updateDefaultProfile(getContext()?.resources?.getString(R.string.DEFAULT_PROFILE))
+
+        vehicleProfile.init(
+            versionCode = BuildConfig.VERSION_CODE,
+            defaultProfile = resources.getString(R.string.DEFAULT_PROFILE))
+
         vehicleProfile.setupProfiles(forceOverrideRecommendation = false)
     }
 }

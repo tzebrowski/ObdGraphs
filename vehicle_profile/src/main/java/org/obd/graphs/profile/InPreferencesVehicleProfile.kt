@@ -49,7 +49,7 @@ private const val DEFAULT_MAX_PROFILES = 13
 const val DEFAULT_PROFILE = "profile_1"
 
 
-val vehicleProfile:VehicleProfile = InPreferencesVehicleProfile()
+val vehicleProfile: VehicleProfile = InPreferencesVehicleProfile()
 
 internal class InPreferencesVehicleProfile : VehicleProfile {
 
@@ -69,12 +69,12 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
             }
 
 
-    override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF,defaultProfile?: DEFAULT_PROFILE)
+    override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF, defaultProfile ?: DEFAULT_PROFILE)
 
     override fun getSelectedProfileName(): String? = Prefs.getString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
 
-    override fun importBackup(){
+    override fun importBackup() {
         runAsync {
             try {
 
@@ -85,7 +85,7 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
                     forceOverride = true,
                     files = mutableListOf(backupFile.absolutePath),
                     installationKey = getInstallationVersion()
-                ){
+                ) {
                     val prop = Properties()
                     prop.load(FileInputStream(it))
                     prop
@@ -95,15 +95,15 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
 
                 sendBroadcastEvent(PROFILE_CHANGED_EVENT)
 
-            } catch (e: Throwable){
-                Log.e(LOG_TAG, "Failed to load backup file",e)
+            } catch (e: Throwable) {
+                Log.e(LOG_TAG, "Failed to load backup file", e)
             } finally {
                 bulkActionEnabled = false
             }
         }
     }
 
-    override fun exportBackup(){
+    override fun exportBackup() {
         runAsync {
             try {
                 Log.i(LOG_TAG, "Start exporting backup file")
@@ -111,6 +111,7 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
                 val backupFile = getBackupFile()
                 data.store(FileOutputStream(backupFile), "Backup file")
                 Log.i(LOG_TAG, "Exporting backup file completed")
+
             } catch (e: Throwable) {
                 Log.e(LOG_TAG, "Failed to store backup file", e)
             } finally {
@@ -149,24 +150,22 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
         }
     }
 
-    override fun updateVersionCode(code: Int){
-        versionCode = code
+    override fun init(versionCode: Int, defaultProfile: String) {
+        Log.i(LOG_TAG,"Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile ")
+        this.versionCode = versionCode
+        this.defaultProfile = defaultProfile
     }
-
-    override fun updateDefaultProfile(profile: String?){
-        defaultProfile = profile
-    }
-
 
     override fun setupProfiles(forceOverrideRecommendation: Boolean) {
+
         try {
             var forceOverride = forceOverrideRecommendation
 
             val installationKeys = Prefs.all.filterKeys { it.startsWith("prefs.installed.profiles") }.keys.toList()
-            Log.i(LOG_TAG,"Found installation keys:  $installationKeys ")
+            Log.i(LOG_TAG, "Found installation keys:  $installationKeys ")
 
-            if (installationKeys.isEmpty()){
-                Log.i(LOG_TAG,"Application is not installed yet.")
+            if (installationKeys.isEmpty()) {
+                Log.i(LOG_TAG, "Application is not installed yet.")
                 forceOverride = true
             }
 
@@ -183,11 +182,12 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
                 val profiles = findProfileFiles()
                 Log.i(LOG_TAG, "Found following profiles: $profiles for installation.")
 
-                loadProfileFilesIntoPreferences(forceOverride, profiles, installationVersion){
+                loadProfileFilesIntoPreferences(forceOverride, profiles, installationVersion) {
                     loadFile(it)
                 }
 
                 if (forceOverride) {
+
                     val defaultProfile = getDefaultProfile()
                     Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
                     loadProfile(getDefaultProfile())
@@ -366,6 +366,7 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
             editor.apply()
         }
     }
+
     private fun getBackupFile(): File =
         File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)
 
