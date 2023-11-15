@@ -32,8 +32,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
 
-const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
-const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
+
 
 const val PROFILES_PREF = "pref.profiles"
 private const val LOG_TAG = "VehicleProfile"
@@ -59,7 +58,7 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
     @Volatile
     private var bulkActionEnabled = false
 
-    override fun getProfiles() =
+    override fun getAvailableProfiles() =
         (1..DEFAULT_MAX_PROFILES)
             .associate {
                 "profile_$it" to Prefs.getString(

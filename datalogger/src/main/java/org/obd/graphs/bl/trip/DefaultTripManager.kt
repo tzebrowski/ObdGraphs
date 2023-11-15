@@ -162,7 +162,7 @@ internal class DefaultTripManager : TripManager {
     override fun findAllTripsBy(filter: String): MutableCollection<TripFileDesc> {
         Log.i(LOGGER_TAG, "Finds all trips by filter: '$filter' and profile=${vehicleProfile.getCurrentProfile()}")
 
-        val profiles = vehicleProfile.getProfiles()
+        val profiles = vehicleProfile.getAvailableProfiles()
         val files = File(getTripsDirectory(getContext()!!)).list()
         if (files == null) {
             Log.i(LOGGER_TAG, "No files were found in the trips directory.")

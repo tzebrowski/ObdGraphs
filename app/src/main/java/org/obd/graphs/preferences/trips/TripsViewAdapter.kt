@@ -51,7 +51,7 @@ class TripsViewAdapter internal constructor(
 
     private val profileColors = mutableMapOf<String, Int>().apply {
         val colors = Colors().generate()
-        vehicleProfile.getProfiles().forEach { (s, _) ->
+        vehicleProfile.getAvailableProfiles().forEach { (s, _) ->
             put(s, colors.nextInt())
         }
     }

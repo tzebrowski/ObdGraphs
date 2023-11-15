@@ -36,7 +36,7 @@ class VehicleProfileListPreference(
 
     init {
 
-        vehicleProfile.getProfiles()
+        vehicleProfile.getAvailableProfiles()
             .let {
                 entries = it.values.toTypedArray()
                 entryValues = it.keys.toTypedArray()

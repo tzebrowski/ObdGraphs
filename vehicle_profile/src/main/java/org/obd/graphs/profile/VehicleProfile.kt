@@ -2,8 +2,11 @@ package org.obd.graphs.profile
 
 import android.content.SharedPreferences
 
+const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
+const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
+
 interface VehicleProfile : SharedPreferences.OnSharedPreferenceChangeListener {
-    fun getProfiles(): Map<String, String?>
+    fun getAvailableProfiles(): Map<String, String?>
     fun getCurrentProfile(): String
     fun getCurrentProfileName(): String
     fun importBackup()
