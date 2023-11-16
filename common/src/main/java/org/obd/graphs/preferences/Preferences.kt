@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.preferences
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import org.obd.graphs.getContext
@@ -58,13 +59,17 @@ fun SharedPreferences.updateString(key: String, value: String?): SharedPreferenc
     return edit()
 }
 
+@SuppressLint("ApplySharedPref")
 fun SharedPreferences.updateInt(key: String, value: Int){
    edit().putInt(key, value).commit()
 }
 
+@SuppressLint("ApplySharedPref")
 fun SharedPreferences.updateStringSet(key: String, list: List<String>) {
     edit().putStringSet(key, list.map { l -> l }.toSet()).commit()
 }
+
+@SuppressLint("ApplySharedPref")
 fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
     edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).commit()
 }
@@ -81,7 +86,7 @@ fun SharedPreferences.isEnabled(key: String): Boolean {
     return getBoolean(key, false)
 }
 
-fun SharedPreferences.getS(name: String?, default: String): String {
+fun SharedPreferences.getS(name: String, default: String): String {
     return getString(name, default)!!
 }
 

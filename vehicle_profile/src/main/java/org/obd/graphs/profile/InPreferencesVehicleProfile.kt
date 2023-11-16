@@ -23,16 +23,12 @@ import android.os.Environment
 import android.util.Log
 import androidx.core.content.edit
 import org.obd.graphs.*
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getS
-import org.obd.graphs.preferences.updateBoolean
-import org.obd.graphs.preferences.updatePreference
+import org.obd.graphs.preferences.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
 import java.util.*
-
-
 
 private const val LOG_TAG = "VehicleProfile"
 private const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
@@ -43,15 +39,11 @@ private const val DEFAULT_MAX_PROFILES = 13
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-const val PROFILES_PREF = "pref.profiles"
-const val PROFILE_ID_PREF = "pref.profile.id"
-
-val vehicleProfile: VehicleProfile = InPreferencesVehicleProfile()
-
 internal class InPreferencesVehicleProfile : VehicleProfile {
 
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
+    private var versionName: String? = null
 
     @Volatile
     private var bulkActionEnabled = false
@@ -61,7 +53,6 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
             .putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newName)
             .apply()
     }
-
 
     override fun getAvailableProfiles() =
         (1..DEFAULT_MAX_PROFILES)
@@ -128,6 +119,7 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
             bulkActionEnabled = true
             Prefs.updateBoolean(getInstallationVersion(), false)
             resetCurrentProfile()
+            updateBuildSettings()
             setupProfiles(forceOverrideRecommendation = true)
             sendBroadcastEvent(PROFILE_RESET_EVENT)
         } finally {
@@ -153,10 +145,13 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
         }
     }
 
-    override fun init(versionCode: Int, defaultProfile: String) {
+    override fun init(versionCode: Int, defaultProfile: String, versionName: String) {
         Log.i(LOG_TAG,"Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile ")
         this.versionCode = versionCode
         this.defaultProfile = defaultProfile
+        this.versionName = versionName
+
+        updateBuildSettings()
     }
 
     override fun setupProfiles(forceOverrideRecommendation: Boolean) {
@@ -176,9 +171,9 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
             val installationVersion = getInstallationVersion()
             val installationVersionAvailable = Prefs.getBoolean(installationVersion, false)
 
-            Log.i(
-                LOG_TAG,
-                "Setup profiles. Installation version='$installationVersion', installationKeyAvailable='$installationVersionAvailable', forceOverride=$forceOverride"
+            Log.i(LOG_TAG,"Setup profiles. Installation version='$installationVersion', " +
+                        "installationKeyAvailable='$installationVersionAvailable', " +
+                        "forceOverride=$forceOverride"
             )
 
             if (!installationVersionAvailable) {
@@ -190,12 +185,14 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
                 }
 
                 if (forceOverride) {
-
                     val defaultProfile = getDefaultProfile()
                     Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
                     loadProfile(getDefaultProfile())
                 }
             }
+
+            updateBuildSettings()
+
         } finally {
             bulkActionEnabled = false
         }
@@ -390,5 +387,16 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
 
         data.putAll(mm)
         return data
+    }
+
+    private fun updateBuildSettings(){
+        runAsync {
+            val buildTime = "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(versionName)}"
+            Log.i(LOG_TAG,"Update build settings, build time=$buildTime, versionCode=$versionCode")
+
+            Prefs.updateString("pref.about.build_time", buildTime).commit()
+            Prefs.updateString("pref.about.build_version", "$versionCode").commit()
+            Prefs.updateBoolean("pref.debug.logging.enabled", false).commit()
+        }
     }
 }

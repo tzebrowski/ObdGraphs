@@ -40,8 +40,6 @@ import org.obd.graphs.preferences.*
 import org.obd.graphs.profile.vehicleProfile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 const val LOG_TAG = "MainActivity"
@@ -117,8 +115,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupVehicleProfiles()
 
         setupStatusPanel()
-        setupPreferences()
-
         network.setupConnectedNetworksCallback()
 
         progressBar {
@@ -173,15 +169,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         floatingActionButton.animate().translationY(floatingActionButtonHeight).duration = duration
     }
 
-
-    private fun setupPreferences() {
-        runAsync {
-            Prefs.updateString("pref.about.build_time", "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(BuildConfig.VERSION_NAME)}")
-            Prefs.updateString("pref.about.build_version", "${BuildConfig.VERSION_CODE}")
-            Prefs.updateBoolean("pref.debug.logging.enabled", false)
-        }
-    }
-
     private fun initCache() {
         cacheManager.initCache(cache)
     }
@@ -216,7 +203,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private fun setupVehicleProfiles() {
         vehicleProfile.init(
             versionCode = BuildConfig.VERSION_CODE,
-            defaultProfile = resources.getString(R.string.DEFAULT_PROFILE))
+            defaultProfile = resources.getString(R.string.DEFAULT_PROFILE),
+            versionName = BuildConfig.VERSION_NAME
+        )
 
         Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
         vehicleProfile.setupProfiles(forceOverrideRecommendation = false)
