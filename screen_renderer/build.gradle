@@ -39,7 +39,7 @@ android {
 
 dependencies {
     implementation project(":common")
-    implementation project(":vehicle_profile")
+    implementation project(':profile')
     implementation project(":datalogger")
     implementation project(":dragracing")
 

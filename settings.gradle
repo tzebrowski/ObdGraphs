@@ -9,7 +9,7 @@ pluginManagement {
 
 rootProject.name = "ObdGraphs"
 include ':common'
-include ':vehicle_profile'
+include ':profile'
 include ':datalogger'
 include ':dragracing'
 include ':screen_renderer'

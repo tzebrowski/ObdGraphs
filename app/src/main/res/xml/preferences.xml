@@ -339,22 +339,22 @@
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
             <PreferenceCategory android:title="@string/pref.general_settings">
-                <org.obd.graphs.preferences.profile.VehicleProfileListPreference
+                <org.obd.graphs.preferences.profile.ProfileListPreference
                     android:key="pref.profile.id"
                     android:title="@string/pref.profile.available_list"
                     app:useSimpleSummaryProvider="true" />
 
-                <org.obd.graphs.preferences.profile.VehicleProfileResetPreferenceAction
+                <org.obd.graphs.preferences.profile.ProfileResetPreferenceAction
                     android:key="pref.profile.reset"
                     android:summary="@string/pref.profile.reset_summary"
                     android:title="@string/pref.profile.reset" />
 
-                <org.obd.graphs.preferences.profile.VehicleProfileSavePreferenceAction
+                <org.obd.graphs.preferences.profile.ProfileSavePreferenceAction
                     android:key="pref.profile.save_current"
                     android:summary="@string/pref.profile.save_user_settings_summary"
                     android:title="@string/pref.profile.save_user_settings" />
 
-                <org.obd.graphs.preferences.profile.VehicleProfileNamePreference
+                <org.obd.graphs.preferences.profile.ProfileNamePreference
                     android:dialogTitle="@string/pref.profile.update_name"
                     android:key="pref.profile.current_name"
                     android:title="@string/pref.profile.update_name"
@@ -367,13 +367,13 @@
                     app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.profile.backup.category">
-                <org.obd.graphs.preferences.profile.VehicleProfileExportAction
+                <org.obd.graphs.preferences.profile.ProfileExportAction
                     android:key="pref.profile.export"
                     android:summary="@string/pref.profile.export_summary"
                     android:title="@string/pref.profile.export"
                     app:singleLineTitle="false" />
 
-                <org.obd.graphs.preferences.profile.VehicleProfileImportAction
+                <org.obd.graphs.preferences.profile.ProfileImportAction
                     android:key="pref.profile.import"
                     android:summary="@string/pref.profile.import_summary"
                     android:title="@string/pref.profile.import"

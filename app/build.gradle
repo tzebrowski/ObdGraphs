@@ -65,7 +65,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.performance_monitor"
-            versionCode 33
+            versionCode 34
         }
 
         giulia {
@@ -134,7 +134,7 @@ dependencies {
     implementation project(':screen_renderer')
     implementation project(":datalogger")
     implementation project(":common")
-    implementation project(":vehicle_profile")
+    implementation project(':profile')
 
     debugImplementation project(":automotive")
     releaseImplementation project(":automotive")

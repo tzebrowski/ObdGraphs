@@ -23,7 +23,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.profile.vehicleProfile
+import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
@@ -68,7 +68,7 @@ internal fun MainActivity.updateVehicleProfile() {
     updateTextField(
         R.id.vehicle_profile,
         resources.getString(R.string.vehicle_profile),
-        vehicleProfile.getCurrentProfileName(),
+        profile.getCurrentProfileName(),
         COLOR_RAINBOW_INDIGO,
         1.0f
     )

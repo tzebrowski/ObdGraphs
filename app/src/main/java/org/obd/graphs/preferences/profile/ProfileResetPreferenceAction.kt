@@ -22,16 +22,16 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.Preference
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.profile.vehicleProfile
+import org.obd.graphs.profile.profile
 
-class VehicleProfileResetPreferenceAction(
+class ProfileResetPreferenceAction(
     context: Context,
     attrs: AttributeSet?
 ) : Preference(context, attrs) {
 
     init {
         setOnPreferenceClickListener {
-            vehicleProfile.reset()
+            profile.reset()
             navigateToPreferencesScreen("pref.profiles")
             true
         }

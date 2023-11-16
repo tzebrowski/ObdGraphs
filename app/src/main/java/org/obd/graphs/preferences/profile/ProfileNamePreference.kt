@@ -20,17 +20,26 @@ package org.obd.graphs.preferences.profile
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.preference.Preference
-import org.obd.graphs.profile.vehicleProfile
+import android.util.Log
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.profile.PROFILES_PREF
+import org.obd.graphs.profile.profile
 
-class VehicleProfileImportAction(
+class ProfileNamePreference(
     context: Context,
     attrs: AttributeSet?
-) : Preference(context, attrs) {
-
+):
+    EditTextPreference(context, attrs) {
     init {
-        setOnPreferenceClickListener {
-            vehicleProfile.importBackup()
+        onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
+
+            Log.d("VehicleProfileNamePreference", "Updating profile value: ${profile.getCurrentProfile()}=$newValue")
+
+            profile.updateCurrentProfileName(newName = newValue.toString())
+
+            navigateToPreferencesScreen(PROFILES_PREF)
             true
         }
     }

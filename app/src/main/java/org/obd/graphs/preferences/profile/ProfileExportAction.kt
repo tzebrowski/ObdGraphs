@@ -21,16 +21,16 @@ package org.obd.graphs.preferences.profile
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.Preference
-import org.obd.graphs.profile.vehicleProfile
+import org.obd.graphs.profile.profile
 
-class VehicleProfileExportAction(
+class ProfileExportAction(
     context: Context,
     attrs: AttributeSet?
 ) : Preference(context, attrs) {
 
     init {
         setOnPreferenceClickListener {
-            vehicleProfile.exportBackup()
+            profile.exportBackup()
             true
         }
     }

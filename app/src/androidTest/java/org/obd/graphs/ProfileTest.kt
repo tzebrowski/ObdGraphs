@@ -31,10 +31,10 @@ import org.junit.runner.RunWith
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateBoolean
-import org.obd.graphs.profile.vehicleProfile
+import org.obd.graphs.profile.profile
 
 @RunWith(AndroidJUnit4ClassRunner::class)
-class VehicleProfileTest {
+class ProfileTest {
 
     @Test
     fun resetProfileTest() {
@@ -42,7 +42,7 @@ class VehicleProfileTest {
         launchActivity<MainActivity>().use {
 
             // lets use this profiles as default
-            vehicleProfile.loadProfile("profile_5")
+            profile.loadProfile("profile_5")
 
             val propName = "pref.adapter.batch.enabled"
             assertEquals(Prefs.getBoolean(propName, true), true)
@@ -52,7 +52,7 @@ class VehicleProfileTest {
             assertEquals(Prefs.getBoolean(propName, false), false)
 
             // resetting profiles
-            vehicleProfile.reset()
+            profile.reset()
             assertEquals(Prefs.getBoolean(propName, true), true)
         }
     }
@@ -72,7 +72,7 @@ class VehicleProfileTest {
             assertTrue(Prefs.getBoolean(setupProfilesKey, true))
             Prefs.updateBoolean(setupProfilesKey, false)
 
-            vehicleProfile.setupProfiles()
+            profile.setupProfiles()
 
             assertTrue(Prefs.getBoolean(setupProfilesKey, true))
 
@@ -85,7 +85,7 @@ class VehicleProfileTest {
 
         launchActivity<MainActivity>().use {
             val expected = getExpectedProfileList()
-            val given = vehicleProfile.getAvailableProfiles()
+            val given = profile.getAvailableProfiles()
 
             assertTrue("Default profiles does not match", expected == given)
         }
@@ -93,16 +93,16 @@ class VehicleProfileTest {
 
     private fun assertProfilesExists() {
         val expected = getExpectedProfileList()
-        val given = vehicleProfile.getAvailableProfiles()
+        val given = profile.getAvailableProfiles()
         Log.e("assertProfilesExists", "Given profiles: $given")
         Log.e("assertProfilesExists", "Expected profiles: $expected")
 
         assertTrue("Default profiles does not match", expected == given)
 
         given.forEach {
-            vehicleProfile.loadProfile(it.key)
+            profile.loadProfile(it.key)
 
-            assertTrue("Loaded profiles does not match",  vehicleProfile.getCurrentProfile() == it.key)
+            assertTrue("Loaded profiles does not match",  profile.getCurrentProfile() == it.key)
 
             val txt =  if (it.value!!.startsWith("Profile"))  it.value!! else "Profile ${it.value}"
 

@@ -39,11 +39,11 @@ private const val DEFAULT_MAX_PROFILES = 13
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-internal class InPreferencesVehicleProfile : VehicleProfile {
+internal class PreferencesProfile : Profile {
 
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
-    private var versionName: String? = null
+    private lateinit var versionName: String
 
     @Volatile
     private var bulkActionEnabled = false
@@ -146,7 +146,7 @@ internal class InPreferencesVehicleProfile : VehicleProfile {
     }
 
     override fun init(versionCode: Int, defaultProfile: String, versionName: String) {
-        Log.i(LOG_TAG,"Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile ")
+        Log.i(LOG_TAG,"Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName")
         this.versionCode = versionCode
         this.defaultProfile = defaultProfile
         this.versionName = versionName

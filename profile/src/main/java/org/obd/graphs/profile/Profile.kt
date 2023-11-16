@@ -7,9 +7,9 @@ const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
 const val PROFILES_PREF = "pref.profiles"
 const val PROFILE_ID_PREF = "pref.profile.id"
 
-val vehicleProfile: VehicleProfile = InPreferencesVehicleProfile()
+val profile: Profile = PreferencesProfile()
 
-interface VehicleProfile : SharedPreferences.OnSharedPreferenceChangeListener {
+interface Profile : SharedPreferences.OnSharedPreferenceChangeListener {
 
     fun updateCurrentProfileName(newName: String)
     fun getAvailableProfiles(): Map<String, String?>

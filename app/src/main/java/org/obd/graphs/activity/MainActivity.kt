@@ -37,7 +37,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.preferences.*
-import org.obd.graphs.profile.vehicleProfile
+import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -201,13 +201,13 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     private fun setupVehicleProfiles() {
-        vehicleProfile.init(
+        profile.init(
             versionCode = BuildConfig.VERSION_CODE,
             defaultProfile = resources.getString(R.string.DEFAULT_PROFILE),
             versionName = BuildConfig.VERSION_NAME
         )
 
-        Prefs.registerOnSharedPreferenceChangeListener(vehicleProfile)
-        vehicleProfile.setupProfiles(forceOverrideRecommendation = false)
+        Prefs.registerOnSharedPreferenceChangeListener(profile)
+        profile.setupProfiles(forceOverrideRecommendation = false)
     }
 }

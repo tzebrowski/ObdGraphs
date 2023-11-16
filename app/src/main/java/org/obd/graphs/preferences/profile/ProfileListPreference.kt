@@ -19,28 +19,42 @@
 package org.obd.graphs.preferences.profile
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
-import android.util.Log
-import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.profile.PROFILES_PREF
-import org.obd.graphs.profile.vehicleProfile
+import org.obd.graphs.profile.profile
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.colorize
 
-class VehicleProfileNamePreference(
+class ProfileListPreference(
     context: Context,
     attrs: AttributeSet?
-):
-    EditTextPreference(context, attrs) {
+) : ListPreference(context, attrs) {
+
     init {
-        onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
 
-            Log.d("VehicleProfileNamePreference", "Updating profile value: ${vehicleProfile.getCurrentProfile()}=$newValue")
+        profile.getAvailableProfiles()
+            .let {
+                entries = it.values.toTypedArray()
+                entryValues = it.keys.toTypedArray()
+                if (it.keys.isNotEmpty()) {
+                    setDefaultValue(it.keys.first())
+                }
+            }
 
-            vehicleProfile.updateCurrentProfileName(newName = newValue.toString())
+        onPreferenceChangeListener =
+            OnPreferenceChangeListener { _, newValue ->
+                profile.saveCurrentProfile()
+                profile.loadProfile(newValue.toString())
+                navigateToPreferencesScreen(PROFILES_PREF)
+                true
+            }
+    }
 
-            navigateToPreferencesScreen(PROFILES_PREF)
-            true
-        }
+    override fun getSummary(): CharSequence {
+        return super.getSummary().toString().colorize(COLOR_PHILIPPINE_GREEN, Typeface.BOLD, 1.0f)
     }
 }
