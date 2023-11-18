@@ -50,7 +50,7 @@ internal abstract class CarScreen(
     protected val settings: CarSettings,
     protected val metricsCollector: CarMetricsCollector,
     protected val fps: Fps = Fps()
-) : Screen(carContext), DefaultLifecycleObserver {
+): Screen(carContext), DefaultLifecycleObserver {
 
     abstract fun renderAction()
 
@@ -80,11 +80,9 @@ internal abstract class CarScreen(
             })
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-                if (dragMeteringEnabled){
-                    dataLogger.start(queryType = QueryType.DRAG_RACING)
-                } else {
-                    dataLogger.start(queryType = QueryType.METRICS)
-                }
+                val query = metricsCollector.getQuery()
+                query.setQueryType(if (dragMeteringEnabled)  QueryType.DRAG_RACING else  QueryType.METRICS)
+                dataLogger.start(query)
             })
         }
 
@@ -141,7 +139,9 @@ internal abstract class CarScreen(
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    dataLogger.start()
+                    val query = metricsCollector.getQuery()
+                    query.setQueryType(QueryType.METRICS)
+                    dataLogger.start(query)
                 }
             }
         }

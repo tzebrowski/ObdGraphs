@@ -133,11 +133,15 @@ internal class SurfaceController(
     fun toggleSurfaceRenderer() {
         surfaceRenderer.release()
         surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING) {
-            dataLogger.updateQuery(QueryType.METRICS)
+
             metricsCollector.applyFilter(settings.getSelectedPIDs())
+            dataLogger.updateQuery(query = metricsCollector.getQuery())
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
+
         } else {
-            dataLogger.updateQuery(QueryType.DRAG_RACING)
+
+            metricsCollector.getQuery().setQueryType(QueryType.DRAG_RACING)
+            dataLogger.updateQuery(query = metricsCollector.getQuery())
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
         }
         surfaceRenderer.applyMetricsFilter()

@@ -25,14 +25,17 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
+import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.QueryType
@@ -46,7 +49,7 @@ import org.obd.graphs.ui.gauge.AdapterContext
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 class DashboardFragment : RefreshableFragment() {
 
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val metricsCollector = CarMetricsCollector.instance(query)
 
     private val renderingThread: RenderingThread = RenderingThread(
         renderAction = {
@@ -69,6 +72,7 @@ class DashboardFragment : RefreshableFragment() {
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     renderingThread.stop()
+                    attachToFloatingButton()
                 }
             }
         }
@@ -99,6 +103,7 @@ class DashboardFragment : RefreshableFragment() {
         renderingThread.stop()
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -114,11 +119,24 @@ class DashboardFragment : RefreshableFragment() {
         }
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.METRICS)
+            val query = metricsCollector.getQuery()
+            query.setQueryType(QueryType.METRICS)
+            dataLogger.updateQuery(query)
             renderingThread.start()
+        } else {
+            attachToFloatingButton()
         }
 
         return root
+    }
+
+    private fun attachToFloatingButton() {
+        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
+            Log.i(LOG_TAG, "DashboardFragment: Start data logging")
+            val query = metricsCollector.getQuery()
+            query.setQueryType(QueryType.METRICS)
+            dataLogger.start(query)
+        }
     }
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {

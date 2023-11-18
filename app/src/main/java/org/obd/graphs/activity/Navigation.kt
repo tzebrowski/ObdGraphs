@@ -20,7 +20,6 @@ package org.obd.graphs.activity
 
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.MenuItem
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -147,12 +146,6 @@ internal fun MainActivity.setupNavigationBar() {
 }
 
 internal fun MainActivity.setupNavigationBarButtons() {
-    floatingActionButton {
-        it.setOnClickListener {
-            Log.i(LOG_TAG, "Start data logging")
-            dataLogger.start()
-        }
-    }
     bottomAppBar {
         it.setOnMenuItemClickListener { item ->
             when (item.itemId) {

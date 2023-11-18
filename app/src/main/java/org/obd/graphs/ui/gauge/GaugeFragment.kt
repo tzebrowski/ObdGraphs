@@ -25,6 +25,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
@@ -49,8 +51,7 @@ private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configura
 private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : RefreshableFragment() {
-
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val metricsCollector = CarMetricsCollector.instance(query)
     private val renderingThread: RenderingThread = RenderingThread(
         id = "GaugeFragmentRenderingThread",
         renderAction = {
@@ -91,6 +92,7 @@ class GaugeFragment : RefreshableFragment() {
                         it.isVisible = true
                     }
                     renderingThread.stop()
+                    attachToFloatingButton()
                 }
 
                 TOGGLE_TOOLBAR_ACTION -> {
@@ -124,11 +126,25 @@ class GaugeFragment : RefreshableFragment() {
         setupVirtualViewPanel()
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.METRICS)
+            val query = metricsCollector.getQuery()
+            query.setQueryType(QueryType.METRICS)
+            dataLogger.updateQuery(query)
+
             renderingThread.start()
+        } else {
+            attachToFloatingButton()
         }
 
         return root
+    }
+
+    private fun attachToFloatingButton() {
+        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
+            Log.i(org.obd.graphs.activity.LOG_TAG, "GaugeFragment: Start data logging")
+            val query = metricsCollector.getQuery()
+            query.setQueryType(QueryType.METRICS)
+            dataLogger.start(query)
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -245,7 +261,7 @@ class GaugeFragment : RefreshableFragment() {
     }
 
     private fun getVisiblePIDsList(): Set<Long> {
-        val query = dataLoggerPreferences.getPIDsToQuery()
+        val query = query.getPIDs()
         return Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey()).filter { query.contains(it) }.toSet()
     }
 }

@@ -48,7 +48,9 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
+import org.obd.graphs.bl.collector.Query
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
@@ -87,6 +89,7 @@ class GraphFragment : Fragment() {
                         it.isVisible = true
                     }
 
+                    attachToFloatingButton()
                 }
                 DATA_LOGGER_CONNECTED_EVENT  -> {
                     virtualScreensPanel {
@@ -170,7 +173,18 @@ class GraphFragment : Fragment() {
         registerReceivers()
         configureRecyclerView()
         setupVirtualViewPanel()
+        attachToFloatingButton()
         return root
+    }
+
+
+    private fun attachToFloatingButton() {
+        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
+            Log.i(org.obd.graphs.activity.LOG_TAG, "GraphFragment: Start data logging")
+            val query = Query()
+            query.setQueryType(QueryType.METRICS)
+            dataLogger.start(query)
+        }
     }
 
     private fun configureRecyclerView() {

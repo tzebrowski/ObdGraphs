@@ -26,12 +26,13 @@ import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.CarScreenFactory
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Query
 import org.obd.graphs.setCarContext
 
 internal class CarSession : Session() {
 
     private val settings by lazy {  CarSettings(carContext) }
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val metricsCollector = CarMetricsCollector.instance(Query())
     private val fps: Fps = Fps()
     private lateinit var screen: CarScreen
 

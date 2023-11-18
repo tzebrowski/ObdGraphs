@@ -19,6 +19,7 @@
 package org.obd.graphs.bl.datalogger
 
 import android.util.Log
+import org.obd.graphs.bl.collector.Query
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
@@ -29,10 +30,6 @@ internal class DataLoggerJobScheduler {
     private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var future: ScheduledFuture<*>? = null
 
-    private val task = Runnable {
-        Log.i(LOG_TAG, "Starting data logger task....")
-        dataLogger.start(queryType = QueryType.METRICS)
-    }
     fun stop() {
         Log.i(
             LOG_TAG,
@@ -42,8 +39,11 @@ internal class DataLoggerJobScheduler {
         future?.cancel(true)
     }
 
-    fun schedule(delay: Long) {
-
+    fun schedule(delay: Long, query: Query) {
+        val task = Runnable {
+            Log.i(LOG_TAG, "Starting data logger task....")
+            dataLogger.start(query)
+        }
         Log.i(
             LOG_TAG,
             "Schedule data logger task with the delay=${delay}s"

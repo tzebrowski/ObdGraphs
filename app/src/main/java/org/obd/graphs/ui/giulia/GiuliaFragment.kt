@@ -24,12 +24,15 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Query
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -45,9 +48,11 @@ import org.obd.graphs.ui.common.SurfaceController
 open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val query = Query()
+    private val metricsCollector = CarMetricsCollector.instance(query)
+    private val settings = GiuliaSettings(query)
     private val fps = Fps()
-    private val settings = GiuliaSettings()
+
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
@@ -70,6 +75,7 @@ open class GiuliaFragment : Fragment() {
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     renderingThread.stop()
+                    attachToFloatingButton()
                 }
             }
         }
@@ -123,11 +129,24 @@ open class GiuliaFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.METRICS)
+            val query = metricsCollector.getQuery()
+            query.setQueryType(QueryType.DRAG_RACING)
+            dataLogger.updateQuery(query)
             renderingThread.start()
+        } else {
+            attachToFloatingButton()
         }
 
         return root
+    }
+
+    private fun attachToFloatingButton() {
+        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
+            Log.i(org.obd.graphs.activity.LOG_TAG, "GiuliaFragment: Start data logging")
+            val query = metricsCollector.getQuery()
+            query.setQueryType(QueryType.METRICS)
+            dataLogger.start(query)
+        }
     }
 
     private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
@@ -159,7 +178,7 @@ open class GiuliaFragment : Fragment() {
     }
 
     private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
-        val query = dataLoggerPreferences.getPIDsToQuery()
+        val query = query.getPIDs()
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
 }

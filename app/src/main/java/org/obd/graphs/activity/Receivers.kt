@@ -244,10 +244,6 @@ private fun MainActivity.handleStop() {
     floatingActionButton {
         it.backgroundTintList =
             ContextCompat.getColorStateList(applicationContext, R.color.philippine_green)
-        it.setOnClickListener {
-            Log.i(LOG_TAG, "Stop data logging ")
-            dataLogger.start()
-        }
     }
 
     toolbar { a, b, c ->
