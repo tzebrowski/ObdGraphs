@@ -24,6 +24,7 @@ import android.util.Log
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.getContext
+import org.obd.graphs.runAsync
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
@@ -41,6 +42,10 @@ private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
 
 val dataLogger: DataLogger = DataLoggerService()
+
+private val workflowOrchestrator: WorkflowOrchestrator by lazy {
+    runAsync { WorkflowOrchestrator() }
+}
 
 internal class DataLoggerService : JobIntentService(), DataLogger {
     private val jobScheduler = DataLoggerJobScheduler()

@@ -44,11 +44,6 @@ import org.obd.metrics.transport.AdapterConnection
 import java.io.File
 import java.util.*
 
-
-internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
-    runAsync { WorkflowOrchestrator() }
-}
-
 /**
  * That's the wrapper interface on Workflow API.
  */
@@ -147,15 +142,16 @@ internal class WorkflowOrchestrator internal constructor() {
     fun start(query: Query) {
         val queryType = query.getQueryType()
 
-        val (query, adjustments) = getSettings(query)
-        connection()?.run {
-            Log.i(LOG_TAG, "Selected PIDs: ${query.pids}")
+        getSettings(query).let {
+            connection()?.run {
+                Log.i(LOG_TAG, "Selected PIDs: ${it.first.pids}")
 
-            val status = workflow.start(
-                this, query, init(),
-                adjustments
-            )
-            Log.i(LOG_TAG, "Start collecting process (${queryType}). Status=$status")
+                val status = workflow.start(
+                    this, it.first, init(),
+                    it.second
+                )
+                Log.i(LOG_TAG, "Start collecting process (${queryType}). Status=$status")
+            }
         }
     }
 
