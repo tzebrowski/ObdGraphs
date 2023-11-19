@@ -19,51 +19,55 @@
 package org.obd.graphs.bl.datalogger
 
 
-
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 
+enum class QueryStrategy {
+    DRAG_RACING_QUERY, SHARED_QUERY, INDIVIDUAL_QUERY_FOR_EACH_VIEW
+}
+
 private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
 private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
 
-class Query: java.io.Serializable {
+class Query : java.io.Serializable {
 
-    private val directMetrics = mutableSetOf<Long>()
-    private var queryType: QueryType = QueryType.METRICS
+    private val individualViewPIDs = mutableSetOf<Long>()
+    private var strategy: QueryStrategy = QueryStrategy.SHARED_QUERY
 
     fun getPIDs(): MutableSet<Long> {
-        return  when(queryType){
-            QueryType.DIRECT_METRICS -> {
-                directMetrics
+        return when (strategy) {
+            QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW -> {
+                individualViewPIDs
             }
-            QueryType.METRICS -> {
+            QueryStrategy.SHARED_QUERY -> {
                 (fastPIDs() + slowPIDs()).toMutableSet()
             }
-            QueryType.DRAG_RACING -> {
+            QueryStrategy.DRAG_RACING_QUERY -> {
                 mutableSetOf(
                     dragRacingResultRegistry.getEngineRpmPID(),
-                        dragRacingResultRegistry.getVehicleSpeedPID())
+                    dragRacingResultRegistry.getVehicleSpeedPID()
+                )
             }
         }
     }
 
-    fun getQueryType(): QueryType = queryType
+    fun getStrategy(): QueryStrategy = strategy
 
-    fun setQueryType (queryType: QueryType){
-        this.queryType = queryType
+    fun setStrategy(queryStrategy: QueryStrategy) {
+        this.strategy = queryStrategy
     }
 
-    fun setDirectMetricsPIDs(newPIDs: Set<Long>){
-        directMetrics.clear()
-        directMetrics.addAll(newPIDs)
+    fun setIndividualViewPIDs(newPIDs: Set<Long>) {
+        individualViewPIDs.clear()
+        individualViewPIDs.addAll(newPIDs)
     }
 
     private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
     private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
         try {
             it.toLong()
-        }catch (e: Exception){
+        } catch (e: Exception) {
             null
         }
     }

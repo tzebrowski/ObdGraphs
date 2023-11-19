@@ -79,9 +79,9 @@
 
             <CheckBoxPreference
                 android:defaultValue="false"
-                android:title="@string/pref.adapter.direct_query.enabled"
-                android:key="pref.adapter.direct_query.enabled"
-                android:summary="@string/pref.adapter.direct_query.enabled_summary"
+                android:title="@string/pref.adapter.query.view_individual.enabled"
+                android:key="pref.adapter.query.individual.enabled"
+                android:summary="@string/pref.adapter.query.view_individual.enabled_summary"
                 app:singleLineTitle="false" />
 
 

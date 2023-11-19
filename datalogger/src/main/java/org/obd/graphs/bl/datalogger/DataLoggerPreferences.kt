@@ -30,7 +30,7 @@ private const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 
 
 data class DataLoggerPreferences(
-    var directQueriesEnabled: Boolean,
+    var queryForEachViewStrategyEnabled: Boolean,
     var debugLogging: Boolean,
     var connectionType: String,
     var tcpHost: String,
@@ -92,7 +92,7 @@ class DataLoggerPreferencesManager {
         val timeout = Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
         val stnEnabled = Prefs.getBoolean("pref.adapter.stn.enabled", false)
 
-        val directQueriesEnabled = Prefs.getBoolean("pref.adapter.direct_query.enabled", false)
+        val queryForEachViewStrategyEnabled = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
 
         val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
@@ -168,7 +168,7 @@ class DataLoggerPreferencesManager {
             dumpRawConnectorResponse = dumpRawConnectorResponse,
             delayAfterReset = delayAfterReset,
             debugLogging = debugLogging,
-            directQueriesEnabled = directQueriesEnabled
+            queryForEachViewStrategyEnabled = queryForEachViewStrategyEnabled
         )
 
         if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {

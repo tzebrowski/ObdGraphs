@@ -137,11 +137,11 @@ class GaugeFragment : RefreshableFragment() {
     }
 
     private fun query(): Query {
-        if (dataLoggerPreferences.instance.directQueriesEnabled) {
-            query.setQueryType(QueryType.DIRECT_METRICS)
-            query.setDirectMetricsPIDs(getSelectedPIDsList())
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.setIndividualViewPIDs(getSelectedPIDsList())
         } else {
-            query.setQueryType(QueryType.METRICS)
+            query.setStrategy(QueryStrategy.SHARED_QUERY)
         }
         return query
     }
@@ -274,7 +274,7 @@ class GaugeFragment : RefreshableFragment() {
 
     private fun getSelectedPIDsList(): Set<Long> {
         val longSet = Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey())
-        return if (dataLoggerPreferences.instance.directQueriesEnabled){
+        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled){
             longSet
         }else {
             val query = query.getPIDs()

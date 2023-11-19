@@ -140,7 +140,7 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     fun start(query: Query) {
-        val queryType = query.getQueryType()
+        val queryType = query.getStrategy()
 
         getSettings(query).let {
             connection()?.run {
@@ -157,7 +157,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun updateQuery(query: Query) {
 
-        val queryType = query.getQueryType()
+        val queryType = query.getStrategy()
         getSettings(query).let {
             val result = workflow.updateQuery(
                 it.first,
@@ -369,8 +369,8 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }.toMutableList()
 
-    private fun getSettings(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getQueryType()) {
-        QueryType.DRAG_RACING ->
+    private fun getSettings(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
+        QueryStrategy.DRAG_RACING_QUERY ->
             Pair(org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getDragRacingAdjustments())
         else ->
             Pair( org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getMetricsAdjustments())

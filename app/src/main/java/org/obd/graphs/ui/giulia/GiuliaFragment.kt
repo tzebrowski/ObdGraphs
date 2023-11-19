@@ -129,7 +129,7 @@ open class GiuliaFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
-            query.setQueryType(QueryType.DRAG_RACING)
+            query.setStrategy(QueryStrategy.DRAG_RACING_QUERY)
             dataLogger.updateQuery(query)
             renderingThread.start()
         } else {
@@ -142,7 +142,7 @@ open class GiuliaFragment : Fragment() {
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
             Log.i(org.obd.graphs.activity.LOG_TAG, "GiuliaFragment: Start data logging")
-            query.setQueryType(QueryType.METRICS)
+            query.setStrategy(QueryStrategy.SHARED_QUERY)
             dataLogger.start(query())
         }
     }
@@ -186,11 +186,11 @@ open class GiuliaFragment : Fragment() {
     }
 
     private fun query(): Query {
-        if (dataLoggerPreferences.instance.directQueriesEnabled) {
-            query.setQueryType(QueryType.DIRECT_METRICS)
-            query.setDirectMetricsPIDs(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.setIndividualViewPIDs(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
         } else {
-            query.setQueryType(QueryType.METRICS)
+            query.setStrategy(QueryStrategy.SHARED_QUERY)
         }
         return query
     }

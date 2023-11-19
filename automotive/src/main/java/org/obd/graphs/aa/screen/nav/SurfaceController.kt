@@ -34,7 +34,7 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.Query
-import org.obd.graphs.bl.datalogger.QueryType
+import org.obd.graphs.bl.datalogger.QueryStrategy
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.renderer.Fps
@@ -139,18 +139,18 @@ internal class SurfaceController(
 
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
 
-            if (dataLoggerPreferences.instance.directQueriesEnabled) {
-                query.setQueryType(QueryType.DIRECT_METRICS)
-                query.setDirectMetricsPIDs(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+            if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+                query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                query.setIndividualViewPIDs(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
             } else {
-                query.setQueryType(QueryType.METRICS)
+                query.setStrategy(QueryStrategy.SHARED_QUERY)
             }
 
             dataLogger.updateQuery(query = query)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
 
         } else {
-            query.setQueryType(QueryType.DRAG_RACING)
+            query.setStrategy(QueryStrategy.DRAG_RACING_QUERY)
             dataLogger.updateQuery(query = query)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
         }

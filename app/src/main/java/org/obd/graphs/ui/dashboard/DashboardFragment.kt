@@ -38,7 +38,7 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.QueryType
+import org.obd.graphs.bl.datalogger.QueryStrategy
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -118,7 +118,7 @@ class DashboardFragment : RefreshableFragment() {
         }
 
         if (dataLogger.isRunning()) {
-            query.setQueryType(QueryType.METRICS)
+            query.setStrategy(QueryStrategy.SHARED_QUERY)
             dataLogger.updateQuery(query)
             renderingThread.start()
         } else {
@@ -131,7 +131,7 @@ class DashboardFragment : RefreshableFragment() {
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
             Log.i(LOG_TAG, "DashboardFragment: Start data logging")
-            query.setQueryType(QueryType.METRICS)
+            query.setStrategy(QueryStrategy.SHARED_QUERY)
             dataLogger.start(query)
         }
     }

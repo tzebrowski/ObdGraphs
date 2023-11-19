@@ -27,9 +27,6 @@ import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
 import java.util.*
 
-enum class QueryType {
-    DRAG_RACING, METRICS, DIRECT_METRICS
-}
 
 interface DataLogger {
     val eventsReceiver: BroadcastReceiver
