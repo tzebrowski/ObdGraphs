@@ -25,23 +25,21 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.ui.common.attachToFloatingButton
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.gauge.AdapterContext
 
@@ -70,7 +68,7 @@ class DashboardFragment : RefreshableFragment() {
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     renderingThread.stop()
-                    attachToFloatingButton()
+                    attachToFloatingButton(activity, query())
                 }
             }
         }
@@ -118,19 +116,13 @@ class DashboardFragment : RefreshableFragment() {
         if (dataLogger.isRunning()) {
             dataLogger.updateQuery(query())
             renderingThread.start()
-        } else {
-            attachToFloatingButton()
         }
+
+        attachToFloatingButton(activity, query())
 
         return root
     }
 
-    private fun attachToFloatingButton() {
-        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
-            Log.i(LOG_TAG, "DashboardFragment: Start data logging")
-            dataLogger.start(query())
-        }
-    }
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
         configureView(

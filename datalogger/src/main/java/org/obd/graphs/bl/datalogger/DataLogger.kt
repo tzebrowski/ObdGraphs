@@ -28,7 +28,6 @@ import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
 import java.util.*
 
-
 interface DataLogger {
     val eventsReceiver: BroadcastReceiver
     fun status(): WorkflowStatus

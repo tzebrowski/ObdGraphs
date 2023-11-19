@@ -142,8 +142,7 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     fun start(query: Query) {
-        val queryType = query.getStrategy()
-
+    
         getSettings(query).let {
             connection()?.run {
                 Log.i(LOG_TAG, "Selected PIDs: ${it.first.pids}")
@@ -152,19 +151,17 @@ internal class WorkflowOrchestrator internal constructor() {
                     this, it.first, init(),
                     it.second
                 )
-                Log.i(LOG_TAG, "Start collecting process (${queryType}). Status=$status")
+                Log.i(LOG_TAG, "Start collecting process (${query.getStrategy()}). Status=$status")
             }
         }
     }
 
     fun updateQuery(query: Query) {
-
-        val queryType = query.getStrategy()
         getSettings(query).let {
             val result = workflow.updateQuery(
                 it.first,
                 init(), it.second)
-            Log.i(LOG_TAG, "Query=$queryType update result=$result")
+            Log.i(LOG_TAG, "Query=${query.getStrategy()} update result=$result")
         }
     }
 

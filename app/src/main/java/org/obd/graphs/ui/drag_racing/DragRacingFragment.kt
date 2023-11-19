@@ -24,10 +24,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
@@ -42,6 +40,7 @@ import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.common.SurfaceController
+import org.obd.graphs.ui.common.attachToFloatingButton
 
 open class DragRacingFragment : Fragment() {
     private lateinit var root: View
@@ -76,7 +75,7 @@ open class DragRacingFragment : Fragment() {
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     renderingThread.stop()
-                    attachToFloatingButton()
+                    attachToFloatingButton(activity, query)
                 }
             }
         }
@@ -137,17 +136,11 @@ open class DragRacingFragment : Fragment() {
         if (dataLogger.isRunning()) {
             dataLogger.updateQuery(query)
             renderingThread.start()
-        } else {
-            attachToFloatingButton()
         }
+
+        attachToFloatingButton(activity, query)
 
         return root
     }
 
-    private fun attachToFloatingButton() {
-        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
-            Log.i(org.obd.graphs.activity.LOG_TAG, "GaugeFragment: Start data logging")
-            dataLogger.start(query)
-        }
-    }
 }

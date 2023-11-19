@@ -25,7 +25,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,18 +32,17 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
+import org.obd.graphs.ui.recycler.RefreshableFragment
 import kotlin.math.roundToInt
 
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
@@ -94,7 +92,7 @@ class GaugeFragment : RefreshableFragment() {
                         it.isVisible = true
                     }
                     renderingThread.stop()
-                    attachToFloatingButton()
+                    attachToFloatingButton(activity, query())
                 }
 
                 TOGGLE_TOOLBAR_ACTION -> {
@@ -130,9 +128,9 @@ class GaugeFragment : RefreshableFragment() {
         if (dataLogger.isRunning()) {
             dataLogger.updateQuery(query())
             renderingThread.start()
-        } else {
-            attachToFloatingButton()
         }
+
+        attachToFloatingButton(activity, query())
 
         return root
     }
@@ -140,18 +138,10 @@ class GaugeFragment : RefreshableFragment() {
     private fun query(): Query =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                 .update(getSelectedPIDsList())
+                .update(getSelectedPIDsList())
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
         }
-
-
-    private fun attachToFloatingButton() {
-        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
-            Log.i(org.obd.graphs.activity.LOG_TAG, "GaugeFragment: Start data logging")
-            dataLogger.start(query())
-        }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -274,11 +264,11 @@ class GaugeFragment : RefreshableFragment() {
 
     private fun getSelectedPIDsList(): Set<Long> {
         val longSet = Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey())
-        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled){
+        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             longSet
-        }else {
+        } else {
             val query = query.getPIDs()
-             longSet.filter { query.contains(it) }.toSet()
+            longSet.filter { query.contains(it) }.toSet()
         }
     }
 }
