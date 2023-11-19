@@ -37,6 +37,8 @@ import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
@@ -171,7 +173,7 @@ class DashboardFragment : RefreshableFragment() {
         }
     }
 
-    private fun query(): Query  =
+    private fun query(): Query =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
                  .update(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first))

@@ -16,49 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs.bl.query
 
-
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getStringSet
-
-enum class QueryStrategyType {
-    DRAG_RACING_QUERY,
-    SHARED_QUERY,
-    INDIVIDUAL_QUERY_FOR_EACH_VIEW
-}
-
-private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
-private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
-
-open class QueryStrategy(protected val pids: MutableSet<Long> = mutableSetOf()) : java.io.Serializable {
-    open fun update(newPIDs: Set<Long>) {
-        pids.clear()
-        pids.addAll(newPIDs)
-    }
-
-    open fun getPIDs(): MutableSet<Long> = pids
-}
-
-class SharedQueryStrategy : QueryStrategy() {
-    override fun getPIDs(): MutableSet<Long> = (fastPIDs() + slowPIDs()).toMutableSet()
-    private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
-    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
-        try {
-            it.toLong()
-        } catch (e: Exception) {
-            null
-        }
-    }
-}
-
-class DragRacingQueryStrategy : QueryStrategy(
-    mutableSetOf(
-        dragRacingResultRegistry.getEngineRpmPID(),
-        dragRacingResultRegistry.getVehicleSpeedPID()
-    )
-)
 
 class Query : java.io.Serializable {
 
