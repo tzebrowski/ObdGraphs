@@ -129,8 +129,7 @@ open class GiuliaFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
-            query.setStrategy(QueryStrategy.DRAG_RACING_QUERY)
-            dataLogger.updateQuery(query)
+            dataLogger.updateQuery(query())
             renderingThread.start()
         } else {
             attachToFloatingButton()
@@ -142,7 +141,6 @@ open class GiuliaFragment : Fragment() {
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
             Log.i(org.obd.graphs.activity.LOG_TAG, "GiuliaFragment: Start data logging")
-            query.setStrategy(QueryStrategy.SHARED_QUERY)
             dataLogger.start(query())
         }
     }
