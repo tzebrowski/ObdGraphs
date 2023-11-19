@@ -40,9 +40,9 @@ private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
 
-val dataLogger = DataLoggerService()
+val dataLogger: DataLogger = DataLoggerService()
 
-class DataLoggerService : JobIntentService(), DataLogger {
+internal class DataLoggerService : JobIntentService(), DataLogger {
     private val jobScheduler = DataLoggerJobScheduler()
 
     override fun onHandleWork(intent: Intent) {

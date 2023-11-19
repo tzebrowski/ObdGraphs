@@ -36,6 +36,7 @@ import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.Query
 import org.obd.graphs.bl.datalogger.QueryType
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -135,9 +136,16 @@ internal class SurfaceController(
     fun toggleSurfaceRenderer() {
         surfaceRenderer.release()
         surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING) {
-            query.setQueryType(QueryType.METRICS)
 
             metricsCollector.applyFilter(settings.getSelectedPIDs(), query = query.getPIDs())
+
+            if (dataLoggerPreferences.instance.directQueriesEnabled) {
+                query.setQueryType(QueryType.DIRECT_METRICS)
+                query.setDirectMetricsPIDs(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+            } else {
+                query.setQueryType(QueryType.METRICS)
+            }
+
             dataLogger.updateQuery(query = query)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
 

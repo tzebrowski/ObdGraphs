@@ -342,7 +342,13 @@ internal class NavTemplateCarScreen(
     }
 
     private fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs(),settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+        metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+
+        if (dataLoggerPreferences.instance.directQueriesEnabled) {
+            query.setQueryType(QueryType.DIRECT_METRICS)
+            query.setDirectMetricsPIDs(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+            dataLogger.updateQuery(query)
+        }
     }
 
     init {
