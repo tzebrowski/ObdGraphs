@@ -11,6 +11,13 @@
 
             <PreferenceCategory android:title="@string/pref.registry.category">
 
+                <org.obd.graphs.preferences.pid.IndividualQueryStrategyCheckBoxPreference
+                    android:defaultValue="false"
+                    android:title="@string/pref.adapter.query.view_individual.enabled"
+                    android:key="pref.adapter.query.individual.enabled"
+                    android:summary="@string/pref.adapter.query.view_individual.enabled_summary"
+                    app:singleLineTitle="false" />
+
                 <org.obd.graphs.preferences.pid.PIDsListPreferences
                     android:dialogTitle="@string/pref.pids_generic_high"
                     android:key="pref.pids.generic.high"
@@ -76,15 +83,6 @@
             android:summary="@string/pref_adapter_settings_summary"
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:title="@string/pref.adapter.query.view_individual.enabled"
-                android:key="pref.adapter.query.individual.enabled"
-                android:summary="@string/pref.adapter.query.view_individual.enabled_summary"
-                app:singleLineTitle="false" />
-
-
 
             <PreferenceCategory android:title="@string/pref.connection.category">
                 <PreferenceScreen

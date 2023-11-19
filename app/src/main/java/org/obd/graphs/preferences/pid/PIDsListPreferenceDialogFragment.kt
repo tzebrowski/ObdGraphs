@@ -119,7 +119,6 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
 
     private fun attachActionButtons() {
 
-
         root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
@@ -227,32 +226,37 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
 
     private fun buildInitialList(viewSerializer: ViewPreferencesSerializer): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()
+        val individualQuery = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
+        val list: List<PidDefinitionDetails> =
+            if (individualQuery) {
+                 findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
+            }else {
+                 when (source) {
+                    "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
+                    "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
 
-        val list = when (source) {
-            "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
-            "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
+                    "dashboard" -> {
+                        buildListFromSource(all)
+                    }
 
-            "dashboard" -> {
-                buildListFromSource(all)
+                    "graph" -> {
+                        buildListFromSource(all)
+                    }
+
+                    "gauge" -> {
+                        buildListFromSource(all)
+                    }
+
+                    "giulia" -> {
+                        buildListFromSource(all)
+                    }
+
+                    "aa" -> {
+                        buildListFromSource(all)
+                    }
+                    else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
+                }
             }
-
-            "graph" -> {
-                buildListFromSource(all)
-            }
-
-            "gauge" -> {
-                buildListFromSource(all)
-            }
-
-            "giulia" -> {
-                buildListFromSource(all)
-            }
-
-            "aa" -> {
-                buildListFromSource(all)
-            }
-            else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
-        }
 
         val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
         list.let {
