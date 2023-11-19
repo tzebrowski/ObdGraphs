@@ -33,7 +33,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.collector.Query
+import org.obd.graphs.bl.datalogger.Query
 import org.obd.graphs.bl.datalogger.QueryType
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.Fps

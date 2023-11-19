@@ -19,7 +19,6 @@
 package org.obd.graphs.bl.datalogger
 
 import android.util.Log
-import org.obd.graphs.bl.collector.Query
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture

@@ -33,7 +33,7 @@ import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.*
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.collector.Query
+import org.obd.graphs.bl.datalogger.Query
 import org.obd.graphs.bl.datalogger.QueryType
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger

@@ -23,7 +23,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.bl.collector.Query
 import org.obd.graphs.getContext
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics

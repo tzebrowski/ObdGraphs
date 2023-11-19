@@ -32,7 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.collector.Query
+import org.obd.graphs.bl.datalogger.Query
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet

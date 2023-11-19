@@ -50,7 +50,7 @@ import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
-import org.obd.graphs.bl.collector.Query
+import org.obd.graphs.bl.datalogger.Query
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
