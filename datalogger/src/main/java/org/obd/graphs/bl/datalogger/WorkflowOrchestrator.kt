@@ -370,7 +370,7 @@ internal class WorkflowOrchestrator internal constructor() {
     }.toMutableList()
 
     private fun getSettings(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
-        QueryStrategy.DRAG_RACING_QUERY ->
+        QueryStrategyType.DRAG_RACING_QUERY ->
             Pair(org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getDragRacingAdjustments())
         else ->
             Pair( org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getMetricsAdjustments())

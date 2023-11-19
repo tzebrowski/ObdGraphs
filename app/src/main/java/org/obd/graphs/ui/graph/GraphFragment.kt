@@ -79,7 +79,7 @@ private const val LOG_TAG = "Graph"
 class GraphFragment : Fragment() {
 
     private val query = Query().apply {
-        setStrategy(QueryStrategy.SHARED_QUERY)
+        setStrategy(QueryStrategyType.SHARED_QUERY)
     }
 
     private var broadcastReceiver = object : BroadcastReceiver() {

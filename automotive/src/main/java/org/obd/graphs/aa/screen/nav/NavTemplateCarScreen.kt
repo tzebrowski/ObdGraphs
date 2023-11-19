@@ -345,8 +345,8 @@ internal class NavTemplateCarScreen(
         metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
 
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-            query.setIndividualViewPIDs(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
             dataLogger.updateQuery(query)
         }
     }

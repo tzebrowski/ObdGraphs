@@ -23,44 +23,43 @@ import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 
-enum class QueryStrategy {
+enum class QueryStrategyType {
     DRAG_RACING_QUERY, SHARED_QUERY, INDIVIDUAL_QUERY_FOR_EACH_VIEW
 }
 
 private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
 private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
 
+class QueryStrategy(private val pids: MutableSet<Long> = mutableSetOf()) : java.io.Serializable {
+    fun update(newPIDs: Set<Long>) {
+        pids.clear()
+        pids.addAll(newPIDs)
+    }
+
+    fun getPIDs(): MutableSet<Long> = pids
+}
+
 class Query : java.io.Serializable {
 
-    private val individualViewPIDs = mutableSetOf<Long>()
-    private var strategy: QueryStrategy = QueryStrategy.SHARED_QUERY
-
-    fun getPIDs(): MutableSet<Long> {
-        return when (strategy) {
-            QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW -> {
-                individualViewPIDs
-            }
-            QueryStrategy.SHARED_QUERY -> {
-                (fastPIDs() + slowPIDs()).toMutableSet()
-            }
-            QueryStrategy.DRAG_RACING_QUERY -> {
-                mutableSetOf(
-                    dragRacingResultRegistry.getEngineRpmPID(),
-                    dragRacingResultRegistry.getVehicleSpeedPID()
-                )
-            }
-        }
+    private val strategies: Map<QueryStrategyType, QueryStrategy> = mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
+        this[QueryStrategyType.SHARED_QUERY] = QueryStrategy((fastPIDs() + slowPIDs()).toMutableSet())
+        this[QueryStrategyType.DRAG_RACING_QUERY] =
+            QueryStrategy(mutableSetOf(dragRacingResultRegistry.getEngineRpmPID(), dragRacingResultRegistry.getVehicleSpeedPID()))
+        this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = QueryStrategy()
     }
 
-    fun getStrategy(): QueryStrategy = strategy
+    private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
 
-    fun setStrategy(queryStrategy: QueryStrategy) {
-        this.strategy = queryStrategy
+    fun getPIDs(): MutableSet<Long> = strategies[strategy]?.getPIDs() ?: mutableSetOf()
+
+    fun getStrategy(): QueryStrategyType = strategy
+
+    fun setStrategy(queryStrategyType: QueryStrategyType) {
+        this.strategy = queryStrategyType
     }
 
-    fun setIndividualViewPIDs(newPIDs: Set<Long>) {
-        individualViewPIDs.clear()
-        individualViewPIDs.addAll(newPIDs)
+    fun update(newPIDs: Set<Long>) {
+        strategies[strategy]?.update(newPIDs)
     }
 
     private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }

@@ -81,10 +81,10 @@ internal abstract class CarScreen(
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
                 if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-                    query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                    query.setIndividualViewPIDs(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                    query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
                 } else {
-                    query.setStrategy(if (dragMeteringEnabled)  QueryStrategy.DRAG_RACING_QUERY else  QueryStrategy.SHARED_QUERY)
+                    query.setStrategy(if (dragMeteringEnabled)  QueryStrategyType.DRAG_RACING_QUERY else  QueryStrategyType.SHARED_QUERY)
                 }
                 dataLogger.start(query)
             })
@@ -143,7 +143,7 @@ internal abstract class CarScreen(
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    query.setStrategy(QueryStrategy.SHARED_QUERY)
+                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
                     dataLogger.start(query)
                 }
             }

@@ -34,7 +34,7 @@ import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.Query
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.QueryStrategy
+import org.obd.graphs.bl.datalogger.QueryStrategyType
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.Fps
@@ -47,7 +47,7 @@ open class DragRacingFragment : Fragment() {
     private lateinit var root: View
 
     private val query = Query().apply {
-        setStrategy(QueryStrategy.DRAG_RACING_QUERY)
+        setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
     }
 
     private val metricsCollector = CarMetricsCollector.instance()
