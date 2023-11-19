@@ -139,11 +139,9 @@ class GaugeFragment : RefreshableFragment() {
     private fun query(): Query =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-            query.update(getSelectedPIDsList())
-            query
+                 .update(getSelectedPIDsList())
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
-            query
         }
 
 

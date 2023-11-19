@@ -24,27 +24,47 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 
 enum class QueryStrategyType {
-    DRAG_RACING_QUERY, SHARED_QUERY, INDIVIDUAL_QUERY_FOR_EACH_VIEW
+    DRAG_RACING_QUERY,
+    SHARED_QUERY,
+    INDIVIDUAL_QUERY_FOR_EACH_VIEW
 }
 
 private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
 private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
 
-class QueryStrategy(private val pids: MutableSet<Long> = mutableSetOf()) : java.io.Serializable {
-    fun update(newPIDs: Set<Long>) {
+open class QueryStrategy(protected val pids: MutableSet<Long> = mutableSetOf()) : java.io.Serializable {
+    open fun update(newPIDs: Set<Long>) {
         pids.clear()
         pids.addAll(newPIDs)
     }
 
-    fun getPIDs(): MutableSet<Long> = pids
+    open fun getPIDs(): MutableSet<Long> = pids
 }
+
+class SharedQueryStrategy : QueryStrategy() {
+    override fun getPIDs(): MutableSet<Long> = (fastPIDs() + slowPIDs()).toMutableSet()
+    private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
+    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
+        try {
+            it.toLong()
+        } catch (e: Exception) {
+            null
+        }
+    }
+}
+
+class DragRacingQueryStrategy : QueryStrategy(
+    mutableSetOf(
+        dragRacingResultRegistry.getEngineRpmPID(),
+        dragRacingResultRegistry.getVehicleSpeedPID()
+    )
+)
 
 class Query : java.io.Serializable {
 
     private val strategies: Map<QueryStrategyType, QueryStrategy> = mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
-        this[QueryStrategyType.SHARED_QUERY] = QueryStrategy((fastPIDs() + slowPIDs()).toMutableSet())
-        this[QueryStrategyType.DRAG_RACING_QUERY] =
-            QueryStrategy(mutableSetOf(dragRacingResultRegistry.getEngineRpmPID(), dragRacingResultRegistry.getVehicleSpeedPID()))
+        this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
+        this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
         this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = QueryStrategy()
     }
 
@@ -54,20 +74,13 @@ class Query : java.io.Serializable {
 
     fun getStrategy(): QueryStrategyType = strategy
 
-    fun setStrategy(queryStrategyType: QueryStrategyType) {
+    fun setStrategy(queryStrategyType: QueryStrategyType): Query {
         this.strategy = queryStrategyType
+        return this
     }
 
-    fun update(newPIDs: Set<Long>) {
+    fun update(newPIDs: Set<Long>): Query {
         strategies[strategy]?.update(newPIDs)
-    }
-
-    private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
-    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
-        try {
-            it.toLong()
-        } catch (e: Exception) {
-            null
-        }
+        return this
     }
 }

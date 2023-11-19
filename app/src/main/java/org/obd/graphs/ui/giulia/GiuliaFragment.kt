@@ -186,10 +186,9 @@ open class GiuliaFragment : Fragment() {
     private fun query(): Query  =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-            query.update(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
-            query
+                 .update(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
-            query
         }
 }

@@ -99,7 +99,6 @@ class DashboardFragment : RefreshableFragment() {
         renderingThread.stop()
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -175,10 +174,8 @@ class DashboardFragment : RefreshableFragment() {
     private fun query(): Query  =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-            query.update(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first))
-            query
+                 .update(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first))
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
-            query
         }
 }
