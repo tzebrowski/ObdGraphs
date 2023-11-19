@@ -139,7 +139,7 @@ class GaugeFragment : RefreshableFragment() {
     private fun query(): Query {
         if (dataLoggerPreferences.instance.directQueriesEnabled) {
             query.setQueryType(QueryType.DIRECT_METRICS)
-            query.setDirectMetricsPIDs(Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey()))
+            query.setDirectMetricsPIDs(getSelectedPIDsList())
         } else {
             query.setQueryType(QueryType.METRICS)
         }
@@ -207,7 +207,7 @@ class GaugeFragment : RefreshableFragment() {
     }
 
     private fun calculateSpan(): Int {
-        val numberOfPIDsToDisplay = getVisiblePIDsList().size
+        val numberOfPIDsToDisplay = getSelectedPIDsList().size
 
         return when (isTablet()) {
             false -> {
@@ -273,8 +273,13 @@ class GaugeFragment : RefreshableFragment() {
         }
     }
 
-    private fun getVisiblePIDsList(): Set<Long> {
-        val query = query.getPIDs()
-        return Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey()).filter { query.contains(it) }.toSet()
+    private fun getSelectedPIDsList(): Set<Long> {
+        val longSet = Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey())
+        return if (dataLoggerPreferences.instance.directQueriesEnabled){
+            longSet
+        }else {
+            val query = query.getPIDs()
+             longSet.filter { query.contains(it) }.toSet()
+        }
     }
 }
