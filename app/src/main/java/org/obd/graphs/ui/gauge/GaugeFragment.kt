@@ -136,15 +136,16 @@ class GaugeFragment : RefreshableFragment() {
         return root
     }
 
-    private fun query(): Query {
+    private fun query(): Query =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.setIndividualViewPIDs(getSelectedPIDsList())
+            query
         } else {
             query.setStrategy(QueryStrategy.SHARED_QUERY)
+            query
         }
-        return query
-    }
+
 
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {

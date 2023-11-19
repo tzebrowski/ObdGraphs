@@ -185,13 +185,13 @@ open class GiuliaFragment : Fragment() {
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
 
-    private fun query(): Query {
+    private fun query(): Query  =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.setIndividualViewPIDs(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+            query
         } else {
             query.setStrategy(QueryStrategy.SHARED_QUERY)
+            query
         }
-        return query
-    }
 }

@@ -36,10 +36,7 @@ import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.QueryStrategy
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
@@ -118,8 +115,7 @@ class DashboardFragment : RefreshableFragment() {
         }
 
         if (dataLogger.isRunning()) {
-            query.setStrategy(QueryStrategy.SHARED_QUERY)
-            dataLogger.updateQuery(query)
+            dataLogger.updateQuery(query())
             renderingThread.start()
         } else {
             attachToFloatingButton()
@@ -131,8 +127,7 @@ class DashboardFragment : RefreshableFragment() {
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
             Log.i(LOG_TAG, "DashboardFragment: Start data logging")
-            query.setStrategy(QueryStrategy.SHARED_QUERY)
-            dataLogger.start(query)
+            dataLogger.start(query())
         }
     }
 
@@ -176,4 +171,14 @@ class DashboardFragment : RefreshableFragment() {
             if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
         }
     }
+
+    private fun query(): Query  =
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategy.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.setIndividualViewPIDs(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first))
+            query
+        } else {
+            query.setStrategy(QueryStrategy.SHARED_QUERY)
+            query
+        }
 }
