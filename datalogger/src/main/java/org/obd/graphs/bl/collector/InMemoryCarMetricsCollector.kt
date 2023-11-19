@@ -24,19 +24,13 @@ import org.obd.metrics.api.model.ObdMetric
 
 private const val LOG_KEY = "InMemoryCollector"
 
-internal class InMemoryCarMetricsCollector(private val query: Query) : CarMetricsCollector {
+internal class InMemoryCarMetricsCollector : CarMetricsCollector {
 
     private var metrics: MutableMap<Long, CarMetric> = sortedMapOf()
 
     override fun getMetrics(enabled: Boolean): List<CarMetric> = metrics.values.filter { it.enabled == enabled }
 
     override fun findById(id: Long): CarMetric? = getMetrics().firstOrNull { it.source.command.pid.id == id }
-
-    override fun getQuery(): Query  = query
-
-    override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
-        applyFilter(enabled,query.getPIDs(),order)
-    }
 
     override fun applyFilter(enabled: Set<Long>, query: Set<Long>,  order: Map<Long, Int>?) {
 

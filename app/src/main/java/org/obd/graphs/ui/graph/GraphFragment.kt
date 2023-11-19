@@ -75,8 +75,12 @@ fun ValueScaler.scaleToPidRange(
     )
 }
 
-const val GRAPH_LOGGER_TAG = "Graph"
+private const val LOG_TAG = "Graph"
 class GraphFragment : Fragment() {
+
+    private val query = Query().apply {
+        setQueryType(QueryType.METRICS)
+    }
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -108,11 +112,10 @@ class GraphFragment : Fragment() {
 
     private class ReverseValueFormatter(val pid: PidDefinition, val valueScaler: ValueScaler) :
         ValueFormatter() {
-
-        override fun getFormattedValue(value: Float): String {
-            return valueScaler.scaleToPidRange(pid, value).toString()
+            override fun getFormattedValue(value: Float): String {
+                return valueScaler.scaleToPidRange(pid, value).toString()
+            }
         }
-    }
 
     private val xAxisFormatter = object : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
@@ -166,6 +169,7 @@ class GraphFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
         preferences = graphPreferencesReader.read()
+
         initializeChart(root)
         registerMetricsObserver()
         initializeTripDetails()
@@ -173,16 +177,19 @@ class GraphFragment : Fragment() {
         registerReceivers()
         configureRecyclerView()
         setupVirtualViewPanel()
-        attachToFloatingButton()
+
+        if (!dataLogger.isRunning()) {
+            attachToFloatingButton()
+        }
+
         return root
     }
 
 
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
-            Log.i(org.obd.graphs.activity.LOG_TAG, "GraphFragment: Start data logging")
-            val query = Query()
-            query.setQueryType(QueryType.METRICS)
+            Log.i(LOG_TAG, "GraphFragment: Start data logging")
+
             dataLogger.start(query)
         }
     }
@@ -282,7 +289,7 @@ class GraphFragment : Fragment() {
                         }
                     }
 
-                    Log.i(GRAPH_LOGGER_TAG, "Set scale minima of XAxis to 7f")
+                    Log.i(LOG_TAG, "Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
                     setScaleMinima(7f, 0.1f)
                     moveViewToX(xAxis.axisMaximum - 5000f)
@@ -301,7 +308,7 @@ class GraphFragment : Fragment() {
 
     private fun LineChart.debug(label: String) {
         Log.i(
-            GRAPH_LOGGER_TAG,
+            LOG_TAG,
             "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
         )
     }

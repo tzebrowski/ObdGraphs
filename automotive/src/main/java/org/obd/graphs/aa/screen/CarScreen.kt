@@ -33,6 +33,7 @@ import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.*
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Query
 import org.obd.graphs.bl.datalogger.QueryType
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -51,6 +52,8 @@ internal abstract class CarScreen(
     protected val metricsCollector: CarMetricsCollector,
     protected val fps: Fps = Fps()
 ): Screen(carContext), DefaultLifecycleObserver {
+
+    protected val query = Query()
 
     abstract fun renderAction()
 
@@ -80,7 +83,6 @@ internal abstract class CarScreen(
             })
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-                val query = metricsCollector.getQuery()
                 query.setQueryType(if (dragMeteringEnabled)  QueryType.DRAG_RACING else  QueryType.METRICS)
                 dataLogger.start(query)
             })
@@ -139,7 +141,6 @@ internal abstract class CarScreen(
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    val query = metricsCollector.getQuery()
                     query.setQueryType(QueryType.METRICS)
                     dataLogger.start(query)
                 }

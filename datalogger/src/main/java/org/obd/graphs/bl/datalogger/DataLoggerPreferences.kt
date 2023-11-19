@@ -30,6 +30,7 @@ private const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 
 
 data class DataLoggerPreferences(
+    var directQueriesEnabled: Boolean,
     var debugLogging: Boolean,
     var connectionType: String,
     var tcpHost: String,
@@ -90,6 +91,8 @@ class DataLoggerPreferencesManager {
         val connectionType = Prefs.getS(PREFERENCE_CONNECTION_TYPE, "bluetooth")
         val timeout = Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
         val stnEnabled = Prefs.getBoolean("pref.adapter.stn.enabled", false)
+
+        val directQueriesEnabled = Prefs.getBoolean("pref.adapter.direct_query.enabled", false)
 
         val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
@@ -164,7 +167,8 @@ class DataLoggerPreferencesManager {
             connectionTimeout = timeout,
             dumpRawConnectorResponse = dumpRawConnectorResponse,
             delayAfterReset = delayAfterReset,
-            debugLogging = debugLogging
+            debugLogging = debugLogging,
+            directQueriesEnabled = directQueriesEnabled
         )
 
         if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {

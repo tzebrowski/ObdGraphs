@@ -33,6 +33,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Query
 import org.obd.graphs.bl.datalogger.QueryType
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.Fps
@@ -46,7 +47,8 @@ internal class SurfaceController(
     private val carContext: CarContext,
     private val settings: CarSettings,
     private val metricsCollector: CarMetricsCollector,
-    private val fps: Fps
+    private val fps: Fps,
+    private val query: Query
 ) :
     DefaultLifecycleObserver {
 
@@ -133,15 +135,15 @@ internal class SurfaceController(
     fun toggleSurfaceRenderer() {
         surfaceRenderer.release()
         surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING) {
+            query.setQueryType(QueryType.METRICS)
 
-            metricsCollector.applyFilter(settings.getSelectedPIDs())
-            dataLogger.updateQuery(query = metricsCollector.getQuery())
+            metricsCollector.applyFilter(settings.getSelectedPIDs(), query = query.getPIDs())
+            dataLogger.updateQuery(query = query)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
 
         } else {
-
-            metricsCollector.getQuery().setQueryType(QueryType.DRAG_RACING)
-            dataLogger.updateQuery(query = metricsCollector.getQuery())
+            query.setQueryType(QueryType.DRAG_RACING)
+            dataLogger.updateQuery(query = query)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
         }
         surfaceRenderer.applyMetricsFilter()

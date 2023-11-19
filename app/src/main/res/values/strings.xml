@@ -61,6 +61,8 @@
     <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
     <string name="pref.adapter_reconnect">Enable OBD2 Adapter automatic reconnect when connectivity errors occur</string>
     <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts</string>
+    <string name="pref.adapter.direct_query.enabled">Enable direct queries</string>
+    <string name="pref.adapter.direct_query.enabled_summary">Enable direct queries</string>
 
     <string name="pref.connection.category">OBD2 Adapter Connection</string>
     <string name="pref.connection.category.summary">Under this section you can find preferences related to the adapter type. You can configure here WIFI or Bluetooth parameters of your adapter</string>

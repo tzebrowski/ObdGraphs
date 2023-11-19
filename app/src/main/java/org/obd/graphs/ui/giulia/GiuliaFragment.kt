@@ -49,7 +49,7 @@ open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
     private val query = Query()
-    private val metricsCollector = CarMetricsCollector.instance(query)
+    private val metricsCollector = CarMetricsCollector.instance()
     private val settings = GiuliaSettings(query)
     private val fps = Fps()
 
@@ -120,7 +120,7 @@ open class GiuliaFragment : Fragment() {
         ))
         surfaceView.holder.addCallback(surfaceController)
 
-        metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+        metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()), query = query.getPIDs())
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
@@ -129,7 +129,6 @@ open class GiuliaFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
-            val query = metricsCollector.getQuery()
             query.setQueryType(QueryType.DRAG_RACING)
             dataLogger.updateQuery(query)
             renderingThread.start()
@@ -143,9 +142,8 @@ open class GiuliaFragment : Fragment() {
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
             Log.i(org.obd.graphs.activity.LOG_TAG, "GiuliaFragment: Start data logging")
-            val query = metricsCollector.getQuery()
             query.setQueryType(QueryType.METRICS)
-            dataLogger.start(query)
+            dataLogger.start(query())
         }
     }
 
@@ -159,7 +157,12 @@ open class GiuliaFragment : Fragment() {
 
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
-                metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+
+                if (dataLogger.isRunning()) {
+                    dataLogger.updateQuery(query())
+                }
+
+                metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()), query = query.getPIDs())
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
             }
@@ -180,5 +183,15 @@ open class GiuliaFragment : Fragment() {
     private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
         val query = query.getPIDs()
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
+    }
+
+    private fun query(): Query {
+        if (dataLoggerPreferences.instance.directQueriesEnabled) {
+            query.setQueryType(QueryType.DIRECT_METRICS)
+            query.setDirectMetricsPIDs(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+        } else {
+            query.setQueryType(QueryType.METRICS)
+        }
+        return query
     }
 }

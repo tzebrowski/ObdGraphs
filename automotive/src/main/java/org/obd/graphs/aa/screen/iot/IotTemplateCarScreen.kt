@@ -73,7 +73,7 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         settings.applyVirtualScreen1()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        metricsCollector.applyFilter(settings.getSelectedPIDs(),settings.getSelectedPIDs())
                         invalidate()
                     }
                 }
@@ -81,7 +81,7 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         settings.applyVirtualScreen2()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        metricsCollector.applyFilter(settings.getSelectedPIDs(),settings.getSelectedPIDs())
                         invalidate()
                     }
                 }
@@ -89,7 +89,7 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         settings.applyVirtualScreen3()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs())
                         invalidate()
                     }
                 }
@@ -97,13 +97,13 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         settings.applyVirtualScreen4()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs())
                         invalidate()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs())
                     invalidate()
                 }
 
@@ -196,7 +196,7 @@ internal class IotTemplateCarScreen(
                     .build()
             } else {
 
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs())
                 var paneBuilder = Pane.Builder()
 
                 paneBuilder = paneBuilder.addAction(createAction(
@@ -205,7 +205,7 @@ internal class IotTemplateCarScreen(
                 ) {
 
                     settings.applyVirtualScreen1()
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs())
                     invalidate()
                 })
 
@@ -215,7 +215,7 @@ internal class IotTemplateCarScreen(
                 ) {
 
                     settings.applyVirtualScreen2()
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs())
                     invalidate()
                 })
 

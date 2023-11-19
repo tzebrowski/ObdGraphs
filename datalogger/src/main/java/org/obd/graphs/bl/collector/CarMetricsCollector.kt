@@ -21,7 +21,6 @@ package org.obd.graphs.bl.collector
 import org.obd.metrics.api.model.ObdMetric
 
 interface CarMetricsCollector {
-    fun getQuery(): Query
 
     fun getMetrics(enabled: Boolean = true): List<CarMetric>
 
@@ -29,11 +28,9 @@ interface CarMetricsCollector {
 
     fun applyFilter(enabled: Set<Long>, query: Set<Long>,  order: Map<Long, Int>? = null)
 
-    fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
-
     fun append(input: ObdMetric?)
 
     companion object {
-        fun instance (query: Query) : CarMetricsCollector = InMemoryCarMetricsCollector(query)
+        fun instance () : CarMetricsCollector = InMemoryCarMetricsCollector()
     }
 }

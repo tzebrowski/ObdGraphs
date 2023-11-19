@@ -10,9 +10,9 @@ private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
 private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
 
 class Query: java.io.Serializable {
+
     private val directMetrics = mutableSetOf<Long>()
     private var queryType: QueryType  =QueryType.METRICS
-
 
     fun getPIDs(): MutableSet<Long> {
         return  when(queryType){
@@ -35,7 +35,7 @@ class Query: java.io.Serializable {
         this.queryType = queryType
     }
 
-    fun updateDirectMetricsPIDs(newPIDs: Set<Long>){
+    fun setDirectMetricsPIDs(newPIDs: Set<Long>){
         directMetrics.clear()
         directMetrics.addAll(newPIDs)
     }

@@ -77,6 +77,15 @@
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
 
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:title="@string/pref.adapter.direct_query.enabled"
+                android:key="pref.adapter.direct_query.enabled"
+                android:summary="@string/pref.adapter.direct_query.enabled_summary"
+                app:singleLineTitle="false" />
+
+
+
             <PreferenceCategory android:title="@string/pref.connection.category">
                 <PreferenceScreen
                     android:key="pref.adapter.connection"

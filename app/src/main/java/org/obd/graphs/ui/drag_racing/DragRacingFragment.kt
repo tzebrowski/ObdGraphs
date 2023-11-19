@@ -50,7 +50,7 @@ open class DragRacingFragment : Fragment() {
         setQueryType(QueryType.DRAG_RACING)
     }
 
-    private val metricsCollector = CarMetricsCollector.instance(query)
+    private val metricsCollector = CarMetricsCollector.instance()
     private val fps = Fps()
     private val settings = DragRacingSettings(query)
     private lateinit var surfaceController: SurfaceController
@@ -151,5 +151,4 @@ open class DragRacingFragment : Fragment() {
             dataLogger.start(query)
         }
     }
-
 }

@@ -38,6 +38,7 @@ import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
+import org.obd.graphs.bl.collector.Query
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
@@ -51,7 +52,7 @@ private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configura
 private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : RefreshableFragment() {
-    private val metricsCollector = CarMetricsCollector.instance(query)
+    private val metricsCollector = CarMetricsCollector.instance()
     private val renderingThread: RenderingThread = RenderingThread(
         id = "GaugeFragmentRenderingThread",
         renderAction = {
@@ -126,10 +127,7 @@ class GaugeFragment : RefreshableFragment() {
         setupVirtualViewPanel()
 
         if (dataLogger.isRunning()) {
-            val query = metricsCollector.getQuery()
-            query.setQueryType(QueryType.METRICS)
-            dataLogger.updateQuery(query)
-
+            dataLogger.updateQuery(query())
             renderingThread.start()
         } else {
             attachToFloatingButton()
@@ -138,12 +136,20 @@ class GaugeFragment : RefreshableFragment() {
         return root
     }
 
+    private fun query(): Query {
+        if (dataLoggerPreferences.instance.directQueriesEnabled) {
+            query.setQueryType(QueryType.DIRECT_METRICS)
+            query.setDirectMetricsPIDs(Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey()))
+        } else {
+            query.setQueryType(QueryType.METRICS)
+        }
+        return query
+    }
+
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
             Log.i(org.obd.graphs.activity.LOG_TAG, "GaugeFragment: Start data logging")
-            val query = metricsCollector.getQuery()
-            query.setQueryType(QueryType.METRICS)
-            dataLogger.start(query)
+            dataLogger.start(query())
         }
     }
 
@@ -195,7 +201,9 @@ class GaugeFragment : RefreshableFragment() {
             },
             metricsSerializerPref = GAUGE_PIDS_SETTINGS
         )
-        metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
+
+        val visible = getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey())
+        metricsCollector.applyFilter(visible, query().getPIDs())
     }
 
     private fun calculateSpan(): Int {
@@ -236,6 +244,11 @@ class GaugeFragment : RefreshableFragment() {
 
             it.setOnClickListener {
                 gaugeVirtualScreen.updateVirtualScreen(viewId)
+
+                if (dataLogger.isRunning()) {
+                    dataLogger.updateQuery(query())
+                }
+
                 configureView(true)
                 setupVirtualViewPanel()
             }

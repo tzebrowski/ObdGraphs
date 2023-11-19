@@ -57,7 +57,7 @@ internal class NavTemplateCarScreen(
     fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
-    private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
+    private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps, query)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -342,7 +342,7 @@ internal class NavTemplateCarScreen(
     }
 
     private fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+        metricsCollector.applyFilter(settings.getSelectedPIDs(),settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
     }
 
     init {

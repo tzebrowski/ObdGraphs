@@ -48,8 +48,7 @@ import org.obd.graphs.ui.gauge.AdapterContext
 
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 class DashboardFragment : RefreshableFragment() {
-
-    private val metricsCollector = CarMetricsCollector.instance(query)
+    private val metricsCollector = CarMetricsCollector.instance()
 
     private val renderingThread: RenderingThread = RenderingThread(
         renderAction = {
@@ -119,7 +118,6 @@ class DashboardFragment : RefreshableFragment() {
         }
 
         if (dataLogger.isRunning()) {
-            val query = metricsCollector.getQuery()
             query.setQueryType(QueryType.METRICS)
             dataLogger.updateQuery(query)
             renderingThread.start()
@@ -133,7 +131,6 @@ class DashboardFragment : RefreshableFragment() {
     private fun attachToFloatingButton() {
         activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
             Log.i(LOG_TAG, "DashboardFragment: Start data logging")
-            val query = metricsCollector.getQuery()
             query.setQueryType(QueryType.METRICS)
             dataLogger.start(query)
         }
@@ -161,7 +158,7 @@ class DashboardFragment : RefreshableFragment() {
             metricsSerializerPref = "prefs.dash.pids.settings"
         )
 
-        metricsCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second)
+        metricsCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second, query = query.getPIDs())
     }
 
     private fun calculateHeight(numberOfItems: Int): Int {

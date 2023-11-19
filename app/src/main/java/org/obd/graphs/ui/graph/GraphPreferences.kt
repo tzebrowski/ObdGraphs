@@ -30,6 +30,8 @@ data class GraphPreferences(
     val toggleVirtualPanel: Boolean
 )
 
+private const val LOG_TAG = "GraphPrefs"
+
 class GraphPreferencesReader {
     fun read(): GraphPreferences {
         val prefixKey = "pref.graph"
@@ -46,15 +48,18 @@ class GraphPreferencesReader {
 
         val toggleVirtualPanel = Prefs.getBoolean("$prefixKey.toggle_virtual_screens_double_click", true)
 
-        Log.d(
-            GRAPH_LOGGER_TAG,
-            "Read graph preferences\n" +
-                    "xAxisStartMovingAfterProp=$xAxisStartMovingAfter\n" +
-                    "xAxisMinimumShiftProp=$xAxisMinimumShift\n" +
-                    "cacheEnabledProp=$cacheEnabled\n" +
-                    "toggleVirtualPanel=$toggleVirtualPanel\n" +
-                    "metrics=$metrics\n"
-        )
+
+        if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+            Log.d(
+                LOG_TAG,
+                "Read graph preferences\n" +
+                        "xAxisStartMovingAfterProp=$xAxisStartMovingAfter\n" +
+                        "xAxisMinimumShiftProp=$xAxisMinimumShift\n" +
+                        "cacheEnabledProp=$cacheEnabled\n" +
+                        "toggleVirtualPanel=$toggleVirtualPanel\n" +
+                        "metrics=$metrics\n"
+            )
+        }
 
 
         return GraphPreferences(
