@@ -22,18 +22,16 @@ import android.content.SharedPreferences
 import android.util.Log
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.isEnabled
 
 
 const val GENERIC_MODE = "Generic mode"
 private const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
-private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
-private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
+
 
 data class DataLoggerPreferences(
+    var queryForEachViewStrategyEnabled: Boolean,
     var debugLogging: Boolean,
-    var pids: MutableSet<Long>,
     var connectionType: String,
     var tcpHost: String,
     var wifiSSID: String,
@@ -94,6 +92,8 @@ class DataLoggerPreferencesManager {
         val timeout = Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
         val stnEnabled = Prefs.getBoolean("pref.adapter.stn.enabled", false)
 
+        val queryForEachViewStrategyEnabled = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
+
         val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
         val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
         val wifiSSID = Prefs.getS("pref.adapter.connection.tcp.ssid", "")
@@ -142,7 +142,6 @@ class DataLoggerPreferencesManager {
             mode22BatchSize = mode22batchSize?.toInt(),
             mode01BatchSize = mode01batchSize?.toInt(),
             stnExtensionsEnabled = stnEnabled,
-            pids = getPIDsToQuery(),
             connectionType = connectionType,
             tcpHost = tcpHost,
             tcpPort = tcpPort,
@@ -168,7 +167,8 @@ class DataLoggerPreferencesManager {
             connectionTimeout = timeout,
             dumpRawConnectorResponse = dumpRawConnectorResponse,
             delayAfterReset = delayAfterReset,
-            debugLogging = debugLogging
+            debugLogging = debugLogging,
+            queryForEachViewStrategyEnabled = queryForEachViewStrategyEnabled
         )
 
         if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {
@@ -178,16 +178,7 @@ class DataLoggerPreferencesManager {
         return dataLoggerPreferences
     }
 
-    fun getPIDsToQuery() = (fastPIDs() + slowPIDs()).toMutableSet()
 
-    private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
-    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
-        try {
-            it.toLong()
-        }catch (e: Exception){
-            null
-        }
-    }
 
     private fun resources(): MutableSet<String> =
         Prefs.getStringSet("pref.pids.registry.list", pidResources.getDefaultPidFiles().keys)!!

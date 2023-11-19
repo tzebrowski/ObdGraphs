@@ -49,7 +49,9 @@ import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.*
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.Prefs
@@ -73,8 +75,12 @@ fun ValueScaler.scaleToPidRange(
     )
 }
 
-const val GRAPH_LOGGER_TAG = "Graph"
+private const val LOG_TAG = "Graph"
 class GraphFragment : Fragment() {
+
+    private val query = Query().apply {
+        setStrategy(QueryStrategyType.SHARED_QUERY)
+    }
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -87,6 +93,7 @@ class GraphFragment : Fragment() {
                         it.isVisible = true
                     }
 
+                    attachToFloatingButton(activity, query)
                 }
                 DATA_LOGGER_CONNECTED_EVENT  -> {
                     virtualScreensPanel {
@@ -105,11 +112,10 @@ class GraphFragment : Fragment() {
 
     private class ReverseValueFormatter(val pid: PidDefinition, val valueScaler: ValueScaler) :
         ValueFormatter() {
-
-        override fun getFormattedValue(value: Float): String {
-            return valueScaler.scaleToPidRange(pid, value).toString()
+            override fun getFormattedValue(value: Float): String {
+                return valueScaler.scaleToPidRange(pid, value).toString()
+            }
         }
-    }
 
     private val xAxisFormatter = object : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
@@ -163,6 +169,7 @@ class GraphFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
         preferences = graphPreferencesReader.read()
+
         initializeChart(root)
         registerMetricsObserver()
         initializeTripDetails()
@@ -170,8 +177,11 @@ class GraphFragment : Fragment() {
         registerReceivers()
         configureRecyclerView()
         setupVirtualViewPanel()
+        attachToFloatingButton(activity, query)
+
         return root
     }
+
 
     private fun configureRecyclerView() {
         val displayInfoPanel = Prefs.getBoolean("pref.trips.recordings.display_info", true)
@@ -268,7 +278,7 @@ class GraphFragment : Fragment() {
                         }
                     }
 
-                    Log.i(GRAPH_LOGGER_TAG, "Set scale minima of XAxis to 7f")
+                    Log.i(LOG_TAG, "Set scale minima of XAxis to 7f")
                     notifyDataSetChanged()
                     setScaleMinima(7f, 0.1f)
                     moveViewToX(xAxis.axisMaximum - 5000f)
@@ -287,7 +297,7 @@ class GraphFragment : Fragment() {
 
     private fun LineChart.debug(label: String) {
         Log.i(
-            GRAPH_LOGGER_TAG,
+            LOG_TAG,
             "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
         )
     }

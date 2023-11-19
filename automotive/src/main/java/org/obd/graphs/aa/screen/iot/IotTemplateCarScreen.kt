@@ -39,6 +39,7 @@ import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
 internal class IotTemplateCarScreen(
@@ -73,7 +74,7 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         settings.applyVirtualScreen1()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         invalidate()
                     }
                 }
@@ -81,7 +82,7 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         settings.applyVirtualScreen2()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         invalidate()
                     }
                 }
@@ -89,7 +90,7 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         settings.applyVirtualScreen3()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         invalidate()
                     }
                 }
@@ -97,13 +98,13 @@ internal class IotTemplateCarScreen(
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         settings.applyVirtualScreen4()
-                        metricsCollector.applyFilter(settings.getSelectedPIDs())
+                        applyMetricsFilter()
                         invalidate()
                     }
                 }
 
                 PROFILE_CHANGED_EVENT -> {
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     invalidate()
                 }
 
@@ -196,7 +197,7 @@ internal class IotTemplateCarScreen(
                     .build()
             } else {
 
-                metricsCollector.applyFilter(settings.getSelectedPIDs())
+                applyMetricsFilter()
                 var paneBuilder = Pane.Builder()
 
                 paneBuilder = paneBuilder.addAction(createAction(
@@ -205,7 +206,7 @@ internal class IotTemplateCarScreen(
                 ) {
 
                     settings.applyVirtualScreen1()
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     invalidate()
                 })
 
@@ -215,7 +216,7 @@ internal class IotTemplateCarScreen(
                 ) {
 
                     settings.applyVirtualScreen2()
-                    metricsCollector.applyFilter(settings.getSelectedPIDs())
+                    applyMetricsFilter()
                     invalidate()
                 })
 
@@ -235,6 +236,16 @@ internal class IotTemplateCarScreen(
                     .setActionStrip(getActionStrip(preferencesEnabled = false, toggleBtnColor = Color.WHITE))
                     .build()
             }
+
+    private fun applyMetricsFilter() {
+        metricsCollector.applyFilter(settings.getSelectedPIDs())
+
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+            dataLogger.updateQuery(query)
+        }
+    }
 
     private fun getTitleFor(metric: CarMetric): SpannableString {
         val title = StringBuilder()

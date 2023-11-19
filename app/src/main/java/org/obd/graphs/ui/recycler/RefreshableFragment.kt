@@ -26,10 +26,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ViewPreferencesSerializer
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsBuilder
-import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.collector.*
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.updateLongSet
@@ -41,6 +39,7 @@ import org.obd.graphs.ui.gauge.AdapterContext
 
 open class RefreshableFragment : Fragment() {
 
+    protected val query: Query = Query()
     protected lateinit var root: View
 
     protected fun refreshRecyclerView(metricsCollector: CarMetricsCollector, recyclerViewId: Int) {
@@ -111,7 +110,7 @@ open class RefreshableFragment : Fragment() {
     }
 
     protected fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
-        val query = dataLoggerPreferences.getPIDsToQuery()
+        val query = query.getPIDs()
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
     private fun createSwappableAdapter(

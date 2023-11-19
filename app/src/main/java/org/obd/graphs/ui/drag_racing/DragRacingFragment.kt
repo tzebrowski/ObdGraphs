@@ -29,9 +29,10 @@ import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.QueryType
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.Fps
@@ -39,13 +40,18 @@ import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.common.SurfaceController
+import org.obd.graphs.ui.common.attachToFloatingButton
 
 open class DragRacingFragment : Fragment() {
     private lateinit var root: View
 
+    private val query = Query().apply {
+        setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+    }
+
     private val metricsCollector = CarMetricsCollector.instance()
     private val fps = Fps()
-    private val settings = DragRacingSettings()
+    private val settings = DragRacingSettings(query)
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
@@ -63,12 +69,13 @@ open class DragRacingFragment : Fragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    dataLogger.updateQuery(QueryType.DRAG_RACING)
+                    dataLogger.updateQuery(query)
                     renderingThread.start()
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     renderingThread.stop()
+                    attachToFloatingButton(activity, query)
                 }
             }
         }
@@ -117,8 +124,7 @@ open class DragRacingFragment : Fragment() {
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(
-            enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID()),
-            query = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
+            enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
         )
 
         dataLogger.observe(viewLifecycleOwner) {
@@ -128,10 +134,13 @@ open class DragRacingFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.DRAG_RACING)
+            dataLogger.updateQuery(query)
             renderingThread.start()
         }
 
+        attachToFloatingButton(activity, query)
+
         return root
     }
+
 }

@@ -23,7 +23,9 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.getContext
+import org.obd.graphs.runAsync
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
@@ -38,24 +40,28 @@ private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay"
 
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
-private const val QUERY_TYPE = "org.obd.graphs.logger.QUERY_TYPE"
+private const val QUERY = "org.obd.graphs.logger.QUERY"
 
-val dataLogger = DataLoggerService()
+val dataLogger: DataLogger = DataLoggerService()
 
-class DataLoggerService : JobIntentService(), DataLogger {
+private val workflowOrchestrator: WorkflowOrchestrator by lazy {
+    runAsync { WorkflowOrchestrator() }
+}
+
+internal class DataLoggerService : JobIntentService(), DataLogger {
     private val jobScheduler = DataLoggerJobScheduler()
 
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
 
             UPDATE_QUERY -> {
-                val queryType = intent.extras?.get(QUERY_TYPE) as QueryType
-                workflowOrchestrator.updateQuery(queryType = queryType)
+                val query = intent.extras?.get(QUERY) as Query
+                workflowOrchestrator.updateQuery(query = query)
             }
 
             ACTION_START -> {
-                val queryType = intent.extras?.get(QUERY_TYPE) as QueryType
-                workflowOrchestrator.start(queryType)
+                val query = intent.extras?.get(QUERY) as Query
+                workflowOrchestrator.start(query)
             }
 
             ACTION_STOP -> workflowOrchestrator.stop()
@@ -64,16 +70,17 @@ class DataLoggerService : JobIntentService(), DataLogger {
 
             SCHEDULED_ACTION_START -> {
                 val delay = intent.extras?.getLong(SCHEDULED_START_DELAY)
-                jobScheduler.schedule(delay as Long)
+                jobScheduler.schedule(delay as Long, Query())
             }
         }
     }
 
-    override fun updateQuery(queryType: QueryType) {
+    override fun updateQuery(query: Query) {
         enqueueWork(UPDATE_QUERY) {
-            it.putExtra(QUERY_TYPE, queryType)
+            it.putExtra(QUERY, query)
         }
     }
+
 
     override fun status(): WorkflowStatus = workflowOrchestrator.status()
 
@@ -87,9 +94,9 @@ class DataLoggerService : JobIntentService(), DataLogger {
         enqueueWork(SCHEDULED_ACTION_STOP)
     }
 
-    override fun start(queryType: QueryType) {
+    override fun start(query: Query) {
         enqueueWork(ACTION_START) {
-            it.putExtra(QUERY_TYPE, queryType)
+            it.putExtra(QUERY, query)
         }
     }
 

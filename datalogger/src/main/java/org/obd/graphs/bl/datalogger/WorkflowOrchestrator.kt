@@ -27,7 +27,8 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
@@ -44,11 +45,6 @@ import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import java.io.File
 import java.util.*
-
-
-internal val workflowOrchestrator: WorkflowOrchestrator by lazy {
-    runAsync { WorkflowOrchestrator() }
-}
 
 /**
  * That's the wrapper interface on Workflow API.
@@ -113,7 +109,6 @@ internal class WorkflowOrchestrator internal constructor() {
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
 
-
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) =
         metricsObserver.observe(lifecycleOwner) {
             it.let {
@@ -146,26 +141,27 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    fun start(queryType: QueryType = QueryType.METRICS) {
+    fun start(query: Query) {
+    
+        getSettings(query).let {
+            connection()?.run {
+                Log.i(LOG_TAG, "Selected PIDs: ${it.first.pids}")
 
-        val (query, adjustments) = getSettings(queryType)
-        connection()?.run {
-            Log.i(LOG_TAG, "Selected PIDs: ${query.pids}")
-
-            val status = workflow.start(
-                this, query, init(),
-                adjustments
-            )
-            Log.i(LOG_TAG, "Start collecting process ($queryType). Status=$status")
+                val status = workflow.start(
+                    this, it.first, init(),
+                    it.second
+                )
+                Log.i(LOG_TAG, "Start collecting process (${query.getStrategy()}). Status=$status")
+            }
         }
     }
 
-    fun updateQuery(queryType: QueryType) {
-        getSettings(queryType).let {
+    fun updateQuery(query: Query) {
+        getSettings(query).let {
             val result = workflow.updateQuery(
                 it.first,
                 init(), it.second)
-            Log.i(LOG_TAG, "Query=$queryType update result=$result")
+            Log.i(LOG_TAG, "Query=${query.getStrategy()} update result=$result")
         }
     }
 
@@ -372,15 +368,10 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }.toMutableList()
 
-    private fun getSettings(queryType: QueryType ): Pair<Query, Adjustments>  = when (queryType) {
-        QueryType.METRICS ->
-            Pair( Query.builder().pids(dataLoggerPreferences.instance.pids).build(), getMetricsAdjustments())
-
-        QueryType.DRAG_RACING ->
-            Pair( Query
-                .builder()
-                .pid(dragRacingResultRegistry.getEngineRpmPID())
-                .pid(dragRacingResultRegistry.getVehicleSpeedPID())
-                .build(), getDragRacingAdjustments())
+    private fun getSettings(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
+        QueryStrategyType.DRAG_RACING_QUERY ->
+            Pair(org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getDragRacingAdjustments())
+        else ->
+            Pair( org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getMetricsAdjustments())
     }
 }

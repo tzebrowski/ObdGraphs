@@ -16,26 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.ui.giulia
+package org.obd.graphs.bl.query
 
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.preferences.getStringSet
 
-class GiuliaSettings(private val query: Query): ScreenSettings {
-    override fun getSelectedPIDs(): Set<Long> {
-        return query.getPIDs()
+private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
+private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
+
+internal class SharedQueryStrategy : QueryStrategy() {
+
+    override fun getPIDs(): MutableSet<Long> = (fastPIDs() + slowPIDs()).toMutableSet()
+
+    private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
+    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
+        try {
+            it.toLong()
+        } catch (e: Exception) {
+            null
+        }
     }
-
-    override fun isBreakLabelTextEnabled(): Boolean = false
-
-    override fun getMaxColumns(): Int = giuliaVirtualScreen.getMaxItemsInColumn()
-    override fun isHistoryEnabled(): Boolean  = true
-    override fun isFpsCounterEnabled(): Boolean  = true
-    override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.giulia.fps","5").toInt()
-    override fun getFontSize(): Int = giuliaVirtualScreen.getFontSize()
-    override fun isStatusPanelEnabled(): Boolean = false
-
-    override fun getMaxAllowedItemsInColumn(): Int  = 8
 }

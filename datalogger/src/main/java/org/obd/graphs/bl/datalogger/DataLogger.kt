@@ -20,16 +20,13 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.BroadcastReceiver
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.bl.query.Query
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
 import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
 import java.util.*
-
-enum class QueryType {
-    DRAG_RACING, METRICS
-}
 
 interface DataLogger {
     val eventsReceiver: BroadcastReceiver
@@ -43,7 +40,7 @@ interface DataLogger {
     fun isDTCEnabled(): Boolean
     fun scheduleStart(delay: Long)
     fun scheduledStop()
-    fun start(queryType: QueryType = QueryType.METRICS)
+    fun start(query: Query)
+    fun updateQuery(query: Query)
     fun stop()
-    fun updateQuery(queryType: QueryType)
 }

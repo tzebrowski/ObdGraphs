@@ -38,6 +38,7 @@ import org.obd.graphs.aa.screen.*
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
@@ -57,7 +58,7 @@ internal class NavTemplateCarScreen(
     fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
-    private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps)
+    private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps, query)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -342,7 +343,13 @@ internal class NavTemplateCarScreen(
     }
 
     private fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+        metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+            dataLogger.updateQuery(query)
+        }
     }
 
     init {

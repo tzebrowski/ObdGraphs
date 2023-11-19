@@ -18,13 +18,13 @@
  **/
 package org.obd.graphs.ui.drag_racing
 
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.DragRacingSettings
 import org.obd.graphs.renderer.ScreenSettings
 
-class DragRacingSettings: ScreenSettings {
+class DragRacingSettings(private val query: Query): ScreenSettings {
 
     private val dragRacingSettings = DragRacingSettings()
 
@@ -37,7 +37,7 @@ class DragRacingSettings: ScreenSettings {
     }
 
     override fun getSelectedPIDs(): Set<Long> {
-        return dataLoggerPreferences.getPIDsToQuery()
+        return query.getPIDs()
     }
 
     override fun isBreakLabelTextEnabled(): Boolean = false

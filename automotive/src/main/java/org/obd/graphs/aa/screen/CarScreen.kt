@@ -33,9 +33,9 @@ import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.*
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.datalogger.QueryType
-import org.obd.graphs.bl.datalogger.WorkflowStatus
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.sendBroadcastEvent
 
@@ -50,7 +50,9 @@ internal abstract class CarScreen(
     protected val settings: CarSettings,
     protected val metricsCollector: CarMetricsCollector,
     protected val fps: Fps = Fps()
-) : Screen(carContext), DefaultLifecycleObserver {
+): Screen(carContext), DefaultLifecycleObserver {
+
+    protected val query = Query()
 
     abstract fun renderAction()
 
@@ -80,11 +82,13 @@ internal abstract class CarScreen(
             })
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-                if (dragMeteringEnabled){
-                    dataLogger.start(queryType = QueryType.DRAG_RACING)
+                if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                    query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
                 } else {
-                    dataLogger.start(queryType = QueryType.METRICS)
+                    query.setStrategy(if (dragMeteringEnabled)  QueryStrategyType.DRAG_RACING_QUERY else  QueryStrategyType.SHARED_QUERY)
                 }
+                dataLogger.start(query)
             })
         }
 
@@ -141,7 +145,8 @@ internal abstract class CarScreen(
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    dataLogger.start()
+                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                    dataLogger.start(query)
                 }
             }
         }

@@ -16,44 +16,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs.ui.common
 
+import android.app.Activity
 import android.util.Log
+import androidx.core.content.ContextCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.Query
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
 
-internal class DataLoggerJobScheduler {
+private const val LOG_TAG = "FloatingButton"
 
-    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-    private var future: ScheduledFuture<*>? = null
-
-    fun stop() {
-        Log.i(
-            LOG_TAG,
-            "Canceling data logger scheduled task"
-        )
-
-        future?.cancel(true)
-    }
-
-    fun schedule(delay: Long, query: Query) {
-        val task = Runnable {
-            Log.i(LOG_TAG, "Starting data logger task....")
+fun attachToFloatingButton(activity: Activity?, query: Query) {
+    activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
+        if (dataLogger.isRunning()) {
+            Log.i(org.obd.graphs.activity.LOG_TAG, "DragRacingFragment: Start data logging")
+            dataLogger.stop()
+        } else {
+            Log.i(LOG_TAG, "Start data logging")
             dataLogger.start(query)
         }
-        Log.i(
-            LOG_TAG,
-            "Schedule data logger task with the delay=${delay}s"
-        )
 
-        future = scheduleService.schedule(
-            task,
-            delay,
-            TimeUnit.SECONDS
-        )
+        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.backgroundTintList =
+            ContextCompat.getColorStateList(activity, if (dataLogger.isRunning()) R.color.cardinal else R.color.philippine_green)
     }
 }
-

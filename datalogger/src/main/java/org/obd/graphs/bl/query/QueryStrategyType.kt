@@ -16,21 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.collector
-
-import org.obd.metrics.api.model.ObdMetric
-
-interface CarMetricsCollector {
-
-    fun getMetrics(enabled: Boolean = true): List<CarMetric>
-
-    fun findById(id: Long): CarMetric?
-
-    fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
-
-    fun append(input: ObdMetric?)
-
-    companion object {
-        fun instance(): CarMetricsCollector = InMemoryCarMetricsCollector()
-    }
+package org.obd.graphs.bl.query
+enum class QueryStrategyType {
+    DRAG_RACING_QUERY,
+    SHARED_QUERY,
+    INDIVIDUAL_QUERY_FOR_EACH_VIEW
 }

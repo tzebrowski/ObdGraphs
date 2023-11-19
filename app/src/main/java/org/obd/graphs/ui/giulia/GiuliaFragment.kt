@@ -30,7 +30,9 @@ import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.renderer.Fps
@@ -40,14 +42,17 @@ import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
+import org.obd.graphs.ui.common.attachToFloatingButton
 
 
 open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
+    private val query = Query()
     private val metricsCollector = CarMetricsCollector.instance()
+    private val settings = GiuliaSettings(query)
     private val fps = Fps()
-    private val settings = GiuliaSettings()
+
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(
@@ -70,6 +75,7 @@ open class GiuliaFragment : Fragment() {
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     renderingThread.stop()
+                    attachToFloatingButton(activity, query())
                 }
             }
         }
@@ -123,12 +129,15 @@ open class GiuliaFragment : Fragment() {
         }
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.METRICS)
+            dataLogger.updateQuery(query())
             renderingThread.start()
         }
 
+        attachToFloatingButton(activity, query())
+
         return root
     }
+
 
     private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
         (root.findViewById<Button>(btnId)).let {
@@ -140,6 +149,11 @@ open class GiuliaFragment : Fragment() {
 
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
+
+                if (dataLogger.isRunning()) {
+                    dataLogger.updateQuery(query())
+                }
+
                 metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
@@ -159,7 +173,16 @@ open class GiuliaFragment : Fragment() {
     }
 
     private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
-        val query = dataLoggerPreferences.getPIDsToQuery()
+        val query = query.getPIDs()
         return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
     }
+
+    private fun query(): Query =
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                 .update(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+
+        } else {
+            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
 }

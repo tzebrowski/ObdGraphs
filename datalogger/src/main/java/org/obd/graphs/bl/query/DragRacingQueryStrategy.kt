@@ -16,21 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.collector
+package org.obd.graphs.bl.query
 
-import org.obd.metrics.api.model.ObdMetric
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
 
-interface CarMetricsCollector {
-
-    fun getMetrics(enabled: Boolean = true): List<CarMetric>
-
-    fun findById(id: Long): CarMetric?
-
-    fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
-
-    fun append(input: ObdMetric?)
-
-    companion object {
-        fun instance(): CarMetricsCollector = InMemoryCarMetricsCollector()
-    }
-}
+internal class DragRacingQueryStrategy : QueryStrategy(
+    mutableSetOf(
+        dragRacingResultRegistry.getEngineRpmPID(),
+        dragRacingResultRegistry.getVehicleSpeedPID()
+    )
+)

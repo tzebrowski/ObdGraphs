@@ -88,7 +88,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     }
 
                     "gauge" -> {
-                        openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(),preference.source)
+                        openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), preference.source)
                         { navigateToScreen(R.id.navigation_gauge) }
                     }
                     else -> {

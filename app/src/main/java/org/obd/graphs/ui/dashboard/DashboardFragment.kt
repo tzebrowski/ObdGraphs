@@ -33,19 +33,18 @@ import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.QueryType
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.ui.common.attachToFloatingButton
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.gauge.AdapterContext
 
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 class DashboardFragment : RefreshableFragment() {
-
     private val metricsCollector = CarMetricsCollector.instance()
 
     private val renderingThread: RenderingThread = RenderingThread(
@@ -69,6 +68,7 @@ class DashboardFragment : RefreshableFragment() {
 
                 DATA_LOGGER_STOPPED_EVENT -> {
                     renderingThread.stop()
+                    attachToFloatingButton(activity, query())
                 }
             }
         }
@@ -114,12 +114,15 @@ class DashboardFragment : RefreshableFragment() {
         }
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.METRICS)
+            dataLogger.updateQuery(query())
             renderingThread.start()
         }
 
+        attachToFloatingButton(activity, query())
+
         return root
     }
+
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
         configureView(
@@ -161,4 +164,12 @@ class DashboardFragment : RefreshableFragment() {
             if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
         }
     }
+
+    private fun query(): Query =
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                 .update(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first))
+        } else {
+            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
 }

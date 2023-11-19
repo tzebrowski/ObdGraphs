@@ -32,11 +32,28 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
 
     override fun findById(id: Long): CarMetric? = getMetrics().firstOrNull { it.source.command.pid.id == id }
 
-    override fun applyFilter(enabled: Set<Long>, query: Set<Long>,  order: Map<Long, Int>?) {
+    override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
 
-        if (metrics.isEmpty() || metrics.size != query.size) {
-            Log.d(LOG_KEY, "Rebuilding metrics configuration for: $query")
-            metrics = CarMetricsBuilder().buildFor(query).associateBy { it.source.command.pid.id }.toMutableMap()
+        if (metrics.isEmpty() || !metrics.keys.containsAll(enabled)) {
+
+            if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
+                Log.d(LOG_KEY, "Rebuilding metrics configuration for: $enabled != ${metrics.keys}")
+            }
+
+            val newMetrics = CarMetricsBuilder().buildFor(enabled).associateBy { it.source.command.pid.id }.toMutableMap()
+            newMetrics.forEach { (l, carMetric) ->
+                if (!metrics.containsKey(l)){
+                    if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
+                        Log.d(LOG_KEY, "Adding PID with id=$l to metrics map")
+                    }
+
+                    metrics[l] = carMetric
+                }
+            }
+        } else {
+            if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
+                Log.d(LOG_KEY, "Its okay. All PIDs are available. Metrics ${metrics.keys} contains $enabled")
+            }
         }
 
         metrics.forEach { (t, u) ->

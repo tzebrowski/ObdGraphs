@@ -32,15 +32,17 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
+import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
-import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
+import org.obd.graphs.ui.recycler.RefreshableFragment
 import kotlin.math.roundToInt
 
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
@@ -49,7 +51,6 @@ private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configura
 private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : RefreshableFragment() {
-
     private val metricsCollector = CarMetricsCollector.instance()
     private val renderingThread: RenderingThread = RenderingThread(
         id = "GaugeFragmentRenderingThread",
@@ -91,6 +92,7 @@ class GaugeFragment : RefreshableFragment() {
                         it.isVisible = true
                     }
                     renderingThread.stop()
+                    attachToFloatingButton(activity, query())
                 }
 
                 TOGGLE_TOOLBAR_ACTION -> {
@@ -124,12 +126,22 @@ class GaugeFragment : RefreshableFragment() {
         setupVirtualViewPanel()
 
         if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(QueryType.METRICS)
+            dataLogger.updateQuery(query())
             renderingThread.start()
         }
 
+        attachToFloatingButton(activity, query())
+
         return root
     }
+
+    private fun query(): Query =
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                .update(getSelectedPIDsList())
+        } else {
+            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -179,11 +191,12 @@ class GaugeFragment : RefreshableFragment() {
             },
             metricsSerializerPref = GAUGE_PIDS_SETTINGS
         )
+
         metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
     }
 
     private fun calculateSpan(): Int {
-        val numberOfPIDsToDisplay = getVisiblePIDsList().size
+        val numberOfPIDsToDisplay = getSelectedPIDsList().size
 
         return when (isTablet()) {
             false -> {
@@ -220,6 +233,11 @@ class GaugeFragment : RefreshableFragment() {
 
             it.setOnClickListener {
                 gaugeVirtualScreen.updateVirtualScreen(viewId)
+
+                if (dataLogger.isRunning()) {
+                    dataLogger.updateQuery(query())
+                }
+
                 configureView(true)
                 setupVirtualViewPanel()
             }
@@ -244,8 +262,13 @@ class GaugeFragment : RefreshableFragment() {
         }
     }
 
-    private fun getVisiblePIDsList(): Set<Long> {
-        val query = dataLoggerPreferences.getPIDsToQuery()
-        return Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey()).filter { query.contains(it) }.toSet()
+    private fun getSelectedPIDsList(): Set<Long> {
+        val longSet = Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey())
+        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            longSet
+        } else {
+            val query = query.getPIDs()
+            longSet.filter { query.contains(it) }.toSet()
+        }
     }
 }
