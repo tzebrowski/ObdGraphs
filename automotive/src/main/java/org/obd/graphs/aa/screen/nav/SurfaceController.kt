@@ -137,7 +137,7 @@ internal class SurfaceController(
         surfaceRenderer.release()
         surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING) {
 
-            metricsCollector.applyFilter(settings.getSelectedPIDs(), query = query.getPIDs())
+            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
 
             if (dataLoggerPreferences.instance.directQueriesEnabled) {
                 query.setQueryType(QueryType.DIRECT_METRICS)

@@ -202,8 +202,7 @@ class GaugeFragment : RefreshableFragment() {
             metricsSerializerPref = GAUGE_PIDS_SETTINGS
         )
 
-        val visible = getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey())
-        metricsCollector.applyFilter(visible, query().getPIDs())
+        metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
     }
 
     private fun calculateSpan(): Int {

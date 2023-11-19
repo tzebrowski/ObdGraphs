@@ -158,7 +158,7 @@ class DashboardFragment : RefreshableFragment() {
             metricsSerializerPref = "prefs.dash.pids.settings"
         )
 
-        metricsCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second, query = query.getPIDs())
+        metricsCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second)
     }
 
     private fun calculateHeight(numberOfItems: Int): Int {

@@ -26,11 +26,11 @@ interface CarMetricsCollector {
 
     fun findById(id: Long): CarMetric?
 
-    fun applyFilter(enabled: Set<Long>, query: Set<Long>,  order: Map<Long, Int>? = null)
+    fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
 
     fun append(input: ObdMetric?)
 
     companion object {
-        fun instance () : CarMetricsCollector = InMemoryCarMetricsCollector()
+        fun instance(): CarMetricsCollector = InMemoryCarMetricsCollector()
     }
 }

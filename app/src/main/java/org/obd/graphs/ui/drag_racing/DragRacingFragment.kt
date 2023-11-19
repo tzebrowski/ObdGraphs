@@ -125,8 +125,7 @@ open class DragRacingFragment : Fragment() {
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(
-            enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID()),
-            query = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
+            enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
         )
 
         dataLogger.observe(viewLifecycleOwner) {

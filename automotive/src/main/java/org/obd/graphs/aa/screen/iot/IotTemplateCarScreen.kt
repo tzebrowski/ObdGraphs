@@ -237,7 +237,7 @@ internal class IotTemplateCarScreen(
             }
 
     private fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs(), settings.getSelectedPIDs())
+        metricsCollector.applyFilter(settings.getSelectedPIDs())
 
         if (dataLoggerPreferences.instance.directQueriesEnabled) {
             query.setQueryType(QueryType.DIRECT_METRICS)

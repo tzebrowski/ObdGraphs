@@ -120,7 +120,7 @@ open class GiuliaFragment : Fragment() {
         ))
         surfaceView.holder.addCallback(surfaceController)
 
-        metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()), query = query.getPIDs())
+        metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
@@ -162,7 +162,7 @@ open class GiuliaFragment : Fragment() {
                     dataLogger.updateQuery(query())
                 }
 
-                metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()), query = query.getPIDs())
+                metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
             }
