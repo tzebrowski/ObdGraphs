@@ -28,6 +28,7 @@ import android.util.AttributeSet
 import androidx.preference.ListPreference
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.network
+import org.obd.graphs.runAsync
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 import java.util.*
@@ -50,13 +51,15 @@ class BluetoothAdaptersListPreferences(
         val entries: MutableList<CharSequence> =
             LinkedList()
 
-        getDeviceList {
-            entries.add(it.label)
-            entriesValues.add(it.address)
-        }
+        runAsync {
+            getDeviceList {
+                entries.add(it.label)
+                entriesValues.add(it.address)
+            }
 
-        setEntries(entries.toTypedArray())
-        entryValues = entriesValues.toTypedArray()
+            setEntries(entries.toTypedArray())
+            entryValues = entriesValues.toTypedArray()
+        }
     }
 
     override fun getSummary(): CharSequence {

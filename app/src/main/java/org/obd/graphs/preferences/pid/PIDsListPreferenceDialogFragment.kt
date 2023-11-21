@@ -194,7 +194,7 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
         val newList = list.filter { it.checked }
             .map { it.source.id.toString() }.toList()
 
-        Log.e(LOG_KEY, "Key=$key, selected PIDs=$newList")
+        Log.i(LOG_KEY, "Key=$key, selected PIDs=$newList")
 
         if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
             notifyListChanged()

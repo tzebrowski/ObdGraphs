@@ -18,13 +18,17 @@
  **/
 package org.obd.graphs.bl.query
 
+import org.obd.graphs.runAsync
+
 
 class Query : java.io.Serializable {
 
     private val strategies: Map<QueryStrategyType, QueryStrategy> = mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
-        this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
-        this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
-        this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = QueryStrategy()
+        runAsync {
+            this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
+            this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
+            this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = QueryStrategy()
+        }
     }
 
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
