@@ -29,16 +29,19 @@ import org.obd.graphs.bl.query.Query
 private const val LOG_TAG = "FloatingButton"
 
 fun attachToFloatingButton(activity: Activity?, query: Query) {
-    activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.setOnClickListener {
-        if (dataLogger.isRunning()) {
-            Log.i(org.obd.graphs.activity.LOG_TAG, "DragRacingFragment: Start data logging")
-            dataLogger.stop()
-        } else {
-            Log.i(LOG_TAG, "Start data logging")
-            dataLogger.start(query)
+    activity?.let {
+        val btn = activity.findViewById<FloatingActionButton>(R.id.connect_btn)
+        btn?.setOnClickListener {
+            if (dataLogger.isRunning()) {
+                Log.i(org.obd.graphs.activity.LOG_TAG, "DragRacingFragment: Start data logging")
+                dataLogger.stop()
+            } else {
+                Log.i(LOG_TAG, "Start data logging")
+                dataLogger.start(query)
+            }
         }
 
-        activity?.findViewById<FloatingActionButton>(R.id.connect_btn)?.backgroundTintList =
+        btn?.backgroundTintList =
             ContextCompat.getColorStateList(activity, if (dataLogger.isRunning()) R.color.cardinal else R.color.philippine_green)
     }
 }
