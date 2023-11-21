@@ -93,7 +93,7 @@ class GraphFragment : Fragment() {
                         it.isVisible = true
                     }
 
-                    attachToFloatingButton(activity, query)
+                    attachToFloatingButton(activity, query())
                 }
                 DATA_LOGGER_CONNECTED_EVENT  -> {
                     virtualScreensPanel {
@@ -177,10 +177,19 @@ class GraphFragment : Fragment() {
         registerReceivers()
         configureRecyclerView()
         setupVirtualViewPanel()
-        attachToFloatingButton(activity, query)
+        attachToFloatingButton(activity, query())
 
         return root
     }
+
+    private fun query(): Query =
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                .update(preferences.metrics)
+        } else {
+            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
+
 
 
     private fun configureRecyclerView() {
@@ -243,7 +252,7 @@ class GraphFragment : Fragment() {
                 pidRegistry.findBy(it)
             }.toMutableList()
 
-            Log.e(LOG_TAG, "Initializing chart with following PIDs: ${metrics.map { it.id }.toList()}")
+            Log.e(LOG_TAG, "Initializing chart with following PIDs: ${preferences.metrics}")
 
             val dataSets = LineData(metrics.mapNotNull {
                 try {
