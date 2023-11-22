@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-private const val LOG_KEY = "DynamicSelectorModeEventEmitter"
+private const val LOG_KEY = "DNAEventsEmitter"
 private class FakeMetricsBroadcaster (private val emitter: DynamicSelectorModeEventBroadcaster) {
 
     private val values = listOf(2,2,2,2,0,0,0,0,0,4,4,4,4,4,4,2,2,2,2,0,0,0,0,0,4,4,4,4,4,4,2,2,2,2,0,0,0,0,0,4,4,4,4,4,4)
@@ -87,9 +87,16 @@ internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
         if (isDynamicSelectorPID(obdMetric)) {
-            Log.d(LOG_KEY,"Received=${obdMetric.value.toInt()}, current=${currentMode} ")
+
+            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                Log.v(LOG_KEY, "Received=${obdMetric.value.toInt()}, current=${currentMode} ")
+            }
+
             if (currentMode != obdMetric.value) {
-                Log.d(LOG_KEY,"Broadcasting Dynamic Selector Mode Change, new=${obdMetric.value.toInt()}")
+
+                if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                    Log.v(LOG_KEY, "Broadcasting Dynamic Selector Mode Change, new=${obdMetric.value.toInt()}")
+                }
 
                 currentMode = obdMetric.value.toInt()
                 when (obdMetric.value.toInt()) {
