@@ -134,11 +134,11 @@ internal fun MainActivity.receive(intent: Intent?) {
             toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
         }
         SCREEN_OFF_EVENT -> {
-            lockScreen()
+            screen.lockScreen(this)
         }
         SCREEN_ON_EVENT -> {
             Log.i(LOG_TAG, "Activating application.")
-            changeScreenBrightness(1f)
+            screen.changeScreenBrightness(this,1f)
         }
         DATA_LOGGER_ERROR_CONNECT_EVENT -> {
             toast(R.string.main_activity_toast_connection_connect_error)

@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         initCache()
         setContentView(R.layout.activity_main)
 
-        setupWindowManager()
+        screen.setupWindowManager(this)
         setupNavigationBar()
         setupNavigationBarButtons()
         registerReceiver()
@@ -127,14 +127,14 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
     override fun onResume() {
         super.onResume()
-        setupWindowManager()
-        changeScreenBrightness(1f)
+        screen.setupWindowManager(this)
+        screen.changeScreenBrightness(this,1f)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            hideSystemUI()
+            screen. hideSystemUI(this)
         }
     }
 
