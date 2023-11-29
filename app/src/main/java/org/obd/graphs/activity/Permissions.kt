@@ -25,9 +25,9 @@ import android.util.Log
 import org.obd.graphs.R
 import pub.devrel.easypermissions.EasyPermissions
 
-val permissions = Permissions()
+internal val permissions = Permissions()
 
-class Permissions {
+internal class Permissions {
     fun requestLocationPermissions(activity: Activity) {
         Log.d(
             LOG_TAG,

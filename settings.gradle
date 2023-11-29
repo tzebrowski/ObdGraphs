@@ -15,5 +15,4 @@ include ':dragracing'
 include ':screen_renderer'
 include ':app'
 include ':automotive'
-
-
+include ':giulia_qv'

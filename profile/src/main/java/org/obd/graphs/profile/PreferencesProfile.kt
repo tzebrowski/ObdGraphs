@@ -35,7 +35,7 @@ private const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
 private const val PROFILE_CURRENT_NAME_PREF = "pref.profile.current_name"
 private const val PROFILE_INSTALLATION_KEY = "prefs.installed.profiles"
 private const val PROFILE_NAME_PREFIX = "pref.profile.names"
-private const val DEFAULT_MAX_PROFILES = 13
+private const val DEFAULT_MAX_PROFILES = 20
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
