@@ -44,6 +44,5 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation("io.github.tzebrowski:obd-metrics-giulia_qv:0.0.1-SNAPSHOT") { changing = true }
-
+    implementation("io.github.tzebrowski:obd-metrics-giulia_qv:0.0.2-SNAPSHOT") { changing = true }
 }
