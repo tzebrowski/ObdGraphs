@@ -45,6 +45,11 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
+data class GaugeRendererSettings (
+    var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.SHORT,
+    var maxItems: Int = 6
+)
+
 data class DragRacingSettings(
     var shiftLightsRevThreshold: Int = 5000,
     var shiftLightsEnabled: Boolean = true,
@@ -59,7 +64,8 @@ interface ScreenSettings {
 
     fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
 
-    fun getGaugeProgressBarType(): GaugeProgressBarType = GaugeProgressBarType.SHORT
+
+    fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
 
     fun isScaleEnabled(): Boolean = true
 

@@ -103,6 +103,8 @@
     <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
 
     <!-- Android Auto -->
+    <string name="pref.aa.virtual_screens.screen.gauge.max_items">Max Gauges visible on the screen</string>
+
     <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
     <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>
     <string name="pref.aa.profile_3.displayed_parameter_ids">Edit Virtual Screen 3</string>
@@ -438,6 +440,17 @@
         <item name="15">15</item>
         <item name="20">20</item>
         <item name="25">25</item>
+    </string-array>
+
+    <string-array name="pref.numbers_1_8">
+        <item name="1">1</item>
+        <item name="2">2</item>
+        <item name="3">3</item>
+        <item name="4">4</item>
+        <item name="5">5</item>
+        <item name="6">6</item>
+        <item name="7">7</item>
+        <item name="8">8</item>
     </string-array>
 
 

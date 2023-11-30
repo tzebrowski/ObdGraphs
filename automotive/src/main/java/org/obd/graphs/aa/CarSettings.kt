@@ -65,6 +65,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     private var itemsSortOrder: Map<Long, Int>? = emptyMap()
     private val dragRacingSettings = DragRacingSettings()
     private val colorTheme = ColorTheme()
+    private val gaugeRendererSettings = GaugeRendererSettings()
 
     override fun getDragRacingSettings(): DragRacingSettings = dragRacingSettings.apply {
         vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
@@ -95,8 +96,10 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
 
-    override fun getGaugeProgressBarType(): GaugeProgressBarType =
-        GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
+    override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
+        gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
+        maxItems = Prefs.getS("pref.aa.virtual_screens.screen.gauge.max_items","6").toInt()
+    }
 
     override fun isStatusPanelEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.status_panel.enabled", true)
 

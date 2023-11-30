@@ -28,7 +28,6 @@ import org.obd.graphs.renderer.*
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import kotlin.math.min
 
-private const val MAX_ITEMS = 6
 
 @Suppress("NOTHING_TO_INLINE")
 internal class GaugeSurfaceRenderer(
@@ -41,7 +40,7 @@ internal class GaugeSurfaceRenderer(
 
     private val drawer = Drawer(
         settings = settings, context = context,
-        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeProgressBarType())
+        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
     )
 
     override fun getType(): SurfaceRendererType = SurfaceRendererType.GAUGE
@@ -121,7 +120,7 @@ internal class GaugeSurfaceRenderer(
         top: Float,
     ) {
 
-        val maxItems = min(metrics.size, MAX_ITEMS)
+        val maxItems = min(metrics.size, settings.getGaugeRendererSetting().maxItems)
         val firstHalf = metrics.subList(0, maxItems / 2)
         val secondHalf = metrics.subList(maxItems / 2, maxItems)
         val height = (area.height() / 2)
@@ -167,6 +166,8 @@ internal class GaugeSurfaceRenderer(
         4 -> 0.8f
         5 -> 1.02f
         6 -> 1.02f
+        7 -> 1.02f
+        8 -> 1.02f
         else -> 1f
     }
 }

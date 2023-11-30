@@ -956,21 +956,6 @@
                         android:title="@string/pref.aa.display_pid_history"
                         app:singleLineTitle="false" />
 
-                    <ListPreference
-                        android:defaultValue="5"
-                        android:dialogTitle="@string/pref.screen.fps"
-                        android:entries="@array/pref.numbers_1_25"
-                        android:entryValues="@array/pref.numbers_1_25"
-                        android:inputType="number"
-                        android:key="pref.aa.surface.fps"
-                        android:title="@string/pref.screen.fps"
-                        app:singleLineTitle="false"
-                        app:useSimpleSummaryProvider="true" />
-                </PreferenceCategory>
-
-                <PreferenceCategory
-                    android:title="@string/pref.aa.renderer.category"
-                    app:singleLineTitle="false">
 
                     <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                         android:defaultValue="GIULIA"
@@ -983,6 +968,18 @@
                         app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                        android:defaultValue="6"
+                        android:dialogTitle="@string/pref.aa.virtual_screens.screen.gauge.max_items"
+                        android:entries="@array/pref.numbers_1_8"
+                        android:entryValues="@array/pref.numbers_1_8"
+                        android:inputType="number"
+                        android:key="pref.aa.virtual_screens.screen.gauge.max_items"
+                        android:title="@string/pref.aa.virtual_screens.screen.gauge.max_items"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+
+
+                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                         android:defaultValue="SHORT"
                         android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
                         android:entries="@array/pref.aa.gauge.progress_type"
@@ -991,8 +988,18 @@
                         android:title="@string/pref.aa.renderer.gauge.progress_type"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
-                </PreferenceCategory>
 
+                    <ListPreference
+                        android:defaultValue="5"
+                        android:dialogTitle="@string/pref.screen.fps"
+                        android:entries="@array/pref.numbers_1_25"
+                        android:entryValues="@array/pref.numbers_1_25"
+                        android:inputType="number"
+                        android:key="pref.aa.surface.fps"
+                        android:title="@string/pref.screen.fps"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+                </PreferenceCategory>
 
                 <PreferenceCategory
                     android:title="@string/pref.aa.virtual_screens.category"
