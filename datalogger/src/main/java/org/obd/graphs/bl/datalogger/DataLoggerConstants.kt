@@ -38,4 +38,5 @@ const val EVENT_DYNAMIC_SELECTOR_MODE_RACE = "event.dynamic.selector.mode.race"
 
 internal const val LOG_TAG = "DataLogger"
 
+const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
 internal const val DYNAMIC_SELECTOR_PID_ID = 7036L

@@ -16,12 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.profile
+package org.obd.graphs.bl.query
 
-internal fun String.toCamelCase() =
-    split('_').joinToString(" ", transform = String::capitalize)
+import org.obd.graphs.bl.datalogger.DYNAMIC_SELECTOR_PID_ID
+import org.obd.graphs.bl.datalogger.PREF_DYNAMIC_SELECTOR_ENABLED
+import org.obd.graphs.preferences.Prefs
 
-internal fun String.isArray() = startsWith("[") || endsWith("]")
-internal fun String.isBoolean(): Boolean = startsWith("false") || startsWith("true")
-internal fun String.isNumeric(): Boolean = matches(Regex("-?\\d+"))
-internal fun String.toBoolean(): Boolean = startsWith("true")
+internal class IndividualQueryStrategy : QueryStrategy() {
+
+    override fun getPIDs(): MutableSet<Long> {
+        val pids = super.getPIDs()
+
+        if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
+            pids.add(DYNAMIC_SELECTOR_PID_ID)
+        }
+
+        return pids
+    }
+}

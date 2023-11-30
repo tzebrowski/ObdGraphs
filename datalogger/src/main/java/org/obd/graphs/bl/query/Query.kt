@@ -27,7 +27,7 @@ class Query : java.io.Serializable {
         runAsync {
             this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
             this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
-            this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = QueryStrategy()
+            this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = IndividualQueryStrategy()
         }
     }
 

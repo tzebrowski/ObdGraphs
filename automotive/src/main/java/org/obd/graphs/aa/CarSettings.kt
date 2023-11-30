@@ -21,6 +21,7 @@ package org.obd.graphs.aa
 import android.graphics.Color
 import androidx.car.app.CarContext
 import org.obd.graphs.ViewPreferencesSerializer
+import org.obd.graphs.bl.datalogger.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.*
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
@@ -32,7 +33,6 @@ import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 private const val PREF_PIDS_HISTORY_ENABLED = "pref.aa.pids.history.enabled"
 
 private const val PREF_THEME_IN_ALLERT_VALUE_COLOR = "pref.aa.theme.inAlertValueColor"
-private const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
 
 private const val BACKGROUND_ENABLED = "pref.aa.theme.background.enabled"
 
