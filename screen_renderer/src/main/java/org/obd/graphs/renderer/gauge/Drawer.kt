@@ -138,12 +138,12 @@ internal class Drawer(
 
         paint.strokeWidth = strokeWidth
 
-        if (settings.isScaleEnabled()) {
-            drawScale(
-                canvas,
-                rect
-            )
+        drawScale(
+            canvas,
+            rect
+        )
 
+        if (settings.isScaleEnabled()) {
             drawNumerals(
                 metric,
                 canvas,
@@ -258,14 +258,18 @@ internal class Drawer(
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-
-        val centerY = (area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)) + 12
+        var centerY = (area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)) + 10
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
         valuePaint.textSize = (drawerSettings.valueTextSize / 4) * scaleRationBasedOnScreenSize(area) * userScaleRatio
         valuePaint.color = color(R.color.gray)
-        canvas.drawText(metric.source.command.pid.units, area.centerX() + textRect.width() / 2 + 6, centerY - valueHeight, valuePaint)
+
+        val unitRect = Rect()
+        val unitTxt = metric.source.command.pid.units
+        valuePaint.getTextBounds(unitTxt, 0, unitTxt.length, unitRect)
+        canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2 + 6, centerY - valueHeight, valuePaint)
+        centerY += unitRect.height() / 2
 
         labelPaint.textSize = drawerSettings.labelTextSize * scaleRationBasedOnScreenSize(area) * userScaleRatio
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
@@ -455,8 +459,8 @@ internal class Drawer(
         area.width() * area.height(),
         0.0f,
         (settings.getHeightPixels() * settings.getWidthPixels()).toFloat(),
-        0.9f,
-        2.4f
+        0.7f,
+        2.3f
     )
 
 
