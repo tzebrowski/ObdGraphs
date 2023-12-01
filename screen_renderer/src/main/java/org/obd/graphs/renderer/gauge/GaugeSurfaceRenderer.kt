@@ -43,6 +43,7 @@ internal class GaugeSurfaceRenderer(
         drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
     )
 
+    override fun getDrawTop(area: Rect): Float =  area.top  + viewSettings.marginTop.toFloat()
     override fun getType(): SurfaceRendererType = SurfaceRendererType.GAUGE
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -63,7 +64,7 @@ internal class GaugeSurfaceRenderer(
                 val left = drawer.getMarginLeft(area.left.toFloat())
                 drawer.drawStatusBar(canvas,top, left, fps)
                 top += 4
-               drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 10
             }
             when (metrics.size) {
