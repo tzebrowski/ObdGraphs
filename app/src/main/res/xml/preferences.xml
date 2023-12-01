@@ -1063,7 +1063,7 @@
                             android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
 
                             app:singleLineTitle="false">
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1073,7 +1073,7 @@
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1083,7 +1083,7 @@
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1094,7 +1094,7 @@
                                 app:useSimpleSummaryProvider="true" />
 
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1156,7 +1156,7 @@
                         <PreferenceCategory
                             android:title="@string/pref.aa.virtual_screens.font_size.category"
                             app:singleLineTitle="false">
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
                                 android:entries="@array/pref.numbers_20_74"
@@ -1166,7 +1166,7 @@
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
                                 android:entries="@array/pref.numbers_20_74"
@@ -1176,7 +1176,7 @@
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
                                 android:entries="@array/pref.numbers_20_74"
@@ -1187,7 +1187,7 @@
                                 app:useSimpleSummaryProvider="true" />
 
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
                                 android:entries="@array/pref.numbers_20_74"
