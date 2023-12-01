@@ -40,16 +40,11 @@ class AASeekBar(
         }
     }
 
-    override fun getPersistedInt(defaultReturnValue: Int): Int {
-        var value = Prefs.all[key]
-        if (value == null){
-            value = defaultReturnValue
-        }
-        return value.toString().toInt()
-    }
+    override fun getPersistedInt(defaultReturnValue: Int): Int =
+        (Prefs.all[key] ?: defaultReturnValue).toString().toInt()
 
     override fun persistInt(value: Int): Boolean {
-        Prefs.updateString(key,value.toString()).commit()
+        Prefs.updateString(key, value.toString()).commit()
         return true
     }
 }
