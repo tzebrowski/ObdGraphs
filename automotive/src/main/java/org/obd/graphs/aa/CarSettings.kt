@@ -98,8 +98,9 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
         gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
-        maxItems = Prefs.getS("pref.aa.virtual_screens.screen.gauge.max_items","6").toInt()
     }
+
+    override fun getMaxItems(): Int  =  Prefs.getS("pref.aa.virtual_screens.screen.max_items","6").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.status_panel.enabled", true)
 

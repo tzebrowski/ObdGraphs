@@ -53,7 +53,7 @@ internal class GaugeSurfaceRenderer(
             }
 
             val metrics = metricsCollector.getMetrics().subList(0, min(metricsCollector.getMetrics().size,
-                settings.getGaugeRendererSetting().maxItems))
+                settings.getMaxItems()))
 
             drawer.drawBackground(canvas, area)
 
@@ -121,7 +121,7 @@ internal class GaugeSurfaceRenderer(
         top: Float,
     ) {
 
-        val maxItems = min(metrics.size, settings.getGaugeRendererSetting().maxItems)
+        val maxItems = min(metrics.size, settings.getMaxItems())
         val firstHalf = metrics.subList(0, maxItems / 2)
         val secondHalf = metrics.subList(maxItems / 2, maxItems)
         val height = (area.height() / 2)

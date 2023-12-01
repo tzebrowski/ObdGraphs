@@ -103,7 +103,7 @@
     <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
 
     <!-- Android Auto -->
-    <string name="pref.aa.virtual_screens.screen.gauge.max_items">Max Gauges visible on the screen</string>
+    <string name="pref.aa.virtual_screens.screen.max_items">Max visible metrics</string>
 
     <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
     <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>

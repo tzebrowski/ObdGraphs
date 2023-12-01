@@ -957,7 +957,7 @@
                         app:singleLineTitle="false" />
 
 
-                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                    <org.obd.graphs.preferences.aa.AAListPreference
                         android:defaultValue="GIULIA"
                         android:dialogTitle="@string/pref.aa.renderer_type"
                         android:entries="@array/pref.aa_renderer_type"
@@ -967,19 +967,19 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
-                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                    <org.obd.graphs.preferences.aa.AASeekBar
+                        app:showSeekBarValue="true"
+                        app:min="1"
+                        android:max="12"
                         android:defaultValue="6"
-                        android:dialogTitle="@string/pref.aa.virtual_screens.screen.gauge.max_items"
-                        android:entries="@array/pref.numbers_1_8"
-                        android:entryValues="@array/pref.numbers_1_8"
-                        android:inputType="number"
-                        android:key="pref.aa.virtual_screens.screen.gauge.max_items"
-                        android:title="@string/pref.aa.virtual_screens.screen.gauge.max_items"
+                        android:dialogTitle="@string/pref.aa.virtual_screens.screen.max_items"
+                        android:key="pref.aa.virtual_screens.screen.max_items"
+                        android:title="@string/pref.aa.virtual_screens.screen.max_items"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
 
-                    <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                    <org.obd.graphs.preferences.aa.AAListPreference
                         android:defaultValue="SHORT"
                         android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
                         android:entries="@array/pref.aa.gauge.progress_type"
@@ -1063,7 +1063,7 @@
                             android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
 
                             app:singleLineTitle="false">
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AAListPreference
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1073,7 +1073,7 @@
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AAListPreference
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1083,7 +1083,7 @@
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AAListPreference
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1094,7 +1094,7 @@
                                 app:useSimpleSummaryProvider="true" />
 
 
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AAListPreference
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 android:entries="@array/pref.numbers_1_2"
@@ -1156,42 +1156,45 @@
                         <PreferenceCategory
                             android:title="@string/pref.aa.virtual_screens.font_size.category"
                             app:singleLineTitle="false">
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="20"
+                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.1"
                                 android:title="@string/pref.aa.font_size.1"
-                                app:singleLineTitle="false"
-                                app:useSimpleSummaryProvider="true" />
+                                app:singleLineTitle="false" />
 
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="20"
+                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.2"
                                 android:title="@string/pref.aa.font_size.2"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="20"
+                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.3"
                                 android:title="@string/pref.aa.font_size.3"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
-                            <org.obd.graphs.preferences.aa.ScreenRendererNotifyList
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="20"
+                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
-                                android:entries="@array/pref.numbers_20_74"
-                                android:entryValues="@array/pref.numbers_20_74"
                                 android:key="pref.aa.screen_font_size.4"
                                 android:title="@string/pref.aa.font_size.4"
                                 app:singleLineTitle="false"

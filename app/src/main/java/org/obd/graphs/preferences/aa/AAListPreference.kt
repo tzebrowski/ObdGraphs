@@ -26,7 +26,7 @@ import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
 
-class ScreenRendererNotifyList(
+class AAListPreference(
     context: Context,
     attrs: AttributeSet?
 ) :

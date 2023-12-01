@@ -46,8 +46,7 @@ data class ColorTheme(
 )
 
 data class GaugeRendererSettings (
-    var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.SHORT,
-    var maxItems: Int = 6
+    var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.SHORT
 )
 
 data class DragRacingSettings(
@@ -64,6 +63,7 @@ interface ScreenSettings {
 
     fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
 
+    fun getMaxItems (): Int = 6
 
     fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
 
