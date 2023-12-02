@@ -50,17 +50,22 @@ class HeaderListPreferences(
 
         linkedMapOf(
             "" to "",
-            "18DA10F1" to "18DA10F1",
-            "18DB33F1" to "18DB33F1",
             "DA10F1" to "DA10F1",
             "DB33F1" to "DB33F1",
-            "7DF" to "7DF",
-            "DA18F1" to "DA18F1",
-            "18DA18F1" to "18DA18F1",
-            "18DA18F1" to "18DA18F1",
             "DA60F1" to "DA60F1",
-            "18DA60F1" to "18DA60F1"
-        ).apply {
+            "DA18F1" to "DA18F1",
+            "DA17F1" to "DA17F1",
+            "DAF110" to "DAF110",
+            "7DF" to "7DF",
+            "18DA18F1" to "18DA18F1",
+            "18DA18F1" to "18DA18F1",
+            "18DA60F1" to "18DA60F1",
+            "18DA10F1" to "18DA10F1",
+            "18DB33F1" to "18DB33F1",
+            "18DA17F1" to "18DA17F1",
+            "18DAF110" to "18DAF110",
+
+            ).apply {
             Prefs.getInt(CAN_HEADER_COUNTER_PREF, 0).let { it ->
                 Log.d(MODE_LOG_KEY, "Number of custom CAN headers available: $it")
                 if (it > 0) {
