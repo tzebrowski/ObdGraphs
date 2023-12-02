@@ -28,6 +28,8 @@ class GiuliaSettings(private val query: Query): ScreenSettings {
         return query.getPIDs()
     }
 
+    override fun getMaxItems(): Int  =  Prefs.getS("pref.giulia.max_items","6").toInt()
+
     override fun isBreakLabelTextEnabled(): Boolean = false
 
     override fun getMaxColumns(): Int = giuliaVirtualScreen.getMaxItemsInColumn()

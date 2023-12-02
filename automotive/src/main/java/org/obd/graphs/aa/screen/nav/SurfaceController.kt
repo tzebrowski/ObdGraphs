@@ -108,8 +108,11 @@ internal class SurfaceController(
         Log.i(LOG_KEY, "SurfaceRenderer created")
         surface?.release()
         surface = null
-
-        carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
+        try {
+            carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
+        } catch (e: java.lang.Exception){
+            Log.e(LOG_KEY, "Failed to set surface callback",e)
+        }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
