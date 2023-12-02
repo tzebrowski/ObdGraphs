@@ -43,7 +43,12 @@ internal class GaugeSurfaceRenderer(
         drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
     )
 
-    override fun getDrawTop(area: Rect): Float =  area.top  + viewSettings.marginTop.toFloat()
+    override fun getDrawTop(area: Rect): Float   = if (settings.isStatusPanelEnabled()) {
+            area.top + viewSettings.marginTop.toFloat() + MARGIN_TOP
+        } else {
+            area.top + viewSettings.marginTop.toFloat()
+        }
+
     override fun getType(): SurfaceRendererType = SurfaceRendererType.GAUGE
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -53,8 +58,7 @@ internal class GaugeSurfaceRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            val metrics = metricsCollector.getMetrics().subList(0, min(metricsCollector.getMetrics().size,
-                settings.getMaxItems()))
+            val metrics = metrics()
 
             drawer.drawBackground(canvas, area)
 

@@ -178,7 +178,6 @@ internal class Drawer(
         val endValue = metric.source.command.pid.max.toFloat()
 
         if (value == startValue) {
-
             canvas.drawArc(
                 progressRect, drawerSettings.startAngle, drawerSettings.longPointerSize, false,
                 progressPaint
@@ -258,7 +257,7 @@ internal class Drawer(
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-        var centerY = (area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area)) + 10
+        var centerY = (area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 

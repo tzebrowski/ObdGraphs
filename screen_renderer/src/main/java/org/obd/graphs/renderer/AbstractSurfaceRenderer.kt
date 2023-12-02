@@ -23,8 +23,10 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import kotlin.math.max
+import kotlin.math.min
 
-private const val MARGIN_TOP = 20f
+const val MARGIN_TOP = 20f
+
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractSurfaceRenderer(
     protected val settings: ScreenSettings,
@@ -35,11 +37,20 @@ internal abstract class AbstractSurfaceRenderer(
 ) :
     SurfaceRenderer {
 
+
     open fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP + viewSettings.marginTop
 
     override fun applyMetricsFilter() {
         metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
     }
+
+    protected fun metrics() = metricsCollector.getMetrics().subList(
+        0, min(
+            metricsCollector.getMetrics().size,
+            settings.getMaxItems()
+        )
+    )
+
 
     protected inline fun splitIntoChunks(metrics: List<CarMetric>): MutableList<List<CarMetric>> {
         val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
