@@ -40,7 +40,7 @@ private const val NUMERALS_RADIUS_SCALE_FACTOR = 0.75f
 
 data class DrawerSettings(
     val gaugeProgressWidth: Float = 1.5f,
-    val gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.SHORT,
+    val gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     val startAngle: Float = 200f,
     val sweepAngle: Float = 180f,
     val scaleStep: Int = 2,
