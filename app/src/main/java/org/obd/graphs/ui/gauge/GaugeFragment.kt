@@ -138,7 +138,7 @@ class GaugeFragment : RefreshableFragment() {
     private fun query(): Query =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                .update(getSelectedPIDsList())
+                .update(getSelectedPIDs())
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
         }
@@ -192,11 +192,11 @@ class GaugeFragment : RefreshableFragment() {
             metricsSerializerPref = GAUGE_PIDS_SETTINGS
         )
 
-        metricsCollector.applyFilter(getVisiblePIDsList(gaugeVirtualScreen.getVirtualScreenPrefKey()))
+        metricsCollector.applyFilter(getSelectedPIDs())
     }
 
     private fun calculateSpan(): Int {
-        val numberOfPIDsToDisplay = getSelectedPIDsList().size
+        val numberOfPIDsToDisplay = getSelectedPIDs().size
 
         return when (isTablet()) {
             false -> {
@@ -222,6 +222,8 @@ class GaugeFragment : RefreshableFragment() {
             }
         }
     }
+
+    private fun getSelectedPIDs() = getSelectedPIDs(gaugeVirtualScreen.getVirtualScreenPrefKey())
 
     private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
         (root.findViewById<Button>(btnId)).let {
@@ -259,16 +261,6 @@ class GaugeFragment : RefreshableFragment() {
     private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
         if (Prefs.getBoolean("pref.gauge.toggle_virtual_screens_double_click", false)) {
             func(root.findViewById(R.id.virtual_view_panel))
-        }
-    }
-
-    private fun getSelectedPIDsList(): Set<Long> {
-        val longSet = Prefs.getLongSet(gaugeVirtualScreen.getVirtualScreenPrefKey())
-        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            longSet
-        } else {
-            val query = query.getPIDs()
-            longSet.filter { query.contains(it) }.toSet()
         }
     }
 }

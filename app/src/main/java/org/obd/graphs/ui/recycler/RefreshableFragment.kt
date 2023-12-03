@@ -20,6 +20,7 @@ package org.obd.graphs.ui.recycler
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.collector.*
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -36,6 +38,8 @@ import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 import org.obd.graphs.ui.gauge.AdapterContext
+
+private const val LOG_KEY = "RefreshableFragment"
 
 open class RefreshableFragment : Fragment() {
 
@@ -63,7 +67,7 @@ open class RefreshableFragment : Fragment() {
         metricsSerializerPref: String
     ): MutableList<CarMetric> {
         val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
-        val metricsIds = getVisiblePIDsList(metricsIdsPref)
+        val metricsIds = getSelectedPIDs(metricsIdsPref)
         return CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
     }
 
@@ -86,7 +90,7 @@ open class RefreshableFragment : Fragment() {
     ) {
 
         val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
-        val metricsIds = getVisiblePIDsList(metricsIdsPref)
+        val metricsIds = getSelectedPIDs(metricsIdsPref)
         val metrics = CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
@@ -109,10 +113,22 @@ open class RefreshableFragment : Fragment() {
         recyclerView.refreshDrawableState()
     }
 
-    protected fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
+    protected fun getSelectedPIDs(pref: String): Set<Long> {
         val query = query.getPIDs()
-        return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
+        val selection = Prefs.getLongSet(pref)
+        val intersection =  selection.filter { query.contains(it) }.toSet()
+        Log.i(LOG_KEY,"Individual query enabled:${dataLoggerPreferences.instance.queryForEachViewStrategyEnabled}, " +
+                " key:$pref, query=$query,selection=$selection, intersection=$intersection")
+
+        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            Log.i(LOG_KEY,"Returning selection=$selection")
+            selection
+        }else {
+            Log.i(LOG_KEY,"Returning intersection=$intersection")
+            intersection
+        }
     }
+
     private fun createSwappableAdapter(
         configureChangeEventId: String,
         recyclerView: RecyclerView,
