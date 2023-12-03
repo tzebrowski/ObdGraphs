@@ -252,12 +252,12 @@ class GraphFragment : Fragment() {
                 pidRegistry.findBy(it)
             }.toMutableList()
 
-            Log.e(LOG_TAG, "Initializing chart with following PIDs: ${preferences.metrics}")
+            Log.i(LOG_TAG, "Initializing chart with following PIDs: ${preferences.metrics}")
 
             val dataSets = LineData(metrics.mapNotNull {
                 try {
                     val dataSet = createDataSet(it)
-                    Log.e(LOG_TAG, "Created chart data-set for PID: ${it.id}")
+                    Log.i(LOG_TAG, "Created chart data-set for PID: ${it.id}")
                     dataSet
                 }catch (e: Throwable){
                     Log.e(LOG_TAG,"Failed to create chart  data-set ${e.message} for PID: ${it.id}",e)
@@ -265,7 +265,7 @@ class GraphFragment : Fragment() {
                 }
             }.toList())
 
-            Log.e(LOG_TAG,"Created data-set size: ${dataSets.dataSetCount}")
+            Log.i(LOG_TAG,"Created data-set size: ${dataSets.dataSetCount}")
 
             data = dataSets
             setOnTouchListener(onDoubleClickListener(requireContext()))
