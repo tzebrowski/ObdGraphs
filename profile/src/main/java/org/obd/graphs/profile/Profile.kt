@@ -25,7 +25,7 @@ const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
 const val PROFILES_PREF = "pref.profiles"
 const val PROFILE_ID_PREF = "pref.profile.id"
 
-val profile: Profile = PreferencesProfile()
+val profile: Profile = PreferencesBackend()
 
 interface Profile : SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -40,4 +40,5 @@ interface Profile : SharedPreferences.OnSharedPreferenceChangeListener {
     fun setupProfiles(forceOverrideRecommendation: Boolean = true)
     fun saveCurrentProfile()
     fun loadProfile(profileName: String)
+    fun getResources(): Map<String,String>
 }

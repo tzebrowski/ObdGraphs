@@ -21,6 +21,7 @@ package org.obd.graphs.bl.datalogger
 import android.content.Context
 import android.util.Log
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.profile.profile
 import java.io.File
 
 private const val STORAGE_FILE_CODING_KEY = "storage:"
@@ -30,18 +31,21 @@ val pidResources = PIDsResources()
 
 class PIDsResources {
 
+    private val overrides = mapOf(
+        "alfa.json" to "Giulietta QV",
+        "giulia_2.0_gme.json" to "Giulia 2.0 GME",
+    )
+
     internal fun externalResourceToURL(it: String) =
         File(it.substring(STORAGE_FILE_CODING_KEY.length, it.length)).toURI().toURL()
 
     internal fun isExternalStorageResource(it: String) = it.startsWith(STORAGE_FILE_CODING_KEY)
 
-    fun getDefaultPidFiles(): Map<String,String> =  mapOf(
-        "alfa.json" to "Giulietta QV",
-        "giulia_2.0_gme.json" to "Giulia 2.0 GME",
-        "mode01.json" to "Mode 01",
-        "mode01_2.json" to "Mode 01.2",
-        "extra.json" to "Extra",
-    )
+    fun getDefaultPidFiles(): Map<String,String> {
+        val resources = profile.getResources().toMutableMap()
+        resources.putAll(overrides)
+        return resources
+    }
 
     fun getExternalPidResources(context: Context?): MutableMap<String, String>? {
         return getExternalPidResources(context) {

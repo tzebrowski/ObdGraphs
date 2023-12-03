@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.profile
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Environment
 import android.util.Log
@@ -39,11 +40,13 @@ private const val DEFAULT_MAX_PROFILES = 20
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-internal class PreferencesProfile : Profile {
+internal class PreferencesBackend : Profile {
 
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
     private lateinit var versionName: String
+
+    private var resources = mutableMapOf<String,String>()
 
     @Volatile
     private var bulkActionEnabled = false
@@ -66,6 +69,8 @@ internal class PreferencesProfile : Profile {
     override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF, defaultProfile ?: DEFAULT_PROFILE)
 
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
+
+    override fun getResources(): Map<String, String> = resources
 
 
     override fun importBackup() {
@@ -193,6 +198,8 @@ internal class PreferencesProfile : Profile {
 
             updateBuildSettings()
 
+            loadResources()
+
         } finally {
             bulkActionEnabled = false
         }
@@ -301,6 +308,20 @@ internal class PreferencesProfile : Profile {
     }
 
     private fun getDefaultProfile(): String = defaultProfile ?: DEFAULT_PROFILE
+
+    @SuppressLint("DefaultLocale")
+    private fun loadResources(){
+        val entries = Prefs.all
+        val keys = entries.keys.filter { it.contains("pref.pids.registry.list") }.toList()
+        val values = keys.map { entries[it].toString().replace("[","").replace("]","").split(",") }.flatten().toSet()
+        val resourcesMap =  values.map { it.replace(" ", "") to
+                it.replace(".json","")
+                    .replace("_"," ")
+                    .trim()
+                    .split(" ").joinToString(" ") { it.toLowerCase().capitalize() }}
+
+        resources.putAll(resourcesMap)
+    }
 
     private fun loadProfileFilesIntoPreferences(
         forceOverride: Boolean,
