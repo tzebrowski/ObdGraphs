@@ -30,7 +30,7 @@ import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.getCurrentMode
 import org.obd.graphs.preferences.Prefs
 
-class HeaderListPreferences(
+class CANHeaderListPreferences(
     context: Context,
     attrs: AttributeSet?
 ) :
@@ -56,6 +56,7 @@ class HeaderListPreferences(
             "DA18F1" to "DA18F1",
             "DA17F1" to "DA17F1",
             "DAF110" to "DAF110",
+            "DAC7F1" to "DAC7F1",
             "7DF" to "7DF",
             "18DA18F1" to "18DA18F1",
             "18DA18F1" to "18DA18F1",
@@ -64,6 +65,8 @@ class HeaderListPreferences(
             "18DB33F1" to "18DB33F1",
             "18DA17F1" to "18DA17F1",
             "18DAF110" to "18DAF110",
+            "18DAC7F1" to "18DAC7F1",
+
 
             ).apply {
             Prefs.getInt(CAN_HEADER_COUNTER_PREF, 0).let { it ->

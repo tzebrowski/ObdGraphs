@@ -213,7 +213,7 @@
                             app:useSimpleSummaryProvider="true" />
                     </PreferenceCategory>
 
-                    <org.obd.graphs.preferences.mode.HeaderListPreferences
+                    <org.obd.graphs.preferences.mode.CANHeaderListPreferences
                         android:key="pref.adapter.init.mode.header"
                         android:title="@string/pref.adapter_init_mode_header_selected"
                         app:singleLineTitle="false"
