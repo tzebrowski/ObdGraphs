@@ -277,14 +277,16 @@ internal class NavTemplateCarScreen(
                 var template = NavigationTemplate.Builder()
 
                 if (surfaceController.isVirtualScreensEnabled()) {
-                    getVirtualScreensActionStrip()?.let {
+                    getActionStrip()?.let {
                         template = template.setMapActionStrip(it)
                     }
                 }
 
-                template.setActionStrip(getActionStrip(
-                    dragMeteringEnabled = surfaceController.isDragRacingEnabled(),
-                    toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())).build()
+                template.setActionStrip(
+                    getActionStrip(
+                        dragMeteringEnabled = surfaceController.isDragRacingEnabled(),
+                        toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())
+                ).build()
             }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)
@@ -293,15 +295,22 @@ internal class NavTemplateCarScreen(
                 .setTitle(carContext.getString(R.string.pref_aa_car_error))
                 .build()
         }
+    private fun actionStripColor(key: String): CarColor =  if (settings.getCurrentVirtualScreen() == key) {
+        CarColor.GREEN
+    } else {
+        mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
+    }
 
-    private fun getVirtualScreensActionStrip(): ActionStrip? {
+    private fun getActionStrip(): ActionStrip? {
 
         var added  = false
         var builder = ActionStrip.Builder()
 
         if (settings.isVirtualScreenEnabled(1)) {
             added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_1, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
+
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
+                invalidate()
                 settings.applyVirtualScreen1()
                 applyMetricsFilter()
                 surfaceController.renderFrame()
@@ -309,8 +318,10 @@ internal class NavTemplateCarScreen(
         }
 
         if (settings.isVirtualScreenEnabled(2)) {
+
             added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_2, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_2,  actionStripColor(VIRTUAL_SCREEN_2)) {
+                invalidate()
                 settings.applyVirtualScreen2()
                 applyMetricsFilter()
                 surfaceController.renderFrame()
@@ -320,7 +331,8 @@ internal class NavTemplateCarScreen(
         if (settings.isVirtualScreenEnabled(3)) {
 
             added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
+                invalidate()
                 settings.applyVirtualScreen3()
                 applyMetricsFilter()
                 surfaceController.renderFrame()
@@ -329,9 +341,10 @@ internal class NavTemplateCarScreen(
 
         if (settings.isVirtualScreenEnabled(4)) {
             added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_4, mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)) {
-                settings.applyVirtualScreen4()
 
+            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_4,  actionStripColor(VIRTUAL_SCREEN_4)) {
+                invalidate()
+                settings.applyVirtualScreen4()
                 applyMetricsFilter()
                 surfaceController.renderFrame()
             })

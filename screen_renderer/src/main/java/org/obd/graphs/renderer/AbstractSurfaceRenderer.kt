@@ -23,6 +23,7 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.query.Query
 import kotlin.math.max
 import kotlin.math.min
 
@@ -39,7 +40,7 @@ internal abstract class AbstractSurfaceRenderer(
     SurfaceRenderer {
     open fun getDrawTop(area: Rect): Float = area.top + MARGIN_TOP + viewSettings.marginTop
 
-    override fun applyMetricsFilter(query: org.obd.graphs.bl.query.Query) {
+    override fun applyMetricsFilter(query: Query) {
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
         } else {
