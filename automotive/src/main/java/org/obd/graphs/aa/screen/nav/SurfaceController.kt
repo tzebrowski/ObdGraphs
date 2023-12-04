@@ -71,7 +71,7 @@ internal class SurfaceController(
                     Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
                     surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
-                surfaceRenderer.applyMetricsFilter()
+                surfaceRenderer.applyMetricsFilter(query)
             }
         }
 
@@ -157,7 +157,7 @@ internal class SurfaceController(
             dataLogger.updateQuery(query = query)
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
         }
-        surfaceRenderer.applyMetricsFilter()
+        surfaceRenderer.applyMetricsFilter(query)
     }
 
     fun allocateSurfaceRender() {

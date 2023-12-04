@@ -25,8 +25,10 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.*
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
+
 
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingSurfaceRenderer(
@@ -39,7 +41,7 @@ internal class DragRacingSurfaceRenderer(
 
     private val drawer = Drawer(context, settings)
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACING
-    override fun applyMetricsFilter() {
+    override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
             enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
        )
@@ -118,6 +120,6 @@ internal class DragRacingSurfaceRenderer(
     }
 
     init {
-        applyMetricsFilter()
+        applyMetricsFilter(Query())
     }
 }

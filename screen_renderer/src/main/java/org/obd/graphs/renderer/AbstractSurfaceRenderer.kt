@@ -22,6 +22,7 @@ import android.content.Context
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import kotlin.math.max
 import kotlin.math.min
 
@@ -36,12 +37,17 @@ internal abstract class AbstractSurfaceRenderer(
     protected val viewSettings: ViewSettings
 ) :
     SurfaceRenderer {
+    open fun getDrawTop(area: Rect): Float = area.top + MARGIN_TOP + viewSettings.marginTop
 
-
-    open fun getDrawTop(area: Rect): Float =  area.top + MARGIN_TOP + viewSettings.marginTop
-
-    override fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+    override fun applyMetricsFilter(query: org.obd.graphs.bl.query.Query) {
+        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+        } else {
+            val pp = query.getPIDs()
+            val selection = settings.getSelectedPIDs()
+            val intersection = selection.filter { pp.contains(it) }.toSet()
+            metricsCollector.applyFilter(enabled = intersection, order = settings.getMetricsSortOrder())
+        }
     }
 
     protected fun metrics() = metricsCollector.getMetrics().subList(
