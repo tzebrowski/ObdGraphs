@@ -118,33 +118,34 @@ internal class NavTemplateCarScreen(
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         settings.applyVirtualScreen1()
-                        applyMetricsFilter()
-                        surfaceController.renderFrame()
                     }
+                    applyMetricsFilter()
+                    surfaceController.renderFrame()
                 }
 
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
                         settings.applyVirtualScreen2()
-                        applyMetricsFilter()
-                        surfaceController.renderFrame()
                     }
+
+                    applyMetricsFilter()
+                    surfaceController.renderFrame()
                 }
 
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         settings.applyVirtualScreen3()
-                        applyMetricsFilter()
-                        surfaceController.renderFrame()
                     }
+                    applyMetricsFilter()
+                    surfaceController.renderFrame()
                 }
 
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
                         settings.applyVirtualScreen4()
-                        applyMetricsFilter()
-                        surfaceController.renderFrame()
                     }
+                    applyMetricsFilter()
+                    surfaceController.renderFrame()
                 }
 
                 PROFILE_CHANGED_EVENT -> {
@@ -343,12 +344,21 @@ internal class NavTemplateCarScreen(
     }
 
     private fun applyMetricsFilter() {
-        metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
-
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            Log.i(LOG_KEY, "User selection: ${settings.getSelectedPIDs()}")
+            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
             dataLogger.updateQuery(query)
+        } else {
+            val query = query.getPIDs()
+            val selection = settings.getSelectedPIDs()
+            val intersection =  selection.filter { query.contains(it) }.toSet()
+
+            Log.i(LOG_KEY,"Query=$query,user selection=$selection, intersection=$intersection")
+
+            metricsCollector.applyFilter(enabled = intersection, order = settings.getMetricsSortOrder())
         }
     }
 

@@ -21,12 +21,14 @@ package org.obd.graphs.bl.collector
 import android.util.Log
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.metrics.api.model.ObdMetric
+import java.util.*
+import kotlin.Comparator
 
 private const val LOG_KEY = "InMemoryCollector"
 
 internal class InMemoryCarMetricsCollector : CarMetricsCollector {
 
-    private var metrics: MutableMap<Long, CarMetric> = sortedMapOf()
+    private var metrics: SortedMap<Long, CarMetric> = TreeMap()
 
     override fun getMetrics(enabled: Boolean): List<CarMetric> = metrics.values.filter { it.enabled == enabled }
 
@@ -39,25 +41,20 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
             if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
                 Log.d(LOG_KEY, "Rebuilding metrics configuration for: $enabled != ${metrics.keys}")
             }
+            CarMetricsBuilder().buildFor(enabled).forEach {
+                val key = it.source.command.pid.id
 
-            val newMetrics = CarMetricsBuilder().buildFor(enabled).associateBy { it.source.command.pid.id }.toMutableMap()
-            newMetrics.forEach { (l, carMetric) ->
-                if (!metrics.containsKey(l)){
+                if (metrics.keys.indexOf(key)  ==-1) {
                     if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
-                        Log.d(LOG_KEY, "Adding PID with id=$l to metrics map")
+                        Log.d(LOG_KEY, "Adding PID with id=$key to metrics map")
                     }
-
-                    metrics[l] = carMetric
+                    metrics[key] = it
                 }
             }
         } else {
             if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
                 Log.d(LOG_KEY, "Its okay. All PIDs are available. Metrics ${metrics.keys} contains $enabled")
             }
-        }
-
-        metrics.forEach { (t, u) ->
-            u.enabled = enabled.contains(t)
         }
 
         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
@@ -67,9 +64,15 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
         order?.let {
             if (order.isNotEmpty()) {
                 metrics = metrics.toSortedMap(comparator(it))
-                Log.i(LOG_KEY, "Applied metrics sort order=$metrics")
+                Log.i(LOG_KEY, "Applied metrics sort order=$order")
             }
         }
+
+
+        metrics.forEach { (k, v) ->
+            v.enabled = enabled.contains(k)
+        }
+
     }
 
     override fun append(input: ObdMetric?) {
