@@ -24,6 +24,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
@@ -44,6 +45,7 @@ import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
 import org.obd.graphs.ui.common.attachToFloatingButton
 
+private const val LOG_KEY = "GiuliaFragment"
 
 open class GiuliaFragment : Fragment() {
     private lateinit var root: View
@@ -120,7 +122,7 @@ open class GiuliaFragment : Fragment() {
         ))
         surfaceView.holder.addCallback(surfaceController)
 
-        metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+        metricsCollector.applyFilter(getSelectedPIDs())
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
@@ -154,7 +156,7 @@ open class GiuliaFragment : Fragment() {
                     dataLogger.updateQuery(query())
                 }
 
-                metricsCollector.applyFilter(getVisiblePIDsList(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+                metricsCollector.applyFilter(getSelectedPIDs())
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
             }
@@ -172,17 +174,32 @@ open class GiuliaFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
     }
 
-    private fun getVisiblePIDsList(metricsIdsPref: String): Set<Long> {
-        val query = query.getPIDs()
-        return Prefs.getLongSet(metricsIdsPref).filter { query.contains(it) }.toSet()
-    }
-
     private fun query(): Query =
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                 .update(Prefs.getLongSet(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+                 .update(getSelectedPIDs())
 
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
         }
+
+
+    private fun getSelectedPIDs(): Set<Long> {
+        val pref = giuliaVirtualScreen.getVirtualScreenPrefKey()
+
+        val query = query.getPIDs()
+        val selection = Prefs.getLongSet(pref)
+        val intersection =  selection.filter { query.contains(it) }.toSet()
+        Log.i(
+            LOG_KEY,"Individual query enabled:${dataLoggerPreferences.instance.queryForEachViewStrategyEnabled}, " +
+                    " key:$pref, query=$query,selection=$selection, intersection=$intersection")
+
+        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+            Log.i(LOG_KEY,"Returning selection=$selection")
+            selection
+        }else {
+            Log.i(LOG_KEY,"Returning intersection=$intersection")
+            intersection
+        }
+    }
 }
