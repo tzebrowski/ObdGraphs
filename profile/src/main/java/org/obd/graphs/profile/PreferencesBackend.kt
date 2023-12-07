@@ -311,16 +311,36 @@ internal class PreferencesBackend : Profile {
 
     @SuppressLint("DefaultLocale")
     private fun loadResources(){
-        val entries = Prefs.all
-        val keys = entries.keys.filter { it.contains("pref.pids.registry.list") }.toList()
-        val values = keys.map { entries[it].toString().replace("[","").replace("]","").split(",") }.flatten().toSet()
-        val resourcesMap =  values.map { it.replace(" ", "") to
-                it.replace(".json","")
-                    .replace("_"," ")
-                    .trim()
-                    .split(" ").joinToString(" ") { it.toLowerCase().capitalize() }}
+        runAsync {
+            val entries  = mutableMapOf<String,Any?>()
 
-        resources.putAll(resourcesMap)
+            try {
+
+                findProfileFiles()?.forEach {
+                    val file = loadFile(it)
+                    for (name in file.stringPropertyNames()) {
+                        entries[name] = file.getProperty(name)
+                    }
+                }
+            } catch (e: Throwable){
+                Log.e(LOG_TAG, "Failed to load properties files",e)
+            }
+
+            if (entries.isEmpty()){
+                entries.putAll(Prefs.all.toMutableMap())
+            }
+
+            val keys = entries.keys.filter { it.contains("pref.pids.registry.list") }.toList()
+            val values = keys.map { entries[it].toString().replace("[","").replace("]","").split(",") }.flatten().toSet()
+            val resourcesMap =  values.map { it.replace(" ", "") to
+                    it.replace(".json","")
+                        .replace("_"," ")
+                        .trim()
+                        .split(" ").joinToString(" ") { it.toLowerCase().capitalize() }}
+
+            resources.putAll(resourcesMap)
+            Log.i(LOG_TAG,"Registered following resource files: $resources")
+        }
     }
 
     private fun loadProfileFilesIntoPreferences(
