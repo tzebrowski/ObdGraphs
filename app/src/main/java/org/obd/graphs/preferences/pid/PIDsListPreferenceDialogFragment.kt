@@ -43,6 +43,7 @@ import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
+import java.lang.IllegalArgumentException
 import java.util.*
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
@@ -70,8 +71,8 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
         requestWindowFeatures()
 
         root = inflater.inflate(R.layout.dialog_pids, container, false)
-        val viewSerializer = ViewPreferencesSerializer("$key.view.settings")
-        listOfItems = buildInitialList(viewSerializer)
+
+        listOfItems = buildInitialList()
 
         val adapter = PIDsViewAdapter(root, context, listOfItems, detailsViewEnabled)
         val recyclerView: RecyclerView = getRecyclerView(root)
@@ -79,7 +80,7 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
         recyclerView.adapter = adapter
 
         attachSearchView()
-        attachDragManager(viewSerializer, recyclerView)
+        attachDragManager(recyclerView)
         attachActionButtons()
         adjustItemsVisibility()
 
@@ -93,17 +94,22 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
     }
 
     private fun attachSearchView() {
+
         val toolbar = root.findViewById<Toolbar>(R.id.custom_dialog_layout_toolbar)
         toolbar.inflateMenu(R.menu.pids_dialog_menu)
         val searchView = toolbar.menu.findItem(R.id.menu_searchview).actionView as SearchView
-        searchView.setIconifiedByDefault(false)
+        searchView.setIconifiedByDefault(true)
+        searchView.isIconified = false
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
                 if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
                     Log.d(LOG_KEY, "OnQueryTextSubmit newText=$query")
                 }
+
                 filterListOfItems(query)
+
                 return false
             }
 
@@ -111,9 +117,11 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
                 if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
                     Log.d(LOG_KEY, "OnQueryTextChange newText=$newText")
                 }
+
                 filterListOfItems(newText)
                 return false
             }
+
         })
     }
 
@@ -157,10 +165,8 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
         }
     }
 
-    private fun attachDragManager(
-        viewSerializer: ViewPreferencesSerializer,
-        recyclerView: RecyclerView
-    ) {
+    private fun attachDragManager(recyclerView: RecyclerView) {
+        val viewSerializer = viewPreferencesSerializer()
         val swappableAdapter: SwappableAdapter = object : SwappableAdapter {
             override fun swapItems(fromPosition: Int, toPosition: Int) {
                 if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
@@ -218,14 +224,16 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
         }
 
         val filtered = listOfItems.filter { it.source.description.lowercase(Locale.getDefault()).contains(newText) }
-        adapter.updateData(filtered)
+        val sorted = sortItems(filtered)
+
+        adapter.updateData(sorted)
         adapter.notifyDataSetChanged()
     }
 
     private fun getAdapter() = (getRecyclerView(root).adapter as PIDsViewAdapter)
 
-    private fun buildInitialList(viewSerializer: ViewPreferencesSerializer): MutableList<PidDefinitionDetails> {
-        val all = dataLogger.getPidDefinitionRegistry().findAll()
+    private fun buildInitialList(): MutableList<PidDefinitionDetails> {
+       val all = dataLogger.getPidDefinitionRegistry().findAll()
         val individualQuery = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
         val list: List<PidDefinitionDetails> =
             if (individualQuery) {
@@ -267,32 +275,50 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
             }
         }
 
-        var toSort = list.toMutableList()
-        viewSerializer.getItemsSortOrder()?.let { order ->
-            if (order.isEmpty()){
-                toSort = toSort.sortedBy { !it.checked }.toMutableList()
-                viewSerializer.store(toSort.map {it.source.id})
-                notifyListChanged()
-            }else {
-                try {
-                    toSort.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
-                        if (order.containsKey(m1.source.id) && order.containsKey(
-                                m2.source.id
-                            )
-                        ) {
-                            order[m1.source.id]!!
-                                .compareTo(order[m2.source.id]!!)
-                        } else {
-                            -1
+        return sortItems(list)
+    }
+
+    private fun sortItems(
+        input: List<PidDefinitionDetails>
+    ): MutableList<PidDefinitionDetails> {
+
+        val viewSerializer = viewPreferencesSerializer()
+        val checked = input.filter { it.checked }.toMutableList()
+        val sortOrder = viewSerializer.getItemsSortOrder()
+
+        if (sortOrder == null) {
+            viewSerializer.store(checked.map { it.source.id })
+            notifyListChanged()
+        } else {
+            sortOrder.let { order ->
+                if (order.isEmpty()) {
+                    viewSerializer.store(checked.map { it.source.id })
+                    notifyListChanged()
+                } else {
+                    try {
+                        checked.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
+                            if (order.containsKey(m1.source.id) && order.containsKey(
+                                    m2.source.id
+                                )
+                            ) {
+                                order[m1.source.id]!!
+                                    .compareTo(order[m2.source.id]!!)
+                            } else {
+                                -1
+                            }
                         }
+                    } catch (e: IllegalArgumentException) {
+                        Log.e(LOG_KEY, "Failed to sort PIDs", e)
                     }
-                }catch (e: java.lang.IllegalArgumentException){
-                    Log.e(LOG_KEY, "Failed to sort PIDs",e)
                 }
             }
+
         }
-        return toSort
+
+        return (checked + input.filter { !it.checked }).toMutableList()
     }
+
+    private fun viewPreferencesSerializer(): ViewPreferencesSerializer  = ViewPreferencesSerializer("$key.view.settings")
 
     private fun buildListFromSource(all: MutableCollection<PidDefinition>): List<PidDefinitionDetails> {
         val source =
