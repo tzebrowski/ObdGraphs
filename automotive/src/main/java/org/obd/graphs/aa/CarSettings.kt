@@ -94,6 +94,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         }
     }
 
+    override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
+
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
@@ -142,7 +144,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
 
     override fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
 
-    override fun getMetricsSortOrder(): Map<Long, Int>? = itemsSortOrder
+    override fun getPIDsSortOrder(): Map<Long, Int>? = if (isPIDsSortOrderEnabled()) itemsSortOrder else null
 
     override fun applyVirtualScreen(key: String) {
         Prefs.updateString(PREF_CURRENT_VIRTUAL_SCREEN, key)

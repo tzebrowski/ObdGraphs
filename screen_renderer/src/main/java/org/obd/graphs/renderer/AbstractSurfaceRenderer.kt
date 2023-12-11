@@ -42,12 +42,12 @@ internal abstract class AbstractSurfaceRenderer(
 
     override fun applyMetricsFilter(query: Query) {
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
         } else {
             val pp = query.getPIDs()
             val selection = settings.getSelectedPIDs()
             val intersection = selection.filter { pp.contains(it) }.toSet()
-            metricsCollector.applyFilter(enabled = intersection, order = settings.getMetricsSortOrder())
+            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
         }
     }
 

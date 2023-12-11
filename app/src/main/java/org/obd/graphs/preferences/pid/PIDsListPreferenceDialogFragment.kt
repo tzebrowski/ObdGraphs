@@ -43,7 +43,6 @@ import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
-import java.lang.IllegalArgumentException
 import java.util.*
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
@@ -304,10 +303,10 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
                                 order[m1.source.id]!!
                                     .compareTo(order[m2.source.id]!!)
                             } else {
-                                -1
+                                m1.source.id.compareTo(m2.source.id)
                             }
                         }
-                    } catch (e: IllegalArgumentException) {
+                    } catch (e: Throwable) {
                         Log.e(LOG_KEY, "Failed to sort PIDs", e)
                     }
                 }

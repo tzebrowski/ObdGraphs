@@ -946,6 +946,12 @@
 
                     <CheckBoxPreference
                         android:defaultValue="false"
+                        android:key="pref.aa.virtual_screens.sort_order.enabled"
+                        android:title="@string/pref.aa.virtual_screens.sort_order.enabled"
+                        app:singleLineTitle="false" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
                         android:key="pref.aa.connection.auto.enabled"
                         android:title="@string/pref.aa.connection_auto"
                         app:singleLineTitle="false" />

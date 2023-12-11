@@ -59,7 +59,9 @@ data class DragRacingSettings(
 
 interface ScreenSettings {
 
-    fun getMetricsSortOrder(): Map<Long, Int>? = emptyMap()
+    fun isPIDsSortOrderEnabled(): Boolean = false
+
+    fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
 

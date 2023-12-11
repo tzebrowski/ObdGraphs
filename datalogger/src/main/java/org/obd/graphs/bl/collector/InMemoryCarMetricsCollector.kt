@@ -35,6 +35,7 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
     override fun findById(id: Long): CarMetric? = getMetrics().firstOrNull { it.source.command.pid.id == id }
 
     override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
+        Log.i(LOG_KEY, "Updating visible PIDs=$enabled with order=$order")
 
         if (metrics.isEmpty() || !metrics.keys.containsAll(enabled)) {
 
@@ -45,9 +46,7 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
                 val key = it.source.command.pid.id
 
                 if (metrics.keys.indexOf(key)  ==-1) {
-                    if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
-                        Log.d(LOG_KEY, "Adding PID with id=$key to metrics map")
-                    }
+                    Log.i(LOG_KEY, "Adding PID with id=$key to metrics map")
                     metrics[key] = it
                 }
             }
@@ -57,17 +56,9 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
             }
         }
 
-        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-            Log.v(LOG_KEY, "Updating visible metrics for: $enabled")
+        if (order != null && order.isNotEmpty()) {
+            metrics = metrics.toSortedMap(comparator(order))
         }
-
-        order?.let {
-            if (order.isNotEmpty()) {
-                metrics = metrics.toSortedMap(comparator(it))
-                Log.i(LOG_KEY, "Applied metrics sort order=$order")
-            }
-        }
-
 
         metrics.forEach { (k, v) ->
             v.enabled = enabled.contains(k)
@@ -103,9 +94,9 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
             }
         }
     }
-    private fun comparator(it: Map<Long, Int>): java.util.Comparator<Long> = Comparator { m1, m2 ->
-        if (it.containsKey(m1) && it.containsKey(m2)) {
-            it[m1]!!.compareTo(it[m2]!!)
+    private fun comparator(order: Map<Long, Int>): java.util.Comparator<Long> = Comparator { m1, m2 ->
+        if (order.containsKey(m1) && order.containsKey(m2)) {
+            order[m1]!!.compareTo(order[m2]!!)
         } else {
             -1
         }

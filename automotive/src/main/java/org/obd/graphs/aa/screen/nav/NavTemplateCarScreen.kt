@@ -358,8 +358,9 @@ internal class NavTemplateCarScreen(
 
     private fun applyMetricsFilter() {
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            Log.i(LOG_KEY, "User selection: ${settings.getSelectedPIDs()}")
-            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getMetricsSortOrder())
+            Log.i(LOG_KEY, "User selection PIDs=${settings.getSelectedPIDs()}")
+
+            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
 
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
@@ -371,7 +372,7 @@ internal class NavTemplateCarScreen(
 
             Log.i(LOG_KEY,"Query=$query,user selection=$selection, intersection=$intersection")
 
-            metricsCollector.applyFilter(enabled = intersection, order = settings.getMetricsSortOrder())
+            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
         }
     }
 

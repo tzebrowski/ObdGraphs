@@ -164,6 +164,8 @@
 
     <string name="pref.aa.display_status_panel">Display status panel</string>
     <string name="pref.aa.connection_auto">Automatic connection to the OBD2 adapter when enter AA mode</string>
+    <string name="pref.aa.virtual_screens.sort_order.enabled">[Experimental] Define order of PIDs on the screen through drag and drop.\nWhen changed App restart is required.</string>
+
     <string name="pref.aa.title">Android Auto</string>
 
     <string name="pref.aa.alerting_category">Alerting</string>
