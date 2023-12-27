@@ -366,6 +366,7 @@ internal class NavTemplateCarScreen(
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
             dataLogger.updateQuery(query)
         } else {
+            query.setStrategy(QueryStrategyType.SHARED_QUERY)
             val query = query.getPIDs()
             val selection = settings.getSelectedPIDs()
             val intersection =  selection.filter { query.contains(it) }.toSet()
