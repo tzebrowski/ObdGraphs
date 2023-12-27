@@ -49,6 +49,13 @@
                 android:checkable="true"
                 android:title="@string/context_menu.parameters_id_to_display"
                 tools:targetApi="o"/>
+
+            <item
+                android:id="@+id/navigation_android_auto_font_size"
+                android:checkable="true"
+                android:title="@string/pref.aa.virtual_screens.font_size.category"
+                tools:targetApi="o"/>
+
         </menu>
     </item>
 

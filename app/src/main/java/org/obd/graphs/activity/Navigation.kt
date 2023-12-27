@@ -63,6 +63,8 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.ctx_menu_view_profiles -> navigateToPreferencesScreen("pref.profiles")
                 R.id.ctx_menu_dtc -> navigateToPreferencesScreen("pref.dtc")
                 R.id.navigation_android_auto_pids -> navigateToPreferencesScreen("pref.aa.displayed.pids")
+                R.id.navigation_android_auto_font_size -> navigateToPreferencesScreen("pref.aa.screen.font_size.category")
+
                 R.id.navigation_gauge_pids -> navigateToPreferencesScreen(PREF_GAUGE_DISPLAYED_PARAMETERS_IDS)
                 R.id.navigation_graph_pids -> navigateToPreferencesScreen(PREF_GRAPH_DISPLAYED_PARAMETERS_IDS)
                 R.id.navigation_giulia_pids -> navigateToPreferencesScreen(PREF_GIULIA_DISPLAYED_PARAMETERS_IDS)
