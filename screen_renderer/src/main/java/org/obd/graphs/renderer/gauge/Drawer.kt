@@ -87,7 +87,7 @@ internal class Drawer(
         strokeCap = Paint.Cap.BUTT
     }
 
-    fun drawGauge(canvas: Canvas, metric: CarMetric,left: Float, top: Float, width: Float) {
+    fun drawGauge(canvas: Canvas, metric: CarMetric, left: Float, top: Float, width: Float, labelCenterYPadding: Float = 0f) {
         paint.shader = null
 
         val rect = calculateRect(left, width, top)
@@ -152,7 +152,7 @@ internal class Drawer(
             )
         }
 
-        drawMetric(canvas, area = rect, metric = metric, radius = calculateRadius(width))
+        drawMetric(canvas, area = rect, metric = metric, radius = calculateRadius(width),labelCenterYPadding=labelCenterYPadding)
     }
 
     private fun drawProgressBar(
@@ -244,7 +244,8 @@ internal class Drawer(
         canvas: Canvas,
         area: RectF,
         metric: CarMetric,
-        radius: Float
+        radius: Float,
+        labelCenterYPadding:Float = 0f
     ) {
 
         val userScaleRatio = userScaleRatio()
@@ -258,7 +259,7 @@ internal class Drawer(
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-        var centerY = (area.centerY() + 8f - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
+        var centerY = (area.centerY() + labelCenterYPadding - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 

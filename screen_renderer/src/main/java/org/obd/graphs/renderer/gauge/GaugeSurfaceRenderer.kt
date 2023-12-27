@@ -79,7 +79,8 @@ internal class GaugeSurfaceRenderer(
                         left = area.left + area.width() / 6f,
                         top = top,
                         width = area.width() * widthScaleRatio(metrics),
-                        metric = metrics[0]
+                        metric = metrics[0],
+                        labelCenterYPadding = 22f
                     )
                 }
 
@@ -91,6 +92,7 @@ internal class GaugeSurfaceRenderer(
                         top = top + area.height() / 7,
                         width = area.width() / 2 * widthScaleRatio(metrics),
                         metric = metrics[0],
+                        labelCenterYPadding = 22f
                     )
 
                     drawer.drawGauge(
@@ -99,6 +101,7 @@ internal class GaugeSurfaceRenderer(
                         top = top + area.height() / 7,
                         width = area.width() / 2 * widthScaleRatio(metrics),
                         metric = metrics[1],
+                        labelCenterYPadding = 22f
                     )
                 }
                 4 -> {
@@ -108,7 +111,7 @@ internal class GaugeSurfaceRenderer(
                     draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top)
                 }
                 else -> {
-                    draw(canvas, area, metrics, top = top)
+                    draw(canvas, area, metrics, top = top,labelCenterYPadding = 20f)
                 }
             }
         }
@@ -124,6 +127,7 @@ internal class GaugeSurfaceRenderer(
         metrics: List<CarMetric>,
         marginLeft: Float = 5f,
         top: Float,
+        labelCenterYPadding: Float = 0f
     ) {
 
         val maxItems = min(metrics.size, settings.getMaxItems())
@@ -146,7 +150,9 @@ internal class GaugeSurfaceRenderer(
                 left = area.left + left,
                 top = top,
                 width = width,
-                metric = it
+                metric = it,
+                labelCenterYPadding = labelCenterYPadding
+
             )
             left += width - padding
         }
@@ -158,7 +164,8 @@ internal class GaugeSurfaceRenderer(
                     left = area.left + left,
                     top = top + height - 8f,
                     width = width,
-                    metric = it
+                    metric = it,
+                    labelCenterYPadding = labelCenterYPadding
                 )
                 left += width - padding
             }
