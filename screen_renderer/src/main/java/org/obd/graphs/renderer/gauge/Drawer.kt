@@ -250,18 +250,19 @@ internal class Drawer(
         val userScaleRatio = userScaleRatio()
 
         val value = metric.valueToString()
-        valuePaint.textSize = drawerSettings.valueTextSize * scaleRationBasedOnScreenSize(area) * userScaleRatio
+        val scaleRatio = scaleRationBasedOnScreenSize(area) * userScaleRatio
+        valuePaint.textSize = drawerSettings.valueTextSize * scaleRatio
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
         valuePaint.color = COLOR_WHITE
 
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-        var centerY = (area.centerY() - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
+        var centerY = (area.centerY() + 8f - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
-        valuePaint.textSize = (drawerSettings.valueTextSize / 4) * scaleRationBasedOnScreenSize(area) * userScaleRatio
+        valuePaint.textSize = (drawerSettings.valueTextSize / 4) * scaleRatio
         valuePaint.color = color(R.color.gray)
 
         val unitRect = Rect()
@@ -270,7 +271,7 @@ internal class Drawer(
         canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2 + 6, centerY - valueHeight, valuePaint)
         centerY += unitRect.height() / 2
 
-        labelPaint.textSize = drawerSettings.labelTextSize * scaleRationBasedOnScreenSize(area) * userScaleRatio
+        labelPaint.textSize = drawerSettings.labelTextSize * scaleRatio
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
         var labelRect = Rect()
@@ -421,7 +422,7 @@ internal class Drawer(
 
         val numberOfItems = (drawerSettings.dividersCount / drawerSettings.scaleStep)
 
-        val scaleRation = scaleRationBasedOnScreenSize(area)
+        val scaleRation = scaleRationBasedOnScreenSize(area, targetMin = 0.4f, targetMax = 1.9f)
         val stepValue = (endValue - startValue) / numberOfItems
         val baseRadius = radius * NUMERALS_RADIUS_SCALE_FACTOR
 
@@ -454,13 +455,16 @@ internal class Drawer(
         value.toString()
     }
 
-    private fun scaleRationBasedOnScreenSize(area: RectF): Float = valueScaler.scaleToNewRange(
+    private fun scaleRationBasedOnScreenSize(area: RectF):Float =  scaleRationBasedOnScreenSize(area, targetMin = 0.7f, targetMax = 2.3f)
+
+    private fun scaleRationBasedOnScreenSize(area: RectF, targetMin:Float = 0.7f, targetMax: Float = 2.3f): Float = valueScaler.scaleToNewRange(
         area.width() * area.height(),
         0.0f,
         (settings.getHeightPixels() * settings.getWidthPixels()).toFloat(),
-        0.7f,
-        2.3f
+        targetMin,
+        targetMax
     )
+
 
 
     private fun calculateRadius(width: Float): Float {
