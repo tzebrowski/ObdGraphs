@@ -456,17 +456,15 @@ internal class Drawer(
         value.toString()
     }
 
-    private fun scaleRationBasedOnScreenSize(area: RectF):Float =  scaleRationBasedOnScreenSize(area, targetMin = 0.7f, targetMax = 2.3f)
+    private fun scaleRationBasedOnScreenSize(area: RectF):Float  = scaleRationBasedOnScreenSize(area = area, targetMin = 0.7f, targetMax = 2.4f)
 
-    private fun scaleRationBasedOnScreenSize(area: RectF, targetMin:Float = 0.7f, targetMax: Float = 2.3f): Float = valueScaler.scaleToNewRange(
-        area.width() * area.height(),
-        0.0f,
-        (settings.getHeightPixels() * settings.getWidthPixels()).toFloat(),
-        targetMin,
-        targetMax
+    private fun scaleRationBasedOnScreenSize(area: RectF, targetMin:Float = 0.7f, targetMax: Float = 2.4f): Float = valueScaler.scaleToNewRange(
+        currentValue = area.width() * area.height(),
+        currentMin = 8875f,
+        currentMax = (settings.getHeightPixels() * settings.getWidthPixels()) * 0.9f,
+        targetMin = targetMin,
+        targetMax = targetMax
     )
-
-
 
     private fun calculateRadius(width: Float): Float {
         val calculatedWidth = width - 2 * drawerSettings.padding
