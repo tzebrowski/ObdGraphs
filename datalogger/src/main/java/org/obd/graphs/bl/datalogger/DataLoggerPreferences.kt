@@ -61,14 +61,14 @@ data class DataLoggerPreferences(
     var gracefulStop: Boolean,
     var dumpRawConnectorResponse: Boolean,
     var delayAfterReset: Long,
-    )
+)
 
 class DataLoggerPreferencesManager {
 
     private inner class SharedPreferenceChangeListener :
         SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-            if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {
+            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
                 Log.v(LOG_TAG, "Key to update $key")
             }
             instance = loadPreferences()
@@ -80,22 +80,34 @@ class DataLoggerPreferencesManager {
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
-        instance =  loadPreferences()
+        instance = loadPreferences()
     }
 
-    fun reload (){
+    fun reload() {
         instance = loadPreferences()
     }
 
     private fun loadPreferences(): DataLoggerPreferences {
         val connectionType = Prefs.getS(PREFERENCE_CONNECTION_TYPE, "bluetooth")
-        val timeout = Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
+
+        val timeout = try {
+            Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
+        } catch (e: Exception) {
+            2000
+        }
+
         val stnEnabled = Prefs.getBoolean("pref.adapter.stn.enabled", false)
 
         val queryForEachViewStrategyEnabled = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
 
         val tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
-        val tcpPort = Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
+
+        val tcpPort = try {
+            Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
+        } catch (e: Exception) {
+            35000
+        }
+
         val wifiSSID = Prefs.getS("pref.adapter.connection.tcp.ssid", "")
 
         val mode22batchSize = Prefs.getString("pref.adapter.batch.size", null)
@@ -120,8 +132,11 @@ class DataLoggerPreferencesManager {
 
         val initProtocol = Prefs.getS("pref.adapter.init.protocol", "AUTO")
 
-        val maxReconnectNum =
+        val maxReconnectNum = try {
             Prefs.getS("pref.adapter.reconnect.max_retry", "0").toInt()
+        } catch (e: Exception) {
+            0
+        }
 
         val vehicleMetadataReadingEnabled =
             Prefs.getBoolean("pref.adapter.init.fetchDeviceProperties", true)
@@ -171,7 +186,7 @@ class DataLoggerPreferencesManager {
             queryForEachViewStrategyEnabled = queryForEachViewStrategyEnabled
         )
 
-        if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {
+        if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
             Log.v(LOG_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
         }
 
@@ -179,9 +194,8 @@ class DataLoggerPreferencesManager {
     }
 
 
-
     private fun resources(): MutableSet<String> =
         Prefs.getStringSet("pref.pids.registry.list", pidResources.getDefaultPidFiles().keys)!!
 }
 
-val dataLoggerPreferences  by lazy {  DataLoggerPreferencesManager() }
+val dataLoggerPreferences by lazy { DataLoggerPreferencesManager() }
