@@ -15,7 +15,6 @@
                     android:defaultValue="false"
                     android:title="@string/pref.adapter.query.view_individual.enabled"
                     android:key="pref.adapter.query.individual.enabled"
-                    android:summary="@string/pref.adapter.query.view_individual.enabled_summary"
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.pid.PIDsListPreferences
@@ -942,7 +941,6 @@
                 <PreferenceCategory
                     android:title="@string/pref.aa.general_category"
                     app:singleLineTitle="false">
-
 
                     <CheckBoxPreference
                         android:defaultValue="false"

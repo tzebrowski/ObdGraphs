@@ -19,10 +19,14 @@
 package org.obd.graphs.preferences.pid
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.R
 import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.colorize
 
 class IndividualQueryStrategyCheckBoxPreference(
     context: Context,
@@ -35,4 +39,9 @@ class IndividualQueryStrategyCheckBoxPreference(
             true
         }
     }
+
+    override fun getSummary(): CharSequence =
+        context.getString(R.string.pref_adapter_query_view_individual_enabled_summary)
+            .colorize(COLOR_CARDINAL, Typeface.NORMAL,0,33, 1.0f)
+
 }

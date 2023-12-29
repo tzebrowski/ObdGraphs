@@ -22,6 +22,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.DialogPreference
+import org.obd.graphs.R
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
@@ -33,15 +34,16 @@ open class PIDsListPreferences(
 
     val source = getAttribute("source")
 
-    override fun isEnabled(): Boolean  =
+    override fun isEnabled(): Boolean =
         !(Prefs.getBoolean("pref.adapter.query.individual.enabled", false) && (source == "high" || source == "low"))
 
 
-    override fun getSummary(): CharSequence? = if (isEnabled){
-            super.getSummary()
-        } else {
-             "Dialog is disabled because individual query strategy is enabled".colorize(COLOR_CARDINAL, Typeface.NORMAL, 1.0f)
-        }
+    override fun getSummary(): CharSequence? = if (isEnabled) {
+        super.getSummary()
+    } else {
+        context.getString(R.string.pref_adapter_query_view_individual_dialog_disabled_warning)
+            .colorize(COLOR_CARDINAL, Typeface.NORMAL, 1.0f)
+    }
 
     private fun getAttribute(attrName: String): String = if (attrs == null) {
         ""
