@@ -5,9 +5,9 @@
 
 
     <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
-    <string name="pref.experimental_switch_network_enabled">This feature is in the EXPERIMENTAL phase.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
-    <string name="pref.experimental_result_cache_enabled">This feature is in the EXPERIMENTAL phase.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
-    <string name="pref.experimental_read_external_storage_enabled">This feature is in the EXPERIMENTAL phase.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
+    <string name="pref.experimental_switch_network_enabled">This is an EXPERIMENTAL feature.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
+    <string name="pref.experimental_result_cache_enabled">This is an EXPERIMENTAL feature.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
+    <string name="pref.experimental_read_external_storage_enabled">This is an EXPERIMENTAL feature.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
 
     <string name="permissions.missing.bt_msg">In order to connect to the Adapter, Bluetooth permissions must be granted.</string>
 
@@ -165,7 +165,7 @@
 
     <string name="pref.aa.display_status_panel">Display status panel</string>
     <string name="pref.aa.connection_auto">Automatic connection to the OBD2 adapter when enter AA mode</string>
-    <string name="pref.aa.virtual_screens.sort_order.enabled">This is an EXPERIMENTAL feature. Define order of PIDs on the screen through drag and drop.\nWhen selected App restart is required.</string>
+    <string name="pref.aa.virtual_screens.sort_order.enabled">This is an EXPERIMENTAL feature.\nDefine order of PIDs on the screen through drag and drop.\nWhen selected App restart is required.</string>
 
     <string name="pref.aa.title">Android Auto</string>
 

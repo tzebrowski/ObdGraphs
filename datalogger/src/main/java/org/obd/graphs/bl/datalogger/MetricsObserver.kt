@@ -20,7 +20,7 @@ package org.obd.graphs.bl.datalogger
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import org.obd.graphs.bl.drag.dragRacingResultsUpdater
+import org.obd.graphs.bl.drag.DragRacingResultsUpdater
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.metrics.api.model.*
 
@@ -29,6 +29,7 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     private val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
     private val dynamicSelectorModeEventsBroadcaster = DynamicSelectorModeEventBroadcaster()
+    private val dragRacingResultsUpdater = DragRacingResultsUpdater()
 
     override fun onStopped() {
         metrics.postValue(null)

@@ -34,12 +34,13 @@ private const val SPEED_200_KM_H = 200
 
 private const val LOG_KEY = "DragRaceResult"
 
-val dragRacingResultsUpdater: MetricsProcessor = DragRacingResultsUpdater()
+const val VEHICLE_SPEED_PID_ID = 14L
+const val ENGINE_RPM_PID_ID = 13L
 
-fun ObdMetric.isVehicleSpeedPID(): Boolean =  command.pid.id == dragRacingResultRegistry.getVehicleSpeedPID()
-fun ObdMetric.isEngineRpmPID(): Boolean =  command.pid.id == dragRacingResultRegistry.getEngineRpmPID()
+fun ObdMetric.isVehicleSpeed(): Boolean =  command.pid.id == VEHICLE_SPEED_PID_ID
+fun ObdMetric.isEngineRpm(): Boolean =  command.pid.id == ENGINE_RPM_PID_ID
 
-internal class DragRacingResultsUpdater : MetricsProcessor {
+class DragRacingResultsUpdater : MetricsProcessor {
 
     private var _0_ts: Long? = null
     private var _100_ts: Long? = null
@@ -61,7 +62,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
 
-        if (obdMetric.isEngineRpmPID()){
+        if (obdMetric.isEngineRpm()){
             if (Log.isLoggable(LOG_KEY,Log.VERBOSE)) {
                 Log.v(
                     LOG_KEY, "Current revLimit='${dragRacingResultRegistry.getShiftLightsRevThreshold()}', " +
@@ -70,7 +71,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
             }
             dragRacingResultRegistry.enableShiftLights(obdMetric.value.toInt() > dragRacingResultRegistry.getShiftLightsRevThreshold())
         } else {
-            if (obdMetric.isVehicleSpeedPID()) {
+            if (obdMetric.isVehicleSpeed()) {
                 if (obdMetric.value.toInt() == SPEED_0_KM_H) {
                     reset()
 
@@ -85,7 +86,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
                     dragRacingResultRegistry.readyToRace(false)
                 }
 
-                if (isGivenSpeed(obdMetric, SPEED_60_KM_H)) {
+                if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H)) {
                     if (result0_60 == null) {
                         _60_ts = obdMetric.timestamp
 
@@ -98,7 +99,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
                 }
 
 
-                if (isGivenSpeed(obdMetric, SPEED_100_KM_H)) {
+                if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H)) {
                     if (result0_100 == null) {
                         _100_ts = obdMetric.timestamp
                         _0_ts?.let { _0_ts ->
@@ -112,7 +113,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
                     }
                 }
 
-                if (result0_160 == null && isGivenSpeed(obdMetric, SPEED_160_KM_H)) {
+                if (result0_160 == null && isGivenSpeedReached(obdMetric, SPEED_160_KM_H)) {
                     _0_ts?.let { _0_ts ->
                         result0_160 = obdMetric.timestamp - _0_ts
                         dragRacingResultRegistry.update0160(result0_160!!, obdMetric.value.toInt())
@@ -120,7 +121,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
                     }
                 }
 
-                if (result100_200 == null && _100_ts != null && isGivenSpeed(obdMetric, SPEED_200_KM_H)) {
+                if (result100_200 == null && _100_ts != null && isGivenSpeedReached(obdMetric, SPEED_200_KM_H)) {
                     _100_ts?.let { _100_ts ->
                         result100_200 = obdMetric.timestamp - _100_ts
                         dragRacingResultRegistry.update100200(result100_200!!, obdMetric.value.toInt())
@@ -128,7 +129,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
                     }
                 }
 
-                if (result60_140 == null && _60_ts != null && isGivenSpeed(obdMetric, SPEED_140_KM_H)) {
+                if (result60_140 == null && _60_ts != null && isGivenSpeedReached(obdMetric, SPEED_140_KM_H)) {
                     _60_ts?.let { _60_ts ->
                         result60_140 = obdMetric.timestamp - _60_ts
                         dragRacingResultRegistry.update60140(result60_140!!, obdMetric.value.toInt())
@@ -140,7 +141,7 @@ internal class DragRacingResultsUpdater : MetricsProcessor {
         }
     }
 
-    private fun isGivenSpeed(obdMetric: ObdMetric, givenSpeed: Int): Boolean = min(obdMetric.value.toInt(), givenSpeed) == givenSpeed
+    private fun isGivenSpeedReached(obdMetric: ObdMetric, givenSpeed: Int): Boolean = min(obdMetric.value.toInt(), givenSpeed) == givenSpeed
 
     private fun reset() {
         _0_ts = null
