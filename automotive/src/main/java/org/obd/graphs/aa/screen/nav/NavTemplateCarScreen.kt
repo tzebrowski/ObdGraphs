@@ -386,6 +386,8 @@ internal class NavTemplateCarScreen(
             metricsCollector.append(it)
         }
 
+        dataLogger.observe(DynamicSelectorModeEventBroadcaster())
+
         submitRenderingTask()
 
         navigationManager().setNavigationManagerCallback(

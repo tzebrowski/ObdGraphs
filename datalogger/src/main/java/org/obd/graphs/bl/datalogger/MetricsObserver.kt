@@ -28,17 +28,14 @@ import org.obd.metrics.api.model.*
 internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     private val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
-    private val dynamicSelectorModeEventsBroadcaster = DynamicSelectorModeEventBroadcaster()
     private val metricsProcessors = mutableSetOf<MetricsProcessor>()
 
     override fun onStopped() {
         metrics.postValue(null)
-        dynamicSelectorModeEventsBroadcaster.onStopped()
         metricsProcessors.forEach { it.onStopped() }
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
-        dynamicSelectorModeEventsBroadcaster.onRunning(vehicleCapabilities)
         metricsProcessors.forEach { it.onRunning(vehicleCapabilities) }
     }
 
@@ -59,8 +56,6 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
             reply.command.pid?.let {
                 metrics.postValue(reply)
                 tripManager.postValue(reply)
-
-                dynamicSelectorModeEventsBroadcaster.postValue(reply)
                 metricsProcessors.forEach { it.postValue(reply) }
             }
         }
