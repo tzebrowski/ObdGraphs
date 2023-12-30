@@ -33,7 +33,7 @@ interface DataLogger {
     val eventsReceiver: BroadcastReceiver
     fun status(): WorkflowStatus
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)
-    fun observe(metricsProcessor: MetricsProcessor)
+    fun observe(metricsProcessor: MetricsProcessor): DataLogger
     fun isRunning(): Boolean
     fun getDiagnostics(): Diagnostics
     fun findHistogramFor(metric: ObdMetric): Histogram

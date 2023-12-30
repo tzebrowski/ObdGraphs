@@ -21,7 +21,6 @@ package org.obd.graphs.query
 import org.obd.graphs.preferences.Prefs
 
 const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
-const val DYNAMIC_SELECTOR_PID_ID = 7036L
 
 
 internal class IndividualQueryStrategy : QueryStrategy() {

@@ -39,6 +39,7 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.DragRacingMetricsProcessor
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.*
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -128,8 +129,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupLeftNavigationPanel()
         supportActionBar?.hide()
 
-        dataLogger.observe(DragRacingMetricsProcessor(dragRacingResultRegistry))
+        setupMetricsProcessors()
     }
+
+
     override fun onResume() {
         super.onResume()
         screen.setupWindowManager(this)
@@ -214,5 +217,12 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         Prefs.registerOnSharedPreferenceChangeListener(profile)
         profile.setupProfiles(forceOverrideRecommendation = false)
+    }
+
+
+    private fun setupMetricsProcessors() {
+        dataLogger
+            .observe(DragRacingMetricsProcessor(dragRacingResultRegistry))
+            .observe(tripManager)
     }
 }

@@ -112,8 +112,9 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
         workflowOrchestrator.observe(lifecycleOwner, observer)
     }
 
-    override fun observe(metricsProcessor: MetricsProcessor) {
+    override fun observe(metricsProcessor: MetricsProcessor) : DataLogger {
         workflowOrchestrator.observe(metricsProcessor)
+        return this
     }
 
     override fun isRunning(): Boolean = workflowOrchestrator.isRunning()

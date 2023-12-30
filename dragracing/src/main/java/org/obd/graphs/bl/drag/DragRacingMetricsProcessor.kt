@@ -20,6 +20,8 @@ package org.obd.graphs.bl.drag
 
 import android.util.Log
 import org.obd.graphs.MetricsProcessor
+import org.obd.graphs.query.isAmbientTemp
+import org.obd.graphs.query.isAtmPressure
 import org.obd.graphs.query.isEngineRpm
 import org.obd.graphs.query.isVehicleSpeed
 import org.obd.metrics.api.model.ObdMetric
@@ -38,14 +40,16 @@ private const val LOG_KEY = "DragRaceResult"
 
 class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry) : MetricsProcessor {
 
-    private var _0_ts: Long? = null
-    private var _100_ts: Long? = null
-    private var _60_ts: Long? = null
+    private var _0ts: Long? = null
+    private var _100ts: Long? = null
+    private var _60ts: Long? = null
     private var result0_60: Long? = null
     private var result0_100: Long? = null
     private var result60_140: Long? = null
     private var result0_160: Long? = null
     private var result100_200: Long? = null
+    private var ambientTemp: Int?  = null
+    private var atmPressure: Int?  = null
 
     override fun onStopped() {
         registry.readyToRace(false)
@@ -65,6 +69,11 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
                 )
             }
             registry.enableShiftLights(obdMetric.value.toInt() > registry.getShiftLightsRevThreshold())
+        } else if (obdMetric.isAtmPressure()) {
+            atmPressure = obdMetric.value.toInt()
+        } else if (obdMetric.isAmbientTemp()) {
+            ambientTemp = obdMetric.value.toInt()
+
         } else if (obdMetric.isVehicleSpeed()) {
             if (obdMetric.value.toInt() == SPEED_0_KM_H) {
                 reset()
@@ -74,7 +83,7 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
                 }
 
                 registry.readyToRace(true)
-                _0_ts = obdMetric.timestamp
+                _0ts = obdMetric.timestamp
 
             } else {
                 registry.readyToRace(false)
@@ -82,11 +91,12 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
 
             if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H)) {
                 if (result0_60 == null) {
-                    _60_ts = obdMetric.timestamp
+                    _60ts = obdMetric.timestamp
 
-                    _0_ts?.let { _0_ts ->
+                    _0ts?.let { _0_ts ->
                         result0_60 = obdMetric.timestamp - _0_ts
-                        registry.update060(result0_60!!, obdMetric.value.toInt())
+                        registry.update060(DragRacingMetric(time = result0_60!!,speed = obdMetric.value.toInt(),
+                            ambientTemp = ambientTemp, atmPressure = atmPressure))
                         Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
                     }
                 }
@@ -95,10 +105,11 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
 
             if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H)) {
                 if (result0_100 == null) {
-                    _100_ts = obdMetric.timestamp
-                    _0_ts?.let { _0_ts ->
+                    _100ts = obdMetric.timestamp
+                    _0ts?.let { _0_ts ->
                         result0_100 = obdMetric.timestamp - _0_ts
-                        registry.update0100(result0_100!!, obdMetric.value.toInt())
+                        registry.update0100(DragRacingMetric(time = result0_100!!,speed = obdMetric.value.toInt(),
+                            ambientTemp = ambientTemp, atmPressure = atmPressure))
 
                         if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
                             Log.v(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
@@ -108,25 +119,28 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
             }
 
             if (result0_160 == null && isGivenSpeedReached(obdMetric, SPEED_160_KM_H)) {
-                _0_ts?.let { _0_ts ->
+                _0ts?.let { _0_ts ->
                     result0_160 = obdMetric.timestamp - _0_ts
-                    registry.update0160(result0_160!!, obdMetric.value.toInt())
+                    registry.update0160(DragRacingMetric(time = result0_160!!,speed =  obdMetric.value.toInt(),
+                        ambientTemp = ambientTemp, atmPressure = atmPressure))
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
                 }
             }
 
-            if (result100_200 == null && _100_ts != null && isGivenSpeedReached(obdMetric, SPEED_200_KM_H)) {
-                _100_ts?.let { _100_ts ->
+            if (result100_200 == null && _100ts != null && isGivenSpeedReached(obdMetric, SPEED_200_KM_H)) {
+                _100ts?.let { _100_ts ->
                     result100_200 = obdMetric.timestamp - _100_ts
-                    registry.update100200(result100_200!!, obdMetric.value.toInt())
+                    registry.update100200(DragRacingMetric(time = result100_200!!,speed =  obdMetric.value.toInt(),
+                        ambientTemp = ambientTemp, atmPressure = atmPressure))
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
                 }
             }
 
-            if (result60_140 == null && _60_ts != null && isGivenSpeedReached(obdMetric, SPEED_140_KM_H)) {
-                _60_ts?.let { _60_ts ->
+            if (result60_140 == null && _60ts != null && isGivenSpeedReached(obdMetric, SPEED_140_KM_H)) {
+                _60ts?.let { _60_ts ->
                     result60_140 = obdMetric.timestamp - _60_ts
-                    registry.update60140(result60_140!!, obdMetric.value.toInt())
+                    registry.update60140(DragRacingMetric(time = result60_140!!,speed =  obdMetric.value.toInt(),
+                        ambientTemp = ambientTemp, atmPressure = atmPressure))
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 60-140 ${result60_140}ms")
                 }
             }
@@ -136,9 +150,9 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
     private fun isGivenSpeedReached(obdMetric: ObdMetric, givenSpeed: Int): Boolean = min(obdMetric.value.toInt(), givenSpeed) == givenSpeed
 
     private fun reset() {
-        _0_ts = null
-        _100_ts = null
-        _60_ts = null
+        _0ts = null
+        _100ts = null
+        _60ts = null
         result0_60 = null
         result0_100 = null
         result0_160 = null

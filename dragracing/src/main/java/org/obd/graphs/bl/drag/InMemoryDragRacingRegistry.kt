@@ -86,7 +86,18 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         results.enableShiftLights  = value
     }
 
-    override fun update60140(time: Long, speed: Int) {
+    override fun update60140(result: DragRacingMetric) {
+        val time = result.time
+        val speed = result.speed
+
+        result.ambientTemp?.let {
+            results._60_140.ambientTemp = it
+        }
+
+        result.atmPressure?.let {
+            results._60_140.atmPressure = it
+        }
+
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
@@ -108,7 +119,18 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         }
     }
 
-    override fun update0100(time: Long, speed: Int) {
+    override fun update0100(result: DragRacingMetric) {
+        val time = result.time
+        val speed = result.speed
+
+        result.ambientTemp?.let {
+            results._0_100.ambientTemp = it
+        }
+
+        result.atmPressure?.let {
+            results._0_100.atmPressure = it
+        }
+
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
@@ -130,7 +152,18 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         }
     }
 
-    override fun update060(time: Long, speed: Int) {
+    override fun update060(result: DragRacingMetric) {
+        val time = result.time
+        val speed = result.speed
+
+        result.ambientTemp?.let {
+            results._0_60.ambientTemp = it
+        }
+
+        result.atmPressure?.let {
+            results._0_60.atmPressure = it
+        }
+
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
@@ -152,7 +185,18 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         }
     }
 
-    override fun update0160(time: Long, speed: Int) {
+    override fun update0160(result: DragRacingMetric) {
+        val time = result.time
+        val speed = result.speed
+
+        result.ambientTemp?.let {
+            results._0_160.ambientTemp = it
+        }
+
+        result.atmPressure?.let {
+            results._0_160.atmPressure = it
+        }
+
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
@@ -174,7 +218,18 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         }
     }
 
-    override fun update100200(time: Long, speed: Int) {
+    override fun update100200(result: DragRacingMetric) {
+        val time = result.time
+        val speed = result.speed
+
+        result.ambientTemp?.let {
+            results._100_200.ambientTemp = it
+        }
+
+        result.atmPressure?.let {
+            results._100_200.atmPressure = it
+        }
+
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {

@@ -21,13 +21,15 @@ package org.obd.graphs.bl.drag
 
 val dragRacingResultRegistry: DragRacingResultRegistry by lazy { InMemoryDragRacingRegistry() }
 
+
+
 interface DragRacingResultRegistry {
     fun getResult(): DragRacingResults
-    fun update0100(time: Long, speed: Int)
-    fun update0160(time: Long, speed: Int)
-    fun update060(time: Long, speed: Int)
-    fun update100200(time: Long, speed: Int)
-    fun update60140(time: Long, speed: Int)
+    fun update0100(result: DragRacingMetric)
+    fun update0160(result: DragRacingMetric)
+    fun update060(result: DragRacingMetric)
+    fun update100200(result: DragRacingMetric)
+    fun update60140(result: DragRacingMetric)
     fun readyToRace(value: Boolean)
     fun enableShiftLights(value: Boolean)
 

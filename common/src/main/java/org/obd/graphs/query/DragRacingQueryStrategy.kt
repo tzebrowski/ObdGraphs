@@ -18,13 +18,12 @@
  **/
 package org.obd.graphs.query
 
-import org.obd.metrics.api.model.ObdMetric
 
-private const val VEHICLE_SPEED_PID_ID = 14L
-private const val ENGINE_RPM_PID_ID = 13L
-
-fun ObdMetric.isVehicleSpeed(): Boolean =  command.pid.id == VEHICLE_SPEED_PID_ID
-fun ObdMetric.isEngineRpm(): Boolean =  command.pid.id == ENGINE_RPM_PID_ID
-
-internal class DragRacingQueryStrategy : QueryStrategy(mutableSetOf(VEHICLE_SPEED_PID_ID, ENGINE_RPM_PID_ID))
+internal class DragRacingQueryStrategy : QueryStrategy(mutableSetOf(
+    VEHICLE_SPEED_PID_ID,
+    ENGINE_RPM_PID_ID,
+    MEASURED_INTAKE_PRESSURE_PID_ID,
+    ATM_PRESSURE_PID_ID,
+    AMBIENT_TEMP_PID_ID,
+))
 

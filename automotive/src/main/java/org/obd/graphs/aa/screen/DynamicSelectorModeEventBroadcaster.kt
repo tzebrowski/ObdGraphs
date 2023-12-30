@@ -7,6 +7,7 @@ import org.obd.graphs.MetricsProcessor
 import org.obd.graphs.datalogger.BuildConfig
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.query.DYNAMIC_SELECTOR_PID_ID
+import org.obd.graphs.query.isDynamicSelector
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
@@ -72,7 +73,7 @@ internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
     }
 
     override fun postValue(obdMetric: ObdMetric) {
-        if (isDynamicSelectorPID(obdMetric)) {
+        if (obdMetric.isDynamicSelector()) {
 
             if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
                 Log.v(LOG_KEY, "Received=${obdMetric.value.toInt()}, current=${currentMode} ")
@@ -97,6 +98,4 @@ internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
 
     private fun isBroadcastingFakeMetricsEnabled(): Boolean = BuildConfig.DEBUG &&
         Prefs.getBoolean("pref.debug.generator.broadcast_fake_metrics", false)
-
-    private fun isDynamicSelectorPID(obdMetric: ObdMetric): Boolean =  obdMetric.command.pid.id == DYNAMIC_SELECTOR_PID_ID
 }
