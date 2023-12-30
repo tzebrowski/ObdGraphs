@@ -98,7 +98,7 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
         if (order.containsKey(m1) && order.containsKey(m2)) {
             order[m1]!!.compareTo(order[m2]!!)
         } else {
-            -1
+            m1.compareTo(m2)
         }
     }
 }
