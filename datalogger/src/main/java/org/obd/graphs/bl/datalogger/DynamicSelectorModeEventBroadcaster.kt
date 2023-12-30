@@ -24,6 +24,7 @@ import android.util.Log
 import org.obd.graphs.MetricsProcessor
 import org.obd.graphs.datalogger.BuildConfig
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.query.DYNAMIC_SELECTOR_PID_ID
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities

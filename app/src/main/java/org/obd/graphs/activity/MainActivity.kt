@@ -36,6 +36,9 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
+import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.drag.DragRacingMetricsProcessor
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.preferences.*
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -124,6 +127,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupLockScreenDialog()
         setupLeftNavigationPanel()
         supportActionBar?.hide()
+
+        dataLogger.observe(DragRacingMetricsProcessor(dragRacingResultRegistry))
     }
     override fun onResume() {
         super.onResume()

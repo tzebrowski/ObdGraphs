@@ -16,24 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.query
+package org.obd.graphs.query
 
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getStringSet
 
-private const val PREFERENCE_PID_FAST = "pref.pids.generic.high"
-private const val PREFERENCE_PID_SLOW = "pref.pids.generic.low"
+const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
+const val DYNAMIC_SELECTOR_PID_ID = 7036L
 
-internal class SharedQueryStrategy : QueryStrategy() {
 
-    override fun getPIDs(): MutableSet<Long> = (fastPIDs() + slowPIDs()).toMutableSet()
+internal class IndividualQueryStrategy : QueryStrategy() {
 
-    private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
-    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
-        try {
-            it.toLong()
-        } catch (e: Exception) {
-            null
+    override fun getPIDs(): MutableSet<Long> {
+        val pids = super.getPIDs()
+
+        if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
+            pids.add(DYNAMIC_SELECTOR_PID_ID)
         }
+
+        return pids
     }
 }

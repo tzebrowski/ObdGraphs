@@ -20,7 +20,7 @@ package org.obd.graphs.bl.datalogger
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import org.obd.graphs.bl.drag.DragRacingResultsUpdater
+import org.obd.graphs.MetricsProcessor
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.metrics.api.model.*
 
@@ -29,17 +29,21 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     private val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
     private val dynamicSelectorModeEventsBroadcaster = DynamicSelectorModeEventBroadcaster()
-    private val dragRacingResultsUpdater = DragRacingResultsUpdater()
+    private val metricsProcessors = mutableSetOf<MetricsProcessor>()
 
     override fun onStopped() {
         metrics.postValue(null)
         dynamicSelectorModeEventsBroadcaster.onStopped()
-        dragRacingResultsUpdater.onStopped()
+        metricsProcessors.forEach { it.onStopped() }
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
         dynamicSelectorModeEventsBroadcaster.onRunning(vehicleCapabilities)
-        dragRacingResultsUpdater.onRunning(vehicleCapabilities)
+        metricsProcessors.forEach { it.onRunning(vehicleCapabilities) }
+    }
+
+    fun observe(metricsProcessor: MetricsProcessor) {
+        metricsProcessors.add(metricsProcessor)
     }
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
@@ -57,7 +61,7 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
                 tripManager.postValue(reply)
 
                 dynamicSelectorModeEventsBroadcaster.postValue(reply)
-                dragRacingResultsUpdater.postValue(reply)
+                metricsProcessors.forEach { it.postValue(reply) }
             }
         }
     }

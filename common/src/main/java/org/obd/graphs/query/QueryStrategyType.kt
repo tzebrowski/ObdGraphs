@@ -16,21 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.query
-
-import org.obd.graphs.bl.datalogger.DYNAMIC_SELECTOR_PID_ID
-import org.obd.graphs.bl.datalogger.PREF_DYNAMIC_SELECTOR_ENABLED
-import org.obd.graphs.preferences.Prefs
-
-internal class IndividualQueryStrategy : QueryStrategy() {
-
-    override fun getPIDs(): MutableSet<Long> {
-        val pids = super.getPIDs()
-
-        if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
-            pids.add(DYNAMIC_SELECTOR_PID_ID)
-        }
-
-        return pids
-    }
+package org.obd.graphs.query
+enum class QueryStrategyType {
+    DRAG_RACING_QUERY,
+    SHARED_QUERY,
+    INDIVIDUAL_QUERY_FOR_EACH_VIEW
 }

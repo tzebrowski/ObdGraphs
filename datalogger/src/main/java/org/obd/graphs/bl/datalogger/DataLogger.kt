@@ -20,7 +20,8 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.BroadcastReceiver
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.bl.query.Query
+import org.obd.graphs.MetricsProcessor
+import org.obd.graphs.query.Query
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
@@ -32,6 +33,7 @@ interface DataLogger {
     val eventsReceiver: BroadcastReceiver
     fun status(): WorkflowStatus
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit)
+    fun observe(metricsProcessor: MetricsProcessor)
     fun isRunning(): Boolean
     fun getDiagnostics(): Diagnostics
     fun findHistogramFor(metric: ObdMetric): Histogram

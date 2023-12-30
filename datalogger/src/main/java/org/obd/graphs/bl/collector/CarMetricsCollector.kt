@@ -24,8 +24,6 @@ interface CarMetricsCollector {
 
     fun getMetrics(enabled: Boolean = true): List<CarMetric>
 
-    fun findById(id: Long): CarMetric?
-
     fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
 
     fun append(input: ObdMetric?)

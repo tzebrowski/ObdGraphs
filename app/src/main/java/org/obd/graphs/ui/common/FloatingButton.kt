@@ -24,7 +24,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.Query
+import org.obd.graphs.query.Query
 
 private const val LOG_TAG = "FloatingButton"
 

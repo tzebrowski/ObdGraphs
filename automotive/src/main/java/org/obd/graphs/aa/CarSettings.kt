@@ -21,8 +21,8 @@ package org.obd.graphs.aa
 import android.graphics.Color
 import androidx.car.app.CarContext
 import org.obd.graphs.ViewPreferencesSerializer
-import org.obd.graphs.bl.datalogger.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.preferences.*
+import org.obd.graphs.query.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.renderer.*
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL

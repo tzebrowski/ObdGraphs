@@ -40,7 +40,6 @@ android {
 dependencies {
     implementation project(":common")
     implementation project(':profile')
-    implementation project(":dragracing")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'org.slf4j:slf4j-api:1.7.25'

@@ -23,7 +23,8 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.bl.query.Query
+import org.obd.graphs.MetricsProcessor
+import org.obd.graphs.query.Query
 import org.obd.graphs.getContext
 import org.obd.graphs.runAsync
 import org.obd.metrics.api.model.ObdMetric
@@ -109,6 +110,10 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
         workflowOrchestrator.observe(lifecycleOwner, observer)
+    }
+
+    override fun observe(metricsProcessor: MetricsProcessor) {
+        workflowOrchestrator.observe(metricsProcessor)
     }
 
     override fun isRunning(): Boolean = workflowOrchestrator.isRunning()

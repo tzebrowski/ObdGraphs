@@ -29,12 +29,11 @@ import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.bl.query.Query
+import org.obd.graphs.query.Query
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.query.QueryStrategyType
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.drag.VEHICLE_SPEED_PID_ID
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -124,7 +123,7 @@ open class DragRacingFragment : Fragment() {
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(
-            enabled = setOf(VEHICLE_SPEED_PID_ID)
+            enabled = query.getPIDs()
         )
 
         dataLogger.observe(viewLifecycleOwner) {
@@ -142,5 +141,4 @@ open class DragRacingFragment : Fragment() {
 
         return root
     }
-
 }

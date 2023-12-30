@@ -23,7 +23,7 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.bl.query.Query
+import org.obd.graphs.query.Query
 import kotlin.math.max
 import kotlin.math.min
 

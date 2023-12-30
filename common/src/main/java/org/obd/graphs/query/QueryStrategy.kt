@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.query
+package org.obd.graphs.query
 internal open class QueryStrategy(protected val pids: MutableSet<Long> = mutableSetOf()) : java.io.Serializable {
     open fun update(newPIDs: Set<Long>) {
         pids.clear()

@@ -16,9 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.query
-enum class QueryStrategyType {
-    DRAG_RACING_QUERY,
-    SHARED_QUERY,
-    INDIVIDUAL_QUERY_FOR_EACH_VIEW
-}
+package org.obd.graphs.query
+
+import org.obd.metrics.api.model.ObdMetric
+
+private const val VEHICLE_SPEED_PID_ID = 14L
+private const val ENGINE_RPM_PID_ID = 13L
+
+fun ObdMetric.isVehicleSpeed(): Boolean =  command.pid.id == VEHICLE_SPEED_PID_ID
+fun ObdMetric.isEngineRpm(): Boolean =  command.pid.id == ENGINE_RPM_PID_ID
+
+internal class DragRacingQueryStrategy : QueryStrategy(mutableSetOf(VEHICLE_SPEED_PID_ID, ENGINE_RPM_PID_ID))
+

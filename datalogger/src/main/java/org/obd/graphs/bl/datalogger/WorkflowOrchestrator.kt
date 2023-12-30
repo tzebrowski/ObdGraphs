@@ -27,8 +27,8 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.query.Query
+import org.obd.graphs.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
@@ -108,6 +108,10 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
+
+    fun observe(metricsProcessor: MetricsProcessor) {
+        metricsObserver.observe(metricsProcessor)
+    }
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) =
         metricsObserver.observe(lifecycleOwner) {

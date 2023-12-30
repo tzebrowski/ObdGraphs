@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.query
+package org.obd.graphs.query
 
 import org.obd.graphs.runAsync
 
