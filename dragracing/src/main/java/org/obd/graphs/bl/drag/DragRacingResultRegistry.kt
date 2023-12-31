@@ -21,8 +21,6 @@ package org.obd.graphs.bl.drag
 
 val dragRacingResultRegistry: DragRacingResultRegistry by lazy { InMemoryDragRacingRegistry() }
 
-
-
 interface DragRacingResultRegistry {
     fun getResult(): DragRacingResults
     fun update0100(result: DragRacingMetric)

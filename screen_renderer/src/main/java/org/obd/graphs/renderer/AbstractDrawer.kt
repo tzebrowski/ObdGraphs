@@ -232,6 +232,12 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         return bounds.left + bounds.width()
     }
 
+    protected fun getTextHeight(text: String, paint: Paint): Int {
+        val bounds = Rect()
+        paint.getTextBounds(text, 0, text.length, bounds)
+        return bounds.height()
+    }
+
     fun getMarginLeft(left: Float): Float = 12 + left
 
     private fun getStatusBarTopMargin(top: Float): Float = top - paint.fontMetrics.ascent

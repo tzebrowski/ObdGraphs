@@ -23,11 +23,28 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
 
 private const val LOG_KEY = "DragRaceRegistry"
+
 private const val PERF_0_60_BEST = "pref.drag_race.best.0_60"
+private const val PERF_0_60_BEST_ATM_PRESSURE = "pref.drag_race.best.0_60.atm_pressure"
+private const val PERF_0_60_BEST_AMBIENT_TEMP = "pref.drag_race.best.0_60.ambient_temp"
+
 private const val PERF_0_100_BEST = "pref.drag_race.best.0_100"
+private const val PERF_0_100_BEST_ATM_PRESSURE = "pref.drag_race.best.0_100.atm_pressure"
+private const val PERF_0_100_BEST_AMBIENT_TEMP = "pref.drag_race.best.0_100.ambient_temp"
+
 private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
+private const val PERF_0_160_BEST_ATM_PRESSURE = "pref.drag_race.best.0_160.atm_pressure"
+private const val PERF_0_160_BEST_AMBIENT_TEMP = "pref.drag_race.best.0_160.ambient_temp"
+
 private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
+private const val PERF_100_200_BEST_ATM_PRESSURE = "pref.drag_race.best.100_200.atm_pressure"
+private const val PERF_100_200_BEST_AMBIENT_TEMP = "pref.drag_race.best.100_200.ambient_temp"
+
 private const val PERF_60_140_BEST = "pref.drag_race.best.60_140"
+private const val PERF_60_140_BEST_ATM_PRESSURE = "pref.drag_race.best.60_140.atm_pressure"
+private const val PERF_60_140_BEST_AMBIENT_TEMP = "pref.drag_race.best.60_140.ambient_temp"
+
+
 private const val PERF_0_60_LAST = "pref.drag_race.last.0_60"
 private const val PERF_0_100_LAST = "pref.drag_race.last.0_100"
 private const val PERF_0_160_LAST = "pref.drag_race.last.0_160"
@@ -40,21 +57,40 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
     private val results = DragRacingResults()
 
+    val readPreferencesSection = { entry: DragRacingEntry, time: String, ambientTemp: String, atmPressure: String ->
+        Prefs.getString(time, null)?.let {
+            entry.best = it.toLong()
+        }
+
+        Prefs.getString(ambientTemp, null)?.let {
+            entry.bestAmbientTemp = it.toInt()
+        }
+
+        Prefs.getString(atmPressure, null)?.let {
+            entry.bestAtmPressure = it.toInt()
+        }
+    }
+
+    val updatePreferencesSection = { entry: DragRacingMetric, time: String, ambientTemp: String, atmPressure: String ->
+        Prefs.updateString(time, entry.time.toString())
+
+        entry.ambientTemp?.let {
+            Prefs.updateString(ambientTemp, it.toString())
+        }
+
+        entry.atmPressure?.let {
+            Prefs.updateString(atmPressure, it.toString())
+        }
+    }
+
+
     init {
 
-        Prefs.getString(PERF_0_60_BEST, null)?.let {
-            results._0_60.best = it.toLong()
-        }
-        Prefs.getString(PERF_0_100_BEST, null)?.let {
-            results._0_100.best = it.toLong()
-        }
-        Prefs.getString(PERF_0_160_BEST, null)?.let {
-            results._0_160.best = it.toLong()
-        }
-
-        Prefs.getString(PERF_100_200_BEST, null)?.let {
-            results._100_200.best = it.toLong()
-        }
+        readPreferencesSection(results._0_60,PERF_0_60_BEST, PERF_0_60_BEST_AMBIENT_TEMP, PERF_0_60_BEST_ATM_PRESSURE)
+        readPreferencesSection(results._0_100,PERF_0_100_BEST, PERF_0_100_BEST_AMBIENT_TEMP, PERF_0_100_BEST_ATM_PRESSURE)
+        readPreferencesSection(results._0_160,PERF_0_160_BEST, PERF_0_160_BEST_AMBIENT_TEMP, PERF_0_160_BEST_ATM_PRESSURE)
+        readPreferencesSection(results._100_200,PERF_100_200_BEST, PERF_100_200_BEST_AMBIENT_TEMP, PERF_100_200_BEST_ATM_PRESSURE)
+        readPreferencesSection(results._60_140,PERF_60_140_BEST, PERF_60_140_BEST_AMBIENT_TEMP, PERF_60_140_BEST_ATM_PRESSURE)
 
         Prefs.getString(PERF_0_60_LAST, null)?.let {
             results._0_60.last = it.toLong()
@@ -69,6 +105,10 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
         Prefs.getString(PERF_100_200_LAST, null)?.let {
             results._100_200.last = it.toLong()
+        }
+
+        Prefs.getString(PERF_60_140_LAST, null)?.let {
+            results._60_140.last = it.toLong()
         }
     }
 
@@ -90,14 +130,6 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         val time = result.time
         val speed = result.speed
 
-        result.ambientTemp?.let {
-            results._60_140.ambientTemp = it
-        }
-
-        result.atmPressure?.let {
-            results._60_140.atmPressure = it
-        }
-
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
@@ -113,8 +145,8 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
             results._60_140.currentSpeed = speed
 
             if (results._60_140.best > time || results._60_140.best == VALUE_NOT_SET) {
-                results._60_140.best = time
-                Prefs.updateString(PERF_60_140_BEST, time.toString())
+                updateBest(results._60_140, result)
+                updatePreferencesSection(result, PERF_60_140_BEST, PERF_60_140_BEST_AMBIENT_TEMP, PERF_60_140_BEST_ATM_PRESSURE)
             }
         }
     }
@@ -123,13 +155,6 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         val time = result.time
         val speed = result.speed
 
-        result.ambientTemp?.let {
-            results._0_100.ambientTemp = it
-        }
-
-        result.atmPressure?.let {
-            results._0_100.atmPressure = it
-        }
 
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
@@ -146,8 +171,8 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
             results._0_100.currentSpeed = speed
 
             if (results._0_100.best > time || results._0_100.best == VALUE_NOT_SET) {
-                results._0_100.best = time
-                Prefs.updateString(PERF_0_100_BEST, time.toString())
+                updateBest(results._0_100, result)
+                updatePreferencesSection(result, PERF_0_100_BEST, PERF_0_100_BEST_AMBIENT_TEMP, PERF_0_100_BEST_ATM_PRESSURE)
             }
         }
     }
@@ -156,13 +181,6 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         val time = result.time
         val speed = result.speed
 
-        result.ambientTemp?.let {
-            results._0_60.ambientTemp = it
-        }
-
-        result.atmPressure?.let {
-            results._0_60.atmPressure = it
-        }
 
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
@@ -179,8 +197,8 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
             results._0_60.currentSpeed = speed
 
             if (results._0_60.best > time || results._0_60.best == VALUE_NOT_SET) {
-                results._0_60.best = time
-                Prefs.updateString(PERF_0_60_BEST, time.toString())
+                updateBest(results._0_60, result)
+                updatePreferencesSection(result, PERF_0_60_BEST, PERF_0_60_BEST_AMBIENT_TEMP, PERF_0_60_BEST_ATM_PRESSURE)
             }
         }
     }
@@ -189,13 +207,6 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         val time = result.time
         val speed = result.speed
 
-        result.ambientTemp?.let {
-            results._0_160.ambientTemp = it
-        }
-
-        result.atmPressure?.let {
-            results._0_160.atmPressure = it
-        }
 
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
@@ -212,8 +223,8 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
             results._0_160.currentSpeed = speed
 
             if (results._0_160.best > time || results._0_160.best == VALUE_NOT_SET) {
-                results._0_160.best = time
-                Prefs.updateString(PERF_0_160_BEST, time.toString())
+                updateBest(results._0_160, result)
+                updatePreferencesSection(result, PERF_0_160_BEST, PERF_0_160_BEST_AMBIENT_TEMP, PERF_0_160_BEST_ATM_PRESSURE)
             }
         }
     }
@@ -222,13 +233,7 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         val time = result.time
         val speed = result.speed
 
-        result.ambientTemp?.let {
-            results._100_200.ambientTemp = it
-        }
 
-        result.atmPressure?.let {
-            results._100_200.atmPressure = it
-        }
 
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
@@ -246,11 +251,24 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
             results._100_200.currentSpeed = speed
 
             if (results._100_200.best > time || results._100_200.best == VALUE_NOT_SET) {
-                results._100_200.best = time
-                Prefs.updateString(PERF_100_200_BEST, time.toString())
+                updateBest(results._100_200, result)
+                updatePreferencesSection(result, PERF_100_200_BEST, PERF_100_200_BEST_AMBIENT_TEMP, PERF_100_200_BEST_ATM_PRESSURE)
             }
         }
     }
 
     override fun getResult(): DragRacingResults = results
+
+    private fun updateBest(entry: DragRacingEntry, result: DragRacingMetric){
+        entry.best = result.time
+        result.ambientTemp?.let {
+            results.ambientTemp = it
+            entry.bestAmbientTemp = it
+        }
+
+        result.atmPressure?.let {
+            results.atmPressure = it
+            entry.bestAtmPressure = it
+        }
+    }
 }
