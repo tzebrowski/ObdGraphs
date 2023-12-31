@@ -24,96 +24,38 @@ import org.obd.graphs.preferences.updateString
 
 private const val LOG_KEY = "DragRaceRegistry"
 
-private const val PERF_0_60_BEST = "pref.drag_race.best.0_60"
-private const val PERF_0_60_BEST_ATM_PRESSURE = "pref.drag_race.best.0_60.atm_pressure"
-private const val PERF_0_60_BEST_AMBIENT_TEMP = "pref.drag_race.best.0_60.ambient_temp"
-
-private const val PERF_0_100_BEST = "pref.drag_race.best.0_100"
-private const val PERF_0_100_BEST_ATM_PRESSURE = "pref.drag_race.best.0_100.atm_pressure"
-private const val PERF_0_100_BEST_AMBIENT_TEMP = "pref.drag_race.best.0_100.ambient_temp"
-
-private const val PERF_0_160_BEST = "pref.drag_race.best.0_160"
-private const val PERF_0_160_BEST_ATM_PRESSURE = "pref.drag_race.best.0_160.atm_pressure"
-private const val PERF_0_160_BEST_AMBIENT_TEMP = "pref.drag_race.best.0_160.ambient_temp"
-
-private const val PERF_100_200_BEST = "pref.drag_race.best.100_200"
-private const val PERF_100_200_BEST_ATM_PRESSURE = "pref.drag_race.best.100_200.atm_pressure"
-private const val PERF_100_200_BEST_AMBIENT_TEMP = "pref.drag_race.best.100_200.ambient_temp"
-
-private const val PERF_60_140_BEST = "pref.drag_race.best.60_140"
-private const val PERF_60_140_BEST_ATM_PRESSURE = "pref.drag_race.best.60_140.atm_pressure"
-private const val PERF_60_140_BEST_AMBIENT_TEMP = "pref.drag_race.best.60_140.ambient_temp"
-
-
-private const val PERF_0_60_LAST = "pref.drag_race.last.0_60"
-private const val PERF_0_100_LAST = "pref.drag_race.last.0_100"
-private const val PERF_0_160_LAST = "pref.drag_race.last.0_160"
-private const val PERF_60_140_LAST = "pref.drag_race.last.60_140"
-private const val PERF_100_200_LAST = "pref.drag_race.last.100_200"
 
 private const val DEFAULT_SHIFT_LIGHT_THRESHOLD = 5000
+
+data class PreferencesIds(
+    val id: String,
+    val best: String = "pref.drag_race.best.${id}",
+    val ambientTemp: String = "pref.drag_race.best.${id}.ambient_temp",
+    val atmPressure: String = "pref.drag_race.best.${id}.atm_pressure",
+    val last: String = "pref.drag_race.last.${id}"
+)
 
 internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
     private val results = DragRacingResults()
 
-    val readPreferencesSection = { entry: DragRacingEntry, time: String, ambientTemp: String, atmPressure: String ->
-        Prefs.getString(time, null)?.let {
-            entry.best = it.toLong()
-        }
-
-        Prefs.getString(ambientTemp, null)?.let {
-            entry.bestAmbientTemp = it.toInt()
-        }
-
-        Prefs.getString(atmPressure, null)?.let {
-            entry.bestAtmPressure = it.toInt()
-        }
-    }
-
-    val updatePreferencesSection = { entry: DragRacingMetric, time: String, ambientTemp: String, atmPressure: String ->
-        Prefs.updateString(time, entry.time.toString())
-
-        entry.ambientTemp?.let {
-            Prefs.updateString(ambientTemp, it.toString())
-        }
-
-        entry.atmPressure?.let {
-            Prefs.updateString(atmPressure, it.toString())
-        }
-    }
-
+    private val _0_60_ids = PreferencesIds(id = "0_60")
+    private val _0_100_ids = PreferencesIds(id = "0_100")
+    private val _0_160_ids = PreferencesIds(id = "0_160")
+    private val _100_200_ids = PreferencesIds(id = "100_200")
+    private val _60_140_ids = PreferencesIds(id = "60_140")
 
     init {
 
-        readPreferencesSection(results._0_60,PERF_0_60_BEST, PERF_0_60_BEST_AMBIENT_TEMP, PERF_0_60_BEST_ATM_PRESSURE)
-        readPreferencesSection(results._0_100,PERF_0_100_BEST, PERF_0_100_BEST_AMBIENT_TEMP, PERF_0_100_BEST_ATM_PRESSURE)
-        readPreferencesSection(results._0_160,PERF_0_160_BEST, PERF_0_160_BEST_AMBIENT_TEMP, PERF_0_160_BEST_ATM_PRESSURE)
-        readPreferencesSection(results._100_200,PERF_100_200_BEST, PERF_100_200_BEST_AMBIENT_TEMP, PERF_100_200_BEST_ATM_PRESSURE)
-        readPreferencesSection(results._60_140,PERF_60_140_BEST, PERF_60_140_BEST_AMBIENT_TEMP, PERF_60_140_BEST_ATM_PRESSURE)
-
-        Prefs.getString(PERF_0_60_LAST, null)?.let {
-            results._0_60.last = it.toLong()
-        }
-        Prefs.getString(PERF_0_100_LAST, null)?.let {
-            results._0_100.last = it.toLong()
-        }
-
-        Prefs.getString(PERF_0_160_LAST, null)?.let {
-            results._0_160.last = it.toLong()
-        }
-
-        Prefs.getString(PERF_100_200_LAST, null)?.let {
-            results._100_200.last = it.toLong()
-        }
-
-        Prefs.getString(PERF_60_140_LAST, null)?.let {
-            results._60_140.last = it.toLong()
-        }
+        readPreferencesByIds(results._0_60, _0_60_ids)
+        readPreferencesByIds(results._0_100, _0_100_ids)
+        readPreferencesByIds(results._0_160, _0_160_ids)
+        readPreferencesByIds(results._100_200, _100_200_ids)
+        readPreferencesByIds(results._60_140, _60_140_ids)
     }
 
     private var shiftLightThresholdValue = DEFAULT_SHIFT_LIGHT_THRESHOLD
-    override fun getShiftLightsRevThreshold(): Int  = shiftLightThresholdValue
+    override fun getShiftLightsRevThreshold(): Int = shiftLightThresholdValue
     override fun setShiftLightsRevThreshold(newThresholdValue: Int) {
         shiftLightThresholdValue = newThresholdValue
     }
@@ -123,152 +65,85 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
     }
 
     override fun enableShiftLights(value: Boolean) {
-        results.enableShiftLights  = value
+        results.enableShiftLights = value
     }
 
-    override fun update60140(result: DragRacingMetric) {
-        val time = result.time
-        val speed = result.speed
-
-        if (time <= 0L) {
-            Log.v(LOG_KEY, "Invalid value")
-        } else {
-            results._60_140.last = if (results._60_140.last == VALUE_NOT_SET) {
-                time
-            } else {
-                results._60_140.current
-            }
-
-            Prefs.updateString(PERF_60_140_LAST, results._60_140.last.toString())
-
-            results._60_140.current = time
-            results._60_140.currentSpeed = speed
-
-            if (results._60_140.best > time || results._60_140.best == VALUE_NOT_SET) {
-                updateBest(results._60_140, result)
-                updatePreferencesSection(result, PERF_60_140_BEST, PERF_60_140_BEST_AMBIENT_TEMP, PERF_60_140_BEST_ATM_PRESSURE)
-            }
-        }
+    override fun update60140(metric: DragRacingMetric) {
+        updateEntry(results._60_140, _60_140_ids, metric)
     }
 
-    override fun update0100(result: DragRacingMetric) {
-        val time = result.time
-        val speed = result.speed
-
-
-        if (time <= 0L) {
-            Log.v(LOG_KEY, "Invalid value")
-        } else {
-            results._0_100.last = if (results._0_100.last == VALUE_NOT_SET) {
-                time
-            } else {
-                results._0_100.current
-            }
-
-            Prefs.updateString(PERF_0_100_LAST, results._0_100.last.toString())
-
-            results._0_100.current = time
-            results._0_100.currentSpeed = speed
-
-            if (results._0_100.best > time || results._0_100.best == VALUE_NOT_SET) {
-                updateBest(results._0_100, result)
-                updatePreferencesSection(result, PERF_0_100_BEST, PERF_0_100_BEST_AMBIENT_TEMP, PERF_0_100_BEST_ATM_PRESSURE)
-            }
-        }
+    override fun update0100(metric: DragRacingMetric) {
+        updateEntry(results._0_100, _0_100_ids, metric)
     }
 
-    override fun update060(result: DragRacingMetric) {
-        val time = result.time
-        val speed = result.speed
-
-
-        if (time <= 0L) {
-            Log.v(LOG_KEY, "Invalid value")
-        } else {
-            results._0_60.last = if (results._0_60.last == VALUE_NOT_SET) {
-                time
-            } else {
-                results._0_60.current
-            }
-
-            Prefs.updateString(PERF_0_60_LAST, results._0_60.last.toString())
-
-            results._0_60.current = time
-            results._0_60.currentSpeed = speed
-
-            if (results._0_60.best > time || results._0_60.best == VALUE_NOT_SET) {
-                updateBest(results._0_60, result)
-                updatePreferencesSection(result, PERF_0_60_BEST, PERF_0_60_BEST_AMBIENT_TEMP, PERF_0_60_BEST_ATM_PRESSURE)
-            }
-        }
+    override fun update060(metric: DragRacingMetric) {
+        updateEntry(results._0_60, _0_60_ids, metric)
     }
 
-    override fun update0160(result: DragRacingMetric) {
-        val time = result.time
-        val speed = result.speed
-
-
-        if (time <= 0L) {
-            Log.v(LOG_KEY, "Invalid value")
-        } else {
-            results._0_160.last = if (results._0_160.last == VALUE_NOT_SET) {
-                time
-            } else {
-                results._0_160.current
-            }
-
-            Prefs.updateString(PERF_0_160_LAST, results._0_160.last.toString())
-
-            results._0_160.current = time
-            results._0_160.currentSpeed = speed
-
-            if (results._0_160.best > time || results._0_160.best == VALUE_NOT_SET) {
-                updateBest(results._0_160, result)
-                updatePreferencesSection(result, PERF_0_160_BEST, PERF_0_160_BEST_AMBIENT_TEMP, PERF_0_160_BEST_ATM_PRESSURE)
-            }
-        }
+    override fun update0160(metric: DragRacingMetric) {
+        updateEntry(results._0_160, _0_160_ids, metric)
     }
 
-    override fun update100200(result: DragRacingMetric) {
-        val time = result.time
-        val speed = result.speed
-
-
-
-        if (time <= 0L) {
-            Log.v(LOG_KEY, "Invalid value")
-        } else {
-
-            results._100_200.last = if (results._100_200.last == VALUE_NOT_SET) {
-                time
-            } else {
-                results._100_200.current
-            }
-
-            Prefs.updateString(PERF_100_200_LAST, results._100_200.last.toString())
-
-            results._100_200.current = time
-            results._100_200.currentSpeed = speed
-
-            if (results._100_200.best > time || results._100_200.best == VALUE_NOT_SET) {
-                updateBest(results._100_200, result)
-                updatePreferencesSection(result, PERF_100_200_BEST, PERF_100_200_BEST_AMBIENT_TEMP, PERF_100_200_BEST_ATM_PRESSURE)
-            }
-        }
+    override fun update100200(metric: DragRacingMetric) {
+        updateEntry(results._100_200, _100_200_ids, metric)
     }
 
     override fun getResult(): DragRacingResults = results
 
-    private fun updateBest(entry: DragRacingEntry, result: DragRacingMetric){
-        entry.best = result.time
-        result.ambientTemp?.let {
-            results.ambientTemp = it
-            entry.bestAmbientTemp = it
+    private fun readPreferencesByIds(entry: DragRacingEntry, id: PreferencesIds) {
+        Prefs.getString(id.best, null)?.let {
+            entry.best = it.toLong()
         }
 
-        result.atmPressure?.let {
-            results.atmPressure = it
-            entry.bestAtmPressure = it
+        Prefs.getString(id.ambientTemp, null)?.let {
+            entry.bestAmbientTemp = it.toInt()
+        }
+
+        Prefs.getString(id.atmPressure, null)?.let {
+            entry.bestAtmPressure = it.toInt()
+        }
+
+        Prefs.getString(id.last, null)?.let {
+            entry.last = it.toLong()
+        }
+    }
+
+    private fun updateEntry(entry: DragRacingEntry, id: PreferencesIds, metric: DragRacingMetric) {
+        val time = metric.time
+        val speed = metric.speed
+
+        if (time <= 0L) {
+            Log.v(LOG_KEY, "Invalid value")
+        } else {
+            entry.last = if (entry.last == VALUE_NOT_SET) {
+                time
+            } else {
+                entry.current
+            }
+
+            Prefs.updateString(id.last, entry.last.toString())
+
+            entry.current = time
+            entry.currentSpeed = speed
+
+            if (entry.best > time || entry.best == VALUE_NOT_SET) {
+
+                entry.best = metric.time
+
+                metric.ambientTemp?.let {
+                    results.ambientTemp = it
+                    entry.bestAmbientTemp = it
+                    Prefs.updateString(id.ambientTemp, it.toString())
+                }
+
+                metric.atmPressure?.let {
+                    results.atmPressure = it
+                    entry.bestAtmPressure = it
+                    Prefs.updateString(id.atmPressure, it.toString())
+                }
+
+                Prefs.updateString(id.best, metric.time.toString())
+            }
         }
     }
 }
