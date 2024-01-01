@@ -23,8 +23,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.JobIntentService
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.MetricsProcessor
-import org.obd.graphs.query.Query
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.getContext
 import org.obd.graphs.runAsync
 import org.obd.metrics.api.model.ObdMetric

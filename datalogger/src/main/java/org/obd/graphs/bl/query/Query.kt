@@ -16,10 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.query
+package org.obd.graphs.bl.query
 
 import org.obd.graphs.runAsync
-
 
 class Query : java.io.Serializable {
 

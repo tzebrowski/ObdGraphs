@@ -34,8 +34,8 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.*
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.query.Query
-import org.obd.graphs.query.QueryStrategyType
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.sendBroadcastEvent
 

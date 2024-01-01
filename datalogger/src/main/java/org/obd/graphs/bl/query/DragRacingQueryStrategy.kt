@@ -16,14 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs
+package org.obd.graphs.bl.query
 
-import org.obd.metrics.api.model.Lifecycle
-import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.api.model.Reply
-import org.obd.metrics.api.model.ReplyObserver
 
-interface MetricsProcessor : Lifecycle {
-    fun init(replyObserver: ReplyObserver<Reply<*>>){}
-    fun postValue(obdMetric: ObdMetric)
-}
+internal class DragRacingQueryStrategy : QueryStrategy(mutableSetOf(
+    VEHICLE_SPEED_PID_ID,
+    ENGINE_RPM_PID_ID,
+    MEASURED_INTAKE_PRESSURE_PID_ID,
+    ATM_PRESSURE_PID_ID,
+    AMBIENT_TEMP_PID_ID,
+))
+

@@ -21,7 +21,7 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import com.github.mikephil.charting.data.Entry
-import org.obd.graphs.MetricsProcessor
+import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext

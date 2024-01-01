@@ -27,8 +27,8 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.query.Query
-import org.obd.graphs.query.QueryStrategyType
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.model.*
@@ -66,7 +66,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
     internal val eventsReceiver = EventsReceiver()
     private val metricsObserver = MetricsObserver()
-    var currentQuery: Query = Query()
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
@@ -161,9 +160,10 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
+    lateinit var currentQuery: Query
 
     fun updateQuery(query: Query) {
-        if (query.getPIDs() == currentQuery.getPIDs()){
+        if (::currentQuery.isInitialized && query.getPIDs() == currentQuery.getPIDs()){
             Log.w(LOG_TAG,"Received same query=${query.getPIDs()}. Do not update.")
         } else {
             getSettings(query).let {
@@ -173,6 +173,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 Log.i(LOG_TAG, "Query=${query.getStrategy()} update result=$result")
             }
         }
+
         currentQuery = query
     }
 

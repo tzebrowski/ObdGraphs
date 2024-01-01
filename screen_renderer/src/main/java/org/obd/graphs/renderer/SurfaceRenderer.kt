@@ -22,7 +22,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
-import org.obd.graphs.query.Query
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer

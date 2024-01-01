@@ -49,9 +49,9 @@ import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.*
-import org.obd.graphs.query.Query
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.query.QueryStrategyType
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.Prefs

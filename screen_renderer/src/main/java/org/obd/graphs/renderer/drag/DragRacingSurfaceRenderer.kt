@@ -25,9 +25,9 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
-import org.obd.graphs.query.Query
-import org.obd.graphs.query.QueryStrategyType
-import org.obd.graphs.query.isVehicleSpeed
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.bl.query.isVehicleSpeed
 import org.obd.graphs.renderer.*
 
 

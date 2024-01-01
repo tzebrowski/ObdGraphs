@@ -18,7 +18,7 @@
  **/
 package org.obd.graphs.bl.trip
 
-import org.obd.graphs.MetricsProcessor
+import org.obd.graphs.bl.datalogger.MetricsProcessor
 
 interface TripManager : MetricsProcessor {
     fun getCurrentTrip(): Trip

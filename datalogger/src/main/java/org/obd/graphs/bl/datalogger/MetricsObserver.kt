@@ -21,7 +21,6 @@ package org.obd.graphs.bl.datalogger
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import org.obd.graphs.MetricsProcessor
 import org.obd.metrics.api.model.*
 
 internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {

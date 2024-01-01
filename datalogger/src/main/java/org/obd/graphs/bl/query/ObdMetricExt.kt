@@ -1,4 +1,4 @@
-package org.obd.graphs.query
+package org.obd.graphs.bl.query
 
 import org.obd.metrics.api.model.ObdMetric
 

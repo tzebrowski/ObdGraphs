@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.collector.*
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.query.Query
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.updateLongSet
