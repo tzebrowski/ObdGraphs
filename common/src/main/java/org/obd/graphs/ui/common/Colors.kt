@@ -38,12 +38,14 @@ fun String.colorize(color: Int, typeface: Int,start: Int, end: Int, size: Float)
     val valSpanString = SpannableString(valText)
     valSpanString.setSpan(RelativeSizeSpan(size), 0, valSpanString.length, 0) // set size
     valSpanString.setSpan(StyleSpan(typeface), 0, valSpanString.length, 0)
-    valSpanString.setSpan(
-        ForegroundColorSpan(color),
-        start,
-        end,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-    )
+    if (valSpanString.length >= end) {
+        valSpanString.setSpan(
+            ForegroundColorSpan(color),
+            start,
+            end,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
     return valSpanString
 }
 

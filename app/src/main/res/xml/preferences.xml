@@ -608,10 +608,12 @@
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.aa.AACheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.drag_racing.shift_lights.enabled"
                     android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
+                    android:summary="@string/pref.aa.performance_meter.shift_lights_enabled_summary"
+                    app:experimental="true"
                     app:singleLineTitle="false" />
 
                 <ListPreference
@@ -895,6 +897,8 @@
                         android:defaultValue="false"
                         android:key="pref.aa.drag_race.shift_lights.enabled"
                         android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
+                        android:summary="@string/pref.aa.performance_meter.shift_lights_enabled_summary"
+                        app:experimental="true"
                         app:singleLineTitle="false" />
 
                     <ListPreference
