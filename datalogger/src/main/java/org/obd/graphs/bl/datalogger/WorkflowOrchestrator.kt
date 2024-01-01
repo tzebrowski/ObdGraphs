@@ -66,6 +66,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     internal val eventsReceiver = EventsReceiver()
     private val metricsObserver = MetricsObserver()
+    var currentQuery: Query = Query()
 
     private var lifecycle = object : Lifecycle {
         override fun onConnecting() {
@@ -160,10 +161,9 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    private var current: Set<Long> = emptySet()
 
     fun updateQuery(query: Query) {
-        if (query.getPIDs() == current){
+        if (query.getPIDs() == currentQuery.getPIDs()){
             Log.w(LOG_TAG,"Received same query=${query.getPIDs()}. Do not update.")
         } else {
             getSettings(query).let {
@@ -173,7 +173,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 Log.i(LOG_TAG, "Query=${query.getStrategy()} update result=$result")
             }
         }
-        current = query.getPIDs()
+        currentQuery = query
     }
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()

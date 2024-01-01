@@ -117,6 +117,8 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
         return this
     }
 
+    override fun getCurrentQuery(): Query = workflowOrchestrator.currentQuery
+
     override fun isRunning(): Boolean = workflowOrchestrator.isRunning()
 
     override fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()

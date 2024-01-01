@@ -37,7 +37,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.drag.DragRaceMetricsBroadcaster
+import org.obd.graphs.MetricsGenerator
 import org.obd.graphs.bl.drag.DragRacingMetricsProcessor
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.trip.tripManager
@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             .observe(tripManager)
 
         if (BuildConfig.DEBUG){
-            dataLogger.observe(DragRaceMetricsBroadcaster())
+            dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
         }
     }
 }
