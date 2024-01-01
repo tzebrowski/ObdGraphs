@@ -20,7 +20,10 @@ package org.obd.graphs
 
 import org.obd.metrics.api.model.Lifecycle
 import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.api.model.Reply
+import org.obd.metrics.api.model.ReplyObserver
 
 interface MetricsProcessor : Lifecycle {
+    fun init(replyObserver: ReplyObserver<Reply<*>>){}
     fun postValue(obdMetric: ObdMetric)
 }

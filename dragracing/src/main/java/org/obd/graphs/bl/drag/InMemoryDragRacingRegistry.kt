@@ -23,35 +23,31 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
 
 private const val LOG_KEY = "DragRaceRegistry"
-
-
 private const val DEFAULT_SHIFT_LIGHT_THRESHOLD = 5000
-
-data class PreferencesIds(
-    val id: String,
-    val best: String = "pref.drag_race.best.${id}",
-    val ambientTemp: String = "pref.drag_race.best.${id}.ambient_temp",
-    val atmPressure: String = "pref.drag_race.best.${id}.atm_pressure",
-    val last: String = "pref.drag_race.last.${id}"
-)
 
 internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
-    private val results = DragRacingResults()
+    private data class PreferencesIds(
+        val id: String,
+        val best: String = "pref.drag_race.best.${id}",
+        val ambientTemp: String = "pref.drag_race.best.${id}.ambient_temp",
+        val atmPressure: String = "pref.drag_race.best.${id}.atm_pressure",
+        val last: String = "pref.drag_race.last.${id}"
+    )
 
-    private val _0_60_ids = PreferencesIds(id = "0_60")
-    private val _0_100_ids = PreferencesIds(id = "0_100")
-    private val _0_160_ids = PreferencesIds(id = "0_160")
-    private val _100_200_ids = PreferencesIds(id = "100_200")
-    private val _60_140_ids = PreferencesIds(id = "60_140")
+    private val results = DragRacingResults()
+    private val ids060 = PreferencesIds(id = "0_60")
+    private val ids0100 = PreferencesIds(id = "0_100")
+    private val ids0160 = PreferencesIds(id = "0_160")
+    private val ids100200 = PreferencesIds(id = "100_200")
+    private val ids60140 = PreferencesIds(id = "60_140")
 
     init {
-
-        readPreferencesByIds(results._0_60, _0_60_ids)
-        readPreferencesByIds(results._0_100, _0_100_ids)
-        readPreferencesByIds(results._0_160, _0_160_ids)
-        readPreferencesByIds(results._100_200, _100_200_ids)
-        readPreferencesByIds(results._60_140, _60_140_ids)
+        readPreferencesByIds(results._0_60, ids060)
+        readPreferencesByIds(results._0_100, ids0100)
+        readPreferencesByIds(results._60_140, ids60140)
+        readPreferencesByIds(results._0_160, ids0160)
+        readPreferencesByIds(results._100_200, ids100200)
     }
 
     private var shiftLightThresholdValue = DEFAULT_SHIFT_LIGHT_THRESHOLD
@@ -69,23 +65,23 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
     }
 
     override fun update60140(metric: DragRacingMetric) {
-        updateEntry(results._60_140, _60_140_ids, metric)
+        updateEntry(results._60_140, ids60140, metric)
     }
 
     override fun update0100(metric: DragRacingMetric) {
-        updateEntry(results._0_100, _0_100_ids, metric)
+        updateEntry(results._0_100, ids0100, metric)
     }
 
     override fun update060(metric: DragRacingMetric) {
-        updateEntry(results._0_60, _0_60_ids, metric)
+        updateEntry(results._0_60, ids060, metric)
     }
 
     override fun update0160(metric: DragRacingMetric) {
-        updateEntry(results._0_160, _0_160_ids, metric)
+        updateEntry(results._0_160, ids0160, metric)
     }
 
     override fun update100200(metric: DragRacingMetric) {
-        updateEntry(results._100_200, _100_200_ids, metric)
+        updateEntry(results._100_200, ids100200, metric)
     }
 
     override fun getResult(): DragRacingResults = results

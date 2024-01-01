@@ -23,11 +23,11 @@ val dragRacingResultRegistry: DragRacingResultRegistry by lazy { InMemoryDragRac
 
 interface DragRacingResultRegistry {
     fun getResult(): DragRacingResults
-    fun update0100(result: DragRacingMetric)
-    fun update0160(result: DragRacingMetric)
-    fun update060(result: DragRacingMetric)
-    fun update100200(result: DragRacingMetric)
-    fun update60140(result: DragRacingMetric)
+    fun update0100(metric: DragRacingMetric)
+    fun update0160(metric: DragRacingMetric)
+    fun update060(metric: DragRacingMetric)
+    fun update100200(metric: DragRacingMetric)
+    fun update60140(metric: DragRacingMetric)
     fun readyToRace(value: Boolean)
     fun enableShiftLights(value: Boolean)
 

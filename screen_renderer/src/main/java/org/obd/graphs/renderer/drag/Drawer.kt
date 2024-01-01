@@ -343,8 +343,12 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         if (dragRacingEntry.best != VALUE_NOT_SET){
             val width = getTextWidth(timeToString(dragRacingEntry.best), titlePaint) * 1.15f
             val height = getTextHeight(timeToString(dragRacingEntry.best), titlePaint) / 2
-            drawText(canvas, "${dragRacingEntry.bestAmbientTemp}C", bestXPos + width, top - height, textSizeBase * 0.5f, color = Color.LTGRAY)
-            drawText(canvas, "${dragRacingEntry.bestAtmPressure}hpa", bestXPos + width, top + height/2, textSizeBase * 0.5f, color = Color.LTGRAY)
+            if (dragRacingEntry.bestAmbientTemp != VALUE_NOT_SET.toInt()){
+                drawText(canvas, "${dragRacingEntry.bestAmbientTemp}C", bestXPos + width, top - height, textSizeBase * 0.5f, color = Color.LTGRAY)
+            }
+            if (dragRacingEntry.bestAtmPressure != VALUE_NOT_SET.toInt()){
+                drawText(canvas, "${dragRacingEntry.bestAtmPressure}hpa", bestXPos + width, top + height/2, textSizeBase * 0.5f, color = Color.LTGRAY)
+            }
         }
     }
 

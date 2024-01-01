@@ -18,6 +18,7 @@
  **/
 package org.obd.graphs.bl.datalogger
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import org.obd.graphs.MetricsProcessor
@@ -39,6 +40,7 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     fun observe(metricsProcessor: MetricsProcessor) {
         metricsProcessors.add(metricsProcessor)
+        metricsProcessor.init(this)
     }
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
@@ -54,7 +56,15 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
         if (reply is ObdMetric) {
             reply.command.pid?.let {
                 metrics.postValue(reply)
-                metricsProcessors.forEach { it.postValue(reply) }
+                metricsProcessors.forEach {
+                    try {
+                        it.postValue(reply)
+                    } catch (e: java.lang.Exception) {
+                        if (Log.isLoggable("MetricsObserver",Log.VERBOSE)){
+                            Log.v("MetricsObserver","Failed to process metric",e)
+                        }
+                    }
+                }
             }
         }
     }

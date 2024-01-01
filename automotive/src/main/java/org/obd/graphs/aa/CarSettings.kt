@@ -24,6 +24,7 @@ import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.preferences.*
 import org.obd.graphs.query.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.renderer.*
+import org.obd.graphs.runAsync
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_RACE
@@ -84,12 +85,14 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     }
 
     override fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode) {
-        if (isDynamicSelectorThemeEnabled()) {
-            when (mode) {
-                DynamicSelectorMode.NORMAL -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_NORMAL)
-                DynamicSelectorMode.SPORT -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
-                DynamicSelectorMode.ECO -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_ECO)
-                DynamicSelectorMode.RACE -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_RACE)
+        runAsync {
+            if (isDynamicSelectorThemeEnabled()) {
+                when (mode) {
+                    DynamicSelectorMode.NORMAL -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_NORMAL)
+                    DynamicSelectorMode.SPORT -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
+                    DynamicSelectorMode.ECO -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_ECO)
+                    DynamicSelectorMode.RACE -> Prefs.updateInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_RACE)
+                }
             }
         }
     }

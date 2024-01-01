@@ -61,6 +61,7 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
     }
 
     override fun postValue(obdMetric: ObdMetric) {
+
         if (obdMetric.isEngineRpm()) {
             if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
                 Log.v(
