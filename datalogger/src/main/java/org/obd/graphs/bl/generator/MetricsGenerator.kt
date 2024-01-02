@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
@@ -41,7 +42,7 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
 
         if (isGeneratorEnabled()) {
-            val metrics = generateMetrics()
+            val metrics = generateMetricsFor(dataLogger.getCurrentQuery())
 
             if (!broadcasterLaunched) {
                 broadcasterLaunched = true
@@ -68,25 +69,22 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
             Prefs.getBoolean("pref.debug.generator.broadcast_fake_metrics", false)
 
 
-    private fun generateMetrics(): MutableSet<MetricGeneratorDefinition> {
-        val metrics = mutableSetOf<MetricGeneratorDefinition>()
-        dataLogger.getCurrentQuery().getPIDs().forEach { id ->
+    private fun generateMetricsFor(query: Query) = mutableSetOf<MetricGeneratorDefinition>().apply {
+        query.getPIDs().forEach { id ->
             if (baseMetrics.containsKey(id)) {
-                metrics.add(baseMetrics[id]!!)
+                add(baseMetrics[id]!!)
             } else {
                 val pid = dataLogger.getPidDefinitionRegistry().findBy(id)
                 val metric = MetricGeneratorDefinition(
                     pid = pid,
-                    data = generateSequence(pid)
+                    data = generateSequenceFor(pid)
                 )
-
-                metrics.add(metric)
+                add(metric)
             }
         }
-        return metrics
     }
 
-    private fun generateSequence(pid: PidDefinition)  =
+    private fun generateSequenceFor(pid: PidDefinition) =
         mutableListOf<Number>().apply {
             if (pid.type == ValueType.DOUBLE) {
                 var step = 1.0
@@ -139,7 +137,7 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
         }
     }
 
-    infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
+    private infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
         require(start.isFinite())
         require(endInclusive.isFinite())
         require(step > 0.0) { "Step must be positive, was: $step." }
