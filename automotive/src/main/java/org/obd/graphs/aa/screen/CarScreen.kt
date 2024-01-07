@@ -82,11 +82,15 @@ internal abstract class CarScreen(
             })
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-                if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                    query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+                if (dragMeteringEnabled)  {
+                    query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
                 } else {
-                    query.setStrategy(if (dragMeteringEnabled)  QueryStrategyType.DRAG_RACING_QUERY else  QueryStrategyType.SHARED_QUERY)
+                    if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+                        query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                        query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+                    }else {
+                        query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                    }
                 }
                 dataLogger.start(query)
             })
