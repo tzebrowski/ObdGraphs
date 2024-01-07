@@ -19,22 +19,47 @@
 package org.obd.graphs.preferences.aa
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
 import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.colorize
 
 
 class AACheckBoxPreference(
     context: Context,
-    attrs: AttributeSet?
+    private val attrs: AttributeSet?
 ) :
     CheckBoxPreference(context, attrs) {
+
+    private val experimental = getAttribute("experimental")
+
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, _ ->
             sendBroadcastEvent(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             true
         }
     }
+
+    override fun getSummary(): CharSequence? {
+        return if (experimental.isEmpty()){
+            super.getSummary()
+        }else {
+            super.getSummary().toString().colorize(COLOR_CARDINAL, Typeface.NORMAL, 0, 33, 1.0f)
+        }
+    }
+
+
+    private fun getAttribute(attrName: String): String = if (attrs == null) {
+        ""
+    } else {
+        val givenValue: String? = (0 until attrs.attributeCount)
+            .filter { index -> attrs.getAttributeName(index) == attrName }
+            .map { index -> attrs.getAttributeValue(index) }.firstOrNull()
+        givenValue ?: ""
+    }
+
 }

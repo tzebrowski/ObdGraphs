@@ -18,11 +18,12 @@
  **/
 package org.obd.graphs.bl.query
 
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
 
-internal class DragRacingQueryStrategy : QueryStrategy(
-    mutableSetOf(
-        dragRacingResultRegistry.getEngineRpmPID(),
-        dragRacingResultRegistry.getVehicleSpeedPID()
-    )
-)
+internal class DragRacingQueryStrategy : QueryStrategy(mutableSetOf(
+    VEHICLE_SPEED_PID_ID,
+    ENGINE_RPM_PID_ID,
+    MEASURED_INTAKE_PRESSURE_PID_ID,
+    ATM_PRESSURE_PID_ID,
+    AMBIENT_TEMP_PID_ID,
+))
+

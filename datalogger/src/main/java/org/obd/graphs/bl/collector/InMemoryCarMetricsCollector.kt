@@ -32,8 +32,6 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
 
     override fun getMetrics(enabled: Boolean): List<CarMetric> = metrics.values.filter { it.enabled == enabled }
 
-    override fun findById(id: Long): CarMetric? = getMetrics().firstOrNull { it.source.command.pid.id == id }
-
     override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
         Log.i(LOG_KEY, "Updating visible PIDs=$enabled with order=$order")
 
@@ -98,7 +96,7 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
         if (order.containsKey(m1) && order.containsKey(m2)) {
             order[m1]!!.compareTo(order[m2]!!)
         } else {
-            -1
+            m1.compareTo(m2)
         }
     }
 }

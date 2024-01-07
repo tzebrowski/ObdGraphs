@@ -109,6 +109,10 @@ internal class WorkflowOrchestrator internal constructor() {
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
 
+    fun observe(metricsProcessor: MetricsProcessor) {
+        metricsObserver.observe(metricsProcessor)
+    }
+
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) =
         metricsObserver.observe(lifecycleOwner) {
             it.let {
@@ -142,24 +146,26 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     fun start(query: Query) {
-    
+        currentQuery = query
         getSettings(query).let {
             connection()?.run {
-                Log.i(LOG_TAG, "Selected PIDs: ${it.first.pids}")
+                Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
 
                 val status = workflow.start(
                     this, it.first, init(),
                     it.second
                 )
-                Log.i(LOG_TAG, "Start collecting process (${query.getStrategy()}). Status=$status")
+                Log.i(LOG_TAG, "Start collecting process, strategy: ${query.getStrategy()}. Status=$status")
             }
         }
     }
 
-    private var current: Set<Long> = emptySet()
+    private lateinit var currentQuery: Query
+
+    fun getCurrentQuery (): Query? = if (::currentQuery.isInitialized) currentQuery else null
 
     fun updateQuery(query: Query) {
-        if (query.getPIDs() == current){
+        if (::currentQuery.isInitialized && query.getPIDs() == currentQuery.getPIDs()){
             Log.w(LOG_TAG,"Received same query=${query.getPIDs()}. Do not update.")
         } else {
             getSettings(query).let {
@@ -169,7 +175,8 @@ internal class WorkflowOrchestrator internal constructor() {
                 Log.i(LOG_TAG, "Query=${query.getStrategy()} update result=$result")
             }
         }
-        current = query.getPIDs()
+
+        currentQuery = query
     }
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
@@ -301,6 +308,8 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
+
+
     private fun getDragRacingAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
         .errorsPolicy(
@@ -310,7 +319,10 @@ internal class WorkflowOrchestrator internal constructor() {
         )
         .batchPolicy(
             BatchPolicy.builder()
-                .enabled(true).build()
+                .enabled(dataLoggerPreferences.instance.batchEnabled)
+                .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
+                .mode01BatchSize(dataLoggerPreferences.instance.mode01BatchSize)
+                .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize).build()
         )
         .collectRawConnectorResponseEnabled(false)
         .stNxx(
@@ -329,6 +341,8 @@ internal class WorkflowOrchestrator internal constructor() {
         .producerPolicy(
             ProducerPolicy
                 .builder()
+                .pidPriority(0,0) // vehicle speed, rpm
+                .pidPriority(5,300) // atm pressure, ambient temp
                 .conditionalSleepEnabled(false)
                 .build()
         )

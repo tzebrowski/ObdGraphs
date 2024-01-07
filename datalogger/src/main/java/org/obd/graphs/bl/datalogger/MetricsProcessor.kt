@@ -16,19 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.collector
+package org.obd.graphs.bl.datalogger
 
+import org.obd.metrics.api.model.Lifecycle
 import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.api.model.Reply
+import org.obd.metrics.api.model.ReplyObserver
 
-interface CarMetricsCollector {
-
-    fun getMetrics(enabled: Boolean = true): List<CarMetric>
-
-    fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
-
-    fun append(input: ObdMetric?)
-
-    companion object {
-        fun instance(): CarMetricsCollector = InMemoryCarMetricsCollector()
-    }
+interface MetricsProcessor : Lifecycle {
+    fun init(replyObserver: ReplyObserver<Reply<*>>){}
+    fun postValue(obdMetric: ObdMetric)
 }

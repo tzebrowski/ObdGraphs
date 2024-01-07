@@ -36,6 +36,11 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
+import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.generator.MetricsGenerator
+import org.obd.graphs.bl.drag.DragRacingMetricsProcessor
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.*
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -124,7 +129,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupLockScreenDialog()
         setupLeftNavigationPanel()
         supportActionBar?.hide()
+
+        setupMetricsProcessors()
     }
+
+
     override fun onResume() {
         super.onResume()
         screen.setupWindowManager(this)
@@ -209,5 +218,16 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         Prefs.registerOnSharedPreferenceChangeListener(profile)
         profile.setupProfiles(forceOverrideRecommendation = false)
+    }
+
+
+    private fun setupMetricsProcessors() {
+        dataLogger
+            .observe(DragRacingMetricsProcessor(dragRacingResultRegistry))
+            .observe(tripManager)
+
+        if (BuildConfig.DEBUG){
+            dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
+        }
     }
 }

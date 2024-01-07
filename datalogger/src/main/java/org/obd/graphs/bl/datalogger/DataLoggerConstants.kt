@@ -31,12 +31,6 @@ const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
-const val EVENT_DYNAMIC_SELECTOR_MODE_NORMAL = "event.dynamic.selector.mode.normal"
-const val EVENT_DYNAMIC_SELECTOR_MODE_ECO = "event.dynamic.selector.mode.eco"
-const val EVENT_DYNAMIC_SELECTOR_MODE_SPORT = "event.dynamic.selector.mode.sport"
-const val EVENT_DYNAMIC_SELECTOR_MODE_RACE = "event.dynamic.selector.mode.race"
 
 internal const val LOG_TAG = "DataLogger"
 
-const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
-internal const val DYNAMIC_SELECTOR_PID_ID = 7036L

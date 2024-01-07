@@ -108,7 +108,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         }
     }
 
-    fun drawStatusBar(canvas: Canvas,top: Float, left: Float, fps: Fps): Float {
+    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps): Float {
 
         var text = statusLabel
         var marginLeft = left
@@ -230,6 +230,12 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         val bounds = Rect()
         paint.getTextBounds(text, 0, text.length, bounds)
         return bounds.left + bounds.width()
+    }
+
+    protected fun getTextHeight(text: String, paint: Paint): Int {
+        val bounds = Rect()
+        paint.getTextBounds(text, 0, text.length, bounds)
+        return bounds.height()
     }
 
     fun getMarginLeft(left: Float): Float = 12 + left

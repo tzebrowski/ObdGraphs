@@ -21,11 +21,14 @@ package org.obd.graphs.bl.drag
 const val VALUE_NOT_SET = -1L
 
 data class DragRacingEntry(
-    var current: Long  = VALUE_NOT_SET,
-    var last: Long  = VALUE_NOT_SET,
-    var best: Long  = VALUE_NOT_SET,
-    var currentSpeed: Int = VALUE_NOT_SET.toInt(),
+    var current: Long = VALUE_NOT_SET,
+    var last: Long = VALUE_NOT_SET,
+    var best: Long = VALUE_NOT_SET,
+    var bestAmbientTemp: Int = VALUE_NOT_SET.toInt(),
+    var bestAtmPressure: Int = VALUE_NOT_SET.toInt(),
+    var currentSpeed: Int = VALUE_NOT_SET.toInt()
 )
+
 
 data class DragRacingResults(
     var enableShiftLights: Boolean = false,
@@ -35,4 +38,13 @@ data class DragRacingResults(
     var _0_160: DragRacingEntry = DragRacingEntry(),
     var _100_200: DragRacingEntry = DragRacingEntry(),
     var _60_140: DragRacingEntry = DragRacingEntry(),
+    var ambientTemp: Int = VALUE_NOT_SET.toInt(),
+    var atmPressure: Int = VALUE_NOT_SET.toInt()
+)
+
+data class DragRacingMetric(
+    val time: Long,
+    val speed: Int,
+    val ambientTemp: Int? = 0,
+    val atmPressure: Int? = 0
 )

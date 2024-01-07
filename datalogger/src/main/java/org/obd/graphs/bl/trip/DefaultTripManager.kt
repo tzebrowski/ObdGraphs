@@ -21,6 +21,7 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import com.github.mikephil.charting.data.Entry
+import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.getContext
@@ -42,7 +43,7 @@ private const val TRIP_DIRECTORY = "trips"
 
 private const val TRIP_FILE_PREFIX = "trip"
 
-internal class DefaultTripManager : TripManager {
+internal class DefaultTripManager : TripManager, MetricsProcessor {
 
     private val valueScaler = ValueScaler()
 

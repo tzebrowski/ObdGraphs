@@ -34,7 +34,6 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -124,7 +123,7 @@ open class DragRacingFragment : Fragment() {
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(
-            enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
+            enabled = query.getPIDs()
         )
 
         dataLogger.observe(viewLifecycleOwner) {
@@ -142,5 +141,4 @@ open class DragRacingFragment : Fragment() {
 
         return root
     }
-
 }

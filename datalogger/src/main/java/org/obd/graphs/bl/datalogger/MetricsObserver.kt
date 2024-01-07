@@ -18,45 +18,52 @@
  **/
 package org.obd.graphs.bl.datalogger
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import org.obd.graphs.bl.drag.dragRacingResultsUpdater
-import org.obd.graphs.bl.trip.tripManager
 import org.obd.metrics.api.model.*
-
 
 internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     private val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
-    private val dynamicSelectorModeEventsBroadcaster = DynamicSelectorModeEventBroadcaster()
+    private val metricsProcessors = mutableSetOf<MetricsProcessor>()
 
     override fun onStopped() {
         metrics.postValue(null)
-        dynamicSelectorModeEventsBroadcaster.onStopped()
-        dragRacingResultsUpdater.onStopped()
+        metricsProcessors.forEach { it.onStopped() }
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
-        dynamicSelectorModeEventsBroadcaster.onRunning(vehicleCapabilities)
-        dragRacingResultsUpdater.onRunning(vehicleCapabilities)
+        metricsProcessors.forEach { it.onRunning(vehicleCapabilities) }
+    }
+
+    fun observe(metricsProcessor: MetricsProcessor) {
+        metricsProcessors.add(metricsProcessor)
+        metricsProcessor.init(this)
     }
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
-        metrics.observe(lifecycleOwner){
+        metrics.observe(lifecycleOwner) {
             it?.let {
                 observer(it)
             }
         }
     }
+
     override fun onNext(reply: Reply<*>) {
 
         if (reply is ObdMetric) {
             reply.command.pid?.let {
                 metrics.postValue(reply)
-                tripManager.postValue(reply)
-
-                dynamicSelectorModeEventsBroadcaster.postValue(reply)
-                dragRacingResultsUpdater.postValue(reply)
+                metricsProcessors.forEach {
+                    try {
+                        it.postValue(reply)
+                    } catch (e: java.lang.Exception) {
+                        if (Log.isLoggable("MetricsObserver",Log.VERBOSE)){
+                            Log.v("MetricsObserver","Failed to process metric",e)
+                        }
+                    }
+                }
             }
         }
     }

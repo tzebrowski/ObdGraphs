@@ -26,8 +26,9 @@ import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.bl.query.isVehicleSpeed
 import org.obd.graphs.renderer.*
-import org.obd.graphs.renderer.AbstractSurfaceRenderer
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -43,7 +44,7 @@ internal class DragRacingSurfaceRenderer(
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACING
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
-            enabled = setOf(dragRacingResultRegistry.getVehicleSpeedPID())
+            enabled = query.getPIDs()
        )
     }
 
@@ -76,13 +77,13 @@ internal class DragRacingSurfaceRenderer(
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                drawer.drawStatusBar(canvas, top, left, fps)
+                drawer.drawStatusPanel(canvas, top, left, fps)
                 top += 4
                 drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             }
 
-            metricsCollector.findById(dragRacingResultRegistry.getVehicleSpeedPID())?.let {
+            metricsCollector.getMetrics().firstOrNull { it.source.isVehicleSpeed() }?.let {
                 top = drawer.drawMetric(
                     canvas = canvas,
                     area = area,
@@ -120,6 +121,8 @@ internal class DragRacingSurfaceRenderer(
     }
 
     init {
-        applyMetricsFilter(Query())
+        applyMetricsFilter(Query().apply {
+            setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+        })
     }
 }

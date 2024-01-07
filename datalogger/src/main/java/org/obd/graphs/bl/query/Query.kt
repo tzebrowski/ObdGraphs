@@ -20,7 +20,6 @@ package org.obd.graphs.bl.query
 
 import org.obd.graphs.runAsync
 
-
 class Query : java.io.Serializable {
 
     private val strategies: Map<QueryStrategyType, QueryStrategy> = mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
