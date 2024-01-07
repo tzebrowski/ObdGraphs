@@ -69,8 +69,8 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
             Prefs.getBoolean("pref.debug.generator.broadcast_fake_metrics", false)
 
 
-    private fun generateMetricsFor(query: Query) = mutableSetOf<MetricGeneratorDefinition>().apply {
-        query.getPIDs().forEach { id ->
+    private fun generateMetricsFor(query: Query?) = mutableSetOf<MetricGeneratorDefinition>().apply {
+        query?.getPIDs()?.forEach { id ->
             if (baseMetrics.containsKey(id)) {
                 add(baseMetrics[id]!!)
             } else {

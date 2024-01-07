@@ -44,5 +44,5 @@ interface DataLogger {
     fun start(query: Query)
     fun updateQuery(query: Query)
     fun stop()
-    fun getCurrentQuery(): Query
+    fun getCurrentQuery(): Query?
 }

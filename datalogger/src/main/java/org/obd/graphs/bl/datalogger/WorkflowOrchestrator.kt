@@ -146,21 +146,23 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     fun start(query: Query) {
-    
+        currentQuery = query
         getSettings(query).let {
             connection()?.run {
-                Log.i(LOG_TAG, "Selected PIDs: ${it.first.pids}")
+                Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
 
                 val status = workflow.start(
                     this, it.first, init(),
                     it.second
                 )
-                Log.i(LOG_TAG, "Start collecting process (${query.getStrategy()}). Status=$status")
+                Log.i(LOG_TAG, "Start collecting process, strategy: ${query.getStrategy()}. Status=$status")
             }
         }
     }
 
-    lateinit var currentQuery: Query
+    private lateinit var currentQuery: Query
+
+    fun getCurrentQuery (): Query? = if (::currentQuery.isInitialized) currentQuery else null
 
     fun updateQuery(query: Query) {
         if (::currentQuery.isInitialized && query.getPIDs() == currentQuery.getPIDs()){
