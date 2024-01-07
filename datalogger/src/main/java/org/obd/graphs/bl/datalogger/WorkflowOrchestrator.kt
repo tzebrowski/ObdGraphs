@@ -308,6 +308,8 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
+
+
     private fun getDragRacingAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
         .errorsPolicy(
@@ -317,7 +319,10 @@ internal class WorkflowOrchestrator internal constructor() {
         )
         .batchPolicy(
             BatchPolicy.builder()
-                .enabled(true).build()
+                .enabled(dataLoggerPreferences.instance.batchEnabled)
+                .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
+                .mode01BatchSize(dataLoggerPreferences.instance.mode01BatchSize)
+                .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize).build()
         )
         .collectRawConnectorResponseEnabled(false)
         .stNxx(
@@ -336,6 +341,8 @@ internal class WorkflowOrchestrator internal constructor() {
         .producerPolicy(
             ProducerPolicy
                 .builder()
+                .pidPriority(0,0) // vehicle speed, rpm
+                .pidPriority(5,300) // atm pressure, ambient temp
                 .conditionalSleepEnabled(false)
                 .build()
         )
