@@ -20,8 +20,10 @@ package org.obd.graphs.preferences.pid
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.*
 import android.widget.Button
 import android.widget.TableLayout
@@ -44,6 +46,7 @@ import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
+
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
@@ -83,7 +86,18 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
         attachActionButtons()
         adjustItemsVisibility()
 
+        adjustRecyclerViewHeight(recyclerView)
+
         return root
+    }
+
+    private fun adjustRecyclerViewHeight(recyclerView: RecyclerView) {
+        val orientation = resources.configuration.orientation
+        recyclerView.layoutParams.height = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+           TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 350f, resources.displayMetrics).toInt()
+        } else {
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 450f, resources.displayMetrics).toInt()
+        }
     }
 
     private fun adjustItemsVisibility() {
@@ -120,7 +134,6 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
                 filterListOfItems(newText)
                 return false
             }
-
         })
     }
 
