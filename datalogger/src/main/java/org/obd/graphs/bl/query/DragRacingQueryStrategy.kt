@@ -18,12 +18,24 @@
  **/
 package org.obd.graphs.bl.query
 
+import org.obd.graphs.preferences.Prefs
 
-internal class DragRacingQueryStrategy : QueryStrategy(mutableSetOf(
-    VEHICLE_SPEED_PID_ID,
-    ENGINE_RPM_PID_ID,
-    MEASURED_INTAKE_PRESSURE_PID_ID,
-    ATM_PRESSURE_PID_ID,
-    AMBIENT_TEMP_PID_ID,
-))
+internal class DragRacingQueryStrategy : QueryStrategy() {
+    override fun getPIDs(): MutableSet<Long> {
+        return if (Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)) {
+            mutableSetOf(
+                namesRegistry.getVehicleSpeedPID(),
+                namesRegistry.getEngineRpmPID(),
+                namesRegistry.getMeasuredIntakePressurePID(),
+                namesRegistry.getAtmPressurePID(),
+                namesRegistry.getAmbientTempPID(),
+            )
+        } else {
+            mutableSetOf(
+                namesRegistry.getVehicleSpeedPID(),
+                namesRegistry.getEngineRpmPID()
+            )
+        }
+    }
+}
 

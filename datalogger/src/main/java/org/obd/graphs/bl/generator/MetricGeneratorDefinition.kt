@@ -1,16 +1,14 @@
 package org.obd.graphs.bl.generator
 
-import org.obd.graphs.bl.query.AMBIENT_TEMP_PID_ID
-import org.obd.graphs.bl.query.ATM_PRESSURE_PID_ID
-import org.obd.graphs.bl.query.DYNAMIC_SELECTOR_PID_ID
+import org.obd.graphs.bl.query.namesRegistry
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType
 
 internal data class MetricGeneratorDefinition(val pid: PidDefinition, val data: MutableList<Number>, var counter: Int = 0)
 
 internal val baseMetrics = mutableMapOf(
-    DYNAMIC_SELECTOR_PID_ID to MetricGeneratorDefinition(
-        pid = PidDefinition(DYNAMIC_SELECTOR_PID_ID,1,"A","22","18F0","","",-1,10, ValueType.INT),
+    namesRegistry.getDynamicSelectorPID() to MetricGeneratorDefinition(
+        pid = PidDefinition(namesRegistry.getDynamicSelectorPID(),1,"A","22","18F0","","",-1,10, ValueType.INT),
         data = mutableListOf<Number>().apply {
             (0..100).forEach{ _ ->
                 add(0)
@@ -26,8 +24,8 @@ internal val baseMetrics = mutableMapOf(
 
     }),
 
-    ATM_PRESSURE_PID_ID to MetricGeneratorDefinition(
-        pid = PidDefinition(ATM_PRESSURE_PID_ID,1,"A","22","18F0","C","Atm Pressure",700,1200, ValueType.INT),
+    namesRegistry.getAtmPressurePID() to MetricGeneratorDefinition(
+        pid = PidDefinition( namesRegistry.getAtmPressurePID(),1,"A","22","18F0","C","Atm Pressure",700,1200, ValueType.INT),
         data = mutableListOf<Number>().apply {
             (0..125).forEach{ _ ->
                 add(1020)
@@ -37,8 +35,8 @@ internal val baseMetrics = mutableMapOf(
             }
         }),
 
-    AMBIENT_TEMP_PID_ID to MetricGeneratorDefinition(
-        pid = PidDefinition(AMBIENT_TEMP_PID_ID,1,"A","22","18F0","C","Ambient Temp",0,50, ValueType.INT),
+    namesRegistry.getAmbientTempPID() to MetricGeneratorDefinition(
+        pid = PidDefinition( namesRegistry.getAmbientTempPID(),1,"A","22","18F0","C","Ambient Temp",0,50, ValueType.INT),
         data = mutableListOf<Number>().apply {
             (5..25).forEach{
                 add(it)

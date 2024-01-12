@@ -18,9 +18,9 @@
  **/
 package org.obd.graphs.bl.query
 
+import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.preferences.Prefs
 
-const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
 
 
 internal class IndividualQueryStrategy : QueryStrategy() {
@@ -29,7 +29,7 @@ internal class IndividualQueryStrategy : QueryStrategy() {
         val pids = super.getPIDs()
 
         if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
-            pids.add(DYNAMIC_SELECTOR_PID_ID)
+            pids.add(namesRegistry.getDynamicSelectorPID())
         }
 
         return pids

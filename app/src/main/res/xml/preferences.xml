@@ -597,6 +597,14 @@
                 android:title="@string/navigation.title_drag_racing"
                 app:key="pref.title_drag_racing">
 
+                <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.profile.2_0_GME_extension.enabled"
+                    android:title="@string/pref.profile.2_0_GME_extension.enabled"
+                    android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
+                    app:experimental="true"
+                    app:singleLineTitle="false" />
+
                 <ListPreference
                     android:defaultValue="30"
                     android:dialogTitle="@string/pref.drag_racing.font_size"
@@ -892,6 +900,14 @@
                 <PreferenceCategory
                     android:title="@string/pref.aa.performance_meter.category"
                     app:singleLineTitle="false">
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.profile.2_0_GME_extension.enabled"
+                        android:title="@string/pref.profile.2_0_GME_extension.enabled"
+                        android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
+                        app:experimental="true"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="false"

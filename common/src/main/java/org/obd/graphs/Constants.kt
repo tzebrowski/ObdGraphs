@@ -30,3 +30,5 @@ const val AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT = "pref.aa.screen_renderer.tog
 const val AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT = "pref.aa.virtual_screens.visibility.changed"
 const val AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT = "pref.aa.screen_renderer.changed"
 const val AA_VIRTUAL_SCREEN_REFRESH_EVENT = "pref.aa.screen_refresh.event"
+
+const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"

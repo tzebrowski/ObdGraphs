@@ -178,6 +178,9 @@
     <string name="pref.aa.performance_meter.display_frequency">Display vehicle speed read frequency</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Display vehicle speed at which measurement was done</string>
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>
+    <string name="pref.profile.2_0_GME_extension.enabled">Enable GME extensions for drag racing</string>
+    <string name="pref.profile.2_0_GME_extension.enabled_summary">This is an EXPERIMENTAL feature.\nIt enables additional context information for drag racing.</string>
+
     <string name="pref.aa.performance_meter.shift_lights_enabled_summary">This is an EXPERIMENTAL feature.\nEnable gear shift lights</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed">Display vehicle speed</string>
 
