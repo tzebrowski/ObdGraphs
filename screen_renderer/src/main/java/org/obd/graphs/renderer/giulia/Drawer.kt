@@ -46,7 +46,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        drawTitle(
+        top1 = drawTitle(
             canvas,
             metric, left1, top1,
             textSizeBase
@@ -260,8 +260,8 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         left: Float,
         top: Float,
         textSize: Float
-    ) {
-
+    ) : Float {
+        var top1 = top
         titlePaint.textSize = textSize
 
         if (settings.isBreakLabelTextEnabled()) {
@@ -284,8 +284,11 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
                         titlePaint
                     )
                     vPos += titlePaint.textSize
+
                 }
+                top1 += titlePaint.textSize
             }
+
         } else {
             val text = metric.source.command.pid.description.replace("\n", " ")
             canvas.drawText(
@@ -296,6 +299,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
             )
 
         }
+        return top1
     }
 
     private fun calculateProgressBarHeight() = when (settings.getMaxColumns()) {
