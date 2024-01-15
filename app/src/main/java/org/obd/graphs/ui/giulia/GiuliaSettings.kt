@@ -30,7 +30,7 @@ class GiuliaSettings(private val query: Query): ScreenSettings {
 
     override fun getMaxItems(): Int  =  Prefs.getS("pref.giulia.max_items","6").toInt()
 
-    override fun isBreakLabelTextEnabled(): Boolean = false
+    override fun isBreakLabelTextEnabled(): Boolean = true
 
     override fun getMaxColumns(): Int = giuliaVirtualScreen.getMaxItemsInColumn()
     override fun isHistoryEnabled(): Boolean  = true
