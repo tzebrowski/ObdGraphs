@@ -130,7 +130,11 @@
                 android:title="@string/pref.aa.virtual_screens.font_size.category"
                 tools:targetApi="o"/>
 
-
+            <item
+                android:id="@+id/navigation_giulia_number_of_columns"
+                android:checkable="true"
+                android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
+                tools:targetApi="o"/>
         </menu>
     </item>
 

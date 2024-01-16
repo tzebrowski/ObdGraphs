@@ -711,85 +711,88 @@
                         <PreferenceCategory
                             android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.category"
                             app:singleLineTitle="false">
-                            <ListPreference
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="1"
+                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.1"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="1"
+                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="1"
+                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.3"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
-                            <ListPreference
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="1"
+                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.4"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="1"
+                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.5"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="1"
+                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.6"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
-                            <ListPreference
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                app:showSeekBarValue="true"
+                                app:min="1"
+                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
-                                android:entries="@array/pref.numbers_1_2"
-                                android:entryValues="@array/pref.numbers_1_2"
-                                android:inputType="number"
                                 android:key="pref.giulia.max_pids_in_column.7"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
-
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
