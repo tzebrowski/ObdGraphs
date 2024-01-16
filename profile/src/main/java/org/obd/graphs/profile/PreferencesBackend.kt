@@ -259,14 +259,9 @@ internal class PreferencesBackend : Profile {
 
     private fun resetCurrentProfile() {
 
-        Prefs.edit().let {
-            getAvailableModes().forEach { key ->
-                it.putString("$MODE_HEADER_PREFIX.$key", "")
-                it.putString("$MODE_NAME_PREFIX.$key", "")
-            }
-            it.putString(PREF_CAN_HEADER_EDITOR, "")
-            it.putString(PREF_ADAPTER_MODE_ID_EDITOR, "")
+        diagnosticRequestIDMapper.reset()
 
+        Prefs.edit().let {
             Prefs.all
                 .filter { (pref, _) -> !pref.startsWith("pref.about") }
                 .filter { (pref, _) -> !pref.startsWith("datalogger") }

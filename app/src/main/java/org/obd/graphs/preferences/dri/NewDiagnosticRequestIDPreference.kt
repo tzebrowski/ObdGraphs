@@ -16,6 +16,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.preferences.mode
+package org.obd.graphs.preferences.dri
 
-const val MODE_LOG_KEY = "Mode"
+import android.content.Context
+import android.util.AttributeSet
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.PREFERENCE_PAGE
+import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.diagnosticRequestIDMapper
+
+
+class NewDiagnosticRequestIDPreference(
+    context: Context,
+    attrs: AttributeSet?
+) :
+    EditTextPreference(context, attrs) {
+    init {
+        onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
+            diagnosticRequestIDMapper.addNewValue(newValue.toString())
+            navigateToPreferencesScreen(PREFERENCE_PAGE)
+            true
+        }
+    }
+}

@@ -250,7 +250,7 @@ internal class WorkflowOrchestrator internal constructor() {
     private fun init() = Init.builder()
         .delayAfterInit(dataLoggerPreferences.instance.initDelay)
         .delayAfterReset(dataLoggerPreferences.instance.delayAfterReset)
-        .headers(getModesAndHeaders().map { entry ->
+        .headers(diagnosticRequestIDMapper.getMapping().map { entry ->
             Init.Header.builder().mode(entry.key).header(entry.value).build()
         }.toMutableList())
         .protocol(Init.Protocol.valueOf(dataLoggerPreferences.instance.initProtocol))

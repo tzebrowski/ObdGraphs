@@ -79,11 +79,12 @@
     <string name="pref.gauge_background_color">Background color</string>
     <string name="pref.gauge_toggle_virtual_screens">Toggle Virtual Screens on double click</string>
 
-    <string name="pref.adapter_init_mode_selected">Edit PID Mode</string>
-    <string name="pref.adapter_init_mode_header_selected">Set CAN Header for the current PID Mode</string>
-    <string name="pref.adapter_init_mode_set_mode_id">Update PID Mode</string>
-    <string name="pref.adapter_init_header_new">Add header</string>
-    <string name="pref.adapter_init_header_settings">CAN header settings</string>
+    <string name="pref.adapter.diagnostic_request_id.mapping.category">Configure Diagnostic Request ID mapping</string>
+    <string name="pref.adapter.diagnostic_request_id.select_key">Select Diagnostic Request ID key</string>
+    <string name="pref.adapter.diagnostic_request_id.set_new_value">Set Diagnostic Request ID value</string>
+    <string name="pref.adapter.diagnostic_request_id.set_key">Update Diagnostic Request ID key</string>
+    <string name="pref.adapter.diagnostic_request_id.add_new_value">Add new Diagnostic Request ID value</string>
+    <string name="pref.adapter.diagnostic_request_id.values.category">Configure Diagnostic Request ID values</string>
 
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
@@ -234,7 +235,7 @@
     <string name="pref.aa_category">Android Auto view configuration</string>
     <string name="pref.aa_category_summary">This page collects Android Auto specific configuration parameters.</string>
 
-    <string name="pref.adapter_category">OBD2 Adapter</string>
+    <string name="pref.adapter_category">OBD2 Adapter Settings</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
     <string name="pref.usb_category">USB</string>
     <string name="pref.usb.baud_rate">This parameter allows to set desired baud rate</string>

@@ -33,6 +33,24 @@
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/context_menu.parameters_id_to_query" />
 
+
+    <item
+        android:title="@string/pref.adapter_category">
+        <menu>
+            <item
+                android:id="@+id/navigation_preferences_adapter"
+                android:checkable="true"
+                android:title="@string/pref.connection.category" />
+
+            <item
+                android:id="@+id/navigation_adapter_dri"
+                android:checkable="true"
+                android:title="@string/pref.adapter.diagnostic_request_id.mapping.category">
+            </item>
+
+        </menu>
+    </item>
+
     <item android:title="@string/navigation.title_aa" android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED">
         <menu>
             <item
@@ -191,10 +209,7 @@
                 android:checkable="true"
                 android:title="@string/pref.settings" />
 
-            <item
-                android:id="@+id/navigation_preferences_adapter"
-                android:checkable="true"
-                android:title="@string/pref.connection.category" />
+
         </menu>
     </item>
 </menu>

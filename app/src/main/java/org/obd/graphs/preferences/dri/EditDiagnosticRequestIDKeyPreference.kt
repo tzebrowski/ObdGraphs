@@ -16,30 +16,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.preferences.mode
+package org.obd.graphs.preferences.dri
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import org.obd.graphs.MODE_NAME_PREFIX
 import org.obd.graphs.PREFERENCE_PAGE
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.getCurrentMode
-import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.diagnosticRequestIDMapper
 
 
-class ModeNamePreference(
+class EditDiagnosticRequestIDKeyPreference(
     context: Context,
     attrs: AttributeSet?
 ) :
     EditTextPreference(context, attrs) {
     private val preferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
-        Log.i(MODE_LOG_KEY, "Updating mode name: ${getCurrentMode()}=$newValue")
-        Prefs.edit()
-            .putString("$MODE_NAME_PREFIX.${getCurrentMode()}", newValue.toString())
-            .apply()
+        diagnosticRequestIDMapper.updateKey(newValue.toString())
         navigateToPreferencesScreen(PREFERENCE_PAGE)
         true
     }

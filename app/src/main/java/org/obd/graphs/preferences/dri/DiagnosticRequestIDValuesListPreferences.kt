@@ -16,38 +16,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.preferences.mode
+package org.obd.graphs.preferences.dri
 
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import org.obd.graphs.CAN_HEADER_COUNTER_PREF
-import org.obd.graphs.PREFERENCE_PAGE
+import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.preferences.Prefs
 
-
-class HeaderNamePreference(
+class DiagnosticRequestIDValuesListPreferences(
     context: Context,
     attrs: AttributeSet?
 ) :
-    EditTextPreference(context, attrs) {
+    ListPreference(context, attrs) {
+
+    private val preferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
+        diagnosticRequestIDMapper.updateValue(newValue.toString())
+        navigateToPreferencesScreen(PREFERENCE_PAGE)
+        true
+    }
+
     init {
-        onPreferenceChangeListener = OnPreferenceChangeListener { _, newValue ->
-            Log.i(MODE_LOG_KEY, "Adding new CAN header=$newValue")
-            var numberOfHeaders = Prefs.getInt(CAN_HEADER_COUNTER_PREF, 0)
-            numberOfHeaders++
+        onPreferenceChangeListener = preferenceChangeListener
 
-            Prefs.edit().run {
-                putInt(CAN_HEADER_COUNTER_PREF, numberOfHeaders)
-                putString("pref.adapter.init.header.$numberOfHeaders", newValue.toString())
-                apply()
+        diagnosticRequestIDMapper.getValues().apply {
+            diagnosticRequestIDMapper.getNumberOfAvailableMappings().let { it ->
+                Log.d(DRI_LOG_KEY, "Number of custom DRI Values available: $it")
+                if (it > 0) {
+                    (1..it).forEach {
+                        Prefs.getString("pref.adapter.init.header.$it", "")?.let { header ->
+                            this[header] = header
+                        }
+                    }
+                }
             }
-
-            navigateToPreferencesScreen(PREFERENCE_PAGE)
-            true
+        }.let {
+            setDefaultValue(it.keys.first())
+            entries = it.values.toTypedArray()
+            entryValues = it.keys.toTypedArray()
         }
     }
 }

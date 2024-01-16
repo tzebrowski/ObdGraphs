@@ -77,6 +77,9 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_preferences -> navigateToPreferencesScreen("pref.root")
                 R.id.navigation_preferences_adapter -> navigateToPreferencesScreen("pref.adapter.connection")
 
+
+                R.id.navigation_adapter_dri -> navigateToPreferencesScreen("pref.init")
+
                 else -> navigateToScreen(item.itemId)
             }
 

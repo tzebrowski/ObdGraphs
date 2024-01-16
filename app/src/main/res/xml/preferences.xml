@@ -197,32 +197,32 @@
                         android:title="@string/pref.adapter_init_protocol"
                         app:useSimpleSummaryProvider="true" />
 
-                    <PreferenceCategory android:title="Configure PID Mode">
-                        <org.obd.graphs.preferences.mode.ModeListPreferences
+                    <PreferenceCategory android:title="@string/pref.adapter.diagnostic_request_id.mapping.category">
+                        <org.obd.graphs.preferences.dri.DiagnosticRequestIDListPreferences
                             android:key="pref.adapter.init.mode.selected"
-                            android:title="@string/pref.adapter_init_mode_selected"
+                            android:title="@string/pref.adapter.diagnostic_request_id.select_key"
                             app:useSimpleSummaryProvider="true" />
 
-                        <org.obd.graphs.preferences.mode.ModeNamePreference
-                            android:dialogTitle="@string/pref.adapter_init_mode_set_mode_id"
+                        <org.obd.graphs.preferences.dri.EditDiagnosticRequestIDKeyPreference
+                            android:dialogTitle="@string/pref.adapter.diagnostic_request_id.set_key"
                             android:digits="0123456789."
                             android:inputType="number"
                             android:key="pref.adapter.init.mode.id"
-                            android:title="@string/pref.adapter_init_mode_set_mode_id"
+                            android:title="@string/pref.adapter.diagnostic_request_id.set_key"
                             app:useSimpleSummaryProvider="true" />
                     </PreferenceCategory>
 
-                    <org.obd.graphs.preferences.mode.CANHeaderListPreferences
+                    <org.obd.graphs.preferences.dri.DiagnosticRequestIDValuesListPreferences
                         android:key="pref.adapter.init.mode.header"
-                        android:title="@string/pref.adapter_init_mode_header_selected"
+                        android:title="@string/pref.adapter.diagnostic_request_id.set_new_value"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
-                    <PreferenceCategory android:title="@string/pref.adapter_init_header_settings">
-                        <org.obd.graphs.preferences.mode.HeaderNamePreference
-                            android:dialogTitle="@string/pref.adapter_init_header_new"
+                    <PreferenceCategory android:title="@string/pref.adapter.diagnostic_request_id.values.category">
+                        <org.obd.graphs.preferences.dri.NewDiagnosticRequestIDPreference
+                            android:dialogTitle="@string/pref.adapter.diagnostic_request_id.add_new_value"
                             android:key="pref.adapter.init.header.new"
-                            android:title="@string/pref.adapter_init_header_new"
+                            android:title="@string/pref.adapter.diagnostic_request_id.add_new_value"
                             app:useSimpleSummaryProvider="true" />
                     </PreferenceCategory>
                 </PreferenceScreen>
