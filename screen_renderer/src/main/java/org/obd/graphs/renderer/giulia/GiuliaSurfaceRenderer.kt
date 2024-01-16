@@ -26,7 +26,6 @@ import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.renderer.*
-import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import kotlin.math.min
 
 
@@ -71,7 +70,7 @@ internal class GiuliaSurfaceRenderer(
             var left = drawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                drawer.drawStatusPanel(canvas,top, left, fps)
+                drawer.drawStatusPanel(canvas, top, left, fps)
                 top += 4
                 drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 32
@@ -90,7 +89,7 @@ internal class GiuliaSurfaceRenderer(
                         valueTextSize = valueTextSize,
                         left = left,
                         top = top,
-                        valueTop = valueTop
+                        valueLeft = valueTop
                     )
                 }
 

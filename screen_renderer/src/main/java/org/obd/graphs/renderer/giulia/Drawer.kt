@@ -38,7 +38,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         valueTextSize: Float,
         left: Float,
         top: Float,
-        valueTop: Float,
+        valueLeft: Float,
     ): Float {
 
         var top1 = top
@@ -53,11 +53,11 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         )
 
         drawValue(
-            canvas,
-            metric,
-            valueTop,
-            top1 + 10,
-            valueTextSize
+            canvas = canvas,
+            metric = metric,
+            left = valueLeft,
+            top = top1 + 10,
+            textSize = valueTextSize
         )
 
         if (settings.isHistoryEnabled()) {
@@ -241,17 +241,19 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
             colorTheme.currentValueColor
         }
 
+        var ll = left
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
 
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()
-        canvas.drawText(text, left, top, valuePaint)
+        ll -= getTextWidth(text, valuePaint) / 6
+        canvas.drawText(text, ll, top, valuePaint)
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textAlign = Paint.Align.LEFT
         valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas.drawText(metric.source.command.pid.units, (left + 2), top, valuePaint)
+        canvas.drawText(metric.source.command.pid.units, (ll + 2), top, valuePaint)
     }
 
     fun drawTitle(
@@ -274,8 +276,8 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
                     titlePaint
                 )
             } else {
-                paint.textSize = textSize * 0.8f
-                var vPos = top - 12
+                paint.textSize = textSize
+                var vPos = top
                 text.forEach {
                     canvas.drawText(
                         it,
