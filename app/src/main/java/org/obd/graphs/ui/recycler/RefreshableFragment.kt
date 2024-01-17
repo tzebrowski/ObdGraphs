@@ -38,7 +38,7 @@ import org.obd.graphs.ui.gauge.AdapterContext
 
 open class RefreshableFragment : Fragment() {
 
-    protected val query: Query = Query()
+    protected val query: Query = Query.instance()
     protected lateinit var root: View
 
     protected fun refreshRecyclerView(metricsCollector: MetricsCollector, recyclerViewId: Int) {

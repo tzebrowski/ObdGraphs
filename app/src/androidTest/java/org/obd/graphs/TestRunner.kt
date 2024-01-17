@@ -73,7 +73,7 @@ fun tcpTestRunner (givenProfile: String,
         try {
             runAsync {
                 mockServer.launch()
-                dataLogger.start(Query())
+                dataLogger.start(Query.instance())
             }
 
             try {

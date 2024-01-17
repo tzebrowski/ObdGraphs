@@ -44,7 +44,7 @@ import org.obd.graphs.ui.common.attachToFloatingButton
 open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
-    private val query = Query()
+    private val query = Query.instance()
     private val metricsCollector = MetricsCollector.instance()
     private val settings = GiuliaSettings(query)
     private val fps = Fps()

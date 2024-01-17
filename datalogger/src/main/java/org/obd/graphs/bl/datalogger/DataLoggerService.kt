@@ -70,7 +70,7 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
 
             SCHEDULED_ACTION_START -> {
                 val delay = intent.extras?.getLong(SCHEDULED_START_DELAY)
-                jobScheduler.schedule(delay as Long, Query())
+                jobScheduler.schedule(delay as Long, Query.instance())
             }
         }
     }

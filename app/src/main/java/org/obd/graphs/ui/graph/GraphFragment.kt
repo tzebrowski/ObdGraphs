@@ -78,9 +78,7 @@ fun ValueScaler.scaleToPidRange(
 private const val LOG_TAG = "Graph"
 class GraphFragment : Fragment() {
 
-    private val query = Query().apply {
-        setStrategy(QueryStrategyType.SHARED_QUERY)
-    }
+    private val query = Query.instance(QueryStrategyType.SHARED_QUERY)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {

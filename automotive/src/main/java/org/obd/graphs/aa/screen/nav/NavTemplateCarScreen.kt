@@ -168,8 +168,8 @@ internal class NavTemplateCarScreen(
                     surfaceController.renderFrame()
                     try {
                         invalidate()
-                    }catch (e: java.lang.Exception){
-                        e.printStackTrace()
+                    } catch (e: java.lang.Exception){
+                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
                     }
                 }
 
@@ -178,34 +178,55 @@ internal class NavTemplateCarScreen(
                 }
 
                 DATA_LOGGER_ERROR_EVENT -> {
-                    invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_connection_error)
+                    try {
+                        invalidate()
+                        toast.show(carContext, R.string.main_activity_toast_connection_error)
+                    } catch (e: java.lang.Exception){
+                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_EVENT event",e)
+                    }
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    toast.show(carContext, R.string.main_activity_toast_connection_stopped)
-                    cancelRenderingTask()
-                    invalidate()
-                    surfaceController.renderFrame()
-                    navigationManager().navigationEnded()
+
+                    try {
+                        toast.show(carContext, R.string.main_activity_toast_connection_stopped)
+                        cancelRenderingTask()
+                        invalidate()
+                        surfaceController.renderFrame()
+                        navigationManager().navigationEnded()
+                    } catch (e: java.lang.Exception){
+                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_STOPPED_EVENT event",e)
+                    }
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    toast.show(carContext, R.string.main_activity_toast_connection_established)
-                    renderingThread.start()
-                    fps.start()
-                    invalidate()
-                    navigationManager().navigationStarted()
+                    try {
+                        toast.show(carContext, R.string.main_activity_toast_connection_established)
+                        renderingThread.start()
+                        fps.start()
+                        invalidate()
+                        navigationManager().navigationStarted()
+                    }catch (e: java.lang.Exception){
+                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
+                    }
                 }
 
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-                    invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
+                    try {
+                        invalidate()
+                        toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
+                    }catch (e: java.lang.Exception){
+                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
+                    }
                 }
 
                 DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
-                    invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
+                    try {
+                        invalidate()
+                        toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
+                    }catch (e: java.lang.Exception){
+                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
+                    }
                 }
             }
         }

@@ -52,7 +52,7 @@ internal abstract class CarScreen(
     protected val fps: Fps = Fps()
 ): Screen(carContext), DefaultLifecycleObserver {
 
-    protected val query = Query()
+    protected val query = Query.instance()
 
     abstract fun renderAction()
 

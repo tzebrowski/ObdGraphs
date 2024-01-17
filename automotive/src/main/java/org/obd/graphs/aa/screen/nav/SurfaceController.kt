@@ -110,8 +110,8 @@ internal class SurfaceController(
         surface = null
         try {
             carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
-        } catch (e: java.lang.Exception){
-            Log.e(LOG_KEY, "Failed to set surface callback",e)
+        } catch (e: androidx.car.app.HostException){
+            Log.w(LOG_KEY, "Failed to set surface callback",e)
         }
     }
 

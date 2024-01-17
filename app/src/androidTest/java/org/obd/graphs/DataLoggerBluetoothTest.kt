@@ -52,7 +52,7 @@ class DataLoggerBluetoothTest {
 
             try {
                 runAsync {
-                    dataLogger.start(Query())
+                    dataLogger.start(Query.instance())
                 }
             } finally {
 

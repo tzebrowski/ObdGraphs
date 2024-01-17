@@ -44,9 +44,7 @@ import org.obd.graphs.ui.common.attachToFloatingButton
 open class DragRacingFragment : Fragment() {
     private lateinit var root: View
 
-    private val query = Query().apply {
-        setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-    }
+    private val query = Query.instance(QueryStrategyType.DRAG_RACING_QUERY)
 
     private val metricsCollector = MetricsCollector.instance()
     private val fps = Fps()

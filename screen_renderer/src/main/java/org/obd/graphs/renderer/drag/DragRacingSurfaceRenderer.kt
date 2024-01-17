@@ -121,8 +121,6 @@ internal class DragRacingSurfaceRenderer(
     }
 
     init {
-        applyMetricsFilter(Query().apply {
-            setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-        })
+        applyMetricsFilter(Query.instance(QueryStrategyType.DRAG_RACING_QUERY))
     }
 }
