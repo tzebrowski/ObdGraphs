@@ -70,7 +70,7 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
 
 
     private fun generateMetricsFor(query: Query?) = mutableSetOf<MetricGeneratorDefinition>().apply {
-        query?.getPIDs()?.forEach { id ->
+        query?.getIDs()?.forEach { id ->
             if (baseMetrics.containsKey(id)) {
                 add(baseMetrics[id]!!)
             } else {

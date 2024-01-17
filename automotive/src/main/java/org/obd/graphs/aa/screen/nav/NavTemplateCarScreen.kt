@@ -111,8 +111,12 @@ internal class NavTemplateCarScreen(
 
                 SURFACE_AREA_CHANGED_EVENT -> {
                     Log.v(LOG_KEY,"Surface area changed")
-                    invalidate()
-                    submitRenderingTask()
+                    try {
+                        invalidate()
+                        submitRenderingTask()
+                    }catch (e: java.lang.Exception){
+                        e.printStackTrace()
+                    }
                 }
 
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
@@ -162,7 +166,11 @@ internal class NavTemplateCarScreen(
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     surfaceController.renderFrame()
-                    invalidate()
+                    try {
+                        invalidate()
+                    }catch (e: java.lang.Exception){
+                        e.printStackTrace()
+                    }
                 }
 
                 DATA_LOGGER_NO_NETWORK_EVENT -> {
@@ -367,7 +375,7 @@ internal class NavTemplateCarScreen(
             dataLogger.updateQuery(query)
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
-            val query = query.getPIDs()
+            val query = query.getIDs()
             val selection = settings.getSelectedPIDs()
             val intersection =  selection.filter { query.contains(it) }.toSet()
 

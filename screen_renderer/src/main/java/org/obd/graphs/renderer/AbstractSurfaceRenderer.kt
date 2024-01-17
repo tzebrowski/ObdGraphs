@@ -44,9 +44,9 @@ internal abstract class AbstractSurfaceRenderer(
         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
         } else {
-            val pp = query.getPIDs()
+            val ids = query.getIDs()
             val selection = settings.getSelectedPIDs()
-            val intersection = selection.filter { pp.contains(it) }.toSet()
+            val intersection = selection.filter { ids.contains(it) }.toSet()
             metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
         }
     }

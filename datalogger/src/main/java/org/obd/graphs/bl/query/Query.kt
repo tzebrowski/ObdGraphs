@@ -18,8 +18,14 @@
  **/
 package org.obd.graphs.bl.query
 
+import android.util.Log
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.runAsync
 
+
+private const val LOG_KEY = "query"
 
 class Query : java.io.Serializable {
 
@@ -33,7 +39,7 @@ class Query : java.io.Serializable {
 
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
 
-    fun getPIDs(): MutableSet<Long> = strategies[strategy]?.getPIDs() ?: mutableSetOf()
+    fun getIDs(): MutableSet<Long> = strategies[strategy]?.getPIDs() ?: mutableSetOf()
 
     fun getStrategy(): QueryStrategyType = strategy
 
@@ -46,4 +52,38 @@ class Query : java.io.Serializable {
         strategies[strategy]?.update(newPIDs)
         return this
     }
+
+    fun filterBy(prefKey: String): Set<Long> {
+        val query = getIDs()
+        val selection = Prefs.getLongSet(prefKey)
+        val intersection =  selection.filter { query.contains(it) }.toSet()
+
+        Log.i(LOG_KEY,"Individual query enabled:${isIndividualQuerySelected()}, " +
+                " key:$prefKey, query=$query,selection=$selection, intersection=$intersection")
+
+        return if (isIndividualQuerySelected()) {
+            Log.i(LOG_KEY,"Returning selection=$selection")
+            selection
+        }else {
+            Log.i(LOG_KEY,"Returning intersection=$intersection")
+            intersection
+        }
+    }
+    fun apply(filter: String): Query =
+        if (isIndividualQuerySelected()) {
+            setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                .update(filterBy(filter))
+        } else {
+            setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
+
+    fun apply(filter: Set<Long>): Query =
+        if (isIndividualQuerySelected()) {
+            setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                .update(filter)
+        } else {
+            setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
+
+    private fun isIndividualQuerySelected() = dataLoggerPreferences.instance.queryForEachViewStrategyEnabled
 }

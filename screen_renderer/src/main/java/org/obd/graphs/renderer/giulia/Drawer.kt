@@ -241,19 +241,18 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
             colorTheme.currentValueColor
         }
 
-        var ll = left
+        val left1 = left - 4
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
 
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
         val text = metric.source.valueToString()
-        ll -= getTextWidth(text, valuePaint) / 6
-        canvas.drawText(text, ll, top, valuePaint)
+        canvas.drawText(text, left1, top, valuePaint)
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textAlign = Paint.Align.LEFT
         valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas.drawText(metric.source.command.pid.units, (ll + 2), top, valuePaint)
+        canvas.drawText(metric.source.command.pid.units, (left1 + 2), top, valuePaint)
     }
 
     fun drawTitle(

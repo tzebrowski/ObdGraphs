@@ -37,7 +37,7 @@ class DragRacingSettings(private val query: Query): ScreenSettings {
     }
 
     override fun getSelectedPIDs(): Set<Long> {
-        return query.getPIDs()
+        return query.getIDs()
     }
 
     override fun isBreakLabelTextEnabled(): Boolean = false

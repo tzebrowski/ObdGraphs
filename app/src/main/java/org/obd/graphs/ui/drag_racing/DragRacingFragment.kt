@@ -123,7 +123,7 @@ open class DragRacingFragment : Fragment() {
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(
-            enabled = query.getPIDs()
+            enabled = query.getIDs()
         )
 
         dataLogger.observe(viewLifecycleOwner) {

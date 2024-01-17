@@ -178,19 +178,9 @@ class GraphFragment : Fragment() {
         configureRecyclerView()
         setupVirtualViewPanel()
         attachToFloatingButton(activity, query())
-
         return root
     }
-
-    private fun query(): Query =
-        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                .update(preferences.metrics)
-        } else {
-            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-        }
-
-
+    private fun query() = query.apply(preferences.metrics)
 
     private fun configureRecyclerView() {
         val displayInfoPanel = Prefs.getBoolean("pref.trips.recordings.display_info", true)

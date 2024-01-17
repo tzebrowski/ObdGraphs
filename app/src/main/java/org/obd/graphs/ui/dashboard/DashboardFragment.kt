@@ -34,8 +34,6 @@ import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
@@ -123,6 +121,7 @@ class DashboardFragment : RefreshableFragment() {
         return root
     }
 
+    private fun query() = query.apply(dashboardPreferences.dashboardSelectedMetrics.first)
 
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
         configureView(
@@ -164,12 +163,4 @@ class DashboardFragment : RefreshableFragment() {
             if (requireContext().resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
         }
     }
-
-    private fun query(): Query =
-        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                 .update(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first))
-        } else {
-            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-        }
 }

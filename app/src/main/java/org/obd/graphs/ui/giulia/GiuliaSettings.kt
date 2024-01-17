@@ -25,7 +25,7 @@ import org.obd.graphs.renderer.ScreenSettings
 
 class GiuliaSettings(private val query: Query): ScreenSettings {
     override fun getSelectedPIDs(): Set<Long> {
-        return query.getPIDs()
+        return query.getIDs()
     }
 
     override fun getMaxItems(): Int  =  Prefs.getS("pref.giulia.max_items","6").toInt()

@@ -81,7 +81,7 @@
 
     <string name="pref.adapter.diagnostic_request_id.mapping.category">Configure Diagnostic Request ID mapping</string>
     <string name="pref.adapter.diagnostic_request_id.select_key">Select Diagnostic Request ID key</string>
-    <string name="pref.adapter.diagnostic_request_id.set_new_value">Set Diagnostic Request ID value</string>
+    <string name="pref.adapter.diagnostic_request_id.set_new_value">Set Diagnostic Request ID value for the selected key</string>
     <string name="pref.adapter.diagnostic_request_id.set_key">Update Diagnostic Request ID key</string>
     <string name="pref.adapter.diagnostic_request_id.add_new_value">Add new Diagnostic Request ID value</string>
     <string name="pref.adapter.diagnostic_request_id.values.category">Configure Diagnostic Request ID values</string>

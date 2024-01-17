@@ -165,8 +165,8 @@ internal class WorkflowOrchestrator internal constructor() {
     fun getCurrentQuery (): Query? = if (::currentQuery.isInitialized) currentQuery else null
 
     fun updateQuery(query: Query) {
-        if (::currentQuery.isInitialized && query.getPIDs() == currentQuery.getPIDs()){
-            Log.w(LOG_TAG,"Received same query=${query.getPIDs()}. Do not update.")
+        if (::currentQuery.isInitialized && query.getIDs() == currentQuery.getIDs()){
+            Log.w(LOG_TAG,"Received same query=${query.getIDs()}. Do not update.")
         } else {
             getSettings(query).let {
                 val result = workflow.updateQuery(
@@ -391,8 +391,8 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun getSettings(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
         QueryStrategyType.DRAG_RACING_QUERY ->
-            Pair(org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getDragRacingAdjustments())
+            Pair(org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build(), getDragRacingAdjustments())
         else ->
-            Pair( org.obd.metrics.api.model.Query.builder().pids(query.getPIDs()).build(), getMetricsAdjustments())
+            Pair( org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build(), getMetricsAdjustments())
     }
 }

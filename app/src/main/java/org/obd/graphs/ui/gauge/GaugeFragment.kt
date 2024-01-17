@@ -37,8 +37,6 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetric
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
@@ -135,13 +133,6 @@ class GaugeFragment : RefreshableFragment() {
         return root
     }
 
-    private fun query(): Query =
-        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                .update(getSelectedPIDs())
-        } else {
-            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-        }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -223,7 +214,7 @@ class GaugeFragment : RefreshableFragment() {
         }
     }
 
-    private fun getSelectedPIDs() = getSelectedPIDs(gaugeVirtualScreen.getVirtualScreenPrefKey())
+    private fun getSelectedPIDs() = query.filterBy(gaugeVirtualScreen.getVirtualScreenPrefKey())
 
     private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
         (root.findViewById<Button>(btnId)).let {
@@ -245,6 +236,8 @@ class GaugeFragment : RefreshableFragment() {
             }
         }
     }
+
+    private fun query() = query.apply(gaugeVirtualScreen.getVirtualScreenPrefKey())
 
     private fun setupVirtualViewPanel() {
         val currentVirtualScreen = gaugeVirtualScreen.getCurrentVirtualScreen()

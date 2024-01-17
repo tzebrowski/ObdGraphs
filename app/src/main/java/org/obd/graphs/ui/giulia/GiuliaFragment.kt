@@ -24,7 +24,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
@@ -33,9 +32,6 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.CarMetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -44,8 +40,6 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
 import org.obd.graphs.ui.common.attachToFloatingButton
-
-private const val LOG_KEY = "GiuliaFragment"
 
 open class GiuliaFragment : Fragment() {
     private lateinit var root: View
@@ -114,15 +108,18 @@ open class GiuliaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        root  = inflater.inflate(R.layout.fragment_giulia, container, false)
+        root = inflater.inflate(R.layout.fragment_giulia, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         setupVirtualViewPanel()
-        surfaceController = SurfaceController(SurfaceRenderer.allocate(requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.GIULIA, viewSettings = ViewSettings(marginTop = 40)
-        ))
+        surfaceController = SurfaceController(
+            SurfaceRenderer.allocate(
+                requireContext(), settings, metricsCollector, fps,
+                surfaceRendererType = SurfaceRendererType.GIULIA, viewSettings = ViewSettings(marginTop = 40)
+            )
+        )
         surfaceView.holder.addCallback(surfaceController)
 
-        metricsCollector.applyFilter(getSelectedPIDs())
+        metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
@@ -156,12 +153,14 @@ open class GiuliaFragment : Fragment() {
                     dataLogger.updateQuery(query())
                 }
 
-                metricsCollector.applyFilter(getSelectedPIDs())
+                metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
             }
         }
     }
+
+    private fun query() = query.apply(giuliaVirtualScreen.getVirtualScreenPrefKey())
 
     private fun setupVirtualViewPanel() {
         val currentVirtualScreen = giuliaVirtualScreen.getCurrentVirtualScreen()
@@ -172,34 +171,5 @@ open class GiuliaFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
         setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
-    }
-
-    private fun query(): Query =
-        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                 .update(getSelectedPIDs())
-
-        } else {
-            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-        }
-
-
-    private fun getSelectedPIDs(): Set<Long> {
-        val pref = giuliaVirtualScreen.getVirtualScreenPrefKey()
-
-        val query = query.getPIDs()
-        val selection = Prefs.getLongSet(pref)
-        val intersection =  selection.filter { query.contains(it) }.toSet()
-        Log.i(
-            LOG_KEY,"Individual query enabled:${dataLoggerPreferences.instance.queryForEachViewStrategyEnabled}, " +
-                    " key:$pref, query=$query,selection=$selection, intersection=$intersection")
-
-        return if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-            Log.i(LOG_KEY,"Returning selection=$selection")
-            selection
-        }else {
-            Log.i(LOG_KEY,"Returning intersection=$intersection")
-            intersection
-        }
     }
 }
