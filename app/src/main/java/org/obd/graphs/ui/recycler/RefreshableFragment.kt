@@ -41,7 +41,7 @@ open class RefreshableFragment : Fragment() {
     protected val query: Query = Query()
     protected lateinit var root: View
 
-    protected fun refreshRecyclerView(metricsCollector: CarMetricsCollector, recyclerViewId: Int) {
+    protected fun refreshRecyclerView(metricsCollector: MetricsCollector, recyclerViewId: Int) {
         if (::root.isInitialized){
             val adapter = ((root.findViewById(recyclerViewId) as RecyclerView).adapter) as RecyclerViewAdapter<RecyclerView.ViewHolder>
             val data = adapter.data
@@ -60,10 +60,10 @@ open class RefreshableFragment : Fragment() {
     protected fun prepareMetrics(
         metricsIdsPref: String,
         metricsSerializerPref: String
-    ): MutableList<CarMetric> {
+    ): MutableList<Metric> {
         val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = query.filterBy(metricsIdsPref)
-        return CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
+        return MetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -77,7 +77,7 @@ open class RefreshableFragment : Fragment() {
         enableOnTouchListener: Boolean = false,
         adapter: (
             context: Context,
-            data: MutableList<CarMetric>,
+            data: MutableList<Metric>,
             resourceId: Int,
             height: Int?
         ) -> RecyclerViewAdapter<*>,
@@ -86,7 +86,7 @@ open class RefreshableFragment : Fragment() {
 
         val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = query.filterBy(metricsIdsPref)
-        val metrics = CarMetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
+        val metrics = MetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
         recyclerView.adapter = adapter(requireContext(), metrics, adapterContext.layoutId, adapterContext.height).apply {
@@ -127,7 +127,7 @@ open class RefreshableFragment : Fragment() {
 
         override fun deleteItems(fromPosition: Int) {
             val data = adapter(recyclerView).data
-            val itemId: CarMetric = data[fromPosition]
+            val itemId: Metric = data[fromPosition]
             data.remove(itemId)
 
             Prefs.updateLongSet(

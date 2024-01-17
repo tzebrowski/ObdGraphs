@@ -20,7 +20,7 @@ package org.obd.graphs.renderer.gauge
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -87,7 +87,7 @@ internal class Drawer(
         strokeCap = Paint.Cap.BUTT
     }
 
-    fun drawGauge(canvas: Canvas, metric: CarMetric, left: Float, top: Float, width: Float, labelCenterYPadding: Float = 0f) {
+    fun drawGauge(canvas: Canvas, metric: Metric, left: Float, top: Float, width: Float, labelCenterYPadding: Float = 0f) {
         paint.shader = null
 
         val rect = calculateRect(left, width, top)
@@ -156,7 +156,7 @@ internal class Drawer(
     }
 
     private fun drawProgressBar(
-        metric: CarMetric,
+        metric: Metric,
         canvas: Canvas,
         rect: RectF,
         strokeWidth: Float
@@ -243,7 +243,7 @@ internal class Drawer(
     private fun drawMetric(
         canvas: Canvas,
         area: RectF,
-        metric: CarMetric,
+        metric: Metric,
         radius: Float,
         labelCenterYPadding:Float = 0f
     ) {
@@ -412,7 +412,7 @@ internal class Drawer(
     }
 
     private fun drawNumerals(
-        metric: CarMetric,
+        metric: Metric,
         canvas: Canvas,
         radius: Float,
         area: RectF,
@@ -450,7 +450,7 @@ internal class Drawer(
         }
     }
 
-    private inline fun valueAsString(metric: CarMetric, value: Double): String = if (metric.source.command.pid.max.toInt() > 20) {
+    private inline fun valueAsString(metric: Metric, value: Double): String = if (metric.source.command.pid.max.toInt() > 20) {
         value.toInt().toString()
     } else {
         value.toString()

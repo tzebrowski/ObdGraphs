@@ -24,13 +24,13 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 
-class CarMetricsBuilder {
+class MetricsBuilder {
     fun buildFor(ids: Set<Long>) = buildFor(ids, emptyMap())
 
-    fun buildFor(ids: Set<Long>, sortOrder: Map<Long, Int>?): MutableList<CarMetric> {
+    fun buildFor(ids: Set<Long>, sortOrder: Map<Long, Int>?): MutableList<Metric> {
         val metrics = buildMetrics(ids)
         sortOrder?.let { order ->
-            metrics.sortWith { m1: CarMetric, m2: CarMetric ->
+            metrics.sortWith { m1: Metric, m2: Metric ->
                 if (order.containsKey(m1.source.command.pid.id) && order.containsKey(
                         m2.source.command.pid.id
                     )
@@ -46,14 +46,14 @@ class CarMetricsBuilder {
         return metrics
     }
 
-    private fun buildMetrics(ids: Set<Long>): MutableList<CarMetric> {
+    private fun buildMetrics(ids: Set<Long>): MutableList<Metric> {
         val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
         val histogramSupplier = dataLogger.getDiagnostics().histogram()
 
         return ids.mapNotNull {
             pidRegistry.findBy(it)?.let { pid ->
                 val histogram = histogramSupplier.findBy(pid)
-                CarMetric
+                Metric
                     .newInstance(
                         min = histogram?.min?:0.0,
                         max = histogram?.max?:0.0,

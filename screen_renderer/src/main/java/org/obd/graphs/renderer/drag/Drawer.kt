@@ -20,7 +20,7 @@ package org.obd.graphs.renderer.drag
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
@@ -142,7 +142,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
     inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
-        metric: CarMetric,
+        metric: Metric,
         left: Float,
         top: Float
     ): Float {
@@ -232,7 +232,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
         left: Float,
         width: Float,
         top: Float,
-        it: CarMetric,
+        it: Metric,
         color: Int
     ) {
         paint.color = color
@@ -254,7 +254,7 @@ internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDraw
 
     fun drawValue(
         canvas: Canvas,
-        metric: CarMetric,
+        metric: Metric,
         area: Rect,
         top: Float,
         textSize: Float

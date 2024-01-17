@@ -22,7 +22,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.query.Query
@@ -35,7 +35,7 @@ import org.obd.graphs.renderer.*
 internal class DragRacingSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
-    metricsCollector: CarMetricsCollector,
+    metricsCollector: MetricsCollector,
     fps: Fps,
     viewSettings: ViewSettings
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {

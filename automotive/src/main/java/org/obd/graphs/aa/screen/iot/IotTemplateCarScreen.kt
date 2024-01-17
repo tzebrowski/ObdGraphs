@@ -36,8 +36,8 @@ import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.*
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.toast
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
@@ -45,7 +45,7 @@ import org.obd.graphs.renderer.DynamicSelectorMode
 internal class IotTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
-    metricsCollector: CarMetricsCollector,
+    metricsCollector: MetricsCollector,
 ) : CarScreen(carContext, settings, metricsCollector) {
 
     private val valueDrawable = ValueDrawable(carContext)
@@ -247,7 +247,7 @@ internal class IotTemplateCarScreen(
         }
     }
 
-    private fun getTitleFor(metric: CarMetric): SpannableString {
+    private fun getTitleFor(metric: Metric): SpannableString {
         val title = StringBuilder()
         title.append(metric.source.command.pid.description.replace("\n",""))
         title.append("\n")

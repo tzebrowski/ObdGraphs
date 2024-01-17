@@ -34,8 +34,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.*
@@ -49,7 +49,7 @@ private const val CONFIGURE_CHANGE_EVENT_GAUGE = "recycler.view.change.configura
 private const val GAUGE_PIDS_SETTINGS = "prefs.gauge.pids.settings"
 
 class GaugeFragment : RefreshableFragment() {
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val metricsCollector = MetricsCollector.instance()
     private val renderingThread: RenderingThread = RenderingThread(
         id = "GaugeFragmentRenderingThread",
         renderAction = {
@@ -175,7 +175,7 @@ class GaugeFragment : RefreshableFragment() {
             enableDragManager = Prefs.getBoolean(ENABLE_DRAG_AND_DROP_PREF, false),
             enableOnTouchListener = enableOnTouchListener,
             adapter = { context: Context,
-                        data: MutableList<CarMetric>,
+                        data: MutableList<Metric>,
                         resourceId: Int,
                         height: Int? ->
                 GaugeAdapter(context, data, resourceId, height)

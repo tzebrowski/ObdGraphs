@@ -24,7 +24,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.*
 import kotlin.math.min
 
@@ -42,7 +42,7 @@ private const val AREA_MAX_WIDTH = 500
 internal class GiuliaSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
-    metricsCollector: CarMetricsCollector,
+    metricsCollector: MetricsCollector,
     fps: Fps,
     viewSettings: ViewSettings
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {

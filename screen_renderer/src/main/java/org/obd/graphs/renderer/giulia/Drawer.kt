@@ -20,7 +20,7 @@ package org.obd.graphs.renderer.giulia
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 
@@ -33,7 +33,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
     inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
-        metric: CarMetric,
+        metric: Metric,
         textSizeBase: Float,
         valueTextSize: Float,
         left: Float,
@@ -168,7 +168,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         left: Float,
         width: Float,
         top: Float,
-        it: CarMetric,
+        it: Metric,
         color: Int
     ) {
         paint.color = color
@@ -187,7 +187,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         )
     }
 
-    fun drawAlertingLegend(canvas: Canvas, metric: CarMetric, left: Float, top: Float) {
+    fun drawAlertingLegend(canvas: Canvas, metric: Metric, left: Float, top: Float) {
         if (settings.isAlertLegendEnabled() && (metric.source.command.pid.alert.lowerThreshold != null ||
                     metric.source.command.pid.alert.upperThreshold != null)
         ) {
@@ -229,7 +229,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
 
     fun drawValue(
         canvas: Canvas,
-        metric: CarMetric,
+        metric: Metric,
         left: Float,
         top: Float,
         textSize: Float
@@ -257,7 +257,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
 
     fun drawTitle(
         canvas: Canvas,
-        metric: CarMetric,
+        metric: Metric,
         left: Float,
         top: Float,
         textSize: Float
@@ -308,7 +308,7 @@ internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawe
         else -> 10
     }
 
-    private fun inAlert(metric: CarMetric) = settings.isAlertingEnabled() && metric.isInAlert()
+    private fun inAlert(metric: Metric) = settings.isAlertingEnabled() && metric.isInAlert()
 
     private inline fun itemWidth(area: Rect): Int =
         when (settings.getMaxColumns()) {

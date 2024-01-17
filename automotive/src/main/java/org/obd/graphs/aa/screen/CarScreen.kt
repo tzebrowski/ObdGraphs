@@ -32,7 +32,7 @@ import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.*
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -48,7 +48,7 @@ const val LOG_KEY = "CarScreen"
 internal abstract class CarScreen(
     carContext: CarContext,
     protected val settings: CarSettings,
-    protected val metricsCollector: CarMetricsCollector,
+    protected val metricsCollector: MetricsCollector,
     protected val fps: Fps = Fps()
 ): Screen(carContext), DefaultLifecycleObserver {
 

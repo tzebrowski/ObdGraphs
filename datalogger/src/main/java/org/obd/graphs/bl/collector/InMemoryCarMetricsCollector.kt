@@ -26,11 +26,11 @@ import kotlin.Comparator
 
 private const val LOG_KEY = "InMemoryCollector"
 
-internal class InMemoryCarMetricsCollector : CarMetricsCollector {
+internal class InMemoryCarMetricsCollector : MetricsCollector {
 
-    private var metrics: SortedMap<Long, CarMetric> = TreeMap()
+    private var metrics: SortedMap<Long, Metric> = TreeMap()
 
-    override fun getMetrics(enabled: Boolean): List<CarMetric> = metrics.values.filter { it.enabled == enabled }
+    override fun getMetrics(enabled: Boolean): List<Metric> = metrics.values.filter { it.enabled == enabled }
 
     override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
         Log.i(LOG_KEY, "Updating visible PIDs=$enabled with order=$order")
@@ -40,7 +40,7 @@ internal class InMemoryCarMetricsCollector : CarMetricsCollector {
             if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
                 Log.d(LOG_KEY, "Rebuilding metrics configuration for: $enabled != ${metrics.keys}")
             }
-            CarMetricsBuilder().buildFor(enabled).forEach {
+            MetricsBuilder().buildFor(enabled).forEach {
                 val key = it.source.command.pid.id
 
                 if (metrics.keys.indexOf(key)  ==-1) {

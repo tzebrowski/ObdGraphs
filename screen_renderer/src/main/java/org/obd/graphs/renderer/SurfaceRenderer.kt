@@ -21,7 +21,7 @@ package org.obd.graphs.renderer
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
@@ -47,7 +47,7 @@ interface SurfaceRenderer {
         fun allocate(
             context: Context,
             settings: ScreenSettings,
-            metricsCollector: CarMetricsCollector,
+            metricsCollector: MetricsCollector,
             fps: Fps,
             surfaceRendererType: SurfaceRendererType = SurfaceRendererType.GIULIA,
             viewSettings: ViewSettings = ViewSettings()

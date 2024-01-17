@@ -32,7 +32,7 @@ import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -47,7 +47,7 @@ private const val LOG_KEY = "SurfaceController"
 internal class SurfaceController(
     private val carContext: CarContext,
     private val settings: CarSettings,
-    private val metricsCollector: CarMetricsCollector,
+    private val metricsCollector: MetricsCollector,
     private val fps: Fps,
     private val query: Query
 ) :

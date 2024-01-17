@@ -28,7 +28,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
@@ -48,7 +48,7 @@ open class DragRacingFragment : Fragment() {
         setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
     }
 
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val metricsCollector = MetricsCollector.instance()
     private val fps = Fps()
     private val settings = DragRacingSettings(query)
     private lateinit var surfaceController: SurfaceController

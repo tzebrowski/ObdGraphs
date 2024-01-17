@@ -36,7 +36,7 @@ import org.obd.graphs.aa.*
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.screen.*
 import org.obd.graphs.aa.screen.CarScreen
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
@@ -54,7 +54,7 @@ private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.
 internal class NavTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
-    metricsCollector: CarMetricsCollector,
+    metricsCollector: MetricsCollector,
     fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 

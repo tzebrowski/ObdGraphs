@@ -20,15 +20,15 @@ package org.obd.graphs.bl.collector
 
 import org.obd.metrics.api.model.ObdMetric
 
-interface CarMetricsCollector {
+interface MetricsCollector {
 
-    fun getMetrics(enabled: Boolean = true): List<CarMetric>
+    fun getMetrics(enabled: Boolean = true): List<Metric>
 
     fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
 
     fun append(input: ObdMetric?)
 
     companion object {
-        fun instance(): CarMetricsCollector = InMemoryCarMetricsCollector()
+        fun instance(): MetricsCollector = InMemoryCarMetricsCollector()
     }
 }

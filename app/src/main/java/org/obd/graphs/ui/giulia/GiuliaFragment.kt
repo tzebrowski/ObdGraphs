@@ -29,7 +29,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.Fps
@@ -45,7 +45,7 @@ open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
     private val query = Query()
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val metricsCollector = MetricsCollector.instance()
     private val settings = GiuliaSettings(query)
     private val fps = Fps()
 

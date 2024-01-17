@@ -22,8 +22,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.*
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import kotlin.math.min
@@ -33,7 +33,7 @@ import kotlin.math.min
 internal class GaugeSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
-    metricsCollector: CarMetricsCollector,
+    metricsCollector: MetricsCollector,
     fps: Fps,
     viewSettings: ViewSettings
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
@@ -124,7 +124,7 @@ internal class GaugeSurfaceRenderer(
     private fun draw(
         canvas: Canvas,
         area: Rect,
-        metrics: List<CarMetric>,
+        metrics: List<Metric>,
         marginLeft: Float = 5f,
         top: Float,
         labelCenterYPadding: Float = 0f
@@ -172,7 +172,7 @@ internal class GaugeSurfaceRenderer(
         }
     }
 
-    private inline fun widthScaleRatio(metrics: List<CarMetric>): Float = when (metrics.size) {
+    private inline fun widthScaleRatio(metrics: List<Metric>): Float = when (metrics.size) {
         1 -> 0.65f
         2 -> 1f
         3 -> 0.8f

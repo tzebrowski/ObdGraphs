@@ -20,8 +20,8 @@ package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.Rect
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
 import kotlin.math.max
@@ -34,7 +34,7 @@ internal abstract class AbstractSurfaceRenderer(
     protected val settings: ScreenSettings,
     protected val context: Context,
     protected val fps: Fps,
-    protected val metricsCollector: CarMetricsCollector,
+    protected val metricsCollector: MetricsCollector,
     protected val viewSettings: ViewSettings
 ) :
     SurfaceRenderer {
@@ -59,7 +59,7 @@ internal abstract class AbstractSurfaceRenderer(
     )
 
 
-    protected inline fun splitIntoChunks(metrics: List<CarMetric>): MutableList<List<CarMetric>> {
+    protected inline fun splitIntoChunks(metrics: List<Metric>): MutableList<List<Metric>> {
         val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
         if (lists.size == 3) {
             lists[0] = lists[0]

@@ -29,8 +29,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.bl.collector.CarMetric
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.datalogger.*
@@ -43,7 +43,7 @@ import org.obd.graphs.ui.gauge.AdapterContext
 
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 class DashboardFragment : RefreshableFragment() {
-    private val metricsCollector = CarMetricsCollector.instance()
+    private val metricsCollector = MetricsCollector.instance()
 
     private val renderingThread: RenderingThread = RenderingThread(
         renderAction = {
@@ -137,7 +137,7 @@ class DashboardFragment : RefreshableFragment() {
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = { context: Context,
-                        data: MutableList<CarMetric>,
+                        data: MutableList<Metric>,
                         resourceId: Int,
                         height: Int? ->
                 DashboardViewAdapter(context, data, resourceId, height)

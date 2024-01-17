@@ -23,7 +23,7 @@ import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.ScreenTemplateType
 import org.obd.graphs.aa.screen.iot.IotTemplateCarScreen
 import org.obd.graphs.aa.screen.nav.NavTemplateCarScreen
-import org.obd.graphs.bl.collector.CarMetricsCollector
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.Fps
 
 internal interface CarScreenFactory {
@@ -32,7 +32,7 @@ internal interface CarScreenFactory {
         fun instance(
             carContext: CarContext,
             settings: CarSettings,
-            metricsCollector: CarMetricsCollector,
+            metricsCollector: MetricsCollector,
             fps: Fps
         ): CarScreen =
             if (settings.getScreenTemplate() == ScreenTemplateType.NAV) {

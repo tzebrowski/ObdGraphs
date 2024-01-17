@@ -23,7 +23,7 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType
 
-data class CarMetric(
+data class Metric(
     var source: ObdMetric,
     var value: Number?,
     var min: Double,
@@ -34,7 +34,7 @@ data class CarMetric(
 ) {
     companion object {
         fun newInstance(source: ObdMetric, value: Number, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0)
-        = CarMetric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
+        = Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 
     fun toNumber(value: Double?): String {
@@ -62,7 +62,7 @@ data class CarMetric(
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
-        other as CarMetric
+        other as Metric
 
         return this.source == other.source
     }

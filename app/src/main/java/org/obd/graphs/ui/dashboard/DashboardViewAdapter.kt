@@ -37,7 +37,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
-import org.obd.graphs.bl.collector.CarMetric
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -49,7 +49,7 @@ import org.obd.metrics.pid.PidDefinition
 
 class DashboardViewAdapter(
     context: Context,
-    data: MutableList<CarMetric>,
+    data: MutableList<Metric>,
     resourceId: Int,
     height: Int? = null
 ) :
