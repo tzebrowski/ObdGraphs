@@ -25,16 +25,17 @@ import org.junit.Assert
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.preferences.updateString
+import org.obd.graphs.profile.profile
 
 private const val CONNECTION_TYPE = "wifi"
 private const val MOCK_SERVER_PORT = "192.0.0.2"
 
 private const val LOG_TAG = "tcpTestRunner"
 
-fun tcpTestRunner (profile: String,
+fun tcpTestRunner (givenProfile: String,
                    expectedEventType: String,
                    mockServerRequestResponse: Map<String,String> = emptyMap(),
                    mockServerPort: Int,
@@ -51,8 +52,8 @@ fun tcpTestRunner (profile: String,
             )
         }
 
-        vehicleProfile.reset()
-        vehicleProfile.loadProfile(profile)
+        profile.reset()
+        profile.loadProfile(givenProfile)
 
         Prefs.updateString("pref.adapter.connection.type", CONNECTION_TYPE)
         Prefs.updateString("pref.adapter.connection.tcp.host", MOCK_SERVER_PORT)
@@ -72,7 +73,7 @@ fun tcpTestRunner (profile: String,
         try {
             runAsync {
                 mockServer.launch()
-                dataLogger.start()
+                dataLogger.start(Query())
             }
 
             try {

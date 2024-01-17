@@ -28,9 +28,10 @@ import org.junit.runner.RunWith
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.profile.vehicleProfile
 import org.obd.graphs.preferences.updateString
+import org.obd.graphs.profile.profile
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class DataLoggerBluetoothTest {
@@ -45,13 +46,13 @@ class DataLoggerBluetoothTest {
                     IntentFilter(countDownLatchBroadcastReceiver.broadcastEvent))
             }
             // lets use this profiles as default
-            vehicleProfile.loadProfile("profile_5")
+            profile.loadProfile("profile_5")
             Prefs.updateString("pref.adapter.id","").commit()
             Prefs.updateString("pref.adapter.connection.type","bluetooth").commit()
 
             try {
                 runAsync {
-                    dataLogger.start()
+                    dataLogger.start(Query())
                 }
             } finally {
 

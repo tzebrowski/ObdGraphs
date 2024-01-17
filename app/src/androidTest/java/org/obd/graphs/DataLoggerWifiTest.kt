@@ -42,7 +42,7 @@ class DataLoggerWifiTest {
             },
             expectedEventType = DATA_LOGGER_ERROR_EVENT,
             mockServerPort = 35000,
-            profile = "profile_5"
+            givenProfile = "profile_5"
         )
     }
 
@@ -59,7 +59,7 @@ class DataLoggerWifiTest {
             expectedEventType = DATA_LOGGER_CONNECTED_EVENT,
             mockServerRequestResponse = mapOf("01 15 0B 04 11 0F 05" to "nodata"),
             mockServerPort = 35007,
-            profile = "profile_3"
+            givenProfile = "profile_3"
         )
     }
 
@@ -84,7 +84,7 @@ class DataLoggerWifiTest {
             expectedEventType = DATA_LOGGER_DTC_AVAILABLE,
             mockServerRequestResponse = mapOf( "19020D" to "00F0:5902CF26E4001:482BC10048D0082:00480"),
             mockServerPort = 35009,
-            profile = "profile_3"
+            givenProfile = "profile_3"
         )
     }
 
@@ -112,7 +112,7 @@ class DataLoggerWifiTest {
                                     "22F195" to "62F1950000",
                                     "22F193" to "62F19300"),
             mockServerPort = 35003,
-            profile = "profile_3"
+            givenProfile = "profile_3"
         )
     }
 
@@ -143,7 +143,7 @@ class DataLoggerWifiTest {
                 "0400" to "4140FED09081414040800000",
                 "0600" to "416001214000"),
             mockServerPort = 35008,
-            profile = "profile_3"
+            givenProfile = "profile_3"
         )
 
     }
