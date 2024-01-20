@@ -21,8 +21,11 @@ package org.obd.graphs.renderer
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.query.isAmbientTemp
+import org.obd.graphs.bl.query.isAtmPressure
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
 import org.obd.graphs.renderer.drag.MARGIN_END
@@ -51,6 +54,10 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
     private val profileLabel: String
     private val fpsLabel: String
 
+    private val ambientTempLabel: String
+    private val atmPressureLabel: String
+
+
     protected val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
 
@@ -74,6 +81,9 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         profileLabel = context.resources.getString(R.string.status_bar_profile)
         fpsLabel = context.resources.getString(R.string.status_bar_fps)
         statusLabel = context.resources.getString(R.string.status_bar_status)
+
+        ambientTempLabel = context.resources.getString(R.string.status_bar_ambient_temp)
+        atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
     fun recycle() {
@@ -108,7 +118,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         }
     }
 
-    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps): Float {
+    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps, metricsCollector: MetricsCollector? = null): Float {
 
         var text = statusLabel
         var marginLeft = left
@@ -206,6 +216,60 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                 16f,
                 statusPaint
             )
+        }
+
+        metricsCollector?.let {
+            if (settings.getDragRacingSettings().contextInfoEnabled) {
+                metricsCollector.getMetrics().firstOrNull { it.source.isAmbientTemp() }?.let {
+                    marginLeft += getTextWidth(text, statusPaint) + 12F
+                    text = ambientTempLabel
+                    drawText(
+                        canvas,
+                        text,
+                        marginLeft,
+                        top,
+                        Color.WHITE,
+                        12f,
+                        statusPaint
+                    )
+
+                    marginLeft += getTextWidth(text, statusPaint) + 4F
+                    drawText(
+                        canvas,
+                        it.valueToString(),
+                        marginLeft,
+                        top,
+                        Color.YELLOW,
+                        16f,
+                        statusPaint
+                    )
+                }
+
+                metricsCollector.getMetrics().firstOrNull { it.source.isAtmPressure() }?.let {
+                    marginLeft += getTextWidth(text, statusPaint) + 12F
+                    text = atmPressureLabel
+                    drawText(
+                        canvas,
+                        text,
+                        marginLeft,
+                        top,
+                        Color.WHITE,
+                        12f,
+                        statusPaint
+                    )
+
+                    marginLeft += getTextWidth(text, statusPaint) + 4F
+                    drawText(
+                        canvas,
+                        it.valueToString(),
+                        marginLeft,
+                        top,
+                        Color.YELLOW,
+                        16f,
+                        statusPaint
+                    )
+                }
+            }
         }
 
         return getStatusBarTopMargin(top)

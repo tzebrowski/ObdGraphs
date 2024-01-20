@@ -13,4 +13,7 @@
     <string name="status_bar.status">status: </string>
     <string name="status_bar.profile">profile: </string>
     <string name="status_bar.fps">fps: </string>
+    <string name="status_bar.ambient_temp">ambient temp: </string>
+    <string name="status_bar.atm_pressure">atm pressure: </string>
+
 </resources>

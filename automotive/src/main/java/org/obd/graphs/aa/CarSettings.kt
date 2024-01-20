@@ -74,6 +74,7 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
         vehicleSpeedEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
         shiftLightsEnabled = Prefs.getBoolean("pref.aa.drag_race.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.aa.drag_race.shift_lights.rev_value", "5000").toInt()
+        contextInfoEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
     }
 
     override fun colorTheme(): ColorTheme = colorTheme.apply {

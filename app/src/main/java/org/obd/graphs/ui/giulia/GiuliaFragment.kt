@@ -54,7 +54,9 @@ open class GiuliaFragment : Fragment() {
     private val renderingThread: RenderingThread = RenderingThread(
         id = "GiuliaFragmentRenderingThread",
         renderAction = {
-            surfaceController.renderFrame()
+            if (::surfaceController.isInitialized) {
+                surfaceController.renderFrame()
+            }
         },
         perfFrameRate = {
             settings.getSurfaceFrameRate()
@@ -113,8 +115,12 @@ open class GiuliaFragment : Fragment() {
         setupVirtualViewPanel()
         surfaceController = SurfaceController(
             SurfaceRenderer.allocate(
-                requireContext(), settings, metricsCollector, fps,
-                surfaceRendererType = SurfaceRendererType.GIULIA, viewSettings = ViewSettings(marginTop = 40)
+                context = requireContext(),
+                settings = settings,
+                metricsCollector = metricsCollector,
+                fps = fps,
+                surfaceRendererType = SurfaceRendererType.GIULIA,
+                viewSettings = ViewSettings(marginTop = 40)
             )
         )
         surfaceView.holder.addCallback(surfaceController)
