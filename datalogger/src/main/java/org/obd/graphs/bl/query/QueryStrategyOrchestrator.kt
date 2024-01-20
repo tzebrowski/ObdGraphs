@@ -8,7 +8,7 @@ import org.obd.graphs.runAsync
 
 private const val LOG_KEY = "query"
 
-internal class QueryAggregator : java.io.Serializable, Query {
+internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
 
     private val strategies: Map<QueryStrategyType, QueryStrategy> = mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
         runAsync {
@@ -34,13 +34,13 @@ internal class QueryAggregator : java.io.Serializable, Query {
         return this
     }
 
-    override fun filterBy(prefKey: String): Set<Long> {
+    override fun filterBy(filter: String): Set<Long> {
         val query = getIDs()
-        val selection = Prefs.getLongSet(prefKey)
+        val selection = Prefs.getLongSet(filter)
         val intersection =  selection.filter { query.contains(it) }.toSet()
 
         Log.i(LOG_KEY,"Individual query enabled:${isIndividualQuerySelected()}, " +
-                " key:$prefKey, query=$query,selection=$selection, intersection=$intersection")
+                " key:$filter, query=$query,selection=$selection, intersection=$intersection")
 
         return if (isIndividualQuerySelected()) {
             Log.i(LOG_KEY,"Returning selection=$selection")
