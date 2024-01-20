@@ -810,8 +810,8 @@
 
                             <org.obd.graphs.preferences.aa.AASeekBar
                                 app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
+                                app:min="30"
+                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
                                 android:key="pref.giulia.screen_font_size.1"
@@ -821,8 +821,8 @@
 
                             <org.obd.graphs.preferences.aa.AASeekBar
                                 app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
+                                app:min="30"
+                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
                                 android:key="pref.giulia.screen_font_size.2"
@@ -832,8 +832,8 @@
 
                             <org.obd.graphs.preferences.aa.AASeekBar
                                 app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
+                                app:min="30"
+                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
                                 android:key="pref.giulia.screen_font_size.3"
@@ -843,8 +843,8 @@
 
                             <org.obd.graphs.preferences.aa.AASeekBar
                                 app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
+                                app:min="30"
+                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
                                 android:key="pref.giulia.screen_font_size.4"
@@ -854,8 +854,8 @@
 
                             <org.obd.graphs.preferences.aa.AASeekBar
                                 app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
+                                app:min="30"
+                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.5"
                                 android:key="pref.giulia.screen_font_size.5"
@@ -865,8 +865,8 @@
 
                             <org.obd.graphs.preferences.aa.AASeekBar
                                 app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
+                                app:min="30"
+                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.6"
                                 android:key="pref.giulia.screen_font_size.6"
@@ -876,8 +876,8 @@
 
                             <org.obd.graphs.preferences.aa.AASeekBar
                                 app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
+                                app:min="30"
+                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.7"
                                 android:key="pref.giulia.screen_font_size.7"
