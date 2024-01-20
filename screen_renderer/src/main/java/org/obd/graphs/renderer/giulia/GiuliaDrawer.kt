@@ -46,17 +46,19 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        top1 = drawTitle(
+        val (t1, t2) = drawTitle(
             canvas,
             metric, left1, top1,
             textSizeBase
         )
 
+        top1 = t1
+
         drawValue(
             canvas = canvas,
             metric = metric,
             left = valueLeft,
-            top = top1 + 10,
+            top = t2?:t1,
             textSize = valueTextSize
         )
 
@@ -226,7 +228,6 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         }
     }
 
-
     fun drawValue(
         canvas: Canvas,
         metric: Metric,
@@ -261,7 +262,8 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         left: Float,
         top: Float,
         textSize: Float
-    ) : Float {
+    ) : Pair<Float,Float?> {
+        val topMargin = 12
         var top1 = top
         titlePaint.textSize = textSize
 
@@ -274,6 +276,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     top,
                     titlePaint
                 )
+                return Pair(top1 + topMargin,null)
             } else {
                 paint.textSize = textSize
                 var vPos = top
@@ -288,6 +291,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
 
                 }
                 top1 += titlePaint.textSize
+                return Pair(top1 + topMargin, top + topMargin)
             }
 
         } else {
@@ -298,9 +302,8 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 top,
                 titlePaint
             )
-
+            return Pair(top1 + topMargin,null)
         }
-        return top1
     }
 
     private fun calculateProgressBarHeight() = when (settings.getMaxColumns()) {
