@@ -147,7 +147,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun start(query: Query) {
         currentQuery = query
-        getSettings(query).let {
+        queryToAdjustments(query).let {
             connection()?.run {
                 Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
 
@@ -168,7 +168,7 @@ internal class WorkflowOrchestrator internal constructor() {
         if (::currentQuery.isInitialized && query.getIDs() == currentQuery.getIDs()){
             Log.w(LOG_TAG,"Received same query=${query.getIDs()}. Do not update.")
         } else {
-            getSettings(query).let {
+            queryToAdjustments(query).let {
                 val result = workflow.updateQuery(
                     it.first,
                     init(), it.second)
@@ -321,8 +321,8 @@ internal class WorkflowOrchestrator internal constructor() {
             BatchPolicy.builder()
                 .enabled(dataLoggerPreferences.instance.batchEnabled)
                 .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
-                .mode01BatchSize(dataLoggerPreferences.instance.mode01BatchSize)
-                .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize).build()
+                .mode01BatchSize(3)
+                .mode22BatchSize(3).build()
         )
         .collectRawConnectorResponseEnabled(false)
         .stNxx(
@@ -389,7 +389,7 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }.toMutableList()
 
-    private fun getSettings(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
+    private fun queryToAdjustments(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
         QueryStrategyType.DRAG_RACING_QUERY ->
             Pair(org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build(), getDragRacingAdjustments())
         else ->
