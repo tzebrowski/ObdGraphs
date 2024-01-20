@@ -48,7 +48,7 @@ internal class GiuliaSurfaceRenderer(
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
     private val valueScaler = ValueScaler()
-    private val drawer = Drawer(context, settings)
+    private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun getType(): SurfaceRendererType = SurfaceRendererType.GIULIA
 
@@ -64,15 +64,15 @@ internal class GiuliaSurfaceRenderer(
 
             val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
-            drawer.drawBackground(canvas, area)
+            giuliaDrawer.drawBackground(canvas, area)
 
             var top = getDrawTop(area)
-            var left = drawer.getMarginLeft(area.left.toFloat())
+            var left = giuliaDrawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                drawer.drawStatusPanel(canvas, top, left, fps)
+                giuliaDrawer.drawStatusPanel(canvas, top, left, fps)
                 top += 4
-                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                giuliaDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 32
             }
 
@@ -81,7 +81,7 @@ internal class GiuliaSurfaceRenderer(
 
             splitIntoChunks(metrics).forEach { chunk ->
                 chunk.forEach lit@{ metric ->
-                    top = drawer.drawMetric(
+                    top = giuliaDrawer.drawMetric(
                         canvas = canvas,
                         area = area,
                         metric = metric,
@@ -104,7 +104,7 @@ internal class GiuliaSurfaceRenderer(
     }
 
     override fun release() {
-        drawer.recycle()
+        giuliaDrawer.recycle()
     }
 
     private inline fun calculateFontSize(

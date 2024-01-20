@@ -28,7 +28,7 @@ private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
-internal class Drawer(context: Context, settings: ScreenSettings): AbstractDrawer(context, settings) {
+internal class GiuliaDrawer(context: Context, settings: ScreenSettings): AbstractDrawer(context, settings) {
 
     inline fun drawMetric(
         canvas: Canvas,

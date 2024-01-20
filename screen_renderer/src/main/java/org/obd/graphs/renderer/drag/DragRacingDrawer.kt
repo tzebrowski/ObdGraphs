@@ -41,7 +41,7 @@ private const val SHIFT_LIGHTS_MAX_SEGMENTS = 14
 const val SHIFT_LIGHTS_WIDTH = 30
 
 @Suppress("NOTHING_TO_INLINE")
-internal class Drawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
 

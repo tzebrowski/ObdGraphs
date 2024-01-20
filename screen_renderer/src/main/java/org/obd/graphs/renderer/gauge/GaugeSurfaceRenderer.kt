@@ -38,7 +38,7 @@ internal class GaugeSurfaceRenderer(
     viewSettings: ViewSettings
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
-    private val drawer = Drawer(
+    private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
         drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
     )
@@ -60,21 +60,21 @@ internal class GaugeSurfaceRenderer(
 
             val metrics = metrics()
 
-            drawer.drawBackground(canvas, area)
+            gaugeDrawer.drawBackground(canvas, area)
 
             var top = getDrawTop(area)
 
             if (settings.isStatusPanelEnabled()) {
-                val left = drawer.getMarginLeft(area.left.toFloat())
-                drawer.drawStatusPanel(canvas,top, left, fps)
+                val left = gaugeDrawer.getMarginLeft(area.left.toFloat())
+                gaugeDrawer.drawStatusPanel(canvas,top, left, fps)
                 top += 4
-                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                gaugeDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 10
             }
             when (metrics.size) {
                 0 -> {}
                 1 -> {
-                    drawer.drawGauge(
+                    gaugeDrawer.drawGauge(
                         canvas = canvas,
                         left = area.left + area.width() / 6f,
                         top = top,
@@ -86,7 +86,7 @@ internal class GaugeSurfaceRenderer(
 
                 2 -> {
 
-                    drawer.drawGauge(
+                    gaugeDrawer.drawGauge(
                         canvas = canvas,
                         left = area.left.toFloat(),
                         top = top + area.height() / 7,
@@ -95,7 +95,7 @@ internal class GaugeSurfaceRenderer(
                         labelCenterYPadding = 22f
                     )
 
-                    drawer.drawGauge(
+                    gaugeDrawer.drawGauge(
                         canvas = canvas,
                         left = (area.left + area.width() / 2f) - 10,
                         top = top + area.height() / 7,
@@ -118,7 +118,7 @@ internal class GaugeSurfaceRenderer(
     }
 
     override fun release() {
-        drawer.recycle()
+        gaugeDrawer.recycle()
     }
 
     private fun draw(
@@ -145,7 +145,7 @@ internal class GaugeSurfaceRenderer(
         var left = marginLeft
         val padding = 10f
         firstHalf.forEach {
-            drawer.drawGauge(
+            gaugeDrawer.drawGauge(
                 canvas = canvas,
                 left = area.left + left,
                 top = top,
@@ -159,7 +159,7 @@ internal class GaugeSurfaceRenderer(
         if (maxItems > 1) {
             left = marginLeft
             secondHalf.forEach {
-                drawer.drawGauge(
+                gaugeDrawer.drawGauge(
                     canvas = canvas,
                     left = area.left + left,
                     top = top + height - 8f,

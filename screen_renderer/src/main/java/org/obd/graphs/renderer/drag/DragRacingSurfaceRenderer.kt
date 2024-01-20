@@ -40,7 +40,7 @@ internal class DragRacingSurfaceRenderer(
     viewSettings: ViewSettings
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
-    private val drawer = Drawer(context, settings)
+    private val dragRacingDrawer = DragRacingDrawer(context, settings)
     override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACING
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
@@ -53,38 +53,38 @@ internal class DragRacingSurfaceRenderer(
         drawArea?.let { it ->
 
             val dragRaceResults = dragRacingResultRegistry.getResult()
-            drawer.drawBackground(canvas, it)
+            dragRacingDrawer.drawBackground(canvas, it)
 
             val margin = if (settings.getDragRacingSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
-            var left = drawer.getMarginLeft(area.left.toFloat())
+            var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
 
             if (settings.getDragRacingSettings().shiftLightsEnabled) {
                 dragRacingResultRegistry.setShiftLightsRevThreshold(settings.getDragRacingSettings().shiftLightsRevThreshold)
                 // permanent white boxes
-                drawer.drawShiftLights(canvas, area, blinking = false)
+                dragRacingDrawer.drawShiftLights(canvas, area, blinking = false)
             }
 
             if (isShiftLight(dragRaceResults)) {
-                drawer.drawShiftLights(canvas, area, blinking = true)
+                dragRacingDrawer.drawShiftLights(canvas, area, blinking = true)
             }
 
             if (dragRaceResults.readyToRace){
-                drawer.drawShiftLights(canvas, area, color = Color.GREEN, blinking = true)
+                dragRacingDrawer.drawShiftLights(canvas, area, color = Color.GREEN, blinking = true)
             }
 
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                drawer.drawStatusPanel(canvas, top, left, fps, metricsCollector)
+                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector)
                 top += 4
-                drawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             }
 
             metricsCollector.getMetrics().firstOrNull { it.source.isVehicleSpeed() }?.let {
-                top = drawer.drawMetric(
+                top = dragRacingDrawer.drawMetric(
                     canvas = canvas,
                     area = area,
                     metric = it,
@@ -93,7 +93,7 @@ internal class DragRacingSurfaceRenderer(
                 )
             }
 
-            drawer.drawDragRaceResults(
+            dragRacingDrawer.drawDragRaceResults(
                 canvas = canvas,
                 area = area,
                 left = left,
@@ -117,7 +117,7 @@ internal class DragRacingSurfaceRenderer(
         settings.getDragRacingSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
 
     override fun release() {
-        drawer.recycle()
+        dragRacingDrawer.recycle()
     }
 
     init {

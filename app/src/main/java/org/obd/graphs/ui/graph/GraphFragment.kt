@@ -78,7 +78,6 @@ fun ValueScaler.scaleToPidRange(
 private const val LOG_TAG = "Graph"
 class GraphFragment : Fragment() {
 
-    private val query = Query.instance(QueryStrategyType.SHARED_QUERY)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -178,7 +177,6 @@ class GraphFragment : Fragment() {
         attachToFloatingButton(activity, query())
         return root
     }
-    private fun query() = query.apply(preferences.metrics)
 
     private fun configureRecyclerView() {
         val displayInfoPanel = Prefs.getBoolean("pref.trips.recordings.display_info", true)
@@ -458,7 +456,10 @@ class GraphFragment : Fragment() {
 
     private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
         if (graphPreferencesReader.read().toggleVirtualPanel) {
-            func(root.findViewById<LinearLayout>(R.id.virtual_view_panel))
+            func(root.findViewById(R.id.virtual_view_panel))
         }
     }
+
+    private fun query() = Query.instance(QueryStrategyType.SHARED_QUERY).apply(preferences.metrics)
+
 }

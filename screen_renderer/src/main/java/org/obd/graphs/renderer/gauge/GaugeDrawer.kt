@@ -57,7 +57,7 @@ data class DrawerSettings(
 )
 
 @Suppress("NOTHING_TO_INLINE")
-internal class Drawer(
+internal class GaugeDrawer(
     settings: ScreenSettings,
     context: Context,
     private val drawerSettings: DrawerSettings = DrawerSettings(),
