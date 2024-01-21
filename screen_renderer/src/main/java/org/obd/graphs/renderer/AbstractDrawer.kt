@@ -30,6 +30,9 @@ import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
 import org.obd.graphs.renderer.drag.MARGIN_END
 
+private const val STATUS_KEY_FONT_SIZE = 12f
+private const val STATUS_VALUE_FONT_SIZE = 18f
+
 internal abstract class AbstractDrawer (context: Context, protected val settings: ScreenSettings) {
 
     protected val valueScaler: ValueScaler = ValueScaler()
@@ -129,7 +132,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
             marginLeft,
             top,
             Color.LTGRAY,
-            12f,
+            STATUS_KEY_FONT_SIZE,
             statusPaint
         )
 
@@ -163,7 +166,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
             marginLeft,
             top,
             color,
-            18f,
+            STATUS_VALUE_FONT_SIZE,
             statusPaint
         )
 
@@ -176,7 +179,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
             marginLeft,
             top,
             Color.LTGRAY,
-            12f,
+            STATUS_KEY_FONT_SIZE,
             statusPaint
         )
 
@@ -189,7 +192,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
             marginLeft,
             top,
             colorTheme.currentProfileColor,
-            18f,
+            STATUS_VALUE_FONT_SIZE,
             statusPaint
         )
 
@@ -202,7 +205,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                 marginLeft,
                 top,
                 Color.WHITE,
-                12f,
+                STATUS_KEY_FONT_SIZE,
                 statusPaint
             )
 
@@ -229,18 +232,18 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                         marginLeft,
                         top,
                         Color.WHITE,
-                        12f,
+                        STATUS_KEY_FONT_SIZE,
                         statusPaint
                     )
 
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        it.valueToString(),
+                        "${it.valueToString()}${it.source.command.pid.units}",
                         marginLeft,
                         top,
                         Color.YELLOW,
-                        16f,
+                        STATUS_VALUE_FONT_SIZE,
                         statusPaint
                     )
                 }
@@ -254,18 +257,18 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                         marginLeft,
                         top,
                         Color.WHITE,
-                        12f,
+                        STATUS_KEY_FONT_SIZE,
                         statusPaint
                     )
 
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        it.valueToString(),
+                        "${it.valueToString()}${it.source.command.pid.units}",
                         marginLeft,
                         top,
                         Color.YELLOW,
-                        16f,
+                        STATUS_VALUE_FONT_SIZE,
                         statusPaint
                     )
                 }
