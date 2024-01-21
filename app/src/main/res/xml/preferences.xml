@@ -1286,14 +1286,14 @@
                     android:title="@string/pref.aa.alerting_category"
                     app:singleLineTitle="false">
 
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.aa.alerting.enabled"
                         android:summary="@string/pref.aa.alerting.enabled_summary"
                         android:title="@string/pref.aa.alerting.enabled"
                         app:singleLineTitle="false" />
 
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.aa.alerting.legend.enabled"
                         android:summary="@string/pref.aa.alerting.legend.enabled_summary"
