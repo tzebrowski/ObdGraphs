@@ -73,11 +73,13 @@ internal class GiuliaSurfaceRenderer(
                 giuliaDrawer.drawStatusPanel(canvas, top, left, fps)
                 top += 4
                 giuliaDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
-                top += 32
+                top += valueTextSize
+            } else {
+                top += 4
             }
 
             val topCpy = top
-            var valueTop = initialValueTop(area)
+            var initialLeft = initialLeft(area)
 
             splitIntoChunks(metrics).forEach { chunk ->
                 chunk.forEach lit@{ metric ->
@@ -89,12 +91,12 @@ internal class GiuliaSurfaceRenderer(
                         valueTextSize = valueTextSize,
                         left = left,
                         top = top,
-                        valueLeft = valueTop
+                        valueLeft = initialLeft
                     )
                 }
 
                 if (settings.getMaxColumns() > 1) {
-                    valueTop += area.width() / 2 - 18
+                    initialLeft += area.width() / 2 - 18
                 }
 
                 left += calculateLeftMargin(area)

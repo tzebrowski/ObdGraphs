@@ -118,7 +118,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         }
     }
 
-    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps, metricsCollector: MetricsCollector? = null): Float {
+    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps, metricsCollector: MetricsCollector? = null){
 
         var text = statusLabel
         var marginLeft = left
@@ -271,8 +271,6 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                 }
             }
         }
-
-        return getStatusBarTopMargin(top)
     }
 
     protected fun drawText(
@@ -303,6 +301,4 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
     }
 
     fun getMarginLeft(left: Float): Float = 12 + left
-
-    private fun getStatusBarTopMargin(top: Float): Float = top - paint.fontMetrics.ascent
 }

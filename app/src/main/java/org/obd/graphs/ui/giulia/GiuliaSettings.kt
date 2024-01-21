@@ -33,7 +33,7 @@ class GiuliaSettings(private val query: Query): ScreenSettings {
     override fun isBreakLabelTextEnabled(): Boolean = true
 
     override fun getMaxColumns(): Int = giuliaVirtualScreen.getMaxItemsInColumn()
-    override fun isHistoryEnabled(): Boolean  = true
+    override fun isStatisticsEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
     override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.giulia.fps","5").toInt()
     override fun getFontSize(): Int = giuliaVirtualScreen.getFontSize()

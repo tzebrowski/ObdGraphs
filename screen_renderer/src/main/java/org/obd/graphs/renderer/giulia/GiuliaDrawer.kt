@@ -54,7 +54,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
 
         top1 = t1
 
-        drawValue(
+        top1 += drawValue(
             canvas = canvas,
             metric = metric,
             left = valueLeft,
@@ -62,8 +62,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
             textSize = valueTextSize
         )
 
-        if (settings.isHistoryEnabled()) {
-            top1 += textSizeBase / FOOTER_SIZE_RATIO
+        if (settings.isStatisticsEnabled()) {
             left1 = drawText(
                 canvas,
                 "min",
@@ -117,14 +116,9 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     footerValueTextSize
                 )
             }
-
             drawAlertingLegend(canvas, metric, left1, top1)
-
-        } else {
-            top1 += 12
+            top1 +=  getTextHeight("min", paint) / 2
         }
-
-        top1 += 6f
 
         drawProgressBar(
             canvas,
@@ -141,7 +135,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
             color = settings.colorTheme().dividerColor
         )
 
-        top1 += (textSizeBase * 1.7).toInt()
+        top1 += (textSizeBase * 1.3).toInt()
 
         if (top1 > area.height()) {
             return top1
@@ -234,7 +228,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         left: Float,
         top: Float,
         textSize: Float
-    ) {
+    ): Float {
         val colorTheme = settings.colorTheme()
         valuePaint.color = if (inAlert(metric)) {
             colorTheme.currentValueInAlertColor
@@ -254,6 +248,8 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         valuePaint.textAlign = Paint.Align.LEFT
         valuePaint.textSize = (textSize * 0.4).toFloat()
         canvas.drawText(metric.source.command.pid.units, (left1 + 2), top, valuePaint)
+
+        return getTextHeight(text, valuePaint) - 1f
     }
 
     fun drawTitle(
@@ -278,7 +274,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 )
                 return Pair(top1 + topMargin,null)
             } else {
-                paint.textSize = textSize
+                titlePaint.textSize = textSize
                 var vPos = top
                 text.forEach {
                     canvas.drawText(

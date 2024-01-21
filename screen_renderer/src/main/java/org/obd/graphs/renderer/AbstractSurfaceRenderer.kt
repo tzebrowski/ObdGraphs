@@ -58,7 +58,6 @@ internal abstract class AbstractSurfaceRenderer(
         )
     )
 
-
     protected inline fun splitIntoChunks(metrics: List<Metric>): MutableList<List<Metric>> {
         val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
         if (lists.size == 3) {
@@ -69,7 +68,7 @@ internal abstract class AbstractSurfaceRenderer(
         return lists
     }
 
-    protected inline fun initialValueTop(area: Rect): Float =
+    protected inline fun initialLeft(area: Rect): Float =
         when (settings.getMaxColumns()) {
             1 -> area.left + ((area.width()) - 42).toFloat()
             else -> area.left + ((area.width() / 2) - 32).toFloat()

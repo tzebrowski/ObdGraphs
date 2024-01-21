@@ -259,7 +259,7 @@ internal class GaugeDrawer(
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-        var centerY = (area.centerY() + labelCenterYPadding - (if (settings.isHistoryEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
+        var centerY = (area.centerY() + labelCenterYPadding - (if (settings.isStatisticsEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
@@ -319,7 +319,7 @@ internal class GaugeDrawer(
             canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
         }
 
-        if (settings.isHistoryEnabled()) {
+        if (settings.isStatisticsEnabled()) {
             val hists =
                 "${metric.toNumber(metric.min)}    ${if (metric.source.command.pid.historgam.isAvgEnabled) metric.toNumber(metric.mean) else ""}     ${
                     metric.toNumber(metric.max)

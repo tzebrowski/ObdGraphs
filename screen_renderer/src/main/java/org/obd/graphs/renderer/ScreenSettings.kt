@@ -100,7 +100,7 @@ interface ScreenSettings {
     fun getSelectedPIDs(): Set<Long> = emptySet()
 
     fun getMaxColumns(): Int = 1
-    fun isHistoryEnabled(): Boolean
+    fun isStatisticsEnabled(): Boolean
     fun isFpsCounterEnabled(): Boolean
     fun getSurfaceFrameRate(): Int
     fun getFontSize(): Int
