@@ -137,7 +137,7 @@ internal class SurfaceController(
         Color.RED else Color.WHITE
 
     fun toggleSurfaceRenderer() {
-        surfaceRenderer.release()
+        surfaceRenderer.recycle()
         surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING) {
 
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
@@ -161,7 +161,7 @@ internal class SurfaceController(
     }
 
     fun allocateSurfaceRender() {
-        surfaceRenderer.release()
+        surfaceRenderer.recycle()
         surfaceRenderer =
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         renderFrame()

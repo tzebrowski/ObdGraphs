@@ -20,11 +20,9 @@ package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.Rect
-import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
-import kotlin.math.max
 import kotlin.math.min
 
 const val MARGIN_TOP = 20f
@@ -57,17 +55,6 @@ internal abstract class AbstractSurfaceRenderer(
             settings.getMaxItems()
         )
     )
-
-    protected inline fun splitIntoChunks(metrics: List<Metric>): MutableList<List<Metric>> {
-        val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
-        if (lists.size == 3) {
-            lists[0] = lists[0]
-            lists[1] = lists[1] + lists[2]
-            lists.removeAt(2)
-        }
-        return lists
-    }
-
     protected inline fun initialLeft(area: Rect): Float =
         when (settings.getMaxColumns()) {
             1 -> area.left + ((area.width()) - 42).toFloat()

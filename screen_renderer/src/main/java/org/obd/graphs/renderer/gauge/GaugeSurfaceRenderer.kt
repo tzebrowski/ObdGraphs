@@ -117,7 +117,7 @@ internal class GaugeSurfaceRenderer(
         }
     }
 
-    override fun release() {
+    override fun recycle() {
         gaugeDrawer.recycle()
     }
 

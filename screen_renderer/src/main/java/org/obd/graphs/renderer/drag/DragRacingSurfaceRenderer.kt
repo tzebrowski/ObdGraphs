@@ -116,7 +116,7 @@ internal class DragRacingSurfaceRenderer(
     private fun isShiftLight(dragRaceResults: DragRacingResults) =
         settings.getDragRacingSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
 
-    override fun release() {
+    override fun recycle() {
         dragRacingDrawer.recycle()
     }
 

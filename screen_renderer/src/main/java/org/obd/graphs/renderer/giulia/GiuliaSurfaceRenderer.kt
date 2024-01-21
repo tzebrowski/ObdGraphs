@@ -24,19 +24,20 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.*
+import kotlin.math.max
 import kotlin.math.min
 
 
-private const val LOG_KEY = "GiuliaScreenRenderer"
-
+private const val LOG_TAG = "GiuliaScreenRenderer"
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 private const val AREA_MAX_WIDTH = 500
-
+private const val MARGIN_TOP = 4
 
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaSurfaceRenderer(
@@ -71,11 +72,11 @@ internal class GiuliaSurfaceRenderer(
 
             if (settings.isStatusPanelEnabled()) {
                 giuliaDrawer.drawStatusPanel(canvas, top, left, fps)
-                top += 4
+                top += MARGIN_TOP
                 giuliaDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += valueTextSize
             } else {
-                top += 4
+                top += MARGIN_TOP
             }
 
             val topCpy = top
@@ -105,7 +106,7 @@ internal class GiuliaSurfaceRenderer(
         }
     }
 
-    override fun release() {
+    override fun recycle() {
         giuliaDrawer.recycle()
     }
 
@@ -125,9 +126,9 @@ internal class GiuliaSurfaceRenderer(
         val valueTextSize = (areaWidth / 10f) * scaleRatio
         val textSizeBase = (areaWidth / 16f) * scaleRatio
 
-        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+        if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
             Log.v(
-                LOG_KEY,
+                LOG_TAG,
                 "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio"
             )
         }
@@ -149,4 +150,13 @@ internal class GiuliaSurfaceRenderer(
             else -> (area.width() / 2)
         }
 
+    private inline fun splitIntoChunks(metrics: List<Metric>): MutableList<List<Metric>> {
+        val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
+        if (lists.size == 3) {
+            lists[0] = lists[0]
+            lists[1] = lists[1] + lists[2]
+            lists.removeAt(2)
+        }
+        return lists
+    }
 }

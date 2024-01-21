@@ -36,13 +36,9 @@ data class ViewSettings(var marginTop: Int = 0)
 
 interface SurfaceRenderer {
     fun applyMetricsFilter(query: Query)
-
     fun onDraw(canvas: Canvas, drawArea: Rect?)
-
-    fun release()
-
+    fun recycle()
     fun getType(): SurfaceRendererType
-
     companion object {
         fun allocate(
             context: Context,
