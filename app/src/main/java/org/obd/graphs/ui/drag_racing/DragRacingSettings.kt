@@ -34,6 +34,7 @@ class DragRacingSettings(private val query: Query): ScreenSettings {
         vehicleSpeedEnabled = Prefs.getBoolean("pref.drag_racing.vehicle_speed.enabled", true)
         shiftLightsEnabled = Prefs.getBoolean("pref.drag_racing.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.drag_racing.shift_lights.rev_value", "5000").toInt()
+        fontSize = Prefs.getS("pref.drag_racing.screen_font_size","30").toInt()
     }
 
     override fun getSelectedPIDs(): Set<Long> {
@@ -45,7 +46,6 @@ class DragRacingSettings(private val query: Query): ScreenSettings {
     override fun isStatisticsEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
     override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.drag_racing.fps","5").toInt()
-    override fun getFontSize(): Int =  Prefs.getS("pref.drag_racing.screen_font_size","30").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
 

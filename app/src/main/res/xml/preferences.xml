@@ -605,12 +605,12 @@
                     app:experimental="true"
                     app:singleLineTitle="false" />
 
-                <ListPreference
+                <org.obd.graphs.preferences.aa.AASeekBar
+                    app:showSeekBarValue="true"
+                    app:min="22"
+                    android:max="70"
                     android:defaultValue="30"
                     android:dialogTitle="@string/pref.drag_racing.font_size"
-                    android:entries="@array/pref.numbers_20_74"
-                    android:entryValues="@array/pref.numbers_20_74"
-                    android:inputType="number"
                     android:key="pref.drag_racing.screen_font_size"
                     android:title="@string/pref.drag_racing.font_size"
                     app:singleLineTitle="false"
@@ -1331,16 +1331,28 @@
                         android:title="@string/pref.aa.performance_meter.display_vehicle_speed_measurement"
                         app:singleLineTitle="false" />
 
-                    <ListPreference
-                        android:defaultValue="10"
-                        android:entries="@array/pref.numbers_1_20"
-                        android:entryValues="@array/pref.numbers_1_20"
-                        android:inputType="number"
-                        android:key="pref.drag_race.vehicle_speed.freq"
-                        android:summary="@string/pref.adapter_command_freq"
-                        android:title="@string/pref.adapter_command_freq"
+                    <org.obd.graphs.preferences.aa.AASeekBar
+                        app:showSeekBarValue="true"
+                        app:min="22"
+                        android:max="72"
+                        android:defaultValue="30"
+                        android:dialogTitle="@string/pref.aa.virtual_screens.font_size.category"
+                        android:key="pref.aa.drag_race.font_size"
+                        android:title="@string/pref.aa.virtual_screens.font_size.category"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
+
+                    <org.obd.graphs.preferences.aa.AASeekBar
+                        app:showSeekBarValue="true"
+                        app:min="1"
+                        android:max="20"
+                        android:defaultValue="10"
+                        android:dialogTitle="@string/pref.aa.performance_meter.vehicle_speed_freq"
+                        android:key="pref.drag_race.vehicle_speed.freq"
+                        android:title="@string/pref.aa.performance_meter.vehicle_speed_freq"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+
                 </PreferenceCategory>
 
                 <PreferenceCategory

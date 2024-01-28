@@ -42,9 +42,9 @@ const val SHIFT_LIGHTS_WIDTH = 30
 
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
-
 
     inline fun drawShiftLights(
         canvas: Canvas,
@@ -305,7 +305,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getFontSize().toFloat(),
+        val scaleRatio = valueScaler.scaleToNewRange(settings.getDragRacingSettings().fontSize.toFloat(),
             CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = area.width()

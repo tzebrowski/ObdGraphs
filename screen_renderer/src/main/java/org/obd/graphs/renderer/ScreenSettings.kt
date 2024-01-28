@@ -55,7 +55,8 @@ data class DragRacingSettings(
     var vehicleSpeedEnabled: Boolean = true,
     var vehicleSpeedFrequencyReadEnabled: Boolean = true,
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
-    var contextInfoEnabled: Boolean = false
+    var contextInfoEnabled: Boolean = false,
+    var fontSize: Int = 32
 )
 
 interface ScreenSettings {
@@ -103,7 +104,7 @@ interface ScreenSettings {
     fun isStatisticsEnabled(): Boolean
     fun isFpsCounterEnabled(): Boolean
     fun getSurfaceFrameRate(): Int
-    fun getFontSize(): Int
+    fun getFontSize(): Int = 30
     fun getCurrentVirtualScreen(): String = ""
     fun applyVirtualScreen(key: String) {}
 
