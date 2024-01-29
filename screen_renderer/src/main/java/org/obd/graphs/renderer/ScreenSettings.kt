@@ -46,7 +46,8 @@ data class ColorTheme(
 )
 
 data class GaugeRendererSettings (
-    var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.SHORT
+    var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
+    var topOffset:Int = 0,
 )
 
 data class DragRacingSettings(

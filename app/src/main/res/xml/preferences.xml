@@ -955,15 +955,7 @@
                         app:useSimpleSummaryProvider="true" />
 
 
-                    <org.obd.graphs.preferences.aa.AAListPreference
-                        android:defaultValue="SHORT"
-                        android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
-                        android:entries="@array/pref.aa.gauge.progress_type"
-                        android:entryValues="@array/pref.aa.gauge.progress_type"
-                        android:key="pref.aa.virtual_screens.screen.gauge.progress_type"
-                        android:title="@string/pref.aa.renderer.gauge.progress_type"
-                        app:singleLineTitle="false"
-                        app:useSimpleSummaryProvider="true" />
+
 
                     <ListPreference
                         android:defaultValue="5"
@@ -973,6 +965,33 @@
                         android:inputType="number"
                         android:key="pref.aa.surface.fps"
                         android:title="@string/pref.screen.fps"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+                </PreferenceCategory>
+
+
+                <PreferenceCategory
+                    android:title="@string/pref.aa.renderer.gauge.category"
+                    app:singleLineTitle="false">
+
+                    <org.obd.graphs.preferences.aa.AAListPreference
+                        android:defaultValue="LONG"
+                        android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
+                        android:entries="@array/pref.aa.gauge.progress_type"
+                        android:entryValues="@array/pref.aa.gauge.progress_type"
+                        android:key="pref.aa.virtual_screens.screen.gauge.progress_type"
+                        android:title="@string/pref.aa.renderer.gauge.progress_type"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <org.obd.graphs.preferences.aa.AASeekBar
+                        app:showSeekBarValue="true"
+                        app:min="0"
+                        android:max="40"
+                        android:defaultValue="0"
+                        android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
+                        android:key="pref.aa.virtual_screens.gauge.top_offset"
+                        android:title="@string/pref.aa.renderer.gauge.top_offset"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>

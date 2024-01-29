@@ -14,7 +14,7 @@
         <item name="colorPrimaryVariant">@color/philippine_green</item>
         <item name="android:colorBackground">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/cardinal</item>
+        <item name="colorSecondary">@color/rainbow_indigo</item>
         <item name="colorSecondaryVariant">@color/cardinal</item>
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>

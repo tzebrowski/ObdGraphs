@@ -104,7 +104,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
-        gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.SHORT.name))
+        gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.LONG.name))
+        topOffset = Prefs.getS("pref.aa.virtual_screens.gauge.top_offset","0").toInt()
     }
 
     override fun getMaxItems(): Int  =  Prefs.getS("pref.aa.virtual_screens.screen.max_items","6").toInt()

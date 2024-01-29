@@ -260,7 +260,7 @@ internal class GaugeDrawer(
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
         var centerY = (area.centerY() + labelCenterYPadding - (if (settings.isStatisticsEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
-        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT)
+        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
 
         valuePaint.textSize = (drawerSettings.valueTextSize / 4) * scaleRatio
@@ -269,7 +269,7 @@ internal class GaugeDrawer(
         val unitRect = Rect()
         val unitTxt = metric.source.command.pid.units
         valuePaint.getTextBounds(unitTxt, 0, unitTxt.length, unitRect)
-        canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2 + 6, centerY - valueHeight, valuePaint)
+        canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2, centerY - valueHeight, valuePaint)
         centerY += unitRect.height() / 2
 
         labelPaint.textSize = drawerSettings.labelTextSize * scaleRatio
