@@ -17,9 +17,11 @@
  * limitations under the License.
  **/
 package org.obd.graphs.bl.query
-enum class QueryStrategyType {
-    ROUTINES_QUERY,
-    DRAG_RACING_QUERY,
-    SHARED_QUERY,
-    INDIVIDUAL_QUERY_FOR_EACH_VIEW
+
+
+internal class RoutinesQueryStrategy : QueryStrategy() {
+    override fun getPIDs(): MutableSet<Long> {
+       return mutableSetOf()
+    }
 }
+

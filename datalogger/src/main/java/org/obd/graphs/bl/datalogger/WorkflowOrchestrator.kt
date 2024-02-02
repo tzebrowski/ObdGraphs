@@ -155,7 +155,19 @@ internal class WorkflowOrchestrator internal constructor() {
                     this, it.first, init(),
                     it.second
                 )
-                Log.i(LOG_TAG, "Start collecting process, strategy: ${query.getStrategy()}. Status=$status")
+                Log.i(LOG_TAG, "Collecting process started. Strategy: ${query.getStrategy()}. Status=$status")
+            }
+        }
+    }
+
+    fun executeRoutine(query: Query) {
+        currentQuery = query
+        queryToAdjustments(query).let {
+            connection()?.run {
+                Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
+
+                val status = workflow.executeRoutine(it.first, init(),)
+                Log.i(LOG_TAG, "Routines has been executed. Strategy: ${query.getStrategy()}. Status=$status")
             }
         }
     }

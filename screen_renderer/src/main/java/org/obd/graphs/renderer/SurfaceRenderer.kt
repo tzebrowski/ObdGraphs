@@ -27,7 +27,6 @@ import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
 
-
 enum class SurfaceRendererType {
     GIULIA, GAUGE, DRAG_RACING
 }
@@ -38,7 +37,6 @@ interface SurfaceRenderer {
     fun applyMetricsFilter(query: Query)
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
-    fun getType(): SurfaceRendererType
     companion object {
         fun allocate(
             context: Context,

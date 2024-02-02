@@ -72,7 +72,7 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
-    protected fun getActionStrip(preferencesEnabled: Boolean = true, dragMeteringEnabled: Boolean = false, toggleBtnColor: Int): ActionStrip {
+    protected fun getActionStrip(preferencesEnabled: Boolean = true, exitEnabled: Boolean = true, screenId: Int = 0, toggleBtnColor: Int): ActionStrip {
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.isRunning()) {
@@ -82,17 +82,28 @@ internal abstract class CarScreen(
             })
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-                if (dragMeteringEnabled)  {
-                    query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                } else {
-                    if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-                        query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                        query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
-                    }else {
-                        query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                when (screenId){
+                    0 -> {
+                        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+                            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                            query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
+                        }else {
+                            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                        }
+                        dataLogger.start(query)
                     }
+                    1 -> {
+                        query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                        dataLogger.start(query)
+                    }
+
+                    2 -> {
+
+                    }
+
                 }
-                dataLogger.start(query)
+
+
             })
         }
 
@@ -107,14 +118,16 @@ internal abstract class CarScreen(
             })
         }
 
-        builder = builder.addAction(createAction(R.drawable.action_exit, CarColor.RED) {
-            try {
-                stopDataLogging()
-            } finally {
-                Log.i(LOG_KEY, "Exiting the app. Closing the context")
-                carContext.finishCarApp()
-            }
-        })
+        if (exitEnabled) {
+            builder = builder.addAction(createAction(R.drawable.action_exit, CarColor.RED) {
+                try {
+                    stopDataLogging()
+                } finally {
+                    Log.i(LOG_KEY, "Exiting the app. Closing the context")
+                    carContext.finishCarApp()
+                }
+            })
+        }
 
         return builder.build()
     }

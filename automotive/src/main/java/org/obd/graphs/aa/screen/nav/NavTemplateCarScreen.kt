@@ -33,9 +33,7 @@ import androidx.car.app.navigation.model.RoutingInfo
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.aa.*
-import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.screen.*
-import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -43,6 +41,9 @@ import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
+import org.obd.metrics.pid.PIDsGroup
+import org.obd.metrics.pid.PidDefinition
+
 
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
@@ -84,6 +85,7 @@ internal class NavTemplateCarScreen(
 
                 AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> {
                     surfaceController.toggleSurfaceRenderer()
+                    surfaceController.renderFrame()
                     invalidate()
                 }
 
@@ -303,19 +305,44 @@ internal class NavTemplateCarScreen(
                     .setActionStrip(getActionStrip(toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor()))
                     .build()
             } else {
-                var template = NavigationTemplate.Builder()
+                when (surfaceController.getScreenId()){
+                    2 -> {
 
-                if (surfaceController.isVirtualScreensEnabled()) {
-                    getActionStrip()?.let {
-                        template = template.setMapActionStrip(it)
+                        var items = ItemList.Builder()
+                        dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).forEach {
+                            items = items.addItem(buildRowClick(it))
+                        }
+
+                        ListTemplate.Builder()
+                            .setLoading(false)
+                            .setTitle("Available routines")
+                            .setSingleList(items.build())
+                            .setActionStrip(
+                            getActionStrip(
+                                preferencesEnabled = false,
+                                exitEnabled= false,
+                                screenId = surfaceController.getScreenId(),
+                                toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())).build()
+                    }
+                    else -> {
+                        var template = NavigationTemplate.Builder()
+
+                        if (surfaceController.isVirtualScreensEnabled()) {
+                            getActionStrip()?.let {
+                                template = template.setMapActionStrip(it)
+                            }
+                        }
+
+                        template.setActionStrip(
+                            getActionStrip(
+                                screenId = surfaceController.getScreenId(),
+                                toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())
+                        ).build()
+
+
                     }
                 }
 
-                template.setActionStrip(
-                    getActionStrip(
-                        dragMeteringEnabled = surfaceController.isDragRacingEnabled(),
-                        toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())
-                ).build()
             }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)
@@ -329,6 +356,18 @@ internal class NavTemplateCarScreen(
     } else {
         mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
     }
+
+    private fun buildRowClick(data: PidDefinition): Row {
+        return Row.Builder()
+            .setOnClickListener {
+                Log.e("EEEEEE", "AAAAAAAAAAAAAAAAAAAAAA ${data.description}")
+                invalidate()
+            }
+            .addText(data.description)
+            .setTitle(data.description)
+            .build()
+    }
+
 
     private fun getActionStrip(): ActionStrip? {
 
@@ -431,10 +470,6 @@ internal class NavTemplateCarScreen(
                     } catch (e: Throwable) {
                         Log.e(LOG_KEY, "Failed to stop DL threads", e)
                     }
-                }
-
-                override fun onAutoDriveEnabled() {
-
                 }
             })
 

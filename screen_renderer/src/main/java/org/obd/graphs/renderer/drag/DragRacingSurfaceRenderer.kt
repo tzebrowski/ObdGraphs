@@ -41,7 +41,6 @@ internal class DragRacingSurfaceRenderer(
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
-    override fun getType(): SurfaceRendererType = SurfaceRendererType.DRAG_RACING
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
             enabled = query.getIDs()
