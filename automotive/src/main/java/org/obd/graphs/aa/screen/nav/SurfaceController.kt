@@ -149,7 +149,7 @@ internal class SurfaceController(
 
     fun toggleSurfaceRenderer() {
 
-        if (screenId == ROUTINES_SCREEN_ID){
+        if (screenId == getNumberOfScreensEnabled()){
             screenId = GIULIA_SCREEN_ID
         } else {
             screenId++
@@ -180,6 +180,7 @@ internal class SurfaceController(
 
         surfaceRenderer.applyMetricsFilter(query)
     }
+
 
     fun allocateSurfaceRender() {
         surfaceRenderer.recycle()
@@ -226,4 +227,5 @@ internal class SurfaceController(
     }
 
     private fun isAllowedFrameRendering() = getCurrentScreenId() == GIULIA_SCREEN_ID || getCurrentScreenId() == DRAG_RACING_SCREEN_ID
+    private fun getNumberOfScreensEnabled() = if (settings.isRoutinesEnabled()) ROUTINES_SCREEN_ID else DRAG_RACING_SCREEN_ID
 }

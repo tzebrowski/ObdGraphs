@@ -177,6 +177,11 @@
     <string name="pref.aa.debug_category">Debug</string>
     <string name="pref.aa.general_category">General</string>
 
+    <string name="pref.aa.routines.category">Routines</string>
+    <string name="pref.aa.routines.enabled">Enable routines screen</string>
+    <string name="pref.aa.routines.enabled.enabled_summary">This is an EXPERIMENTAL feature.\nBy enabling this option,an additional screen will be accessible which let to execute routines</string>
+
+
     <string name="pref.aa.performance_meter.category">Drag Racing</string>
     <string name="pref.aa.performance_meter.vehicle_speed_freq">Vehicle speed reading frequency</string>
     <string name="pref.aa.performance_meter.display_frequency">Display vehicle speed read frequency</string>

@@ -1302,6 +1302,20 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory
+                    android:title="@string/pref.aa.routines.category"
+                    app:singleLineTitle="false">
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.aa.routines.enabled"
+                        android:title="@string/pref.aa.routines.enabled"
+                        android:summary="@string/pref.aa.routines.enabled.enabled_summary"
+                        app:experimental="true"
+                        app:singleLineTitle="false" />
+
+                </PreferenceCategory>
+
+                <PreferenceCategory
                     android:title="@string/pref.aa.performance_meter.category"
                     app:singleLineTitle="false">
 

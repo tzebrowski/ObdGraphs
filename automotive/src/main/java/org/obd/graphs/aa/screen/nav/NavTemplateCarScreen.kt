@@ -255,7 +255,6 @@ internal class NavTemplateCarScreen(
                         Log.w(LOG_KEY,"Failed when received ROUTINE_UNKNOWN_STATUS_EVENT event",e)
                     }
                 }
-
             }
         }
     }
