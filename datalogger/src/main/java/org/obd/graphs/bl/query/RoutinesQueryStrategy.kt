@@ -19,9 +19,5 @@
 package org.obd.graphs.bl.query
 
 
-internal class RoutinesQueryStrategy : QueryStrategy() {
-    override fun getPIDs(): MutableSet<Long> {
-       return mutableSetOf()
-    }
-}
+internal class RoutinesQueryStrategy : QueryStrategy() {}
 

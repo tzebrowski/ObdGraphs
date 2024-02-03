@@ -87,7 +87,6 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
         }
     }
 
-
     override fun status(): WorkflowStatus = workflowOrchestrator.status()
 
     override fun scheduleStart(delay: Long) {

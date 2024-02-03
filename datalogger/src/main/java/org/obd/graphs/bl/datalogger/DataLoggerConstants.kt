@@ -31,6 +31,12 @@ const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"
 const val DATA_LOGGER_ERROR_EVENT = "data.logger.error"
 const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
+const val ROUTINE_EXECUTED_EVENT = "data.logger.routine.executed"
+const val ROUTINE_REJECTED_EVENT = "data.logger.routine.rejected"
+const val ROUTINE_WORKFLOW_NOT_RUNNING_EVENT = "data.logger.routine.workflow_not_running"
+const val ROUTINE_UNKNOWN_STATUS_EVENT = "data.logger.routine.unknown_status"
+
+
 
 internal const val LOG_TAG = "DataLogger"
 

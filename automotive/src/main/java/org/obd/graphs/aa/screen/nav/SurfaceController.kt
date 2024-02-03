@@ -44,6 +44,10 @@ import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"
 
+const val GIULIA_SCREEN_ID = 0
+const val DRAG_RACING_SCREEN_ID = 1
+const val ROUTINES_SCREEN_ID = 2
+
 internal class SurfaceController(
     private val carContext: CarContext,
     private val settings: CarSettings,
@@ -58,6 +62,7 @@ internal class SurfaceController(
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
+    private var screenId = GIULIA_SCREEN_ID
 
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
 
@@ -132,28 +137,27 @@ internal class SurfaceController(
     fun onCarConfigurationChanged() {
         renderFrame()
     }
-    fun isVirtualScreensEnabled(): Boolean = getScreenId() == 0
+    fun isVirtualScreensEnabled(): Boolean = getCurrentScreenId() == GIULIA_SCREEN_ID
 
     fun getToggleSurfaceRendererBtnColor(): Int = when (screenId){
-        0 -> Color.RED
-        1 -> Color.WHITE
-        2 -> Color.BLUE
+        GIULIA_SCREEN_ID -> Color.RED
+        DRAG_RACING_SCREEN_ID -> Color.WHITE
+        ROUTINES_SCREEN_ID -> Color.BLUE
         else -> Color.YELLOW
     }
 
-    private var screenId = 0
 
     fun toggleSurfaceRenderer() {
 
-        if (screenId == 2){
-            screenId = 0
+        if (screenId == ROUTINES_SCREEN_ID){
+            screenId = GIULIA_SCREEN_ID
         } else {
             screenId++
         }
 
         surfaceRenderer.recycle()
         when (screenId){
-            0 -> {
+            GIULIA_SCREEN_ID -> {
                 metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
 
                 if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
@@ -167,7 +171,7 @@ internal class SurfaceController(
                 surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
             }
 
-            1 -> {
+            DRAG_RACING_SCREEN_ID -> {
                 query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
                 dataLogger.updateQuery(query = query)
                 surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
@@ -184,11 +188,11 @@ internal class SurfaceController(
         renderFrame()
     }
 
-    fun getScreenId(): Int = screenId
+    fun getCurrentScreenId(): Int = screenId
 
     @MainThread
     fun renderFrame() {
-        if (getScreenId() == 0 || getScreenId() == 1){
+        if (isAllowedFrameRendering()){
             surface?.let {
                 var canvas: Canvas? = null
                 if (it.isValid && !surfaceLocked) {
@@ -220,4 +224,6 @@ internal class SurfaceController(
             }
         }
     }
+
+    private fun isAllowedFrameRendering() = getCurrentScreenId() == GIULIA_SCREEN_ID || getCurrentScreenId() == DRAG_RACING_SCREEN_ID
 }

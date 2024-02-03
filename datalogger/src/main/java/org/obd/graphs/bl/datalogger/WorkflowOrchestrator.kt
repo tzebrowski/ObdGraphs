@@ -31,6 +31,7 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.api.Workflow
+import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
@@ -166,8 +167,15 @@ internal class WorkflowOrchestrator internal constructor() {
             connection()?.run {
                 Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
 
-                val status = workflow.executeRoutine(it.first, init(),)
-                Log.i(LOG_TAG, "Routines has been executed. Strategy: ${query.getStrategy()}. Status=$status")
+                val status = workflow.executeRoutine(it.first, init())
+                Log.i(LOG_TAG, "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status")
+
+                when (status) {
+                    WorkflowExecutionStatus.ROUTINE_EXECUTED -> sendBroadcastEvent(ROUTINE_EXECUTED_EVENT)
+                    WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
+                    WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
+                    else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
+                }
             }
         }
     }
