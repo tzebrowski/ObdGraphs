@@ -61,7 +61,6 @@ const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 enum class ScreenTemplateType {
     NAV, IOT
 }
-
 internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private var itemsSortOrder: Map<Long, Int>? = emptyMap()
     private val dragRacingSettings = DragRacingSettings()
@@ -98,6 +97,8 @@ internal class CarSettings(private val carContext: CarContext) : ScreenSettings 
             }
         }
     }
+
+    fun isRoutinesEnabled(): Boolean = Prefs.getBoolean("pref.aa.routines.enabled", false)
 
     override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
 

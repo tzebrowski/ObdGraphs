@@ -41,6 +41,7 @@ private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay
 
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
+private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
 
 val dataLogger: DataLogger = DataLoggerService()
 
@@ -64,6 +65,11 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
                 workflowOrchestrator.start(query)
             }
 
+            EXECUTE_ROUTINE -> {
+                val query = intent.extras?.get(QUERY) as Query
+                workflowOrchestrator.executeRoutine(query)
+            }
+
             ACTION_STOP -> workflowOrchestrator.stop()
 
             SCHEDULED_ACTION_STOP -> jobScheduler.stop()
@@ -81,7 +87,6 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
         }
     }
 
-
     override fun status(): WorkflowStatus = workflowOrchestrator.status()
 
     override fun scheduleStart(delay: Long) {
@@ -92,6 +97,12 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun scheduledStop() {
         enqueueWork(SCHEDULED_ACTION_STOP)
+    }
+
+    override fun executeRoutine(query: Query) {
+        enqueueWork(EXECUTE_ROUTINE) {
+            it.putExtra(QUERY, query)
+        }
     }
 
     override fun start(query: Query) {

@@ -31,9 +31,17 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.aa.*
+import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.aa.R
+import org.obd.graphs.aa.mapColor
+import org.obd.graphs.aa.screen.nav.DRAG_RACING_SCREEN_ID
+import org.obd.graphs.aa.screen.nav.GIULIA_SCREEN_ID
+import org.obd.graphs.aa.screen.nav.ROUTINES_SCREEN_ID
+import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.datalogger.WorkflowStatus
+import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.Fps
@@ -50,7 +58,7 @@ internal abstract class CarScreen(
     protected val settings: CarSettings,
     protected val metricsCollector: MetricsCollector,
     protected val fps: Fps = Fps()
-): Screen(carContext), DefaultLifecycleObserver {
+) : Screen(carContext), DefaultLifecycleObserver {
 
     protected val query = Query.instance()
 
@@ -72,7 +80,12 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
-    protected fun getActionStrip(preferencesEnabled: Boolean = true, dragMeteringEnabled: Boolean = false, toggleBtnColor: Int): ActionStrip {
+    protected fun getActionStrip(
+        preferencesEnabled: Boolean = true,
+        exitEnabled: Boolean = true,
+        screenId: Int = 0,
+        toggleBtnColor: Int
+    ): ActionStrip {
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.isRunning()) {
@@ -82,17 +95,25 @@ internal abstract class CarScreen(
             })
         } else {
             builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
-                if (dragMeteringEnabled)  {
-                    query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                } else {
-                    if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-                        query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                        query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
-                    }else {
-                        query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                when (screenId) {
+                    GIULIA_SCREEN_ID -> {
+                        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+                            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                            query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+                        } else {
+                            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                        }
+                        dataLogger.start(query)
+                    }
+                    DRAG_RACING_SCREEN_ID -> {
+                        query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                        dataLogger.start(query)
+                    }
+                    ROUTINES_SCREEN_ID -> {
+                        query.setStrategy(QueryStrategyType.ROUTINES_QUERY)
+                        dataLogger.start(query)
                     }
                 }
-                dataLogger.start(query)
             })
         }
 
@@ -107,14 +128,16 @@ internal abstract class CarScreen(
             })
         }
 
-        builder = builder.addAction(createAction(R.drawable.action_exit, CarColor.RED) {
-            try {
-                stopDataLogging()
-            } finally {
-                Log.i(LOG_KEY, "Exiting the app. Closing the context")
-                carContext.finishCarApp()
-            }
-        })
+        if (exitEnabled) {
+            builder = builder.addAction(createAction(R.drawable.action_exit, CarColor.RED) {
+                try {
+                    stopDataLogging()
+                } finally {
+                    Log.i(LOG_KEY, "Exiting the app. Closing the context")
+                    carContext.finishCarApp()
+                }
+            })
+        }
 
         return builder.build()
     }

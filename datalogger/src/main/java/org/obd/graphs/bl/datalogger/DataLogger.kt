@@ -41,6 +41,7 @@ interface DataLogger {
     fun isDTCEnabled(): Boolean
     fun scheduleStart(delay: Long)
     fun scheduledStop()
+    fun executeRoutine(query: Query)
     fun start(query: Query)
     fun updateQuery(query: Query)
     fun stop()

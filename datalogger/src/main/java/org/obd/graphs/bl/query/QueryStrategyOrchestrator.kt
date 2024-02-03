@@ -15,6 +15,7 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
             this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
             this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
             this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = IndividualQueryStrategy()
+            this[QueryStrategyType.ROUTINES_QUERY] = RoutinesQueryStrategy()
         }
     }
 

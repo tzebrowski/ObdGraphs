@@ -49,7 +49,6 @@ internal class GaugeSurfaceRenderer(
             area.top + viewSettings.marginTop.toFloat()
         }
 
-    override fun getType(): SurfaceRendererType = SurfaceRendererType.GAUGE
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let { area ->

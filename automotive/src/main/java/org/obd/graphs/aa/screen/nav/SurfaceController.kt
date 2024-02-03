@@ -44,6 +44,10 @@ import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"
 
+const val GIULIA_SCREEN_ID = 0
+const val DRAG_RACING_SCREEN_ID = 1
+const val ROUTINES_SCREEN_ID = 2
+
 internal class SurfaceController(
     private val carContext: CarContext,
     private val settings: CarSettings,
@@ -58,6 +62,7 @@ internal class SurfaceController(
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
+    private var screenId = GIULIA_SCREEN_ID
 
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
 
@@ -132,33 +137,50 @@ internal class SurfaceController(
     fun onCarConfigurationChanged() {
         renderFrame()
     }
+    fun isVirtualScreensEnabled(): Boolean = getCurrentScreenId() == GIULIA_SCREEN_ID
 
-    fun getToggleSurfaceRendererBtnColor(): Int = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING)
-        Color.RED else Color.WHITE
+    fun getToggleSurfaceRendererBtnColor(): Int = when (screenId){
+        GIULIA_SCREEN_ID -> Color.RED
+        DRAG_RACING_SCREEN_ID -> Color.WHITE
+        ROUTINES_SCREEN_ID -> Color.BLUE
+        else -> Color.YELLOW
+    }
+
 
     fun toggleSurfaceRenderer() {
+
+        if (screenId == getNumberOfScreensEnabled()){
+            screenId = GIULIA_SCREEN_ID
+        } else {
+            screenId++
+        }
+
         surfaceRenderer.recycle()
-        surfaceRenderer = if (surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING) {
+        when (screenId){
+            GIULIA_SCREEN_ID -> {
+                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
 
-            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
+                if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                    query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+                } else {
+                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                }
 
-            if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
-                query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
-            } else {
-                query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                dataLogger.updateQuery(query = query)
+                surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
             }
 
-            dataLogger.updateQuery(query = query)
-            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
-
-        } else {
-            query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-            dataLogger.updateQuery(query = query)
-            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
+            DRAG_RACING_SCREEN_ID -> {
+                query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                dataLogger.updateQuery(query = query)
+                surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
+            }
         }
+
         surfaceRenderer.applyMetricsFilter(query)
     }
+
 
     fun allocateSurfaceRender() {
         surfaceRenderer.recycle()
@@ -167,41 +189,43 @@ internal class SurfaceController(
         renderFrame()
     }
 
-    fun isDragRacingEnabled(): Boolean = surfaceRenderer.getType() == SurfaceRendererType.DRAG_RACING
-
-    fun isVirtualScreensEnabled(): Boolean = !isDragRacingEnabled()
+    fun getCurrentScreenId(): Int = screenId
 
     @MainThread
     fun renderFrame() {
-
-        surface?.let {
-            var canvas: Canvas? = null
-            if (it.isValid && !surfaceLocked) {
-                try {
-                    canvas = it.lockHardwareCanvas()
-                    surfaceLocked = true
-                    surfaceRenderer.onDraw(
-                        canvas = canvas,
-                        drawArea = visibleArea
-                    )
-
-                } catch (e: Throwable) {
-                    Log.e(LOG_KEY, "Exception was thrown during surface locking.", e)
-                    surface = null
-                    sendBroadcastEvent(SURFACE_BROKEN_EVENT)
-                } finally {
+        if (isAllowedFrameRendering()){
+            surface?.let {
+                var canvas: Canvas? = null
+                if (it.isValid && !surfaceLocked) {
                     try {
-                        canvas?.let { c ->
-                            it.unlockCanvasAndPost(c)
-                        }
-                    } catch (e: Throwable) {
-                        Log.e(LOG_KEY, "Exception was thrown during surface un-locking.", e)
-                        sendBroadcastEvent(SURFACE_BROKEN_EVENT)
-                    }
+                        canvas = it.lockHardwareCanvas()
+                        surfaceLocked = true
+                        surfaceRenderer.onDraw(
+                            canvas = canvas,
+                            drawArea = visibleArea
+                        )
 
-                    surfaceLocked = false
+                    } catch (e: Throwable) {
+                        Log.e(LOG_KEY, "Exception was thrown during surface locking.", e)
+                        surface = null
+                        sendBroadcastEvent(SURFACE_BROKEN_EVENT)
+                    } finally {
+                        try {
+                            canvas?.let { c ->
+                                it.unlockCanvasAndPost(c)
+                            }
+                        } catch (e: Throwable) {
+                            Log.e(LOG_KEY, "Exception was thrown during surface un-locking.", e)
+                            sendBroadcastEvent(SURFACE_BROKEN_EVENT)
+                        }
+
+                        surfaceLocked = false
+                    }
                 }
             }
         }
     }
+
+    private fun isAllowedFrameRendering() = getCurrentScreenId() == GIULIA_SCREEN_ID || getCurrentScreenId() == DRAG_RACING_SCREEN_ID
+    private fun getNumberOfScreensEnabled() = if (settings.isRoutinesEnabled()) ROUTINES_SCREEN_ID else DRAG_RACING_SCREEN_ID
 }

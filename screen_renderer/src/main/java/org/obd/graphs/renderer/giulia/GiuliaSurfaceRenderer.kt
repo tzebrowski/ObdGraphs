@@ -51,8 +51,6 @@ internal class GiuliaSurfaceRenderer(
     private val valueScaler = ValueScaler()
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
-    override fun getType(): SurfaceRendererType = SurfaceRendererType.GIULIA
-
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let { area ->

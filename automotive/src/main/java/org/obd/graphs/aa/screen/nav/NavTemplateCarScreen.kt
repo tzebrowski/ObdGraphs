@@ -33,16 +33,18 @@ import androidx.car.app.navigation.model.RoutingInfo
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.aa.*
-import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.screen.*
-import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
+import org.obd.metrics.pid.PIDsGroup
+import org.obd.metrics.pid.PidDefinition
+
 
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
@@ -84,6 +86,7 @@ internal class NavTemplateCarScreen(
 
                 AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> {
                     surfaceController.toggleSurfaceRenderer()
+                    surfaceController.renderFrame()
                     invalidate()
                 }
 
@@ -115,7 +118,7 @@ internal class NavTemplateCarScreen(
                         invalidate()
                         submitRenderingTask()
                     }catch (e: java.lang.Exception){
-                        e.printStackTrace()
+                        Log.w(LOG_KEY,"Failed when received SURFACE_AREA_CHANGED_EVENT event",e)
                     }
                 }
 
@@ -168,7 +171,7 @@ internal class NavTemplateCarScreen(
                     surfaceController.renderFrame()
                     try {
                         invalidate()
-                    } catch (e: java.lang.Exception){
+                    } catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
                     }
                 }
@@ -181,7 +184,7 @@ internal class NavTemplateCarScreen(
                     try {
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_connection_error)
-                    } catch (e: java.lang.Exception){
+                    } catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_EVENT event",e)
                     }
                 }
@@ -194,7 +197,7 @@ internal class NavTemplateCarScreen(
                         invalidate()
                         surfaceController.renderFrame()
                         navigationManager().navigationEnded()
-                    } catch (e: java.lang.Exception){
+                    } catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_STOPPED_EVENT event",e)
                     }
                 }
@@ -206,7 +209,7 @@ internal class NavTemplateCarScreen(
                         fps.start()
                         invalidate()
                         navigationManager().navigationStarted()
-                    }catch (e: java.lang.Exception){
+                    }catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
                     }
                 }
@@ -215,7 +218,7 @@ internal class NavTemplateCarScreen(
                     try {
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
-                    }catch (e: java.lang.Exception){
+                    }catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
                     }
                 }
@@ -224,8 +227,32 @@ internal class NavTemplateCarScreen(
                     try {
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
-                    }catch (e: java.lang.Exception){
+                    }catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
+                    }
+                }
+
+                ROUTINE_EXECUTED_EVENT -> {
+                    try {
+                       toast.show(carContext, R.string.routine_routine_executed)
+                    }catch (e: Exception){
+                        Log.w(LOG_KEY,"Failed when received ROUTINE_EXECUTED_EVENT event",e)
+                    }
+                }
+
+                ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> {
+                    try {
+                        toast.show(carContext, R.string.routine_workflow_is_not_running)
+                    }catch (e: Exception){
+                        Log.w(LOG_KEY,"Failed when received ROUTINE_WORKFLOW_NOT_RUNNING_EVENT event",e)
+                    }
+                }
+
+                ROUTINE_UNKNOWN_STATUS_EVENT -> {
+                    try {
+                        toast.show(carContext, R.string.routine_unknown_error)
+                    }catch (e: Exception){
+                        Log.w(LOG_KEY,"Failed when received ROUTINE_UNKNOWN_STATUS_EVENT event",e)
                     }
                 }
             }
@@ -267,6 +294,9 @@ internal class NavTemplateCarScreen(
             addAction(HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
             addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
 
+            addAction(ROUTINE_EXECUTED_EVENT)
+            addAction(ROUTINE_REJECTED_EVENT)
+            addAction(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
         })
     }
 
@@ -303,19 +333,42 @@ internal class NavTemplateCarScreen(
                     .setActionStrip(getActionStrip(toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor()))
                     .build()
             } else {
-                var template = NavigationTemplate.Builder()
+                when (surfaceController.getCurrentScreenId()) {
+                    ROUTINES_SCREEN_ID -> {
 
-                if (surfaceController.isVirtualScreensEnabled()) {
-                    getActionStrip()?.let {
-                        template = template.setMapActionStrip(it)
+                        var items = ItemList.Builder()
+                        dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).forEach {
+                            items = items.addItem(buildRoutineListItem(it))
+                        }
+
+                        ListTemplate.Builder()
+                            .setLoading(false)
+                            .setTitle(carContext.getString(R.string.routine_page_title))
+                            .setSingleList(items.build())
+                            .setActionStrip(
+                            getActionStrip(
+                                preferencesEnabled = false,
+                                exitEnabled= false,
+                                screenId = surfaceController.getCurrentScreenId(),
+                                toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())).build()
+                    }
+                    else -> {
+                        var template = NavigationTemplate.Builder()
+
+                        if (surfaceController.isVirtualScreensEnabled()) {
+                            getActionStrip()?.let {
+                                template = template.setMapActionStrip(it)
+                            }
+                        }
+
+                        template.setActionStrip(
+                            getActionStrip(
+                                screenId = surfaceController.getCurrentScreenId(),
+                                toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())
+                        ).build()
                     }
                 }
 
-                template.setActionStrip(
-                    getActionStrip(
-                        dragMeteringEnabled = surfaceController.isDragRacingEnabled(),
-                        toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())
-                ).build()
             }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)
@@ -329,6 +382,16 @@ internal class NavTemplateCarScreen(
     } else {
         mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
     }
+
+    private fun buildRoutineListItem(data: PidDefinition): Row = Row.Builder()
+            .setOnClickListener {
+                Log.e(LOG_KEY, "Executing routine ${data.description}")
+                dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
+            }
+            .addText(data.description)
+            .setTitle(data.description)
+            .build()
+
 
     private fun getActionStrip(): ActionStrip? {
 
@@ -431,10 +494,6 @@ internal class NavTemplateCarScreen(
                     } catch (e: Throwable) {
                         Log.e(LOG_KEY, "Failed to stop DL threads", e)
                     }
-                }
-
-                override fun onAutoDriveEnabled() {
-
                 }
             })
 
