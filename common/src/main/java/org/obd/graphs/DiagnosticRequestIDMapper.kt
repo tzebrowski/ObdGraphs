@@ -25,7 +25,7 @@ const val PREFERENCE_PAGE = "pref.init"
 
 
 const val DRI_LOG_KEY = "DRI"
-private const val DRI_MAX_MAPPINGS_ALLOWED = 7
+private const val DRI_MAX_MAPPINGS_ALLOWED = 20
 private const val DRI_MAX_MAPPING_AVAILABLE = "pref.adapter.init.header.counter"
 private const val DRI_VALUE = "pref.adapter.init.mode.header"
 private const val DRI_KEY = "pref.adapter.init.mode.id"
