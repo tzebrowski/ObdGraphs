@@ -44,19 +44,18 @@ class DiagnosticRequestIDValuesListPreferences(
 
         diagnosticRequestIDMapper.getValues().apply {
             diagnosticRequestIDMapper.getNumberOfAvailableMappings().let { it ->
-                Log.d(DRI_LOG_KEY, "Number of custom DRI Values available: $it")
+                Log.i(DRI_LOG_KEY, "Number of custom DRI Values available: $it")
                 if (it > 0) {
                     (1..it).forEach {
                         Prefs.getString("pref.adapter.init.header.$it", "")?.let { header ->
-                            this[header] = header
+                            add(header)
                         }
                     }
                 }
             }
         }.let {
-            setDefaultValue(it.keys.first())
-            entries = it.values.toTypedArray()
-            entryValues = it.keys.toTypedArray()
+            entries = it.toTypedArray()
+            entryValues = it.toTypedArray()
         }
     }
 }

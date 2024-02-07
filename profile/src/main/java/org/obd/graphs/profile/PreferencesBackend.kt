@@ -46,7 +46,7 @@ internal class PreferencesBackend : Profile {
     private var defaultProfile: String? = null
     private lateinit var versionName: String
 
-    private var resources = mutableMapOf<String,String>()
+    private var resources = mutableMapOf<String, String>()
 
     @Volatile
     private var bulkActionEnabled = false
@@ -71,7 +71,6 @@ internal class PreferencesBackend : Profile {
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
     override fun getResources(): Map<String, String> = resources
-
 
     override fun importBackup() {
         runAsync {
@@ -151,7 +150,7 @@ internal class PreferencesBackend : Profile {
     }
 
     override fun init(versionCode: Int, defaultProfile: String, versionName: String) {
-        Log.i(LOG_TAG,"Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName")
+        Log.i(LOG_TAG, "Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName")
         this.versionCode = versionCode
         this.defaultProfile = defaultProfile
         this.versionName = versionName
@@ -176,7 +175,8 @@ internal class PreferencesBackend : Profile {
             val installationVersion = getInstallationVersion()
             val installationVersionAvailable = Prefs.getBoolean(installationVersion, false)
 
-            Log.i(LOG_TAG,"Setup profiles. Installation version='$installationVersion', " +
+            Log.i(
+                LOG_TAG, "Setup profiles. Installation version='$installationVersion', " +
                         "installationKeyAvailable='$installationVersionAvailable', " +
                         "forceOverride=$forceOverride"
             )
@@ -198,7 +198,12 @@ internal class PreferencesBackend : Profile {
 
             updateBuildSettings()
 
-            loadResources()
+            allProps().let {
+                runAsync {
+                    loadResources(it)
+                    loadCanIDS(it)
+                }
+            }
 
         } finally {
             bulkActionEnabled = false
@@ -305,37 +310,48 @@ internal class PreferencesBackend : Profile {
     private fun getDefaultProfile(): String = defaultProfile ?: DEFAULT_PROFILE
 
     @SuppressLint("DefaultLocale")
-    private fun loadResources(){
-        runAsync {
-            val entries  = mutableMapOf<String,Any?>()
+    private fun loadCanIDS(entries: MutableMap<String, Any?>) {
+        val canIDS = entries.filter { entry -> entry.key.contains("adapter.init.mode.header_value") }.values.map { it.toString() }.toSet()
+        Log.i(LOG_TAG, "Registered following CAN IDS: $canIDS")
+        diagnosticRequestIDMapper.setValues(canIDS)
+    }
 
-            try {
-
-                findProfileFiles()?.forEach {
-                    val file = loadFile(it)
-                    for (name in file.stringPropertyNames()) {
-                        entries[name] = file.getProperty(name)
-                    }
-                }
-            } catch (e: Throwable){
-                Log.e(LOG_TAG, "Failed to load properties files",e)
-            }
-
-            if (entries.isEmpty()){
-                entries.putAll(Prefs.all.toMutableMap())
-            }
-
-            val keys = entries.keys.filter { it.contains("pref.pids.registry.list") }.toList()
-            val values = keys.map { entries[it].toString().replace("[","").replace("]","").split(",") }.flatten().toSet()
-            val resourcesMap =  values.map { it.replace(" ", "") to
-                    it.replace(".json","")
-                        .replace("_"," ")
+    @SuppressLint("DefaultLocale")
+    private fun loadResources(allProps: MutableMap<String, Any?>) {
+        val keys = allProps.keys.filter { it.contains("pref.pids.registry.list") }.toList()
+        val values = keys.map { allProps[it].toString().replace("[", "").replace("]", "").split(",") }.flatten().toSet()
+        val resourcesMap = values.map {
+            it.replace(" ", "") to
+                    it.replace(".json", "")
+                        .replace("_", " ")
                         .trim()
-                        .split(" ").joinToString(" ") { it.toLowerCase().capitalize() }}
-
-            resources.putAll(resourcesMap)
-            Log.i(LOG_TAG,"Registered following resource files: $resources")
+                        .split(" ").joinToString(" ") { it.lowercase(Locale.getDefault())
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
         }
+
+        resources.putAll(resourcesMap)
+        Log.i(LOG_TAG, "Registered following resource files: $resources")
+    }
+
+    private fun allProps(): MutableMap<String, Any?> {
+        val entries = mutableMapOf<String, Any?>()
+
+        try {
+
+            findProfileFiles()?.forEach {
+                val file = loadFile(it)
+                for (name in file.stringPropertyNames()) {
+                    entries[name] = file.getProperty(name)
+                }
+            }
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to load properties files", e)
+        }
+
+        if (entries.isEmpty()) {
+            entries.putAll(Prefs.all.toMutableMap())
+        }
+        return entries
     }
 
     private fun loadProfileFilesIntoPreferences(
@@ -425,10 +441,10 @@ internal class PreferencesBackend : Profile {
         return data
     }
 
-    private fun updateBuildSettings(){
+    private fun updateBuildSettings() {
         runAsync {
             val buildTime = "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(versionName)}"
-            Log.i(LOG_TAG,"Update build settings, build time=$buildTime, versionCode=$versionCode")
+            Log.i(LOG_TAG, "Update build settings, build time=$buildTime, versionCode=$versionCode")
 
             Prefs.updateString("pref.about.build_time", buildTime).commit()
             Prefs.updateString("pref.about.build_version", "$versionCode").commit()

@@ -36,26 +36,7 @@ private const val DRI_CURRENT_KEY = "pref.adapter.init.mode.selected"
 val diagnosticRequestIDMapper = DiagnosticRequestIDMapper()
 
 class DiagnosticRequestIDMapper {
-
-    private val values  =  linkedMapOf(
-        "" to "",
-        "DA10F1" to "DA10F1",
-        "DB33F1" to "DB33F1",
-        "DA60F1" to "DA60F1",
-        "DA18F1" to "DA18F1",
-        "DA17F1" to "DA17F1",
-        "DAF110" to "DAF110",
-        "DAC7F1" to "DAC7F1",
-        "7DF" to "7DF",
-        "18DA18F1" to "18DA18F1",
-        "18DA18F1" to "18DA18F1",
-        "18DA60F1" to "18DA60F1",
-        "18DA10F1" to "18DA10F1",
-        "18DB33F1" to "18DB33F1",
-        "18DA17F1" to "18DA17F1",
-        "18DAF110" to "18DAF110",
-        "18DAC7F1" to "18DAC7F1",
-        )
+    private val values = mutableSetOf<String>()
 
     fun reset(){
         Prefs.edit().let {
@@ -81,7 +62,12 @@ class DiagnosticRequestIDMapper {
         }
     }
 
+    fun setValues (newValues: Set<String>){
+        values.addAll(newValues)
+    }
+
     fun getValues() = values
+
     fun getMapping(): Map<String, String> {
         return getAvailableKeys().associate { getKeyById(it) to getValueById(it) }
     }
