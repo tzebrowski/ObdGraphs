@@ -23,7 +23,6 @@ import org.obd.graphs.preferences.Prefs
 
 const val PREFERENCE_PAGE = "pref.init"
 
-
 const val DRI_LOG_KEY = "DRI"
 private const val DRI_MAX_MAPPINGS_ALLOWED = 20
 private const val DRI_MAX_MAPPING_AVAILABLE = "pref.adapter.init.header.counter"
