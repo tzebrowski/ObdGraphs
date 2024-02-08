@@ -25,28 +25,28 @@ const val PREFERENCE_PAGE = "pref.init"
 
 const val DRI_LOG_KEY = "DRI"
 private const val DRI_MAX_MAPPINGS_ALLOWED = 20
-private const val DRI_MAX_MAPPING_AVAILABLE = "pref.adapter.init.header.counter"
-private const val DRI_VALUE = "pref.adapter.init.mode.header"
-private const val DRI_KEY = "pref.adapter.init.mode.id"
-private const val DRI_KEY_PREFIX = "pref.adapter.init.mode.id_value"
-private const val DRI_VALUE_PREFIX = "pref.adapter.init.mode.header_value"
-private const val DRI_CURRENT_KEY = "pref.adapter.init.mode.selected"
+private const val PREFERENCE_DRI_MAX_MAPPING_AVAILABLE = "pref.adapter.init.header.counter"
+private const val PREFERENCE_DRI_VALUE = "pref.adapter.init.mode.header"
+private const val PREFERENCE_DRI_KEY = "pref.adapter.init.mode.id"
+private const val PREFERENCE_DRI_KEY_PREFIX = "pref.adapter.init.mode.id_value"
+private const val PREFERENCE_DRI_VALUE_PREFIX = "pref.adapter.init.mode.header_value"
+private const val PREFERENCE_DRI_CURRENT_KEY = "pref.adapter.init.mode.selected"
 
 val diagnosticRequestIDMapper = DiagnosticRequestIDMapper()
 
 class DiagnosticRequestIDMapper {
     private val values = mutableSetOf<String>()
 
-    fun getValuePreferenceName() = DRI_VALUE
+    fun getValuePreferenceName() = PREFERENCE_DRI_VALUE
 
     fun reset(){
         Prefs.edit().let {
             diagnosticRequestIDMapper.getAvailableKeys().forEach { key ->
-                it.putString("$DRI_VALUE_PREFIX.$key", "")
-                it.putString("$DRI_KEY_PREFIX.$key", "")
+                it.putString("$PREFERENCE_DRI_VALUE_PREFIX.$key", "")
+                it.putString("$PREFERENCE_DRI_KEY_PREFIX.$key", "")
             }
-            it.putString(DRI_VALUE, "")
-            it.putString(DRI_KEY, "")
+            it.putString(PREFERENCE_DRI_VALUE, "")
+            it.putString(PREFERENCE_DRI_KEY, "")
             it.apply()
         }
     }
@@ -57,14 +57,16 @@ class DiagnosticRequestIDMapper {
         numberOfHeaders++
 
         Prefs.edit().run {
-            putInt(DRI_MAX_MAPPING_AVAILABLE, numberOfHeaders)
+            putInt(PREFERENCE_DRI_MAX_MAPPING_AVAILABLE, numberOfHeaders)
             putString("pref.adapter.init.header.$numberOfHeaders", newValue)
             apply()
         }
     }
 
-    fun setValues (newValues: Set<String>){
-        values.addAll(newValues)
+    fun updateSettings (preferences: MutableMap<String, Any?>){
+        val canIDS = preferences.filter { entry -> entry.key.contains(diagnosticRequestIDMapper.getValuePreferenceName()) }.values.map { it.toString() }.toSet()
+        Log.i(DRI_LOG_KEY, "Registered following CAN IDS: $canIDS")
+        values.addAll(canIDS)
     }
 
     fun getValues() = values
@@ -76,7 +78,7 @@ class DiagnosticRequestIDMapper {
     }
 
     fun getAvailableKeys() = (1..DRI_MAX_MAPPINGS_ALLOWED).map { "mode_$it" }
-    fun getKeyById(id: String) = Prefs.getString("$DRI_KEY_PREFIX.$id", "")!!
+    fun getKeyById(id: String) = Prefs.getString("$PREFERENCE_DRI_KEY_PREFIX.$id", "")!!
 
     fun setCurrentMapping (newValue: String){
         val key = diagnosticRequestIDMapper.getKeyById(newValue)
@@ -85,8 +87,8 @@ class DiagnosticRequestIDMapper {
         Log.i(DRI_LOG_KEY, "Updating DRI mapping $key=$value")
 
         Prefs.edit().run {
-            putString(DRI_KEY, key)
-            putString(DRI_VALUE, value)
+            putString(PREFERENCE_DRI_KEY, key)
+            putString(PREFERENCE_DRI_VALUE, value)
             apply()
         }
     }
@@ -94,7 +96,7 @@ class DiagnosticRequestIDMapper {
     fun updateValue (newValue: String){
         Log.i(DRI_LOG_KEY, "Updating DRI key ${diagnosticRequestIDMapper.getCurrentKey()}=$newValue")
         Prefs.edit()
-            .putString("$DRI_VALUE_PREFIX.${diagnosticRequestIDMapper.getCurrentKey()}", newValue)
+            .putString("$PREFERENCE_DRI_VALUE_PREFIX.${diagnosticRequestIDMapper.getCurrentKey()}", newValue)
             .apply()
     }
 
@@ -102,13 +104,13 @@ class DiagnosticRequestIDMapper {
 
         Log.e(DRI_LOG_KEY, "Updating DRI key: ${diagnosticRequestIDMapper.getCurrentKey()}=$newValue")
         Prefs.edit()
-            .putString("$DRI_KEY_PREFIX.${diagnosticRequestIDMapper.getCurrentKey()}", newValue)
+            .putString("$PREFERENCE_DRI_KEY_PREFIX.${diagnosticRequestIDMapper.getCurrentKey()}", newValue)
             .apply()
     }
 
-    fun getNumberOfAvailableMappings ():Int  = Prefs.getInt(DRI_MAX_MAPPING_AVAILABLE, 0)
+    fun getNumberOfAvailableMappings ():Int  = Prefs.getInt(PREFERENCE_DRI_MAX_MAPPING_AVAILABLE, 0)
 
-    private fun getValueById(id: String) = Prefs.getString("$DRI_VALUE_PREFIX.$id", "")!!
+    private fun getValueById(id: String) = Prefs.getString("$PREFERENCE_DRI_VALUE_PREFIX.$id", "")!!
 
-    private fun getCurrentKey(): String = Prefs.getString(DRI_CURRENT_KEY, "")!!
+    private fun getCurrentKey(): String = Prefs.getString(PREFERENCE_DRI_CURRENT_KEY, "")!!
 }

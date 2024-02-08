@@ -201,7 +201,7 @@ internal class ProfilePreferencesBackend : Profile {
             allProps().let {
                 runAsync {
                     loadResources(it)
-                    loadCanIDS(it)
+                    distributePreferences(it)
                 }
             }
 
@@ -310,10 +310,8 @@ internal class ProfilePreferencesBackend : Profile {
     private fun getDefaultProfile(): String = defaultProfile ?: DEFAULT_PROFILE
 
     @SuppressLint("DefaultLocale")
-    private fun loadCanIDS(entries: MutableMap<String, Any?>) {
-        val canIDS = entries.filter { entry -> entry.key.contains(diagnosticRequestIDMapper.getValuePreferenceName()) }.values.map { it.toString() }.toSet()
-        Log.i(LOG_TAG, "Registered following CAN IDS: $canIDS")
-        diagnosticRequestIDMapper.setValues(canIDS)
+    private fun distributePreferences(entries: MutableMap<String, Any?>) {
+        diagnosticRequestIDMapper.updateSettings(entries)
     }
 
     @SuppressLint("DefaultLocale")
