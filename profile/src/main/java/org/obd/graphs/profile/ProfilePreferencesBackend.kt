@@ -40,7 +40,7 @@ private const val DEFAULT_MAX_PROFILES = 20
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-internal class PreferencesBackend : Profile {
+internal class ProfilePreferencesBackend : Profile {
 
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
@@ -311,7 +311,7 @@ internal class PreferencesBackend : Profile {
 
     @SuppressLint("DefaultLocale")
     private fun loadCanIDS(entries: MutableMap<String, Any?>) {
-        val canIDS = entries.filter { entry -> entry.key.contains(DRI_VALUE_PREFIX) }.values.map { it.toString() }.toSet()
+        val canIDS = entries.filter { entry -> entry.key.contains(diagnosticRequestIDMapper.getValuePreferenceName()) }.values.map { it.toString() }.toSet()
         Log.i(LOG_TAG, "Registered following CAN IDS: $canIDS")
         diagnosticRequestIDMapper.setValues(canIDS)
     }
@@ -375,7 +375,7 @@ internal class PreferencesBackend : Profile {
                     val value = u.toString()
                     val key = t.toString()
 
-                    if (forceOverride || !allPrefs.keys.contains(key)) {
+                    if (forceOverride || !allPrefs.keys.contains(key) || allowedToOverride().any { key.contains(it) }) {
                         Log.i(LOG_TAG, "Updating profile.key=`$key=$value`")
 
                         when {
@@ -408,6 +408,8 @@ internal class PreferencesBackend : Profile {
             editor.apply()
         }
     }
+
+    private fun allowedToOverride() = setOf(diagnosticRequestIDMapper.getValuePreferenceName())
 
     private fun getBackupFile(): File =
         File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)
