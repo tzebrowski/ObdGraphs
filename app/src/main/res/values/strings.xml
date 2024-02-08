@@ -85,6 +85,7 @@
     <string name="pref.adapter.diagnostic_request_id.set_key">Update Diagnostic Request ID key</string>
     <string name="pref.adapter.diagnostic_request_id.add_new_value">Add new Diagnostic Request ID value</string>
     <string name="pref.adapter.diagnostic_request_id.values.category">Configure Diagnostic Request ID values</string>
+    <string name="pref.adapter.diagnostic_request_id.keys.category">Configure Diagnostic Request ID keys</string>
 
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
