@@ -29,7 +29,7 @@ private const val DRI_MAX_MAPPING_AVAILABLE = "pref.adapter.init.header.counter"
 private const val DRI_VALUE = "pref.adapter.init.mode.header"
 private const val DRI_KEY = "pref.adapter.init.mode.id"
 private const val DRI_KEY_PREFIX = "pref.adapter.init.mode.id_value"
-private const val DRI_VALUE_PREFIX = "pref.adapter.init.mode.header_value"
+const val DRI_VALUE_PREFIX = "pref.adapter.init.mode.header_value"
 private const val DRI_CURRENT_KEY = "pref.adapter.init.mode.selected"
 
 val diagnosticRequestIDMapper = DiagnosticRequestIDMapper()
@@ -68,7 +68,9 @@ class DiagnosticRequestIDMapper {
     fun getValues() = values
 
     fun getMapping(): Map<String, String> {
-        return getAvailableKeys().associate { getKeyById(it) to getValueById(it) }
+        val mapping = getAvailableKeys().associate { getKeyById(it) to getValueById(it) }.filter { entry -> entry.value.isNotEmpty() }
+        Log.i(DRI_LOG_KEY, "Available mapping: $mapping")
+        return mapping
     }
 
     fun getAvailableKeys() = (1..DRI_MAX_MAPPINGS_ALLOWED).map { "mode_$it" }

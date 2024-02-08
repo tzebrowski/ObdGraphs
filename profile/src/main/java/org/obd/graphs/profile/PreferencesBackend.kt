@@ -311,7 +311,7 @@ internal class PreferencesBackend : Profile {
 
     @SuppressLint("DefaultLocale")
     private fun loadCanIDS(entries: MutableMap<String, Any?>) {
-        val canIDS = entries.filter { entry -> entry.key.contains("adapter.init.mode.header_value") }.values.map { it.toString() }.toSet()
+        val canIDS = entries.filter { entry -> entry.key.contains(DRI_VALUE_PREFIX) }.values.map { it.toString() }.toSet()
         Log.i(LOG_TAG, "Registered following CAN IDS: $canIDS")
         diagnosticRequestIDMapper.setValues(canIDS)
     }
