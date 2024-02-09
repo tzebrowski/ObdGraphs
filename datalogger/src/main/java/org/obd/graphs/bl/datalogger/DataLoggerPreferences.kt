@@ -20,6 +20,7 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.SharedPreferences
 import android.util.Log
+import org.obd.graphs.PREF_RESOURCES_LIST
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.isEnabled
@@ -62,6 +63,7 @@ data class DataLoggerPreferences(
     var dumpRawConnectorResponse: Boolean,
     var delayAfterReset: Long,
 )
+
 
 class DataLoggerPreferencesManager {
 
@@ -195,7 +197,7 @@ class DataLoggerPreferencesManager {
 
 
     private fun resources(): MutableSet<String> =
-        Prefs.getStringSet("pref.pids.registry.list", pidResources.getDefaultPidFiles().keys)!!
+        Prefs.getStringSet(PREF_RESOURCES_LIST, pidResources.getDefaultPidFiles().keys)!!
 }
 
 val dataLoggerPreferences by lazy { DataLoggerPreferencesManager() }

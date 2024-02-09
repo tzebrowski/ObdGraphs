@@ -316,7 +316,7 @@ internal class ProfilePreferencesBackend : Profile {
 
     @SuppressLint("DefaultLocale")
     private fun loadResources(allProps: MutableMap<String, Any?>) {
-        val keys = allProps.keys.filter { it.contains("pref.pids.registry.list") }.toList()
+        val keys = allProps.keys.filter { it.contains(PREF_RESOURCES_LIST) }.toList()
         val values = keys.map { allProps[it].toString().replace("[", "").replace("]", "").split(",") }.flatten().toSet()
         val resourcesMap = values.map {
             it.replace(" ", "") to
@@ -407,7 +407,7 @@ internal class ProfilePreferencesBackend : Profile {
         }
     }
 
-    private fun allowedToOverride() = setOf(diagnosticRequestIDMapper.getValuePreferenceName())
+    private fun allowedToOverride() = setOf(diagnosticRequestIDMapper.getValuePreferenceName(), PREF_RESOURCES_LIST)
 
     private fun getBackupFile(): File =
         File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)

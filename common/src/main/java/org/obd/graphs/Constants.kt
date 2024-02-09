@@ -32,3 +32,4 @@ const val AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT = "pref.aa.screen_renderer.ch
 const val AA_VIRTUAL_SCREEN_REFRESH_EVENT = "pref.aa.screen_refresh.event"
 
 const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
+const val PREF_RESOURCES_LIST = "pref.pids.registry.list"
