@@ -334,41 +334,9 @@ internal class NavTemplateCarScreen(
                     .build()
             } else {
                 when (surfaceController.getCurrentScreenId()) {
-                    ROUTINES_SCREEN_ID -> {
-
-                        var items = ItemList.Builder()
-                        dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).forEach {
-                            items = items.addItem(buildRoutineListItem(it))
-                        }
-
-                        ListTemplate.Builder()
-                            .setLoading(false)
-                            .setTitle(carContext.getString(R.string.routine_page_title))
-                            .setSingleList(items.build())
-                            .setActionStrip(
-                            getActionStrip(
-                                preferencesEnabled = false,
-                                exitEnabled= false,
-                                screenId = surfaceController.getCurrentScreenId(),
-                                toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())).build()
-                    }
-                    else -> {
-                        var template = NavigationTemplate.Builder()
-
-                        if (surfaceController.isVirtualScreensEnabled()) {
-                            getActionStrip()?.let {
-                                template = template.setMapActionStrip(it)
-                            }
-                        }
-
-                        template.setActionStrip(
-                            getActionStrip(
-                                screenId = surfaceController.getCurrentScreenId(),
-                                toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor())
-                        ).build()
-                    }
+                    ROUTINES_SCREEN_ID -> routinesScreen()
+                    else ->  surfaceRenderersScreen()
                 }
-
             }
         } catch (e: Exception) {
             Log.e(LOG_KEY, "Failed to build template", e)
@@ -377,6 +345,9 @@ internal class NavTemplateCarScreen(
                 .setTitle(carContext.getString(R.string.pref_aa_car_error))
                 .build()
         }
+
+
+
     private fun actionStripColor(key: String): CarColor =  if (settings.getCurrentVirtualScreen() == key) {
         CarColor.GREEN
     } else {
@@ -501,4 +472,41 @@ internal class NavTemplateCarScreen(
     }
 
     private fun navigationManager() = carContext.getCarService(NavigationManager::class.java)
+
+    private fun surfaceRenderersScreen(): NavigationTemplate {
+        var template = NavigationTemplate.Builder()
+
+        if (surfaceController.isVirtualScreensEnabled()) {
+            getActionStrip()?.let {
+                template = template.setMapActionStrip(it)
+            }
+        }
+
+        return template.setActionStrip(
+            getActionStrip(
+                screenId = surfaceController.getCurrentScreenId(),
+                toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor()
+            )
+        ).build()
+    }
+
+    private fun routinesScreen(): ListTemplate {
+        var items = ItemList.Builder()
+        dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).forEach {
+            items = items.addItem(buildRoutineListItem(it))
+        }
+
+        return ListTemplate.Builder()
+            .setLoading(false)
+            .setTitle(carContext.getString(R.string.routine_page_title))
+            .setSingleList(items.build())
+            .setActionStrip(
+                getActionStrip(
+                    preferencesEnabled = false,
+                    exitEnabled = false,
+                    screenId = surfaceController.getCurrentScreenId(),
+                    toggleBtnColor = surfaceController.getToggleSurfaceRendererBtnColor()
+                )
+            ).build()
+    }
 }
