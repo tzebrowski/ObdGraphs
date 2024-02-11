@@ -26,9 +26,8 @@ import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.isEnabled
 
 
-const val GENERIC_MODE = "Generic mode"
+private const val GENERIC_MODE = "Generic mode"
 private const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
-
 
 data class DataLoggerPreferences(
     var queryForEachViewStrategyEnabled: Boolean,
@@ -150,9 +149,9 @@ class DataLoggerPreferencesManager {
         val responseLength = Prefs.getBoolean("pref.adapter.responseLength.enabled", false)
 
         val gracefulStop = Prefs.getBoolean("pref.adapter.graceful_stop.enabled", true)
-
-
         val dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
+
+        val resources  = Prefs.getStringSet(PREF_RESOURCES_LIST, pidResources.getDefaultPidFiles().keys)!!
 
         val dataLoggerPreferences = DataLoggerPreferences(
             dragRacingCommandFrequency = dragRacingCommandFrequency,
@@ -174,7 +173,7 @@ class DataLoggerPreferencesManager {
             resultsCacheEnabled = resultsCacheEnabled,
             initProtocol = initProtocol,
             maxReconnectNum = maxReconnectNum,
-            resources = resources(),
+            resources = resources,
             vehicleMetadataReadingEnabled = vehicleMetadataReadingEnabled,
             vehicleCapabilitiesReadingEnabled = vehicleCapabilitiesReadingEnabled,
             vehicleDTCReadingEnabled = vehicleDTCReadingEnabled,
@@ -194,10 +193,6 @@ class DataLoggerPreferencesManager {
 
         return dataLoggerPreferences
     }
-
-
-    private fun resources(): MutableSet<String> =
-        Prefs.getStringSet(PREF_RESOURCES_LIST, pidResources.getDefaultPidFiles().keys)!!
 }
 
 val dataLoggerPreferences by lazy { DataLoggerPreferencesManager() }

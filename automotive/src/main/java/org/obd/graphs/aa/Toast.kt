@@ -18,8 +18,10 @@
  **/
 package org.obd.graphs.aa
 
+import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
+import org.obd.graphs.aa.screen.LOG_KEY
 
 
 internal val toast = Toast()
@@ -30,10 +32,13 @@ internal class Toast {
     }
 
     fun show(carCtx: CarContext, msg: String) {
-        CarToast.makeText(
-            carCtx,
-            msg, CarToast.LENGTH_LONG
-        ).show()
+        try {
+            CarToast.makeText(
+                carCtx,
+                msg, CarToast.LENGTH_LONG
+            ).show()
+        } catch (e: Exception){
+            Log.w(LOG_KEY,"Failed to show toast",e)
+        }
     }
-
 }

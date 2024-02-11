@@ -36,6 +36,8 @@ import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.GeneratorPolicy
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
 import org.obd.metrics.command.group.DefaultCommandGroup
+import org.obd.metrics.command.routine.RoutineCommand
+import org.obd.metrics.command.routine.RoutineExecutionStatus
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
 import org.obd.metrics.diagnostic.Rate
@@ -46,6 +48,8 @@ import org.obd.metrics.pid.Urls
 import org.obd.metrics.transport.AdapterConnection
 import java.io.File
 import java.util.*
+
+private const val JS_ENGINE_NAME = "rhino"
 
 /**
  * That's the wrapper interface on Workflow API.
@@ -69,10 +73,17 @@ internal class WorkflowOrchestrator internal constructor() {
     private val metricsObserver = MetricsObserver()
 
     private var lifecycle = object : Lifecycle {
+
         override fun onConnecting() {
             status = WorkflowStatus.Connecting
             Log.i(LOG_TAG, "Start collecting process")
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
+        }
+
+        override fun onRoutineCompleted(routineCommand: RoutineCommand, status: RoutineExecutionStatus) {
+            Log.e(LOG_TAG, "Routine: ${routineCommand.pid.description}  execution status: $status")
+            val even = if (status == RoutineExecutionStatus.ERROR) ROUTINE_EXECUTION_FAILED_EVENT else ROUTINE_EXECUTED_SUCCESSFULLY_EVENT
+            sendBroadcastEvent(even)
         }
 
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
@@ -167,11 +178,11 @@ internal class WorkflowOrchestrator internal constructor() {
             connection()?.run {
                 Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
 
-                val status = workflow.executeRoutine(it.first, init())
+                val status = workflow.executeRoutine(it.first.pids.first(), init())
                 Log.i(LOG_TAG, "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status")
 
                 when (status) {
-                    WorkflowExecutionStatus.ROUTINE_EXECUTED -> sendBroadcastEvent(ROUTINE_EXECUTED_EVENT)
+                    WorkflowExecutionStatus.ROUTINE_QUEUED -> sendBroadcastEvent(ROUTINE_QUEUED_EVENT)
                     WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
                     WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
                     else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
@@ -382,7 +393,7 @@ internal class WorkflowOrchestrator internal constructor() {
         ).build()
 
     private fun workflow() = Workflow.instance()
-        .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine("rhino").build())
+        .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build())
         .pids(
             Pids.builder().resources(
                 getSelectedPIDsResources()

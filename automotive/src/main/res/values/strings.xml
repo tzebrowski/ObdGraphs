@@ -4,8 +4,10 @@
     <string name="pref.aa.get_to_app_conf">AA preferences are opened in the mobile app\n Go there to edit App settings</string>
     <string name="app_name">Giulia IOT Monitor</string>
 
-    <string name="routine.routine_executed">Routine has been executed.</string>
+    <string name="routine.routine_queued">Routine has been queued.</string>
     <string name="routine.workflow_is_not_running">Please connect OBD Adapter first.</string>
     <string name="routine.unknown_error">Unknown error.</string>
     <string name="routine.page_title">Available routines.</string>
+    <string name="routine.execution_failed">Routine execution failed.</string>
+    <string name="routine.executed_successfully">Routine has been executed successfully.</string>
 </resources>

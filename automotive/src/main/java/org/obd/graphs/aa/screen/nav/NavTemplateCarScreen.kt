@@ -108,9 +108,7 @@ internal class NavTemplateCarScreen(
                     invalidate()
                 }
 
-                SURFACE_DESTROYED_EVENT -> {
-                    cancelRenderingTask()
-                }
+                SURFACE_DESTROYED_EVENT -> cancelRenderingTask()
 
                 SURFACE_AREA_CHANGED_EVENT -> {
                     Log.v(LOG_KEY,"Surface area changed")
@@ -176,9 +174,7 @@ internal class NavTemplateCarScreen(
                     }
                 }
 
-                DATA_LOGGER_NO_NETWORK_EVENT -> {
-                    toast.show(carContext, R.string.main_activity_toast_connection_no_network)
-                }
+                DATA_LOGGER_NO_NETWORK_EVENT -> toast.show(carContext, R.string.main_activity_toast_connection_no_network)
 
                 DATA_LOGGER_ERROR_EVENT -> {
                     try {
@@ -232,30 +228,12 @@ internal class NavTemplateCarScreen(
                     }
                 }
 
-                ROUTINE_EXECUTED_EVENT -> {
-                    try {
-                       toast.show(carContext, R.string.routine_routine_executed)
-                    }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received ROUTINE_EXECUTED_EVENT event",e)
-                    }
-                }
-
-                ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> {
-                    try {
-                        toast.show(carContext, R.string.routine_workflow_is_not_running)
-                    }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received ROUTINE_WORKFLOW_NOT_RUNNING_EVENT event",e)
-                    }
-                }
-
-                ROUTINE_UNKNOWN_STATUS_EVENT -> {
-                    try {
-                        toast.show(carContext, R.string.routine_unknown_error)
-                    }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received ROUTINE_UNKNOWN_STATUS_EVENT event",e)
-                    }
-                }
-            }
+                ROUTINE_QUEUED_EVENT ->  toast.show(carContext, R.string.routine_routine_queued)
+                ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> toast.show(carContext, R.string.routine_workflow_is_not_running)
+                ROUTINE_UNKNOWN_STATUS_EVENT ->  toast.show(carContext, R.string.routine_unknown_error)
+                ROUTINE_EXECUTION_FAILED_EVENT -> toast.show(carContext, R.string.routine_execution_failed)
+                ROUTINE_EXECUTED_SUCCESSFULLY_EVENT -> toast.show(carContext, R.string.routine_executed_successfully)
+          }
         }
     }
 
@@ -294,9 +272,11 @@ internal class NavTemplateCarScreen(
             addAction(HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
             addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
 
-            addAction(ROUTINE_EXECUTED_EVENT)
+            addAction(ROUTINE_QUEUED_EVENT)
             addAction(ROUTINE_REJECTED_EVENT)
             addAction(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
+            addAction(ROUTINE_EXECUTION_FAILED_EVENT)
+            addAction(ROUTINE_EXECUTED_SUCCESSFULLY_EVENT)
         })
     }
 
@@ -353,16 +333,6 @@ internal class NavTemplateCarScreen(
     } else {
         mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
     }
-
-    private fun buildRoutineListItem(data: PidDefinition): Row = Row.Builder()
-            .setOnClickListener {
-                Log.e(LOG_KEY, "Executing routine ${data.description}")
-                dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
-            }
-            .addText(data.description)
-            .setTitle(data.description)
-            .build()
-
 
     private fun getActionStrip(): ActionStrip? {
 
@@ -509,4 +479,13 @@ internal class NavTemplateCarScreen(
                 )
             ).build()
     }
+
+    private fun buildRoutineListItem(data: PidDefinition): Row = Row.Builder()
+        .setOnClickListener {
+            Log.i(LOG_KEY, "Executing routine ${data.description}")
+            dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
+        }
+        .addText(data.description)
+        .setTitle(data.description)
+        .build()
 }
