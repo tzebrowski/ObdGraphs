@@ -462,7 +462,7 @@ internal class NavTemplateCarScreen(
 
     private fun routinesScreen(): ListTemplate {
         var items = ItemList.Builder()
-        dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).forEach {
+        dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).sortedBy { it.description }.forEach {
             items = items.addItem(buildRoutineListItem(it))
         }
 
@@ -485,7 +485,8 @@ internal class NavTemplateCarScreen(
             Log.i(LOG_KEY, "Executing routine ${data.description}")
             dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
         }
-        .addText(data.description)
+        .setBrowsable(false)
+        .addText(data.longDescription?:data.description)
         .setTitle(data.description)
         .build()
 }
