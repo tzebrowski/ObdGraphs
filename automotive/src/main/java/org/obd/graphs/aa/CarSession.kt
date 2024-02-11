@@ -24,8 +24,8 @@ import androidx.car.app.Screen
 import androidx.car.app.Session
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.CarScreenFactory
-import org.obd.graphs.renderer.Fps
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.renderer.Fps
 import org.obd.graphs.setCarContext
 
 internal class CarSession : Session() {
@@ -37,7 +37,7 @@ internal class CarSession : Session() {
 
     override fun onCreateScreen(intent: Intent): Screen {
         setCarContext(carContext)
-        screen =  CarScreenFactory.instance(carContext,settings,metricsCollector,fps)
+        screen = CarScreenFactory.instance(carContext, settings, metricsCollector, fps)
         return screen
     }
 

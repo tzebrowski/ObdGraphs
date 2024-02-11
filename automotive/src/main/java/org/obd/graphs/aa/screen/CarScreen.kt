@@ -62,9 +62,9 @@ internal abstract class CarScreen(
 
     protected val query = Query.instance()
 
-    abstract fun renderAction()
+    protected open fun renderAction() {}
 
-    abstract fun onCarConfigurationChanged()
+    open fun onCarConfigurationChanged(){}
 
     protected val renderingThread: RenderingThread = RenderingThread(
         id = "CarScreenRenderingThread",
@@ -80,7 +80,7 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
-    protected fun getActionStrip(
+    protected fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
         exitEnabled: Boolean = true,
         screenId: Int = 0,

@@ -61,7 +61,7 @@ const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
 enum class ScreenTemplateType {
     NAV, IOT
 }
-internal class CarSettings(private val carContext: CarContext) : ScreenSettings {
+class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private var itemsSortOrder: Map<Long, Int>? = emptyMap()
     private val dragRacingSettings = DragRacingSettings()
     private val colorTheme = ColorTheme()

@@ -19,7 +19,6 @@
 package org.obd.graphs.aa.screen.nav
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.util.Log
@@ -44,25 +43,20 @@ import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"
 
-const val GIULIA_SCREEN_ID = 0
-const val DRAG_RACING_SCREEN_ID = 1
-const val ROUTINES_SCREEN_ID = 2
 
-internal class SurfaceController(
+class SurfaceController(
     private val carContext: CarContext,
     private val settings: CarSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
     private val query: Query
-) :
-    DefaultLifecycleObserver {
+) : DefaultLifecycleObserver {
 
     private var surfaceRenderer: SurfaceRenderer =
         SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, settings.getSurfaceRendererType())
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
-    private var screenId = GIULIA_SCREEN_ID
 
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
 
@@ -137,23 +131,8 @@ internal class SurfaceController(
     fun onCarConfigurationChanged() {
         renderFrame()
     }
-    fun isVirtualScreensEnabled(): Boolean = getCurrentScreenId() == GIULIA_SCREEN_ID
 
-    fun getToggleSurfaceRendererBtnColor(): Int = when (screenId){
-        GIULIA_SCREEN_ID -> Color.RED
-        DRAG_RACING_SCREEN_ID -> Color.WHITE
-        ROUTINES_SCREEN_ID -> Color.BLUE
-        else -> Color.YELLOW
-    }
-
-
-    fun toggleSurfaceRenderer() {
-
-        if (screenId == getNumberOfScreensEnabled()){
-            screenId = GIULIA_SCREEN_ID
-        } else {
-            screenId++
-        }
+    fun toggleSurfaceRenderer(screenId: Int) {
 
         surfaceRenderer.recycle()
         when (screenId){
@@ -189,11 +168,8 @@ internal class SurfaceController(
         renderFrame()
     }
 
-    fun getCurrentScreenId(): Int = screenId
-
     @MainThread
     fun renderFrame() {
-        if (isAllowedFrameRendering()){
             surface?.let {
                 var canvas: Canvas? = null
                 if (it.isValid && !surfaceLocked) {
@@ -223,9 +199,6 @@ internal class SurfaceController(
                     }
                 }
             }
-        }
-    }
 
-    private fun isAllowedFrameRendering() = getCurrentScreenId() == GIULIA_SCREEN_ID || getCurrentScreenId() == DRAG_RACING_SCREEN_ID
-    private fun getNumberOfScreensEnabled() = if (settings.isRoutinesEnabled()) ROUTINES_SCREEN_ID else DRAG_RACING_SCREEN_ID
+    }
 }
