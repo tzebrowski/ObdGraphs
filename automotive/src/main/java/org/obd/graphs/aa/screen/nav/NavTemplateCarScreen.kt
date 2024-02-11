@@ -228,11 +228,11 @@ internal class NavTemplateCarScreen(
                     }
                 }
 
-                ROUTINE_QUEUED_EVENT ->  toast.show(carContext, R.string.routine_routine_queued)
                 ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> toast.show(carContext, R.string.routine_workflow_is_not_running)
                 ROUTINE_UNKNOWN_STATUS_EVENT ->  toast.show(carContext, R.string.routine_unknown_error)
                 ROUTINE_EXECUTION_FAILED_EVENT -> toast.show(carContext, R.string.routine_execution_failed)
                 ROUTINE_EXECUTED_SUCCESSFULLY_EVENT -> toast.show(carContext, R.string.routine_executed_successfully)
+                ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT -> toast.show(carContext, R.string.routine_no_data)
           }
         }
     }
@@ -272,11 +272,11 @@ internal class NavTemplateCarScreen(
             addAction(HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
             addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
 
-            addAction(ROUTINE_QUEUED_EVENT)
             addAction(ROUTINE_REJECTED_EVENT)
             addAction(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
             addAction(ROUTINE_EXECUTION_FAILED_EVENT)
             addAction(ROUTINE_EXECUTED_SUCCESSFULLY_EVENT)
+            addAction(ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT)
         })
     }
 

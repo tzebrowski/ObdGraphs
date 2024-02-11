@@ -33,7 +33,7 @@ const val DATA_LOGGER_NO_NETWORK_EVENT = "data.logger.network_error"
 
 const val ROUTINE_EXECUTED_SUCCESSFULLY_EVENT = "data.logger.routine.executed_successfully"
 const val ROUTINE_EXECUTION_FAILED_EVENT = "data.logger.routine.execution_failed"
-const val ROUTINE_QUEUED_EVENT = "data.logger.routine.queued"
+const val ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT = "data.logger.routine.no_data_received"
 const val ROUTINE_REJECTED_EVENT = "data.logger.routine.rejected"
 const val ROUTINE_WORKFLOW_NOT_RUNNING_EVENT = "data.logger.routine.workflow_not_running"
 const val ROUTINE_UNKNOWN_STATUS_EVENT = "data.logger.routine.unknown_status"

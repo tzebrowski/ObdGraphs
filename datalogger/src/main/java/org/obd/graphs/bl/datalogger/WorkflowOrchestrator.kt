@@ -82,8 +82,13 @@ internal class WorkflowOrchestrator internal constructor() {
 
         override fun onRoutineCompleted(routineCommand: RoutineCommand, status: RoutineExecutionStatus) {
             Log.e(LOG_TAG, "Routine: ${routineCommand.pid.description}  execution status: $status")
-            val even = if (status == RoutineExecutionStatus.ERROR) ROUTINE_EXECUTION_FAILED_EVENT else ROUTINE_EXECUTED_SUCCESSFULLY_EVENT
-            sendBroadcastEvent(even)
+            val event = when (status){
+                RoutineExecutionStatus.ERROR -> ROUTINE_EXECUTION_FAILED_EVENT
+                RoutineExecutionStatus.NO_DATA -> ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT
+                RoutineExecutionStatus.SUCCESS -> ROUTINE_EXECUTED_SUCCESSFULLY_EVENT
+            }
+
+            sendBroadcastEvent(event)
         }
 
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
@@ -182,7 +187,6 @@ internal class WorkflowOrchestrator internal constructor() {
                 Log.i(LOG_TAG, "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status")
 
                 when (status) {
-                    WorkflowExecutionStatus.ROUTINE_QUEUED -> sendBroadcastEvent(ROUTINE_QUEUED_EVENT)
                     WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
                     WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
                     else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
@@ -246,7 +250,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun wifiConnection(): WifiConnection? {
         try {
-
             Log.i(
                 LOG_TAG,
                 "Creating TCP connection to: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
@@ -338,8 +341,6 @@ internal class WorkflowOrchestrator internal constructor() {
                 .build()
 
         ).build()
-
-
 
     private fun getDragRacingAdjustments() = Adjustments.builder()
         .debugEnabled(dataLoggerPreferences.instance.debugLogging)
