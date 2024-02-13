@@ -1268,13 +1268,13 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.theme">
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.theme.background.enabled"
                         android:title="@string/pref.aa.theme.background.enabled"
                         app:singleLineTitle="false" />
 
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.aa.theme.dynamic-selector.enabled"
                         android:summary="@string/pref.aa.theme.dynamic_selector.enabled_summary"

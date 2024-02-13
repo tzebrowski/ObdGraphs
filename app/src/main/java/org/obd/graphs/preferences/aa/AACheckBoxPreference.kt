@@ -52,7 +52,6 @@ class AACheckBoxPreference(
         }
     }
 
-
     private fun getAttribute(attrName: String): String = if (attrs == null) {
         ""
     } else {
