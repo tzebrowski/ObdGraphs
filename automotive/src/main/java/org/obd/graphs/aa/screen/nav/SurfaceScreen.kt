@@ -135,8 +135,7 @@ internal class SurfaceScreen(
 
         return template.setActionStrip(
             getHorizontalActionStrip(
-                screenId = screenNavigator.getCurrentScreenId(),
-                toggleBtnColor = screenNavigator.getCurrentScreenBtnColor()
+                screenId = screenNavigator.getCurrentScreenId()
             )
         ).build()
     }
@@ -189,7 +188,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(1)) {
             added = true
 
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
+            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
                 parent.invalidate()
                 settings.applyVirtualScreen1()
                 applyMetricsFilter()
@@ -200,7 +199,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(2)) {
 
             added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_2, actionStripColor(VIRTUAL_SCREEN_2)) {
+            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_2, actionStripColor(VIRTUAL_SCREEN_2)) {
                 parent.invalidate()
                 settings.applyVirtualScreen2()
                 applyMetricsFilter()
@@ -211,7 +210,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(3)) {
 
             added = true
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
+            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
                 parent.invalidate()
                 settings.applyVirtualScreen3()
                 applyMetricsFilter()
@@ -222,7 +221,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(4)) {
             added = true
 
-            builder = builder.addAction(createAction(R.drawable.action_virtual_screen_4, actionStripColor(VIRTUAL_SCREEN_4)) {
+            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_4, actionStripColor(VIRTUAL_SCREEN_4)) {
                 parent.invalidate()
                 settings.applyVirtualScreen4()
                 applyMetricsFilter()

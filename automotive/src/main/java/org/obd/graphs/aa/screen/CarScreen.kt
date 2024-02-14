@@ -22,18 +22,14 @@ import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.connection.CarConnection
-import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarColor
-import androidx.car.app.model.CarIcon
-import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import org.obd.graphs.AA_EDIT_PREF_SCREEN
-import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.aa.CarSettings
-import org.obd.graphs.aa.R
+import org.obd.graphs.aa.*
 import org.obd.graphs.aa.mapColor
+import org.obd.graphs.aa.screen.nav.CHANGE_SCREEN_EVENT
 import org.obd.graphs.aa.screen.nav.DRAG_RACING_SCREEN_ID
 import org.obd.graphs.aa.screen.nav.GIULIA_SCREEN_ID
 import org.obd.graphs.aa.screen.nav.ROUTINES_SCREEN_ID
@@ -58,7 +54,7 @@ internal abstract class CarScreen(
     protected val settings: CarSettings,
     protected val metricsCollector: MetricsCollector,
     protected val fps: Fps = Fps()
-) : Screen(carContext), DefaultLifecycleObserver {
+    ) : Screen(carContext), DefaultLifecycleObserver {
 
     protected val query = Query.instance()
 
@@ -83,18 +79,17 @@ internal abstract class CarScreen(
     protected fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
         exitEnabled: Boolean = true,
-        screenId: Int = 0,
-        toggleBtnColor: Int
+        screenId: Int = 0
     ): ActionStrip {
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.isRunning()) {
-            builder.addAction(createAction(R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
+            builder.addAction(createAction(carContext, R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
                 stopDataLogging()
                 toast.show(carContext, R.string.toast_connection_disconnect)
             })
         } else {
-            builder.addAction(createAction(R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
+            builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
                 when (screenId) {
                     GIULIA_SCREEN_ID -> {
                         if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
@@ -117,19 +112,19 @@ internal abstract class CarScreen(
             })
         }
 
-        builder = builder.addAction(createAction(R.drawable.action_drag_race_screen, mapColor(toggleBtnColor)) {
-            sendBroadcastEvent(AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT)
+        builder = builder.addAction(createAction(carContext, android.R.drawable.ic_dialog_dialer,CarColor.BLUE) {
+            sendBroadcastEvent(CHANGE_SCREEN_EVENT)
         })
 
         if (preferencesEnabled) {
-            builder = builder.addAction(createAction(R.drawable.config, CarColor.BLUE) {
+            builder = builder.addAction(createAction(carContext, R.drawable.config, CarColor.BLUE) {
                 sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
                 toast.show(carContext, R.string.pref_aa_get_to_app_conf)
             })
         }
 
         if (exitEnabled) {
-            builder = builder.addAction(createAction(R.drawable.action_exit, CarColor.RED) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
                 try {
                     stopDataLogging()
                 } finally {
@@ -154,19 +149,6 @@ internal abstract class CarScreen(
         }
     }
 
-    protected fun createAction(iconResId: Int, iconColorTint: CarColor, func: () -> Unit): Action =
-        Action.Builder()
-            .setIcon(
-                CarIcon.Builder(
-                    IconCompat.createWithResource(
-                        carContext,
-                        iconResId
-                    )
-                ).setTint(iconColorTint).build()
-            )
-            .setOnClickListener {
-                func()
-            }.build()
 
     private fun onConnectionStateUpdated(connectionState: Int) {
         when (connectionState) {

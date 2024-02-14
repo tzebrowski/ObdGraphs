@@ -25,10 +25,7 @@ import android.content.IntentFilter
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.connection.CarConnection
-import androidx.car.app.model.Action
-import androidx.car.app.model.Pane
-import androidx.car.app.model.PaneTemplate
-import androidx.car.app.model.Template
+import androidx.car.app.model.*
 import androidx.car.app.navigation.NavigationManager
 import androidx.car.app.navigation.NavigationManagerCallback
 import androidx.car.app.navigation.model.NavigationTemplate
@@ -44,10 +41,12 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 
-
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
+
+const val CHANGE_SCREEN_EVENT = "car.event.screen.change.event"
+
 
 internal class NavTemplateCarScreen(
     carContext: CarContext,
@@ -56,7 +55,7 @@ internal class NavTemplateCarScreen(
     fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
-    private val screenNavigator = ScreenNavigator(settings)
+    private val screenNavigator = ScreenNavigator()
 
     private val routineScreen = RoutinesScreen(carContext, settings, metricsCollector, fps, screenNavigator = screenNavigator)
     private val surfaceScreen = SurfaceScreen(carContext, settings, metricsCollector, fps, parent = this, screenNavigator = screenNavigator)
@@ -65,17 +64,28 @@ internal class NavTemplateCarScreen(
         override fun onReceive(context: Context?, intent: Intent?) {
 
             when (intent?.action) {
+                CHANGE_SCREEN_EVENT -> {
+                    screenManager.popToRoot()
+                    screenManager.pushForResult(AvailableFeaturesScreen(carContext)) {
+                        Log.e(LOG_KEY, "Selected new screen: $it")
+                        it?.let {
+                            val newScreen = it.toString().toInt()
+                            if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID) {
+                                screenNavigator.setNewScreen(newScreen)
+                                surfaceScreen.toggleSurfaceRenderer(newScreen)
+                                invalidate()
+                            } else {
+                                screenManager.push(routineScreen)
+                            }
+                        }
+                   }
+                }
 
                 EVENT_DYNAMIC_SELECTOR_MODE_NORMAL -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.NORMAL)
                 EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
-
-                AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT -> {
-                    surfaceScreen.toggleSurfaceRenderer(screenNavigator.nextScreenId())
-                    invalidate()
-                }
 
                 SURFACE_BROKEN_EVENT -> {
                     Log.d(LOG_KEY, "Received event about ")
@@ -197,7 +207,7 @@ internal class NavTemplateCarScreen(
             addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
             addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
             addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
-            addAction(AA_VIRTUAL_SCREEN_RENDERER_TOGGLE_EVENT)
+            addAction(CHANGE_SCREEN_EVENT)
         })
     }
 
@@ -240,7 +250,7 @@ internal class NavTemplateCarScreen(
             if (dataLogger.status() == WorkflowStatus.Connecting) {
                 NavigationTemplate.Builder()
                     .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
-                    .setActionStrip(getHorizontalActionStrip(toggleBtnColor = screenNavigator.getCurrentScreenBtnColor()))
+                    .setActionStrip(getHorizontalActionStrip())
                     .build()
             } else {
                 when (screenNavigator.getCurrentScreenId()) {
@@ -287,4 +297,5 @@ internal class NavTemplateCarScreen(
         registerConnectionStateReceiver()
     }
     private fun navigationManager() = carContext.getCarService(NavigationManager::class.java)
+
 }

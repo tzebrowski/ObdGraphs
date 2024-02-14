@@ -22,7 +22,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.text.SpannableString
 import android.util.Log
 import androidx.car.app.CarContext
@@ -193,7 +192,7 @@ internal class IotTemplateCarScreen(
                 GridTemplate.Builder()
                     .setTitle(carContext.resources.getString(R.string.app_name))
                     .setLoading(true)
-                    .setActionStrip(getHorizontalActionStrip(preferencesEnabled = false, toggleBtnColor = Color.WHITE))
+                    .setActionStrip(getHorizontalActionStrip(preferencesEnabled = false))
                     .setHeaderAction(Action.APP_ICON)
                     .build()
             } else {
@@ -201,7 +200,7 @@ internal class IotTemplateCarScreen(
                 applyMetricsFilter()
                 var paneBuilder = Pane.Builder()
 
-                paneBuilder = paneBuilder.addAction(createAction(
+                paneBuilder = paneBuilder.addAction(createAction(carContext,
                     R.drawable.action_virtual_screen_1,
                     mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
                 ) {
@@ -211,7 +210,7 @@ internal class IotTemplateCarScreen(
                     invalidate()
                 })
 
-                paneBuilder = paneBuilder.addAction(createAction(
+                paneBuilder = paneBuilder.addAction(createAction(carContext,
                     R.drawable.action_virtual_screen_2,
                     mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
                 ) {
@@ -234,7 +233,7 @@ internal class IotTemplateCarScreen(
 
                 PaneTemplate.Builder(paneBuilder.build())
                     .setTitle(carContext.resources.getString(R.string.app_name))
-                    .setActionStrip(getHorizontalActionStrip(preferencesEnabled = false, toggleBtnColor = Color.WHITE))
+                    .setActionStrip(getHorizontalActionStrip(preferencesEnabled = false))
                     .build()
             }
 
