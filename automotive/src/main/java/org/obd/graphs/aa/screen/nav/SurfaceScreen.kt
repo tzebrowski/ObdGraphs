@@ -33,10 +33,10 @@ internal class SurfaceScreen(
     settings: CarSettings,
     metricsCollector: MetricsCollector,
     fps: Fps,
-    private val screenNavigator: ScreenNavigator,
     private val parent: NavTemplateCarScreen
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
+    private var screenId = GIULIA_SCREEN_ID
     private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps, query)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -109,8 +109,9 @@ internal class SurfaceScreen(
     }
 
     fun getLifecycleObserver() = surfaceController
-    fun toggleSurfaceRenderer(screenId: Int) {
-        surfaceController.toggleSurfaceRenderer(screenId)
+    fun toggleSurfaceRenderer(newScreen: Int) {
+        screenId = newScreen
+        surfaceController.toggleSurfaceRenderer(newScreen)
         renderFrame()
     }
 
@@ -127,7 +128,7 @@ internal class SurfaceScreen(
     override fun onGetTemplate(): Template {
         var template = NavigationTemplate.Builder()
 
-        if (screenNavigator.isVirtualScreensEnabled()) {
+        if (screenId == GIULIA_SCREEN_ID) {
             getVerticalActionStrip()?.let {
                 template = template.setMapActionStrip(it)
             }
@@ -135,7 +136,7 @@ internal class SurfaceScreen(
 
         return template.setActionStrip(
             getHorizontalActionStrip(
-                screenId = screenNavigator.getCurrentScreenId()
+                screenId = screenId
             )
         ).build()
     }
@@ -241,6 +242,6 @@ internal class SurfaceScreen(
         mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
     }
 
-    private fun isAllowedFrameRendering() = screenNavigator.getCurrentScreenId() == GIULIA_SCREEN_ID ||
-            screenNavigator.getCurrentScreenId() == DRAG_RACING_SCREEN_ID
+    private fun isAllowedFrameRendering() = screenId == GIULIA_SCREEN_ID ||
+            screenId == DRAG_RACING_SCREEN_ID
 }

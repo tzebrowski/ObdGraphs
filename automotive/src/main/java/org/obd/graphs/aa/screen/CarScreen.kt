@@ -76,9 +76,10 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
-    protected fun getHorizontalActionStrip(
+    protected open fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
         exitEnabled: Boolean = true,
+        featureListsEnabledSetting: Boolean = true,
         screenId: Int = 0
     ): ActionStrip {
         var builder = ActionStrip.Builder()
@@ -112,9 +113,11 @@ internal abstract class CarScreen(
             })
         }
 
-        builder = builder.addAction(createAction(carContext, android.R.drawable.ic_dialog_dialer,CarColor.BLUE) {
-            sendBroadcastEvent(CHANGE_SCREEN_EVENT)
-        })
+        if (featureListsEnabledSetting) {
+            builder = builder.addAction(createAction(carContext, android.R.drawable.ic_dialog_dialer, CarColor.BLUE) {
+                sendBroadcastEvent(CHANGE_SCREEN_EVENT)
+            })
+        }
 
         if (preferencesEnabled) {
             builder = builder.addAction(createAction(carContext, R.drawable.config, CarColor.BLUE) {
@@ -161,7 +164,7 @@ internal abstract class CarScreen(
         }
     }
 
-    private fun stopDataLogging() {
+    protected fun stopDataLogging() {
         Log.i(LOG_KEY, "Stopping data logging process")
         dataLogger.stop()
         cancelRenderingTask()

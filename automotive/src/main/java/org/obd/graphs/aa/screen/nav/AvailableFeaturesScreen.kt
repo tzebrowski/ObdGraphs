@@ -27,6 +27,10 @@ import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
 
+const val GIULIA_SCREEN_ID = 0
+const val DRAG_RACING_SCREEN_ID = 1
+const val ROUTINES_SCREEN_ID = 2
+
 internal class AvailableFeaturesScreen(
     carContext: CarContext
 ) : Screen(carContext) {

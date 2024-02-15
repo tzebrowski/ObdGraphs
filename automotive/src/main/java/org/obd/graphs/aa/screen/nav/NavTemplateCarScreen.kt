@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.car.app.CarContext
 import androidx.car.app.connection.CarConnection
 import androidx.car.app.model.*
@@ -55,10 +56,9 @@ internal class NavTemplateCarScreen(
     fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
-    private val screenNavigator = ScreenNavigator()
 
-    private val routineScreen = RoutinesScreen(carContext, settings, metricsCollector, fps, screenNavigator = screenNavigator)
-    private val surfaceScreen = SurfaceScreen(carContext, settings, metricsCollector, fps, parent = this, screenNavigator = screenNavigator)
+    private val routineScreen = RoutinesScreen(carContext, settings, metricsCollector, fps)
+    private val surfaceScreen = SurfaceScreen(carContext, settings, metricsCollector, fps, parent = this)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -71,7 +71,6 @@ internal class NavTemplateCarScreen(
                         it?.let {
                             val newScreen = it.toString().toInt()
                             if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID) {
-                                screenNavigator.setNewScreen(newScreen)
                                 surfaceScreen.toggleSurfaceRenderer(newScreen)
                                 invalidate()
                             } else {
@@ -241,31 +240,31 @@ internal class NavTemplateCarScreen(
     override fun renderAction() {
         surfaceScreen.renderFrame()
     }
-
-
     override fun onGetTemplate(): Template  = try {
-            settings.initItemsSortOrder()
+        settings.initItemsSortOrder()
 
-            if (dataLogger.status() == WorkflowStatus.Connecting) {
-                NavigationTemplate.Builder()
-                    .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
-                    .setActionStrip(getHorizontalActionStrip())
-                    .build()
-            } else {
-                when (screenNavigator.getCurrentScreenId()) {
-                    ROUTINES_SCREEN_ID -> routineScreen.onGetTemplate()
-                    else ->  surfaceScreen.onGetTemplate()
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(LOG_KEY, "Failed to build template", e)
-            PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
-                .setHeaderAction(Action.BACK)
-                .setTitle(carContext.getString(R.string.pref_aa_car_error))
+        if (dataLogger.status() == WorkflowStatus.Connecting) {
+            NavigationTemplate.Builder()
+                .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
+                .setActionStrip(getHorizontalActionStrip())
                 .build()
+        } else {
+            surfaceScreen.onGetTemplate()
         }
+    } catch (e: Exception) {
+        Log.e(LOG_KEY, "Failed to build template", e)
+        PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
+            .setHeaderAction(Action.BACK)
+            .setTitle(carContext.getString(R.string.pref_aa_car_error))
+            .build()
+    }
 
     init {
+        carContext.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                screenManager.pop()
+            }
+        })
 
         lifecycle.addObserver(this)
         lifecycle.addObserver(surfaceScreen.getLifecycleObserver())

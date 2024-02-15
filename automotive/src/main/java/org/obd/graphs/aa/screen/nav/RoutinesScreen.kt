@@ -40,8 +40,7 @@ import org.obd.metrics.pid.PidDefinition
 internal class RoutinesScreen (carContext: CarContext,
                       settings: CarSettings,
                       metricsCollector: MetricsCollector,
-                      fps: Fps,
-                      private val screenNavigator: ScreenNavigator
+                      fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -103,7 +102,6 @@ internal class RoutinesScreen (carContext: CarContext,
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
                     }
                 }
-
             }
         }
     }
@@ -113,13 +111,7 @@ internal class RoutinesScreen (carContext: CarContext,
             ListTemplate.Builder()
                 .setLoading(true)
                 .setTitle(carContext.getString(R.string.routine_page_title))
-                .setActionStrip(
-                    getHorizontalActionStrip(
-                        preferencesEnabled = false,
-                        exitEnabled = false,
-                        screenId = screenNavigator.getCurrentScreenId()
-                    )
-                ).build()
+                .setActionStrip(getHorizontalActionStrip()).build()
         } else {
             var items = ItemList.Builder()
             dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).sortedBy { it.description }.forEach {
@@ -128,17 +120,11 @@ internal class RoutinesScreen (carContext: CarContext,
 
             ListTemplate.Builder()
                 .setLoading(false)
-
                 .setTitle(carContext.getString(R.string.routine_page_title))
                 .setSingleList(items.build())
                 .setHeaderAction(Action.BACK)
-                .setActionStrip(
-                    getHorizontalActionStrip(
-                        preferencesEnabled = false,
-                        exitEnabled = false,
-                        screenId = screenNavigator.getCurrentScreenId()
-                    )
-                ).build()
+                .setActionStrip(getHorizontalActionStrip())
+                .build()
         }
     } catch (e: Exception) {
         Log.e(LOG_KEY, "Failed to build template", e)
@@ -163,7 +149,6 @@ internal class RoutinesScreen (carContext: CarContext,
             addAction(DATA_LOGGER_CONNECTED_EVENT)
             addAction(DATA_LOGGER_NO_NETWORK_EVENT)
             addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
-
         })
     }
 
@@ -180,4 +165,34 @@ internal class RoutinesScreen (carContext: CarContext,
         .addText(data.longDescription?:data.description)
         .setTitle(data.description)
         .build()
+
+    private fun getHorizontalActionStrip(): ActionStrip {
+        var builder = ActionStrip.Builder()
+
+        builder = if (dataLogger.isRunning()) {
+            builder.addAction(createAction(carContext, R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
+                stopDataLogging()
+                toast.show(carContext, R.string.toast_connection_disconnect)
+            })
+        } else {
+            builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
+                query.setStrategy(QueryStrategyType.ROUTINES_QUERY)
+                dataLogger.start(query)
+
+            })
+        }
+
+
+        builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
+            try {
+                stopDataLogging()
+            } finally {
+                Log.i(LOG_KEY, "Exiting the app. Closing the context")
+                carContext.finishCarApp()
+            }
+        })
+
+
+        return builder.build()
+    }
 }
