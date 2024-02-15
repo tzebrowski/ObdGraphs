@@ -1,3 +1,21 @@
+/**
+ * Copyright 2019-2023, Tomasz Żebrowski
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 package org.obd.graphs.aa.screen.nav
 
 import android.content.BroadcastReceiver
@@ -29,12 +47,12 @@ internal class RoutinesScreen (carContext: CarContext,
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+
                 ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> toast.show(carContext, R.string.routine_workflow_is_not_running)
                 ROUTINE_UNKNOWN_STATUS_EVENT ->  toast.show(carContext, R.string.routine_unknown_error)
                 ROUTINE_EXECUTION_FAILED_EVENT -> toast.show(carContext, R.string.routine_execution_failed)
                 ROUTINE_EXECUTED_SUCCESSFULLY_EVENT -> toast.show(carContext, R.string.routine_executed_successfully)
                 ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT -> toast.show(carContext, R.string.routine_no_data)
-
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     try {
@@ -43,6 +61,7 @@ internal class RoutinesScreen (carContext: CarContext,
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
                     }
                 }
+
                 DATA_LOGGER_NO_NETWORK_EVENT -> toast.show(carContext, R.string.main_activity_toast_connection_no_network)
                 DATA_LOGGER_ERROR_EVENT -> {
                     invalidate()

@@ -216,7 +216,6 @@ internal class NavTemplateCarScreen(
         surfaceScreen.onCarConfigurationChanged()
         routineScreen.onCarConfigurationChanged()
     }
-
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         lifecycle.addObserver(surfaceScreen.getLifecycleObserver())

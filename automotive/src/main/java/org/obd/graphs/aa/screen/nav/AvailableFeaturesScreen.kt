@@ -1,3 +1,21 @@
+/**
+ * Copyright 2019-2023, Tomasz Żebrowski
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 package org.obd.graphs.aa.screen.nav
 
 import android.util.Log
@@ -6,11 +24,10 @@ import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import org.obd.graphs.aa.R
-import org.obd.graphs.aa.createAction
+import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
 
-
-open class AvailableFeaturesScreen(
+internal class AvailableFeaturesScreen(
     carContext: CarContext
 ) : Screen(carContext) {
 
@@ -32,7 +49,6 @@ open class AvailableFeaturesScreen(
             .setTitle(carContext.getString(R.string.pref_aa_car_error))
             .build()
     }
-
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
             addItem(row(ROUTINES_SCREEN_ID,
@@ -76,10 +92,8 @@ open class AvailableFeaturesScreen(
     private fun getHorizontalActionStrip(): ActionStrip {
         var builder = ActionStrip.Builder()
         builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
-
-                Log.i(org.obd.graphs.aa.screen.LOG_KEY, "Exiting the app. Closing the context")
-                carContext.finishCarApp()
-
+            Log.i(org.obd.graphs.aa.screen.LOG_KEY, "Exiting the app. Closing the context")
+            carContext.finishCarApp()
         })
         return builder.build()
     }
