@@ -55,10 +55,6 @@ internal class AvailableFeaturesScreen(
     }
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
-            addItem(row(ROUTINES_SCREEN_ID,
-                R.drawable.action_features,
-                carContext.getString(R.string.available_features_routine_screen_title))
-            )
 
             addItem(row(DRAG_RACING_SCREEN_ID,  R.drawable.action_drag_race_screen,
                 carContext.getString(R.string.available_features_drag_race_screen_title))
@@ -66,6 +62,12 @@ internal class AvailableFeaturesScreen(
             addItem(row(GIULIA_SCREEN_ID,  R.drawable.action_giulia,
                 carContext.getString(R.string.available_features_giulia_screen_title))
             )
+
+            addItem(row(ROUTINES_SCREEN_ID,
+                R.drawable.action_features,
+                carContext.getString(R.string.available_features_routine_screen_title))
+            )
+
         }.build()
 
 
