@@ -12,7 +12,7 @@
     <string name="routine.no_data">No data received from the ECU. Probably there is no connection to ECU established.</string>
 
     <string name="available_features.page_title">Available screens</string>
-    <string name="available_features.routine_screen.title">Routine Screen</string>
+    <string name="available_features.routine_screen.title">Functions and adjustments</string>
     <string name="available_features.drag_race_screen.title">Drag Racing</string>
     <string name="available_features.giulia_screen.title">Metrics</string>
 

@@ -23,6 +23,7 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
+import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
@@ -32,7 +33,8 @@ const val DRAG_RACING_SCREEN_ID = 1
 const val ROUTINES_SCREEN_ID = 2
 
 internal class AvailableFeaturesScreen(
-    carContext: CarContext
+    carContext: CarContext,
+    private val carSettings: CarSettings
 ) : Screen(carContext) {
 
     override fun onGetTemplate(): Template  = try {
@@ -56,17 +58,30 @@ internal class AvailableFeaturesScreen(
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
 
-            addItem(row(DRAG_RACING_SCREEN_ID,  R.drawable.action_drag_race_screen,
-                carContext.getString(R.string.available_features_drag_race_screen_title))
-            )
-            addItem(row(GIULIA_SCREEN_ID,  R.drawable.action_giulia,
-                carContext.getString(R.string.available_features_giulia_screen_title))
+
+            addItem(
+                row(
+                    DRAG_RACING_SCREEN_ID, R.drawable.action_drag_race_screen,
+                    carContext.getString(R.string.available_features_drag_race_screen_title)
+                )
             )
 
-            addItem(row(ROUTINES_SCREEN_ID,
-                R.drawable.action_features,
-                carContext.getString(R.string.available_features_routine_screen_title))
+            addItem(
+                row(
+                    GIULIA_SCREEN_ID, R.drawable.action_giulia,
+                    carContext.getString(R.string.available_features_giulia_screen_title)
+                )
             )
+
+            if (carSettings.isRoutinesEnabled()){
+                 addItem(
+                    row(
+                        ROUTINES_SCREEN_ID,
+                        R.drawable.action_features,
+                        carContext.getString(R.string.available_features_routine_screen_title)
+                    )
+                )
+            }
 
         }.build()
 
