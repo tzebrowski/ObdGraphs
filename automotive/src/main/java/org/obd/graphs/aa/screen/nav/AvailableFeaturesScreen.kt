@@ -85,7 +85,6 @@ internal class AvailableFeaturesScreen(
 
         }.build()
 
-
         return ListTemplate.Builder()
             .setHeaderAction(Action.BACK)
             .setActionStrip(getHorizontalActionStrip())

@@ -66,7 +66,7 @@ internal class NavTemplateCarScreen(
             when (intent?.action) {
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
-                    screenManager.pushForResult(AvailableFeaturesScreen(carContext)) {
+                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, settings)) {
                         Log.e(LOG_KEY, "Selected new screen: $it")
                         it?.let {
                             val newScreen = it.toString().toInt()
