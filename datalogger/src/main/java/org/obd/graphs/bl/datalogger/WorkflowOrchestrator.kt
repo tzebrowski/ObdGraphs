@@ -414,8 +414,8 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     private fun getSelectedModules() = dataLoggerPreferences.instance.resources.map {
-        if (modules.isExternalStorageResource(it)) {
-            modules.externalResourceToURL(it)
+        if (modules.isExternalStorageModule(it)) {
+            modules.externalModuleToURL(it)
         } else {
             Urls.resourceToUrl(it)
         }

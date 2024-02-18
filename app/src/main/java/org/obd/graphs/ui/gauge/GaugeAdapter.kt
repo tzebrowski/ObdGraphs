@@ -35,7 +35,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.modules
+import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.*

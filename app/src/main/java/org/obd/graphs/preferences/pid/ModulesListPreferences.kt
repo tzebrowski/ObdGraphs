@@ -26,9 +26,9 @@ import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.PREF_MODULE_LIST
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.bl.datalogger.ACCESS_EXTERNAL_STORAGE_ENABLED
-import org.obd.graphs.bl.datalogger.MODULES_LIST_CHANGED_EVENT
-import org.obd.graphs.bl.datalogger.modules
+import org.obd.graphs.ACCESS_EXTERNAL_STORAGE_ENABLED
+import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
+import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 

@@ -40,5 +40,4 @@ interface Profile : SharedPreferences.OnSharedPreferenceChangeListener {
     fun setupProfiles(forceOverrideRecommendation: Boolean = true)
     fun saveCurrentProfile()
     fun loadProfile(profileName: String)
-    fun getModules(): Map<String,String>
 }

@@ -46,7 +46,6 @@ internal class ProfilePreferencesBackend : Profile {
     private var defaultProfile: String? = null
     private lateinit var versionName: String
 
-    private var modules = mutableMapOf<String, String>()
 
     @Volatile
     private var bulkActionEnabled = false
@@ -70,7 +69,6 @@ internal class ProfilePreferencesBackend : Profile {
 
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
-    override fun getModules(): Map<String, String> = modules
 
     override fun importBackup() {
         runAsync {
@@ -197,10 +195,9 @@ internal class ProfilePreferencesBackend : Profile {
             }
 
             updateBuildSettings()
-
             allProps().let {
                 runAsync {
-                    loadModules(it)
+
                     distributePreferences(it)
                 }
             }
@@ -312,23 +309,7 @@ internal class ProfilePreferencesBackend : Profile {
     @SuppressLint("DefaultLocale")
     private fun distributePreferences(entries: MutableMap<String, Any?>) {
         diagnosticRequestIDMapper.updateSettings(entries)
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun loadModules(allProps: MutableMap<String, Any?>) {
-        val keys = allProps.keys.filter { it.contains(PREF_MODULE_LIST) }.toList()
-        val values = keys.map { allProps[it].toString().replace("[", "").replace("]", "").split(",") }.flatten().toSet()
-        val resourcesMap = values.map {
-            it.replace(" ", "") to
-                    it.replace(".json", "")
-                        .replace("_", " ")
-                        .trim()
-                        .split(" ").joinToString(" ") { it.lowercase(Locale.getDefault())
-                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
-        }
-
-        modules.putAll(resourcesMap)
-        Log.i(LOG_TAG, "Registered following resource files: $modules")
+        modules.updateSettings(entries)
     }
 
     private fun allProps(): MutableMap<String, Any?> {

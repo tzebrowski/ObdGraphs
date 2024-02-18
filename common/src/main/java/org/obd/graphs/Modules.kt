@@ -16,18 +16,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs
 
 import android.content.Context
 import android.util.Log
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.profile.profile
 import java.io.File
+import java.net.URL
+import java.util.*
+
+const val MODULES_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
 
 private const val STORAGE_FILE_CODING_KEY = "storage:"
 const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
 
 val modules = Modules()
+private const val LOG_TAG = "Modules"
 
 class Modules {
 
@@ -36,13 +40,30 @@ class Modules {
         "giulia_2.0_gme.json" to "Giulia 2.0 GME",
     )
 
-    internal fun externalResourceToURL(it: String) =
-        File(it.substring(STORAGE_FILE_CODING_KEY.length, it.length)).toURI().toURL()
+    private var modules = mutableMapOf<String, String>()
 
-    internal fun isExternalStorageResource(it: String) = it.startsWith(STORAGE_FILE_CODING_KEY)
+    fun externalModuleToURL(it: String): URL = File(it.substring(STORAGE_FILE_CODING_KEY.length, it.length)).toURI().toURL()
 
-    fun getDefaultModules(): Map<String,String>  = profile.getModules().toMutableMap().apply {
+    fun isExternalStorageModule(it: String) = it.startsWith(STORAGE_FILE_CODING_KEY)
+
+    fun getDefaultModules(): Map<String,String>  =  modules.apply {
         putAll(overrides)
+    }
+
+    fun updateSettings (allProps: MutableMap<String, Any?>){
+        val keys = allProps.keys.filter { it.contains(PREF_MODULE_LIST) }.toList()
+        val values = keys.map { allProps[it].toString().replace("[", "").replace("]", "").split(",") }.flatten().toSet()
+        val resourcesMap = values.map {
+            it.replace(" ", "") to
+                    it.replace(".json", "")
+                        .replace("_", " ")
+                        .trim()
+                        .split(" ").joinToString(" ") { it.lowercase(Locale.getDefault())
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+        }
+
+        modules.putAll(resourcesMap)
+        Log.i(LOG_TAG, "Registered following resource modules files: $modules")
     }
 
     fun getExternalModules(context: Context?): MutableMap<String, String>?  = getExternalModules(context) {
@@ -51,14 +72,13 @@ class Modules {
                 false
             )
         }
-    
+
 
     fun getExternalModules(
         context: Context?,
         isFeatureEnabled: () -> Boolean
-    ): MutableMap<String, String>? {
-        if (isFeatureEnabled()) {
-            getExternalModulesDirectory(context)?.let { directory ->
+    ): MutableMap<String, String>?  = if (isFeatureEnabled()) {
+        getExternalModulesDirectory(context)?.let { directory ->
                 val files = File(directory).listFiles()
                 Log.d(
                     LOG_TAG,
@@ -75,9 +95,8 @@ class Modules {
                 }?.toMutableMap()
 
             }
-        }
-        return null
-    }
+        } else null
+
 
     private fun getExternalModulesDirectory(context: Context?): String? =
         context?.getExternalFilesDir("pid")?.absolutePath

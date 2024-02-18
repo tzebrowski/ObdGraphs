@@ -19,7 +19,6 @@
 package org.obd.graphs.bl.datalogger
 
 const val WORKFLOW_RELOAD_EVENT = "data.logger.workflow.reload.event"
-const val MODULES_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
 const val DATA_LOGGER_ADAPTER_NOT_SET_EVENT = "data.logger.adapter.not_set"
 const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_WIFI_INCORRECT = "data.logger.error.wifi.incorrect"

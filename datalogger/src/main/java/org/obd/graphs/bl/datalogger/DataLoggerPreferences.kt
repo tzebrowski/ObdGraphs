@@ -21,6 +21,7 @@ package org.obd.graphs.bl.datalogger
 import android.content.SharedPreferences
 import android.util.Log
 import org.obd.graphs.PREF_MODULE_LIST
+import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.isEnabled
