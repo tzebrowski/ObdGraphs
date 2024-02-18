@@ -27,9 +27,9 @@ import java.io.File
 private const val STORAGE_FILE_CODING_KEY = "storage:"
 const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
 
-val pidResources = PIDsResources()
+val modules = Modules()
 
-class PIDsResources {
+class Modules {
 
     private val overrides = mapOf(
         "alfa.json" to "Giulietta QV",
@@ -41,27 +41,24 @@ class PIDsResources {
 
     internal fun isExternalStorageResource(it: String) = it.startsWith(STORAGE_FILE_CODING_KEY)
 
-    fun getDefaultPidFiles(): Map<String,String> {
-        val resources = profile.getResources().toMutableMap()
-        resources.putAll(overrides)
-        return resources
+    fun getDefaultModules(): Map<String,String>  = profile.getModules().toMutableMap().apply {
+        putAll(overrides)
     }
 
-    fun getExternalPidResources(context: Context?): MutableMap<String, String>? {
-        return getExternalPidResources(context) {
+    fun getExternalModules(context: Context?): MutableMap<String, String>?  = getExternalModules(context) {
             Prefs.getBoolean(
                 ACCESS_EXTERNAL_STORAGE_ENABLED,
                 false
             )
         }
-    }
+    
 
-    fun getExternalPidResources(
+    fun getExternalModules(
         context: Context?,
         isFeatureEnabled: () -> Boolean
     ): MutableMap<String, String>? {
         if (isFeatureEnabled()) {
-            getExternalPidDirectory(context)?.let { directory ->
+            getExternalModulesDirectory(context)?.let { directory ->
                 val files = File(directory).listFiles()
                 Log.d(
                     LOG_TAG,
@@ -82,7 +79,7 @@ class PIDsResources {
         return null
     }
 
-    private fun getExternalPidDirectory(context: Context?): String? =
+    private fun getExternalModulesDirectory(context: Context?): String? =
         context?.getExternalFilesDir("pid")?.absolutePath
 
 }

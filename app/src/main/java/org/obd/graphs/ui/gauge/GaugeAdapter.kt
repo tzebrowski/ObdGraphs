@@ -35,7 +35,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.pidResources
+import org.obd.graphs.bl.datalogger.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.*
@@ -130,7 +130,7 @@ class GaugeAdapter(
         if (!holder.init) {
             holder.label.text = metric.source.command.pid.longDescription ?: metric.source.command.pid.description
             holder.resourceFile?.run {
-                val resourceFile = pidResources.getDefaultPidFiles()[metric.source.command.pid.resourceFile]
+                val resourceFile = modules.getDefaultModules()[metric.source.command.pid.resourceFile]
                     ?: metric.source.command.pid.resourceFile
                 text = resourceFile
                 highLightText(

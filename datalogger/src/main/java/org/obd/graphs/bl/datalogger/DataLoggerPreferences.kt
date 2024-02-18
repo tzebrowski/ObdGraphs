@@ -20,7 +20,7 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.SharedPreferences
 import android.util.Log
-import org.obd.graphs.PREF_RESOURCES_LIST
+import org.obd.graphs.PREF_MODULE_LIST
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.isEnabled
@@ -151,7 +151,7 @@ class DataLoggerPreferencesManager {
         val gracefulStop = Prefs.getBoolean("pref.adapter.graceful_stop.enabled", true)
         val dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
 
-        val resources  = Prefs.getStringSet(PREF_RESOURCES_LIST, pidResources.getDefaultPidFiles().keys)!!
+        val resources  = Prefs.getStringSet(PREF_MODULE_LIST, modules.getDefaultModules().keys)!!
 
         val dataLoggerPreferences = DataLoggerPreferences(
             dragRacingCommandFrequency = dragRacingCommandFrequency,

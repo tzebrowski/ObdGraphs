@@ -46,7 +46,7 @@ internal class ProfilePreferencesBackend : Profile {
     private var defaultProfile: String? = null
     private lateinit var versionName: String
 
-    private var resources = mutableMapOf<String, String>()
+    private var modules = mutableMapOf<String, String>()
 
     @Volatile
     private var bulkActionEnabled = false
@@ -70,7 +70,7 @@ internal class ProfilePreferencesBackend : Profile {
 
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
-    override fun getResources(): Map<String, String> = resources
+    override fun getModules(): Map<String, String> = modules
 
     override fun importBackup() {
         runAsync {
@@ -200,7 +200,7 @@ internal class ProfilePreferencesBackend : Profile {
 
             allProps().let {
                 runAsync {
-                    loadResources(it)
+                    loadModules(it)
                     distributePreferences(it)
                 }
             }
@@ -315,8 +315,8 @@ internal class ProfilePreferencesBackend : Profile {
     }
 
     @SuppressLint("DefaultLocale")
-    private fun loadResources(allProps: MutableMap<String, Any?>) {
-        val keys = allProps.keys.filter { it.contains(PREF_RESOURCES_LIST) }.toList()
+    private fun loadModules(allProps: MutableMap<String, Any?>) {
+        val keys = allProps.keys.filter { it.contains(PREF_MODULE_LIST) }.toList()
         val values = keys.map { allProps[it].toString().replace("[", "").replace("]", "").split(",") }.flatten().toSet()
         val resourcesMap = values.map {
             it.replace(" ", "") to
@@ -327,8 +327,8 @@ internal class ProfilePreferencesBackend : Profile {
                             .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
         }
 
-        resources.putAll(resourcesMap)
-        Log.i(LOG_TAG, "Registered following resource files: $resources")
+        modules.putAll(resourcesMap)
+        Log.i(LOG_TAG, "Registered following resource files: $modules")
     }
 
     private fun allProps(): MutableMap<String, Any?> {
@@ -381,6 +381,11 @@ internal class ProfilePreferencesBackend : Profile {
                                 editor.putBoolean(key, value.toBoolean())
                             }
                             value.isArray() -> {
+                                if (key.startsWith(getCurrentProfile())){
+                                    val currentProfilePropName = key.substring(getCurrentProfile().length  + 1, key.length)
+                                    Log.i(LOG_TAG,"Updating current profile value $currentProfilePropName=$value")
+                                    editor.putStringSet(currentProfilePropName, stringToStringSet(value))
+                                }
                                 editor.putStringSet(key, stringToStringSet(value))
                             }
                             value.isNumeric() -> {
@@ -407,7 +412,7 @@ internal class ProfilePreferencesBackend : Profile {
         }
     }
 
-    private fun allowedToOverride() = setOf(diagnosticRequestIDMapper.getValuePreferenceName(), PREF_RESOURCES_LIST)
+    private fun allowedToOverride() = setOf(diagnosticRequestIDMapper.getValuePreferenceName(), PREF_MODULE_LIST)
 
     private fun getBackupFile(): File =
         File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)

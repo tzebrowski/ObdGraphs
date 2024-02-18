@@ -62,7 +62,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 updatePidRegistry()
             }
 
-            if (intent.action === RESOURCE_LIST_CHANGED_EVENT) {
+            if (intent.action === MODULES_LIST_CHANGED_EVENT) {
                 updatePidRegistry()
                 sendBroadcastEvent(WORKFLOW_RELOAD_EVENT)
             }
@@ -397,7 +397,7 @@ internal class WorkflowOrchestrator internal constructor() {
         .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build())
         .pids(
             Pids.builder().resources(
-                getSelectedPIDsResources()
+                getSelectedModules()
             ).build()
         )
         .observer(metricsObserver)
@@ -408,14 +408,14 @@ internal class WorkflowOrchestrator internal constructor() {
     private fun updatePidRegistry() = runAsync {
         workflow.updatePidRegistry(
             Pids.builder().resources(
-                getSelectedPIDsResources()
+                getSelectedModules()
             ).build()
         )
     }
 
-    private fun getSelectedPIDsResources() = dataLoggerPreferences.instance.resources.map {
-        if (pidResources.isExternalStorageResource(it)) {
-            pidResources.externalResourceToURL(it)
+    private fun getSelectedModules() = dataLoggerPreferences.instance.resources.map {
+        if (modules.isExternalStorageResource(it)) {
+            modules.externalResourceToURL(it)
         } else {
             Urls.resourceToUrl(it)
         }

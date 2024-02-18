@@ -56,7 +56,7 @@
                     android:title="@string/pref.pids_display_only_stable_pids"
                     app:singleLineTitle="false" />
 
-                <org.obd.graphs.preferences.pid.PIDsResourceListPreferences
+                <org.obd.graphs.preferences.pid.ModulesListPreferences
                     android:dialogTitle="@string/pref.pids.registry.resource_list"
                     android:key="pref.pids.registry.list"
                     android:summary="@string/pref.pids.registry.resource.list_summary"

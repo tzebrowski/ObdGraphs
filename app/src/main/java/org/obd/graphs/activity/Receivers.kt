@@ -318,7 +318,7 @@ internal fun MainActivity.registerReceiver() {
     })
 
     registerReceiver(dataLogger.eventsReceiver, IntentFilter().apply {
-        addAction(RESOURCE_LIST_CHANGED_EVENT)
+        addAction(MODULES_LIST_CHANGED_EVENT)
         addAction(PROFILE_CHANGED_EVENT)
     })
 }

@@ -20,29 +20,33 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import androidx.preference.CheckBoxPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
+import org.obd.graphs.PREF_MODULE_LIST
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.bl.datalogger.ACCESS_EXTERNAL_STORAGE_ENABLED
-import org.obd.graphs.bl.datalogger.RESOURCE_LIST_CHANGED_EVENT
-import org.obd.graphs.bl.datalogger.pidResources
+import org.obd.graphs.bl.datalogger.MODULES_LIST_CHANGED_EVENT
+import org.obd.graphs.bl.datalogger.modules
+import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 
+const val LOG_TAG = "ModulesListPreferences"
 
-class PIDsResourceListPreferences(
+class ModulesListPreferences(
     context: Context,
     attrs: AttributeSet?
 ) :
     MultiSelectListPreference(context, attrs) {
 
     init {
-        initialize { pidResources.getExternalPidResources(context) }
+        initialize { modules.getExternalModules(context) }
 
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
                 navigateToPreferencesScreen("pref.registry")
-                sendBroadcastEvent(RESOURCE_LIST_CHANGED_EVENT)
+                sendBroadcastEvent(MODULES_LIST_CHANGED_EVENT)
                 true
             }
     }
@@ -52,14 +56,14 @@ class PIDsResourceListPreferences(
 
         findPreferenceInHierarchy<CheckBoxPreference>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run {
             onPreferenceChangeListener = OnPreferenceChangeListener { _, new ->
-                initialize { pidResources.getExternalPidResources(context) { new.toString().toBoolean() } }
+                initialize { modules.getExternalModules(context) { new.toString().toBoolean() } }
                 true
             }
         }
     }
 
     private fun initialize(files: () -> MutableMap<String, String>? = { null }) {
-        val mutableMap = pidResources.getDefaultPidFiles().toMutableMap().apply {
+        val mutableMap = modules.getDefaultModules().toMutableMap().apply {
             files()?.let {
                 putAll(it)
             }
@@ -69,5 +73,6 @@ class PIDsResourceListPreferences(
             entryValues = it.keys.toTypedArray()
             setDefaultValue(it.keys)
         }
+        Log.i(LOG_TAG, "Selected modules=${Prefs.getStringSet(PREF_MODULE_LIST, mutableSetOf())}")
     }
 }
