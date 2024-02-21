@@ -59,11 +59,11 @@ internal class WorkflowOrchestrator internal constructor() {
         override fun onReceive(context: Context?, intent: Intent) {
             if (intent.action === PROFILE_CHANGED_EVENT) {
                 Log.i(LOG_TAG, "Received profile changed event")
-                updatePidRegistry()
+                updateModulesRegistry()
             }
 
             if (intent.action === MODULES_LIST_CHANGED_EVENT) {
-                updatePidRegistry()
+                updateModulesRegistry()
                 sendBroadcastEvent(WORKFLOW_RELOAD_EVENT)
             }
         }
@@ -405,7 +405,7 @@ internal class WorkflowOrchestrator internal constructor() {
         .lifecycle(metricsObserver)
         .initialize()
 
-    private fun updatePidRegistry() = runAsync {
+    private fun updateModulesRegistry() = runAsync {
         workflow.updatePidRegistry(
             Pids.builder().resources(
                 getSelectedModules()

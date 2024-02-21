@@ -26,13 +26,12 @@ import java.net.URL
 import java.util.*
 
 const val MODULES_LIST_CHANGED_EVENT = "data.logger.resources.changed.event"
-
-private const val STORAGE_FILE_CODING_KEY = "storage:"
 const val ACCESS_EXTERNAL_STORAGE_ENABLED = "pref.pids.registry.access_external_storage"
 
-val modules = Modules()
+private const val STORAGE_FILE_CODING_KEY = "storage:"
 private const val LOG_TAG = "Modules"
 
+val modules = Modules()
 class Modules {
 
     private val overrides = mapOf(
