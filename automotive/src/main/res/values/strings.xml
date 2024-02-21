@@ -6,15 +6,13 @@
 
     <string name="routine.workflow_is_not_running">Please connect to the OBD Adapter first.</string>
     <string name="routine.unknown_error">Unknown error.</string>
-    <string name="routine.page_title">Available routines.</string>
+    <string name="routine.page_title">Available Routines</string>
     <string name="routine.execution_failed">Routine execution failed.</string>
     <string name="routine.executed_successfully">Routine has been executed successfully.</string>
     <string name="routine.no_data">No data received from the ECU. Probably there is no connection to ECU established.</string>
 
     <string name="available_features.page_title">Available screens</string>
-    <string name="available_features.routine_screen.title">Functions and adjustments</string>
+    <string name="available_features.routine_screen.title">Routines</string>
     <string name="available_features.drag_race_screen.title">Drag Racing</string>
     <string name="available_features.giulia_screen.title">Metrics</string>
-
-
 </resources>
