@@ -994,8 +994,8 @@
 
                     <org.obd.graphs.preferences.aa.AASeekBar
                         app:showSeekBarValue="true"
-                        app:min="0"
-                        android:max="40"
+                        app:min="-30"
+                        android:max="80"
                         android:defaultValue="0"
                         android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
                         android:key="pref.aa.virtual_screens.gauge.top_offset"

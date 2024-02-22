@@ -316,7 +316,8 @@ internal class GaugeDrawer(
             labelPaint.getTextBounds(label, 0, label.length, labelRect)
 
             labelY = centerY - valueHeight / 2
-            canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
+            canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY -
+                    settings.getGaugeRendererSetting().topOffset, labelPaint)
         }
 
         if (settings.isStatisticsEnabled()) {
@@ -327,7 +328,8 @@ internal class GaugeDrawer(
             histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area) * userScaleRatio
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
-            canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), labelY + labelRect.height() + 8, histogramPaint)
+            canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), labelY + labelRect.height() + 8
+                    -  settings.getGaugeRendererSetting().topOffset, histogramPaint)
         }
     }
 
