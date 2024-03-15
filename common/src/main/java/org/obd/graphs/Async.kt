@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2023, Tomasz Żebrowski
+ * Copyright 2019-2024, Tomasz Żebrowski
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "UNCHECKED_CAST")
 
 package org.obd.graphs
 

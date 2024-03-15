@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2023, Tomasz Żebrowski
+ * Copyright 2019-2024, Tomasz Żebrowski
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
