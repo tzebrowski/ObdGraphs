@@ -98,7 +98,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         }
     }
 
-    fun isRoutinesEnabled(): Boolean = Prefs.getBoolean("pref.aa.routines.enabled", false)
+    fun isRoutinesEnabled(): Boolean = Prefs.getBoolean("pref.aa.routines.enabled", true)
 
     override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
 
