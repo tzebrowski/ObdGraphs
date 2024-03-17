@@ -56,8 +56,6 @@ internal class NavTemplateCarScreen(
     fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
-
-    private val routineScreen = RoutinesScreen(carContext, settings, metricsCollector, fps)
     private val surfaceScreen = SurfaceScreen(carContext, settings, metricsCollector, fps, parent = this)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -67,14 +65,18 @@ internal class NavTemplateCarScreen(
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
                     screenManager.pushForResult(AvailableFeaturesScreen(carContext, settings)) {
-                        Log.e(LOG_KEY, "Selected new screen: $it")
+                        Log.d(LOG_KEY, "Selected new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()
                             if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID) {
                                 surfaceScreen.toggleSurfaceRenderer(newScreen)
                                 invalidate()
                             } else {
-                                screenManager.push(routineScreen)
+                                val routinesScreen = RoutinesScreen(carContext, settings, metricsCollector, fps)
+                                lifecycle.addObserver(routinesScreen)
+                                screenManager.pushForResult(routinesScreen){
+                                    lifecycle.removeObserver(routinesScreen)
+                                }
                             }
                         }
                    }
@@ -184,7 +186,6 @@ internal class NavTemplateCarScreen(
         super.onCreate(owner)
 
         surfaceScreen.onCreate(owner)
-        routineScreen.onCreate(owner)
 
         carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
@@ -213,27 +214,25 @@ internal class NavTemplateCarScreen(
     override fun onCarConfigurationChanged() {
         super.onCarConfigurationChanged()
         surfaceScreen.onCarConfigurationChanged()
-        routineScreen.onCarConfigurationChanged()
     }
+
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         lifecycle.addObserver(surfaceScreen.getLifecycleObserver())
         surfaceScreen.onResume(owner)
-        routineScreen.onResume(owner)
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
         lifecycle.removeObserver(surfaceScreen.getLifecycleObserver())
         surfaceScreen.onPause(owner)
-        routineScreen.onPause(owner)
-    }
+   }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         lifecycle.removeObserver(surfaceScreen.getLifecycleObserver())
         surfaceScreen.onDestroy(owner)
-        routineScreen.onDestroy(owner)
+//        routineScreen.onDestroy(owner)
         carContext.unregisterReceiver(broadcastReceiver)
     }
 
@@ -267,6 +266,7 @@ internal class NavTemplateCarScreen(
         })
 
         lifecycle.addObserver(this)
+
         lifecycle.addObserver(surfaceScreen.getLifecycleObserver())
 
         dataLogger.observe(this) {

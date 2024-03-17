@@ -25,10 +25,15 @@ import android.content.IntentFilter
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.model.*
+import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.aa.*
-import org.obd.graphs.aa.screen.*
+import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.aa.R
+import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.CarScreen
+import org.obd.graphs.aa.screen.LOG_KEY
+import org.obd.graphs.aa.screen.createAction
+import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.Query
@@ -37,104 +42,91 @@ import org.obd.graphs.renderer.Fps
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 
-internal class RoutinesScreen (carContext: CarContext,
-                      settings: CarSettings,
-                      metricsCollector: MetricsCollector,
-                      fps: Fps
+internal class RoutinesScreen(
+    carContext: CarContext,
+    settings: CarSettings,
+    metricsCollector: MetricsCollector,
+    fps: Fps
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
+    private var routineExecuting = false
+    private var routineId = -1L
+    private var routineExecutionSuccessfully = false
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-
-                ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> toast.show(carContext, R.string.routine_workflow_is_not_running)
-                ROUTINE_UNKNOWN_STATUS_EVENT ->  toast.show(carContext, R.string.routine_unknown_error)
-                ROUTINE_EXECUTION_FAILED_EVENT -> toast.show(carContext, R.string.routine_execution_failed)
-                ROUTINE_EXECUTED_SUCCESSFULLY_EVENT -> toast.show(carContext, R.string.routine_executed_successfully)
-                ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT -> toast.show(carContext, R.string.routine_no_data)
-
-                DATA_LOGGER_CONNECTING_EVENT -> {
-                    try {
+            Log.i(LOG_KEY, "Received event=${intent?.action}")
+            try {
+                when (intent?.action) {
+                    ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> {
+                        toast.show(carContext, R.string.routine_workflow_is_not_running)
+                        routineExecuting = false
+                        routineExecutionSuccessfully = false
                         invalidate()
-                    } catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
                     }
-                }
+                    ROUTINE_UNKNOWN_STATUS_EVENT -> {
+                        toast.show(carContext, R.string.routine_unknown_error)
+                        routineExecuting = false
+                        routineExecutionSuccessfully = false
+                        invalidate()
+                    }
+                    ROUTINE_EXECUTION_FAILED_EVENT -> {
+                        routineExecuting = false
+                        routineExecutionSuccessfully = false
+                        invalidate()
+                        toast.show(carContext, R.string.routine_execution_failed)
+                    }
 
-                DATA_LOGGER_NO_NETWORK_EVENT -> toast.show(carContext, R.string.main_activity_toast_connection_no_network)
-                DATA_LOGGER_ERROR_EVENT -> {
-                    invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_connection_error)
-                }
+                    ROUTINE_EXECUTED_SUCCESSFULLY_EVENT -> {
+                        toast.show(carContext, R.string.routine_executed_successfully)
+                        routineExecuting = false
+                        routineExecutionSuccessfully = true
+                        invalidate()
+                    }
 
-                DATA_LOGGER_STOPPED_EVENT -> {
-                    try {
+                    ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT -> {
+                        routineExecuting = false
+                        routineExecutionSuccessfully = false
+                        invalidate()
+                        toast.show(carContext, R.string.routine_no_data)
+                    }
+
+                    DATA_LOGGER_CONNECTING_EVENT -> invalidate()
+
+                    DATA_LOGGER_NO_NETWORK_EVENT -> toast.show(carContext, R.string.main_activity_toast_connection_no_network)
+                    DATA_LOGGER_ERROR_EVENT -> {
+                        invalidate()
+                        toast.show(carContext, R.string.main_activity_toast_connection_error)
+                    }
+
+                    DATA_LOGGER_STOPPED_EVENT -> {
                         toast.show(carContext, R.string.main_activity_toast_connection_stopped)
                         invalidate()
-                    } catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_STOPPED_EVENT event",e)
                     }
-                }
 
-                DATA_LOGGER_CONNECTED_EVENT -> {
-                    try {
+                    DATA_LOGGER_CONNECTED_EVENT -> {
                         toast.show(carContext, R.string.main_activity_toast_connection_established)
                         invalidate()
-                    } catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
                     }
-                }
 
-                DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-                    try {
+                    DATA_LOGGER_ERROR_CONNECT_EVENT -> {
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
-                    }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
                     }
-                }
 
-                DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
-                    try {
+                    DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
-                    }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
                     }
                 }
+            } catch (e: Exception) {
+                Log.w(LOG_KEY, "Failed event ${intent?.action} processing", e)
             }
         }
     }
 
-    override fun onGetTemplate(): Template  = try {
-        if (dataLogger.status() == WorkflowStatus.Connecting) {
-            ListTemplate.Builder()
-                .setLoading(true)
-                .setTitle(carContext.getString(R.string.routine_page_title))
-                .setActionStrip(getHorizontalActionStrip()).build()
-        } else {
-            var items = ItemList.Builder()
-            dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE).sortedBy { it.description }.forEach {
-                items = items.addItem(buildRoutineListItem(it))
-            }
-
-            ListTemplate.Builder()
-                .setLoading(false)
-                .setTitle(carContext.getString(R.string.routine_page_title))
-                .setSingleList(items.build())
-                .setHeaderAction(Action.BACK)
-                .setActionStrip(getHorizontalActionStrip())
-                .build()
-        }
-    } catch (e: Exception) {
-        Log.e(LOG_KEY, "Failed to build template", e)
-        PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
-            .setHeaderAction(Action.BACK)
-            .setTitle(carContext.getString(R.string.pref_aa_car_error))
-            .build()
-    }
-
-    override fun onCreate(owner: LifecycleOwner) {
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        Log.i(LOG_KEY, "RoutinesScreen onResume")
         carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(ROUTINE_REJECTED_EVENT)
             addAction(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
@@ -152,33 +144,107 @@ internal class RoutinesScreen (carContext: CarContext,
         })
     }
 
-    override fun onDestroy(owner: LifecycleOwner) {
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        Log.i(LOG_KEY, "RoutinesScreen onPause")
         carContext.unregisterReceiver(broadcastReceiver)
     }
 
-    private fun buildRoutineListItem(data: PidDefinition): Row = Row.Builder()
-        .setOnClickListener {
-            Log.i(LOG_KEY, "Executing routine ${data.description}")
-            dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
+
+    override fun onGetTemplate(): Template = try {
+        if (routineExecuting) {
+            ListTemplate.Builder()
+                .setLoading(true)
+                .setTitle(carContext.getString(R.string.routine_execution_start))
+                .setActionStrip(getHorizontalActionStrip()).build()
+        } else if (dataLogger.status() == WorkflowStatus.Connecting) {
+            ListTemplate.Builder()
+                .setLoading(true)
+                .setTitle(carContext.getString(R.string.routine_page_connecting))
+                .setActionStrip(getHorizontalActionStrip()).build()
+        } else {
+            var items = ItemList.Builder()
+            dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE)
+                .sortedBy { it.description }
+                .sortedBy { it.id != routineId }
+                .forEach {
+                    items = items.addItem(buildItem(it))
+                }
+
+            ListTemplate.Builder()
+                .setLoading(false)
+                .setTitle(carContext.getString(R.string.routine_page_title))
+                .setSingleList(items.build())
+                .setHeaderAction(Action.BACK)
+                .setActionStrip(getHorizontalActionStrip())
+                .build()
         }
-        .setBrowsable(false)
-        .addText(data.longDescription?:data.description)
-        .setTitle(data.description)
-        .build()
+    } catch (e: Exception) {
+        Log.e(LOG_KEY, "Failed to build template", e)
+        PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
+            .setHeaderAction(Action.BACK)
+            .setTitle(carContext.getString(R.string.pref_aa_car_error))
+            .build()
+    }
+
+    private fun buildItem(data: PidDefinition): Row {
+        var rowBuilder = Row.Builder()
+            .setOnClickListener {
+                Log.i(LOG_KEY, "Executing routine ${data.description}")
+
+                if (dataLogger.isRunning()) {
+                    routineExecuting = true
+                    routineId = data.id
+                } else {
+                    routineId = -1L
+                }
+                invalidate()
+                dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
+            }
+            .setBrowsable(false)
+
+            .addText(data.longDescription ?: data.description)
+            .setTitle(data.description)
+
+        if (data.id == routineId) {
+            rowBuilder = if (routineExecutionSuccessfully) {
+                rowBuilder.setImage(
+                    CarIcon.Builder(
+                        IconCompat.createWithResource(
+                            carContext, android.R.drawable.ic_input_add
+                        )
+                    ).build()
+                )
+            } else {
+                rowBuilder.setImage(
+                    CarIcon.Builder(
+                        IconCompat.createWithResource(
+                            carContext, android.R.drawable.ic_delete
+                        )
+                    ).build()
+                )
+            }
+        }
+        return rowBuilder.build()
+    }
 
     private fun getHorizontalActionStrip(): ActionStrip {
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.isRunning()) {
-            builder.addAction(createAction(carContext, R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
-                stopDataLogging()
-                toast.show(carContext, R.string.toast_connection_disconnect)
-            })
+            builder.addAction(
+                createAction(
+                    carContext,
+                    R.drawable.action_disconnect,
+                    mapColor(settings.colorTheme().actionsBtnDisconnectColor)
+                ) {
+                    stopDataLogging()
+                    toast.show(carContext, R.string.toast_connection_disconnect)
+                })
         } else {
             builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
                 query.setStrategy(QueryStrategyType.ROUTINES_QUERY)
                 dataLogger.start(query)
-
             })
         }
 
@@ -191,7 +257,6 @@ internal class RoutinesScreen (carContext: CarContext,
                 carContext.finishCarApp()
             }
         })
-
 
         return builder.build()
     }
