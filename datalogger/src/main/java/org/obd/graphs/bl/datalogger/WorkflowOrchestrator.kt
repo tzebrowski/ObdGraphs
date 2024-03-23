@@ -126,8 +126,16 @@ internal class WorkflowOrchestrator internal constructor() {
     private val workflow: Workflow = workflow()
     private var status = WorkflowStatus.Disconnected
 
+    private val metricsProcessorsRegistry = mutableSetOf<String>()
+
     fun observe(metricsProcessor: MetricsProcessor) {
-        metricsObserver.observe(metricsProcessor)
+        if (metricsProcessorsRegistry.contains(metricsProcessor.javaClass.name)){
+            Log.e(LOG_TAG,"Metrics processor is already registered: $metricsProcessor")
+        }else {
+            Log.e(LOG_TAG,"Registering: $metricsProcessor metrics processor")
+            metricsProcessorsRegistry.add(metricsProcessor.javaClass.name)
+            metricsObserver.observe(metricsProcessor)
+        }
     }
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) =
