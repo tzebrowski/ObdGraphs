@@ -261,7 +261,7 @@ internal class IotTemplateCarScreen(
         dataLogger.observe(this) {
             metricsCollector.append(it)
         }
-        dataLogger.observe(DynamicSelectorModeEventBroadcaster())
+        dataLogger.observe(dynamicSelectorModeEventBroadcaster)
         submitRenderingTask()
         registerConnectionStateReceiver()
     }

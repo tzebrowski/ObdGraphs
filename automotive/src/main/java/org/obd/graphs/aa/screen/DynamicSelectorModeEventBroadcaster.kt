@@ -12,6 +12,8 @@ const val EVENT_DYNAMIC_SELECTOR_MODE_ECO = "event.dynamic.selector.mode.eco"
 const val EVENT_DYNAMIC_SELECTOR_MODE_SPORT = "event.dynamic.selector.mode.sport"
 const val EVENT_DYNAMIC_SELECTOR_MODE_RACE = "event.dynamic.selector.mode.race"
 
+internal val dynamicSelectorModeEventBroadcaster:MetricsProcessor  = DynamicSelectorModeEventBroadcaster()
+
 internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
     private var currentMode = -1
 

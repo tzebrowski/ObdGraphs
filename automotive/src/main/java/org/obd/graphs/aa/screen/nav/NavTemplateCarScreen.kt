@@ -39,8 +39,7 @@ import org.obd.graphs.aa.screen.*
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.drag.DragRacingMetricsProcessor
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
@@ -276,10 +275,10 @@ internal class NavTemplateCarScreen(
             metricsCollector.append(it)
         }
 
-        dataLogger.observe(DynamicSelectorModeEventBroadcaster())
+        dataLogger.observe(dynamicSelectorModeEventBroadcaster)
 
         dataLogger
-            .observe(DragRacingMetricsProcessor(dragRacingResultRegistry))
+            .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
 
         submitRenderingTask()

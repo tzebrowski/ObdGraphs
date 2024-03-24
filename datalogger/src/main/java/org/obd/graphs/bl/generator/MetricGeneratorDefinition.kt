@@ -42,4 +42,16 @@ internal val baseMetrics = mutableMapOf(
                 add(it)
             }
         }),
+
+    namesRegistry.getVehicleSpeedPID() to MetricGeneratorDefinition(
+        pid = PidDefinition(namesRegistry.getVehicleSpeedPID(),2,"A","22","18F0","km/h","Vehicle Speed",0,300, ValueType.INT),
+        data = mutableListOf<Number>().apply {
+            (0..100).forEach{ _ ->
+                add(0)
+            }
+            (1..100).forEach{
+                add(it)
+            }
+
+        }),
 )

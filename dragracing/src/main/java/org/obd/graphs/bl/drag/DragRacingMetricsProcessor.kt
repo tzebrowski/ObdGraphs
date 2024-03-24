@@ -38,7 +38,9 @@ private const val SPEED_200_KM_H = 200
 private const val LOG_KEY = "DragRaceResult"
 
 
-class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry) : MetricsProcessor {
+val dragRacingMetricsProcessor: MetricsProcessor = DragRacingMetricsProcessor(dragRacingResultRegistry)
+
+internal class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry) : MetricsProcessor {
 
     private var _0ts: Long? = null
     private var _100ts: Long? = null
@@ -76,6 +78,7 @@ class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry)
             ambientTemp = obdMetric.value.toInt()
 
         } else if (obdMetric.isVehicleSpeed()) {
+
             if (obdMetric.value.toInt() == SPEED_0_KM_H) {
                 reset()
 
