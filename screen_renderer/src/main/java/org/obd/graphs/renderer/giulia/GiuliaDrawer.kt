@@ -63,39 +63,42 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         )
 
         if (settings.isStatisticsEnabled()) {
-            left1 = drawText(
-                canvas,
-                "min",
-                left,
-                top1,
-                Color.DKGRAY,
-                footerTitleTextSize
-            )
-            left1 = drawText(
-                canvas,
-                metric.toNumber(metric.min),
-                left1,
-                top1,
-                Color.LTGRAY,
-                footerValueTextSize
-            )
-
-            left1 = drawText(
-                canvas,
-                "max",
-                left1,
-                top1,
-                Color.DKGRAY,
-                footerTitleTextSize
-            )
-            left1 = drawText(
-                canvas,
-                metric.toNumber(metric.max),
-                left1,
-                top1,
-                Color.LTGRAY,
-                footerValueTextSize
-            )
+            if (metric.source.command.pid.historgam.isMinEnabled) {
+                left1 = drawText(
+                    canvas,
+                    "min",
+                    left,
+                    top1,
+                    Color.DKGRAY,
+                    footerTitleTextSize
+                )
+                left1 = drawText(
+                    canvas,
+                    metric.toNumber(metric.min),
+                    left1,
+                    top1,
+                    Color.LTGRAY,
+                    footerValueTextSize
+                )
+            }
+            if (metric.source.command.pid.historgam.isMaxEnabled) {
+                left1 = drawText(
+                    canvas,
+                    "max",
+                    left1,
+                    top1,
+                    Color.DKGRAY,
+                    footerTitleTextSize
+                )
+                left1 = drawText(
+                    canvas,
+                    metric.toNumber(metric.max),
+                    left1,
+                    top1,
+                    Color.LTGRAY,
+                    footerValueTextSize
+                )
+            }
 
             if (metric.source.command.pid.historgam.isAvgEnabled) {
                 left1 = drawText(
@@ -117,7 +120,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 )
             }
             drawAlertingLegend(canvas, metric, left1, top1)
-            top1 +=  getTextHeight("min", paint) / 2
+            top1 += getTextHeight("min", paint) / 2
         }
 
         drawProgressBar(

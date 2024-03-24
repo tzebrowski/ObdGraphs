@@ -322,9 +322,9 @@ internal class GaugeDrawer(
 
         if (settings.isStatisticsEnabled()) {
             val hists =
-                "${metric.toNumber(metric.min)}    ${if (metric.source.command.pid.historgam.isAvgEnabled) metric.toNumber(metric.mean) else ""}     ${
-                    metric.toNumber(metric.max)
-                }"
+                "${if(metric.source.command.pid.historgam.isMinEnabled) metric.toNumber(metric.min) else ""}   " +
+                        "${if(metric.source.command.pid.historgam.isAvgEnabled) metric.toNumber(metric.mean) else ""}    " +
+                        "${if(metric.source.command.pid.historgam.isMaxEnabled) metric.toNumber(metric.max) else ""}"
             histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area) * userScaleRatio
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
