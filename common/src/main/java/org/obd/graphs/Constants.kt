@@ -32,3 +32,4 @@ const val AA_VIRTUAL_SCREEN_REFRESH_EVENT = "pref.aa.screen_refresh.event"
 
 const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
 const val PREF_MODULE_LIST = "pref.pids.registry.list"
+const val PREF_DRAG_RACE_KEY_PREFIX = "pref.drag_race"

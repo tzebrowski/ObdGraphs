@@ -19,8 +19,10 @@
 package org.obd.graphs.bl.drag
 
 import android.util.Log
+import org.obd.graphs.PREF_DRAG_RACE_KEY_PREFIX
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
+
 
 private const val LOG_KEY = "DragRaceRegistry"
 private const val DEFAULT_SHIFT_LIGHT_THRESHOLD = 5000
@@ -29,10 +31,10 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
 
     private data class PreferencesIds(
         val id: String,
-        val best: String = "pref.drag_race.best.${id}",
-        val ambientTemp: String = "pref.drag_race.best.${id}.ambient_temp",
-        val atmPressure: String = "pref.drag_race.best.${id}.atm_pressure",
-        val last: String = "pref.drag_race.last.${id}"
+        val best: String = "$PREF_DRAG_RACE_KEY_PREFIX.best.${id}",
+        val ambientTemp: String = "$PREF_DRAG_RACE_KEY_PREFIX.best.${id}.ambient_temp",
+        val atmPressure: String = "$PREF_DRAG_RACE_KEY_PREFIX.best.${id}.atm_pressure",
+        val last: String = "$PREF_DRAG_RACE_KEY_PREFIX.last.${id}"
     )
 
     private val results = DragRacingResults()

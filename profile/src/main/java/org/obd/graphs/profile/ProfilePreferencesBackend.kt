@@ -243,6 +243,7 @@ internal class ProfilePreferencesBackend : Profile {
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                     .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
+                    .filter { (pref, _) -> !pref.startsWith(PREF_DRAG_RACE_KEY_PREFIX) }
                     .forEach { (pref, value) ->
                         pref.substring(profileName.length + 1).run {
                             Log.d(LOG_TAG, "Loading user preference $this = $value")
@@ -272,6 +273,8 @@ internal class ProfilePreferencesBackend : Profile {
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                 .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
+                .filter { (pref, _) -> !pref.startsWith(PREF_DRAG_RACE_KEY_PREFIX) }
+
                 .forEach { (pref, _) ->
                     it.remove(pref)
                 }
