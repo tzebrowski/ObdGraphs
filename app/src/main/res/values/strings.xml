@@ -61,8 +61,8 @@
     <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
     <string name="pref.adapter_reconnect">Enable OBD2 Adapter automatic reconnect when connectivity errors occur</string>
     <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts</string>
-    <string name="pref.adapter.query.view_individual.enabled">Fetch only the PIDs visible for the current active screen</string>
-    <string name="pref.adapter.query.view_individual.enabled_summary">By setting this parameter, only visible on the current screen PISs are fetched from vehicle. This feature impact performance and its recommend for slow adapters.</string>
+    <string name="pref.adapter.query.view_individual.enabled">Only fetch PIDs visible for the current active screen</string>
+    <string name="pref.adapter.query.view_individual.enabled_summary">By setting this parameter, only visible PIDs on the current screen are fetched from vehicle. This feature increase performance and its recommend for slow adapters.</string>
     <string name="pref.adapter.query.view_individual.dialog_disabled_warning">Dialog is disabled because individual query strategy is enabled.</string>
 
     <string name="pref.connection.category">OBD2 Adapter Connection</string>
@@ -188,8 +188,8 @@
     <string name="pref.aa.performance_meter.display_frequency">Display vehicle speed read frequency</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Display vehicle speed at which measurement was done</string>
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>
-    <string name="pref.profile.2_0_GME_extension.enabled">Enable GME extensions for drag racing</string>
-    <string name="pref.profile.2_0_GME_extension.enabled_summary">This is an EXPERIMENTAL feature.\nIt enables additional context information for drag racing.</string>
+    <string name="pref.profile.2_0_GME_extension.enabled">Get additional context information </string>
+    <string name="pref.profile.2_0_GME_extension.enabled_summary">It pulls additional metrics during performance meter.</string>
 
     <string name="pref.aa.performance_meter.shift_lights_enabled_summary">This is an EXPERIMENTAL feature.\nEnable gear shift lights</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed">Display vehicle speed</string>
