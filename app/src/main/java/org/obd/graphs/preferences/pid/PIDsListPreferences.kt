@@ -23,7 +23,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.DialogPreference
 import org.obd.graphs.R
-import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
 
@@ -35,7 +35,7 @@ open class PIDsListPreferences(
     val source = getAttribute("source")
 
     override fun isEnabled(): Boolean =
-        !(Prefs.getBoolean("pref.adapter.query.individual.enabled", false) && (source == "high" || source == "low"))
+        !(dataLoggerPreferences.instance.individualQueryStrategyEnabled && (source == "high" || source == "low"))
 
 
     override fun getSummary(): CharSequence? = if (isEnabled) {

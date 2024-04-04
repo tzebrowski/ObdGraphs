@@ -139,7 +139,7 @@ class SurfaceController(
             GIULIA_SCREEN_ID -> {
                 metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
 
-                if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+                if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
                     query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
                     query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
                 } else {

@@ -31,7 +31,7 @@ private const val GENERIC_MODE = "Generic mode"
 private const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 
 data class DataLoggerPreferences(
-    var queryForEachViewStrategyEnabled: Boolean,
+    var individualQueryStrategyEnabled: Boolean,
     var debugLogging: Boolean,
     var connectionType: String,
     var tcpHost: String,
@@ -185,7 +185,7 @@ class DataLoggerPreferencesManager {
             dumpRawConnectorResponse = dumpRawConnectorResponse,
             delayAfterReset = delayAfterReset,
             debugLogging = debugLogging,
-            queryForEachViewStrategyEnabled = queryForEachViewStrategyEnabled
+            individualQueryStrategyEnabled = queryForEachViewStrategyEnabled
         )
 
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {

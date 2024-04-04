@@ -39,7 +39,7 @@ internal abstract class AbstractSurfaceRenderer(
     open fun getDrawTop(area: Rect): Float = area.top + MARGIN_TOP + viewSettings.marginTop
 
     override fun applyMetricsFilter(query: Query) {
-        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()

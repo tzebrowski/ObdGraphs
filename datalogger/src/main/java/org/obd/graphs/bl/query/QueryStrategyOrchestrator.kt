@@ -67,5 +67,5 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
             setStrategy(QueryStrategyType.SHARED_QUERY)
         }
 
-    private fun isIndividualQuerySelected() = dataLoggerPreferences.instance.queryForEachViewStrategyEnabled
+    private fun isIndividualQuerySelected() = dataLoggerPreferences.instance.individualQueryStrategyEnabled
 }

@@ -161,7 +161,7 @@ internal class SurfaceScreen(
     }
 
     private fun applyMetricsFilter() {
-        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
             Log.i(LOG_KEY, "User selection PIDs=${settings.getSelectedPIDs()}")
 
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())

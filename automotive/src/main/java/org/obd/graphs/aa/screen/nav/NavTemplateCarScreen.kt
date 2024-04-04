@@ -63,6 +63,8 @@ internal class NavTemplateCarScreen(
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
+            Log.i(LOG_KEY, "Received ${intent?.action} event")
+
             when (intent?.action) {
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
@@ -141,11 +143,12 @@ internal class NavTemplateCarScreen(
                 DATA_LOGGER_STOPPED_EVENT -> {
 
                     try {
-                        toast.show(carContext, R.string.main_activity_toast_connection_stopped)
                         cancelRenderingTask()
                         invalidate()
                         surfaceScreen.renderFrame()
                         navigationManager().navigationEnded()
+                        toast.show(carContext, R.string.main_activity_toast_connection_stopped)
+
                     } catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_STOPPED_EVENT event",e)
                     }
@@ -153,11 +156,12 @@ internal class NavTemplateCarScreen(
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
                     try {
-                        toast.show(carContext, R.string.main_activity_toast_connection_established)
                         renderingThread.start()
                         fps.start()
                         invalidate()
                         navigationManager().navigationStarted()
+                        toast.show(carContext, R.string.main_activity_toast_connection_established)
+
                     }catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
                     }

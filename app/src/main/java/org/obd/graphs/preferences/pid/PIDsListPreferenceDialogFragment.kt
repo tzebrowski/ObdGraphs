@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.preferences.Prefs
@@ -246,7 +247,7 @@ class PIDsListPreferenceDialogFragment(private val key: String, private val deta
 
     private fun buildInitialList(): MutableList<PidDefinitionDetails> {
        val all = dataLogger.getPidDefinitionRegistry().findAll()
-        val individualQuery = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
+        val individualQuery = dataLoggerPreferences.instance.individualQueryStrategyEnabled
         val list: List<PidDefinitionDetails> =
             if (individualQuery) {
                  findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }

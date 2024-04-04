@@ -240,7 +240,7 @@ internal class IotTemplateCarScreen(
     private fun applyMetricsFilter() {
         metricsCollector.applyFilter(settings.getSelectedPIDs())
 
-        if (dataLoggerPreferences.instance.queryForEachViewStrategyEnabled) {
+        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
             dataLogger.updateQuery(query)
