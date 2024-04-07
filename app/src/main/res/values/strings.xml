@@ -119,7 +119,7 @@
     <string name="pref.aa.theme.virtual_screen_color">Virtual screen buttons color</string>
 
     <string name="pref.aa.virtual_screens.split_pids_labels.category">Split PIDs label</string>
-    <string name="pref.aa.virtual_screens.split_pids_labels.category.summary">Choose splitting PIDs label into 2 lines for each virtual screen individually</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.category.summary">Enable splitting PIDs label into 2 lines for each virtual screen</string>
 
     <string name="pref.aa.virtual_screens.split_pids_labels.1">Split PIDs label into 2 lines for screen 1</string>
     <string name="pref.aa.virtual_screens.split_pids_labels.2">Split PIDs label into 2 lines for screen 2</string>
