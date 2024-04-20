@@ -13,6 +13,7 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
 import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
+import org.obd.graphs.AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT
 import org.obd.graphs.aa.*
 import org.obd.graphs.aa.screen.*
 import org.obd.graphs.aa.screen.CarScreen
@@ -25,7 +26,6 @@ import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.renderer.Fps
 
 
-private const val HIGH_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.high.event.changed"
 private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.event.changed"
 
 internal class SurfaceScreen(
@@ -46,7 +46,7 @@ internal class SurfaceScreen(
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateSurfaceRender()
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
 
-                HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
+                AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
                     applyMetricsFilter()
                     renderFrame()
                 }
@@ -143,7 +143,7 @@ internal class SurfaceScreen(
 
     override fun onCreate(owner: LifecycleOwner) {
         carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
+            addAction(AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
             addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
             addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
             addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
