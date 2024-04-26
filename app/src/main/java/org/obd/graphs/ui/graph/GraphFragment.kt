@@ -54,6 +54,7 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.*
 import org.obd.metrics.api.model.ObdMetric
@@ -434,7 +435,7 @@ class GraphFragment : Fragment() {
             }
 
             it.setOnClickListener {
-                graphVirtualScreen.updateVirtualScreen(viewId)
+                tripVirtualScreenManager.updateScreenId(viewId)
                 setupVirtualViewPanel()
                 preferences = graphPreferencesReader.read()
 
@@ -446,7 +447,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun setupVirtualViewPanel() {
-        val currentVirtualScreen = graphVirtualScreen.getCurrentVirtualScreen()
+        val currentVirtualScreen = tripVirtualScreenManager.getCurrentScreenId()
         setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
         setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
         setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")

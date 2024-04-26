@@ -16,24 +16,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.ui.graph
+package org.obd.graphs.bl.trip
 
 import org.obd.graphs.preferences.*
 
 private const val VIRTUAL_SCREEN_SELECTION = "pref.graph.virtual.selected"
 const val PREF_GRAPH_DIALOG = "pref.graph.pids.selected"
 
-class GraphVirtualScreen {
-    fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
+class TripVirtualScreenManager {
+    fun getCurrentScreenId() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
-    fun updateVirtualScreen(screenId: String) {
+    fun updateScreenId(screenId: String) {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
     }
 
-    fun getVirtualScreenMetrics(): Set<String> =
+    fun getCurrentMetrics(): Set<String> =
         Prefs.getStringSet(getVirtualScreenPrefKey(), mutableSetOf())!!
 
-    fun getVirtualScreenPrefKey(): String = "$PREF_GRAPH_DIALOG.${getCurrentVirtualScreen()}"
+    fun updateCurrentScreenMetrics(metrics: List<String>) {
+        Prefs.updateStringSet(getVirtualScreenPrefKey(),metrics)
+    }
+    fun getVirtualScreenPrefKey(): String = "$PREF_GRAPH_DIALOG.${getCurrentScreenId()}"
 }
 
-val graphVirtualScreen = GraphVirtualScreen()
+val tripVirtualScreenManager = TripVirtualScreenManager()

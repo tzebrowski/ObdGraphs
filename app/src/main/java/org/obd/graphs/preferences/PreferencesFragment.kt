@@ -29,6 +29,7 @@ import androidx.preference.*
 import org.obd.graphs.R
 import org.obd.graphs.activity.*
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
@@ -41,7 +42,6 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
-import org.obd.graphs.ui.graph.graphVirtualScreen
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
@@ -78,7 +78,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                             { navigateToScreen(R.id.navigation_dashboard) }
                     }
                     "graph" -> {
-                        openPIDsDialog(graphVirtualScreen.getVirtualScreenPrefKey(),preference.source)
+                        openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(),preference.source)
                         { navigateToScreen(R.id.navigation_graph) }
                     }
 
@@ -248,7 +248,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 { navigateToScreen(R.id.navigation_giulia) }
 
             PREF_GRAPH_DISPLAYED_PARAMETERS_IDS ->
-                openPIDsDialog(graphVirtualScreen.getVirtualScreenPrefKey(),"graph")
+                openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(),"graph")
                 { navigateToScreen(R.id.navigation_graph) }
         }
     }

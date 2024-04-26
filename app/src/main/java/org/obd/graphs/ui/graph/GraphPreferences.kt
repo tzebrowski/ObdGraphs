@@ -19,6 +19,7 @@
 package org.obd.graphs.ui.graph
 
 import android.util.Log
+import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 
@@ -44,7 +45,7 @@ class GraphPreferencesReader {
 
         val cacheEnabled = Prefs.getBoolean("$prefixKey.cache.enabled", true)
 
-        val metrics = graphVirtualScreen.getVirtualScreenMetrics().map { it.toLong() }.toSet()
+        val metrics = tripVirtualScreenManager.getCurrentMetrics().map { it.toLong() }.toSet()
 
         val toggleVirtualPanel = Prefs.getBoolean("$prefixKey.toggle_virtual_screens_double_click", true)
 

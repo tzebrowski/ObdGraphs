@@ -220,8 +220,13 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
             val file = File(getTripsDirectory(getContext()!!), tripName)
             try {
                 val trip: Trip = tripModelSerializer.deserializer.readValue(file, Trip::class.java)
-                Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the disk.")
+                Log.i(LOGGER_TAG, "Trip '${file.absolutePath}' was loaded from the storage.")
+                Log.i(LOGGER_TAG, "Trip selected PIDs ${trip.entries.keys}")
+                Log.i(LOGGER_TAG, "Number of entries ${trip.entries.values.size} collected within the trip")
+
                 tripCache.updateTrip(trip)
+                tripVirtualScreenManager.updateCurrentScreenMetrics(trip.entries.keys.map { it.toString() }.toList())
+
             } catch (e: FileNotFoundException) {
                 Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)
                 updateCache(System.currentTimeMillis())
