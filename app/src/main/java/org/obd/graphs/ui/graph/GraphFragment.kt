@@ -244,10 +244,10 @@ class GraphFragment : Fragment() {
             val dataSets = LineData(metrics.mapNotNull {
                 try {
                     val dataSet = createDataSet(it)
-                    Log.i(LOG_TAG, "Created chart data-set for PID: ${it.id}")
+                    Log.d(LOG_TAG, "Created chart data-set for PID: ${it.id}")
                     dataSet
                 }catch (e: Throwable){
-                    Log.e(LOG_TAG,"Failed to create chart  data-set ${e.message} for PID: ${it.id}",e)
+                    Log.v(LOG_TAG,"Failed to create chart  data-set ${e.message} for PID: ${it.id}",e)
                     null
                 }
             }.toList())

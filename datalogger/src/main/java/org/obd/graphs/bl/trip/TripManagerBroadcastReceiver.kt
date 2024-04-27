@@ -44,33 +44,32 @@ class TripManagerBroadcastReceiver : BroadcastReceiver() {
             DATA_LOGGER_STOPPED_EVENT -> {
                 Log.d(LOGGER_KEY, "Received data logger on stopped event. Saving trip into file.")
 
-                runAsync {
+                sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, context?.getText(R.string.dialog_screen_lock_saving_trip_message) as String)
+
+                Thread {
                     try {
-                        tripManager.saveCurrentTrip {
-                            val msg = context?.getText(R.string.dialog_screen_lock_saving_trip_message) as String
-                            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, msg)
-                        }
+                        tripManager.saveCurrentTrip{}
                     } finally {
                         sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                     }
-                }
+                }.start()
             }
             TRIP_LOAD_EVENT -> {
 
                 if (!dataLogger.isRunning()) {
-                    context?.run {
-                        runAsync {
-                            try {
-                                val tripName = intent.getExtraParam()
-                                Log.i(LOGGER_KEY, "Loading trip: '$tripName' ...................")
-                                sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                                tripManager.loadTrip(tripName)
-                                Log.i(LOGGER_KEY, "Trip: '$tripName' is loaded")
-                            } finally {
-                                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
-                            }
+                    sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                    Thread{
+                        try {
+                            val tripName = intent.getExtraParam()
+                            Log.i(LOGGER_KEY, "Loading trip: '$tripName' ...................")
+
+                            tripManager.loadTrip(tripName)
+                            Log.i(LOGGER_KEY, "Trip: '$tripName' is loaded")
+                        } finally {
+                            sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                         }
-                    }
+
+                    }.start()
                 }
             }
         }
