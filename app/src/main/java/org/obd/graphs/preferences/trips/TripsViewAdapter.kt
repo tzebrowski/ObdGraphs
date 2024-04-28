@@ -30,7 +30,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.*
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.profile
@@ -114,21 +113,8 @@ class TripsViewAdapter internal constructor(
         init {
 
             loadTrip.setOnClickListener {
-                if (!dataLogger.isRunning()) {
-                    sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                    Thread {
-                        try {
-                            val tripName = data.elementAt(adapterPosition).fileName
-                            Log.i(LOGGER_KEY, "Loading trip: '$tripName' ...................")
-
-                            tripManager.loadTrip(tripName)
-                            Log.i(LOGGER_KEY, "Trip: '$tripName' is loaded")
-                        } finally {
-                            sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
-                        }
-                    }.start()
-                }
-           }
+                tripManager.loadTripAsync( data.elementAt(adapterPosition).fileName)
+            }
 
             deleteTrip.setOnClickListener {
                 val builder = AlertDialog.Builder(itemView.context)
