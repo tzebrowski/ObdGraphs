@@ -18,12 +18,31 @@
  **/
 package org.obd.graphs.bl.trip
 
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.bl.datalogger.MetricsProcessor
+import org.obd.graphs.commons.R
+import org.obd.graphs.getContext
+import org.obd.graphs.sendBroadcastEvent
 
 interface TripManager : MetricsProcessor {
     fun getCurrentTrip(): Trip
     fun startNewTrip(newTs: Long)
     fun saveCurrentTrip(f: () -> Unit)
+
+    fun saveCurrentTrip(){
+
+        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, getContext()?.getText(R.string.dialog_screen_lock_saving_trip_message) as String)
+
+        Thread {
+            try {
+                tripManager.saveCurrentTrip {}
+            } finally {
+                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+            }
+        }.start()
+    }
+
     fun findAllTripsBy(filter: String = ""): MutableCollection<TripFileDesc>
     fun deleteTrip(trip: TripFileDesc)
     fun loadTrip(tripName: String)

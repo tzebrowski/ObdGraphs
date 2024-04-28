@@ -33,7 +33,6 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.bl.trip.TripManagerBroadcastReceiver
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -44,7 +43,6 @@ import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.toast
 
 
-internal val tripRecorderBroadcastReceiver = TripManagerBroadcastReceiver()
 internal val powerReceiver = PowerBroadcastReceiver()
 
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"
@@ -267,7 +265,6 @@ internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
 
 internal fun MainActivity.unregisterReceiver() {
     unregisterReceiver(activityBroadcastReceiver)
-    unregisterReceiver(tripRecorderBroadcastReceiver)
     unregisterReceiver(powerReceiver)
     unregisterReceiver(dataLogger.eventsReceiver)
 }
@@ -303,13 +300,6 @@ internal fun MainActivity.registerReceiver() {
         addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
         addAction(REQUEST_LOCATION_PERMISSIONS)
         addAction(RESET_TOOLBAR_ANIMATION)
-    })
-
-    registerReceiver(tripRecorderBroadcastReceiver, IntentFilter().apply {
-        addAction(DATA_LOGGER_CONNECTED_EVENT)
-        addAction(DATA_LOGGER_STOPPED_EVENT)
-        addAction(DATA_LOGGER_CONNECTING_EVENT)
-        addAction(TRIP_LOAD_EVENT)
     })
 
     registerReceiver(powerReceiver, IntentFilter().apply {

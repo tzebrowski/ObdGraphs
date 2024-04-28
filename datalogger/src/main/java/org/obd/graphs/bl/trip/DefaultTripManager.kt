@@ -30,7 +30,6 @@ import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.profile.profile
 import org.obd.metrics.api.model.ObdMetric
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -227,7 +226,7 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                 tripCache.updateTrip(trip)
                 tripVirtualScreenManager.updateCurrentScreenMetrics(trip.entries.keys.map { it.toString() }.toList())
 
-            } catch (e: FileNotFoundException) {
+            } catch (e: Throwable) {
                 Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)
                 updateCache(System.currentTimeMillis())
             }

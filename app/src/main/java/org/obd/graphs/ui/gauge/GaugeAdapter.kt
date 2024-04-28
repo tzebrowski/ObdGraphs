@@ -142,7 +142,7 @@ class GaugeAdapter(
         }
 
         holder.value.run {
-            val units = (metric.source.command as ObdCommand).pid.units
+            val units = (metric.source.command as ObdCommand).pid.units?:""
             val txt = "${metric.valueToString()} $units"
             text = txt
 
@@ -201,8 +201,14 @@ class GaugeAdapter(
         }
 
         holder.gauge?.apply {
-            startValue = (metric.source.command as ObdCommand).pid.min.toFloat()
-            endValue = (metric.source.command as ObdCommand).pid.max.toFloat()
+            (metric.source.command as ObdCommand).pid?.let {
+                if (it.min != null) {
+                    startValue = it.min.toFloat()
+                }
+                if (it.max != null) {
+                    endValue = it.max.toFloat()
+                }
+            }
             value = metric.toFloat()
             invalidate()
         }

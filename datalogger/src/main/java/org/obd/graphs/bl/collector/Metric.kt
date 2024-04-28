@@ -53,7 +53,7 @@ data class Metric(
 
     fun toFloat(): Float =
         if (source.value == null) {
-            source.command.pid.min.toFloat()
+            if (source.command.pid.min == null ) 0f else source.command.pid.min.toFloat()
         } else {
             source.valueToDouble().toFloat()
         }

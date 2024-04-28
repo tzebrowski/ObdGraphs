@@ -29,6 +29,7 @@ import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
@@ -101,6 +102,8 @@ internal class WorkflowOrchestrator internal constructor() {
             if (vehicleCapabilities.dtc.isNotEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
             }
+
+            tripManager.startNewTrip(System.currentTimeMillis())
         }
 
         override fun onError(msg: String, tr: Throwable?) {
@@ -120,6 +123,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 "Collecting process is completed."
             )
             sendBroadcastEvent(DATA_LOGGER_STOPPED_EVENT)
+            tripManager.saveCurrentTrip()
         }
     }
 
