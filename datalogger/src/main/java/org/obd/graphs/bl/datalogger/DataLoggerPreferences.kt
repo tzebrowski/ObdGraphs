@@ -40,6 +40,7 @@ data class DataLoggerPreferences(
     var connectionTimeout: Int,
     var stnExtensionsEnabled: Boolean,
     var batchEnabled: Boolean,
+    var batchStricValidationEnabled: Boolean,
     var mode22BatchSize: Int?,
     var mode01BatchSize: Int?,
     var reconnectWhenError: Boolean,
@@ -114,10 +115,11 @@ class DataLoggerPreferencesManager {
 
         val mode22batchSize = Prefs.getString("pref.adapter.batch.size", null)
         val mode01batchSize = Prefs.getString("pref.adapter.batch_01.size", null)
+        val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
+        val batchStrictValidationEnabled = Prefs.getBoolean("pref.adapter.batch.strict_validation.enabled", false)
 
         val debugLogging = Prefs.getBoolean("pref.debug.logging.enabled", false)
 
-        val batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
         val reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
         val adapterId = Prefs.getS("pref.adapter.id", "OBDII")
         val commandFrequency = Prefs.getS("pref.adapter.command.freq", "6").toLong()
@@ -185,7 +187,8 @@ class DataLoggerPreferencesManager {
             dumpRawConnectorResponse = dumpRawConnectorResponse,
             delayAfterReset = delayAfterReset,
             debugLogging = debugLogging,
-            individualQueryStrategyEnabled = queryForEachViewStrategyEnabled
+            individualQueryStrategyEnabled = queryForEachViewStrategyEnabled,
+            batchStricValidationEnabled = batchStrictValidationEnabled
         )
 
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {

@@ -312,6 +312,7 @@ internal class WorkflowOrchestrator internal constructor() {
         .batchPolicy(
             BatchPolicy.builder()
                 .enabled(dataLoggerPreferences.instance.batchEnabled)
+                .strictValidationEnabled(dataLoggerPreferences.instance.batchStricValidationEnabled)
                 .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
                 .mode01BatchSize(dataLoggerPreferences.instance.mode01BatchSize)
                 .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize).build()

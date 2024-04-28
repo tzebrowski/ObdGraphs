@@ -55,6 +55,8 @@
     <string name="prefs.adapter_batch_mode_01_batch_size">Batch Size for Mode 01</string>
     <string name="prefs.adapter_batch_mode_22_batch_size">Batch Size for Mode 22</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
+    <string name="pref.adapter_batch__strict_validation_enabled">Enable strict messages validation</string>
+
     <string name="pref.adapter_stn_enabled">Enable STN extensions</string>
     <string name="pref.adapter_stn_enabled_summary">Enabling this option will cause that STNxx chip specific commands are used during session with ECU which might increase performance. This option should be turned on only when STNxx based adapter is in use, otherwise it will cause errors. </string>
     <string name="pref.adapter_cache_result_enabled">Enable result cache</string>

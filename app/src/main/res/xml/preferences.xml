@@ -292,6 +292,15 @@
                     android:title="@string/prefs.adapter_batch_mode_01_batch_size"
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
+
+
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.adapter_batch__strict_validation_enabled"
+                    android:key="pref.adapter.batch.strict_validation.enabled"
+                    android:title="@string/pref.adapter_batch__strict_validation_enabled"
+                    app:singleLineTitle="false" />
+
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.adapter.general_settings">
