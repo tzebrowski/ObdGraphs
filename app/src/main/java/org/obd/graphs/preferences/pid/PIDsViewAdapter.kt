@@ -65,8 +65,15 @@ class PIDsViewAdapter internal constructor(
         position: Int
     ) {
         data.elementAt(position).run {
-            holder.file.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
-            holder.name.setText(source.description, COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 1f)
+            holder.module.setText(source.resourceFile, COLOR_PHILIPPINE_GREEN, Typeface.NORMAL, 0.7f)
+
+            val description = if (source.longDescription == null || source.longDescription.isEmpty()) {
+                source.description
+            } else {
+                source.longDescription
+            }
+
+            holder.description.setText(description, COLOR_RAINBOW_INDIGO, Typeface.NORMAL, 1f)
 
             if (source.stable) {
                 holder.status.setText("Yes", Color.GRAY, Typeface.NORMAL, 0.7f)
@@ -110,8 +117,8 @@ class PIDsViewAdapter internal constructor(
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val file: TextView = itemView.findViewById(R.id.pid_file)
-        val name: TextView = itemView.findViewById(R.id.pid_name)
+        val module: TextView = itemView.findViewById(R.id.pid_module)
+        val description: TextView = itemView.findViewById(R.id.pid_description)
         val status: TextView = itemView.findViewById(R.id.pid_status)
         val selected: CheckBox = itemView.findViewById(R.id.pid_selected)
 
@@ -127,7 +134,12 @@ class PIDsViewAdapter internal constructor(
                     pidDetailsModule.text = item.source.module
 
                     val pidDetailsDescription = root.findViewById<TextView>(R.id.pid_details_name)
-                    pidDetailsDescription.text = item.source.description
+
+                    pidDetailsDescription.text = if (item.source.longDescription == null || item.source.longDescription.isEmpty()) {
+                        item.source.description
+                    } else {
+                        item.source.longDescription
+                    }
 
                     val pidDetailsCalculationFormula = root.findViewById<EditText>(R.id.pid_details_calculation_formula)
                     pidDetailsCalculationFormula.removeTextChangedListener(formulaTextWatcher)

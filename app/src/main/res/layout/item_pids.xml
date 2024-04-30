@@ -32,7 +32,7 @@
 
 
             <TextView
-                android:id="@+id/pid_file"
+                android:id="@+id/pid_module"
                 android:layout_width="0dp"
                 android:layout_weight="0.7"
                 android:gravity="start"
@@ -43,7 +43,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/pid_name"
+                android:id="@+id/pid_description"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:gravity="start"

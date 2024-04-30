@@ -386,7 +386,7 @@
     <string name="pids_alert">Alert\nrule</string>
     <string name="pids_formula">Calculation\nformula</string>
 
-    <string name="pids_name">PID Name</string>
+    <string name="pids_name">Name</string>
     <string name="pids_module">Module</string>
 
     <string name="pref.usb_event_receiver_activity_label">Grant permissions to access USB device</string>
