@@ -266,8 +266,15 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         var top1 = top
         titlePaint.textSize = textSize
 
+        val description = if (metric.source.command.pid.longDescription == null || metric.source.command.pid.longDescription.isEmpty()) {
+            metric.source.command.pid.description
+        } else {
+            metric.source.command.pid.longDescription
+        }
+
         if (settings.isBreakLabelTextEnabled()) {
-            val text = metric.source.command.pid.description.split("\n")
+
+            val text = description.split("\n")
             if (text.size == 1) {
                 canvas.drawText(
                     text[0],
@@ -294,7 +301,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
             }
 
         } else {
-            val text = metric.source.command.pid.description.replace("\n", " ")
+            val text = description.replace("\n", " ")
             canvas.drawText(
                 text,
                 left,
