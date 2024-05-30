@@ -68,6 +68,7 @@ open class GiuliaFragment : Fragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
+                    applyFilter()
                     renderingThread.start()
                 }
 
@@ -125,7 +126,7 @@ open class GiuliaFragment : Fragment() {
         )
         surfaceView.holder.addCallback(surfaceController)
 
-        metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+        applyFilter()
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
@@ -159,12 +160,15 @@ open class GiuliaFragment : Fragment() {
                     dataLogger.updateQuery(query())
                 }
 
-                metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+                applyFilter()
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
             }
         }
     }
+
+    private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+
 
     private fun query() = query.apply(giuliaVirtualScreen.getVirtualScreenPrefKey())
 

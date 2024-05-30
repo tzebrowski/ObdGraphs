@@ -224,7 +224,7 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                 Log.i(LOGGER_TAG, "Number of entries ${trip.entries.values.size} collected within the trip")
 
                 tripCache.updateTrip(trip)
-                tripVirtualScreenManager.updateCurrentScreenMetrics(trip.entries.keys.map { it.toString() }.toList())
+                tripVirtualScreenManager.updateReservedVirtualScreen(trip.entries.keys.map { it.toString() }.toList())
 
             } catch (e: Throwable) {
                 Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)

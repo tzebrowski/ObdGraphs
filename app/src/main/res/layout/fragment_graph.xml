@@ -26,7 +26,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="4dp"
-                android:text="1"
+                android:text="@string/graph_view.virtual_screen_1"
                 android:textSize="10dp" />
 
             <Button
@@ -35,7 +35,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="4dp"
-                android:text="2"
+                android:text="@string/graph_view.virtual_screen_2"
                 android:textSize="10dp" />
 
             <Button
@@ -44,7 +44,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="4dp"
-                android:text="3"
+                android:text="@string/graph_view.virtual_screen_3"
                 android:textSize="10dp" />
 
             <Button
@@ -53,7 +53,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="4dp"
-                android:text="4"
+                android:text="@string/graph_view.virtual_screen_4"
                 android:textSize="10dp" />
 
             <Button
@@ -62,7 +62,16 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="4dp"
-                android:text="5"
+                android:text="@string/graph_view.virtual_screen_5"
+                android:textSize="10dp" />
+
+            <Button
+                android:id="@+id/virtual_view_6"
+                android:layout_width="96dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/transparent"
+                android:text="@string/graph_view.virtual_screen_reserved"
                 android:textSize="10dp" />
         </LinearLayout>
 

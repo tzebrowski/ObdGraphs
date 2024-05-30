@@ -22,6 +22,7 @@ import org.obd.graphs.preferences.*
 
 private const val VIRTUAL_SCREEN_SELECTION = "pref.graph.virtual.selected"
 const val PREF_GRAPH_DIALOG = "pref.graph.pids.selected"
+const val RESERVED_SCREEN_ID = "6"
 
 class TripVirtualScreenManager {
     fun getCurrentScreenId() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
@@ -33,8 +34,8 @@ class TripVirtualScreenManager {
     fun getCurrentMetrics(): Set<String> =
         Prefs.getStringSet(getVirtualScreenPrefKey(), mutableSetOf())!!
 
-    fun updateCurrentScreenMetrics(metrics: List<String>) {
-        Prefs.updateStringSet(getVirtualScreenPrefKey(),metrics)
+    fun updateReservedVirtualScreen(metrics: List<String>) {
+        Prefs.updateStringSet("$PREF_GRAPH_DIALOG.$RESERVED_SCREEN_ID",metrics)
     }
     fun getVirtualScreenPrefKey(): String = "$PREF_GRAPH_DIALOG.${getCurrentScreenId()}"
 }

@@ -453,6 +453,8 @@ class GraphFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")
         setVirtualViewBtn(R.id.virtual_view_4, currentVirtualScreen, "4")
         setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
+        setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
+
     }
 
     private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
