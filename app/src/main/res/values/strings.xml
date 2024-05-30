@@ -233,6 +233,9 @@
 
     <string name="pref.pids_category">OBD2 PIDs/Sensors</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
+
+    <string name="pref.giulia_apply_graph_filter">Apply PID filter to Graph View</string>
+
     <string name="pref.giulia_category">Giulia view configuration</string>
     <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
 
@@ -277,6 +280,7 @@
     <string name="pref.enable_view_summary">Enabling this option will cause additionally button appear on the task bar which shortcuts to the view</string>
     <string name="pref.enable_view">Show view shortcut on the taskbar</string>
     <string name="pref.trips_recordings_display_info">Display trip info</string>
+
     <string name="pref.graph_trips_selected">Manage recorded trips</string>
     <string name="pref.graph_trips_selected_summary">Manage recorded Trips.\nYou are allowed to load or delete existing trip</string>
     <string name="pref.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>

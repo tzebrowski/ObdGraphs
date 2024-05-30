@@ -36,6 +36,7 @@ class TripVirtualScreenManager {
 
     fun updateReservedVirtualScreen(metrics: List<String>) {
         Prefs.updateStringSet("$PREF_GRAPH_DIALOG.$RESERVED_SCREEN_ID",metrics)
+
     }
     fun getVirtualScreenPrefKey(): String = "$PREF_GRAPH_DIALOG.${getCurrentScreenId()}"
 }
