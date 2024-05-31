@@ -146,7 +146,6 @@ class GraphFragment : Fragment() {
 
     private val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     private lateinit var chart: LineChart
-    private lateinit var colors: IntIterator
     private val valueScaler = ValueScaler()
     private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
@@ -231,7 +230,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun initializeChart(root: View) {
-        colors = Colors().generate()
+        val colors = Colors().get()
         chart = buildChart(root).apply {
 
             val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
@@ -243,7 +242,7 @@ class GraphFragment : Fragment() {
 
             val dataSets = LineData(metrics.mapNotNull {
                 try {
-                    val dataSet = createDataSet(it)
+                    val dataSet = createDataSetFor(it, colors.nextInt())
                     Log.d(LOG_TAG, "Created chart data-set for PID: ${it.id}")
                     dataSet
                 }catch (e: Throwable){
@@ -253,7 +252,6 @@ class GraphFragment : Fragment() {
             }.toList())
 
             Log.i(LOG_TAG,"Created data-set size: ${dataSets.dataSetCount}")
-
             data = dataSets
             setOnTouchListener(onDoubleClickListener(requireContext()))
             invalidate()
@@ -399,10 +397,9 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private fun createDataSet(pid: PidDefinition): LineDataSet {
+    private fun createDataSetFor(pid: PidDefinition, col: Int): LineDataSet {
         val values = mutableListOf<Entry>()
         val lineDataSet = LineDataSet(values, pid.description)
-        val col = colors.nextInt()
         lineDataSet.run {
             mode = LineDataSet.Mode.CUBIC_BEZIER
             label = pid.description

@@ -234,7 +234,7 @@
     <string name="pref.pids_category">OBD2 PIDs/Sensors</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
 
-    <string name="pref.giulia_apply_graph_filter">Apply PID filter to Graph View</string>
+    <string name="pref.giulia_apply_graph_filter">Apply PID selection to Graph View</string>
 
     <string name="pref.giulia_category">Giulia view configuration</string>
     <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>

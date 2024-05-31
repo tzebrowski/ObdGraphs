@@ -70,31 +70,41 @@ fun String.colorize(color: Int, typeface: Int, size: Float) : SpannableString {
 
 class Colors {
 
-    private val base: List<Int> =  mutableListOf<Int>().apply {
-        add(COLOR_CARDINAL)
-        add(COLOR_PHILIPPINE_GREEN)
-        add(Color.parseColor("#1C3D72"))
-        add(Color.parseColor("#BBBBBB"))
+    private val base: IntArray =  mutableListOf<Int>().apply {
+        val inner = mutableListOf<Int>().apply {
+            add(COLOR_CARDINAL)
+            add(COLOR_PHILIPPINE_GREEN)
+            add(COLOR_WHITE)
+            add(COLOR_DYNAMIC_SELECTOR_NORMAL)
+            add(COLOR_DYNAMIC_SELECTOR_RACE)
+            add(COLOR_DYNAMIC_SELECTOR_ECO)
 
-        add(Color.parseColor("#C0CA33"))
-        add(Color.parseColor("#FF9800"))
-        add(Color.parseColor("#F44336"))
-        add(Color.parseColor("#4A148C"))
-        add(Color.parseColor("#FFFF00"))
-        add(Color.parseColor("#42A5F5"))
-        add(Color.parseColor("#4DB6AC"))
-        add(Color.parseColor("#3F51B5"))
+            add(Color.parseColor("#1C3D72"))
+            add(Color.parseColor("#BBBBBB"))
+            add(Color.parseColor("#C0CA33"))
+            add(Color.parseColor("#FF9800"))
+            add(Color.parseColor("#F44336"))
+            add(Color.parseColor("#4A148C"))
+            add(Color.parseColor("#FFFF00"))
+            add(Color.parseColor("#42A5F5"))
+            add(Color.parseColor("#4DB6AC"))
+            add(Color.parseColor("#3F51B5"))
+            add(Color.parseColor("#FF6F00"))
+            add(Color.parseColor("#E8F5E9"))
+            add(Color.parseColor("#757575"))
+            add(Color.parseColor("#FFCCBC"))
+            add(Color.parseColor("#00C853"))
+            add(Color.parseColor("#66BB6A"))
+        }
 
-        add(Color.parseColor("#FF6F00"))
-        add(Color.parseColor("#E8F5E9"))
-        add(Color.parseColor("#757575"))
-        add(Color.parseColor("#FFCCBC"))
-        add(Color.parseColor("#00C853"))
-        add(Color.parseColor("#66BB6A"))
-    }
+        (1 .. 5).forEach { _ ->
+            addAll(inner)
+        }
 
-    fun generate(): IntIterator {
-        return base.toIntArray().iterator()
+    }.toIntArray()
+
+    fun get(): IntIterator {
+        return base.iterator()
     }
 }
 

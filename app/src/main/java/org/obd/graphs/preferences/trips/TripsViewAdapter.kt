@@ -50,7 +50,7 @@ class TripsViewAdapter internal constructor(
         SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault())
 
     private val profileColors = mutableMapOf<String, Int>().apply {
-        val colors = Colors().generate()
+        val colors = Colors().get()
         profile.getAvailableProfiles().forEach { (s, _) ->
             if (colors.hasNext()) {
                 put(s, colors.nextInt())
