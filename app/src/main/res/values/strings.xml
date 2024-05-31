@@ -411,6 +411,15 @@
     <string name="graph_view.virtual_screen_4">4</string>
     <string name="graph_view.virtual_screen_5">5</string>
     <string name="graph_view.virtual_screen_reserved">Reserved</string>
+    <string name="graph_view.filters_based_on_giulia_screen">Filters (from Giulia screen)</string>
+    <string name="graph_view.filters_filter_1">Filter 1</string>
+    <string name="graph_view.filters_filter_2">Filter 2</string>
+    <string name="graph_view.filters_filter_3">Filter 3</string>
+    <string name="graph_view.filters_filter_4">Filter 4</string>
+    <string name="graph_view.filters_filter_5">Filter 5</string>
+    <string name="graph_view.filters_filter_6">Filter 6</string>
+    <string name="graph_view.filters_filter_7">Filter 7</string>
+
 
     <string-array name="pref.numbers_1_20">
         <item name="0">0</item>

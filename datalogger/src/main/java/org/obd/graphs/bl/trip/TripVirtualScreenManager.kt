@@ -27,16 +27,13 @@ const val RESERVED_SCREEN_ID = "6"
 class TripVirtualScreenManager {
     fun getCurrentScreenId() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
-    fun updateScreenId(screenId: String) {
-        Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
-    }
+    fun updateScreenId(screenId: String = getCurrentScreenId()) = Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
 
     fun getCurrentMetrics(): Set<String> =
         Prefs.getStringSet(getVirtualScreenPrefKey(), mutableSetOf())!!
 
     fun updateReservedVirtualScreen(metrics: List<String>) {
         Prefs.updateStringSet("$PREF_GRAPH_DIALOG.$RESERVED_SCREEN_ID",metrics)
-
     }
     fun getVirtualScreenPrefKey(): String = "$PREF_GRAPH_DIALOG.${getCurrentScreenId()}"
 }

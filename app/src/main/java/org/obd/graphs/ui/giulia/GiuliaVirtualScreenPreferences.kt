@@ -28,7 +28,8 @@ const val PREF_GAUGE_DIALOG = "pref.giulia.pids.selected"
 class GiuliaVirtualScreenPreferences {
     fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
-    fun getVirtualScreenPrefKey(): String = "$PREF_GAUGE_DIALOG.${getCurrentVirtualScreen()}"
+    fun getVirtualScreenPrefKey(default: String = getCurrentVirtualScreen()): String = "$PREF_GAUGE_DIALOG.${default}"
+
 
     fun updateVirtualScreen(screenId: String) {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)

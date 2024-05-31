@@ -20,6 +20,7 @@ package org.obd.graphs.activity
 
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.MenuItem
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -146,7 +147,9 @@ internal fun MainActivity.setupNavigationBar() {
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).title =
                             resources.getString(R.string.pref_graph_trips_selected)
-                    }
+
+                        it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = true
+                     }
 
                     resources.getString(R.string.navigation_title_giulia) -> {
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
@@ -156,6 +159,8 @@ internal fun MainActivity.setupNavigationBar() {
 
                     else -> {
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
+                        it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = false
+
                     }
                 }
             }
@@ -183,6 +188,14 @@ internal fun MainActivity.setupNavigationBarButtons() {
                         else -> {}
                     }
                 }
+
+                R.id.ctx_menu_submenu_filters_filter_1 -> applyGraphViewFilter(1)
+                R.id.ctx_menu_submenu_filters_filter_2 -> applyGraphViewFilter(2)
+                R.id.ctx_menu_submenu_filters_filter_3 -> applyGraphViewFilter(3)
+                R.id.ctx_menu_submenu_filters_filter_4 -> applyGraphViewFilter(4)
+                R.id.ctx_menu_submenu_filters_filter_5 -> applyGraphViewFilter(5)
+                R.id.ctx_menu_submenu_filters_filter_6 -> applyGraphViewFilter(6)
+                R.id.ctx_menu_submenu_filters_filter_7 -> applyGraphViewFilter(7)
 
                 R.id.ctx_menu_pids_to_display -> {
                     val screenId = when (getCurrentScreenId()) {
@@ -236,6 +249,15 @@ internal fun MainActivity.setupNavigationBarButtons() {
             true
         }
     }
+}
+
+private fun applyGraphViewFilter(screenId: Int) {
+    Log.e("EEEEEEEEEEE", "EEEEEEEEEEEEEEEEEE $screenId")
+
+    tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")).toList())
+    tripVirtualScreenManager.updateScreenId()
+
+    navigateToScreen(R.id.navigation_graph)
 }
 
 private fun MainActivity.getCurrentScreenId(): Int {
