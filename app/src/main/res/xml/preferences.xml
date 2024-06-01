@@ -1454,6 +1454,18 @@
                     </PreferenceScreen>
                 </PreferenceCategory>
                 <PreferenceCategory android:title="@string/pref.general_settings">
+
+                    <ListPreference
+                        android:defaultValue="Gauge"
+                        android:dialogTitle="@string/pref.graph.filter_source"
+                        android:entries="@array/pref.graph.filter_source"
+                        android:entryValues="@array/pref.graph.filter_source"
+                        android:inputType="number"
+                        android:key="pref.graph.filter.source"
+                        android:title="@string/pref.graph.filter_source"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+
                     <CheckBoxPreference
                         android:defaultValue="true"
                         app:singleLineTitle="false"

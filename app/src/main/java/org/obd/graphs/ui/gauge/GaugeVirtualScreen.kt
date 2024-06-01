@@ -27,7 +27,7 @@ const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
 class GaugeVirtualScreen {
     fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
-    fun getVirtualScreenPrefKey(): String = "$PREF_GAUGE_DIALOG.${getCurrentVirtualScreen()}"
+    fun getVirtualScreenPrefKey(screenId: String = getCurrentVirtualScreen()): String = "$PREF_GAUGE_DIALOG.${screenId}"
 
     fun updateVirtualScreen(screenId: String) {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)

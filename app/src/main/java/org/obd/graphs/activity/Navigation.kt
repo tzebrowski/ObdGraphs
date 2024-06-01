@@ -35,6 +35,7 @@ import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.*
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
 
@@ -252,9 +253,14 @@ internal fun MainActivity.setupNavigationBarButtons() {
 }
 
 private fun applyGraphViewFilter(screenId: Int) {
-    Log.e("EEEEEEEEEEE", "EEEEEEEEEEEEEEEEEE $screenId")
+    val propertyId =  when (Prefs.getS("pref.graph.filter.source","Giulia")){
+        "Giulia" -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
+        "Gauge" -> gaugeVirtualScreen.getVirtualScreenPrefKey("$screenId")
+        else -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
+    }
 
-    tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")).toList())
+    Log.i(LOG_TAG, "Applying graph view filter for property.id=$propertyId")
+    tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(propertyId).toList())
     tripVirtualScreenManager.updateScreenId()
 
     navigateToScreen(R.id.navigation_graph)
