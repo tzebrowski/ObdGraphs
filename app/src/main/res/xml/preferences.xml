@@ -525,7 +525,7 @@
             android:summary="@string/pref.view_category_summary"
             android:title="@string/pref.settings">
             <PreferenceScreen
-                android:summary="@string/pref.gauge_category"
+                android:summary="@string/pref.gauge.category"
                 android:title="@string/navigation.title_gauge"
                 app:key="pref.gauge">
 
@@ -909,7 +909,7 @@
 
 
             <PreferenceScreen
-                android:summary="@string/pref.aa_category"
+                android:summary="@string/pref.aa.category"
                 android:title="@string/navigation.title_aa"
                 app:isPreferenceVisible="@bool/MODULE_ANDROID_AUTO_ENABLED"
                 app:key="pref.aa">
@@ -1418,7 +1418,7 @@
             </PreferenceScreen>
 
             <PreferenceScreen
-                android:summary="@string/pref.graph_category"
+                android:summary="@string/pref.graph.category"
                 android:title="@string/navigation.title_graph"
                 app:key="pref.graph">
 
@@ -1448,8 +1448,8 @@
                             <org.obd.graphs.preferences.trips.TripsListPreferences
                                 android:defaultValue="@array/pref.empty_array"
                                 android:key="pref.graph.trips.selected"
-                                android:summary="@string/pref.graph_trips_selected_summary"
-                                android:title="@string/pref.graph_trips_selected" />
+                                android:summary="@string/pref.graph.trips_selected_summary"
+                                android:title="@string/pref.graph.trips_selected" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
@@ -1487,23 +1487,23 @@
 
                     <ListPreference
                         android:defaultValue="20"
-                        android:dialogTitle="@string/pref.graph_x_axis_minimum_shift_time"
+                        android:dialogTitle="@string/pref.graph.x_axis_minimum_shift_time"
                         android:entries="@array/pref.numbers_20_74"
                         android:entryValues="@array/pref.numbers_20_74"
                         android:inputType="number"
                         android:key="pref.graph.x-axis.minimum-shift.time"
-                        android:title="@string/pref.graph_x_axis_minimum_shift_time"
+                        android:title="@string/pref.graph.x_axis_minimum_shift_time"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                     <ListPreference
                         android:defaultValue="20000"
-                        android:dialogTitle="@string/pref.graph_x_axis_start_moving_after_time"
+                        android:dialogTitle="@string/pref.graph.x_axis_start_moving_after_time"
                         android:entries="@array/pref.numbers_20000_60000"
                         android:entryValues="@array/pref.numbers_20000_60000"
                         android:inputType="number"
                         android:key="pref.graph.x-axis.start-moving-after.time"
-                        android:title="@string/pref.graph_x_axis_start_moving_after_time"
+                        android:title="@string/pref.graph.x_axis_start_moving_after_time"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
@@ -1513,12 +1513,12 @@
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.trips.recordings.display_info"
-                        android:title="@string/pref.trips_recordings_display_info" />
+                        android:title="@string/pref.graph.trips_recordings_display_info" />
 
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.trips.recordings.save.short.trip"
-                        android:title="@string/pref.trips_recordings_save_short_trip"
+                        android:title="@string/pref.graph.trips_recordings_save_short_trip"
                         app:singleLineTitle="false" />
                 </PreferenceCategory>
             </PreferenceScreen>

@@ -35,35 +35,35 @@
 
     <item
         android:id="@+id/ctx_menu_submenu_filters"
-        android:title="@string/graph_view.filters_based_on_giulia_screen">
+        android:title="@string/pref.graph.view.filters_based_on_giulia_screen">
         <menu>
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_1"
-                android:title="@string/graph_view.filters_filter_1"/>
+                android:title="@string/pref.graph.view.filters_filter_1"/>
 
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_2"
-                android:title="@string/graph_view.filters_filter_2"/>
+                android:title="@string/pref.graph.view.filters_filter_2"/>
 
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_3"
-                android:title="@string/graph_view.filters_filter_3"/>
+                android:title="@string/pref.graph.view.filters_filter_3"/>
 
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_4"
-                android:title="@string/graph_view.filters_filter_4"/>
+                android:title="@string/pref.graph.view.filters_filter_4"/>
 
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_5"
-                android:title="@string/graph_view.filters_filter_5"/>
+                android:title="@string/pref.graph.view.filters_filter_5"/>
 
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_6"
-                android:title="@string/graph_view.filters_filter_6"/>
+                android:title="@string/pref.graph.view.filters_filter_6"/>
 
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_7"
-                android:title="@string/graph_view.filters_filter_7"/>
+                android:title="@string/pref.graph.view.filters_filter_7"/>
 
         </menu>
 

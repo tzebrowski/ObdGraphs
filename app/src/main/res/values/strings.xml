@@ -244,10 +244,10 @@
     <string name="pref.drag_racing.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
     <string name="pref.drag_racing.font_size">Font size of items on the screen</string>
 
-    <string name="pref.graph_category">Graph view configuration</string>
-    <string name="pref.gauge_category">Gauge view configuration</string>
-    <string name="pref.aa_category">Android Auto view configuration</string>
-    <string name="pref.aa_category_summary">This page collects Android Auto specific configuration parameters.</string>
+    <string name="pref.graph.category">Graph view configuration</string>
+    <string name="pref.gauge.category">Gauge view configuration</string>
+    <string name="pref.aa.category">Android Auto view configuration</string>
+    <string name="pref.aa.category_summary">This page collects Android Auto specific configuration parameters.</string>
 
     <string name="pref.adapter_category">OBD2 Adapter Settings</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
@@ -279,18 +279,33 @@
 
     <string name="pref.enable_view_summary">Enabling this option will cause additionally button appear on the task bar which shortcuts to the view</string>
     <string name="pref.enable_view">Show view shortcut on the taskbar</string>
-    <string name="pref.trips_recordings_display_info">Display trip info</string>
 
-    <string name="pref.graph_trips_selected">Manage recorded trips</string>
-    <string name="pref.graph_trips_selected_summary">Manage recorded Trips.\nYou are allowed to load or delete existing trip</string>
-    <string name="pref.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
-    <string name="pref.graph_x_axis_start_moving_after_time">X-Axis start moving after</string>
-    <string name="pref.graph_x_axis_minimum_shift_time">X-Axis moving time</string>
+    <string name="pref.graph.trips_recordings_display_info">Display trip info</string>
+    <string name="pref.graph.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
+    <string name="pref.graph.x_axis_start_moving_after_time">X-Axis start moving after</string>
+    <string name="pref.graph.x_axis_minimum_shift_time">X-Axis moving time</string>
     <string name="pref.graph_cache_enabled">Cache enabled</string>
     <string name="pref.graph.filter_source">Filter source. Use this parameter to configure  \"Filters\" quick menu.</string>
+    <string name="pref.graph.trips_selected">Manage recorded trips</string>
+    <string name="pref.graph.trips_selected_summary">Manage recorded Trips.\nYou are allowed to load or delete existing trip</string>
+
+    <string name="pref.graph.view.virtual_screen_2">2</string>
+    <string name="pref.graph.view.virtual_screen_3">3</string>
+    <string name="pref.graph.view.virtual_screen_1">1</string>
+    <string name="pref.graph.view.virtual_screen_4">4</string>
+    <string name="pref.graph.view.virtual_screen_5">5</string>
+    <string name="pref.graph.view.virtual_screen_reserved">Reserved</string>
+    <string name="pref.graph.view.filters_based_on_giulia_screen">Filters</string>
+    <string name="pref.graph.view.filters_filter_1">Filter 1</string>
+    <string name="pref.graph.view.filters_filter_2">Filter 2</string>
+    <string name="pref.graph.view.filters_filter_3">Filter 3</string>
+    <string name="pref.graph.view.filters_filter_4">Filter 4</string>
+    <string name="pref.graph.view.filters_filter_5">Filter 5</string>
+    <string name="pref.graph.view.filters_filter_6">Filter 6</string>
+    <string name="pref.graph.view.filters_filter_7">Filter 7</string>
+
 
     <string name="pref.debug_broadcast_fake_metrics">Enable data generator</string>
-
     <string name="pref.debug_trip_save_connector_response">Save connector response</string>
     <string name="pref.debug_logging_enabled">Enable debug logging</string>
     <string name="pref.debug_generator_enabled">Enable data generator through obd-metrics</string>
@@ -406,20 +421,6 @@
     <string name="dialog_save_action">Save\n </string>
     <string name="pids_supported">Supported</string>
     <string name="pref_search_view_title">Search</string>
-    <string name="graph_view.virtual_screen_2">2</string>
-    <string name="graph_view.virtual_screen_3">3</string>
-    <string name="graph_view.virtual_screen_1">1</string>
-    <string name="graph_view.virtual_screen_4">4</string>
-    <string name="graph_view.virtual_screen_5">5</string>
-    <string name="graph_view.virtual_screen_reserved">Reserved</string>
-    <string name="graph_view.filters_based_on_giulia_screen">Filters</string>
-    <string name="graph_view.filters_filter_1">Filter 1</string>
-    <string name="graph_view.filters_filter_2">Filter 2</string>
-    <string name="graph_view.filters_filter_3">Filter 3</string>
-    <string name="graph_view.filters_filter_4">Filter 4</string>
-    <string name="graph_view.filters_filter_5">Filter 5</string>
-    <string name="graph_view.filters_filter_6">Filter 6</string>
-    <string name="graph_view.filters_filter_7">Filter 7</string>
 
 
     <string-array name="pref.numbers_1_20">
