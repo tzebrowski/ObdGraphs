@@ -35,7 +35,7 @@
 
     <item
         android:id="@+id/ctx_menu_submenu_filters"
-        android:title="@string/pref.graph.view.filters_based_on_giulia_screen">
+        android:title="@string/pref.graph.view.filters">
         <menu>
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_1"

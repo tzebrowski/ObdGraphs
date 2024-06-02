@@ -234,7 +234,7 @@
     <string name="pref.pids_category">OBD2 PIDs/Sensors</string>
     <string name="pref.dashboard_category">Dashboard view configuration</string>
 
-    <string name="pref.giulia_apply_graph_filter">Apply PID selection to Graph View</string>
+    <string name="pref.giulia_apply_graph_filter">Apply Filter to Graph View</string>
 
     <string name="pref.giulia_category">Giulia view configuration</string>
     <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
@@ -295,14 +295,14 @@
     <string name="pref.graph.view.virtual_screen_4">4</string>
     <string name="pref.graph.view.virtual_screen_5">5</string>
     <string name="pref.graph.view.virtual_screen_reserved">Reserved</string>
-    <string name="pref.graph.view.filters_based_on_giulia_screen">Filters</string>
-    <string name="pref.graph.view.filters_filter_1">Filter 1</string>
-    <string name="pref.graph.view.filters_filter_2">Filter 2</string>
-    <string name="pref.graph.view.filters_filter_3">Filter 3</string>
-    <string name="pref.graph.view.filters_filter_4">Filter 4</string>
-    <string name="pref.graph.view.filters_filter_5">Filter 5</string>
-    <string name="pref.graph.view.filters_filter_6">Filter 6</string>
-    <string name="pref.graph.view.filters_filter_7">Filter 7</string>
+    <string name="pref.graph.view.filters">Filters</string>
+    <string name="pref.graph.view.filters_filter_1">Apply filter 1</string>
+    <string name="pref.graph.view.filters_filter_2">Apply filter 2</string>
+    <string name="pref.graph.view.filters_filter_3">Apply filter 3</string>
+    <string name="pref.graph.view.filters_filter_4">Apply filter 4</string>
+    <string name="pref.graph.view.filters_filter_5">Apply filter 5</string>
+    <string name="pref.graph.view.filters_filter_6">Apply filter 6</string>
+    <string name="pref.graph.view.filters_filter_7">Apply filter 7</string>
 
 
     <string name="pref.debug_broadcast_fake_metrics">Enable data generator</string>
@@ -315,7 +315,7 @@
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
     <string name="pref.trips_recordings">Recorded trips</string>
-    <string name="pref.view_category_summary">Under this section you can find preferences related to the Gauge, Graph, Metrics views</string>
+    <string name="pref.view_category_summary">Under this section you can find preferences related to the Gauge, Graph, Giulia views</string>
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Initialization&amp;Protocols</string>
@@ -519,11 +519,11 @@
         <item name="5500">5500</item>
     </string-array>
 
-
     <string-array name="pref.graph.filter_source">
         <item name="Giulia">Giulia</item>
         <item name="Gauge">Gauge</item>
-    </string-array>
+        <item name="AA">AA</item>
+   </string-array>
 
     <string-array name="pref.numbers_20_74">
         <item name="20">20</item>

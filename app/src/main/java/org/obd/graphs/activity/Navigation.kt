@@ -134,7 +134,7 @@ internal fun MainActivity.setupNavigationBar() {
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
                 val aaMenuItem = it.menu.findItem(R.id.ctx_menu_android_auto)
-                if (resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)) {
+                if (isAndroidAutoEnabled()) {
                     val spanString = SpannableString(aaMenuItem.title.toString())
                     spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
                     aaMenuItem.title = spanString
@@ -150,12 +150,15 @@ internal fun MainActivity.setupNavigationBar() {
                             resources.getString(R.string.pref_graph_trips_selected)
 
                         it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = true
+
+                        val spanString = SpannableString("${resources.getString(R.string.pref_graph_view_filters)} (${getGraphFilterSource()})")
+                        spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
+                        it.menu.findItem(R.id.ctx_menu_submenu_filters).title = spanString
                      }
 
                     resources.getString(R.string.navigation_title_giulia) -> {
-                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
-                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).title =
-                            resources.getString(R.string.pref_giulia_apply_graph_filter)
+                       it.menu.findItem(R.id.ctx_menu_view_custom_action_1).title = resources.getString(R.string.pref_giulia_apply_graph_filter)
+                       it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
                     }
 
                     else -> {
@@ -252,19 +255,35 @@ internal fun MainActivity.setupNavigationBarButtons() {
     }
 }
 
-private fun applyGraphViewFilter(screenId: Int) {
-    val propertyId =  when (Prefs.getS("pref.graph.filter.source","Giulia")){
+private fun MainActivity.applyGraphViewFilter(screenId: Int) {
+    val propertyId: String? =  when (getGraphFilterSource()){
         "Giulia" -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
         "Gauge" -> gaugeVirtualScreen.getVirtualScreenPrefKey("$screenId")
+        "AA" -> {
+            if (isAndroidAutoEnabled()) {
+               "pref.aa.pids.profile_$screenId"
+            } else {
+                null
+            }
+        }
         else -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
     }
 
     Log.i(LOG_TAG, "Applying graph view filter for property.id=$propertyId")
-    tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(propertyId).toList())
-    tripVirtualScreenManager.updateScreenId()
 
-    navigateToScreen(R.id.navigation_graph)
+    propertyId?.let{
+        val filter = Prefs.getStringSet(propertyId).toList()
+        Log.i(LOG_TAG, "Applying graph view filter=$filter")
+        tripVirtualScreenManager.updateReservedVirtualScreen(filter)
+        tripVirtualScreenManager.updateScreenId()
+
+        navigateToScreen(R.id.navigation_graph)
+    }
 }
+
+private fun getGraphFilterSource() = Prefs.getS("pref.graph.filter.source", "Giulia")
+
+private fun MainActivity.isAndroidAutoEnabled() = resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)
 
 private fun MainActivity.getCurrentScreenId(): Int {
     val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_nav_view)
