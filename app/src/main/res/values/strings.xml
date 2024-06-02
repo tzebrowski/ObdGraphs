@@ -63,7 +63,7 @@
     <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
     <string name="pref.adapter_reconnect">Enable OBD2 Adapter automatic reconnect when connectivity errors occur</string>
     <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts</string>
-    <string name="pref.adapter.query.view_individual.enabled">Fetch PIDs only for current active screen</string>
+    <string name="pref.adapter.query.view_individual.enabled">Fetch PIDs based on the current screen selection</string>
     <string name="pref.adapter.query.view_individual.enabled_summary">By setting this parameter, only selected PIDs on the current screen are fetched from vehicle. This feature increase performance and its recommend for slow adapters.</string>
     <string name="pref.adapter.query.view_individual.dialog_disabled_warning">Dialog is disabled because individual query strategy is enabled.</string>
 
