@@ -595,20 +595,22 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.theme">
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.gauge_display_background"
+                        android:title="@string/pref.gauge_display_background"
+                        app:singleLineTitle="false" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="@android:color/holo_red_light"
+                        android:key="pref.gauge_background_color"
+                        android:title="@string/pref.gauge_background_color" />
+                </PreferenceCategory>
+
             </PreferenceScreen>
 
-            <PreferenceCategory android:title="@string/pref.theme">
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref.gauge_display_background"
-                    android:title="@string/pref.gauge_display_background"
-                    app:singleLineTitle="false" />
-
-                <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                    android:defaultValue="@android:color/holo_red_light"
-                    android:key="pref.gauge_background_color"
-                    android:title="@string/pref.gauge_background_color" />
-            </PreferenceCategory>
 
             <PreferenceScreen
                 android:summary="@string/pref.drag_racing_category"
