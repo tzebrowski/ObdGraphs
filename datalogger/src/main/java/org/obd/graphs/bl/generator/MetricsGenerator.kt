@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
 
     private val raw = object : ConnectorResponse {
-        override fun byteAt(p0: Int): Byte = "".toByte()
+        override fun at(p0: Int): Byte = "".toByte()
         override fun capacity(): Long = 0
         override fun remaining(): Int = 0
     }
