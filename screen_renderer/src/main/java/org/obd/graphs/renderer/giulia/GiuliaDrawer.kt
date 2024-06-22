@@ -127,7 +127,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
             canvas,
             left,
             itemWidth(area).toFloat(), top1, metric,
-            color = settings.colorTheme().progressColor
+            color = settings.getColorTheme().progressColor
         )
 
         top1 += calculateDividerSpacing()
@@ -135,7 +135,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         drawDivider(
             canvas,
             left, itemWidth(area).toFloat(), top1,
-            color = settings.colorTheme().dividerColor
+            color = settings.getColorTheme().dividerColor
         )
 
         top1 += (textSizeBase * 1.3).toInt()
@@ -232,7 +232,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         top: Float,
         textSize: Float
     ): Float {
-        val colorTheme = settings.colorTheme()
+        val colorTheme = settings.getColorTheme()
         valuePaint.color = if (inAlert(metric)) {
             colorTheme.currentValueInAlertColor
         } else {

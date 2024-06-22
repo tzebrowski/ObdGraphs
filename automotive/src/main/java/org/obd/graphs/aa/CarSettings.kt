@@ -77,7 +77,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         fontSize = Prefs.getS("pref.aa.drag_race.font_size", "30").toInt()
     }
 
-    override fun colorTheme(): ColorTheme = colorTheme.apply {
+    override fun getColorTheme(): ColorTheme = colorTheme.apply {
         progressColor = Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
         dividerColor = Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE)
         currentValueColor = Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE)

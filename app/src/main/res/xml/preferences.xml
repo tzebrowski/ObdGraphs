@@ -64,7 +64,7 @@
                     android:title="@string/pref.pids.registry.resource_list"
                     app:useSimpleSummaryProvider="true" />
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.aa.AACheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids.registry.resource.external_storage"
                     android:key="pref.pids.registry.access_external_storage"

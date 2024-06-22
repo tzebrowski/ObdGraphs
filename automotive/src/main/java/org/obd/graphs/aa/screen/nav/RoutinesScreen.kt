@@ -236,13 +236,13 @@ internal class RoutinesScreen(
                 createAction(
                     carContext,
                     R.drawable.action_disconnect,
-                    mapColor(settings.colorTheme().actionsBtnDisconnectColor)
+                    mapColor(settings.getColorTheme().actionsBtnDisconnectColor)
                 ) {
                     stopDataLogging()
                     toast.show(carContext, R.string.toast_connection_disconnect)
                 })
         } else {
-            builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
+            builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.getColorTheme().actionsBtnConnectColor)) {
                 query.setStrategy(QueryStrategyType.ROUTINES_QUERY)
                 dataLogger.start(query)
             })

@@ -139,7 +139,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         marginLeft += getTextWidth(text, statusPaint) + 2f
 
         val color: Int
-        val colorTheme = settings.colorTheme()
+        val colorTheme = settings.getColorTheme()
         text = dataLogger.status().name.lowercase()
 
         color = when (dataLogger.status()) {

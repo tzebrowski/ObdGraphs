@@ -49,7 +49,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     inline fun drawShiftLights(
         canvas: Canvas,
         area: Rect,
-        color: Int = settings.colorTheme().progressColor,
+        color: Int = settings.getColorTheme().progressColor,
         shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH,
         blinking: Boolean = false
     ) {
@@ -200,7 +200,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                 canvas,
                 left,
                 getAreaWidth(area), top1, metric,
-                color = settings.colorTheme().progressColor
+                color = settings.getColorTheme().progressColor
             )
 
             top1 += calculateDividerSpacing()
@@ -208,7 +208,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             drawDivider(
                 canvas,
                 left, getAreaWidth(area), top1,
-                color = settings.colorTheme().dividerColor
+                color = settings.getColorTheme().dividerColor
             )
         }
 

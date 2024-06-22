@@ -93,7 +93,7 @@ interface ScreenSettings {
     fun isAlertLegendEnabled(): Boolean = false
     fun isAlertingEnabled(): Boolean = false
 
-    fun colorTheme(): ColorTheme = ColorTheme()
+    fun getColorTheme(): ColorTheme = ColorTheme()
 
     fun applyVirtualScreen1() {}
     fun applyVirtualScreen2() {}

@@ -85,12 +85,12 @@ internal abstract class CarScreen(
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.isRunning()) {
-            builder.addAction(createAction(carContext, R.drawable.action_disconnect, mapColor(settings.colorTheme().actionsBtnDisconnectColor)) {
+            builder.addAction(createAction(carContext, R.drawable.action_disconnect, mapColor(settings.getColorTheme().actionsBtnDisconnectColor)) {
                 stopDataLogging()
                 toast.show(carContext, R.string.toast_connection_disconnect)
             })
         } else {
-            builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.colorTheme().actionsBtnConnectColor)) {
+            builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.getColorTheme().actionsBtnConnectColor)) {
                 when (screenId) {
                     GIULIA_SCREEN_ID -> {
                         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {

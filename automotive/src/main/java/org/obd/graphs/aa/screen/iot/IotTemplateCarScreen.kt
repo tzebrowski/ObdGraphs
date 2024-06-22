@@ -202,7 +202,7 @@ internal class IotTemplateCarScreen(
 
                 paneBuilder = paneBuilder.addAction(createAction(carContext,
                     R.drawable.action_virtual_screen_1,
-                    mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
+                    mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
                 ) {
 
                     settings.applyVirtualScreen1()
@@ -212,7 +212,7 @@ internal class IotTemplateCarScreen(
 
                 paneBuilder = paneBuilder.addAction(createAction(carContext,
                     R.drawable.action_virtual_screen_2,
-                    mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
+                    mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
                 ) {
 
                     settings.applyVirtualScreen2()
@@ -223,7 +223,7 @@ internal class IotTemplateCarScreen(
                 metricsCollector.getMetrics().forEach {
                     paneBuilder.addRow(
                         Row.Builder()
-                        .setImage(valueDrawable.draw(it.valueToString(),settings.colorTheme().progressColor),
+                        .setImage(valueDrawable.draw(it.valueToString(),settings.getColorTheme().progressColor),
                             Row.IMAGE_TYPE_LARGE
                         )
                         .setMetadata(Metadata.Builder().build())

@@ -239,7 +239,7 @@ internal class SurfaceScreen(
     private fun actionStripColor(key: String): CarColor = if (settings.getCurrentVirtualScreen() == key) {
         CarColor.GREEN
     } else {
-        mapColor(settings.colorTheme().actionsBtnVirtualScreensColor)
+        mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
     }
 
     private fun isAllowedFrameRendering() = screenId == GIULIA_SCREEN_ID ||

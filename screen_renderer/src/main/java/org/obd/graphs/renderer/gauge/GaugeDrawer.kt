@@ -231,7 +231,7 @@ internal class GaugeDrawer(
     }
 
     private fun setProgressGradient(rect: RectF) {
-        val colors = intArrayOf(COLOR_WHITE, settings.colorTheme().progressColor)
+        val colors = intArrayOf(COLOR_WHITE, settings.getColorTheme().progressColor)
         val gradient = SweepGradient(rect.centerY(), rect.centerX(), colors, null)
         val matrix = Matrix()
         matrix.postRotate(90f, rect.centerY(), rect.centerX())
@@ -337,7 +337,7 @@ internal class GaugeDrawer(
         valueScaler.scaleToNewRange(settings.getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
     private inline fun scaleColor(j: Int): Int = if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
-        settings.colorTheme().progressColor
+        settings.getColorTheme().progressColor
     } else {
         color(R.color.gray_light)
     }
@@ -357,7 +357,7 @@ internal class GaugeDrawer(
 
         drawScale(canvas, scaleRect, start, end, paintColor = {
             if (it == 10 || it == 12) {
-                settings.colorTheme().progressColor
+                settings.getColorTheme().progressColor
             } else {
                 color(R.color.gray_light)
             }
@@ -375,7 +375,7 @@ internal class GaugeDrawer(
 
         drawScale(canvas, rect, (drawerSettings.dividersStepAngle * drawerSettings.dividerHighlightStart + 3).toInt(),
             (drawerSettings.dividersStepAngle * (drawerSettings.dividersCount - 1)).toInt(),
-            paintColor = { settings.colorTheme().progressColor }) {
+            paintColor = { settings.getColorTheme().progressColor }) {
             drawerSettings.startAngle + it
         }
 
@@ -443,7 +443,7 @@ internal class GaugeDrawer(
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
             numbersPaint.color = if (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep) {
-                settings.colorTheme().progressColor
+                settings.getColorTheme().progressColor
             } else {
                 color(R.color.gray)
             }
