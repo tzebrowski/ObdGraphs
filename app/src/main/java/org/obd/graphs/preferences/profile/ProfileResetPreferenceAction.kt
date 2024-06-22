@@ -20,9 +20,16 @@ package org.obd.graphs.preferences.profile
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
+import org.obd.graphs.R
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.profile
+import org.obd.graphs.sendBroadcastEvent
 
 class ProfileResetPreferenceAction(
     context: Context,
@@ -31,8 +38,22 @@ class ProfileResetPreferenceAction(
 
     init {
         setOnPreferenceClickListener {
-            profile.reset()
-            navigateToPreferencesScreen("pref.profiles")
+            val builder = AlertDialog.Builder(context)
+            val title = context.getString(R.string.pref_profile_reset_confirmation_dialog)
+            val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
+            val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
+
+            builder.setMessage(title)
+                .setCancelable(false)
+                .setPositiveButton(yes) { _, _ ->
+                    profile.reset()
+                    navigateToPreferencesScreen("pref.profiles")
+                }
+                .setNegativeButton(no) { dialog, _ ->
+                    dialog.dismiss()
+                }
+            val alert = builder.create()
+            alert.show()
             true
         }
     }
