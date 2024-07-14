@@ -84,7 +84,7 @@ internal abstract class CarScreen(
     ): ActionStrip {
         var builder = ActionStrip.Builder()
 
-        builder = if (dataLogger.isRunning()) {
+        builder = if (dataLogger.status() == WorkflowStatus.Connecting || dataLogger.status() == WorkflowStatus.Connected) {
             builder.addAction(createAction(carContext, R.drawable.action_disconnect, mapColor(settings.getColorTheme().actionsBtnDisconnectColor)) {
                 stopDataLogging()
                 toast.show(carContext, R.string.toast_connection_disconnect)
