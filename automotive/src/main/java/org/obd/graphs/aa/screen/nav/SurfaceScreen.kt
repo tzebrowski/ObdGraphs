@@ -11,12 +11,12 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.Template
 import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT
+import org.obd.graphs.AA_REFRESH_EVENT
 import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
 import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
-import org.obd.graphs.AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT
 import org.obd.graphs.aa.*
 import org.obd.graphs.aa.screen.*
-import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
@@ -45,6 +45,20 @@ internal class SurfaceScreen(
             when (intent?.action) {
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateSurfaceRender()
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
+
+                AA_REFRESH_EVENT -> {
+                    Log.i(LOG_KEY,"Received forced refresh screen event")
+
+                    when (settings.getCurrentVirtualScreen()) {
+                        VIRTUAL_SCREEN_1 -> settings.applyVirtualScreen1()
+                        VIRTUAL_SCREEN_2 -> settings.applyVirtualScreen2()
+                        VIRTUAL_SCREEN_3 -> settings.applyVirtualScreen3()
+                        VIRTUAL_SCREEN_4 -> settings.applyVirtualScreen4()
+                    }
+
+                    applyMetricsFilter()
+                    renderFrame()
+                }
 
                 AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
                     applyMetricsFilter()
@@ -153,6 +167,7 @@ internal class SurfaceScreen(
             addAction(PROFILE_RESET_EVENT)
             addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
+            addAction(AA_REFRESH_EVENT)
         })
     }
 
@@ -162,12 +177,13 @@ internal class SurfaceScreen(
 
     private fun applyMetricsFilter() {
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            Log.i(LOG_KEY, "User selection PIDs=${settings.getSelectedPIDs()}")
 
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
 
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+            Log.i(LOG_KEY, "User selection PIDs=${settings.getSelectedPIDs()}")
+
             dataLogger.updateQuery(query)
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
@@ -189,7 +205,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(1)) {
             added = true
 
-            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
                 parent.invalidate()
                 settings.applyVirtualScreen1()
                 applyMetricsFilter()
@@ -200,7 +216,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(2)) {
 
             added = true
-            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_2, actionStripColor(VIRTUAL_SCREEN_2)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_2, actionStripColor(VIRTUAL_SCREEN_2)) {
                 parent.invalidate()
                 settings.applyVirtualScreen2()
                 applyMetricsFilter()
@@ -211,7 +227,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(3)) {
 
             added = true
-            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
                 parent.invalidate()
                 settings.applyVirtualScreen3()
                 applyMetricsFilter()
@@ -222,7 +238,7 @@ internal class SurfaceScreen(
         if (settings.isVirtualScreenEnabled(4)) {
             added = true
 
-            builder = builder.addAction(createAction(carContext,R.drawable.action_virtual_screen_4, actionStripColor(VIRTUAL_SCREEN_4)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_4, actionStripColor(VIRTUAL_SCREEN_4)) {
                 parent.invalidate()
                 settings.applyVirtualScreen4()
                 applyMetricsFilter()

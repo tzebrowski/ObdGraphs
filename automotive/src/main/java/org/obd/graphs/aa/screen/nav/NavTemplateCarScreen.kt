@@ -158,11 +158,10 @@ internal class NavTemplateCarScreen(
                     try {
                         renderingThread.start()
                         fps.start()
-                        invalidate()
-                        //force refresh screen
-                        sendBroadcastEvent(AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
+                        sendBroadcastEvent(AA_REFRESH_EVENT)
                         navigationManager().navigationStarted()
                         toast.show(carContext, R.string.main_activity_toast_connection_established)
+                        invalidate()
 
                     }catch (e: Exception){
                         Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)

@@ -45,7 +45,8 @@ import org.obd.graphs.sendBroadcastEvent
 
 const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
 const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
-const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
+const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED
+= "pref.aa.pids.profile_3.event.changed"
 const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
 const val LOG_KEY = "CarScreen"
 
