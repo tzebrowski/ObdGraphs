@@ -71,6 +71,7 @@
                     android:summary="@string/pref.experimental_read_external_storage_enabled"
                     android:title="@string/pref.pids.registry.resource.external_storage"
                     app:enabled="@bool/FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED"
+                    app:experimental="true"
                     app:singleLineTitle="false" />
 
             </PreferenceCategory>
