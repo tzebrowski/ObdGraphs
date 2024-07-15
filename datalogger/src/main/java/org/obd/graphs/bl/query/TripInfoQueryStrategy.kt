@@ -22,7 +22,6 @@ package org.obd.graphs.bl.query
 internal class TripInfoQueryStrategy : QueryStrategy() {
     override fun getPIDs(): MutableSet<Long> =
         mutableSetOf(
-
             namesRegistry.getVehicleSpeedPID(),
             namesRegistry.getFuelConsumptionPID(),
             namesRegistry.getFuelLevelPID(),
@@ -30,7 +29,6 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             namesRegistry.getAmbientTempPID(),
             namesRegistry.getGearboxEngagedPID(),
             namesRegistry.getGearboxOilTempPID(),
-
             namesRegistry.getOilTempPID(),
             namesRegistry.getCoolantTempPID(),
             namesRegistry.getExhaustTempPID(),

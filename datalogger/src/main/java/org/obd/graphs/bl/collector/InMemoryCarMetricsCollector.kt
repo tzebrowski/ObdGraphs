@@ -32,6 +32,8 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     override fun getMetrics(enabled: Boolean): List<Metric> = metrics.values.filter { it.enabled == enabled }
 
+    override fun getMetric(id: Long): Metric? = metrics[id]
+
     override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
         Log.i(LOG_KEY, "Updating visible PIDs=$enabled with order=$order")
 

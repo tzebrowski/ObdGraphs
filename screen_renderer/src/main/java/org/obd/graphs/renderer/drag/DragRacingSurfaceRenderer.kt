@@ -54,13 +54,14 @@ internal class DragRacingSurfaceRenderer(
             val dragRaceResults = dragRacingResultRegistry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
-            val margin = if (settings.getDragRacingSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
+            val dragRacingSettings = settings.getDragRacingSettings()
+            val margin = if (dragRacingSettings.shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
             var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
 
-            if (settings.getDragRacingSettings().shiftLightsEnabled) {
-                dragRacingResultRegistry.setShiftLightsRevThreshold(settings.getDragRacingSettings().shiftLightsRevThreshold)
+            if (dragRacingSettings.shiftLightsEnabled) {
+                dragRacingResultRegistry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
                 // permanent white boxes
                 dragRacingDrawer.drawShiftLights(canvas, area, blinking = false)
             }
@@ -83,7 +84,7 @@ internal class DragRacingSurfaceRenderer(
             }
 
             metricsCollector.getMetrics().firstOrNull { it.source.isVehicleSpeed() }?.let {
-                top = dragRacingDrawer.drawMetric(
+                top = dragRacingDrawer.drawVehicleSpeed(
                     canvas = canvas,
                     area = area,
                     metric = it,

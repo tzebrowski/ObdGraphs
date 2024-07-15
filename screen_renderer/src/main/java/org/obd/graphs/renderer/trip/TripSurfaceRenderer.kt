@@ -23,12 +23,23 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.drag.DragRacingResults
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.isVehicleSpeed
+import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
+
+
+data class TripInfoDetails(
+    var ambientTemp: Number? = null,
+    var atmPressure: Number? = null,
+    var vehicleSpeed: Number? = null,
+    var fuellevel: Number? = null,
+    var fuelConsumption: Number? = null,
+    var oilTemp: Number? = null,
+    var coolantTemp: Number? = null,
+    var airTemp: Number? = null,
+    var exhaustTemp: Number? = null,
+    var gearboxOilTemp: Number? = null,
+    var gearboxEngaged: Number? = null,
+)
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -39,39 +50,24 @@ internal class TripSurfaceRenderer(
     fps: Fps,
     viewSettings: ViewSettings
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
-
+    private val tripInfo = TripInfoDetails()
     private val tripDrawer = TripDrawer(context, settings)
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
             enabled = query.getIDs()
-       )
+        )
     }
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let { it ->
 
-            val dragRaceResults = dragRacingResultRegistry.getResult()
             tripDrawer.drawBackground(canvas, it)
 
-            val margin = if (settings.getDragRacingSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
+            val margin = 0
             val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
             var left = tripDrawer.getMarginLeft(area.left.toFloat())
-
-            if (settings.getDragRacingSettings().shiftLightsEnabled) {
-                dragRacingResultRegistry.setShiftLightsRevThreshold(settings.getDragRacingSettings().shiftLightsRevThreshold)
-                // permanent white boxes
-                tripDrawer.drawShiftLights(canvas, area, blinking = false)
-            }
-
-            if (isShiftLight(dragRaceResults)) {
-                tripDrawer.drawShiftLights(canvas, area, blinking = true)
-            }
-
-            if (dragRaceResults.readyToRace){
-                tripDrawer.drawShiftLights(canvas, area, color = Color.GREEN, blinking = true)
-            }
 
             left += 5
 
@@ -82,26 +78,35 @@ internal class TripSurfaceRenderer(
                 top += 40
             }
 
-            metricsCollector.getMetrics().firstOrNull { it.source.isVehicleSpeed() }?.let {
-                top = tripDrawer.drawMetric(
-                    canvas = canvas,
-                    area = area,
-                    metric = it,
-                    left = left,
-                    top = top
-                )
-            }
 
-            tripDrawer.drawDragRaceResults(
+
+            tripDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
                 left = left,
                 top = top,
-                dragRacingResults = dragRaceResults)
+                tripInfo = getTripInfo()
+            )
         }
     }
 
-    private fun getArea(area: Rect, canvas: Canvas, margin: Int) : Rect {
+    private fun getTripInfo(): TripInfoDetails {
+        metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
+            tripInfo.apply { vehicleSpeed = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getAmbientTempPID())?.let {
+            tripInfo.apply { ambientTemp = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getAtmPressurePID())?.let {
+            tripInfo.apply { atmPressure = it.value }
+        }
+
+        return tripInfo
+    }
+
+    private fun getArea(area: Rect, canvas: Canvas, margin: Int): Rect {
         val newArea = Rect()
         if (area.isEmpty) {
             newArea[0 + margin, viewSettings.marginTop, canvas.width - 1 - margin] = canvas.height - 1
@@ -112,14 +117,12 @@ internal class TripSurfaceRenderer(
         return newArea
     }
 
-    private fun isShiftLight(dragRaceResults: DragRacingResults) =
-        settings.getDragRacingSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
 
     override fun recycle() {
         tripDrawer.recycle()
     }
 
     init {
-        applyMetricsFilter(Query.instance(QueryStrategyType.DRAG_RACING_QUERY))
+        applyMetricsFilter(Query.instance(QueryStrategyType.TRIP_INFO_QUERY))
     }
 }
