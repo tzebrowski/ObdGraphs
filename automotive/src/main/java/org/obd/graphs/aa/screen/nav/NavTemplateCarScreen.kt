@@ -72,7 +72,7 @@ internal class NavTemplateCarScreen(
                         Log.d(LOG_KEY, "Selected new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()
-                            if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID) {
+                            if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID) {
                                 surfaceScreen.toggleSurfaceRenderer(newScreen)
                                 invalidate()
                             } else {

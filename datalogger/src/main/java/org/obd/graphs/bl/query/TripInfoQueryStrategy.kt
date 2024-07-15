@@ -17,10 +17,24 @@
  * limitations under the License.
  **/
 package org.obd.graphs.bl.query
-enum class QueryStrategyType {
-    ROUTINES_QUERY,
-    DRAG_RACING_QUERY,
-    TRIP_INFO_QUERY,
-    SHARED_QUERY,
-    INDIVIDUAL_QUERY_FOR_EACH_VIEW
+
+
+internal class TripInfoQueryStrategy : QueryStrategy() {
+    override fun getPIDs(): MutableSet<Long> =
+        mutableSetOf(
+
+            namesRegistry.getVehicleSpeedPID(),
+            namesRegistry.getFuelConsumptionPID(),
+            namesRegistry.getFuelLevelPID(),
+            namesRegistry.getAtmPressurePID(),
+            namesRegistry.getAmbientTempPID(),
+            namesRegistry.getGearboxEngagedPID(),
+            namesRegistry.getGearboxOilTempPID(),
+
+            namesRegistry.getOilTempPID(),
+            namesRegistry.getCoolantTempPID(),
+            namesRegistry.getExhaustTempPID(),
+            namesRegistry.getAirTempPID(),
+        )
 }
+
