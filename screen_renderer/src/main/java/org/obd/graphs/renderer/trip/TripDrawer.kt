@@ -20,6 +20,7 @@ package org.obd.graphs.renderer.trip
 
 import android.content.Context
 import android.graphics.*
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 
@@ -42,22 +43,20 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         val textSizeBase = calculateFontSize(area)
 
         val x = 130
-        var rowTop = top + 10f
-        drawMetric(tripInfo.airTemp, "Intake Temp", rowTop, left, canvas, textSizeBase)
-        drawMetric(tripInfo.ambientTemp, "Ambient Temp", rowTop, left + x, canvas, textSizeBase)
-        drawMetric(tripInfo.coolantTemp, "Coolant Temp", rowTop, left + 2 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.oilTemp, "Oil Temp", rowTop, left + 3 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.exhaustTemp, "Exhaust Temp", rowTop, left + 4 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.gearboxOilTemp, "Gearbox Temp", rowTop, left + 5 * x, canvas, textSizeBase)
-
-
-        rowTop = top + (textSizeBase) + 42f
-        drawMetric(tripInfo.fuellevel, "Fuel Level", rowTop, left, canvas, textSizeBase)
-        drawMetric(tripInfo.gearboxEngaged, "Selected gear", rowTop, left + x, canvas, textSizeBase)
-        drawMetric(tripInfo.atmPressure, "Atm pressure", rowTop, left + 2 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.vehicleSpeed, "Vehicle speed", rowTop, left + 3 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.fuelConsumption, "Fuel Consumption", rowTop, left + 4 * x, canvas, textSizeBase)
-
+        var rowTop = top + 12f
+        drawMetric(tripInfo.airTemp!!, rowTop, left, canvas, textSizeBase)
+        drawMetric(tripInfo.ambientTemp!!, rowTop, left + x, canvas, textSizeBase)
+        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 2 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.oilTemp!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 4 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 5 * x, canvas, textSizeBase)
+        //second row
+        rowTop = top + (textSizeBase) + 46f
+        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase)
+        drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + x, canvas, textSizeBase)
+        drawMetric(tripInfo.atmPressure!!, rowTop, left + 2 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.vehicleSpeed!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase)
     }
 
 
@@ -83,23 +82,78 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
     private inline fun calculateFontSize(
         area: Rect
-    ): Float = (area.width() / 12f) * valueScaler.scaleToNewRange(
+    ): Float = (area.width() / 11f) * valueScaler.scaleToNewRange(
         settings.getDragRacingSettings().fontSize.toFloat(),
         CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX
     )
 
 
     private inline fun drawMetric(
-        value: Number?,
-        label: String,
+        metrics: Metric,
         top: Float,
         left: Float,
         canvas: Canvas,
         textSizeBase: Float
     ) {
-        drawText(canvas, timeToString(value), left, top, textSizeBase, color = Color.WHITE)
-        drawText(canvas, label, left, top + 24, textSizeBase * 0.35F, color = Color.LTGRAY)
+        drawText(canvas, metrics.valueToString(), left, top, textSizeBase, color = Color.WHITE, typeface =
+        Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
+        drawTitle(canvas, metrics, left, top + 24, textSizeBase * 0.30F)
     }
 
-    private inline fun timeToString(value: Number?): String = value?.toString() ?: "---"
+    private fun drawTitle(
+        canvas: Canvas,
+        metric: Metric,
+        left: Float,
+        top: Float,
+        textSize: Float
+    ) {
+
+        var top1 = top
+        titlePaint.textSize = textSize
+        titlePaint. typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+
+        val description = if (metric.source.command.pid.longDescription == null || metric.source.command.pid.longDescription.isEmpty()) {
+            metric.source.command.pid.description
+        } else {
+            metric.source.command.pid.longDescription
+        }
+
+        if (settings.isBreakLabelTextEnabled()) {
+
+            val text = description.split("\n")
+            if (text.size == 1) {
+                canvas.drawText(
+                    text[0],
+                    left,
+                    top,
+                    titlePaint
+                )
+
+            } else {
+                titlePaint.textSize = textSize
+                var vPos = top
+                text.forEach {
+                    canvas.drawText(
+                        it,
+                        left,
+                        vPos,
+                        titlePaint
+                    )
+                    vPos += titlePaint.textSize
+
+                }
+                top1 += titlePaint.textSize
+
+            }
+
+        } else {
+            val text = description.replace("\n", " ")
+            canvas.drawText(
+                text,
+                left,
+                top,
+                titlePaint
+            )
+        }
+    }
 }

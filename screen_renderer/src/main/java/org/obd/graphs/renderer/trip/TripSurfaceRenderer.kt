@@ -22,23 +22,24 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
 
 
 data class TripInfoDetails(
-    var ambientTemp: Number? = null,
-    var atmPressure: Number? = null,
-    var vehicleSpeed: Number? = null,
-    var fuellevel: Number? = null,
-    var fuelConsumption: Number? = null,
-    var oilTemp: Number? = null,
-    var coolantTemp: Number? = null,
-    var airTemp: Number? = null,
-    var exhaustTemp: Number? = null,
-    var gearboxOilTemp: Number? = null,
-    var gearboxEngaged: Number? = null,
+    var ambientTemp: Metric? = null,
+    var atmPressure: Metric? = null,
+    var vehicleSpeed: Metric? = null,
+    var fuellevel: Metric? = null,
+    var fuelConsumption: Metric? = null,
+    var oilTemp: Metric? = null,
+    var coolantTemp: Metric? = null,
+    var airTemp: Metric? = null,
+    var exhaustTemp: Metric? = null,
+    var gearboxOilTemp: Metric? = null,
+    var gearboxEngaged: Metric? = null,
 )
 
 
@@ -83,56 +84,23 @@ internal class TripSurfaceRenderer(
                 area = area,
                 left = left,
                 top = top,
-                tripInfo = getTripInfo()
+                tripInfo = tripInfo.apply {
+                    airTemp = metricsCollector.getMetric(namesRegistry.getAirTempPID())
+                    vehicleSpeed = metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())
+                    ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
+                    atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
+                    fuellevel = metricsCollector.getMetric(namesRegistry.getFuelLevelPID())
+                    fuelConsumption = metricsCollector.getMetric(namesRegistry.getFuelConsumptionPID())
+                    coolantTemp = metricsCollector.getMetric(namesRegistry.getCoolantTempPID())
+                    exhaustTemp = metricsCollector.getMetric(namesRegistry.getExhaustTempPID())
+                    oilTemp = metricsCollector.getMetric(namesRegistry.getOilTempPID())
+                    gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
+                    gearboxEngaged = metricsCollector.getMetric(namesRegistry.getGearboxEngagedPID())
+
+                }
             )
         }
     }
-
-    private fun getTripInfo(): TripInfoDetails {
-        metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
-            tripInfo.apply { vehicleSpeed = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getAmbientTempPID())?.let {
-            tripInfo.apply { ambientTemp = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getAtmPressurePID())?.let {
-            tripInfo.apply { atmPressure = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getFuelLevelPID())?.let {
-            tripInfo.apply { fuellevel = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getFuelConsumptionPID())?.let {
-            tripInfo.apply { fuelConsumption = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getCoolantTempPID())?.let {
-            tripInfo.apply { coolantTemp = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getExhaustTempPID())?.let {
-            tripInfo.apply { exhaustTemp = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getOilTempPID())?.let {
-            tripInfo.apply { oilTemp = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())?.let {
-            tripInfo.apply { gearboxOilTemp = it.value }
-        }
-
-        metricsCollector.getMetric(namesRegistry.getGearboxEngagedPID())?.let {
-            tripInfo.apply { gearboxEngaged = it.value }
-        }
-
-        return tripInfo
-    }
-
-
 
     override fun recycle() {
         tripDrawer.recycle()
