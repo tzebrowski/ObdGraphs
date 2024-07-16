@@ -102,17 +102,6 @@ internal class DragRacingSurfaceRenderer(
         }
     }
 
-    private fun getArea(area: Rect, canvas: Canvas, margin: Int) : Rect {
-        val newArea = Rect()
-        if (area.isEmpty) {
-            newArea[0 + margin, viewSettings.marginTop, canvas.width - 1 - margin] = canvas.height - 1
-        } else {
-            val width = canvas.width - 1 - (margin)
-            newArea[area.left + margin, area.top + viewSettings.marginTop, width] = canvas.height
-        }
-        return newArea
-    }
-
     private fun isShiftLight(dragRaceResults: DragRacingResults) =
         settings.getDragRacingSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
 

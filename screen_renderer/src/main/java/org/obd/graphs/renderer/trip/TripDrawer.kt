@@ -39,40 +39,29 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         tripInfo: TripInfoDetails
     ) {
 
-        val (_, textSizeBase) = calculateFontSize(area)
+        val textSizeBase = calculateFontSize(area)
 
-        val currentXPos = area.centerX() / 1.5f
-        val lastXPos = area.centerX() + 60f
-        val bestXPos = area.centerX() * 1.60f
+        val x = 130
+        var rowTop = top + 10f
+        drawMetric(tripInfo.airTemp, "Intake Temp", rowTop, left, canvas, textSizeBase)
+        drawMetric(tripInfo.ambientTemp, "Ambient Temp", rowTop, left + x, canvas, textSizeBase)
+        drawMetric(tripInfo.coolantTemp, "Coolant Temp", rowTop, left + 2 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.oilTemp, "Oil Temp", rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.exhaustTemp, "Exhaust Temp", rowTop, left + 4 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.gearboxOilTemp, "Gearbox Temp", rowTop, left + 5 * x, canvas, textSizeBase)
 
-        // legend
-        drawText(canvas, "Current", currentXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Last", lastXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Best", bestXPos, top, textSizeBase, color = Color.LTGRAY)
 
-        // 0-60
-        var rowTop = top + textSizeBase + 12f
-        drawDragRacingEntry(area, tripInfo.airTemp, "airTemp",  rowTop, left,canvas, textSizeBase)
+        rowTop = top + (textSizeBase) + 42f
+        drawMetric(tripInfo.fuellevel, "Fuel Level", rowTop, left, canvas, textSizeBase)
+        drawMetric(tripInfo.gearboxEngaged, "Selected gear", rowTop, left + x, canvas, textSizeBase)
+        drawMetric(tripInfo.atmPressure, "Atm pressure", rowTop, left + 2 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.vehicleSpeed, "Vehicle speed", rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.fuelConsumption, "Fuel Consumption", rowTop, left + 4 * x, canvas, textSizeBase)
 
-        // 0 - 100
-        rowTop = top + (2 * textSizeBase) + 24f
-        drawDragRacingEntry(area, tripInfo.ambientTemp, "ambientTemp",  rowTop, left, canvas, textSizeBase)
-
-        // 60 - 140
-        rowTop = top + (3 * textSizeBase) + 36f
-        drawDragRacingEntry(area,tripInfo.coolantTemp, "coolantTemp", rowTop, left,canvas, textSizeBase)
-
-        // 0 - 160
-        rowTop = top + (4 * textSizeBase) + 48f
-        drawDragRacingEntry(area,tripInfo.fuellevel, "fuelevel", rowTop, left, canvas, textSizeBase)
-
-        // 100 - 200
-        rowTop = top + (5 * textSizeBase) + 60f
-        drawDragRacingEntry(area, tripInfo.fuelConsumption, "fuelConsumption", rowTop, left, canvas, textSizeBase)
     }
 
 
-    fun drawText(
+    private fun drawText(
         canvas: Canvas,
         text: String,
         left: Float,
@@ -94,34 +83,22 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
     private inline fun calculateFontSize(
         area: Rect
-    ): Pair<Float, Float> {
-
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getDragRacingSettings().fontSize.toFloat(),
-            CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
-
-        val areaWidth = area.width()
-        val valueTextSize = (areaWidth / 18f) * scaleRatio
-        val textSizeBase = (areaWidth / 21f) * scaleRatio
-        return Pair(valueTextSize, textSizeBase)
-    }
+    ): Float = (area.width() / 12f) * valueScaler.scaleToNewRange(
+        settings.getDragRacingSettings().fontSize.toFloat(),
+        CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX
+    )
 
 
-    private inline fun drawDragRacingEntry(area: Rect,
-                                           value: Number?,
-                                           label: String,
-                                           top: Float,
-                                           left:Float,
-                                           canvas: Canvas,
-                                           textSizeBase: Float) {
-
-
-        val currentXPos = area.centerX() / 1.5f
-        val lastXPos = area.centerX() + 60f
-
-        drawText(canvas, label, left, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, timeToString(value), currentXPos, top, textSizeBase)
-
-        drawText(canvas, timeToString(value), lastXPos, top, textSizeBase)
+    private inline fun drawMetric(
+        value: Number?,
+        label: String,
+        top: Float,
+        left: Float,
+        canvas: Canvas,
+        textSizeBase: Float
+    ) {
+        drawText(canvas, timeToString(value), left, top, textSizeBase, color = Color.WHITE)
+        drawText(canvas, label, left, top + 24, textSizeBase * 0.35F, color = Color.LTGRAY)
     }
 
     private inline fun timeToString(value: Number?): String = value?.toString() ?: "---"

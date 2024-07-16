@@ -78,8 +78,6 @@ internal class TripSurfaceRenderer(
                 top += 40
             }
 
-
-
             tripDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
@@ -103,19 +101,37 @@ internal class TripSurfaceRenderer(
             tripInfo.apply { atmPressure = it.value }
         }
 
+        metricsCollector.getMetric(namesRegistry.getFuelLevelPID())?.let {
+            tripInfo.apply { fuellevel = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getFuelConsumptionPID())?.let {
+            tripInfo.apply { fuelConsumption = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getCoolantTempPID())?.let {
+            tripInfo.apply { coolantTemp = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getExhaustTempPID())?.let {
+            tripInfo.apply { exhaustTemp = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getOilTempPID())?.let {
+            tripInfo.apply { oilTemp = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())?.let {
+            tripInfo.apply { gearboxOilTemp = it.value }
+        }
+
+        metricsCollector.getMetric(namesRegistry.getGearboxEngagedPID())?.let {
+            tripInfo.apply { gearboxEngaged = it.value }
+        }
+
         return tripInfo
     }
 
-    private fun getArea(area: Rect, canvas: Canvas, margin: Int): Rect {
-        val newArea = Rect()
-        if (area.isEmpty) {
-            newArea[0 + margin, viewSettings.marginTop, canvas.width - 1 - margin] = canvas.height - 1
-        } else {
-            val width = canvas.width - 1 - (margin)
-            newArea[area.left + margin, area.top + viewSettings.marginTop, width] = canvas.height
-        }
-        return newArea
-    }
 
 
     override fun recycle() {
