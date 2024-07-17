@@ -22,25 +22,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
-
-
-data class TripInfoDetails(
-    var ambientTemp: Metric? = null,
-    var atmPressure: Metric? = null,
-    var vehicleSpeed: Metric? = null,
-    var fuellevel: Metric? = null,
-    var fuelConsumption: Metric? = null,
-    var oilTemp: Metric? = null,
-    var coolantTemp: Metric? = null,
-    var airTemp: Metric? = null,
-    var exhaustTemp: Metric? = null,
-    var gearboxOilTemp: Metric? = null,
-    var gearboxEngaged: Metric? = null,
-)
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -86,7 +70,7 @@ internal class TripSurfaceRenderer(
                 top = top,
                 tripInfo = tripInfo.apply {
                     airTemp = metricsCollector.getMetric(namesRegistry.getAirTempPID())
-                    vehicleSpeed = metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())
+                    totalMisfires = metricsCollector.getMetric(namesRegistry.getTotalMisfiresPID())
                     ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
                     atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
                     fuellevel = metricsCollector.getMetric(namesRegistry.getFuelLevelPID())
@@ -96,7 +80,7 @@ internal class TripSurfaceRenderer(
                     oilTemp = metricsCollector.getMetric(namesRegistry.getOilTempPID())
                     gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
                     gearboxEngaged = metricsCollector.getMetric(namesRegistry.getGearboxEngagedPID())
-
+                    oilLevel = metricsCollector.getMetric(namesRegistry.getOilLevelPID())
                 }
             )
         }

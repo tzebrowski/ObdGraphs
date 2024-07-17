@@ -42,23 +42,25 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
         val textSizeBase = calculateFontSize(area)
 
-        val x = 130
+        val x = 135
         var rowTop = top + 12f
         drawMetric(tripInfo.airTemp!!, rowTop, left, canvas, textSizeBase)
-        drawMetric(tripInfo.ambientTemp!!, rowTop, left + x, canvas, textSizeBase)
-        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 2 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.oilTemp!!, rowTop, left + 3 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 4 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.ambientTemp!!, rowTop, left + 5 * x, canvas, textSizeBase)
+
         //second row
-        rowTop = top + (textSizeBase) + 46f
+        rowTop = top + (textSizeBase) + 52f
         drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase)
         drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + x, canvas, textSizeBase)
         drawMetric(tripInfo.atmPressure!!, rowTop, left + 2 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.vehicleSpeed!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase)
         drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase)
-    }
+        drawMetric(tripInfo.oilLevel!!, rowTop, left + 5 * x, canvas, textSizeBase)
 
+    }
 
     private fun drawText(
         canvas: Canvas,
@@ -82,7 +84,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
     private inline fun calculateFontSize(
         area: Rect
-    ): Float = (area.width() / 11f) * valueScaler.scaleToNewRange(
+    ): Float = (area.width() / 14f) * valueScaler.scaleToNewRange(
         settings.getDragRacingSettings().fontSize.toFloat(),
         CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX
     )
@@ -95,9 +97,9 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         canvas: Canvas,
         textSizeBase: Float
     ) {
-        drawText(canvas, metrics.valueToString(), left, top, textSizeBase, color = Color.WHITE, typeface =
-        Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
-        drawTitle(canvas, metrics, left, top + 24, textSizeBase * 0.30F)
+        drawText(canvas, metrics.valueToIntString(), left, top, textSizeBase, color = Color.WHITE, typeface =
+        Typeface.create(Typeface.DEFAULT, Typeface.NORMAL))
+        drawTitle(canvas, metrics, left, top + 24, textSizeBase * 0.35F)
     }
 
     private fun drawTitle(
