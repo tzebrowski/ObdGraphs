@@ -155,7 +155,6 @@ class SurfaceController(
                     setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
                 })
 
-                dataLogger.updateQuery(query = query)
                 surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
             }
 

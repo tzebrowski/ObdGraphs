@@ -259,5 +259,5 @@ internal class SurfaceScreen(
     }
 
     private fun isAllowedFrameRendering() = screenId == GIULIA_SCREEN_ID ||
-            screenId == DRAG_RACING_SCREEN_ID
+            screenId == DRAG_RACING_SCREEN_ID || screenId == TRIP_INFO_SCREEN_ID
 }
