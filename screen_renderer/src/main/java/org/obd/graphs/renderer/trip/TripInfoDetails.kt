@@ -15,4 +15,7 @@ data class TripInfoDetails(
     var gearboxOilTemp: Metric? = null,
     var gearboxEngaged: Metric? = null,
     var oilLevel: Metric? = null,
+    var intakePressure: Metric? = null,
+    var torque: Metric? = null,
+
 )

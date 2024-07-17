@@ -81,6 +81,8 @@ internal class TripSurfaceRenderer(
                     gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
                     gearboxEngaged = metricsCollector.getMetric(namesRegistry.getGearboxEngagedPID())
                     oilLevel = metricsCollector.getMetric(namesRegistry.getOilLevelPID())
+                    torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
+                    intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
                 }
             )
         }

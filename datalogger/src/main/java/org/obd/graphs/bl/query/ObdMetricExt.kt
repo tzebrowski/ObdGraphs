@@ -37,11 +37,21 @@ private const val AIR_TEMP_PID_ID = 7002L
 private const val TOTAL_MISFIRES_PID_ID = 17078L
 private const val OIL_LEVEL_PID_ID = 7014L
 
+private const val ENGINE_TORQUE_PID_ID = 7028L
+private const val INTAKE_PRESSURE_PID_ID = 7005L
+
+
+
+
 
 class PIDsNamesRegistry {
 
     fun getTotalMisfiresPID(): Long = TOTAL_MISFIRES_PID_ID
     fun getOilLevelPID(): Long = OIL_LEVEL_PID_ID
+
+    fun getTorquePID(): Long = ENGINE_TORQUE_PID_ID
+
+    fun getIntakePressurePID(): Long = INTAKE_PRESSURE_PID_ID
 
 
     fun getFuelConsumptionPID(): Long = FUEL_CONSUMPTION_PID_ID

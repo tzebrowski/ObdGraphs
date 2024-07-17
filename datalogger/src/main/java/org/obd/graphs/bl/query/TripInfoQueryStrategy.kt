@@ -35,6 +35,8 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             namesRegistry.getAirTempPID(),
             namesRegistry.getTotalMisfiresPID(),
             namesRegistry.getOilLevelPID(),
-        )
+            namesRegistry.getTorquePID(),
+            namesRegistry.getIntakePressurePID(),
+            )
 }
 
