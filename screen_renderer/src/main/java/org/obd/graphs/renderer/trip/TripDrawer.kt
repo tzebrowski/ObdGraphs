@@ -229,7 +229,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         textSizeBase: Float
     ) {
         drawText(
-            canvas, metrics.valueToIntString(), left, top, textSizeBase, color = Color.WHITE, typeface =
+            canvas, metrics.valueToString(), left, top, textSizeBase, color = Color.WHITE, typeface =
             Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
         )
         drawTitle(canvas, metrics, left, top + 24, textSizeBase * 0.35F)

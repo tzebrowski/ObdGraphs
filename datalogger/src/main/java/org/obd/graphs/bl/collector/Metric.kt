@@ -53,13 +53,6 @@ data class Metric(
             toNumber(source.valueToDouble())
         }
 
-    fun valueToIntString(): String =
-        if (source.value == null) {
-            NO_DATA
-        } else {
-            source.valueToDouble().toInt().toString()
-        }
-
     fun toFloat(): Float =
         if (source.value == null) {
             if (source.command.pid.min == null ) 0f else source.command.pid.min.toFloat()
