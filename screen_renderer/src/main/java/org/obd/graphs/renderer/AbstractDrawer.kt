@@ -121,7 +121,8 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         }
     }
 
-    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps, metricsCollector: MetricsCollector? = null){
+    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps, metricsCollector: MetricsCollector? = null,
+                        drawContextInfo: Boolean = false){
 
         var text = statusLabel
         var marginLeft = left
@@ -222,7 +223,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         }
 
         metricsCollector?.let {
-            if (settings.getDragRacingSettings().contextInfoEnabled) {
+            if (drawContextInfo) {
                 metricsCollector.getMetrics().firstOrNull { it.source.isAmbientTemp() }?.let {
                     marginLeft += getTextWidth(text, statusPaint) + 12F
                     text = ambientTempLabel

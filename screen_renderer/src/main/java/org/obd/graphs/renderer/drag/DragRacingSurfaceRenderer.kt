@@ -77,7 +77,7 @@ internal class DragRacingSurfaceRenderer(
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector)
+                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = settings.getDragRacingSettings().contextInfoEnabled)
                 top += 4
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
