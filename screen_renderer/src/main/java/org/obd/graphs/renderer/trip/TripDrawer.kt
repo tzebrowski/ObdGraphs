@@ -56,10 +56,11 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         rowTop = top + (textSizeBase) + 52f
         drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + x, canvas, textSizeBase)
-        drawMetric(tripInfo.atmPressure!!, rowTop, left + 2 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.oilLevel!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase, unitEnabled = false)
         drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.oilLevel!!, rowTop, left + 5 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.atmPressure!!, rowTop, left + 5 * x, canvas, textSizeBase)
+
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 2, Color.DKGRAY)
 
 
@@ -84,7 +85,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
         val areaWidth = area.width()
         val valueTextSize = (areaWidth / 17f) * scaleRatio
-        val textSizeBase = (areaWidth / 20f) * scaleRatio
+        val textSizeBase = (areaWidth / 22f) * scaleRatio
         return Pair(valueTextSize, textSizeBase)
     }
 
@@ -246,7 +247,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         left: Float,
         typeface: Typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
         color: Int = Color.WHITE,
-        statsEnabled: Boolean
+        statsEnabled: Boolean,
+        unitEnabled: Boolean
 
     ) {
 
@@ -259,10 +261,11 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         canvas.drawText(text, left, top, valuePaint)
         var textWidth = getTextWidth(text, valuePaint) + 2
 
-        valuePaint.color = Color.LTGRAY
-        valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas.drawText(metric.source.command.pid.units, (left + textWidth), top, valuePaint)
-
+        if (unitEnabled) {
+            valuePaint.color = Color.LTGRAY
+            valuePaint.textSize = (textSize * 0.4).toFloat()
+            canvas.drawText(metric.source.command.pid.units, (left + textWidth), top, valuePaint)
+        }
 
         if (settings.isStatisticsEnabled() && statsEnabled) {
             textWidth += getTextWidth(metric.source.command.pid.units, valuePaint) + 2
@@ -282,7 +285,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         left: Float,
         canvas: Canvas,
         textSizeBase: Float,
-        statsEnabled: Boolean = false
+        statsEnabled: Boolean = false,
+        unitEnabled: Boolean = true
     ) {
 
         drawValue(
@@ -291,9 +295,11 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
             top = top,
             textSize = textSizeBase * 0.8f,
             left = left,
-            color = Color.WHITE, typeface =
-            Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
-            statsEnabled = statsEnabled
+            color = Color.WHITE,
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
+            statsEnabled = statsEnabled,
+            unitEnabled = unitEnabled
+
         )
 
         drawTitle(canvas, metric, left, top + 24, textSizeBase * 0.35F)
