@@ -130,7 +130,7 @@ internal class SurfaceScreen(
     }
 
     fun renderFrame() {
-        if (isAllowedFrameRendering()) {
+        if (isScreenAllowedForFrameRendering(screenId)) {
             surfaceController.renderFrame()
         }
     }
@@ -258,6 +258,6 @@ internal class SurfaceScreen(
         mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
     }
 
-    private fun isAllowedFrameRendering() = screenId == GIULIA_SCREEN_ID ||
+    private fun isScreenAllowedForFrameRendering(screenId: Int) = screenId == GIULIA_SCREEN_ID ||
             screenId == DRAG_RACING_SCREEN_ID || screenId == TRIP_INFO_SCREEN_ID
 }
