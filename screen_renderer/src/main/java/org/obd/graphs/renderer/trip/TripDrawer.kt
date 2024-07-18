@@ -45,27 +45,26 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
         val x = 135
         var rowTop = top + 12f
-        drawMetric(tripInfo.airTemp!!, top = rowTop, left = left, canvas, textSizeBase)
-        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.airTemp!!, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.ambientTemp!!, rowTop, left + 5 * x, canvas, textSizeBase)
 
         //second row
         rowTop = top + (textSizeBase) + 52f
-        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase)
+        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + x, canvas, textSizeBase)
         drawMetric(tripInfo.atmPressure!!, rowTop, left + 2 * x, canvas, textSizeBase)
         drawMetric(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.oilLevel!!, rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.oilLevel!!, rowTop, left + 5 * x, canvas, textSizeBase, statsEnabled = true)
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 2, Color.DKGRAY)
 
 
         //metrics
         rowTop += 2.5f * textSizeBase
-
         drawMetric(canvas, area, tripInfo.intakePressure!!, left, rowTop)
         drawMetric(canvas, area, tripInfo.torque!!, left + getAreaWidth(area) + 10, rowTop)
 
@@ -76,7 +75,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
     ): Pair<Float, Float> {
 
         val scaleRatio = valueScaler.scaleToNewRange(
-            settings.getDragRacingSettings().fontSize.toFloat(),
+            settings.getTripInfoSettings().fontSize.toFloat(),
             CURRENT_MIN,
             CURRENT_MAX,
             NEW_MIN,
@@ -150,7 +149,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
                     left1,
                     top1,
                     Color.LTGRAY,
-                    tt,
+                    tt * 0.8f,
                     valuePaint
                 )
                 drawText(
@@ -246,7 +245,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         textSize: Float,
         left: Float,
         typeface: Typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
-        color: Int = Color.WHITE
+        color: Int = Color.WHITE,
+        statsEnabled: Boolean
 
     ) {
 
@@ -257,11 +257,21 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         valuePaint.textSize = textSize
         val text = metric.source.valueToString()
         canvas.drawText(text, left, top, valuePaint)
-        val textWidth = getTextWidth(text, valuePaint) + 2
+        var textWidth = getTextWidth(text, valuePaint) + 2
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textSize = (textSize * 0.4).toFloat()
         canvas.drawText(metric.source.command.pid.units, (left + textWidth), top, valuePaint)
+
+
+        if (settings.isStatisticsEnabled() && statsEnabled) {
+            textWidth += getTextWidth(metric.source.command.pid.units, valuePaint) + 2
+            valuePaint.color = Color.LTGRAY
+            valuePaint.textSize = (textSize * 0.65).toFloat()
+            canvas.drawText(metric.toNumber(metric.min), (left + textWidth), top, valuePaint)
+            canvas.drawText(metric.toNumber(metric.max), (left + textWidth), top - 20, valuePaint)
+        }
+
     }
 
     private fun calculateProgressBarHeight() = 16
@@ -271,7 +281,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         top: Float,
         left: Float,
         canvas: Canvas,
-        textSizeBase: Float
+        textSizeBase: Float,
+        statsEnabled: Boolean = false
     ) {
 
         drawValue(
@@ -281,7 +292,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
             textSize = textSizeBase * 0.8f,
             left = left,
             color = Color.WHITE, typeface =
-            Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+            Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
+            statsEnabled = statsEnabled
         )
 
         drawTitle(canvas, metric, left, top + 24, textSizeBase * 0.35F)

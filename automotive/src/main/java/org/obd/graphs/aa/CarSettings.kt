@@ -66,6 +66,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private val dragRacingSettings = DragRacingSettings()
     private val colorTheme = ColorTheme()
     private val gaugeRendererSettings = GaugeRendererSettings()
+    private val tripInfoSettings = TripInfoSettings()
 
     override fun getDragRacingSettings(): DragRacingSettings = dragRacingSettings.apply {
         vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
@@ -76,6 +77,12 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         contextInfoEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
         fontSize = Prefs.getS("pref.aa.drag_race.font_size", "30").toInt()
     }
+
+    override fun getTripInfoSettings(): TripInfoSettings = tripInfoSettings.apply {
+        fontSize = Prefs.getS("pref.aa.trip_info.font_size", "24").toInt()
+    }
+
+
 
     override fun getColorTheme(): ColorTheme = colorTheme.apply {
         progressColor = Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
