@@ -41,7 +41,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         tripInfo: TripInfoDetails
     ) {
 
-        val textSizeBase = calculateFontSize(area)
+        val (textSizeBase) = calculateFontSize(area)
 
         val x = 135
         var rowTop = top + 12f
@@ -69,7 +69,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
     }
 
-    private inline fun calculateFontSize2(
+    private inline fun calculateFontSize(
         area: Rect
     ): Pair<Float, Float> {
 
@@ -82,8 +82,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         )
 
         val areaWidth = area.width()
-        val valueTextSize = (areaWidth / 18f) * scaleRatio
-        val textSizeBase = (areaWidth / 21f) * scaleRatio
+        val valueTextSize = (areaWidth / 17f) * scaleRatio
+        val textSizeBase = (areaWidth / 20f) * scaleRatio
         return Pair(valueTextSize, textSizeBase)
     }
 
@@ -95,7 +95,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         top: Float
     ): Float {
 
-        val (valueTextSize, textSizeBase) = calculateFontSize2(area)
+        val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
         var top1 = top
         var left1 = left
@@ -215,13 +215,6 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
     private fun calculateProgressBarHeight() = 16
 
-    private inline fun calculateFontSize(
-        area: Rect
-    ): Float = (area.width() / 14f) * valueScaler.scaleToNewRange(
-        settings.getDragRacingSettings().fontSize.toFloat(),
-        CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX
-    )
-
     private inline fun drawProgressBar(
         metric: Metric,
         top: Float,
@@ -234,7 +227,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
             canvas,
             metric,
             top=top,
-            textSize =  textSizeBase * 0.70f,
+            textSize =  textSizeBase * 0.8f,
             left = left,
             color = Color.WHITE, typeface =
             Typeface.create(Typeface.DEFAULT, Typeface.NORMAL))
