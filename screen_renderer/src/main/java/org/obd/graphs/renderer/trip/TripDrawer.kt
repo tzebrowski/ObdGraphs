@@ -45,27 +45,29 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
         val x = 135
         var rowTop = top + 12f
-        drawProgressBar(tripInfo.airTemp!!, top = rowTop,left =  left, canvas, textSizeBase)
-        drawProgressBar(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.ambientTemp!!, rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.airTemp!!, top = rowTop, left = left, canvas, textSizeBase)
+        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.ambientTemp!!, rowTop, left + 5 * x, canvas, textSizeBase)
 
         //second row
         rowTop = top + (textSizeBase) + 52f
-        drawProgressBar(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase)
-        drawProgressBar(tripInfo.gearboxEngaged!!, rowTop, left + x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.atmPressure!!, rowTop, left + 2 * x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase)
-        drawProgressBar(tripInfo.oilLevel!!, rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase)
+        drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + x, canvas, textSizeBase)
+        drawMetric(tripInfo.atmPressure!!, rowTop, left + 2 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.oilLevel!!, rowTop, left + 5 * x, canvas, textSizeBase)
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 2, Color.DKGRAY)
 
 
         //metrics
-        drawProgressBar(canvas,area, tripInfo.intakePressure!!,left,rowTop + 2 * textSizeBase)
-        drawProgressBar(canvas,area, tripInfo.torque!!,getAreaWidth(area) + 10,rowTop + 2 * textSizeBase)
+        rowTop += 2.5f * textSizeBase
+
+        drawMetric(canvas, area, tripInfo.intakePressure!!, left, rowTop)
+        drawMetric(canvas, area, tripInfo.torque!!, left + getAreaWidth(area) + 10, rowTop)
 
     }
 
@@ -87,7 +89,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         return Pair(valueTextSize, textSizeBase)
     }
 
-    private inline fun drawProgressBar(
+    private inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
         metric: Metric,
@@ -117,7 +119,56 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
             left = left + getAreaWidth(area) - 50f
         )
 
-        top1 += 54f
+        top1 += 52f
+
+        if (settings.isStatisticsEnabled()) {
+            val tt = textSizeBase * 0.6f
+            if (metric.source.command.pid.historgam.isMinEnabled) {
+                left1 = drawText(
+                    canvas,
+                    "min",
+                    left,
+                    top1,
+                    Color.LTGRAY,
+                    tt * 0.8f,
+                    valuePaint
+                )
+                left1 = drawText(
+                    canvas,
+                    metric.toNumber(metric.min),
+                    left1,
+                    top1,
+                    Color.LTGRAY,
+                    tt * 0.8f,
+                    valuePaint
+                )
+            }
+            if (metric.source.command.pid.historgam.isMaxEnabled) {
+                left1 = drawText(
+                    canvas,
+                    "max",
+                    left1,
+                    top1,
+                    Color.LTGRAY,
+                    tt,
+                    valuePaint
+                )
+                drawText(
+                    canvas,
+                    metric.toNumber(metric.max),
+                    left1,
+                    top1,
+                    Color.LTGRAY,
+                    tt,
+                    valuePaint
+                )
+            }
+
+
+            top1 += getTextHeight("min", paint) / 2
+        }
+
+        top1 += 4f
 
         drawProgressBar(
             canvas,
@@ -206,7 +257,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         valuePaint.textSize = textSize
         val text = metric.source.valueToString()
         canvas.drawText(text, left, top, valuePaint)
-        val textWidth = getTextWidth(text,valuePaint) + 2
+        val textWidth = getTextWidth(text, valuePaint) + 2
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textSize = (textSize * 0.4).toFloat()
@@ -215,7 +266,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
     private fun calculateProgressBarHeight() = 16
 
-    private inline fun drawProgressBar(
+    private inline fun drawMetric(
         metric: Metric,
         top: Float,
         left: Float,
@@ -226,11 +277,12 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         drawValue(
             canvas,
             metric,
-            top=top,
-            textSize =  textSizeBase * 0.8f,
+            top = top,
+            textSize = textSizeBase * 0.8f,
             left = left,
             color = Color.WHITE, typeface =
-            Typeface.create(Typeface.DEFAULT, Typeface.NORMAL))
+            Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        )
 
         drawTitle(canvas, metric, left, top + 24, textSizeBase * 0.35F)
     }
