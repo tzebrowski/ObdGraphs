@@ -63,9 +63,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 2, Color.DKGRAY)
 
-
         //metrics
-        rowTop += 2.5f * textSizeBase
+        rowTop += 2.2f * textSizeBase
         drawMetric(canvas, area, tripInfo.intakePressure!!, left, rowTop)
         drawMetric(canvas, area, tripInfo.torque!!, left + getAreaWidth(area) + 10, rowTop)
 
@@ -139,7 +138,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
                     left1,
                     top1,
                     Color.LTGRAY,
-                    tt * 0.8f,
+                    tt,
                     valuePaint
                 )
             }
