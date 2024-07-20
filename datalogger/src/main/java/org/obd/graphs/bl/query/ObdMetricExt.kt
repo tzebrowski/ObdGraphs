@@ -39,8 +39,8 @@ private const val OIL_LEVEL_PID_ID = 7014L
 
 private const val ENGINE_TORQUE_PID_ID = 7028L
 private const val INTAKE_PRESSURE_PID_ID = 7005L
-
-
+private const val DISTANCE_PID_ID = 7076L
+private const val FUEL_CONSUMED_PID_ID = 7077L
 
 
 
@@ -53,6 +53,9 @@ class PIDsNamesRegistry {
 
     fun getIntakePressurePID(): Long = INTAKE_PRESSURE_PID_ID
 
+    fun getDistancePID(): Long = DISTANCE_PID_ID
+
+    fun getFuelConsumedPID(): Long = FUEL_CONSUMED_PID_ID
 
     fun getFuelConsumptionPID(): Long = FUEL_CONSUMPTION_PID_ID
     fun getFuelLevelPID(): Long = FUEL_LEVEL_PID_ID

@@ -21,9 +21,11 @@ package org.obd.graphs.renderer.trip
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
+import org.obd.metrics.api.model.ObdMetric
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
@@ -32,6 +34,8 @@ private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
 internal class TripDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+
+    private val metricBuilder = MetricsBuilder()
 
     inline fun drawScreen(
         canvas: Canvas,
@@ -50,7 +54,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.ambientTemp!!, rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(diff(tripInfo.distance!!), rowTop, left + 5 * x, canvas, textSizeBase)
 
         //second row
         rowTop = top + (textSizeBase) + 52f
@@ -59,7 +63,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         drawMetric(tripInfo.oilLevel!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase, unitEnabled = false)
         drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.atmPressure!!, rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(diff(tripInfo.fuelConsumed!!), rowTop, left + 5 * x, canvas, textSizeBase)
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 2, Color.DKGRAY)
 
@@ -67,8 +71,11 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         rowTop += 2.2f * textSizeBase
         drawMetric(canvas, area, tripInfo.intakePressure!!, left, rowTop)
         drawMetric(canvas, area, tripInfo.torque!!, left + getAreaWidth(area) + 10, rowTop)
-
     }
+
+    private fun diff(distance: Metric) : Metric  = metricBuilder.buildFor( ObdMetric.builder()
+        .command(distance.source.command)
+        .value(distance.value!!.toDouble() - distance.min).build())
 
     private inline fun calculateFontSize(
         area: Rect

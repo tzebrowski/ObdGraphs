@@ -57,7 +57,7 @@ internal class TripSurfaceRenderer(
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                tripDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector)
+                tripDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
                 top += 4
                 tripDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
@@ -83,6 +83,8 @@ internal class TripSurfaceRenderer(
                     oilLevel = metricsCollector.getMetric(namesRegistry.getOilLevelPID())
                     torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
                     intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
+                    distance = metricsCollector.getMetric(namesRegistry.getDistancePID())
+                    fuelConsumed = metricsCollector.getMetric(namesRegistry.getFuelConsumedPID())
                 }
             )
         }

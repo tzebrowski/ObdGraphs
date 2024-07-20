@@ -17,5 +17,6 @@ data class TripInfoDetails(
     var oilLevel: Metric? = null,
     var intakePressure: Metric? = null,
     var torque: Metric? = null,
-
+    var distance: Metric? = null,
+    var fuelConsumed: Metric? = null
 )
