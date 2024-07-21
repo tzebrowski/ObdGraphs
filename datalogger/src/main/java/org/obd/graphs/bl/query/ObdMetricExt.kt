@@ -26,7 +26,50 @@ private const val VEHICLE_SPEED_PID_ID = 14L
 private const val EXT_ENGINE_RPM_PID_ID = 7008L
 private const val ENGINE_RPM_PID_ID = 13L
 
+private const val FUEL_CONSUMPTION_PID_ID = 7035L
+private const val FUEL_LEVEL_PID_ID = 7037L
+private const val GEARBOX_OIL_TEMP_PID_ID = 7025L
+private const val GEARBOX_ENGAGED_PID_ID = 7029L
+private const val OIL_TEMP_PID_ID = 7003L
+private const val COOLANT_TEMP_PID_ID = 7009L
+private const val EXHAUST_TEMP_PID_ID = 7016L
+private const val AIR_TEMP_PID_ID = 7002L
+private const val TOTAL_MISFIRES_PID_ID = 17078L
+private const val OIL_LEVEL_PID_ID = 7014L
+
+private const val ENGINE_TORQUE_PID_ID = 7028L
+private const val INTAKE_PRESSURE_PID_ID = 7005L
+private const val DISTANCE_PID_ID = 7076L
+private const val FUEL_CONSUMED_PID_ID = 7077L
+
+
+
 class PIDsNamesRegistry {
+
+    fun getTotalMisfiresPID(): Long = TOTAL_MISFIRES_PID_ID
+    fun getOilLevelPID(): Long = OIL_LEVEL_PID_ID
+
+    fun getTorquePID(): Long = ENGINE_TORQUE_PID_ID
+
+    fun getIntakePressurePID(): Long = INTAKE_PRESSURE_PID_ID
+
+    fun getDistancePID(): Long = DISTANCE_PID_ID
+
+    fun getFuelConsumedPID(): Long = FUEL_CONSUMED_PID_ID
+
+    fun getFuelConsumptionPID(): Long = FUEL_CONSUMPTION_PID_ID
+    fun getFuelLevelPID(): Long = FUEL_LEVEL_PID_ID
+    fun getGearboxOilTempPID(): Long = GEARBOX_OIL_TEMP_PID_ID
+
+    fun getGearboxEngagedPID(): Long = GEARBOX_ENGAGED_PID_ID
+
+    fun getOilTempPID(): Long = OIL_TEMP_PID_ID
+
+    fun getCoolantTempPID(): Long = COOLANT_TEMP_PID_ID
+
+    fun getExhaustTempPID(): Long = EXHAUST_TEMP_PID_ID
+
+    fun getAirTempPID(): Long = AIR_TEMP_PID_ID
 
     fun getAtmPressurePID(): Long = EXT_ATM_PRESSURE_PID_ID
     fun getAmbientTempPID(): Long = EXT_AMBIENT_TEMP_PID_ID
@@ -38,5 +81,4 @@ class PIDsNamesRegistry {
     fun getDynamicSelectorPID(): Long = EXT_DYNAMIC_SELECTOR_PID_ID
 
     private fun isProfileExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
-
 }

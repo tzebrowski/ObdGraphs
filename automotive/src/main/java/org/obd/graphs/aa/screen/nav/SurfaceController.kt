@@ -151,9 +151,18 @@ class SurfaceController(
             }
 
             DRAG_RACING_SCREEN_ID -> {
-                query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                dataLogger.updateQuery(query = query)
+                dataLogger.updateQuery(query = query.apply {
+                    setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                })
+
                 surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
+            }
+
+            TRIP_INFO_SCREEN_ID -> {
+                dataLogger.updateQuery(query = query.apply {
+                    setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+                })
+                surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.TRIP_INFO)
             }
         }
 

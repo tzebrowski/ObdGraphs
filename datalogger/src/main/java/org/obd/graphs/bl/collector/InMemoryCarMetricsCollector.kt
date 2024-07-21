@@ -29,8 +29,11 @@ private const val LOG_KEY = "InMemoryCollector"
 internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     private var metrics: SortedMap<Long, Metric> = TreeMap()
+    private val metricBuilder = MetricsBuilder()
 
     override fun getMetrics(enabled: Boolean): List<Metric> = metrics.values.filter { it.enabled == enabled }
+
+    override fun getMetric(id: Long): Metric? = metrics[id]
 
     override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
         Log.i(LOG_KEY, "Updating visible PIDs=$enabled with order=$order")
@@ -40,7 +43,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
             if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
                 Log.d(LOG_KEY, "Rebuilding metrics configuration for: $enabled != ${metrics.keys}")
             }
-            MetricsBuilder().buildFor(enabled).forEach {
+            metricBuilder.buildFor(enabled).forEach {
                 val key = it.source.command.pid.id
 
                 if (metrics.keys.indexOf(key)  ==-1) {
@@ -67,6 +70,10 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
     override fun append(input: ObdMetric?) {
 
         input?.let { metric ->
+            if (!metrics.containsKey(metric.command.pid.id)) {
+                metrics[metric.command.pid.id] = metricBuilder.buildFor(metric)
+            }
+
             metrics[metric.command.pid.id]?.let {
                 it.source = metric
 

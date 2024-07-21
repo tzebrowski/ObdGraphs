@@ -25,6 +25,20 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 
 class MetricsBuilder {
+
+    fun buildFor(obdMetric: ObdMetric): Metric {
+        val histogramSupplier = dataLogger.getDiagnostics().histogram()
+        val histogram = histogramSupplier.findBy(obdMetric.command.pid)
+        return Metric
+            .newInstance(
+                min = histogram?.min ?: 0.0,
+                max = histogram?.max ?: 0.0,
+                mean = histogram?.mean ?: 0.0,
+                value = histogram?.latestValue ?: 0,
+                source = obdMetric
+            )
+    }
+
     fun buildFor(ids: Set<Long>) = buildFor(ids, emptyMap())
 
     fun buildFor(ids: Set<Long>, sortOrder: Map<Long, Int>?): MutableList<Metric> {
@@ -46,6 +60,7 @@ class MetricsBuilder {
         return metrics
     }
 
+
     private fun buildMetrics(ids: Set<Long>): MutableList<Metric> {
         val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
         val histogramSupplier = dataLogger.getDiagnostics().histogram()
@@ -55,13 +70,14 @@ class MetricsBuilder {
                 val histogram = histogramSupplier.findBy(pid)
                 Metric
                     .newInstance(
-                        min = histogram?.min?:0.0,
-                        max = histogram?.max?:0.0,
-                        mean = histogram?.mean?:0.0,
-                        value = histogram?.latestValue?:0,
-                        source=ObdMetric.builder()
-                        .command(ObdCommand(pid))
-                        .value(histogram?.latestValue).build())
+                        min = histogram?.min ?: 0.0,
+                        max = histogram?.max ?: 0.0,
+                        mean = histogram?.mean ?: 0.0,
+                        value = histogram?.latestValue ?: 0,
+                        source = ObdMetric.builder()
+                            .command(ObdCommand(pid))
+                            .value(histogram?.latestValue).build()
+                    )
             }
         }.toMutableList()
     }

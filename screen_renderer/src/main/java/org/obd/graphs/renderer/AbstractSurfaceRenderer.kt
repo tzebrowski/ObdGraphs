@@ -19,6 +19,7 @@
 package org.obd.graphs.renderer
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
@@ -47,6 +48,17 @@ internal abstract class AbstractSurfaceRenderer(
             val intersection = selection.filter { ids.contains(it) }.toSet()
             metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
         }
+    }
+
+    protected fun getArea(area: Rect, canvas: Canvas, margin: Int): Rect {
+        val newArea = Rect()
+        if (area.isEmpty) {
+            newArea[0 + margin, viewSettings.marginTop, canvas.width - 1 - margin] = canvas.height - 1
+        } else {
+            val width = canvas.width - 1 - (margin)
+            newArea[area.left + margin, area.top + viewSettings.marginTop, width] = canvas.height
+        }
+        return newArea
     }
 
     protected fun metrics() = metricsCollector.getMetrics().subList(

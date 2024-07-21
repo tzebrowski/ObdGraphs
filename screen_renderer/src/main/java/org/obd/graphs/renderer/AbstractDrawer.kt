@@ -26,6 +26,7 @@ import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.isAmbientTemp
 import org.obd.graphs.bl.query.isAtmPressure
+import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
 import org.obd.graphs.renderer.drag.MARGIN_END
@@ -33,7 +34,7 @@ import org.obd.graphs.renderer.drag.MARGIN_END
 private const val STATUS_KEY_FONT_SIZE = 12f
 private const val STATUS_VALUE_FONT_SIZE = 18f
 
-internal abstract class AbstractDrawer (context: Context, protected val settings: ScreenSettings) {
+internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
 
     protected val valueScaler: ValueScaler = ValueScaler()
 
@@ -121,7 +122,10 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
         }
     }
 
-    fun drawStatusPanel(canvas: Canvas, top: Float, left: Float, fps: Fps, metricsCollector: MetricsCollector? = null){
+    fun drawStatusPanel(
+        canvas: Canvas, top: Float, left: Float, fps: Fps, metricsCollector: MetricsCollector? = null,
+        drawContextInfo: Boolean = false
+    ) {
 
         var text = statusLabel
         var marginLeft = left
@@ -221,9 +225,11 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
             )
         }
 
-        metricsCollector?.let {
-            if (settings.getDragRacingSettings().contextInfoEnabled) {
-                metricsCollector.getMetrics().firstOrNull { it.source.isAmbientTemp() }?.let {
+
+        if (drawContextInfo) {
+            metricsCollector?.let {
+
+                metricsCollector.getMetric(namesRegistry.getAmbientTempPID())?.let {
                     marginLeft += getTextWidth(text, statusPaint) + 12F
                     text = ambientTempLabel
                     drawText(
@@ -231,7 +237,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                         text,
                         marginLeft,
                         top,
-                        Color.WHITE,
+                        Color.LTGRAY,
                         STATUS_KEY_FONT_SIZE,
                         statusPaint
                     )
@@ -242,13 +248,13 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                         "${it.valueToString()}${it.source.command.pid.units}",
                         marginLeft,
                         top,
-                        Color.YELLOW,
+                        Color.WHITE,
                         STATUS_VALUE_FONT_SIZE,
                         statusPaint
                     )
                 }
 
-                metricsCollector.getMetrics().firstOrNull { it.source.isAtmPressure() }?.let {
+                metricsCollector.getMetric(namesRegistry.getAtmPressurePID())?.let {
                     marginLeft += getTextWidth(text, statusPaint) + 12F
                     text = atmPressureLabel
                     drawText(
@@ -256,7 +262,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                         text,
                         marginLeft,
                         top,
-                        Color.WHITE,
+                        Color.LTGRAY,
                         STATUS_KEY_FONT_SIZE,
                         statusPaint
                     )
@@ -267,7 +273,7 @@ internal abstract class AbstractDrawer (context: Context, protected val settings
                         "${it.valueToString()}${it.source.command.pid.units}",
                         marginLeft,
                         top,
-                        Color.YELLOW,
+                        Color.WHITE,
                         STATUS_VALUE_FONT_SIZE,
                         statusPaint
                     )

@@ -60,6 +60,11 @@ data class DragRacingSettings(
     var fontSize: Int = 32
 )
 
+
+data class TripInfoSettings(
+    var fontSize: Int = 24
+)
+
 interface ScreenSettings {
 
     fun isPIDsSortOrderEnabled(): Boolean = false
@@ -67,6 +72,9 @@ interface ScreenSettings {
     fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
+
+    fun getTripInfoSettings(): TripInfoSettings = TripInfoSettings()
+
 
     fun getMaxItems (): Int = 6
 

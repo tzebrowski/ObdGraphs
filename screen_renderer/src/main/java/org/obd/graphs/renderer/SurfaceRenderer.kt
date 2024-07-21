@@ -26,9 +26,10 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
+import org.obd.graphs.renderer.trip.TripSurfaceRenderer
 
 enum class SurfaceRendererType {
-    GIULIA, GAUGE, DRAG_RACING
+    GIULIA, GAUGE, DRAG_RACING, TRIP_INFO
 }
 
 data class ViewSettings(var marginTop: Int = 0)
@@ -37,6 +38,7 @@ interface SurfaceRenderer {
     fun applyMetricsFilter(query: Query)
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
+
     companion object {
         fun allocate(
             context: Context,
@@ -50,6 +52,7 @@ interface SurfaceRenderer {
                 SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
                 SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
                 SurfaceRendererType.DRAG_RACING -> DragRacingSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
+                SurfaceRendererType.TRIP_INFO -> TripSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
             }
     }
 }

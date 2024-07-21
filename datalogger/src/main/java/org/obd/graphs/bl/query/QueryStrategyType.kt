@@ -20,6 +20,7 @@ package org.obd.graphs.bl.query
 enum class QueryStrategyType {
     ROUTINES_QUERY,
     DRAG_RACING_QUERY,
+    TRIP_INFO_QUERY,
     SHARED_QUERY,
     INDIVIDUAL_QUERY_FOR_EACH_VIEW
 }

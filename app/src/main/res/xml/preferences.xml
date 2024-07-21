@@ -1336,6 +1336,24 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory
+                    android:title="@string/pref.aa.trip_info.category"
+                    app:singleLineTitle="false">
+
+                    <org.obd.graphs.preferences.aa.AASeekBar
+                        app:showSeekBarValue="true"
+                        app:min="22"
+                        android:max="72"
+                        android:defaultValue="30"
+                        android:dialogTitle="@string/pref.aa.virtual_screens.font_size.category"
+                        android:key="pref.aa.trip_info.font_size"
+                        android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+
+                </PreferenceCategory>
+
+
+                <PreferenceCategory
                     android:title="@string/pref.aa.performance_meter.category"
                     app:singleLineTitle="false">
 

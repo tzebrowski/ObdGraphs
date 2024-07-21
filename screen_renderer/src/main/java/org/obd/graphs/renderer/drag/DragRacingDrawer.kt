@@ -139,7 +139,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         drawDragRacingEntry(area, dragRacingResults._100_200, "100-200 km/h", rowTop, left, canvas, textSizeBase)
     }
 
-    inline fun drawMetric(
+    inline fun drawVehicleSpeed(
         canvas: Canvas,
         area: Rect,
         metric: Metric,

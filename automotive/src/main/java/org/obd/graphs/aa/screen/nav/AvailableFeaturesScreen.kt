@@ -31,6 +31,7 @@ import org.obd.graphs.bl.datalogger.*
 const val GIULIA_SCREEN_ID = 0
 const val DRAG_RACING_SCREEN_ID = 1
 const val ROUTINES_SCREEN_ID = 2
+const val TRIP_INFO_SCREEN_ID = 3
 
 internal class AvailableFeaturesScreen(
     carContext: CarContext,
@@ -58,6 +59,13 @@ internal class AvailableFeaturesScreen(
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
 
+
+            addItem(
+                row(
+                    TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,
+                    carContext.getString(R.string.available_features_trip_info_screen_title)
+                )
+            )
 
             addItem(
                 row(

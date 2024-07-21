@@ -29,10 +29,7 @@ import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.*
 import org.obd.graphs.aa.mapColor
-import org.obd.graphs.aa.screen.nav.CHANGE_SCREEN_EVENT
-import org.obd.graphs.aa.screen.nav.DRAG_RACING_SCREEN_ID
-import org.obd.graphs.aa.screen.nav.GIULIA_SCREEN_ID
-import org.obd.graphs.aa.screen.nav.ROUTINES_SCREEN_ID
+import org.obd.graphs.aa.screen.nav.*
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
@@ -102,13 +99,21 @@ internal abstract class CarScreen(
                         }
                         dataLogger.start(query)
                     }
-                    DRAG_RACING_SCREEN_ID -> {
-                        query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                        dataLogger.start(query)
-                    }
+
+                    DRAG_RACING_SCREEN_ID ->
+                        dataLogger.start(query.apply{
+                            setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                        })
+
+                    TRIP_INFO_SCREEN_ID ->
+                        dataLogger.start(query.apply{
+                            setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+                        })
+
                     ROUTINES_SCREEN_ID -> {
-                        query.setStrategy(QueryStrategyType.ROUTINES_QUERY)
-                        dataLogger.start(query)
+                        dataLogger.start(query.apply{
+                            setStrategy(QueryStrategyType.ROUTINES_QUERY)
+                        })
                     }
                 }
             })

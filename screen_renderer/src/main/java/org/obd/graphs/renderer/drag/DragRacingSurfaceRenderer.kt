@@ -54,13 +54,14 @@ internal class DragRacingSurfaceRenderer(
             val dragRaceResults = dragRacingResultRegistry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
-            val margin = if (settings.getDragRacingSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
+            val dragRacingSettings = settings.getDragRacingSettings()
+            val margin = if (dragRacingSettings.shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
             var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
 
-            if (settings.getDragRacingSettings().shiftLightsEnabled) {
-                dragRacingResultRegistry.setShiftLightsRevThreshold(settings.getDragRacingSettings().shiftLightsRevThreshold)
+            if (dragRacingSettings.shiftLightsEnabled) {
+                dragRacingResultRegistry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
                 // permanent white boxes
                 dragRacingDrawer.drawShiftLights(canvas, area, blinking = false)
             }
@@ -76,14 +77,14 @@ internal class DragRacingSurfaceRenderer(
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector)
+                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = settings.getDragRacingSettings().contextInfoEnabled)
                 top += 4
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             }
 
             metricsCollector.getMetrics().firstOrNull { it.source.isVehicleSpeed() }?.let {
-                top = dragRacingDrawer.drawMetric(
+                top = dragRacingDrawer.drawVehicleSpeed(
                     canvas = canvas,
                     area = area,
                     metric = it,
@@ -99,17 +100,6 @@ internal class DragRacingSurfaceRenderer(
                 top = top,
                 dragRacingResults = dragRaceResults)
         }
-    }
-
-    private fun getArea(area: Rect, canvas: Canvas, margin: Int) : Rect {
-        val newArea = Rect()
-        if (area.isEmpty) {
-            newArea[0 + margin, viewSettings.marginTop, canvas.width - 1 - margin] = canvas.height - 1
-        } else {
-            val width = canvas.width - 1 - (margin)
-            newArea[area.left + margin, area.top + viewSettings.marginTop, width] = canvas.height
-        }
-        return newArea
     }
 
     private fun isShiftLight(dragRaceResults: DragRacingResults) =

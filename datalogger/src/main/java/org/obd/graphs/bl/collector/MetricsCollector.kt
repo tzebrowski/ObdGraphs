@@ -22,6 +22,8 @@ import org.obd.metrics.api.model.ObdMetric
 
 interface MetricsCollector {
 
+    fun getMetric(id: Long): Metric?
+
     fun getMetrics(enabled: Boolean = true): List<Metric>
 
     fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)

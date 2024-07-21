@@ -23,6 +23,8 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType
 
+private const val NO_DATA = "----"
+
 data class Metric(
     var source: ObdMetric,
     var value: Number?,
@@ -46,7 +48,7 @@ data class Metric(
 
     fun valueToString(): String =
          if (source.value == null) {
-            "----"
+             NO_DATA
         } else {
             toNumber(source.valueToDouble())
         }
