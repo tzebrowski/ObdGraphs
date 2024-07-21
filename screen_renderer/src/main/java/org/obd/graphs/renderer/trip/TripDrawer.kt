@@ -59,11 +59,11 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         //second row
         rowTop = top + (textSizeBase) + 52f
         drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + x, canvas, textSizeBase)
-        drawMetric(tripInfo.oilLevel!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 3 * x, canvas, textSizeBase, unitEnabled = false)
-        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(diff(tripInfo.fuelConsumed!!), rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(diff(tripInfo.fuelConsumed!!), rowTop, left + 1 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false)
+        drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.oilLevel!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false)
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 2, Color.DKGRAY)
 
@@ -73,9 +73,17 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         drawMetric(canvas, area, tripInfo.torque!!, left + getAreaWidth(area) + 10, rowTop)
     }
 
-    private fun diff(distance: Metric) : Metric  = metricBuilder.buildFor( ObdMetric.builder()
-        .command(distance.source.command)
-        .value(distance.value!!.toDouble() - distance.min).build())
+    private fun diff(metric: Metric) : Metric  {
+        val value: Number? = if (metric.source.value == null){
+            null
+        } else {
+            metric.max - metric.min
+        }
+
+        return metricBuilder.buildFor(ObdMetric.builder()
+            .command(metric.source.command)
+            .value(value).build())
+    }
 
     private inline fun calculateFontSize(
         area: Rect
@@ -271,16 +279,16 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
             valuePaint.color = Color.LTGRAY
             valuePaint.textSize = (textSize * 0.4).toFloat()
             canvas.drawText(metric.source.command.pid.units, (left + textWidth), top, valuePaint)
+            textWidth += getTextWidth(metric.source.command.pid.units, valuePaint) + 2
+
         }
 
         if (settings.isStatisticsEnabled() && statsEnabled) {
-            textWidth += getTextWidth(metric.source.command.pid.units, valuePaint) + 2
             valuePaint.color = Color.LTGRAY
             valuePaint.textSize = (textSize * 0.65).toFloat()
             canvas.drawText(metric.toNumber(metric.min), (left + textWidth), top, valuePaint)
             canvas.drawText(metric.toNumber(metric.max), (left + textWidth), top - 20, valuePaint)
         }
-
     }
 
     private fun calculateProgressBarHeight() = 16
