@@ -2,6 +2,7 @@ package org.obd.graphs.bl.generator
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.Query
@@ -86,19 +87,19 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
 
     private fun generateSequenceFor(pid: PidDefinition) =
         mutableListOf<Number>().apply {
-            if (pid.type == ValueType.DOUBLE) {
-                var step = 1.0
+            if (pid.type == ValueType.DOUBLE || pid.type == null) {
+                var step = 1.55
 
                 if (pid.max.toInt() < 15) {
                     step = 0.1
                 }
 
                 if (pid.max.toInt() > 1000) {
-                    step = 5.0
+                    step = 5.22
                 }
 
                 if (pid.max.toInt() > 5000) {
-                    step = 10.0
+                    step = 10.33
                 }
 
                 (pid.min.toDouble()..pid.max.toDouble() step step).forEach {
