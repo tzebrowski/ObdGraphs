@@ -33,7 +33,7 @@ Application offers few configurable screens which visualize vehicle telemetry da
 ### Android Auto (Trip Info Dashboard)
 |                                                     |                                                     |
 |-----------------------------------------------------|-----------------------------------------------------|
-| ![Alt text](./res/aa_3.jpg?raw=true "Android Auto") | 
+| ![Alt text](./res/aa_6.jpg?raw=true "Android Auto") | 
 
 
 
