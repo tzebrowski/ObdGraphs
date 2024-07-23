@@ -260,25 +260,25 @@ internal class WorkflowOrchestrator internal constructor() {
         null
     }
 
-    private fun wifiConnection(): WifiConnection? {
+    private fun wifiConnection(preferences: DataLoggerPreferences = dataLoggerPreferences.instance): WifiConnection? {
         try {
             Log.i(
                 LOG_TAG,
-                "Creating TCP connection to: ${dataLoggerPreferences.instance.tcpHost}:${dataLoggerPreferences.instance.tcpPort}."
+                "Creating TCP connection to: ${preferences.tcpHost}:${preferences.tcpPort}."
             )
 
-            Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${dataLoggerPreferences.instance.wifiSSID}")
+            Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${preferences.wifiSSID}")
             Log.i(LOG_TAG, "Current connected WIFI SSID ${network.currentSSID}")
 
-            if (dataLoggerPreferences.instance.wifiSSID.isEmpty()) {
+            if (preferences.wifiSSID.isEmpty()) {
                 Log.d(LOG_TAG, "Target WIFI SSID is not specified in the prefs section. Connecting to the default one.")
             } else if (network.currentSSID.isNullOrBlank()) {
                 sendBroadcastEvent(DATA_LOGGER_WIFI_NOT_CONNECTED)
                 return null
-            } else if (dataLoggerPreferences.instance.wifiSSID != network.currentSSID) {
+            } else if (preferences.wifiSSID != network.currentSSID) {
                 Log.w(
                     LOG_TAG,
-                    "Preferences selected WIFI SSID ${dataLoggerPreferences.instance.wifiSSID} " +
+                    "Preferences selected WIFI SSID ${preferences.wifiSSID} " +
                             "is different than current connected ${network.currentSSID}"
                 )
                 sendBroadcastEvent(DATA_LOGGER_WIFI_INCORRECT)
@@ -293,79 +293,80 @@ internal class WorkflowOrchestrator internal constructor() {
         return null
     }
 
-    private fun init() = Init.builder()
-        .delayAfterInit(dataLoggerPreferences.instance.initDelay)
-        .delayAfterReset(dataLoggerPreferences.instance.delayAfterReset)
+    private fun init(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Init.builder()
+        .delayAfterInit(preferences.initDelay)
+        .delayAfterReset(preferences.delayAfterReset)
         .headers(diagnosticRequestIDMapper.getMapping().map { entry ->
             Init.Header.builder().mode(entry.key).header(entry.value).build()
         }.toMutableList())
-        .protocol(Init.Protocol.valueOf(dataLoggerPreferences.instance.initProtocol))
+        .protocol(Init.Protocol.valueOf(preferences.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
-    private fun getMetricsAdjustments() = Adjustments.builder()
-        .debugEnabled(dataLoggerPreferences.instance.debugLogging)
+    private fun getMetricsAdjustments(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Adjustments.builder()
+        .debugEnabled(preferences.debugLogging)
+        .formulaExternalParams(FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize).build())
         .errorsPolicy(
             ErrorsPolicy.builder()
-                .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
-                .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build()
+                .numberOfRetries(preferences.maxReconnectNum)
+                .reconnectEnabled(preferences.reconnectWhenError).build()
         )
         .batchPolicy(
             BatchPolicy.builder()
-                .enabled(dataLoggerPreferences.instance.batchEnabled)
-                .strictValidationEnabled(dataLoggerPreferences.instance.batchStricValidationEnabled)
-                .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
-                .mode01BatchSize(dataLoggerPreferences.instance.mode01BatchSize)
-                .mode22BatchSize(dataLoggerPreferences.instance.mode22BatchSize).build()
+                .enabled(preferences.batchEnabled)
+                .strictValidationEnabled(preferences.batchStricValidationEnabled)
+                .responseLengthEnabled(preferences.responseLengthEnabled)
+                .mode01BatchSize(preferences.mode01BatchSize)
+                .mode22BatchSize(preferences.mode22BatchSize).build()
         )
-        .collectRawConnectorResponseEnabled(dataLoggerPreferences.instance.dumpRawConnectorResponse)
+        .collectRawConnectorResponseEnabled(preferences.dumpRawConnectorResponse)
         .stNxx(
             STNxxExtensions.builder()
-                .promoteSlowGroupsEnabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
-                .enabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
+                .promoteSlowGroupsEnabled(preferences.stnExtensionsEnabled)
+                .enabled(preferences.stnExtensionsEnabled)
                 .build()
         )
-        .vehicleMetadataReadingEnabled(dataLoggerPreferences.instance.vehicleMetadataReadingEnabled)
-        .vehicleCapabilitiesReadingEnabled(dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled)
-        .vehicleDtcReadingEnabled(dataLoggerPreferences.instance.vehicleDTCReadingEnabled)
-        .vehicleDtcCleaningEnabled(dataLoggerPreferences.instance.vehicleDTCCleaningEnabled)
+        .vehicleMetadataReadingEnabled(preferences.vehicleMetadataReadingEnabled)
+        .vehicleCapabilitiesReadingEnabled(preferences.vehicleCapabilitiesReadingEnabled)
+        .vehicleDtcReadingEnabled(preferences.vehicleDTCReadingEnabled)
+        .vehicleDtcCleaningEnabled(preferences.vehicleDTCCleaningEnabled)
         .cachePolicy(
             CachePolicy.builder()
                 .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
-                .resultCacheEnabled(dataLoggerPreferences.instance.resultsCacheEnabled).build()
+                .resultCacheEnabled(preferences.resultsCacheEnabled).build()
         )
         .producerPolicy(
             ProducerPolicy
                 .builder()
-                .conditionalSleepEnabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
+                .conditionalSleepEnabled(preferences.adaptiveConnectionEnabled)
                 .conditionalSleepSliceSize(10).build()
         )
         .generatorPolicy(
             GeneratorPolicy
                 .builder()
-                .enabled(dataLoggerPreferences.instance.generatorEnabled)
+                .enabled(preferences.generatorEnabled)
                 .increment(0.5).build()
         ).adaptiveTimeoutPolicy(
             AdaptiveTimeoutPolicy
                 .builder()
-                .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
+                .enabled(preferences.adaptiveConnectionEnabled)
                 .checkInterval(5000)
-                .commandFrequency(dataLoggerPreferences.instance.commandFrequency)
+                .commandFrequency(preferences.commandFrequency)
                 .minimumTimeout(10)
                 .build()
 
         ).build()
 
-    private fun getDragRacingAdjustments() = Adjustments.builder()
-        .debugEnabled(dataLoggerPreferences.instance.debugLogging)
+    private fun getDragRacingAdjustments(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Adjustments.builder()
+        .debugEnabled(preferences.debugLogging)
         .errorsPolicy(
             ErrorsPolicy.builder()
-                .numberOfRetries(dataLoggerPreferences.instance.maxReconnectNum)
-                .reconnectEnabled(dataLoggerPreferences.instance.reconnectWhenError).build()
+                .numberOfRetries(preferences.maxReconnectNum)
+                .reconnectEnabled(preferences.reconnectWhenError).build()
         )
         .batchPolicy(
             BatchPolicy.builder()
-                .enabled(dataLoggerPreferences.instance.batchEnabled)
-                .responseLengthEnabled(dataLoggerPreferences.instance.responseLengthEnabled)
+                .enabled(preferences.batchEnabled)
+                .responseLengthEnabled(preferences.responseLengthEnabled)
                 .mode01BatchSize(3)
                 .mode22BatchSize(3).build()
         )
@@ -394,14 +395,14 @@ internal class WorkflowOrchestrator internal constructor() {
         .generatorPolicy(
             GeneratorPolicy
                 .builder()
-                .enabled(dataLoggerPreferences.instance.generatorEnabled)
+                .enabled(preferences.generatorEnabled)
                 .increment(0.5).build()
         ).adaptiveTimeoutPolicy(
             AdaptiveTimeoutPolicy
                 .builder()
-                .enabled(dataLoggerPreferences.instance.adaptiveConnectionEnabled)
+                .enabled(preferences.adaptiveConnectionEnabled)
                 .checkInterval(5000)
-                .commandFrequency(dataLoggerPreferences.instance.dragRacingCommandFrequency)
+                .commandFrequency(preferences.dragRacingCommandFrequency)
                 .minimumTimeout(10)
                 .build()
         ).build()

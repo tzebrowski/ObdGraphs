@@ -13,9 +13,9 @@
 
                 <org.obd.graphs.preferences.pid.IndividualQueryStrategyCheckBoxPreference
                     android:defaultValue="false"
-                    android:title="@string/pref.adapter.query.view_individual.enabled"
-                    android:summary="@string/pref.adapter.query.view_individual.enabled_summary"
                     android:key="pref.adapter.query.individual.enabled"
+                    android:summary="@string/pref.adapter.query.view_individual.enabled_summary"
+                    android:title="@string/pref.adapter.query.view_individual.enabled"
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.pid.PIDsListPreferences
@@ -215,7 +215,6 @@
                     </PreferenceCategory>
 
 
-
                     <PreferenceCategory android:title="@string/pref.adapter.diagnostic_request_id.values.category">
                         <org.obd.graphs.preferences.dri.NewDiagnosticRequestIDPreference
                             android:dialogTitle="@string/pref.adapter.diagnostic_request_id.add_new_value"
@@ -354,6 +353,24 @@
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref.vehicle_settings.category">
+        <PreferenceScreen
+            android:title="@string/pref.settings"
+            android:summary="@string/pref.vehicle_settings.category_summary"
+            app:key="pref.vehicle.settings">
+            <org.obd.graphs.preferences.aa.AASeekBar
+                android:defaultValue="58"
+                android:dialogTitle="@string/pref.vehicle_settings.fuel_tank_size"
+                android:key="pref.vehicle_settings.fuelTankSize"
+                android:max="80"
+                android:title="@string/pref.vehicle_settings.fuel_tank_size"
+                app:min="40"
+                app:showSeekBarValue="true"
+                app:singleLineTitle="false"
+                app:useSimpleSummaryProvider="true" />
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -621,27 +638,27 @@
                 <org.obd.graphs.preferences.aa.AACheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.profile.2_0_GME_extension.enabled"
-                    android:title="@string/pref.profile.2_0_GME_extension.enabled"
                     android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
+                    android:title="@string/pref.profile.2_0_GME_extension.enabled"
                     app:experimental="true"
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.aa.AASeekBar
-                    app:showSeekBarValue="true"
-                    app:min="22"
-                    android:max="70"
                     android:defaultValue="30"
                     android:dialogTitle="@string/pref.drag_racing.font_size"
                     android:key="pref.drag_racing.screen_font_size"
+                    android:max="70"
                     android:title="@string/pref.drag_racing.font_size"
+                    app:min="22"
+                    app:showSeekBarValue="true"
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
                 <org.obd.graphs.preferences.aa.AACheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.drag_racing.shift_lights.enabled"
-                    android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
                     android:summary="@string/pref.aa.performance_meter.shift_lights_enabled_summary"
+                    android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
                     app:experimental="true"
                     app:singleLineTitle="false" />
 
@@ -674,10 +691,10 @@
 
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        app:singleLineTitle="false"
                         android:key="pref.giulia.view.enabled"
                         android:summary="@string/pref.enable_view_summary"
-                        android:title="@string/pref.enable_view" />
+                        android:title="@string/pref.enable_view"
+                        app:singleLineTitle="false" />
 
                     <ListPreference
                         android:defaultValue="5"
@@ -691,13 +708,13 @@
                         app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.AASeekBar
-                        app:showSeekBarValue="true"
-                        app:min="1"
-                        android:max="24"
                         android:defaultValue="10"
                         android:dialogTitle="@string/pref.aa.virtual_screens.screen.max_items"
                         android:key="pref.giulia.max_items"
+                        android:max="24"
                         android:title="@string/pref.aa.virtual_screens.screen.max_items"
+                        app:min="1"
+                        app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
@@ -734,84 +751,84 @@
                             app:singleLineTitle="false">
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="1"
-                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
                                 android:key="pref.giulia.max_pids_in_column.1"
+                                android:max="2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.1"
+                                app:min="1"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="1"
-                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
                                 android:key="pref.giulia.max_pids_in_column.2"
+                                android:max="2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.2"
+                                app:min="1"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="1"
-                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
                                 android:key="pref.giulia.max_pids_in_column.3"
+                                android:max="2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.3"
+                                app:min="1"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="1"
-                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
                                 android:key="pref.giulia.max_pids_in_column.4"
+                                android:max="2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.4"
+                                app:min="1"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="1"
-                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
                                 android:key="pref.giulia.max_pids_in_column.5"
+                                android:max="2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.5"
+                                app:min="1"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="1"
-                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
                                 android:key="pref.giulia.max_pids_in_column.6"
+                                android:max="2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.6"
+                                app:min="1"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="1"
-                                android:max="2"
                                 android:defaultValue="1"
                                 android:dialogTitle="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
                                 android:key="pref.giulia.max_pids_in_column.7"
+                                android:max="2"
                                 android:title="@string/pref.aa.virtual_screens.number_of_items_in_column.7"
+                                app:min="1"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
@@ -830,79 +847,79 @@
                             app:singleLineTitle="false">
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="30"
-                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
                                 android:key="pref.giulia.screen_font_size.1"
+                                android:max="80"
                                 android:title="@string/pref.aa.font_size.1"
+                                app:min="30"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="30"
-                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
                                 android:key="pref.giulia.screen_font_size.2"
+                                android:max="80"
                                 android:title="@string/pref.aa.font_size.2"
+                                app:min="30"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="30"
-                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
                                 android:key="pref.giulia.screen_font_size.3"
+                                android:max="80"
                                 android:title="@string/pref.aa.font_size.3"
+                                app:min="30"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="30"
-                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
                                 android:key="pref.giulia.screen_font_size.4"
+                                android:max="80"
                                 android:title="@string/pref.aa.font_size.4"
+                                app:min="30"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="30"
-                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.5"
                                 android:key="pref.giulia.screen_font_size.5"
+                                android:max="80"
                                 android:title="@string/pref.aa.font_size.5"
+                                app:min="30"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="30"
-                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.6"
                                 android:key="pref.giulia.screen_font_size.6"
+                                android:max="80"
                                 android:title="@string/pref.aa.font_size.6"
+                                app:min="30"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="30"
-                                android:max="80"
                                 android:defaultValue="52"
                                 android:dialogTitle="@string/pref.aa.font_size.7"
                                 android:key="pref.giulia.screen_font_size.7"
+                                android:max="80"
                                 android:title="@string/pref.aa.font_size.7"
+                                app:min="30"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
@@ -924,8 +941,8 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.aa.virtual_screens.sort_order.enabled"
-                        android:title="@string/pref.aa.virtual_screens.sort_order.enabled"
                         android:summary="@string/pref.aa.virtual_screens.sort_order.enabled_summary"
+                        android:title="@string/pref.aa.virtual_screens.sort_order.enabled"
                         app:experimental="true"
                         app:singleLineTitle="false" />
 
@@ -965,17 +982,15 @@
                         app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.AASeekBar
-                        app:showSeekBarValue="true"
-                        app:min="1"
-                        android:max="12"
                         android:defaultValue="6"
                         android:dialogTitle="@string/pref.aa.virtual_screens.screen.max_items"
                         android:key="pref.aa.virtual_screens.screen.max_items"
+                        android:max="12"
                         android:title="@string/pref.aa.virtual_screens.screen.max_items"
+                        app:min="1"
+                        app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
-
-
 
 
                     <ListPreference
@@ -1006,13 +1021,13 @@
                         app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.AASeekBar
-                        app:showSeekBarValue="true"
-                        app:min="-30"
-                        android:max="80"
                         android:defaultValue="0"
                         android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
                         android:key="pref.aa.virtual_screens.gauge.top_offset"
+                        android:max="80"
                         android:title="@string/pref.aa.renderer.gauge.top_offset"
+                        app:min="-30"
+                        app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
                 </PreferenceCategory>
@@ -1173,46 +1188,46 @@
                             android:title="@string/pref.aa.virtual_screens.font_size.category"
                             app:singleLineTitle="false">
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.1"
                                 android:key="pref.aa.screen_font_size.1"
+                                android:max="74"
                                 android:title="@string/pref.aa.font_size.1"
+                                app:min="20"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.2"
                                 android:key="pref.aa.screen_font_size.2"
+                                android:max="74"
                                 android:title="@string/pref.aa.font_size.2"
+                                app:min="20"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.3"
                                 android:key="pref.aa.screen_font_size.3"
+                                android:max="74"
                                 android:title="@string/pref.aa.font_size.3"
+                                app:min="20"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
 
                             <org.obd.graphs.preferences.aa.AASeekBar
-                                app:showSeekBarValue="true"
-                                app:min="20"
-                                android:max="74"
                                 android:defaultValue="32"
                                 android:dialogTitle="@string/pref.aa.font_size.4"
                                 android:key="pref.aa.screen_font_size.4"
+                                android:max="74"
                                 android:title="@string/pref.aa.font_size.4"
+                                app:min="20"
+                                app:showSeekBarValue="true"
                                 app:singleLineTitle="false"
                                 app:useSimpleSummaryProvider="true" />
 
@@ -1329,8 +1344,8 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.routines.enabled"
-                        android:title="@string/pref.aa.routines.enabled"
                         android:summary="@string/pref.aa.routines.enabled.enabled_summary"
+                        android:title="@string/pref.aa.routines.enabled"
                         app:singleLineTitle="false" />
 
                 </PreferenceCategory>
@@ -1340,13 +1355,13 @@
                     app:singleLineTitle="false">
 
                     <org.obd.graphs.preferences.aa.AASeekBar
-                        app:showSeekBarValue="true"
-                        app:min="22"
-                        android:max="72"
                         android:defaultValue="30"
                         android:dialogTitle="@string/pref.aa.virtual_screens.font_size.category"
                         android:key="pref.aa.trip_info.font_size"
+                        android:max="72"
                         android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:min="22"
+                        app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
@@ -1360,16 +1375,16 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.profile.2_0_GME_extension.enabled"
-                        android:title="@string/pref.profile.2_0_GME_extension.enabled"
                         android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
+                        android:title="@string/pref.profile.2_0_GME_extension.enabled"
                         app:experimental="true"
                         app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.aa.drag_race.shift_lights.enabled"
-                        android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
                         android:summary="@string/pref.aa.performance_meter.shift_lights_enabled_summary"
+                        android:title="@string/pref.aa.performance_meter.shift_lights_enabled"
                         app:experimental="true"
                         app:singleLineTitle="false" />
 
@@ -1403,24 +1418,24 @@
                         app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AASeekBar
-                        app:showSeekBarValue="true"
-                        app:min="22"
-                        android:max="72"
                         android:defaultValue="30"
                         android:dialogTitle="@string/pref.aa.virtual_screens.font_size.category"
                         android:key="pref.aa.drag_race.font_size"
+                        android:max="72"
                         android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:min="22"
+                        app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.AASeekBar
-                        app:showSeekBarValue="true"
-                        app:min="1"
-                        android:max="20"
                         android:defaultValue="10"
                         android:dialogTitle="@string/pref.aa.performance_meter.vehicle_speed_freq"
                         android:key="pref.drag_race.vehicle_speed.freq"
+                        android:max="20"
                         android:title="@string/pref.aa.performance_meter.vehicle_speed_freq"
+                        app:min="1"
+                        app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
@@ -1489,10 +1504,10 @@
 
                     <CheckBoxPreference
                         android:defaultValue="true"
-                        app:singleLineTitle="false"
                         android:key="pref.graph.view.enabled"
                         android:summary="@string/pref.enable_view_summary"
-                        android:title="@string/pref.enable_view" />
+                        android:title="@string/pref.enable_view"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
                         android:defaultValue="true"
@@ -1560,9 +1575,9 @@
                                 android:key="pref.dash.pids.selected"
                                 android:summary="@string/pref.displayed_parameter_ids_summary"
                                 android:title="@string/pref.displayed_parameter_ids"
-                                app:useSimpleSummaryProvider="true"
                                 app:singleLineTitle="false"
-                                app:source="dashboard" />
+                                app:source="dashboard"
+                                app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
@@ -1571,9 +1586,9 @@
                     <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.dash.view.enabled"
-                        app:singleLineTitle="false"
                         android:summary="@string/pref.enable_view_summary"
-                        android:title="@string/pref.enable_view" />
+                        android:title="@string/pref.enable_view"
+                        app:singleLineTitle="false" />
 
                     <CheckBoxPreference
                         android:defaultValue="false"
@@ -1658,10 +1673,10 @@
                 android:title="@string/pref.debug_logging_enabled" />
 
             <CheckBoxPreference
-                app:singleLineTitle="false"
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
-                android:title="@string/pref.debug_generator_enabled" />
+                android:title="@string/pref.debug_generator_enabled"
+                app:singleLineTitle="false" />
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -1679,7 +1694,6 @@
                 app:enabled="false"
                 app:title="@string/pref.about_build_version"
                 app:useSimpleSummaryProvider="true" />
-
         </PreferenceCategory>
     </PreferenceScreen>
 </PreferenceScreen>
