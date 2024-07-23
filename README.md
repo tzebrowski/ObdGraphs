@@ -30,6 +30,13 @@ Application offers integration with `Android Auto` and it is available in google
 
 Application offers few configurable screens which visualize vehicle telemetry data.
 
+### Android Auto (Trip Info Dashboard)
+|                                                     |                                                     |
+|-----------------------------------------------------|-----------------------------------------------------|
+| ![Alt text](./res/aa_3.jpg?raw=true "Android Auto") | 
+
+
+
 ### Android Auto (Giulia Renderer)
 |                                                     |                                                     |
 |-----------------------------------------------------|-----------------------------------------------------|
