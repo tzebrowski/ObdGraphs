@@ -61,11 +61,11 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase)
         drawMetric(diff(tripInfo.fuelConsumed!!), rowTop, left + 1 * x, canvas, textSizeBase)
         drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false)
-        drawMetric(tripInfo.gearboxEngaged!!, rowTop, left + 3 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.ibs!!, rowTop, left + 3 * x, canvas, textSizeBase)
         drawMetric(tripInfo.oilLevel!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.totalMisfires!!, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false)
 
-        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 2, Color.DKGRAY)
+        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
         //metrics
         rowTop += 2.2f * textSizeBase

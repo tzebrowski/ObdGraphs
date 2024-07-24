@@ -27,7 +27,6 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             namesRegistry.getFuelLevelPID(),
             namesRegistry.getAtmPressurePID(),
             namesRegistry.getAmbientTempPID(),
-            namesRegistry.getGearboxEngagedPID(),
             namesRegistry.getGearboxOilTempPID(),
             namesRegistry.getOilTempPID(),
             namesRegistry.getCoolantTempPID(),
@@ -39,7 +38,9 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             namesRegistry.getIntakePressurePID(),
             namesRegistry.getDynamicSelectorPID(),
             namesRegistry.getDistancePID(),
-            namesRegistry.getFuelConsumedPID()
+            namesRegistry.getFuelConsumedPID(),
+            namesRegistry.getBatteryVoltageID(),
+            namesRegistry.getIbsPID()
         )
 }
 

@@ -13,10 +13,11 @@ data class TripInfoDetails(
     var airTemp: Metric? = null,
     var exhaustTemp: Metric? = null,
     var gearboxOilTemp: Metric? = null,
-    var gearboxEngaged: Metric? = null,
     var oilLevel: Metric? = null,
     var intakePressure: Metric? = null,
     var torque: Metric? = null,
     var distance: Metric? = null,
-    var fuelConsumed: Metric? = null
+    var fuelConsumed: Metric? = null,
+    var ibs: Metric? = null,
+    var batteryVoltage: Metric? = null,
 )
