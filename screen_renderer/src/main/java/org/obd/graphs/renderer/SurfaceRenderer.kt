@@ -26,7 +26,7 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
-import org.obd.graphs.renderer.trip.TripSurfaceRenderer
+import org.obd.graphs.renderer.trip.TripInfoSurfaceRenderer
 
 enum class SurfaceRendererType {
     GIULIA, GAUGE, DRAG_RACING, TRIP_INFO
@@ -52,7 +52,7 @@ interface SurfaceRenderer {
                 SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
                 SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
                 SurfaceRendererType.DRAG_RACING -> DragRacingSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
-                SurfaceRendererType.TRIP_INFO -> TripSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
+                SurfaceRendererType.TRIP_INFO -> TripInfoSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
             }
     }
 }

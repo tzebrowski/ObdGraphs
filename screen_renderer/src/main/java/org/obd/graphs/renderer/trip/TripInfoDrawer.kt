@@ -20,6 +20,7 @@ package org.obd.graphs.renderer.trip
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.renderer.AbstractDrawer
@@ -33,7 +34,7 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
-internal class TripDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     private val metricBuilder = MetricsBuilder()
 
@@ -60,7 +61,7 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
         rowTop = top + (textSizeBase) + 52f
         drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false)
-        drawMetric(diff(tripInfo.batteryVoltage!!), rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.batteryVoltage!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.ibs!!, rowTop, left + 3 * x, canvas, textSizeBase)
         drawMetric(tripInfo.oilLevel!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.totalMisfires!!, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false)

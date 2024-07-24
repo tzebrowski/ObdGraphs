@@ -28,7 +28,7 @@ import org.obd.graphs.renderer.*
 
 
 @Suppress("NOTHING_TO_INLINE")
-internal class TripSurfaceRenderer(
+internal class TripInfoSurfaceRenderer(
     context: Context,
     settings: ScreenSettings,
     metricsCollector: MetricsCollector,
@@ -36,7 +36,7 @@ internal class TripSurfaceRenderer(
     viewSettings: ViewSettings
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
     private val tripInfo = TripInfoDetails()
-    private val tripDrawer = TripDrawer(context, settings)
+    private val tripInfoDrawer = TripInfoDrawer(context, settings)
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
             enabled = query.getIDs()
@@ -47,22 +47,21 @@ internal class TripSurfaceRenderer(
 
         drawArea?.let { it ->
 
-            tripDrawer.drawBackground(canvas, it)
+            tripInfoDrawer.drawBackground(canvas, it)
 
             val margin = 0
             val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
-            val left = tripDrawer.getMarginLeft(area.left.toFloat())
+            val left = tripInfoDrawer.getMarginLeft(area.left.toFloat())
 
 
             if (settings.isStatusPanelEnabled()) {
-                tripDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
+                tripInfoDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
                 top += 4
-                tripDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                tripInfoDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             }
-
-            tripDrawer.drawScreen(
+            tripInfoDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
                 left = left,
@@ -90,7 +89,7 @@ internal class TripSurfaceRenderer(
     }
 
     override fun recycle() {
-        tripDrawer.recycle()
+        tripInfoDrawer.recycle()
     }
 
     init {
