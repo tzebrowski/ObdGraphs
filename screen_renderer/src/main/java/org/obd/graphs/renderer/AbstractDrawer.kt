@@ -24,8 +24,6 @@ import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.isAmbientTemp
-import org.obd.graphs.bl.query.isAtmPressure
 import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
@@ -309,5 +307,5 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         return bounds.height()
     }
 
-    fun getMarginLeft(left: Float): Float = 12 + left
+    fun getMarginLeft(left: Float): Float = 10 + left
 }

@@ -52,9 +52,8 @@ internal class TripSurfaceRenderer(
             val margin = 0
             val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
-            var left = tripDrawer.getMarginLeft(area.left.toFloat())
+            val left = tripDrawer.getMarginLeft(area.left.toFloat())
 
-            left += 5
 
             if (settings.isStatusPanelEnabled()) {
                 tripDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)

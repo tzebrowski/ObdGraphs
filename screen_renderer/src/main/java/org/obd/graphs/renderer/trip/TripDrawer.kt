@@ -46,8 +46,8 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
     ) {
 
         val (textSizeBase) = calculateFontSize(area)
+        val x = (area.width() / 6 ) + 4
 
-        val x = 135
         var rowTop = top + 12f
         drawMetric(tripInfo.airTemp!!, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true)
