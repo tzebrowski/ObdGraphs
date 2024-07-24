@@ -90,8 +90,12 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
             if (pid.type == ValueType.DOUBLE || pid.type == null) {
                 var step = 1.55
 
-                if (pid.max.toInt() < 15) {
+                if (pid.max.toInt() <= 20) {
                     step = 0.1
+                }
+
+                if (pid.max.toInt() in 21..100) {
+                    step = 1.05
                 }
 
                 if (pid.max.toInt() > 1000) {
