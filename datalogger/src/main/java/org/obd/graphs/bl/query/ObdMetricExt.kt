@@ -4,12 +4,12 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 
 
-fun ObdMetric.isAtmPressure(): Boolean =  command.pid.id == namesRegistry.getAtmPressurePID()
-fun ObdMetric.isAmbientTemp(): Boolean =  command.pid.id == namesRegistry.getAmbientTempPID()
+fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == namesRegistry.getAtmPressurePID()
+fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == namesRegistry.getAmbientTempPID()
 
-fun ObdMetric.isDynamicSelector(): Boolean =  command.pid.id == namesRegistry.getDynamicSelectorPID()
-fun ObdMetric.isVehicleSpeed(): Boolean =  command.pid.id == namesRegistry.getVehicleSpeedPID()
-fun ObdMetric.isEngineRpm(): Boolean =  command.pid.id == namesRegistry.getEngineRpmPID()
+fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == namesRegistry.getDynamicSelectorPID()
+fun ObdMetric.isVehicleSpeed(): Boolean = command.pid.id == namesRegistry.getVehicleSpeedPID()
+fun ObdMetric.isEngineRpm(): Boolean = command.pid.id == namesRegistry.getEngineRpmPID()
 
 val namesRegistry = PIDsNamesRegistry()
 
@@ -39,14 +39,14 @@ private const val OIL_LEVEL_PID_ID = 7014L
 private const val ENGINE_TORQUE_PID_ID = 7028L
 private const val INTAKE_PRESSURE_PID_ID = 7005L
 private const val DISTANCE_PID_ID = 7076L
-private const val FUEL_CONSUMED_PID_ID = 7077L
 
 private const val IBS_PID_ID = 7020L
-private const val BATTERY_VOLTAGE_PID_ID =7019L
+private const val BATTERY_VOLTAGE_PID_ID = 7019L
+
 class PIDsNamesRegistry {
 
     fun getIbsPID(): Long = IBS_PID_ID
-    fun getBatteryVoltageID(): Long = BATTERY_VOLTAGE_PID_ID
+    fun getBatteryVoltagePID(): Long = BATTERY_VOLTAGE_PID_ID
 
     fun getTotalMisfiresPID(): Long = TOTAL_MISFIRES_PID_ID
     fun getOilLevelPID(): Long = OIL_LEVEL_PID_ID
@@ -56,8 +56,6 @@ class PIDsNamesRegistry {
     fun getIntakePressurePID(): Long = INTAKE_PRESSURE_PID_ID
 
     fun getDistancePID(): Long = DISTANCE_PID_ID
-
-    fun getFuelConsumedPID(): Long = FUEL_CONSUMED_PID_ID
 
     fun getFuelConsumptionPID(): Long = FUEL_CONSUMPTION_PID_ID
     fun getFuelLevelPID(): Long = FUEL_LEVEL_PID_ID
@@ -72,10 +70,10 @@ class PIDsNamesRegistry {
 
     fun getAtmPressurePID(): Long = EXT_ATM_PRESSURE_PID_ID
     fun getAmbientTempPID(): Long = EXT_AMBIENT_TEMP_PID_ID
-    fun getMeasuredIntakePressurePID (): Long =  EXT_MEASURED_INTAKE_PRESSURE_PID_ID
-    fun getVehicleSpeedPID (): Long = if (isProfileExtensionsEnabled()) EXT_VEHICLE_SPEED_PID_ID else VEHICLE_SPEED_PID_ID
+    fun getMeasuredIntakePressurePID(): Long = EXT_MEASURED_INTAKE_PRESSURE_PID_ID
+    fun getVehicleSpeedPID(): Long = if (isProfileExtensionsEnabled()) EXT_VEHICLE_SPEED_PID_ID else VEHICLE_SPEED_PID_ID
 
-    fun getEngineRpmPID (): Long = if (isProfileExtensionsEnabled())  EXT_ENGINE_RPM_PID_ID else ENGINE_RPM_PID_ID
+    fun getEngineRpmPID(): Long = if (isProfileExtensionsEnabled()) EXT_ENGINE_RPM_PID_ID else ENGINE_RPM_PID_ID
 
     fun getDynamicSelectorPID(): Long = EXT_DYNAMIC_SELECTOR_PID_ID
 

@@ -82,9 +82,8 @@ internal class TripSurfaceRenderer(
                     torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
                     intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
                     distance = metricsCollector.getMetric(namesRegistry.getDistancePID())
-                    fuelConsumed = metricsCollector.getMetric(namesRegistry.getFuelConsumedPID())
                     ibs = metricsCollector.getMetric(namesRegistry.getIbsPID())
-                    batteryVoltage = metricsCollector.getMetric(namesRegistry.getBatteryVoltageID())
+                    batteryVoltage = metricsCollector.getMetric(namesRegistry.getBatteryVoltagePID())
                 }
             )
         }

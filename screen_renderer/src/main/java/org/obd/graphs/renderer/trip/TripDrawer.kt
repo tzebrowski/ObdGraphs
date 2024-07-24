@@ -58,9 +58,9 @@ internal class TripDrawer(context: Context, settings: ScreenSettings) : Abstract
 
         //second row
         rowTop = top + (textSizeBase) + 52f
-        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase)
-        drawMetric(diff(tripInfo.fuelConsumed!!), rowTop, left + 1 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false)
+        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true)
+        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false)
+        drawMetric(diff(tripInfo.batteryVoltage!!), rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.ibs!!, rowTop, left + 3 * x, canvas, textSizeBase)
         drawMetric(tripInfo.oilLevel!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
         drawMetric(tripInfo.totalMisfires!!, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false)
