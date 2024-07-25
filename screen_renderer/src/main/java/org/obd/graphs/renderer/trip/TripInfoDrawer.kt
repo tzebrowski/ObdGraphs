@@ -20,7 +20,6 @@ package org.obd.graphs.renderer.trip
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.renderer.AbstractDrawer
@@ -47,24 +46,24 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     ) {
 
         val (textSizeBase) = calculateFontSize(area)
-        val x = (area.width() / 6 ) + 4
+        val x = maxItemWidth(area) + 4
 
         var rowTop = top + 12f
-        drawMetric(tripInfo.airTemp!!, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(diff(tripInfo.distance!!), rowTop, left + 5 * x, canvas, textSizeBase)
+        drawMetric(tripInfo.airTemp!!, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true, area=area)
+        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true,area=area)
+        drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true,area=area)
+        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true, area=area)
+        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area)
+        drawMetric(diff(tripInfo.distance!!), rowTop, left + 5 * x, canvas, textSizeBase, area=area)
 
         //second row
         rowTop = top + (textSizeBase) + 52f
-        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false)
-        drawMetric(tripInfo.batteryVoltage!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.ibs!!, rowTop, left + 3 * x, canvas, textSizeBase)
-        drawMetric(tripInfo.oilLevel!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true)
-        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false)
+        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1)
+        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)
+        drawMetric(tripInfo.batteryVoltage!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, area=area)
+        drawMetric(tripInfo.ibs!!, rowTop, left + 3 * x, canvas, textSizeBase, area=area)
+        drawMetric(tripInfo.oilLevel!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area)
+        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false, area=area)
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
@@ -90,13 +89,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(
-            settings.getTripInfoSettings().fontSize.toFloat(),
-            CURRENT_MIN,
-            CURRENT_MAX,
-            NEW_MIN,
-            NEW_MAX
-        )
+        val scaleRatio = getScaleRatio()
 
         val areaWidth = area.width()
         val valueTextSize = (areaWidth / 17f) * scaleRatio
@@ -125,7 +118,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             textSizeBase
         )
 
-
         drawValue(
             canvas,
             metric,
@@ -133,8 +125,10 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             valueTextSize,
             left = left + getAreaWidth(area) - 50f
         )
+        val scaleRatio = getScaleRatio()
 
-        top1 += 52f
+        //space between title and  statistic values
+        top1 +=  ( area.width() / 11f) * scaleRatio
 
         if (settings.isStatisticsEnabled()) {
             val tt = textSizeBase * 0.6f
@@ -204,6 +198,14 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         return top1
     }
 
+    private inline fun getScaleRatio() = valueScaler.scaleToNewRange(
+        settings.getTripInfoSettings().fontSize.toFloat(),
+        CURRENT_MIN,
+        CURRENT_MAX,
+        NEW_MIN,
+        NEW_MAX
+    )
+
     private inline fun calculateDividerSpacing(): Int = 14
     private inline fun getAreaWidth(area: Rect): Float = area.width().toFloat() / 2
 
@@ -263,8 +265,9 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         typeface: Typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
         color: Int = Color.WHITE,
         statsEnabled: Boolean,
-        unitEnabled: Boolean
-
+        unitEnabled: Boolean,
+        area: Rect,
+        statsDoublePrecision: Int = 2
     ) {
 
         valuePaint.typeface = typeface
@@ -286,11 +289,17 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         if (settings.isStatisticsEnabled() && statsEnabled) {
             valuePaint.color = Color.LTGRAY
-            valuePaint.textSize = (textSize * 0.65).toFloat()
-            canvas.drawText(metric.toNumber(metric.min), (left + textWidth), top, valuePaint)
-            canvas.drawText(metric.toNumber(metric.max), (left + textWidth), top - 20, valuePaint)
+            valuePaint.textSize = (textSize * 0.60).toFloat()
+            val itemWidth = textWidth + getTextWidth(metric.toNumber(metric.max), valuePaint)
+            if (itemWidth <= maxItemWidth(area)) {
+                val min = metric.toNumber(metric.min, statsDoublePrecision)
+                canvas.drawText(min, (left + textWidth), top, valuePaint)
+                canvas.drawText(metric.toNumber(metric.max, statsDoublePrecision), (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
+            }
         }
     }
+
+    private inline fun maxItemWidth(area: Rect) = (area.width() / 6)
 
     private fun calculateProgressBarHeight() = 16
 
@@ -301,7 +310,9 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         canvas: Canvas,
         textSizeBase: Float,
         statsEnabled: Boolean = false,
-        unitEnabled: Boolean = true
+        unitEnabled: Boolean = true,
+        area: Rect,
+        statsDoublePrecision: Int = 2
     ) {
 
         drawValue(
@@ -313,8 +324,9 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             color = Color.WHITE,
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
             statsEnabled = statsEnabled,
-            unitEnabled = unitEnabled
-
+            unitEnabled = unitEnabled,
+            area = area,
+            statsDoublePrecision = statsDoublePrecision
         )
 
         drawTitle(canvas, metric, left, top + 24, textSizeBase * 0.35F)
@@ -326,7 +338,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         left: Float,
         top: Float,
         textSize: Float
-    ) {
+    ): Int {
 
         var top1 = top
         titlePaint.textSize = textSize
@@ -348,10 +360,11 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                     top,
                     titlePaint
                 )
-
+                return getTextWidth(text[0], titlePaint)
             } else {
                 titlePaint.textSize = textSize
                 var vPos = top
+
                 text.forEach {
                     canvas.drawText(
                         it,
@@ -364,6 +377,11 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 }
                 top1 += titlePaint.textSize
 
+                return if (text[0].length > text[1].length){
+                    getTextWidth(text[0], titlePaint)
+                } else {
+                    getTextWidth(text[1], titlePaint)
+                }
             }
 
         } else {
@@ -374,6 +392,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 top,
                 titlePaint
             )
+            return getTextWidth(text, titlePaint)
         }
     }
 }

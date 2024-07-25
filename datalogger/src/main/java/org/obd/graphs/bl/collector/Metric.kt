@@ -39,12 +39,11 @@ data class Metric(
         = Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 
-    fun toNumber(value: Double?): String {
-        return toNumber(source.command.pid, value).toString()
+    fun toNumber(value: Double?, doublePrecision: Int = 2): String {
+        return toNumber(source.command.pid, value, doublePrecision = doublePrecision).toString()
     }
 
     fun isInAlert() : Boolean = source.isAlert
-
 
     fun valueToString(): String =
          if (source.value == null) {
@@ -74,7 +73,7 @@ data class Metric(
     }
 }
 
-fun toNumber(pid: PidDefinition, input: Number?): Number {
+fun toNumber(pid: PidDefinition, input: Number?, doublePrecision: Int = 2): Number {
 
     if (input == null) {
         return Double.NaN
@@ -84,10 +83,10 @@ fun toNumber(pid: PidDefinition, input: Number?): Number {
     if (value.isNaN()) {
         return 0.0
     }
-    return if (pid.type == null) value.round(2) else
+    return if (pid.type == null) value.round(doublePrecision) else
         pid.type.let {
             return when (pid.type) {
-                ValueType.DOUBLE -> value.round(2)
+                ValueType.DOUBLE -> value.round(doublePrecision)
                 ValueType.INT -> value.toInt()
                 ValueType.SHORT -> value.toInt()
                 else -> value.round(1)
