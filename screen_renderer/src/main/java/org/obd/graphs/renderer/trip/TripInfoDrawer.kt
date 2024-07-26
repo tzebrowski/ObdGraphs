@@ -22,6 +22,7 @@ import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
+import org.obd.graphs.bl.query.valueToString
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
@@ -58,7 +59,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         //second row
         rowTop = top + (textSizeBase) + 52f
-        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1)
+        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)
         drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)
         drawMetric(tripInfo.batteryVoltage!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, area=area)
         drawMetric(tripInfo.ibs!!, rowTop, left + 3 * x, canvas, textSizeBase, area=area)
@@ -267,6 +268,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         statsEnabled: Boolean,
         unitEnabled: Boolean,
         area: Rect,
+        valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2
     ) {
 
@@ -275,7 +277,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
-        val text = metric.source.valueToString()
+        val text = metric.source.valueToString(valueDoublePrecision)
         canvas.drawText(text, left, top, valuePaint)
         var textWidth = getTextWidth(text, valuePaint) + 2
 
@@ -312,6 +314,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         statsEnabled: Boolean = false,
         unitEnabled: Boolean = true,
         area: Rect,
+        valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2
     ) {
 
@@ -326,6 +329,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             statsEnabled = statsEnabled,
             unitEnabled = unitEnabled,
             area = area,
+            valueDoublePrecision = valueDoublePrecision,
             statsDoublePrecision = statsDoublePrecision
         )
 
