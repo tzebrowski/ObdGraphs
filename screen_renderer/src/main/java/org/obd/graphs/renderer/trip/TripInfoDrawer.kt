@@ -116,7 +116,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             metric,
             left1,
             top1,
-            textSizeBase
+            textSizeBase * 0.85f
         )
 
         drawValue(
@@ -173,7 +173,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                     valuePaint
                 )
             }
-
 
             top1 += getTextHeight("min", paint) / 2
         }
@@ -253,7 +252,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         valuePaint.color = Color.LTGRAY
         valuePaint.textAlign = Paint.Align.LEFT
-        valuePaint.textSize = (textSize * 0.4).toFloat()
+        valuePaint.textSize = textSize * 0.4f
         canvas.drawText(metric.source.command.pid.units, (left + 2), top, valuePaint)
     }
 
