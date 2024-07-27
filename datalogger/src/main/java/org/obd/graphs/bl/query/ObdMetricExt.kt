@@ -9,11 +9,8 @@ fun ObdMetric.valueToString(precision: Int = 2): String  =
     if (this.value == null) {
         "No data"
     } else {
-        if (this.value is Double) this.valueToDouble(precision).toString() else this.value.toString()
+        if (this.value is Double) value.toDouble().round(precision).toString() else this.value.toString()
     }
-
-fun ObdMetric.valueToDouble(precision: Int = 2): Double  =
-    if (this.value == null) Double.NaN else value.toDouble().round(precision)
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == namesRegistry.getAtmPressurePID()
 fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == namesRegistry.getAmbientTempPID()
