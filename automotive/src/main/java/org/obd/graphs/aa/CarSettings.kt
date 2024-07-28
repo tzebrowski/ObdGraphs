@@ -80,9 +80,8 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     override fun getTripInfoSettings(): TripInfoSettings = tripInfoSettings.apply {
         fontSize = Prefs.getS("pref.aa.trip_info.font_size", "24").toInt()
+        viewEnabled = Prefs.getBoolean("pref.aa.trip_info.enabled", true)
     }
-
-
 
     override fun getColorTheme(): ColorTheme = colorTheme.apply {
         progressColor = Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)

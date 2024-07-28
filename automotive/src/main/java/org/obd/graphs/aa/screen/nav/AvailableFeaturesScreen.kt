@@ -59,13 +59,15 @@ internal class AvailableFeaturesScreen(
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
 
-
-            addItem(
-                row(
-                    TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,
-                    carContext.getString(R.string.available_features_trip_info_screen_title)
+            if (carSettings.getTripInfoSettings().viewEnabled) {
+                addItem(
+                    row(
+                        TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,
+                        carContext.getString(R.string.available_features_trip_info_screen_title)
+                    )
                 )
-            )
+            }
+
 
             addItem(
                 row(

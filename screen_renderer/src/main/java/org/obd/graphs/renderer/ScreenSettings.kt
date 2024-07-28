@@ -62,8 +62,10 @@ data class DragRacingSettings(
 
 
 data class TripInfoSettings(
-    var fontSize: Int = 24
+    var fontSize: Int = 24,
+    var viewEnabled: Boolean = true
 )
+
 
 interface ScreenSettings {
 

@@ -182,6 +182,8 @@
     <string name="pref.aa.general_category">General</string>
 
     <string name="pref.aa.trip_info.category">Trip Info</string>
+    <string name="pref.aa.trip_info.enabled">Enable trip info screen</string>
+    <string name="pref.aa.trip_info.enabled_summary">It enables trip info screen  with predefined set of metrics. Screen is dedicated to 2.0 GME engines</string>
 
     <string name="pref.aa.routines.category">Routines</string>
     <string name="pref.aa.routines.enabled">Enable routines screen</string>

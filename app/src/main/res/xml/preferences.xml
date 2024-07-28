@@ -1365,6 +1365,12 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.trip_info.enabled"
+                        android:title="@string/pref.aa.trip_info.enabled"
+                        android:summary="@string/pref.aa.trip_info.enabled_summary"
+                        app:singleLineTitle="false" />
                 </PreferenceCategory>
 
 
@@ -1377,7 +1383,7 @@
                         android:key="pref.profile.2_0_GME_extension.enabled"
                         android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
                         android:title="@string/pref.profile.2_0_GME_extension.enabled"
-                        app:experimental="true"
+                        app:experimental="false"
                         app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
