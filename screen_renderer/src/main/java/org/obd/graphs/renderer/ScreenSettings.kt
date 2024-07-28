@@ -50,7 +50,7 @@ data class GaugeRendererSettings (
     var topOffset:Int = 0,
 )
 
-data class DragRacingSettings(
+data class DragRacingScreenSettings(
     var shiftLightsRevThreshold: Int = 5000,
     var shiftLightsEnabled: Boolean = true,
     var vehicleSpeedEnabled: Boolean = true,
@@ -61,21 +61,26 @@ data class DragRacingSettings(
 )
 
 
-data class TripInfoSettings(
+data class TripInfoScreenSettings(
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true
 )
 
+data class RoutinesScreenSettings(
+    var viewEnabled: Boolean = true
+)
 
 interface ScreenSettings {
+
+    fun getRoutinesScreenSettings(): RoutinesScreenSettings = RoutinesScreenSettings()
+
+    fun getDragRacingScreenSettings(): DragRacingScreenSettings = DragRacingScreenSettings()
+
+    fun getTripInfoScreenSettings(): TripInfoScreenSettings = TripInfoScreenSettings()
 
     fun isPIDsSortOrderEnabled(): Boolean = false
 
     fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
-
-    fun getDragRacingSettings(): DragRacingSettings = DragRacingSettings()
-
-    fun getTripInfoSettings(): TripInfoSettings = TripInfoSettings()
 
 
     fun getMaxItems (): Int = 6

@@ -152,7 +152,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         var top1 = top
         var left1 = left
 
-        if (settings.getDragRacingSettings().vehicleSpeedEnabled) {
+        if (settings.getDragRacingScreenSettings().vehicleSpeedEnabled) {
             drawText(
                 canvas,
                 metric.source.command.pid.description,
@@ -162,7 +162,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             )
         }
 
-        if (settings.getDragRacingSettings().vehicleSpeedEnabled) {
+        if (settings.getDragRacingScreenSettings().vehicleSpeedEnabled) {
 
             drawValue(
                 canvas,
@@ -172,7 +172,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                 valueTextSize
             )
 
-            if (settings.getDragRacingSettings().vehicleSpeedFrequencyReadEnabled) {
+            if (settings.getDragRacingScreenSettings().vehicleSpeedFrequencyReadEnabled) {
 
                 val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
                 top1 += textSizeBase / FOOTER_SIZE_RATIO
@@ -305,7 +305,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getDragRacingSettings().fontSize.toFloat(),
+        val scaleRatio = valueScaler.scaleToNewRange(settings.getDragRacingScreenSettings().fontSize.toFloat(),
             CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = area.width()
@@ -331,7 +331,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         drawText(canvas, label, left, top, textSizeBase, color = Color.LTGRAY)
         drawText(canvas, timeToString(dragRacingEntry.current), currentXPos, top, textSizeBase)
 
-        if (settings.getDragRacingSettings().vehicleSpeedDisplayDebugEnabled) {
+        if (settings.getDragRacingScreenSettings().vehicleSpeedDisplayDebugEnabled) {
             val width = getTextWidth(timeToString(dragRacingEntry.current), titlePaint) * 1.25f
             drawText(canvas, speedToString(dragRacingEntry.currentSpeed), currentXPos + width, top, textSizeBase / 1.5f)
         }

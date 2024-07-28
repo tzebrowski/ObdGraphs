@@ -21,14 +21,14 @@ package org.obd.graphs.ui.drag_racing
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.DragRacingSettings
+import org.obd.graphs.renderer.DragRacingScreenSettings
 import org.obd.graphs.renderer.ScreenSettings
 
 class DragRacingSettings(private val query: Query): ScreenSettings {
 
-    private val dragRacingSettings = DragRacingSettings()
+    private val dragRacingScreenSettings = DragRacingScreenSettings()
 
-    override fun getDragRacingSettings(): DragRacingSettings  = dragRacingSettings.apply {
+    override fun getDragRacingScreenSettings(): DragRacingScreenSettings  = dragRacingScreenSettings.apply {
         vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.drag_racing.debug.display_frequency", true)
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.drag_racing.debug.vehicle_speed_measurement", false)
         vehicleSpeedEnabled = Prefs.getBoolean("pref.drag_racing.vehicle_speed.enabled", true)

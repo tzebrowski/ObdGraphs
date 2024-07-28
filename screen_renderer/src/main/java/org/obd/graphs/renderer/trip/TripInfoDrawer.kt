@@ -199,7 +199,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     }
 
     private inline fun getScaleRatio() = valueScaler.scaleToNewRange(
-        settings.getTripInfoSettings().fontSize.toFloat(),
+        settings.getTripInfoScreenSettings().fontSize.toFloat(),
         CURRENT_MIN,
         CURRENT_MAX,
         NEW_MIN,

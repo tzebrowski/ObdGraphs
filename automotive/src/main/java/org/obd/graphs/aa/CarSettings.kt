@@ -63,12 +63,13 @@ enum class ScreenTemplateType {
 }
 class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private var itemsSortOrder: Map<Long, Int>? = emptyMap()
-    private val dragRacingSettings = DragRacingSettings()
+    private val dragRacingScreenSettings = DragRacingScreenSettings()
     private val colorTheme = ColorTheme()
     private val gaugeRendererSettings = GaugeRendererSettings()
-    private val tripInfoSettings = TripInfoSettings()
+    private val tripInfoScreenSettings = TripInfoScreenSettings()
+    private val routinesScreenSettings = RoutinesScreenSettings()
 
-    override fun getDragRacingSettings(): DragRacingSettings = dragRacingSettings.apply {
+    override fun getDragRacingScreenSettings(): DragRacingScreenSettings = dragRacingScreenSettings.apply {
         vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.vehicle_speed_measurement", true)
         vehicleSpeedEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
@@ -78,7 +79,11 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         fontSize = Prefs.getS("pref.aa.drag_race.font_size", "30").toInt()
     }
 
-    override fun getTripInfoSettings(): TripInfoSettings = tripInfoSettings.apply {
+    override fun getRoutinesScreenSettings(): RoutinesScreenSettings  = routinesScreenSettings.apply {
+        viewEnabled = Prefs.getBoolean("pref.aa.routines.enabled", true)
+    }
+
+    override fun getTripInfoScreenSettings(): TripInfoScreenSettings = tripInfoScreenSettings.apply {
         fontSize = Prefs.getS("pref.aa.trip_info.font_size", "24").toInt()
         viewEnabled = Prefs.getBoolean("pref.aa.trip_info.enabled", true)
     }
@@ -104,7 +109,6 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         }
     }
 
-    fun isRoutinesEnabled(): Boolean = Prefs.getBoolean("pref.aa.routines.enabled", true)
 
     override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
 

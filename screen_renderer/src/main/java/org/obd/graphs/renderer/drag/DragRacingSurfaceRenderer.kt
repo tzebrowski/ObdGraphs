@@ -54,7 +54,7 @@ internal class DragRacingSurfaceRenderer(
             val dragRaceResults = dragRacingResultRegistry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
-            val dragRacingSettings = settings.getDragRacingSettings()
+            val dragRacingSettings = settings.getDragRacingScreenSettings()
             val margin = if (dragRacingSettings.shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
             var top = getDrawTop(area)
@@ -77,7 +77,7 @@ internal class DragRacingSurfaceRenderer(
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = settings.getDragRacingSettings().contextInfoEnabled)
+                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = settings.getDragRacingScreenSettings().contextInfoEnabled)
                 top += 4
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
@@ -103,7 +103,7 @@ internal class DragRacingSurfaceRenderer(
     }
 
     private fun isShiftLight(dragRaceResults: DragRacingResults) =
-        settings.getDragRacingSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
+        settings.getDragRacingScreenSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
 
     override fun recycle() {
         dragRacingDrawer.recycle()
