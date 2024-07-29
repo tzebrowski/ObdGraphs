@@ -21,7 +21,6 @@ package org.obd.graphs.aa.screen.nav
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.model.*
@@ -38,6 +37,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.Fps
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
@@ -127,21 +127,20 @@ internal class RoutinesScreen(
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         Log.i(LOG_KEY, "RoutinesScreen onResume")
-        carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(ROUTINE_REJECTED_EVENT)
-            addAction(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
-            addAction(ROUTINE_EXECUTION_FAILED_EVENT)
-            addAction(ROUTINE_EXECUTED_SUCCESSFULLY_EVENT)
-            addAction(ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT)
-
-            addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
-            addAction(DATA_LOGGER_CONNECTING_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-            addAction(DATA_LOGGER_ERROR_EVENT)
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_NO_NETWORK_EVENT)
-            addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
-        })
+        registerReceiver(carContext, broadcastReceiver) {
+            it.addAction(ROUTINE_REJECTED_EVENT)
+            it.addAction(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
+            it.addAction(ROUTINE_EXECUTION_FAILED_EVENT)
+            it.addAction(ROUTINE_EXECUTED_SUCCESSFULLY_EVENT)
+            it.addAction(ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT)
+            it.addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTING_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_NO_NETWORK_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
+        }
     }
 
     override fun onPause(owner: LifecycleOwner) {

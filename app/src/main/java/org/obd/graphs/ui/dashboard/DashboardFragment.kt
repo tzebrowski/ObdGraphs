@@ -21,7 +21,6 @@ package org.obd.graphs.ui.dashboard
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
@@ -37,6 +36,7 @@ import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.attachToFloatingButton
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.gauge.AdapterContext
@@ -79,11 +79,11 @@ class DashboardFragment : RefreshableFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(CONFIGURATION_CHANGE_EVENT_DASH)
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-        })
+        registerReceiver(activity, broadcastReceiver) {
+            it.addAction(CONFIGURATION_CHANGE_EVENT_DASH)
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+        }
     }
 
     override fun onDestroy() {

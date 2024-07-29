@@ -22,7 +22,6 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -312,12 +311,12 @@ class GraphFragment : Fragment() {
     }
 
     private fun registerReceivers() {
-        requireContext().registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-            addAction(DATA_LOGGER_CONNECTING_EVENT)
-            addAction(TOGGLE_TOOLBAR_ACTION)
-        })
+        registerReceiver(requireContext(), broadcastReceiver){
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTING_EVENT)
+            it.addAction(TOGGLE_TOOLBAR_ACTION)
+        }
     }
 
     private fun addEntry(obdMetric: ObdMetric) {

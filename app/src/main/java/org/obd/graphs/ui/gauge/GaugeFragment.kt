@@ -22,7 +22,6 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -38,6 +37,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.preferences.*
+import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import org.obd.graphs.ui.recycler.RefreshableFragment
@@ -136,13 +136,13 @@ class GaugeFragment : RefreshableFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(CONFIGURE_CHANGE_EVENT_GAUGE)
-            addAction(DATA_LOGGER_CONNECTING_EVENT)
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-            addAction(TOGGLE_TOOLBAR_ACTION)
-        })
+        registerReceiver(activity, broadcastReceiver){
+            it.addAction(CONFIGURE_CHANGE_EVENT_GAUGE)
+            it.addAction(DATA_LOGGER_CONNECTING_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+            it.addAction(TOGGLE_TOOLBAR_ACTION)
+        }
     }
 
     override fun onDestroyView() {

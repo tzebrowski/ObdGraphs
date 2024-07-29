@@ -3,7 +3,6 @@ package org.obd.graphs.aa.screen.nav
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.model.ActionStrip
@@ -11,10 +10,7 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.Template
 import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT
-import org.obd.graphs.AA_REFRESH_EVENT
-import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
-import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
+import org.obd.graphs.*
 import org.obd.graphs.aa.*
 import org.obd.graphs.aa.screen.*
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -156,19 +152,19 @@ internal class SurfaceScreen(
     }
 
     override fun onCreate(owner: LifecycleOwner) {
-        carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
-            addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
-            addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
-            addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
-            addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
-            addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
-            addAction(PROFILE_CHANGED_EVENT)
-            addAction(PROFILE_RESET_EVENT)
-            addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
-            addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
-            addAction(AA_REFRESH_EVENT)
-        })
+        registerReceiver(carContext,broadcastReceiver) {
+            it.addAction(AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
+            it.addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
+            it.addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
+            it.addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
+            it.addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
+            it.addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
+            it.addAction(PROFILE_CHANGED_EVENT)
+            it.addAction(PROFILE_RESET_EVENT)
+            it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+            it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
+            it.addAction(AA_REFRESH_EVENT)
+        }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {

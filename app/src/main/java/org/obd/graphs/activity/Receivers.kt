@@ -19,7 +19,6 @@
 package org.obd.graphs.activity
 
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.hardware.usb.UsbDevice
@@ -271,44 +270,45 @@ internal fun MainActivity.unregisterReceiver() {
 
 internal fun MainActivity.registerReceiver() {
 
-    registerReceiver(activityBroadcastReceiver, IntentFilter().apply {
-        addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
-        addAction(DATA_LOGGER_CONNECTING_EVENT)
-        addAction(DATA_LOGGER_STOPPED_EVENT)
-        addAction(DATA_LOGGER_ERROR_EVENT)
-        addAction(DATA_LOGGER_CONNECTED_EVENT)
-        addAction(DATA_LOGGER_NO_NETWORK_EVENT)
-        addAction(DATA_LOGGER_DTC_AVAILABLE)
-        addAction(Intent.ACTION_BATTERY_CHANGED)
-        addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
-        addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)
-        addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)
-        addAction(NOTIFICATION_DASH_VIEW_TOGGLE)
-        addAction(NOTIFICATION_GIULIA_VIEW_TOGGLE)
-        addAction(TOGGLE_TOOLBAR_ACTION)
-        addAction(SCREEN_OFF_EVENT)
-        addAction(SCREEN_ON_EVENT)
-        addAction(PROFILE_CHANGED_EVENT)
-        addAction(REQUEST_PERMISSIONS_BT)
-        addAction(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
-        addAction(SCREEN_LOCK_PROGRESS_EVENT)
-        addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
-        addAction(USB_DEVICE_ATTACHED_EVENT)
-        addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
-        addAction(AA_EDIT_PREF_SCREEN)
-        addAction(DATA_LOGGER_WIFI_INCORRECT)
-        addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
-        addAction(REQUEST_LOCATION_PERMISSIONS)
-        addAction(RESET_TOOLBAR_ANIMATION)
-    })
+    registerReceiver(this,activityBroadcastReceiver) {
+        it.addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+        it.addAction(DATA_LOGGER_CONNECTING_EVENT)
+        it.addAction(DATA_LOGGER_STOPPED_EVENT)
+        it.addAction(DATA_LOGGER_ERROR_EVENT)
+        it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+        it.addAction(DATA_LOGGER_NO_NETWORK_EVENT)
+        it.addAction(DATA_LOGGER_DTC_AVAILABLE)
+        it.addAction(Intent.ACTION_BATTERY_CHANGED)
+        it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
+        it.addAction(NOTIFICATION_GRAPH_VIEW_TOGGLE)
+        it.addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)
+        it.addAction(NOTIFICATION_DASH_VIEW_TOGGLE)
+        it.addAction(NOTIFICATION_GIULIA_VIEW_TOGGLE)
+        it.addAction(TOGGLE_TOOLBAR_ACTION)
+        it.addAction(SCREEN_OFF_EVENT)
+        it.addAction(SCREEN_ON_EVENT)
+        it.addAction(PROFILE_CHANGED_EVENT)
+        it.addAction(REQUEST_PERMISSIONS_BT)
+        it.addAction(PREFS_CONNECTION_TYPE_CHANGED_EVENT)
+        it.addAction(SCREEN_LOCK_PROGRESS_EVENT)
+        it.addAction(SCREEN_UNLOCK_PROGRESS_EVENT)
+        it.addAction(USB_DEVICE_ATTACHED_EVENT)
+        it.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+        it.addAction(AA_EDIT_PREF_SCREEN)
+        it.addAction(DATA_LOGGER_WIFI_INCORRECT)
+        it.addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
+        it.addAction(REQUEST_LOCATION_PERMISSIONS)
+        it.addAction(RESET_TOOLBAR_ANIMATION)
+    }
 
-    registerReceiver(powerReceiver, IntentFilter().apply {
-        addAction("android.intent.action.ACTION_POWER_CONNECTED")
-        addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
-    })
+    registerReceiver(this, powerReceiver){
+        it.addAction("android.intent.action.ACTION_POWER_CONNECTED")
+        it.addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
+    }
 
-    registerReceiver(dataLogger.eventsReceiver, IntentFilter().apply {
-        addAction(MODULES_LIST_CHANGED_EVENT)
-        addAction(PROFILE_CHANGED_EVENT)
-    })
+    registerReceiver(this, dataLogger.eventsReceiver){
+        it.addAction(MODULES_LIST_CHANGED_EVENT)
+        it.addAction(PROFILE_CHANGED_EVENT)
+    }
 }
+

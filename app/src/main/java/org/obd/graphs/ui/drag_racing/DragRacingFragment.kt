@@ -21,7 +21,6 @@ package org.obd.graphs.ui.drag_racing
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
@@ -34,6 +33,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -86,10 +86,11 @@ open class DragRacingFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-        })
+
+        registerReceiver(activity, broadcastReceiver){
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+        }
     }
 
     override fun onDestroy() {

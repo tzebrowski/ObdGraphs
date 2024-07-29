@@ -18,7 +18,6 @@
  **/
 package org.obd.graphs
 
-import android.content.IntentFilter
 import androidx.test.core.app.launchActivity
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import org.hamcrest.Matchers.*
@@ -42,8 +41,9 @@ class DataLoggerBluetoothTest {
 
         launchActivity<MainActivity>().use { it ->
             it.onActivity { activity ->
-                activity.registerReceiver(countDownLatchBroadcastReceiver.eventReceiver,
-                    IntentFilter(countDownLatchBroadcastReceiver.broadcastEvent))
+                registerReceiver(activity, countDownLatchBroadcastReceiver.eventReceiver){
+                    it.addAction(countDownLatchBroadcastReceiver.broadcastEvent)
+                }
             }
             // lets use this profiles as default
             profile.loadProfile("profile_5")

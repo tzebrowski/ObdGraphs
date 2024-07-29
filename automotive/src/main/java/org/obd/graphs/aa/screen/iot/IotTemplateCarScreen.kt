@@ -21,7 +21,6 @@ package org.obd.graphs.aa.screen.iot
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.text.SpannableString
 import android.util.Log
 import androidx.car.app.CarContext
@@ -148,31 +147,31 @@ internal class IotTemplateCarScreen(
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-        carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
-            addAction(DATA_LOGGER_CONNECTING_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-            addAction(DATA_LOGGER_ERROR_EVENT)
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_NO_NETWORK_EVENT)
-            addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
-            addAction(PROFILE_CHANGED_EVENT)
-            addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
-            addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
-            addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
-            addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
-            addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
-            addAction(MAIN_ACTIVITY_EVENT_PAUSE)
+        registerReceiver(carContext, broadcastReceiver) {
+            it.addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTING_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_NO_NETWORK_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
+            it.addAction(PROFILE_CHANGED_EVENT)
+            it.addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
+            it.addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
+            it.addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
+            it.addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
+            it.addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
+            it.addAction(MAIN_ACTIVITY_EVENT_PAUSE)
 
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
 
-            addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
-            addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
-            addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
-        })
+            it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
+            it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+            it.addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
+        }
     }
 
     override fun renderAction() {

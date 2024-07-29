@@ -21,17 +21,22 @@ package org.obd.graphs.ui.giulia
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.SurfaceView
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -88,10 +93,10 @@ open class GiuliaFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-        })
+        registerReceiver(activity, broadcastReceiver) {
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+        }
     }
 
     override fun onDestroy() {

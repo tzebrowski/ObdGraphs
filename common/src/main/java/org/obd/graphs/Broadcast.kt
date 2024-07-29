@@ -18,7 +18,11 @@
  **/
 package org.obd.graphs
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 
 private const val EXTRA_PARAM_NAME = "extra"
 
@@ -33,5 +37,16 @@ fun sendBroadcastEvent(actionName: String, extra: String? = "") {
     }
 }
 
+fun registerReceiver(context: Context?, receiver: BroadcastReceiver, func: (filter: IntentFilter) -> Unit){
+    context?.let {
+        val intent = IntentFilter()
+        func(intent)
 
+        if (Build.VERSION.SDK_INT >= 34 && context.applicationInfo.targetSdkVersion >= 34) {
+            context.registerReceiver(receiver, intent , Context.RECEIVER_EXPORTED)
+        } else {
+            context.registerReceiver(receiver,intent)
+        }
+    }
+}
 

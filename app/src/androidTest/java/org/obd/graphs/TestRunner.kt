@@ -18,7 +18,6 @@
  **/
 package org.obd.graphs
 
-import android.content.IntentFilter
 import android.util.Log
 import androidx.test.core.app.launchActivity
 import org.junit.Assert
@@ -44,12 +43,12 @@ fun tcpTestRunner (givenProfile: String,
                    arrange: () -> Unit){
 
     val receiver = CountDownLatchBroadcastReceiver(expectedEventType)
-    launchActivity<MainActivity>().use {
+    launchActivity<MainActivity>().use { it ->
 
         it.onActivity { activity ->
-            activity.registerReceiver(receiver.eventReceiver,
-                IntentFilter(receiver.broadcastEvent)
-            )
+            registerReceiver(activity,receiver.eventReceiver){
+                it.addAction(receiver.broadcastEvent)
+            }
         }
 
         profile.reset()

@@ -21,7 +21,6 @@ package org.obd.graphs.aa.screen.nav
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.car.app.CarContext
@@ -194,28 +193,28 @@ internal class NavTemplateCarScreen(
 
         surfaceScreen.onCreate(owner)
 
-        carContext.registerReceiver(broadcastReceiver, IntentFilter().apply {
-            addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
-            addAction(DATA_LOGGER_CONNECTING_EVENT)
-            addAction(DATA_LOGGER_STOPPED_EVENT)
-            addAction(DATA_LOGGER_ERROR_EVENT)
-            addAction(DATA_LOGGER_CONNECTED_EVENT)
-            addAction(DATA_LOGGER_NO_NETWORK_EVENT)
-            addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
-            addAction(SURFACE_DESTROYED_EVENT)
-            addAction(SURFACE_AREA_CHANGED_EVENT)
-            addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
-            addAction(MAIN_ACTIVITY_EVENT_PAUSE)
-            addAction(SURFACE_BROKEN_EVENT)
+        registerReceiver(carContext, broadcastReceiver) {
+            it.addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTING_EVENT)
+            it.addAction(DATA_LOGGER_STOPPED_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_EVENT)
+            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
+            it.addAction(DATA_LOGGER_NO_NETWORK_EVENT)
+            it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
+            it.addAction(SURFACE_DESTROYED_EVENT)
+            it.addAction(SURFACE_AREA_CHANGED_EVENT)
+            it.addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
+            it.addAction(MAIN_ACTIVITY_EVENT_PAUSE)
+            it.addAction(SURFACE_BROKEN_EVENT)
 
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
-            addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
-            addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
-            addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
-            addAction(CHANGE_SCREEN_EVENT)
-        })
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
+            it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
+            it.addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
+            it.addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
+            it.addAction(CHANGE_SCREEN_EVENT)
+        }
     }
 
     override fun onCarConfigurationChanged() {
