@@ -115,7 +115,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
 
-    fun isLoadLastVisitedScreenEnabled(): Boolean = Prefs.getBoolean("pref.aa.screen.load_last_visited.enabled", true)
+    fun isLoadLastVisitedScreenEnabled(): Boolean = Prefs.getBoolean("pref.aa.screen.load_last_visited.enabled", false)
 
     fun getLastVisitedScreen(): Int = Prefs.getInt(LAST_USER_SCREEN, 0)
 
