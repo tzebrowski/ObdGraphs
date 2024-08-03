@@ -21,6 +21,9 @@ import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.renderer.Fps
 
+const val GIULIA_SCREEN_ID = 0
+const val DRAG_RACING_SCREEN_ID = 1
+const val TRIP_INFO_SCREEN_ID = 3
 
 private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.event.changed"
 
@@ -113,7 +116,6 @@ internal class SurfaceScreen(
                     surfaceController.allocateSurfaceRender()
                     renderFrame()
                 }
-
             }
         }
     }
@@ -125,8 +127,11 @@ internal class SurfaceScreen(
         renderFrame()
     }
 
+    fun isRendererScreen(newScreen: Int) =
+        newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID
+
     fun renderFrame() {
-        if (isScreenAllowedForFrameRendering(screenId)) {
+        if (isRendererScreen(screenId)) {
             surfaceController.renderFrame()
         }
     }
@@ -253,7 +258,4 @@ internal class SurfaceScreen(
     } else {
         mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
     }
-
-    private fun isScreenAllowedForFrameRendering(screenId: Int) = screenId == GIULIA_SCREEN_ID ||
-            screenId == DRAG_RACING_SCREEN_ID || screenId == TRIP_INFO_SCREEN_ID
 }

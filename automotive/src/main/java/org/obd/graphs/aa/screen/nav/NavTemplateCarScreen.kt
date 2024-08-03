@@ -70,7 +70,8 @@ internal class NavTemplateCarScreen(
                         Log.d(LOG_KEY, "Selected new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()
-                            if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID) {
+
+                            if (surfaceScreen.isRendererScreen(newScreen)) {
                                 updateLastVisitedScreen(newScreen)
                             }
 
@@ -183,7 +184,7 @@ internal class NavTemplateCarScreen(
     }
 
     override fun gotoScreen(newScreen: Int) {
-        if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID) {
+        if (surfaceScreen.isRendererScreen(newScreen)) {
             surfaceScreen.toggleSurfaceRenderer(newScreen)
             invalidate()
         } else {
@@ -194,7 +195,6 @@ internal class NavTemplateCarScreen(
             }
         }
     }
-
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
