@@ -47,7 +47,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
                 val key = it.source.command.pid.id
 
                 if (metrics.keys.indexOf(key)  ==-1) {
-                    Log.i(LOG_KEY, "Adding PID with id=$key to metrics map")
+                    Log.i(LOG_KEY, "Adding PID($key = ${it.source.command.pid.description}) to metrics map.")
                     metrics[key] = it
                 }
             }
@@ -64,14 +64,15 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
         metrics.forEach { (k, v) ->
             v.enabled = enabled.contains(k)
         }
-
     }
 
     override fun append(input: ObdMetric?) {
 
         input?.let { metric ->
-            if (!metrics.containsKey(metric.command.pid.id)) {
-                metrics[metric.command.pid.id] = metricBuilder.buildFor(metric)
+            val key = metric.command.pid.id
+            if (!metrics.containsKey(key)) {
+                metrics[key] = metricBuilder.buildFor(metric)
+                Log.i(LOG_KEY, "Adding PID($key = ${metric.command.pid.description}) to metrics map.")
             }
 
             metrics[metric.command.pid.id]?.let {
@@ -99,7 +100,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
             }
         }
     }
-    private fun comparator(order: Map<Long, Int>): java.util.Comparator<Long> = Comparator { m1, m2 ->
+    private fun comparator(order: Map<Long, Int>): Comparator<Long> = Comparator { m1, m2 ->
         if (order.containsKey(m1) && order.containsKey(m2)) {
             order[m1]!!.compareTo(order[m2]!!)
         } else {
