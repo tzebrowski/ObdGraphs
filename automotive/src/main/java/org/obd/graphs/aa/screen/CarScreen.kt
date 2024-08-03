@@ -37,12 +37,9 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.sendBroadcastEvent
 
-private const val LAST_USER_SCREEN = "pref.aa.screen.last_used"
 
 const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
 const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
@@ -62,9 +59,8 @@ internal abstract class CarScreen(
 
     protected open fun gotoScreen(newScreen: Int){}
     protected open fun updateLastVisitedScreen(newScreen: Int){
-        Prefs.updateInt(LAST_USER_SCREEN, newScreen)
+       settings.setLastVisitedScreen(newScreen)
     }
-
 
     protected open fun renderAction() {}
 
@@ -177,7 +173,7 @@ internal abstract class CarScreen(
                 }
 
                 if (settings.isLoadLastVisitedScreenEnabled()){
-                    gotoScreen(getLastVisitedScreen())
+                    gotoScreen(settings.getLastVisitedScreen())
                 }
             }
         }
@@ -188,7 +184,4 @@ internal abstract class CarScreen(
         dataLogger.stop()
         cancelRenderingTask()
     }
-
-    private fun getLastVisitedScreen(): Int = Prefs.getInt(LAST_USER_SCREEN, GIULIA_SCREEN_ID)
-
 }
