@@ -170,6 +170,7 @@
     <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
     <string name="pref.aa.display_pid_scale">Display PIDs scale</string>
 
+    <string name="pref.aa.screen.load_last_visited.enabled">Load automatically last visited screen</string>
     <string name="pref.aa.display_status_panel">Display status panel</string>
     <string name="pref.aa.connection_auto">Automatic connection to the OBD2 adapter when enter AA mode</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled">Enable PIDs sort order</string>

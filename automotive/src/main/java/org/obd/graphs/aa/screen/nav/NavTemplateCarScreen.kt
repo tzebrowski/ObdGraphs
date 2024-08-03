@@ -72,15 +72,10 @@ internal class NavTemplateCarScreen(
                         it?.let {
                             val newScreen = it.toString().toInt()
                             if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID) {
-                                surfaceScreen.toggleSurfaceRenderer(newScreen)
-                                invalidate()
-                            } else {
-                                val routinesScreen = RoutinesScreen(carContext, settings, metricsCollector, fps)
-                                lifecycle.addObserver(routinesScreen)
-                                screenManager.pushForResult(routinesScreen){
-                                    lifecycle.removeObserver(routinesScreen)
-                                }
+                                updateLastVisitedScreen(newScreen)
                             }
+
+                            gotoScreen(newScreen)
                         }
                    }
                 }
@@ -188,6 +183,20 @@ internal class NavTemplateCarScreen(
         }
     }
 
+    override fun gotoScreen(newScreen: Int) {
+        if (newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID) {
+            surfaceScreen.toggleSurfaceRenderer(newScreen)
+            invalidate()
+        } else {
+            val routinesScreen = RoutinesScreen(carContext, settings, metricsCollector, fps)
+            lifecycle.addObserver(routinesScreen)
+            screenManager.pushForResult(routinesScreen) {
+                lifecycle.removeObserver(routinesScreen)
+            }
+        }
+    }
+
+
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
 
@@ -238,7 +247,6 @@ internal class NavTemplateCarScreen(
         super.onDestroy(owner)
         lifecycle.removeObserver(surfaceScreen.getLifecycleObserver())
         surfaceScreen.onDestroy(owner)
-//        routineScreen.onDestroy(owner)
         carContext.unregisterReceiver(broadcastReceiver)
     }
 

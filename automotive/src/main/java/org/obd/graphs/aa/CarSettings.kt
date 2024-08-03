@@ -113,6 +113,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
 
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
+    fun isLoadLastVisitedScreenEnabled(): Boolean = Prefs.getBoolean("pref.aa.screen.load_last_visited.enabled", true)
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
         gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.LONG.name))

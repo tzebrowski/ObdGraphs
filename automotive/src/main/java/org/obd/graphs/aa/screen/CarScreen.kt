@@ -37,8 +37,12 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.sendBroadcastEvent
+
+private const val LAST_USER_SCREEN = "pref.aa.screen.last_used"
 
 const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
 const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
@@ -55,6 +59,12 @@ internal abstract class CarScreen(
     ) : Screen(carContext), DefaultLifecycleObserver {
 
     protected val query = Query.instance()
+
+    protected open fun gotoScreen(newScreen: Int){}
+    protected open fun updateLastVisitedScreen(newScreen: Int){
+        Prefs.updateInt(LAST_USER_SCREEN, newScreen)
+    }
+
 
     protected open fun renderAction() {}
 
@@ -158,13 +168,16 @@ internal abstract class CarScreen(
         }
     }
 
-
     private fun onConnectionStateUpdated(connectionState: Int) {
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
                     query.setStrategy(QueryStrategyType.SHARED_QUERY)
                     dataLogger.start(query)
+                }
+
+                if (settings.isLoadLastVisitedScreenEnabled()){
+                    gotoScreen(getLastVisitedScreen())
                 }
             }
         }
@@ -175,4 +188,7 @@ internal abstract class CarScreen(
         dataLogger.stop()
         cancelRenderingTask()
     }
+
+    private fun getLastVisitedScreen(): Int = Prefs.getInt(LAST_USER_SCREEN, GIULIA_SCREEN_ID)
+
 }

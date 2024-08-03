@@ -952,6 +952,12 @@
                         android:title="@string/pref.aa.connection_auto"
                         app:singleLineTitle="false" />
 
+                    <CheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.screen.load_last_visited.enabled"
+                        android:title="@string/pref.aa.screen.load_last_visited.enabled"
+                        app:singleLineTitle="false" />
+
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.virtual_screens.status_panel.enabled"
