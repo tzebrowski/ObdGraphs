@@ -31,9 +31,12 @@ import org.obd.graphs.bl.datalogger.*
 const val LOG_TAG = "AvailableFeaturesScreen"
 const val ROUTINES_SCREEN_ID = 2
 
+
+data class FeatureDescription(val id: Int, val iconId: Int, val title: String)
+
 internal class AvailableFeaturesScreen(
     carContext: CarContext,
-    private val screenMapping:  List<ScreenMapping>,
+    private val screenMapping:  List<FeatureDescription>,
     private val carSettings: CarSettings
 ) : Screen(carContext) {
 
@@ -59,7 +62,7 @@ internal class AvailableFeaturesScreen(
         val items = ItemList.Builder().apply {
 
             screenMapping.forEach {
-                addItem(row(it.screenId, it.iconId, it.title))
+                addItem(row(it.id, it.iconId, it.title))
             }
 
             if (carSettings.getRoutinesScreenSettings().viewEnabled){

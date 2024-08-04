@@ -28,8 +28,6 @@ private const val TRIP_INFO_SCREEN_ID = 3
 
 private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.event.changed"
 
-data class ScreenMapping(val screenId: Int, val iconId: Int, val title: String)
-
 internal class SurfaceRendererScreen(
     carContext: CarContext,
     settings: CarSettings,
@@ -195,11 +193,11 @@ internal class SurfaceRendererScreen(
     fun isRendererScreen(newScreen: Int) =
         newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID
 
-    fun getScreenMappings(): List<ScreenMapping>  = mutableListOf(
-        ScreenMapping(DRAG_RACING_SCREEN_ID, R.drawable.action_drag_race_screen, carContext.getString(R.string.available_features_drag_race_screen_title)),
-        ScreenMapping(GIULIA_SCREEN_ID, R.drawable.action_giulia, carContext.getString(R.string.available_features_giulia_screen_title))).apply {
+    fun getScreenMappings(): List<FeatureDescription>  = mutableListOf(
+        FeatureDescription(DRAG_RACING_SCREEN_ID, R.drawable.action_drag_race_screen, carContext.getString(R.string.available_features_drag_race_screen_title)),
+        FeatureDescription(GIULIA_SCREEN_ID, R.drawable.action_giulia, carContext.getString(R.string.available_features_giulia_screen_title))).apply {
             if (settings.getTripInfoScreenSettings().viewEnabled) {
-                add(ScreenMapping(TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,  carContext.getString(R.string.available_features_trip_info_screen_title)))
+                add(FeatureDescription(TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,  carContext.getString(R.string.available_features_trip_info_screen_title)))
             }
     }
 
