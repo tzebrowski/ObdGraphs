@@ -28,13 +28,15 @@ import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
 
-const val GIULIA_SCREEN_ID = 0
-const val DRAG_RACING_SCREEN_ID = 1
+const val LOG_TAG = "AvailableFeaturesScreen"
 const val ROUTINES_SCREEN_ID = 2
-const val TRIP_INFO_SCREEN_ID = 3
+
+
+data class FeatureDescription(val id: Int, val iconId: Int, val title: String)
 
 internal class AvailableFeaturesScreen(
     carContext: CarContext,
+    private val screenMapping:  List<FeatureDescription>,
     private val carSettings: CarSettings
 ) : Screen(carContext) {
 
@@ -50,7 +52,7 @@ internal class AvailableFeaturesScreen(
             listTemplate()
         }
     } catch (e: Exception) {
-        Log.e(org.obd.graphs.aa.screen.LOG_KEY, "Failed to build template", e)
+        Log.e(LOG_TAG, "Failed to build template", e)
         PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
             .setHeaderAction(Action.BACK)
             .setTitle(carContext.getString(R.string.pref_aa_car_error))
@@ -59,29 +61,9 @@ internal class AvailableFeaturesScreen(
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
 
-            if (carSettings.getTripInfoScreenSettings().viewEnabled) {
-                addItem(
-                    row(
-                        TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,
-                        carContext.getString(R.string.available_features_trip_info_screen_title)
-                    )
-                )
+            screenMapping.forEach {
+                addItem(row(it.id, it.iconId, it.title))
             }
-
-
-            addItem(
-                row(
-                    DRAG_RACING_SCREEN_ID, R.drawable.action_drag_race_screen,
-                    carContext.getString(R.string.available_features_drag_race_screen_title)
-                )
-            )
-
-            addItem(
-                row(
-                    GIULIA_SCREEN_ID, R.drawable.action_giulia,
-                    carContext.getString(R.string.available_features_giulia_screen_title)
-                )
-            )
 
             if (carSettings.getRoutinesScreenSettings().viewEnabled){
                  addItem(
@@ -122,7 +104,7 @@ internal class AvailableFeaturesScreen(
     private fun getHorizontalActionStrip(): ActionStrip {
         var builder = ActionStrip.Builder()
         builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
-            Log.i(org.obd.graphs.aa.screen.LOG_KEY, "Exiting the app. Closing the context")
+            Log.i(org.obd.graphs.aa.screen.LOG_TAG, "Exiting the app. Closing the context")
             carContext.finishCarApp()
         })
         return builder.build()

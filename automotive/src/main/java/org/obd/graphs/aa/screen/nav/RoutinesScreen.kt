@@ -30,7 +30,7 @@ import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.CarScreen
-import org.obd.graphs.aa.screen.LOG_KEY
+import org.obd.graphs.aa.screen.LOG_TAG
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -54,7 +54,7 @@ internal class RoutinesScreen(
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.i(LOG_KEY, "Received event=${intent?.action}")
+            Log.i(LOG_TAG, "Received event=${intent?.action}")
             try {
                 when (intent?.action) {
                     ROUTINE_WORKFLOW_NOT_RUNNING_EVENT -> {
@@ -119,14 +119,14 @@ internal class RoutinesScreen(
                     }
                 }
             } catch (e: Exception) {
-                Log.w(LOG_KEY, "Failed event ${intent?.action} processing", e)
+                Log.w(LOG_TAG, "Failed event ${intent?.action} processing", e)
             }
         }
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        Log.i(LOG_KEY, "RoutinesScreen onResume")
+        Log.i(LOG_TAG, "RoutinesScreen onResume")
         registerReceiver(carContext, broadcastReceiver) {
             it.addAction(ROUTINE_REJECTED_EVENT)
             it.addAction(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
@@ -145,7 +145,7 @@ internal class RoutinesScreen(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        Log.i(LOG_KEY, "RoutinesScreen onPause")
+        Log.i(LOG_TAG, "RoutinesScreen onPause")
         carContext.unregisterReceiver(broadcastReceiver)
     }
 
@@ -179,7 +179,7 @@ internal class RoutinesScreen(
                 .build()
         }
     } catch (e: Exception) {
-        Log.e(LOG_KEY, "Failed to build template", e)
+        Log.e(LOG_TAG, "Failed to build template", e)
         PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
             .setHeaderAction(Action.BACK)
             .setTitle(carContext.getString(R.string.pref_aa_car_error))
@@ -189,7 +189,7 @@ internal class RoutinesScreen(
     private fun buildItem(data: PidDefinition): Row {
         var rowBuilder = Row.Builder()
             .setOnClickListener {
-                Log.i(LOG_KEY, "Executing routine ${data.description}")
+                Log.i(LOG_TAG, "Executing routine ${data.description}")
 
                 if (dataLogger.isRunning()) {
                     routineExecuting = true
@@ -237,7 +237,7 @@ internal class RoutinesScreen(
                     R.drawable.action_disconnect,
                     mapColor(settings.getColorTheme().actionsBtnDisconnectColor)
                 ) {
-                    stopDataLogging()
+                    actionStopDataLogging()
                     toast.show(carContext, R.string.toast_connection_disconnect)
                 })
         } else {
@@ -250,9 +250,9 @@ internal class RoutinesScreen(
 
         builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
             try {
-                stopDataLogging()
+                actionStopDataLogging()
             } finally {
-                Log.i(LOG_KEY, "Exiting the app. Closing the context")
+                Log.i(LOG_TAG, "Exiting the app. Closing the context")
                 carContext.finishCarApp()
             }
         })

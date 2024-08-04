@@ -33,9 +33,6 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
@@ -44,7 +41,7 @@ import org.obd.graphs.sendBroadcastEvent
 private const val LOG_KEY = "SurfaceController"
 
 
-class SurfaceController(
+class SurfaceRendererController(
     private val carContext: CarContext,
     private val settings: CarSettings,
     private val metricsCollector: MetricsCollector,
@@ -61,7 +58,7 @@ class SurfaceController(
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
 
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface is now available")
                 surface?.release()
                 surface = surfaceContainer.surface
@@ -75,9 +72,9 @@ class SurfaceController(
         }
 
         override fun onVisibleAreaChanged(visibleArea: Rect) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface visible area changed: w=${visibleArea.width()} h=${visibleArea.height()},l=${visibleArea.left}")
-                this@SurfaceController.visibleArea = visibleArea
+                this@SurfaceRendererController.visibleArea = visibleArea
 
                 sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
@@ -85,7 +82,7 @@ class SurfaceController(
         }
 
         override fun onStableAreaChanged(stableArea: Rect) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface stable area changed: w=${stableArea.width()} h=${stableArea.height()}")
                 sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
@@ -93,7 +90,7 @@ class SurfaceController(
         }
 
         override fun onSurfaceDestroyed(surfaceContainer: SurfaceContainer) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface destroyed")
                 surface?.release()
                 surface = null
@@ -132,48 +129,12 @@ class SurfaceController(
         renderFrame()
     }
 
-    fun toggleSurfaceRenderer(screenId: Int) {
+    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType()) {
 
         surfaceRenderer.recycle()
-        when (screenId){
-            GIULIA_SCREEN_ID -> {
-                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
-
-                if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                    query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-                } else {
-                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
-                }
-
-                dataLogger.updateQuery(query = query)
-                surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
-            }
-
-            DRAG_RACING_SCREEN_ID -> {
-                dataLogger.updateQuery(query = query.apply {
-                    setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                })
-
-                surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.DRAG_RACING)
-            }
-
-            TRIP_INFO_SCREEN_ID -> {
-                dataLogger.updateQuery(query = query.apply {
-                    setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-                })
-                surfaceRenderer  = SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = SurfaceRendererType.TRIP_INFO)
-            }
-        }
-
+        surfaceRenderer  =
+            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = surfaceRendererType)
         surfaceRenderer.applyMetricsFilter(query)
-    }
-
-
-    fun allocateSurfaceRender() {
-        surfaceRenderer.recycle()
-        surfaceRenderer =
-            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         renderFrame()
     }
 

@@ -30,6 +30,7 @@ import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_RACE
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
+private const val LAST_USER_SCREEN = "pref.aa.screen.last_used"
 
 private const val PREF_PIDS_HISTORY_ENABLED = "pref.aa.pids.history.enabled"
 
@@ -113,6 +114,14 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
 
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
+
+    fun isLoadLastVisitedScreenEnabled(): Boolean = Prefs.getBoolean("pref.aa.screen.load_last_visited.enabled", false)
+
+    fun getLastVisitedScreen(): Int = Prefs.getInt(LAST_USER_SCREEN, 0)
+
+    fun setLastVisitedScreen(newScreen: Int){
+        Prefs.updateInt(LAST_USER_SCREEN, newScreen)
+    }
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
         gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.LONG.name))
