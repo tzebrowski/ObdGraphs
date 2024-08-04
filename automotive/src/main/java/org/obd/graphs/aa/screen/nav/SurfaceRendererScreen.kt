@@ -30,7 +30,7 @@ private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.
 
 data class ScreenMapping(val screenId: Int, val iconId: Int, val title: String)
 
-internal class SurfaceScreen(
+internal class SurfaceRendererScreen(
     carContext: CarContext,
     settings: CarSettings,
     metricsCollector: MetricsCollector,
@@ -39,13 +39,13 @@ internal class SurfaceScreen(
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
     private var screenId = GIULIA_SCREEN_ID
-    private val surfaceController = SurfaceController(carContext, settings, metricsCollector, fps, query)
+    private val surfaceRendererController = SurfaceRendererController(carContext, settings, metricsCollector, fps, query)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
             when (intent?.action) {
-                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceController.allocateSurfaceRender()
+                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceRendererController.allocateSurfaceRenderer()
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
 
                 AA_REFRESH_EVENT -> {
@@ -112,20 +112,20 @@ internal class SurfaceScreen(
 
                 PROFILE_CHANGED_EVENT -> {
                     updateQuery()
-                    surfaceController.allocateSurfaceRender()
+                    surfaceRendererController.allocateSurfaceRenderer()
                     renderFrame()
                 }
 
                 PROFILE_RESET_EVENT -> {
                     updateQuery()
-                    surfaceController.allocateSurfaceRender()
+                    surfaceRendererController.allocateSurfaceRenderer()
                     renderFrame()
                 }
             }
         }
     }
 
-    fun getLifecycleObserver() = surfaceController
+    fun getLifecycleObserver() = surfaceRendererController
     fun toggleSurfaceRenderer(newScreen: Int) {
         screenId = newScreen
 
@@ -141,21 +141,21 @@ internal class SurfaceScreen(
                 }
 
                 dataLogger.updateQuery(query = query)
-                surfaceController.toggleSurfaceRenderer()
+                surfaceRendererController.allocateSurfaceRenderer()
             }
 
             DRAG_RACING_SCREEN_ID -> {
                 dataLogger.updateQuery(query = query.apply {
                     setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
                 })
-                surfaceController.toggleSurfaceRenderer(surfaceRendererType = SurfaceRendererType.DRAG_RACING)
+                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.DRAG_RACING)
             }
 
             TRIP_INFO_SCREEN_ID -> {
                 dataLogger.updateQuery(query = query.apply {
                     setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
                 })
-                surfaceController.toggleSurfaceRenderer(surfaceRendererType = SurfaceRendererType.TRIP_INFO)
+                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.TRIP_INFO)
             }
         }
 
@@ -206,12 +206,12 @@ internal class SurfaceScreen(
 
     fun renderFrame() {
         if (isRendererScreen(screenId)) {
-            surfaceController.renderFrame()
+            surfaceRendererController.renderFrame()
         }
     }
 
     override fun onCarConfigurationChanged() {
-        surfaceController.onCarConfigurationChanged()
+        surfaceRendererController.onCarConfigurationChanged()
     }
 
     override fun onGetTemplate(): Template {

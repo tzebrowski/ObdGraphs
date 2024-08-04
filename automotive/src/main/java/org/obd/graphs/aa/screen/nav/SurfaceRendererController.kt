@@ -41,7 +41,7 @@ import org.obd.graphs.sendBroadcastEvent
 private const val LOG_KEY = "SurfaceController"
 
 
-class SurfaceController(
+class SurfaceRendererController(
     private val carContext: CarContext,
     private val settings: CarSettings,
     private val metricsCollector: MetricsCollector,
@@ -58,7 +58,7 @@ class SurfaceController(
     private val surfaceCallback: SurfaceCallback = object : SurfaceCallback {
 
         override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface is now available")
                 surface?.release()
                 surface = surfaceContainer.surface
@@ -72,9 +72,9 @@ class SurfaceController(
         }
 
         override fun onVisibleAreaChanged(visibleArea: Rect) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface visible area changed: w=${visibleArea.width()} h=${visibleArea.height()},l=${visibleArea.left}")
-                this@SurfaceController.visibleArea = visibleArea
+                this@SurfaceRendererController.visibleArea = visibleArea
 
                 sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
@@ -82,7 +82,7 @@ class SurfaceController(
         }
 
         override fun onStableAreaChanged(stableArea: Rect) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface stable area changed: w=${stableArea.width()} h=${stableArea.height()}")
                 sendBroadcastEvent(SURFACE_AREA_CHANGED_EVENT)
                 renderFrame()
@@ -90,7 +90,7 @@ class SurfaceController(
         }
 
         override fun onSurfaceDestroyed(surfaceContainer: SurfaceContainer) {
-            synchronized(this@SurfaceController) {
+            synchronized(this@SurfaceRendererController) {
                 Log.i(LOG_KEY, "Surface destroyed")
                 surface?.release()
                 surface = null
@@ -129,18 +129,12 @@ class SurfaceController(
         renderFrame()
     }
 
-    fun toggleSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType()) {
+    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType()) {
 
         surfaceRenderer.recycle()
         surfaceRenderer  =
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = surfaceRendererType)
         surfaceRenderer.applyMetricsFilter(query)
-    }
-
-    fun allocateSurfaceRender() {
-        surfaceRenderer.recycle()
-        surfaceRenderer =
-            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = settings.getSurfaceRendererType())
         renderFrame()
     }
 
