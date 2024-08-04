@@ -20,14 +20,14 @@ internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
     override fun postValue(obdMetric: ObdMetric) {
         if (obdMetric.isDynamicSelector()) {
 
-            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                Log.v(LOG_KEY, "Received=${obdMetric.value.toInt()}, current=${currentMode} ")
+            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                Log.v(LOG_TAG, "Received=${obdMetric.value.toInt()}, current=${currentMode} ")
             }
 
             if (currentMode != obdMetric.value) {
 
-                if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                    Log.v(LOG_KEY, "Broadcasting Dynamic Selector Mode Change, new=${obdMetric.value.toInt()}")
+                if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                    Log.v(LOG_TAG, "Broadcasting Dynamic Selector Mode Change, new=${obdMetric.value.toInt()}")
                 }
 
                 currentMode = obdMetric.value.toInt()

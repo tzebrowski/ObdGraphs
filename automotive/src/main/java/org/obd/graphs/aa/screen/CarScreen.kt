@@ -46,7 +46,7 @@ const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.chan
 const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 = "pref.aa.pids.profile_3.event.changed"
 const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
-const val LOG_KEY = "CarScreen"
+const val LOG_TAG = "CarScreen"
 
 internal abstract class CarScreen(
     carContext: CarContext,
@@ -143,7 +143,7 @@ internal abstract class CarScreen(
                 try {
                     stopDataLogging()
                 } finally {
-                    Log.i(LOG_KEY, "Exiting the app. Closing the context")
+                    Log.i(LOG_TAG, "Exiting the app. Closing the context")
                     carContext.finishCarApp()
                 }
             })
@@ -180,7 +180,7 @@ internal abstract class CarScreen(
     }
 
     protected fun stopDataLogging() {
-        Log.i(LOG_KEY, "Stopping data logging process")
+        Log.i(LOG_TAG, "Stopping data logging process")
         dataLogger.stop()
         cancelRenderingTask()
     }

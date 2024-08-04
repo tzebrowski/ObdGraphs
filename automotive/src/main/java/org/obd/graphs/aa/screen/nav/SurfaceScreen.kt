@@ -46,7 +46,7 @@ internal class SurfaceScreen(
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
 
                 AA_REFRESH_EVENT -> {
-                    Log.i(LOG_KEY,"Received forced refresh screen event")
+                    Log.i(LOG_TAG,"Received forced refresh screen event")
 
                     when (settings.getCurrentVirtualScreen()) {
                         VIRTUAL_SCREEN_1 -> settings.applyVirtualScreen1()
@@ -55,24 +55,24 @@ internal class SurfaceScreen(
                         VIRTUAL_SCREEN_4 -> settings.applyVirtualScreen4()
                     }
 
-                    applyMetricsFilter()
+                    updateQuery()
                     renderFrame()
                 }
 
                 AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
-                    applyMetricsFilter()
+                    updateQuery()
                     renderFrame()
                 }
 
                 LOW_FREQ_PID_SELECTION_CHANGED_EVENT -> {
-                    applyMetricsFilter()
+                    updateQuery()
                     renderFrame()
                 }
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
                         settings.applyVirtualScreen1()
                     }
-                    applyMetricsFilter()
+                    updateQuery()
                     renderFrame()
                 }
 
@@ -82,7 +82,7 @@ internal class SurfaceScreen(
                         settings.applyVirtualScreen2()
                     }
 
-                    applyMetricsFilter()
+                    updateQuery()
                     renderFrame()
                 }
 
@@ -91,7 +91,7 @@ internal class SurfaceScreen(
                     if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
                         settings.applyVirtualScreen3()
                     }
-                    applyMetricsFilter()
+                    updateQuery()
                     renderFrame()
                 }
 
@@ -101,18 +101,18 @@ internal class SurfaceScreen(
                         settings.applyVirtualScreen4()
                     }
 
-                    applyMetricsFilter()
+                    updateQuery()
                     renderFrame()
                 }
 
                 PROFILE_CHANGED_EVENT -> {
-                    applyMetricsFilter()
+                    updateQuery()
                     surfaceController.allocateSurfaceRender()
                     renderFrame()
                 }
 
                 PROFILE_RESET_EVENT -> {
-                    applyMetricsFilter()
+                    updateQuery()
                     surfaceController.allocateSurfaceRender()
                     renderFrame()
                 }
@@ -176,23 +176,42 @@ internal class SurfaceScreen(
         carContext.unregisterReceiver(broadcastReceiver)
     }
 
-    private fun applyMetricsFilter() {
-        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+    private fun updateQuery() {
+        if (screenId == DRAG_RACING_SCREEN_ID) {
+            Log.i(LOG_TAG,"Updating query for  DRAG_RACING_SCREEN_ID screen")
+
+            query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+            metricsCollector.applyFilter(enabled = query.getIDs())
+            Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
+            dataLogger.updateQuery(query)
+
+        } else if (screenId == TRIP_INFO_SCREEN_ID){
+            Log.i(LOG_TAG,"Updating query for  TRIP_INFO_SCREEN_ID screen")
+
+            query.setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+            metricsCollector.applyFilter(enabled = query.getIDs())
+            Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
+            dataLogger.updateQuery(query)
+
+        } else if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+            Log.i(LOG_TAG,"Updating query for  individualQueryStrategyEnabled")
 
             metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
 
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-            Log.i(LOG_KEY, "User selection PIDs=${settings.getSelectedPIDs()}")
+            Log.i(LOG_TAG, "User selection PIDs=${settings.getSelectedPIDs()}")
 
             dataLogger.updateQuery(query)
         } else {
+            Log.i(LOG_TAG,"Updating query for  default query")
+
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
             val query = query.getIDs()
             val selection = settings.getSelectedPIDs()
             val intersection = selection.filter { query.contains(it) }.toSet()
 
-            Log.i(LOG_KEY, "Query=$query,user selection=$selection, intersection=$intersection")
+            Log.i(LOG_TAG, "Query=$query,user selection=$selection, intersection=$intersection")
 
             metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
         }
@@ -209,7 +228,7 @@ internal class SurfaceScreen(
             builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
                 parent.invalidate()
                 settings.applyVirtualScreen1()
-                applyMetricsFilter()
+                updateQuery()
                 renderFrame()
             })
         }
@@ -220,7 +239,7 @@ internal class SurfaceScreen(
             builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_2, actionStripColor(VIRTUAL_SCREEN_2)) {
                 parent.invalidate()
                 settings.applyVirtualScreen2()
-                applyMetricsFilter()
+                updateQuery()
                 renderFrame()
             })
         }
@@ -231,7 +250,7 @@ internal class SurfaceScreen(
             builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
                 parent.invalidate()
                 settings.applyVirtualScreen3()
-                applyMetricsFilter()
+                updateQuery()
                 renderFrame()
             })
         }
@@ -242,7 +261,7 @@ internal class SurfaceScreen(
             builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_4, actionStripColor(VIRTUAL_SCREEN_4)) {
                 parent.invalidate()
                 settings.applyVirtualScreen4()
-                applyMetricsFilter()
+                updateQuery()
                 renderFrame()
             })
         }

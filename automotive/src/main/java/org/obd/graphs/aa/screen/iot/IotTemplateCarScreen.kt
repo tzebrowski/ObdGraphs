@@ -62,11 +62,11 @@ internal class IotTemplateCarScreen(
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> invalidate()
 
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
-                    Log.v(LOG_KEY, "Main activity has been destroyed.")
+                    Log.v(LOG_TAG, "Main activity has been destroyed.")
                     invalidate()
                 }
                 MAIN_ACTIVITY_EVENT_PAUSE -> {
-                    Log.v(LOG_KEY, "Main activity is going to the background.")
+                    Log.v(LOG_TAG, "Main activity is going to the background.")
                     invalidate()
                 }
 

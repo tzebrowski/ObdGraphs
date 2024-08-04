@@ -61,13 +61,13 @@ internal class NavTemplateCarScreen(
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
-            Log.i(LOG_KEY, "Received ${intent?.action} event")
+            Log.i(LOG_TAG, "Received ${intent?.action} event")
 
             when (intent?.action) {
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
                     screenManager.pushForResult(AvailableFeaturesScreen(carContext, settings)) {
-                        Log.d(LOG_KEY, "Selected new screen id=$it")
+                        Log.d(LOG_TAG, "Selected new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()
 
@@ -87,30 +87,30 @@ internal class NavTemplateCarScreen(
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
 
                 SURFACE_BROKEN_EVENT -> {
-                    Log.d(LOG_KEY, "Received event about ")
+                    Log.d(LOG_TAG, "Received event about ")
                     cancelRenderingTask()
                     carContext.finishCarApp()
                 }
 
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
-                    Log.v(LOG_KEY, "Main activity has been destroyed.")
+                    Log.v(LOG_TAG, "Main activity has been destroyed.")
                     invalidate()
                 }
 
                 MAIN_ACTIVITY_EVENT_PAUSE -> {
-                    Log.v(LOG_KEY, "Main activity is going to the background.")
+                    Log.v(LOG_TAG, "Main activity is going to the background.")
                     invalidate()
                 }
 
                 SURFACE_DESTROYED_EVENT -> cancelRenderingTask()
 
                 SURFACE_AREA_CHANGED_EVENT -> {
-                    Log.v(LOG_KEY,"Surface area changed")
+                    Log.v(LOG_TAG,"Surface area changed")
                     try {
                         invalidate()
                         submitRenderingTask()
                     }catch (e: java.lang.Exception){
-                        Log.w(LOG_KEY,"Failed when received SURFACE_AREA_CHANGED_EVENT event",e)
+                        Log.w(LOG_TAG,"Failed when received SURFACE_AREA_CHANGED_EVENT event",e)
                     }
                 }
 
@@ -119,7 +119,7 @@ internal class NavTemplateCarScreen(
                     try {
                         invalidate()
                     } catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
+                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
                     }
                 }
 
@@ -130,7 +130,7 @@ internal class NavTemplateCarScreen(
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_connection_error)
                     } catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_EVENT event",e)
+                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ERROR_EVENT event",e)
                     }
                 }
 
@@ -144,7 +144,7 @@ internal class NavTemplateCarScreen(
                         toast.show(carContext, R.string.main_activity_toast_connection_stopped)
 
                     } catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_STOPPED_EVENT event",e)
+                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_STOPPED_EVENT event",e)
                     }
                 }
 
@@ -158,7 +158,7 @@ internal class NavTemplateCarScreen(
                         invalidate()
 
                     }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
+                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
                     }
                 }
 
@@ -167,7 +167,7 @@ internal class NavTemplateCarScreen(
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
                     }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
+                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
                     }
                 }
 
@@ -176,7 +176,7 @@ internal class NavTemplateCarScreen(
                         invalidate()
                         toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
                     }catch (e: Exception){
-                        Log.w(LOG_KEY,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
+                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
                     }
                 }
             }
@@ -264,7 +264,7 @@ internal class NavTemplateCarScreen(
             surfaceScreen.onGetTemplate()
         }
     } catch (e: Exception) {
-        Log.e(LOG_KEY, "Failed to build template", e)
+        Log.e(LOG_TAG, "Failed to build template", e)
         PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
             .setHeaderAction(Action.BACK)
             .setTitle(carContext.getString(R.string.pref_aa_car_error))
@@ -304,7 +304,7 @@ internal class NavTemplateCarScreen(
                         fps.stop()
                         invalidate()
                     } catch (e: Throwable) {
-                        Log.e(LOG_KEY, "Failed to stop DL threads", e)
+                        Log.e(LOG_TAG, "Failed to stop DL threads", e)
                     }
                 }
             })

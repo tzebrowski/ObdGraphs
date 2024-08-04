@@ -28,6 +28,7 @@ import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
 
+const val LOG_TAG = "AvailableFeaturesScreen"
 const val ROUTINES_SCREEN_ID = 2
 
 internal class AvailableFeaturesScreen(
@@ -47,7 +48,7 @@ internal class AvailableFeaturesScreen(
             listTemplate()
         }
     } catch (e: Exception) {
-        Log.e(org.obd.graphs.aa.screen.LOG_KEY, "Failed to build template", e)
+        Log.e(LOG_TAG, "Failed to build template", e)
         PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
             .setHeaderAction(Action.BACK)
             .setTitle(carContext.getString(R.string.pref_aa_car_error))
@@ -119,7 +120,7 @@ internal class AvailableFeaturesScreen(
     private fun getHorizontalActionStrip(): ActionStrip {
         var builder = ActionStrip.Builder()
         builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
-            Log.i(org.obd.graphs.aa.screen.LOG_KEY, "Exiting the app. Closing the context")
+            Log.i(org.obd.graphs.aa.screen.LOG_TAG, "Exiting the app. Closing the context")
             carContext.finishCarApp()
         })
         return builder.build()
