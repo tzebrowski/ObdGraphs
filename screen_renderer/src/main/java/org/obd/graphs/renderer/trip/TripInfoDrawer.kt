@@ -50,28 +50,28 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         val x = maxItemWidth(area) + 4
 
         var rowTop = top + 12f
-        drawMetric(tripInfo.airTemp!!, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true, area=area)
-        drawMetric(tripInfo.coolantTemp!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true,area=area)
-        drawMetric(tripInfo.oilTemp!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true,area=area)
-        drawMetric(tripInfo.exhaustTemp!!, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true, area=area)
-        drawMetric(tripInfo.gearboxOilTemp!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area)
-        drawMetric(diff(tripInfo.distance!!), rowTop, left + 5 * x, canvas, textSizeBase, area=area)
+        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.gearboxOilTemp?.let {drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.distance?.let{drawMetric(diff(it), rowTop, left + 5 * x, canvas, textSizeBase, area=area) }
 
         //second row
         rowTop = top + (textSizeBase) + 52f
-        drawMetric(tripInfo.fuellevel!!, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)
-        drawMetric(tripInfo.fuelConsumption!!, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)
-        drawMetric(tripInfo.batteryVoltage!!, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, area=area)
-        drawMetric(tripInfo.ibs!!, rowTop, left + 3 * x, canvas, textSizeBase, area=area)
-        drawMetric(tripInfo.oilLevel!!, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area)
-        drawMetric(tripInfo.totalMisfires!!, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false, area=area)
+        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
+        tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
+        tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.ibs?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, area=area)}
+        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false, area=area) }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
         //metrics
         rowTop += 2.2f * textSizeBase
-        drawMetric(canvas, area, tripInfo.intakePressure!!, left, rowTop)
-        drawMetric(canvas, area, tripInfo.torque!!, left + getAreaWidth(area) + 10, rowTop)
+        tripInfo.intakePressure?.let {  drawMetric(canvas, area, it, left, rowTop) }
+        tripInfo.torque?.let { drawMetric(canvas, area, it, left + getAreaWidth(area) + 10, rowTop) }
     }
 
     private fun diff(metric: Metric) : Metric  {
