@@ -237,7 +237,7 @@ internal class RoutinesScreen(
                     R.drawable.action_disconnect,
                     mapColor(settings.getColorTheme().actionsBtnDisconnectColor)
                 ) {
-                    stopDataLogging()
+                    actionStopDataLogging()
                     toast.show(carContext, R.string.toast_connection_disconnect)
                 })
         } else {
@@ -250,7 +250,7 @@ internal class RoutinesScreen(
 
         builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
             try {
-                stopDataLogging()
+                actionStopDataLogging()
             } finally {
                 Log.i(LOG_TAG, "Exiting the app. Closing the context")
                 carContext.finishCarApp()

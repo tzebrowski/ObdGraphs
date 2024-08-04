@@ -66,7 +66,7 @@ internal class NavTemplateCarScreen(
             when (intent?.action) {
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
-                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, settings)) {
+                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, surfaceScreen.getScreenMappings(), settings)) {
                         Log.d(LOG_TAG, "Selected new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()
@@ -109,7 +109,7 @@ internal class NavTemplateCarScreen(
                     try {
                         invalidate()
                         submitRenderingTask()
-                    }catch (e: java.lang.Exception){
+                    }catch (e: Exception){
                         Log.w(LOG_TAG,"Failed when received SURFACE_AREA_CHANGED_EVENT event",e)
                     }
                 }

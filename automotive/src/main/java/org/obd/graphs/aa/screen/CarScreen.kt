@@ -27,9 +27,10 @@ import androidx.car.app.model.CarColor
 import androidx.lifecycle.DefaultLifecycleObserver
 import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.aa.*
+import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.aa.R
 import org.obd.graphs.aa.mapColor
-import org.obd.graphs.aa.screen.nav.*
+import org.obd.graphs.aa.screen.nav.CHANGE_SCREEN_EVENT
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
@@ -43,8 +44,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
 const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
-const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED
-= "pref.aa.pids.profile_3.event.changed"
+const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
 const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
 const val LOG_TAG = "CarScreen"
 
@@ -53,18 +53,18 @@ internal abstract class CarScreen(
     protected val settings: CarSettings,
     protected val metricsCollector: MetricsCollector,
     protected val fps: Fps = Fps()
-    ) : Screen(carContext), DefaultLifecycleObserver {
+) : Screen(carContext), DefaultLifecycleObserver {
 
     protected val query = Query.instance()
 
-    protected open fun gotoScreen(newScreen: Int){}
-    protected open fun updateLastVisitedScreen(newScreen: Int){
-       settings.setLastVisitedScreen(newScreen)
+    protected open fun gotoScreen(newScreen: Int) {}
+    protected open fun updateLastVisitedScreen(newScreen: Int) {
+        settings.setLastVisitedScreen(newScreen)
     }
 
     protected open fun renderAction() {}
 
-    open fun onCarConfigurationChanged(){}
+    open fun onCarConfigurationChanged() {}
 
     protected val renderingThread: RenderingThread = RenderingThread(
         id = "CarScreenRenderingThread",
@@ -80,6 +80,22 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
+    protected fun actionStopDataLogging() {
+        Log.i(LOG_TAG, "Stopping data logging process")
+        dataLogger.stop()
+        cancelRenderingTask()
+    }
+
+    protected open fun actionStartDataLogging() {
+        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+        } else {
+            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
+        dataLogger.start(query)
+    }
+
     protected open fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
         exitEnabled: Boolean = true,
@@ -89,40 +105,24 @@ internal abstract class CarScreen(
         var builder = ActionStrip.Builder()
 
         builder = if (dataLogger.status() == WorkflowStatus.Connecting || dataLogger.status() == WorkflowStatus.Connected) {
-            builder.addAction(createAction(carContext, R.drawable.action_disconnect, mapColor(settings.getColorTheme().actionsBtnDisconnectColor)) {
-                stopDataLogging()
-                toast.show(carContext, R.string.toast_connection_disconnect)
-            })
+            builder.addAction(
+                createAction(
+                    carContext,
+                    R.drawable.action_disconnect,
+                    mapColor(settings.getColorTheme().actionsBtnDisconnectColor)
+                ) {
+                    actionStopDataLogging()
+                    toast.show(carContext, R.string.toast_connection_disconnect)
+                })
         } else {
-            builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.getColorTheme().actionsBtnConnectColor)) {
-                when (screenId) {
-                    GIULIA_SCREEN_ID -> {
-                        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-                            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-                            query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-                        } else {
-                            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-                        }
-                        dataLogger.start(query)
-                    }
-
-                    DRAG_RACING_SCREEN_ID ->
-                        dataLogger.start(query.apply{
-                            setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                        })
-
-                    TRIP_INFO_SCREEN_ID ->
-                        dataLogger.start(query.apply{
-                            setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-                        })
-
-                    ROUTINES_SCREEN_ID -> {
-                        dataLogger.start(query.apply{
-                            setStrategy(QueryStrategyType.ROUTINES_QUERY)
-                        })
-                    }
-                }
-            })
+            builder.addAction(
+                createAction(
+                    carContext,
+                    R.drawable.actions_connect,
+                    mapColor(settings.getColorTheme().actionsBtnConnectColor)
+                ) {
+                    actionStartDataLogging()
+                })
         }
 
         if (featureListsEnabledSetting) {
@@ -141,7 +141,7 @@ internal abstract class CarScreen(
         if (exitEnabled) {
             builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
                 try {
-                    stopDataLogging()
+                    actionStopDataLogging()
                 } finally {
                     Log.i(LOG_TAG, "Exiting the app. Closing the context")
                     carContext.finishCarApp()
@@ -172,16 +172,10 @@ internal abstract class CarScreen(
                     dataLogger.start(query)
                 }
 
-                if (settings.isLoadLastVisitedScreenEnabled()){
+                if (settings.isLoadLastVisitedScreenEnabled()) {
                     gotoScreen(settings.getLastVisitedScreen())
                 }
             }
         }
-    }
-
-    protected fun stopDataLogging() {
-        Log.i(LOG_TAG, "Stopping data logging process")
-        dataLogger.stop()
-        cancelRenderingTask()
     }
 }

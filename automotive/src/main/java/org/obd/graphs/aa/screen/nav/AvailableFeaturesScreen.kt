@@ -33,6 +33,7 @@ const val ROUTINES_SCREEN_ID = 2
 
 internal class AvailableFeaturesScreen(
     carContext: CarContext,
+    private val screenMapping:  List<ScreenMapping>,
     private val carSettings: CarSettings
 ) : Screen(carContext) {
 
@@ -57,29 +58,9 @@ internal class AvailableFeaturesScreen(
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
 
-            if (carSettings.getTripInfoScreenSettings().viewEnabled) {
-                addItem(
-                    row(
-                        TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,
-                        carContext.getString(R.string.available_features_trip_info_screen_title)
-                    )
-                )
+            screenMapping.forEach {
+                addItem(row(it.screenId, it.iconId, it.title))
             }
-
-
-            addItem(
-                row(
-                    DRAG_RACING_SCREEN_ID, R.drawable.action_drag_race_screen,
-                    carContext.getString(R.string.available_features_drag_race_screen_title)
-                )
-            )
-
-            addItem(
-                row(
-                    GIULIA_SCREEN_ID, R.drawable.action_giulia,
-                    carContext.getString(R.string.available_features_giulia_screen_title)
-                )
-            )
 
             if (carSettings.getRoutinesScreenSettings().viewEnabled){
                  addItem(
