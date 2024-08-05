@@ -54,13 +54,15 @@ internal class TripInfoSurfaceRenderer(
             var top = getDrawTop(area)
             val left = tripInfoDrawer.getMarginLeft(area.left.toFloat())
 
-
             if (settings.isStatusPanelEnabled()) {
                 tripInfoDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
                 top += 4
                 tripInfoDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
+            } else {
+                top += 4
             }
+
             tripInfoDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
