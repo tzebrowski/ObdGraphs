@@ -66,7 +66,13 @@ internal class NavTemplateCarScreen(
             when (intent?.action) {
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
-                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, surfaceRendererScreen.getScreenMappings(), settings)) {
+
+                    val availableFeatures = mutableListOf<FeatureDescription>().apply {
+                        addAll(surfaceRendererScreen.getFeatureDescription())
+                        addAll(RoutinesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
+                    }
+
+                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures)) {
                         Log.d(LOG_TAG, "Selected new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()

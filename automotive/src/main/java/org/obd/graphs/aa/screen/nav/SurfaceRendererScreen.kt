@@ -181,19 +181,13 @@ internal class SurfaceRendererScreen(
                 dataLogger.start(query.apply{
                     setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
                 })
-
-            ROUTINES_SCREEN_ID -> {
-                dataLogger.start(query.apply{
-                    setStrategy(QueryStrategyType.ROUTINES_QUERY)
-                })
-            }
         }
     }
 
     fun isRendererScreen(newScreen: Int) =
         newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID
 
-    fun getScreenMappings(): List<FeatureDescription>  = mutableListOf(
+    override fun getFeatureDescription(): List<FeatureDescription>  = mutableListOf(
         FeatureDescription(DRAG_RACING_SCREEN_ID, R.drawable.action_drag_race_screen, carContext.getString(R.string.available_features_drag_race_screen_title)),
         FeatureDescription(GIULIA_SCREEN_ID, R.drawable.action_giulia, carContext.getString(R.string.available_features_giulia_screen_title))).apply {
             if (settings.getTripInfoScreenSettings().viewEnabled) {

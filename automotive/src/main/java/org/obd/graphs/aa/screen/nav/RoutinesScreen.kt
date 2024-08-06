@@ -42,6 +42,8 @@ import org.obd.graphs.renderer.Fps
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 
+private const val ROUTINES_SCREEN_ID = 222
+
 internal class RoutinesScreen(
     carContext: CarContext,
     settings: CarSettings,
@@ -124,6 +126,14 @@ internal class RoutinesScreen(
         }
     }
 
+    override fun getFeatureDescription(): List<FeatureDescription>  = mutableListOf<FeatureDescription>().apply {
+        if (settings.getRoutinesScreenSettings().viewEnabled) {
+            add(FeatureDescription( ROUTINES_SCREEN_ID,
+                R.drawable.action_features,
+                carContext.getString(R.string.available_features_routine_screen_title)))
+        }
+    }
+
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         Log.i(LOG_TAG, "RoutinesScreen onResume")
@@ -147,6 +157,12 @@ internal class RoutinesScreen(
         super.onPause(owner)
         Log.i(LOG_TAG, "RoutinesScreen onPause")
         carContext.unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun actionStartDataLogging(){
+        dataLogger.start(query.apply{
+            setStrategy(QueryStrategyType.ROUTINES_QUERY)
+        })
     }
 
 

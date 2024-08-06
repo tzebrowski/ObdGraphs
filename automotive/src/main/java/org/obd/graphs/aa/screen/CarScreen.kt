@@ -31,6 +31,7 @@ import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.nav.CHANGE_SCREEN_EVENT
+import org.obd.graphs.aa.screen.nav.FeatureDescription
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
@@ -55,8 +56,9 @@ internal abstract class CarScreen(
     protected val fps: Fps = Fps()
 ) : Screen(carContext), DefaultLifecycleObserver {
 
-    protected val query = Query.instance()
+    open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
 
+    protected val query = Query.instance()
     protected open fun gotoScreen(newScreen: Int) {}
     protected open fun updateLastVisitedScreen(newScreen: Int) {
         settings.setLastVisitedScreen(newScreen)
