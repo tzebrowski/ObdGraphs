@@ -83,6 +83,7 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
+
     protected fun actionStopDataLogging() {
         Log.i(LOG_TAG, "Stopping data logging process")
         dataLogger.stop()
@@ -176,6 +177,7 @@ internal abstract class CarScreen(
                 }
 
                 if (settings.isLoadLastVisitedScreenEnabled()) {
+                    Log.i(LOG_TAG,"Loading last last visited screen")
                     gotoScreen(settings.getLastVisitedScreen())
                 }
             }

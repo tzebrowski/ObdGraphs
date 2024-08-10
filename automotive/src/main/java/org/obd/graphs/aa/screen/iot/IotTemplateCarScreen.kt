@@ -256,7 +256,7 @@ internal class IotTemplateCarScreen(
     }
 
     init {
-
+        Log.i(LOG_TAG, "IotTemplate Screen Init")
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
             metricsCollector.append(it)

@@ -113,14 +113,14 @@ class SurfaceRendererController(
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-        Log.d(LOG_KEY, "(onDestroy) SurfaceRenderer destroyed")
+        Log.d(LOG_KEY, "SurfaceRenderer destroyed (onDestroy) ")
         surface?.release()
         surface = null
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        Log.d(LOG_KEY, "(onPause) SurfaceRenderer destroyed")
+        Log.d(LOG_KEY, "SurfaceRenderer destroyed (onPause)")
         surface?.release()
         surface = null
     }

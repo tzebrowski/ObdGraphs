@@ -22,6 +22,7 @@ import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRendererType
 
+private const val NOT_SET = -1
 private const val GIULIA_SCREEN_ID = 0
 private const val DRAG_RACING_SCREEN_ID = 1
 private const val TRIP_INFO_SCREEN_ID = 3
@@ -48,19 +49,21 @@ internal class SurfaceRendererScreen(
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
 
                 AA_REFRESH_EVENT -> {
-                    Log.i(LOG_TAG,"Received forced refresh screen event")
+                    Log.i(LOG_TAG,"Received forced refresh screen event for screen ${screenId}. Is renderer: ${isSurfaceRendererScreen(screenId)}")
+                    if (isSurfaceRendererScreen(screenId)) {
 
-                    if (screenId == GIULIA_SCREEN_ID) {
-                        when (settings.getCurrentVirtualScreen()) {
-                            VIRTUAL_SCREEN_1 -> settings.applyVirtualScreen1()
-                            VIRTUAL_SCREEN_2 -> settings.applyVirtualScreen2()
-                            VIRTUAL_SCREEN_3 -> settings.applyVirtualScreen3()
-                            VIRTUAL_SCREEN_4 -> settings.applyVirtualScreen4()
+                        if (screenId == GIULIA_SCREEN_ID) {
+                            when (settings.getCurrentVirtualScreen()) {
+                                VIRTUAL_SCREEN_1 -> settings.applyVirtualScreen1()
+                                VIRTUAL_SCREEN_2 -> settings.applyVirtualScreen2()
+                                VIRTUAL_SCREEN_3 -> settings.applyVirtualScreen3()
+                                VIRTUAL_SCREEN_4 -> settings.applyVirtualScreen4()
+                            }
                         }
-                    }
 
-                    updateQuery()
-                    renderFrame()
+                        updateQuery()
+                        renderFrame()
+                    }
                 }
 
                 AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
@@ -125,8 +128,14 @@ internal class SurfaceRendererScreen(
     }
 
     fun getLifecycleObserver() = surfaceRendererController
-    fun toggleSurfaceRenderer(newScreen: Int) {
+
+    fun resetSurfaceRenderer(){
+        screenId = NOT_SET
+    }
+
+    fun switchSurfaceRenderer(newScreen: Int) {
         screenId = newScreen
+        Log.i(LOG_TAG, "Switch to new surface renderer screen: $screenId")
 
         when (screenId){
             GIULIA_SCREEN_ID -> {
@@ -185,7 +194,7 @@ internal class SurfaceRendererScreen(
         }
     }
 
-    fun isRendererScreen(newScreen: Int) =
+    fun isSurfaceRendererScreen(newScreen: Int) =
         newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID
 
     override fun getFeatureDescription(): List<FeatureDescription>  = mutableListOf(
@@ -198,7 +207,7 @@ internal class SurfaceRendererScreen(
 
 
     fun renderFrame() {
-        if (isRendererScreen(screenId)) {
+        if (isSurfaceRendererScreen(screenId)) {
             surfaceRendererController.renderFrame()
         }
     }
@@ -244,43 +253,45 @@ internal class SurfaceRendererScreen(
     }
 
     private fun updateQuery() {
-        if (screenId == DRAG_RACING_SCREEN_ID) {
-            Log.i(LOG_TAG,"Updating query for  DRAG_RACING_SCREEN_ID screen")
+        if (isSurfaceRendererScreen(screenId)) {
+            if (screenId == DRAG_RACING_SCREEN_ID) {
+                Log.i(LOG_TAG, "Updating query for  DRAG_RACING_SCREEN_ID screen")
 
-            query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-            metricsCollector.applyFilter(enabled = query.getIDs())
-            Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-            dataLogger.updateQuery(query)
+                query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                metricsCollector.applyFilter(enabled = query.getIDs())
+                Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
+                dataLogger.updateQuery(query)
 
-        } else if (screenId == TRIP_INFO_SCREEN_ID){
-            Log.i(LOG_TAG,"Updating query for  TRIP_INFO_SCREEN_ID screen")
+            } else if (screenId == TRIP_INFO_SCREEN_ID) {
+                Log.i(LOG_TAG, "Updating query for  TRIP_INFO_SCREEN_ID screen")
 
-            query.setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-            metricsCollector.applyFilter(enabled = query.getIDs())
-            Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-            dataLogger.updateQuery(query)
+                query.setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+                metricsCollector.applyFilter(enabled = query.getIDs())
+                Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
+                dataLogger.updateQuery(query)
 
-        } else if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            Log.i(LOG_TAG,"Updating query for  individualQueryStrategyEnabled")
+            } else if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+                Log.i(LOG_TAG, "Updating query for  individualQueryStrategyEnabled")
 
-            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
+                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
 
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-            query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-            Log.i(LOG_TAG, "User selection PIDs=${settings.getSelectedPIDs()}")
+                query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+                Log.i(LOG_TAG, "User selection PIDs=${settings.getSelectedPIDs()}")
 
-            dataLogger.updateQuery(query)
-        } else {
-            Log.i(LOG_TAG,"Updating query for  default query")
+                dataLogger.updateQuery(query)
+            } else {
+                Log.i(LOG_TAG, "Updating query for default query")
 
-            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-            val query = query.getIDs()
-            val selection = settings.getSelectedPIDs()
-            val intersection = selection.filter { query.contains(it) }.toSet()
+                query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                val query = query.getIDs()
+                val selection = settings.getSelectedPIDs()
+                val intersection = selection.filter { query.contains(it) }.toSet()
 
-            Log.i(LOG_TAG, "Query=$query,user selection=$selection, intersection=$intersection")
+                Log.i(LOG_TAG, "Query=$query,user selection=$selection, intersection=$intersection")
 
-            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+                metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+            }
         }
     }
 
