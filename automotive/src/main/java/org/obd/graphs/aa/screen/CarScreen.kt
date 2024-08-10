@@ -177,7 +177,7 @@ internal abstract class CarScreen(
                 }
 
                 if (settings.isLoadLastVisitedScreenEnabled()) {
-                    Log.i(LOG_TAG,"Loading last last visited screen")
+                    Log.i(LOG_TAG,"Loading last visited screen")
                     gotoScreen(settings.getLastVisitedScreen())
                 }
             }

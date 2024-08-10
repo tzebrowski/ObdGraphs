@@ -179,9 +179,6 @@ internal class IotTemplateCarScreen(
         invalidate()
     }
 
-    override fun onCarConfigurationChanged() {
-    }
-
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
         carContext.unregisterReceiver(broadcastReceiver)

@@ -125,9 +125,6 @@ class SurfaceRendererController(
         surface = null
     }
 
-    fun onCarConfigurationChanged() {
-        renderFrame()
-    }
 
     fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType()) {
 

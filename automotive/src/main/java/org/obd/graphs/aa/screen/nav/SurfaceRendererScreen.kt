@@ -213,7 +213,9 @@ internal class SurfaceRendererScreen(
     }
 
     override fun onCarConfigurationChanged() {
-        surfaceRendererController.onCarConfigurationChanged()
+        if (isSurfaceRendererScreen(screenId)) {
+            surfaceRendererController.renderFrame()
+        }
     }
 
     override fun onGetTemplate(): Template {
