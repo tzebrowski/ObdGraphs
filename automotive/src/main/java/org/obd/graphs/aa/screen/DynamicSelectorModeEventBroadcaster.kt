@@ -14,6 +14,8 @@ const val EVENT_DYNAMIC_SELECTOR_MODE_RACE = "event.dynamic.selector.mode.race"
 
 internal val dynamicSelectorModeEventBroadcaster:MetricsProcessor  = DynamicSelectorModeEventBroadcaster()
 
+private const val LOG_TAG = "DynSelectorBroadcast"
+
 internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
     private var currentMode = -1
 

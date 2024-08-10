@@ -31,6 +31,7 @@ import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.nav.CHANGE_SCREEN_EVENT
+import org.obd.graphs.aa.screen.nav.FeatureDescription
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
@@ -46,7 +47,8 @@ const val VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.chan
 const val VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
 const val VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.pids.profile_3.event.changed"
 const val VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.pids.profile_4.event.changed"
-const val LOG_TAG = "CarScreen"
+
+private const val LOG_TAG = "CarScreen"
 
 internal abstract class CarScreen(
     carContext: CarContext,
@@ -55,8 +57,9 @@ internal abstract class CarScreen(
     protected val fps: Fps = Fps()
 ) : Screen(carContext), DefaultLifecycleObserver {
 
-    protected val query = Query.instance()
+    open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
 
+    protected val query = Query.instance()
     protected open fun gotoScreen(newScreen: Int) {}
     protected open fun updateLastVisitedScreen(newScreen: Int) {
         settings.setLastVisitedScreen(newScreen)
@@ -79,6 +82,7 @@ internal abstract class CarScreen(
     protected fun registerConnectionStateReceiver() {
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
+
 
     protected fun actionStopDataLogging() {
         Log.i(LOG_TAG, "Stopping data logging process")
@@ -173,6 +177,7 @@ internal abstract class CarScreen(
                 }
 
                 if (settings.isLoadLastVisitedScreenEnabled()) {
+                    Log.i(LOG_TAG,"Loading last last visited screen")
                     gotoScreen(settings.getLastVisitedScreen())
                 }
             }

@@ -48,6 +48,7 @@ const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 const val CHANGE_SCREEN_EVENT = "car.event.screen.change.event"
 
+private const val LOG_TAG = "NavTemplateCarScreen"
 
 internal class NavTemplateCarScreen(
     carContext: CarContext,
@@ -66,12 +67,18 @@ internal class NavTemplateCarScreen(
             when (intent?.action) {
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
-                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, surfaceRendererScreen.getScreenMappings(), settings)) {
-                        Log.d(LOG_TAG, "Selected new screen id=$it")
+
+                    val availableFeatures = mutableListOf<FeatureDescription>().apply {
+                        addAll(surfaceRendererScreen.getFeatureDescription())
+                        addAll(RoutinesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
+                    }
+
+                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures)) {
+                        Log.d(LOG_TAG, "Going to the new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()
 
-                            if (surfaceRendererScreen.isRendererScreen(newScreen)) {
+                            if (surfaceRendererScreen.isSurfaceRendererScreen(newScreen)) {
                                 updateLastVisitedScreen(newScreen)
                             }
 
@@ -184,10 +191,11 @@ internal class NavTemplateCarScreen(
     }
 
     override fun gotoScreen(newScreen: Int) {
-        if (surfaceRendererScreen.isRendererScreen(newScreen)) {
-            surfaceRendererScreen.toggleSurfaceRenderer(newScreen)
+        if (surfaceRendererScreen.isSurfaceRendererScreen(newScreen)) {
+            surfaceRendererScreen.switchSurfaceRenderer(newScreen)
             invalidate()
         } else {
+            surfaceRendererScreen.resetSurfaceRenderer()
             val routinesScreen = RoutinesScreen(carContext, settings, metricsCollector, fps)
             lifecycle.addObserver(routinesScreen)
             screenManager.pushForResult(routinesScreen) {

@@ -23,21 +23,18 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
-import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
 
-const val LOG_TAG = "AvailableFeaturesScreen"
-const val ROUTINES_SCREEN_ID = 2
+private const val LOG_TAG = "AvailableFeaturesScreen"
 
 
 data class FeatureDescription(val id: Int, val iconId: Int, val title: String)
 
 internal class AvailableFeaturesScreen(
     carContext: CarContext,
-    private val screenMapping:  List<FeatureDescription>,
-    private val carSettings: CarSettings
+    private val screenMapping:  List<FeatureDescription>
 ) : Screen(carContext) {
 
     override fun onGetTemplate(): Template  = try {
@@ -60,21 +57,9 @@ internal class AvailableFeaturesScreen(
     }
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
-
             screenMapping.forEach {
                 addItem(row(it.id, it.iconId, it.title))
             }
-
-            if (carSettings.getRoutinesScreenSettings().viewEnabled){
-                 addItem(
-                    row(
-                        ROUTINES_SCREEN_ID,
-                        R.drawable.action_features,
-                        carContext.getString(R.string.available_features_routine_screen_title)
-                    )
-                )
-            }
-
         }.build()
 
         return ListTemplate.Builder()
@@ -104,7 +89,7 @@ internal class AvailableFeaturesScreen(
     private fun getHorizontalActionStrip(): ActionStrip {
         var builder = ActionStrip.Builder()
         builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
-            Log.i(org.obd.graphs.aa.screen.LOG_TAG, "Exiting the app. Closing the context")
+            Log.i(LOG_TAG, "Exiting the app. Closing the context")
             carContext.finishCarApp()
         })
         return builder.build()

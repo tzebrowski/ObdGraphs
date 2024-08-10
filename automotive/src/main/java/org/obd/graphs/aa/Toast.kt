@@ -21,10 +21,10 @@ package org.obd.graphs.aa
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
-import org.obd.graphs.aa.screen.LOG_TAG
 
 
 internal val toast = Toast()
+private const val LOG_TAG = "Toast"
 
 internal class Toast {
     fun show(carCtx: CarContext, id: Int) {

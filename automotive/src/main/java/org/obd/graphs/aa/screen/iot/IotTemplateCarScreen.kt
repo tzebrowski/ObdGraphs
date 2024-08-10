@@ -41,6 +41,7 @@ import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
 
+private const val LOG_TAG = "IotTemplateCarScreen"
 internal class IotTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
@@ -255,7 +256,7 @@ internal class IotTemplateCarScreen(
     }
 
     init {
-
+        Log.i(LOG_TAG, "IotTemplate Screen Init")
         lifecycle.addObserver(this)
         dataLogger.observe(this) {
             metricsCollector.append(it)
