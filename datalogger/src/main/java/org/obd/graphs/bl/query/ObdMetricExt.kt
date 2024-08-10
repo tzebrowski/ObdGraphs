@@ -50,11 +50,14 @@ private const val DISTANCE_PID_ID = 7076L
 
 private const val IBS_PID_ID = 7020L
 private const val BATTERY_VOLTAGE_PID_ID = 7019L
+private const val OIL_PRESSURE_PID_ID = 7018L
+
 
 class PIDsNamesRegistry {
 
     fun getIbsPID(): Long = IBS_PID_ID
     fun getBatteryVoltagePID(): Long = BATTERY_VOLTAGE_PID_ID
+    fun getOilPressurePID(): Long = OIL_PRESSURE_PID_ID
 
     fun getTotalMisfiresPID(): Long = TOTAL_MISFIRES_PID_ID
     fun getOilLevelPID(): Long = OIL_LEVEL_PID_ID

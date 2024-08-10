@@ -60,7 +60,7 @@ internal class TripInfoSurfaceRenderer(
                 tripInfoDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             } else {
-                top += 4
+                top += 8
             }
 
             tripInfoDrawer.drawScreen(
@@ -85,6 +85,7 @@ internal class TripInfoSurfaceRenderer(
                     distance = metricsCollector.getMetric(namesRegistry.getDistancePID())
                     ibs = metricsCollector.getMetric(namesRegistry.getIbsPID())
                     batteryVoltage = metricsCollector.getMetric(namesRegistry.getBatteryVoltagePID())
+                    oilPressure = metricsCollector.getMetric(namesRegistry.getOilPressurePID())
                 }
             )
         }

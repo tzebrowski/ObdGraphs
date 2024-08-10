@@ -39,7 +39,8 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             namesRegistry.getDynamicSelectorPID(),
             namesRegistry.getDistancePID(),
             namesRegistry.getBatteryVoltagePID(),
-            namesRegistry.getIbsPID()
+            namesRegistry.getIbsPID(),
+            namesRegistry.getOilPressurePID(),
         )
 }
 
