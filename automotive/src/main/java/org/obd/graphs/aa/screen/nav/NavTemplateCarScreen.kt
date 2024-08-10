@@ -48,6 +48,7 @@ const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 const val CHANGE_SCREEN_EVENT = "car.event.screen.change.event"
 
+private const val LOG_TAG = "NavTemplateCarScreen"
 
 internal class NavTemplateCarScreen(
     carContext: CarContext,

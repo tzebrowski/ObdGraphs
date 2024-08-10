@@ -27,6 +27,7 @@ private const val DRAG_RACING_SCREEN_ID = 1
 private const val TRIP_INFO_SCREEN_ID = 3
 
 private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.event.changed"
+private const val LOG_TAG = "SurfaceRendererScreen"
 
 internal class SurfaceRendererScreen(
     carContext: CarContext,

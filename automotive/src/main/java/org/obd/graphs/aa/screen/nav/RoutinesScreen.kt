@@ -30,7 +30,6 @@ import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.mapColor
 import org.obd.graphs.aa.screen.CarScreen
-import org.obd.graphs.aa.screen.LOG_TAG
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -43,6 +42,7 @@ import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 
 private const val ROUTINES_SCREEN_ID = 222
+private const val LOG_TAG = "RoutinesScreen"
 
 internal class RoutinesScreen(
     carContext: CarContext,
