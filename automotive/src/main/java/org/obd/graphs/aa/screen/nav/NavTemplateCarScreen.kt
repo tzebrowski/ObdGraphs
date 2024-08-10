@@ -68,12 +68,7 @@ internal class NavTemplateCarScreen(
                 CHANGE_SCREEN_EVENT -> {
                     screenManager.popToRoot()
 
-                    val availableFeatures = mutableListOf<FeatureDescription>().apply {
-                        addAll(surfaceRendererScreen.getFeatureDescription())
-                        addAll(RoutinesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
-                    }
-
-                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures)) {
+                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures())) {
                         Log.d(LOG_TAG, "Going to the new screen id=$it")
                         it?.let {
                             val newScreen = it.toString().toInt()
@@ -187,6 +182,11 @@ internal class NavTemplateCarScreen(
                     }
                 }
             }
+        }
+
+        private inline fun availableFeatures(): MutableList<FeatureDescription>  = mutableListOf<FeatureDescription>().apply {
+                addAll(surfaceRendererScreen.getFeatureDescription())
+                addAll(RoutinesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
         }
     }
 
@@ -321,5 +321,4 @@ internal class NavTemplateCarScreen(
     }
 
     private fun navigationManager() = carContext.getCarService(NavigationManager::class.java)
-
 }
