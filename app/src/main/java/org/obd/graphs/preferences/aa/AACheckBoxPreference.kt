@@ -35,7 +35,7 @@ class AACheckBoxPreference(
 ) :
     CheckBoxPreference(context, attrs) {
 
-    private val experimental = getAttribute("experimental")
+    private val experimental = getAttribute("experimental").toBooleanStrictOrNull() ?: false
 
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, _ ->
@@ -44,13 +44,13 @@ class AACheckBoxPreference(
         }
     }
 
-    override fun getSummary(): CharSequence? {
-        return if (experimental.isEmpty()){
-            super.getSummary()
-        }else {
+    override fun getSummary(): CharSequence?  =
+        if (experimental){
             super.getSummary().toString().colorize(COLOR_CARDINAL, Typeface.NORMAL, 0, 33, 1.0f)
+        } else {
+            super.getSummary()
         }
-    }
+
 
     private fun getAttribute(attrName: String): String = if (attrs == null) {
         ""

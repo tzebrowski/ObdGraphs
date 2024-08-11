@@ -71,9 +71,9 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private val routinesScreenSettings = RoutinesScreenSettings()
 
     override fun getDragRacingScreenSettings(): DragRacingScreenSettings = dragRacingScreenSettings.apply {
-        vehicleSpeedFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
+        metricsFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.vehicle_speed_measurement", true)
-        vehicleSpeedEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
+        displayMetricsEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
         shiftLightsEnabled = Prefs.getBoolean("pref.aa.drag_race.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.aa.drag_race.shift_lights.rev_value", "5000").toInt()
         contextInfoEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)

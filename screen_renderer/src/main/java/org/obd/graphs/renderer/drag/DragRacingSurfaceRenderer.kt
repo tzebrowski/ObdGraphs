@@ -27,8 +27,10 @@ import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.isVehicleSpeed
+import org.obd.graphs.bl.query.isGMEExtensionsEnabled
+import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.renderer.*
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -71,7 +73,7 @@ internal class DragRacingSurfaceRenderer(
             }
 
             if (dragRaceResults.readyToRace){
-                dragRacingDrawer.drawShiftLights(canvas, area, color = Color.GREEN, blinking = true)
+                dragRacingDrawer.drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
             }
 
             left += 5
@@ -81,16 +83,44 @@ internal class DragRacingSurfaceRenderer(
                 top += 4
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
+            } else {
+                top += 8
             }
 
-            metricsCollector.getMetrics().firstOrNull { it.source.isVehicleSpeed() }?.let {
-                top = dragRacingDrawer.drawVehicleSpeed(
-                    canvas = canvas,
-                    area = area,
-                    metric = it,
-                    left = left,
-                    top = top
-                )
+            if (isGMEExtensionsEnabled()){
+                val width =  (area.width() / 2f ) - 10
+                metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
+                    dragRacingDrawer.drawMetric(
+                        canvas = canvas,
+                        area = area,
+                        metric = it,
+                        left = left,
+                        top = top,
+                        width = width
+                    )
+                }
+
+                metricsCollector.getMetric(namesRegistry.getMeasuredIntakePressurePID())?.let {
+                    top = dragRacingDrawer.drawMetric(
+                        canvas = canvas,
+                        area = area,
+                        metric = it,
+                        left = left + width,
+                        top = top,
+                        width = width
+                    )
+                }
+
+            } else {
+                metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
+                    top = dragRacingDrawer.drawMetric(
+                        canvas = canvas,
+                        area = area,
+                        metric = it,
+                        left = left,
+                        top = top
+                    )
+                }
             }
 
             dragRacingDrawer.drawDragRaceResults(

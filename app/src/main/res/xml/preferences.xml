@@ -676,7 +676,7 @@
                 <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="pref.drag_racing.vehicle_speed.enabled"
-                    android:title="@string/pref.aa.performance_meter.display_vehicle_speed"
+                    android:title="@string/pref.aa.performance_meter.display_context_metrics"
                     app:singleLineTitle="false" />
 
 
@@ -1393,6 +1393,7 @@
                         app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:enabled="false"
                         android:defaultValue="false"
                         android:key="pref.aa.drag_race.shift_lights.enabled"
                         android:summary="@string/pref.aa.performance_meter.shift_lights_enabled_summary"
@@ -1401,6 +1402,7 @@
                         app:singleLineTitle="false" />
 
                     <ListPreference
+                        android:enabled="false"
                         android:defaultValue="5000"
                         android:entries="@array/pref.numbers_4500_5000"
                         android:entryValues="@array/pref.numbers_4500_5000"
@@ -1414,7 +1416,7 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.drag_race.vehicle_speed.enabled"
-                        android:title="@string/pref.aa.performance_meter.display_vehicle_speed"
+                        android:title="@string/pref.aa.performance_meter.display_context_metrics"
                         app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
@@ -1442,10 +1444,10 @@
 
                     <org.obd.graphs.preferences.aa.AASeekBar
                         android:defaultValue="10"
-                        android:dialogTitle="@string/pref.aa.performance_meter.vehicle_speed_freq"
+                        android:dialogTitle="@string/pref.aa.performance_meter.metrics_read_freq"
                         android:key="pref.drag_race.vehicle_speed.freq"
                         android:max="20"
-                        android:title="@string/pref.aa.performance_meter.vehicle_speed_freq"
+                        android:title="@string/pref.aa.performance_meter.metrics_read_freq"
                         app:min="1"
                         app:showSeekBarValue="true"
                         app:singleLineTitle="false"

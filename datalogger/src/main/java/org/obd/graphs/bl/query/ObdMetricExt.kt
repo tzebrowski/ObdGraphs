@@ -4,6 +4,8 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
 import org.obd.metrics.api.model.ObdMetric
 
+fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
+
 
 fun ObdMetric.valueToString(precision: Int = 2): String  =
     if (this.value == null) {
@@ -82,11 +84,9 @@ class PIDsNamesRegistry {
     fun getAtmPressurePID(): Long = EXT_ATM_PRESSURE_PID_ID
     fun getAmbientTempPID(): Long = EXT_AMBIENT_TEMP_PID_ID
     fun getMeasuredIntakePressurePID(): Long = EXT_MEASURED_INTAKE_PRESSURE_PID_ID
-    fun getVehicleSpeedPID(): Long = if (isProfileExtensionsEnabled()) EXT_VEHICLE_SPEED_PID_ID else VEHICLE_SPEED_PID_ID
+    fun getVehicleSpeedPID(): Long = if (isGMEExtensionsEnabled()) EXT_VEHICLE_SPEED_PID_ID else VEHICLE_SPEED_PID_ID
 
-    fun getEngineRpmPID(): Long = if (isProfileExtensionsEnabled()) EXT_ENGINE_RPM_PID_ID else ENGINE_RPM_PID_ID
+    fun getEngineRpmPID(): Long = if (isGMEExtensionsEnabled()) EXT_ENGINE_RPM_PID_ID else ENGINE_RPM_PID_ID
 
     fun getDynamicSelectorPID(): Long = EXT_DYNAMIC_SELECTOR_PID_ID
-
-    private fun isProfileExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
 }

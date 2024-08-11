@@ -30,7 +30,6 @@ import org.obd.graphs.round
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_WHITE
 
-private const val FOOTER_SIZE_RATIO = 1.3f
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
@@ -139,67 +138,106 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         drawDragRacingEntry(area, dragRacingResults._100_200, "100-200 km/h", rowTop, left, canvas, textSizeBase)
     }
 
-    inline fun drawVehicleSpeed(
+    inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
         metric: Metric,
         left: Float,
-        top: Float
+        top: Float,
+        width: Float =  getAreaWidth(area)
     ): Float {
 
+        var top1 = top
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
-        var top1 = top
-        var left1 = left
+        if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
 
-        if (settings.getDragRacingScreenSettings().vehicleSpeedEnabled) {
-            drawText(
+            top1 += drawTitle(
                 canvas,
-                metric.source.command.pid.description,
-                left1,
-                top1,
+                metric,
+                left = left,
+                top = top1,
                 textSizeBase
             )
-        }
-
-        if (settings.getDragRacingScreenSettings().vehicleSpeedEnabled) {
 
             drawValue(
                 canvas,
                 metric,
-                area,
-                top1 + 10,
+                left + width,
+                top1 + 1,
                 valueTextSize
             )
 
-            if (settings.getDragRacingScreenSettings().vehicleSpeedFrequencyReadEnabled) {
+            if (settings.getDragRacingScreenSettings().metricsFrequencyReadEnabled) {
 
-                val frequencyTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
-                top1 += textSizeBase / FOOTER_SIZE_RATIO
-                left1 = drawText(
-                    canvas,
-                    "freq:",
-                    left,
-                    top1,
-                    Color.DKGRAY,
-                    frequencyTextSize
-                )
+                val frequencyTextSize = textSizeBase * 0.45f
+                val text = "${metric.rate?.round(2)} read/sec"
+                val ww = getTextWidth(text,titlePaint) * 0.6F
+
                 drawText(
                     canvas,
-                    "${metric.rate?.round(2)} read/sec",
-                    left1,
-                    top1,
+                    text,
+                    left + width - ww,
+                    top ,
                     Color.WHITE,
                     frequencyTextSize
                 )
             }
 
-            top1 += 12f
+
+            if (settings.isStatisticsEnabled()) {
+                val tt = textSizeBase * 0.6f
+                var left1 = left
+                if (metric.source.command.pid.historgam.isMinEnabled) {
+                    left1 = drawText(
+                        canvas,
+                        "min",
+                        left,
+                        top1,
+                        Color.LTGRAY,
+                        tt * 0.8f,
+                        valuePaint
+                    )
+                    left1 = drawText(
+                        canvas,
+                        metric.toNumber(metric.min),
+                        left1,
+                        top1,
+                        Color.LTGRAY,
+                        tt,
+                        valuePaint
+                    )
+                }
+                if (metric.source.command.pid.historgam.isMaxEnabled) {
+                    left1 = drawText(
+                        canvas,
+                        "max",
+                        left1,
+                        top1,
+                        Color.LTGRAY,
+                        tt * 0.8f,
+                        valuePaint
+                    )
+                    drawText(
+                        canvas,
+                        metric.toNumber(metric.max),
+                        left1,
+                        top1,
+                        Color.LTGRAY,
+                        tt,
+                        valuePaint
+                    )
+                }
+
+                top1 += getTextHeight("min", paint) / 2
+            } else {
+                top1 += 4f
+            }
 
             drawProgressBar(
                 canvas,
                 left,
-                getAreaWidth(area), top1, metric,
+                width, top1, metric,
                 color = settings.getColorTheme().progressColor
             )
 
@@ -207,7 +245,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
             drawDivider(
                 canvas,
-                left, getAreaWidth(area), top1,
+                left, width, top1,
                 color = settings.getColorTheme().dividerColor
             )
         }
@@ -255,13 +293,13 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     fun drawValue(
         canvas: Canvas,
         metric: Metric,
-        area: Rect,
+        width: Float,
         top: Float,
         textSize: Float
     ) {
 
         valuePaint.color = COLOR_WHITE
-        val x = area.right - 50f
+        val x = width - 50f
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
@@ -352,6 +390,8 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         }
     }
 
+
     private inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).round(2).toString()
     private inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "" else "$value km/h"
+
 }

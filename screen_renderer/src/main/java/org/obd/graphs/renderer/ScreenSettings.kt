@@ -53,8 +53,8 @@ data class GaugeRendererSettings (
 data class DragRacingScreenSettings(
     var shiftLightsRevThreshold: Int = 5000,
     var shiftLightsEnabled: Boolean = true,
-    var vehicleSpeedEnabled: Boolean = true,
-    var vehicleSpeedFrequencyReadEnabled: Boolean = true,
+    var displayMetricsEnabled: Boolean = true,
+    var metricsFrequencyReadEnabled: Boolean = true,
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var contextInfoEnabled: Boolean = false,
     var fontSize: Int = 32

@@ -21,6 +21,7 @@ package org.obd.graphs.renderer
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -294,6 +295,67 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         canvas.drawText(text, left, top, paint1)
         return (left + getTextWidth(text, paint1) * 1.25f)
     }
+
+    protected fun drawTitle(
+        canvas: Canvas,
+        metric: Metric,
+        left: Float,
+        top: Float,
+        textSize: Float,
+        color: Int  = Color.WHITE
+    ): Int {
+
+        var top1 = top
+        titlePaint.textSize = textSize
+        titlePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        titlePaint.color = color
+
+        val description = if (metric.source.command.pid.longDescription == null || metric.source.command.pid.longDescription.isEmpty()) {
+            metric.source.command.pid.description
+        } else {
+            metric.source.command.pid.longDescription
+        }
+
+        if (settings.isBreakLabelTextEnabled()) {
+
+            val text = description.split("\n")
+            if (text.size == 1) {
+                canvas.drawText(
+                    text[0],
+                    left,
+                    top,
+                    titlePaint
+                )
+                return titlePaint.textSize.toInt()
+            } else {
+                titlePaint.textSize = textSize
+                var vPos = top
+
+                text.forEach {
+                    canvas.drawText(
+                        it,
+                        left,
+                        vPos,
+                        titlePaint
+                    )
+                    vPos += titlePaint.textSize
+
+                }
+                top1 += titlePaint.textSize
+                return titlePaint.textSize.toInt() * text.size
+            }
+        } else {
+            val text = description.replace("\n", " ")
+            canvas.drawText(
+                text,
+                left,
+                top,
+                titlePaint
+            )
+            return titlePaint.textSize.toInt()
+        }
+    }
+
 
     protected fun getTextWidth(text: String, paint: Paint): Int {
         val bounds = Rect()
