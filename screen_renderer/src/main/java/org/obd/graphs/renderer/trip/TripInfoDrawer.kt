@@ -62,9 +62,9 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         tripInfo.fuellevel?.let { drawMetric(it, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
         tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
         tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.ibs?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, area=area)}
-        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false, area=area) }
+        tripInfo.ibs?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, area=area, castToInt = true)}
+        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area = area) }
+        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false, area = area) }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
@@ -270,7 +270,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         unitEnabled: Boolean,
         area: Rect,
         valueDoublePrecision: Int = 2,
-        statsDoublePrecision: Int = 2
+        statsDoublePrecision: Int = 2,
+        castToInt: Boolean = false
     ) {
 
         valuePaint.typeface = typeface
@@ -278,7 +279,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
-        val text = metric.source.valueToString(valueDoublePrecision)
+        val text =  metric.source.valueToString(castToInt = castToInt, precision = valueDoublePrecision)
+
         canvas.drawText(text, left, top, valuePaint)
         var textWidth = getTextWidth(text, valuePaint) + 2
 
@@ -316,7 +318,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         unitEnabled: Boolean = true,
         area: Rect,
         valueDoublePrecision: Int = 2,
-        statsDoublePrecision: Int = 2
+        statsDoublePrecision: Int = 2,
+        castToInt: Boolean = false
     ) {
 
         drawValue(
@@ -331,7 +334,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             unitEnabled = unitEnabled,
             area = area,
             valueDoublePrecision = valueDoublePrecision,
-            statsDoublePrecision = statsDoublePrecision
+            statsDoublePrecision = statsDoublePrecision,
+            castToInt = castToInt
         )
 
         drawTitle(canvas, metric, left, top + 24, textSizeBase * 0.35F)

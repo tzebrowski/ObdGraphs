@@ -7,11 +7,13 @@ import org.obd.metrics.api.model.ObdMetric
 fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
 
 
-fun ObdMetric.valueToString(precision: Int = 2): String  =
+fun ObdMetric.valueToString(castToInt: Boolean = false, precision: Int = 2): String  =
     if (this.value == null) {
         "No data"
     } else {
-        if (this.value is Double) value.toDouble().round(precision).toString() else this.value.toString()
+        if (castToInt)  value.toInt().toString()
+        else if (this.value is Double) value.toDouble().round(precision).toString()
+        else this.value.toString()
     }
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == namesRegistry.getAtmPressurePID()
