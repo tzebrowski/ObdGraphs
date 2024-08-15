@@ -26,7 +26,7 @@ import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
 import kotlin.math.min
 
-const val MARGIN_TOP = 20f
+const val MARGIN_TOP = 8
 
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractSurfaceRenderer(
@@ -35,9 +35,9 @@ internal abstract class AbstractSurfaceRenderer(
     protected val fps: Fps,
     protected val metricsCollector: MetricsCollector,
     protected val viewSettings: ViewSettings
-) :
-    SurfaceRenderer {
-    open fun getDrawTop(area: Rect): Float = area.top + MARGIN_TOP + viewSettings.marginTop
+) : SurfaceRenderer {
+    open fun getTop(area: Rect): Float = area.top + getDefaultTopMargin() + viewSettings.marginTop
+    fun getDefaultTopMargin(): Float =  20f
 
     override fun applyMetricsFilter(query: Query) {
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {

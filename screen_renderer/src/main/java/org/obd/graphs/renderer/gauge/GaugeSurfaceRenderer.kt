@@ -43,11 +43,11 @@ internal class GaugeSurfaceRenderer(
         drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
     )
 
-    override fun getDrawTop(area: Rect): Float   = if (settings.isStatusPanelEnabled()) {
-            area.top + viewSettings.marginTop.toFloat() + MARGIN_TOP
-        } else {
-            area.top + viewSettings.marginTop.toFloat()
-        }
+    override fun getTop(area: Rect): Float   = if (settings.isStatusPanelEnabled()) {
+        area.top + viewSettings.marginTop.toFloat() + getDefaultTopMargin()
+    } else {
+        area.top + viewSettings.marginTop.toFloat()
+    }
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -61,22 +61,23 @@ internal class GaugeSurfaceRenderer(
 
             gaugeDrawer.drawBackground(canvas, area)
 
-            var top = getDrawTop(area)
+            var top = getTop(area)
 
             if (settings.isStatusPanelEnabled()) {
                 val left = gaugeDrawer.getMarginLeft(area.left.toFloat())
                 gaugeDrawer.drawStatusPanel(canvas,top, left, fps)
-                top += 4
+                top += MARGIN_TOP
                 gaugeDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 10
             }
+
             when (metrics.size) {
                 0 -> {}
                 1 -> {
                     gaugeDrawer.drawGauge(
                         canvas = canvas,
                         left = area.left + area.width() / 6f,
-                        top = top,
+                        top = top + 6f,
                         width = area.width() * widthScaleRatio(metrics),
                         metric = metrics[0],
                         labelCenterYPadding = 22f

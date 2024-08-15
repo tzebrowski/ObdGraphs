@@ -26,7 +26,6 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal class TripInfoSurfaceRenderer(
     context: Context,
@@ -51,16 +50,16 @@ internal class TripInfoSurfaceRenderer(
 
             val margin = 0
             val area = getArea(it, canvas, margin)
-            var top = getDrawTop(area)
+            var top = getTop(area)
             val left = tripInfoDrawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
                 tripInfoDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
-                top += 4
+                top += MARGIN_TOP
                 tripInfoDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             } else {
-                top += 8
+                top += MARGIN_TOP
             }
 
             tripInfoDrawer.drawScreen(

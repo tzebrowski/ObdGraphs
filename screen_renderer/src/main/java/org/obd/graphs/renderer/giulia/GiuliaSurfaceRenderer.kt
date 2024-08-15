@@ -37,7 +37,7 @@ private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 private const val AREA_MAX_WIDTH = 500
-private const val MARGIN_TOP = 4
+
 
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaSurfaceRenderer(
@@ -65,7 +65,7 @@ internal class GiuliaSurfaceRenderer(
 
             giuliaDrawer.drawBackground(canvas, area)
 
-            var top = getDrawTop(area)
+            var top = getTop(area)
             var left = giuliaDrawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {

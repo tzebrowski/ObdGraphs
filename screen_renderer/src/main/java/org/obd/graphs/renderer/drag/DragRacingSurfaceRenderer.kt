@@ -59,7 +59,7 @@ internal class DragRacingSurfaceRenderer(
             val dragRacingSettings = settings.getDragRacingScreenSettings()
             val margin = if (dragRacingSettings.shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
-            var top = getDrawTop(area)
+            var top = getTop(area)
             var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
 
             if (dragRacingSettings.shiftLightsEnabled) {
@@ -80,11 +80,11 @@ internal class DragRacingSurfaceRenderer(
 
             if (settings.isStatusPanelEnabled()) {
                 dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = settings.getDragRacingScreenSettings().contextInfoEnabled)
-                top += 4
+                top += MARGIN_TOP
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             } else {
-                top += 8
+                top += MARGIN_TOP
             }
 
             if (isGMEExtensionsEnabled()){
