@@ -322,6 +322,7 @@ internal class WorkflowOrchestrator internal constructor() {
         .stNxx(
             STNxxExtensions.builder()
                 .promoteSlowGroupsEnabled(preferences.stnExtensionsEnabled)
+                .promoteAllGroupsEnabled(preferences.stnExtensionsEnabled)
                 .enabled(preferences.stnExtensionsEnabled)
                 .build()
         )
