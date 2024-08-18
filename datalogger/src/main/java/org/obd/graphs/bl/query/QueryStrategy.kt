@@ -23,5 +23,7 @@ internal open class QueryStrategy(protected val pids: MutableSet<Long> = mutable
         pids.addAll(newPIDs)
     }
 
+    open fun getDefaults():  Set<Long> = emptySet()
+
     open fun getPIDs(): MutableSet<Long> = pids
 }

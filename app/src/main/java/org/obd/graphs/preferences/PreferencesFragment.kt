@@ -47,6 +47,7 @@ const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
 const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
+const val PREF_TRIP_INFO_DISPLAYED_PARAMETERS_IDS = "pref.trip_info.displayed_parameter_ids"
 const val PREF_DASH_DISPLAYED_PARAMETERS_IDS = "pref.dash.displayed_parameter_ids"
 const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_ids"
 const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
@@ -64,14 +65,17 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
         when (preference) {
+
             is TripsListPreferences -> {
                 TripsPreferenceDialogFragment().show(parentFragmentManager, null)
             }
+
             is VehicleMetadataListPreferences -> {
                 VehicleMetadataPreferenceDialogFragment().show(parentFragmentManager, null)
             }
 
             is PIDsListPreferences -> {
+                openPreferenceDialogFor(preference.source)
                 when (preference.source) {
                     "dash" -> {
                         openPIDsDialog("pref.dash.pids.selected","dashboard")
@@ -91,6 +95,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), preference.source)
                         { navigateToScreen(R.id.navigation_gauge) }
                     }
+
+                    "trip_info" -> {
+                        openPIDsDialog(preference.key, preference.source)
+                        { navigateToPreferencesScreen("pref.aa") }
+                    }
+
                     else -> {
                         openPIDsDialog(preference.key, preference.source)
                     }
@@ -235,6 +245,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         when (preferenceKey) {
             PREF_GAUGE_RECORDINGS -> TripsPreferenceDialogFragment().show(parentFragmentManager, null)
 
+            PREF_TRIP_INFO_DISPLAYED_PARAMETERS_IDS ->
+                openPIDsDialog("pref.aa.trip_info.pids.selected","trip_info")
+                { navigateToPreferencesScreen("pref.aa") }
+
+
             PREF_DASH_DISPLAYED_PARAMETERS_IDS ->
                 openPIDsDialog("pref.dash.pids.selected","dashboard")
                 { navigateToScreen(R.id.navigation_dashboard) }
@@ -254,9 +269,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
-        val detailsViewVisible = source == "low" || source == "high"
         PIDsListPreferenceDialogFragment(key = key, source = source,
-            detailsViewEnabled = detailsViewVisible,
             onDialogCloseListener = onDialogCloseListener)
             .show(parentFragmentManager, null)
     }

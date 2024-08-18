@@ -22,7 +22,7 @@ import org.obd.metrics.api.model.ObdMetric
 
 interface MetricsCollector {
 
-    fun getMetric(id: Long): Metric?
+    fun getMetric(id: Long,enabled: Boolean = true): Metric?
 
     fun getMetrics(enabled: Boolean = true): List<Metric>
 

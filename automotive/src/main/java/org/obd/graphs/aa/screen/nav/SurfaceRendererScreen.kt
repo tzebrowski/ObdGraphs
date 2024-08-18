@@ -66,6 +66,11 @@ internal class SurfaceRendererScreen(
                     }
                 }
 
+                AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT -> {
+                    updateQuery()
+                    renderFrame()
+                }
+
                 AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
                     updateQuery()
                     renderFrame()
@@ -247,6 +252,7 @@ internal class SurfaceRendererScreen(
             it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             it.addAction(AA_REFRESH_EVENT)
+            it.addAction(AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT)
         }
     }
 
