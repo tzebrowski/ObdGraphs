@@ -50,21 +50,23 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         val x = maxItemWidth(area) + 4
 
         var rowTop = top + 12f
-        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true,area=area) }
-        tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true,area=area) }
-        tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.gearboxOilTemp?.let {drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.distance?.let{drawMetric(diff(it), rowTop, left + 5 * x, canvas, textSizeBase, area=area) }
+        var leftAlignment = 0
+        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.gearboxOilTemp?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.distance?.let{drawMetric(diff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
 
         //second row
+        leftAlignment = 0
         rowTop = top + (textSizeBase) + 52f
-        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
-        tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
-        tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.ibs?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, area=area, castToInt = true)}
-        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area = area) }
-        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false, area = area) }
+        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
+        tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
+        tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true)}
+        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area = area) }
+        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area) }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
