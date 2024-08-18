@@ -18,7 +18,6 @@
  **/
 package org.obd.graphs.profile
 
-import android.content.SharedPreferences
 
 const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
 const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
@@ -27,7 +26,7 @@ const val PROFILE_ID_PREF = "pref.profile.id"
 
 val profile: Profile = ProfilePreferencesBackend()
 
-interface Profile : SharedPreferences.OnSharedPreferenceChangeListener {
+interface Profile {
 
     fun updateCurrentProfileName(newName: String)
     fun getAvailableProfiles(): Map<String, String?>

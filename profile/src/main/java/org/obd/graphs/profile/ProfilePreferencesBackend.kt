@@ -40,7 +40,7 @@ private const val DEFAULT_MAX_PROFILES = 20
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-internal class ProfilePreferencesBackend : Profile {
+internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPreferenceChangeListener  {
 
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
@@ -154,6 +154,7 @@ internal class ProfilePreferencesBackend : Profile {
         this.versionName = versionName
 
         updateBuildSettings()
+        Prefs.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun setupProfiles(forceOverrideRecommendation: Boolean) {
