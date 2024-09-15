@@ -46,7 +46,6 @@ internal class TripInfoSurfaceRenderer(
             enabled = query.getIDs()
         )
     }
-
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let { it ->

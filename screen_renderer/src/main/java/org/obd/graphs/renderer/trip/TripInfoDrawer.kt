@@ -72,10 +72,25 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         //metrics
         rowTop += 2.2f * textSizeBase
-        tripInfo.intakePressure?.let {  drawMetric(canvas, area, it, left, rowTop) }
-        tripInfo.torque?.let { drawMetric(canvas, area, it, left + getAreaWidth(area) + 5, rowTop) }
-        tripInfo.oilPressure?.let { drawMetric(canvas, area, it, left +  2 * getAreaWidth(area) + 5, rowTop) }
+        leftAlignment = 0
 
+        val bottomMetrics = mutableListOf<Metric>()
+
+        tripInfo.intakePressure?.let {
+            bottomMetrics.add(it)
+        }
+
+        tripInfo.oilPressure?.let {
+            bottomMetrics.add(it)
+        }
+
+        tripInfo.torque?.let {
+            bottomMetrics.add(it)
+        }
+
+        bottomMetrics.forEachIndexed{ index, metric ->
+            drawMetric(canvas, area, metric, left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5), rowTop, bottomMetrics.size)
+        }
     }
 
     private fun diff(metric: Metric) : Metric  {
@@ -107,7 +122,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         area: Rect,
         metric: Metric,
         left: Float,
-        top: Float
+        top: Float,
+        items: Int
     ): Float {
 
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
@@ -123,12 +139,13 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             textSizeBase * 0.75f
         )
 
+        val areaWidth = getAreaWidth(area, items = items)
         drawValue(
             canvas,
             metric,
             top1 + 44,
             valueTextSize * 0.9f,
-            left = left + getAreaWidth(area) - 50f
+            left = left + areaWidth - 50f
         )
         val scaleRatio = getScaleRatio()
 
@@ -186,7 +203,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         drawProgressBar(
             canvas,
             left,
-            getAreaWidth(area), top1, metric,
+            areaWidth, top1, metric,
             color = settings.getColorTheme().progressColor
         )
 
@@ -194,7 +211,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         drawDivider(
             canvas,
-            left, getAreaWidth(area), top1,
+            left, areaWidth, top1,
             color = settings.getColorTheme().dividerColor
         )
 
@@ -211,7 +228,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     )
 
     private inline fun calculateDividerSpacing(): Int = 14
-    private inline fun getAreaWidth(area: Rect): Float = area.width().toFloat() / 3
+    private inline fun getAreaWidth(area: Rect, items: Int = 3): Float = area.width().toFloat() / items
 
     private fun drawProgressBar(
         canvas: Canvas,
