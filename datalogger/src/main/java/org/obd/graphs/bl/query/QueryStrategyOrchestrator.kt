@@ -20,7 +20,10 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
         }
     }
 
+
+
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
+    override fun getDefaults(): Set<Long> = strategies[strategy]?.getDefaults() ?: emptySet()
 
     override fun getIDs(): MutableSet<Long> = strategies[strategy]?.getPIDs() ?: mutableSetOf()
 

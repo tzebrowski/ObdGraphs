@@ -18,29 +18,36 @@
  **/
 package org.obd.graphs.bl.query
 
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
+
+
+private const val TRIP_INFO_QUERY_PREF_KEY = "pref.aa.trip_info.pids.selected"
 
 internal class TripInfoQueryStrategy : QueryStrategy() {
-    override fun getPIDs(): MutableSet<Long> =
-        mutableSetOf(
-            namesRegistry.getVehicleSpeedPID(),
-            namesRegistry.getFuelConsumptionPID(),
-            namesRegistry.getFuelLevelPID(),
-            namesRegistry.getAtmPressurePID(),
-            namesRegistry.getAmbientTempPID(),
-            namesRegistry.getGearboxOilTempPID(),
-            namesRegistry.getOilTempPID(),
-            namesRegistry.getCoolantTempPID(),
-            namesRegistry.getExhaustTempPID(),
-            namesRegistry.getAirTempPID(),
-            namesRegistry.getTotalMisfiresPID(),
-            namesRegistry.getOilLevelPID(),
-            namesRegistry.getTorquePID(),
-            namesRegistry.getIntakePressurePID(),
-            namesRegistry.getDynamicSelectorPID(),
-            namesRegistry.getDistancePID(),
-            namesRegistry.getBatteryVoltagePID(),
-            namesRegistry.getIbsPID(),
-            namesRegistry.getOilPressurePID(),
-        )
+
+    private val defaults  = mutableSetOf(
+        namesRegistry.getFuelConsumptionPID(),
+        namesRegistry.getFuelLevelPID(),
+        namesRegistry.getAtmPressurePID(),
+        namesRegistry.getAmbientTempPID(),
+        namesRegistry.getGearboxOilTempPID(),
+        namesRegistry.getOilTempPID(),
+        namesRegistry.getCoolantTempPID(),
+        namesRegistry.getExhaustTempPID(),
+        namesRegistry.getAirTempPID(),
+        namesRegistry.getTotalMisfiresPID(),
+        namesRegistry.getOilLevelPID(),
+        namesRegistry.getTorquePID(),
+        namesRegistry.getIntakePressurePID(),
+        namesRegistry.getDynamicSelectorPID(),
+        namesRegistry.getDistancePID(),
+        namesRegistry.getBatteryVoltagePID(),
+        namesRegistry.getIbsPID(),
+        namesRegistry.getOilPressurePID(),
+    )
+    override fun getDefaults() = defaults
+
+    override fun getPIDs() = Prefs.getLongSet(TRIP_INFO_QUERY_PREF_KEY).toMutableSet()
 }
 

@@ -50,30 +50,47 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         val x = maxItemWidth(area) + 4
 
         var rowTop = top + 12f
-        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true,area=area) }
-        tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true,area=area) }
-        tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.gearboxOilTemp?.let {drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.distance?.let{drawMetric(diff(it), rowTop, left + 5 * x, canvas, textSizeBase, area=area) }
+        var leftAlignment = 0
+        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.gearboxOilTemp?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.distance?.let{drawMetric(diff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
 
         //second row
+        leftAlignment = 0
         rowTop = top + (textSizeBase) + 52f
-        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
-        tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + 1 * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
-        tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + 2 * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.ibs?.let { drawMetric(it, rowTop, left + 3 * x, canvas, textSizeBase, area=area, castToInt = true)}
-        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + 4 * x, canvas, textSizeBase, statsEnabled = true, area = area) }
-        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + 5 * x, canvas, textSizeBase, unitEnabled = false, area = area) }
+        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
+        tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
+        tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true)}
+        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area = area) }
+        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area) }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
         //metrics
         rowTop += 2.2f * textSizeBase
-        tripInfo.intakePressure?.let {  drawMetric(canvas, area, it, left, rowTop) }
-        tripInfo.torque?.let { drawMetric(canvas, area, it, left + getAreaWidth(area) + 5, rowTop) }
-        tripInfo.oilPressure?.let { drawMetric(canvas, area, it, left +  2 * getAreaWidth(area) + 5, rowTop) }
+        leftAlignment = 0
 
+        val bottomMetrics = mutableListOf<Metric>()
+
+        tripInfo.intakePressure?.let {
+            bottomMetrics.add(it)
+        }
+
+        tripInfo.oilPressure?.let {
+            bottomMetrics.add(it)
+        }
+
+        tripInfo.torque?.let {
+            bottomMetrics.add(it)
+        }
+
+        bottomMetrics.forEachIndexed{ index, metric ->
+            drawMetric(canvas, area, metric, left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5), rowTop, bottomMetrics.size)
+        }
     }
 
     private fun diff(metric: Metric) : Metric  {
@@ -105,7 +122,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         area: Rect,
         metric: Metric,
         left: Float,
-        top: Float
+        top: Float,
+        items: Int
     ): Float {
 
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
@@ -121,12 +139,13 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             textSizeBase * 0.75f
         )
 
+        val areaWidth = getAreaWidth(area, items = items)
         drawValue(
             canvas,
             metric,
             top1 + 44,
             valueTextSize * 0.9f,
-            left = left + getAreaWidth(area) - 50f
+            left = left + areaWidth - 50f
         )
         val scaleRatio = getScaleRatio()
 
@@ -184,7 +203,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         drawProgressBar(
             canvas,
             left,
-            getAreaWidth(area), top1, metric,
+            areaWidth, top1, metric,
             color = settings.getColorTheme().progressColor
         )
 
@@ -192,7 +211,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         drawDivider(
             canvas,
-            left, getAreaWidth(area), top1,
+            left, areaWidth, top1,
             color = settings.getColorTheme().dividerColor
         )
 
@@ -209,7 +228,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     )
 
     private inline fun calculateDividerSpacing(): Int = 14
-    private inline fun getAreaWidth(area: Rect): Float = area.width().toFloat() / 3
+    private inline fun getAreaWidth(area: Rect, items: Int = 3): Float = area.width().toFloat() / items
 
     private fun drawProgressBar(
         canvas: Canvas,

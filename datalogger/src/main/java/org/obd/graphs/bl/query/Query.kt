@@ -19,6 +19,7 @@
 package org.obd.graphs.bl.query
 
 interface Query: java.io.Serializable {
+    fun getDefaults():  Set<Long>
     fun getIDs(): MutableSet<Long>
     fun getStrategy(): QueryStrategyType
     fun setStrategy(queryStrategyType: QueryStrategyType): Query

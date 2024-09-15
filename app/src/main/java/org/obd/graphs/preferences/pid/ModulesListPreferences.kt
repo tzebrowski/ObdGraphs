@@ -32,7 +32,7 @@ import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.sendBroadcastEvent
 
-const val LOG_TAG = "ModulesListPreferences"
+private const val LOG_TAG = "ModulesListPreferences"
 
 class ModulesListPreferences(
     context: Context,

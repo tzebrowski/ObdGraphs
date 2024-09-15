@@ -45,7 +45,6 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.preferences.*
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -221,7 +220,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             versionName = BuildConfig.VERSION_NAME
         )
 
-        Prefs.registerOnSharedPreferenceChangeListener(profile)
         profile.setupProfiles(forceOverrideRecommendation = false)
     }
 
