@@ -22,7 +22,7 @@ plugins {
 
 project.ext {
     compileSdkVersion = 34
-    minSdkVersion = 26
+    minSdkVersion = 24
 }
 
 allprojects {
