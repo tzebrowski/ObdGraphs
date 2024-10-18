@@ -73,7 +73,13 @@ open class GiuliaFragment : Fragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
+
+                    if (dataLogger.isRunning()) {
+                        dataLogger.updateQuery(query())
+                    }
+
                     applyFilter()
+                    surfaceController.renderFrame()
                     renderingThread.start()
                 }
 
@@ -126,7 +132,7 @@ open class GiuliaFragment : Fragment() {
                 metricsCollector = metricsCollector,
                 fps = fps,
                 surfaceRendererType = SurfaceRendererType.GIULIA,
-                viewSettings = ViewSettings(marginTop = 40)
+                viewSettings = ViewSettings(marginTop = 0)
             )
         )
         surfaceView.holder.addCallback(surfaceController)
