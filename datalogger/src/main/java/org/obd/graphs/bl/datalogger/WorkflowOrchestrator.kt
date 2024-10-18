@@ -316,7 +316,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 .strictValidationEnabled(preferences.batchStricValidationEnabled)
                 .responseLengthEnabled(preferences.responseLengthEnabled)
                 .mode01BatchSize(preferences.mode01BatchSize)
-                .mode22BatchSize(preferences.mode22BatchSize).build()
+                .otherModesBatchSize(preferences.otherModesBatchSize).build()
         )
         .collectRawConnectorResponseEnabled(preferences.dumpRawConnectorResponse)
         .stNxx(
@@ -369,7 +369,7 @@ internal class WorkflowOrchestrator internal constructor() {
                 .enabled(preferences.batchEnabled)
                 .responseLengthEnabled(preferences.responseLengthEnabled)
                 .mode01BatchSize(3)
-                .mode22BatchSize(3).build()
+                .otherModesBatchSize(3).build()
         )
         .collectRawConnectorResponseEnabled(false)
         .stNxx(

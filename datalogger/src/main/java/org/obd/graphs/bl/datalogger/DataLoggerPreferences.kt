@@ -41,7 +41,7 @@ data class DataLoggerPreferences(
     var stnExtensionsEnabled: Boolean,
     var batchEnabled: Boolean,
     var batchStricValidationEnabled: Boolean,
-    var mode22BatchSize: Int?,
+    var otherModesBatchSize: Int?,
     var mode01BatchSize: Int?,
     var reconnectWhenError: Boolean,
     var adapterId: String,
@@ -162,7 +162,7 @@ class DataLoggerPreferencesManager {
 
         val dataLoggerPreferences = DataLoggerPreferences(
             dragRacingCommandFrequency = dragRacingCommandFrequency,
-            mode22BatchSize = mode22batchSize?.toInt(),
+            otherModesBatchSize = mode22batchSize?.toInt(),
             mode01BatchSize = mode01batchSize?.toInt(),
             stnExtensionsEnabled = stnEnabled,
             connectionType = connectionType,

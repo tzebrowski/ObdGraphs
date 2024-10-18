@@ -88,8 +88,15 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             bottomMetrics.add(it)
         }
 
-        bottomMetrics.forEachIndexed{ index, metric ->
-            drawMetric(canvas, area, metric, left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5), rowTop, bottomMetrics.size)
+        bottomMetrics.forEachIndexed { index, metric ->
+            drawMetric(
+                canvas,
+                area,
+                metric,
+                left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5),
+                rowTop,
+                bottomMetrics.size
+            )
         }
     }
 
