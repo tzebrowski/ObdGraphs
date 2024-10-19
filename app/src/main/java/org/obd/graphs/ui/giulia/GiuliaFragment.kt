@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.view.View
@@ -31,11 +32,14 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
+import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.Query
+import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
@@ -72,14 +76,15 @@ open class GiuliaFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
 
-                DATA_LOGGER_CONNECTED_EVENT -> {
-
-                    if (dataLogger.isRunning()) {
-                        dataLogger.updateQuery(query())
+                DATA_LOGGER_SCHEDULED_START_EVENT -> {
+                    if (isAdded && isVisible) {
+                        Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
+                        dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                     }
+                }
 
+                DATA_LOGGER_CONNECTED_EVENT -> {
                     applyFilter()
-                    surfaceController.renderFrame()
                     renderingThread.start()
                 }
 
@@ -102,6 +107,7 @@ open class GiuliaFragment : Fragment() {
         registerReceiver(activity, broadcastReceiver) {
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
+            it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
         }
     }
 

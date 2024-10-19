@@ -41,13 +41,14 @@ internal class DataLoggerJobScheduler {
 
     fun schedule(delay: Long, query: Query) {
         val task = Runnable {
-            Log.i(LOG_TAG, "Starting data logger task....")
+            Log.i(LOG_TAG, "Starting data logger task for = ${query.getIDs()} .............")
             dataLogger.start(query)
         }
         Log.i(
             LOG_TAG,
-            "Schedule data logger task with the delay=${delay}s"
+            "Scheduled data logger task with the delay=${delay}s"
         )
+        future?.cancel(true)
 
         future = scheduleService.schedule(
             task,

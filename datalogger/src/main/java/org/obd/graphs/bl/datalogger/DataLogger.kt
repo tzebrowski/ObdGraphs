@@ -39,7 +39,7 @@ interface DataLogger {
     fun findRateFor(metric: ObdMetric): Optional<Rate>
     fun getPidDefinitionRegistry(): PidDefinitionRegistry
     fun isDTCEnabled(): Boolean
-    fun scheduleStart(delay: Long)
+    fun scheduleStart(delay: Long, query: Query)
     fun scheduledStop()
     fun executeRoutine(query: Query)
     fun start(query: Query)

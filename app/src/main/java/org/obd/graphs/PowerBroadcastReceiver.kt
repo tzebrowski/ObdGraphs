@@ -26,6 +26,7 @@ import android.content.Intent
 import android.util.Log
 import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.MainActivity
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.dataLogger
 
 const val SCREEN_OFF_EVENT = "power.screen.off"
@@ -45,11 +46,11 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
                 true.run {
                     network.bluetooth(this)
                     network.wifi(this)
-                    dataLogger.scheduleStart(powerPreferences.startDataLoggingAfter)
+                    sendBroadcastEvent(DATA_LOGGER_SCHEDULED_START_EVENT)
                 }
             } else {
                 if (powerPreferences.connectOnPower) {
-                    dataLogger.scheduleStart(powerPreferences.startDataLoggingAfter)
+                    sendBroadcastEvent(DATA_LOGGER_SCHEDULED_START_EVENT)
                 }
             }
 

@@ -76,7 +76,8 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
 
             SCHEDULED_ACTION_START -> {
                 val delay = intent.extras?.getLong(SCHEDULED_START_DELAY)
-                jobScheduler.schedule(delay as Long, Query.instance())
+                val query = intent.extras?.get(QUERY) as Query
+                jobScheduler.schedule(delay as Long, query)
             }
         }
     }
@@ -89,9 +90,10 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun status(): WorkflowStatus = workflowOrchestrator.status()
 
-    override fun scheduleStart(delay: Long) {
+    override fun scheduleStart(delay: Long, query: Query) {
         enqueueWork(SCHEDULED_ACTION_START) {
             it.putExtra(SCHEDULED_START_DELAY, delay)
+            it.putExtra(QUERY, query)
         }
     }
 

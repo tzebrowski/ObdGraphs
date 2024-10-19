@@ -78,13 +78,21 @@ fun ValueScaler.scaleToPidRange(
 private const val LOG_TAG = "Graph"
 class GraphFragment : Fragment() {
 
-
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+
+                DATA_LOGGER_SCHEDULED_START_EVENT -> {
+                    if (isAdded && isVisible) {
+                        Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
+                        dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                    }
+                }
+
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     initializeChart(root)
                 }
+
                 DATA_LOGGER_STOPPED_EVENT -> {
                     virtualScreensPanel {
                         it.isVisible = true
@@ -316,6 +324,7 @@ class GraphFragment : Fragment() {
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_CONNECTING_EVENT)
             it.addAction(TOGGLE_TOOLBAR_ACTION)
+            it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
         }
     }
 

@@ -24,6 +24,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,7 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.*
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.*
@@ -64,6 +66,13 @@ class GaugeFragment : RefreshableFragment() {
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
+                DATA_LOGGER_SCHEDULED_START_EVENT -> {
+                    if (isAdded && isVisible) {
+                        Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
+                        dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                    }
+                }
+
                 CONFIGURE_CHANGE_EVENT_GAUGE -> {
                     configureView(false)
                 }
@@ -142,6 +151,7 @@ class GaugeFragment : RefreshableFragment() {
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(TOGGLE_TOOLBAR_ACTION)
+            it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
         }
     }
 
