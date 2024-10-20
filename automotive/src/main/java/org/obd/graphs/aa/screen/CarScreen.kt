@@ -59,8 +59,10 @@ internal abstract class CarScreen(
 
     open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
 
-    protected val query = Query.instance()
+    open fun query(): Query = Query.instance()
+
     protected open fun gotoScreen(newScreen: Int) {}
+
     protected open fun updateLastVisitedScreen(newScreen: Int) {
         settings.setLastVisitedScreen(newScreen)
     }
@@ -90,7 +92,8 @@ internal abstract class CarScreen(
         cancelRenderingTask()
     }
 
-    protected open fun actionStartDataLogging() {
+    open fun actionStartDataLogging() {
+        val query = query()
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
@@ -99,6 +102,7 @@ internal abstract class CarScreen(
         }
         dataLogger.start(query)
     }
+
 
     protected open fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
@@ -171,14 +175,14 @@ internal abstract class CarScreen(
     private fun onConnectionStateUpdated(connectionState: Int) {
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
-                if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
-                    dataLogger.start(query)
+                if (settings.isLoadLastVisitedScreenEnabled()) {
+                    Log.e(LOG_TAG,"Loading last visited screen")
+                    gotoScreen(settings.getLastVisitedScreen())
                 }
 
-                if (settings.isLoadLastVisitedScreenEnabled()) {
-                    Log.i(LOG_TAG,"Loading last visited screen")
-                    gotoScreen(settings.getLastVisitedScreen())
+                if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
+                    Log.e(LOG_TAG,"Auto connection enabled. Auto start data logging.")
+                    actionStartDataLogging()
                 }
             }
         }

@@ -100,6 +100,7 @@ internal class TripInfoSurfaceRenderer(
     }
 
     init {
+        Log.i(LOG_TAG,"Init Trip Info Surface renderer")
         applyMetricsFilter(Query.instance(QueryStrategyType.TRIP_INFO_QUERY))
     }
 }

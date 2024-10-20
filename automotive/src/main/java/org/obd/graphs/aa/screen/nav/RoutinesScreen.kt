@@ -160,11 +160,10 @@ internal class RoutinesScreen(
     }
 
     override fun actionStartDataLogging(){
-        dataLogger.start(query.apply{
-            setStrategy(QueryStrategyType.ROUTINES_QUERY)
-        })
+        dataLogger.start(query())
     }
 
+    override fun query(): Query = Query.instance(QueryStrategyType.ROUTINES_QUERY)
 
     override fun onGetTemplate(): Template = try {
         if (routineExecuting) {
@@ -258,8 +257,7 @@ internal class RoutinesScreen(
                 })
         } else {
             builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.getColorTheme().actionsBtnConnectColor)) {
-                query.setStrategy(QueryStrategyType.ROUTINES_QUERY)
-                dataLogger.start(query)
+                dataLogger.start(query())
             })
         }
 

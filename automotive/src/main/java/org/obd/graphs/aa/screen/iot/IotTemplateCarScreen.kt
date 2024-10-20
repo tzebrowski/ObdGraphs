@@ -37,6 +37,7 @@ import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
@@ -49,6 +50,7 @@ internal class IotTemplateCarScreen(
 ) : CarScreen(carContext, settings, metricsCollector) {
 
     private val valueDrawable = ValueDrawable(carContext)
+    private val query = Query.instance(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -238,11 +240,12 @@ internal class IotTemplateCarScreen(
         metricsCollector.applyFilter(settings.getSelectedPIDs())
 
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
             dataLogger.updateQuery(query)
         }
     }
+
+    override fun query(): Query = query
 
     private fun getTitleFor(metric: Metric): SpannableString {
         val title = StringBuilder()

@@ -127,7 +127,7 @@ class SurfaceRendererController(
 
 
     fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType()) {
-
+        Log.e(LOG_KEY, "Allocating Surface renderer")
         surfaceRenderer.recycle()
         surfaceRenderer  =
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = surfaceRendererType)
