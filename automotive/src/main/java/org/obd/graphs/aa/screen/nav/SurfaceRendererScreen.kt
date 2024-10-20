@@ -267,8 +267,6 @@ internal class SurfaceRendererScreen(
 
     private fun updateQuery() {
 
-        Log.e(LOG_TAG,"Updating query")
-
         if (isSurfaceRendererScreen(screenId)) {
             if (screenId == DRAG_RACING_SCREEN_ID) {
                 Log.i(LOG_TAG, "Updating query for  DRAG_RACING_SCREEN_ID screen")
@@ -297,7 +295,7 @@ internal class SurfaceRendererScreen(
 
                 dataLogger.updateQuery(query)
             } else {
-                Log.i(LOG_TAG, "Updating query for default query")
+                Log.i(LOG_TAG, "Updating query to SHARED_QUERY strategy")
 
                 query.setStrategy(QueryStrategyType.SHARED_QUERY)
                 val query = query.getIDs()
@@ -308,6 +306,8 @@ internal class SurfaceRendererScreen(
 
                 metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
             }
+        } else {
+            Log.i(LOG_TAG, "Do not update the query. Its not surface renderer screen.")
         }
     }
 
