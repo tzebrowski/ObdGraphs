@@ -36,9 +36,6 @@ import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.sendBroadcastEvent
 
@@ -58,8 +55,7 @@ internal abstract class CarScreen(
 ) : Screen(carContext), DefaultLifecycleObserver {
 
     open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
-
-    open fun query(): Query = Query.instance()
+    abstract fun actionStartDataLogging()
 
     protected open fun gotoScreen(newScreen: Int) {}
 
@@ -91,18 +87,6 @@ internal abstract class CarScreen(
         dataLogger.stop()
         cancelRenderingTask()
     }
-
-    open fun actionStartDataLogging() {
-        val query = query()
-        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-            query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-        } else {
-            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-        }
-        dataLogger.start(query)
-    }
-
 
     protected open fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
@@ -176,12 +160,12 @@ internal abstract class CarScreen(
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isLoadLastVisitedScreenEnabled()) {
-                    Log.e(LOG_TAG,"Loading last visited screen")
+                    Log.i(LOG_TAG,"Load last visited screen flag is enabled. Loading last visited screen....")
                     gotoScreen(settings.getLastVisitedScreen())
                 }
 
                 if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    Log.e(LOG_TAG,"Auto connection enabled. Auto start data logging.")
+                    Log.i(LOG_TAG,"Auto connection enabled. Auto start data logging.....")
                     actionStartDataLogging()
                 }
             }

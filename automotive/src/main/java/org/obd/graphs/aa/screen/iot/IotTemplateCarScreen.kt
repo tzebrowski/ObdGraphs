@@ -177,6 +177,15 @@ internal class IotTemplateCarScreen(
         }
     }
 
+    override fun actionStartDataLogging() {
+        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+        } else {
+            query.setStrategy(QueryStrategyType.SHARED_QUERY)
+        }
+        dataLogger.start(query)
+    }
     override fun renderAction() {
         invalidate()
     }
@@ -244,8 +253,6 @@ internal class IotTemplateCarScreen(
             dataLogger.updateQuery(query)
         }
     }
-
-    override fun query(): Query = query
 
     private fun getTitleFor(metric: Metric): SpannableString {
         val title = StringBuilder()

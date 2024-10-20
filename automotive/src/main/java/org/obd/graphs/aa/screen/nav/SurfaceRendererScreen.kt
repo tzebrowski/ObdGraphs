@@ -41,9 +41,6 @@ internal class SurfaceRendererScreen(
 
     private val query = Query.instance()
 
-    override fun query(): Query  = query
-
-
     private var screenId = GIULIA_SCREEN_ID
     private val surfaceRendererController = SurfaceRendererController(carContext, settings, metricsCollector, fps, query)
 
@@ -146,7 +143,7 @@ internal class SurfaceRendererScreen(
 
     fun switchSurfaceRenderer(newScreen: Int) {
         screenId = newScreen
-        Log.e(LOG_TAG, "Switch to new surface renderer screen: $screenId and updating query")
+        Log.i(LOG_TAG, "Switch to new surface renderer screen: $screenId and updating query...")
 
         when (screenId){
             GIULIA_SCREEN_ID -> {
