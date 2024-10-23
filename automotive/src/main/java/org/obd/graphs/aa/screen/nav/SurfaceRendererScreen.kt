@@ -16,6 +16,7 @@ import org.obd.graphs.aa.screen.*
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
@@ -37,6 +38,8 @@ internal class SurfaceRendererScreen(
     fps: Fps,
     private val parent: NavTemplateCarScreen
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
+
+    private val query = Query.instance()
 
     private var screenId = GIULIA_SCREEN_ID
     private val surfaceRendererController = SurfaceRendererController(carContext, settings, metricsCollector, fps, query)
@@ -140,7 +143,7 @@ internal class SurfaceRendererScreen(
 
     fun switchSurfaceRenderer(newScreen: Int) {
         screenId = newScreen
-        Log.i(LOG_TAG, "Switch to new surface renderer screen: $screenId")
+        Log.i(LOG_TAG, "Switch to new surface renderer screen: $screenId and updating query...")
 
         when (screenId){
             GIULIA_SCREEN_ID -> {
@@ -165,6 +168,7 @@ internal class SurfaceRendererScreen(
             }
 
             TRIP_INFO_SCREEN_ID -> {
+
                 dataLogger.updateQuery(query = query.apply {
                     setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
                 })
@@ -176,6 +180,7 @@ internal class SurfaceRendererScreen(
     }
 
     override fun actionStartDataLogging(){
+        Log.i(LOG_TAG, "Action start data logging")
         when (screenId) {
             GIULIA_SCREEN_ID -> {
                 if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
@@ -261,6 +266,7 @@ internal class SurfaceRendererScreen(
     }
 
     private fun updateQuery() {
+
         if (isSurfaceRendererScreen(screenId)) {
             if (screenId == DRAG_RACING_SCREEN_ID) {
                 Log.i(LOG_TAG, "Updating query for  DRAG_RACING_SCREEN_ID screen")
@@ -289,7 +295,7 @@ internal class SurfaceRendererScreen(
 
                 dataLogger.updateQuery(query)
             } else {
-                Log.i(LOG_TAG, "Updating query for default query")
+                Log.i(LOG_TAG, "Updating query to SHARED_QUERY strategy")
 
                 query.setStrategy(QueryStrategyType.SHARED_QUERY)
                 val query = query.getIDs()
@@ -300,6 +306,8 @@ internal class SurfaceRendererScreen(
 
                 metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
             }
+        } else {
+            Log.i(LOG_TAG, "Do not update the query. Its not surface renderer screen.")
         }
     }
 

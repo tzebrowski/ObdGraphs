@@ -154,7 +154,7 @@ internal class NavTemplateCarScreen(
                     try {
                         renderingThread.start()
                         fps.start()
-                        sendBroadcastEvent(AA_REFRESH_EVENT)
+//                        sendBroadcastEvent(AA_REFRESH_EVENT)
                         navigationManager().navigationStarted()
                         toast.show(carContext, R.string.main_activity_toast_connection_established)
                         invalidate()
@@ -231,6 +231,10 @@ internal class NavTemplateCarScreen(
             it.addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
             it.addAction(CHANGE_SCREEN_EVENT)
         }
+    }
+
+    override fun actionStartDataLogging() {
+        surfaceRendererScreen.actionStartDataLogging()
     }
 
     override fun onCarConfigurationChanged() {

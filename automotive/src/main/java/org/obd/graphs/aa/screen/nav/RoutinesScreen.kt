@@ -53,6 +53,7 @@ internal class RoutinesScreen(
     private var routineExecuting = false
     private var routineId = -1L
     private var routineExecutionSuccessfully = false
+    private val query: Query = Query.instance(QueryStrategyType.ROUTINES_QUERY)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -160,9 +161,7 @@ internal class RoutinesScreen(
     }
 
     override fun actionStartDataLogging(){
-        dataLogger.start(query.apply{
-            setStrategy(QueryStrategyType.ROUTINES_QUERY)
-        })
+        dataLogger.start(query)
     }
 
 
@@ -258,11 +257,9 @@ internal class RoutinesScreen(
                 })
         } else {
             builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.getColorTheme().actionsBtnConnectColor)) {
-                query.setStrategy(QueryStrategyType.ROUTINES_QUERY)
                 dataLogger.start(query)
             })
         }
-
 
         builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
             try {

@@ -36,9 +36,6 @@ import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.sendBroadcastEvent
 
@@ -58,9 +55,10 @@ internal abstract class CarScreen(
 ) : Screen(carContext), DefaultLifecycleObserver {
 
     open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
+    abstract fun actionStartDataLogging()
 
-    protected val query = Query.instance()
     protected open fun gotoScreen(newScreen: Int) {}
+
     protected open fun updateLastVisitedScreen(newScreen: Int) {
         settings.setLastVisitedScreen(newScreen)
     }
@@ -88,16 +86,6 @@ internal abstract class CarScreen(
         Log.i(LOG_TAG, "Stopping data logging process")
         dataLogger.stop()
         cancelRenderingTask()
-    }
-
-    protected open fun actionStartDataLogging() {
-        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
-            query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-        } else {
-            query.setStrategy(QueryStrategyType.SHARED_QUERY)
-        }
-        dataLogger.start(query)
     }
 
     protected open fun getHorizontalActionStrip(
@@ -171,14 +159,14 @@ internal abstract class CarScreen(
     private fun onConnectionStateUpdated(connectionState: Int) {
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
-                if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
-                    dataLogger.start(query)
+                if (settings.isLoadLastVisitedScreenEnabled()) {
+                    Log.i(LOG_TAG,"Load last visited screen flag is enabled. Loading last visited screen....")
+                    gotoScreen(settings.getLastVisitedScreen())
                 }
 
-                if (settings.isLoadLastVisitedScreenEnabled()) {
-                    Log.i(LOG_TAG,"Loading last visited screen")
-                    gotoScreen(settings.getLastVisitedScreen())
+                if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
+                    Log.i(LOG_TAG,"Auto connection enabled. Auto start data logging.....")
+                    actionStartDataLogging()
                 }
             }
         }
