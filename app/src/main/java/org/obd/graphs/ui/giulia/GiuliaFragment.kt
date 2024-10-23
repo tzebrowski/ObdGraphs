@@ -147,7 +147,7 @@ open class GiuliaFragment : Fragment() {
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
-                metricsCollector.append(it)
+                metricsCollector.append(it,forceAppend = false)
             }
         }
 
@@ -173,10 +173,7 @@ open class GiuliaFragment : Fragment() {
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
 
-                if (dataLogger.isRunning()) {
-                    dataLogger.updateQuery(query())
-                }
-
+                dataLogger.updateQuery(query())
                 applyFilter()
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()

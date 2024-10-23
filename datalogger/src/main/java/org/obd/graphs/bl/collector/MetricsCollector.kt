@@ -28,7 +28,7 @@ interface MetricsCollector {
 
     fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
 
-    fun append(input: ObdMetric?)
+    fun append(input: ObdMetric?, forceAppend:Boolean = true)
 
     companion object {
         fun instance(): MetricsCollector = InMemoryCarMetricsCollector()

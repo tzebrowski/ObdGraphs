@@ -72,11 +72,12 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
         }
     }
 
-    override fun append(input: ObdMetric?) {
+    override fun append(input: ObdMetric?, forceAppend: Boolean) {
 
         input?.let { metric ->
             val key = metric.command.pid.id
-            if (!metrics.containsKey(key)) {
+
+            if (forceAppend && !metrics.containsKey(key)) {
                 metrics[key] = metricBuilder.buildFor(metric)
                 Log.i(LOG_KEY, "Adding PID($key = ${metric.command.pid.description}) to metrics map.")
             }
