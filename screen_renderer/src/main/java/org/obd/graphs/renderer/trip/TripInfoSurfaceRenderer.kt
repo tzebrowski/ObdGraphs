@@ -22,13 +22,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
-
-private const val LOG_TAG = "TripInfoSurfaceRenderer"
-
 @Suppress("NOTHING_TO_INLINE")
 internal class TripInfoSurfaceRenderer(
     context: Context,
@@ -39,13 +35,7 @@ internal class TripInfoSurfaceRenderer(
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
     private val tripInfo = TripInfoDetails()
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
-    override fun applyMetricsFilter(query: Query) {
-        Log.e(LOG_TAG,"Query strategy ${query.getStrategy()}, selected ids: ${query.getIDs()}")
 
-        metricsCollector.applyFilter(
-            enabled = query.getIDs()
-        )
-    }
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let { it ->
@@ -99,8 +89,4 @@ internal class TripInfoSurfaceRenderer(
         tripInfoDrawer.recycle()
     }
 
-    init {
-        Log.i(LOG_TAG,"Init Trip Info Surface renderer")
-        applyMetricsFilter(Query.instance(QueryStrategyType.TRIP_INFO_QUERY))
-    }
 }

@@ -45,8 +45,7 @@ class SurfaceRendererController(
     private val carContext: CarContext,
     private val settings: CarSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
-    private val query: Query
+    private val fps: Fps
 ) : DefaultLifecycleObserver {
 
     private var surfaceRenderer: SurfaceRenderer =
@@ -67,7 +66,6 @@ class SurfaceRendererController(
                     Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
                     surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
-                surfaceRenderer.applyMetricsFilter(query)
             }
         }
 
@@ -126,12 +124,12 @@ class SurfaceRendererController(
     }
 
 
-    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType()) {
+    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType(), query: Query) {
         Log.i(LOG_KEY, "Allocating Surface renderer, type=$surfaceRendererType")
         surfaceRenderer.recycle()
+        metricsCollector.applyFilter(enabled = query.getIDs())
         surfaceRenderer  =
             SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = surfaceRendererType)
-        surfaceRenderer.applyMetricsFilter(query)
         renderFrame()
     }
 

@@ -173,9 +173,7 @@ open class GiuliaFragment : Fragment() {
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
 
-                if (dataLogger.isRunning()) {
-                    dataLogger.updateQuery(query())
-                }
+                dataLogger.updateQuery(query())
 
                 applyFilter()
                 setupVirtualViewPanel()

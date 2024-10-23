@@ -84,12 +84,8 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
 
     override fun updateQuery(query: Query) {
         Log.i(LOG_TAG,"Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}")
-        if (isRunning()) {
-            enqueueWork(UPDATE_QUERY) {
-                it.putExtra(QUERY, query)
-            }
-        } else {
-            Log.w(LOG_TAG,"No workflow is currently running. Query won't be updated.")
+        enqueueWork(UPDATE_QUERY) {
+            it.putExtra(QUERY, query)
         }
     }
 

@@ -25,8 +25,6 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.query.isGMEExtensionsEnabled
 import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.renderer.*
@@ -43,11 +41,7 @@ internal class DragRacingSurfaceRenderer(
 ) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
 
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
-    override fun applyMetricsFilter(query: Query) {
-        metricsCollector.applyFilter(
-            enabled = query.getIDs()
-       )
-    }
+
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -137,9 +131,5 @@ internal class DragRacingSurfaceRenderer(
 
     override fun recycle() {
         dragRacingDrawer.recycle()
-    }
-
-    init {
-        applyMetricsFilter(Query.instance(QueryStrategyType.DRAG_RACING_QUERY))
     }
 }

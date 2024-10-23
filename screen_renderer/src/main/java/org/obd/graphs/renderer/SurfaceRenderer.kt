@@ -22,7 +22,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
@@ -35,7 +34,7 @@ enum class SurfaceRendererType {
 data class ViewSettings(var marginTop: Int = 0)
 
 interface SurfaceRenderer {
-    fun applyMetricsFilter(query: Query)
+
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
 
