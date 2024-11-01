@@ -71,7 +71,6 @@ internal class GaugeSurfaceRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            val metrics = metrics()
 
             gaugeDrawer.drawBackground(canvas, area)
 
@@ -85,14 +84,21 @@ internal class GaugeSurfaceRenderer(
                 top += 10
             }
 
-            when (metrics.size) {
+            val maxItems = min(
+                metricsCollector.getMetrics().size,
+                settings.getMaxItems()
+            )
+
+            val metrics = metricsCollector.getMetrics()
+
+            when (maxItems) {
                 0 -> {}
                 1 -> {
                     gaugeDrawer.drawGauge(
                         canvas = canvas,
                         left = area.left + area.width() / 6f,
                         top = top + 6f,
-                        width = area.width() * widthScaleRatio(metrics),
+                        width = area.width() * widthScaleRatio(maxItems),
                         metric = metrics[0],
                         labelCenterYPadding = 22f
                     )
@@ -104,7 +110,7 @@ internal class GaugeSurfaceRenderer(
                         canvas = canvas,
                         left = area.left.toFloat(),
                         top = top + area.height() / 7,
-                        width = area.width() / 2 * widthScaleRatio(metrics),
+                        width = area.width() / 2 * widthScaleRatio(maxItems),
                         metric = metrics[0],
                         labelCenterYPadding = 22f
                     )
@@ -113,19 +119,19 @@ internal class GaugeSurfaceRenderer(
                         canvas = canvas,
                         left = (area.left + area.width() / 2f) - 10,
                         top = top + area.height() / 7,
-                        width = area.width() / 2 * widthScaleRatio(metrics),
+                        width = area.width() / 2 * widthScaleRatio(maxItems),
                         metric = metrics[1],
                         labelCenterYPadding = 22f
                     )
                 }
                 4 -> {
-                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top)
+                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
                 }
                 3 -> {
-                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top)
+                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
                 }
                 else -> {
-                    draw(canvas, area, metrics, top = top,labelCenterYPadding = 20f)
+                    draw(canvas, area, metrics, top = top,labelCenterYPadding = 20f, maxItems = maxItems)
                 }
             }
         }
@@ -141,10 +147,10 @@ internal class GaugeSurfaceRenderer(
         metrics: List<Metric>,
         marginLeft: Float = 5f,
         top: Float,
-        labelCenterYPadding: Float = 0f
+        labelCenterYPadding: Float = 0f,
+        maxItems: Int,
     ) {
 
-        val maxItems = min(metrics.size, settings.getMaxItems())
         val firstHalf = metrics.subList(0, maxItems / 2)
         val secondHalf = metrics.subList(maxItems / 2, maxItems)
         val height = (area.height() / 2)
@@ -155,7 +161,7 @@ internal class GaugeSurfaceRenderer(
             else -> secondHalf.size
         }
 
-        val width = ((area.width()) / widthDivider).toFloat() * widthScaleRatio(metrics)
+        val width = ((area.width()) / widthDivider).toFloat() * widthScaleRatio(maxItems)
         var left = marginLeft
         val padding = 10f
         firstHalf.forEach {
@@ -186,7 +192,7 @@ internal class GaugeSurfaceRenderer(
         }
     }
 
-    private inline fun widthScaleRatio(metrics: List<Metric>): Float = when (metrics.size) {
+    private inline fun widthScaleRatio(maxItems: Int): Float = when (maxItems) {
         1 -> 0.65f
         2 -> 1f
         3 -> 0.8f
@@ -197,12 +203,4 @@ internal class GaugeSurfaceRenderer(
         8 -> 1.02f
         else -> 1f
     }
-
-
-    private fun metrics() = metricsCollector.getMetrics().subList(
-        0, min(
-            metricsCollector.getMetrics().size,
-            settings.getMaxItems()
-        )
-    )
 }
