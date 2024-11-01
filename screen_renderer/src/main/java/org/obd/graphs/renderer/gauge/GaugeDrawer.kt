@@ -269,7 +269,7 @@ internal class GaugeDrawer(
         val unitRect = Rect()
         val unitTxt = metric.source.command.pid.units
         valuePaint.getTextBounds(unitTxt, 0, unitTxt.length, unitRect)
-        canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2, centerY - valueHeight, valuePaint)
+        canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2  + 4, centerY - valueHeight, valuePaint)
         centerY += unitRect.height() / 2
 
         labelPaint.textSize = drawerSettings.labelTextSize * scaleRatio
