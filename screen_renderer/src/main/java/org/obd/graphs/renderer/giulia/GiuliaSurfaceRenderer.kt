@@ -26,6 +26,8 @@ import android.util.Log
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.*
 import kotlin.math.max
 import kotlin.math.min
@@ -42,14 +44,25 @@ private const val AREA_MAX_WIDTH = 500
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaSurfaceRenderer(
     context: Context,
-    settings: ScreenSettings,
-    metricsCollector: MetricsCollector,
-    fps: Fps,
+    private val  settings: ScreenSettings,
+    private val  metricsCollector: MetricsCollector,
+    private val fps: Fps,
     viewSettings: ViewSettings
-) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
+) : CoreSurfaceRenderer(viewSettings) {
 
     private val valueScaler = ValueScaler()
     private val giuliaDrawer = GiuliaDrawer(context, settings)
+
+    override fun applyMetricsFilter(query: Query) {
+        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
+        } else {
+            val ids = query.getIDs()
+            val selection = settings.getSelectedPIDs()
+            val intersection = selection.filter { ids.contains(it) }.toSet()
+            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+        }
+    }
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
@@ -58,8 +71,6 @@ internal class GiuliaSurfaceRenderer(
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
-
-            val metrics = metrics()
 
             val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
@@ -80,7 +91,7 @@ internal class GiuliaSurfaceRenderer(
             val topCpy = top
             var initialLeft = initialLeft(area)
 
-            splitIntoChunks(metrics).forEach { chunk ->
+            metrics().forEach { chunk ->
                 chunk.forEach lit@{ metric ->
                     top = giuliaDrawer.drawMetric(
                         canvas = canvas,
@@ -148,7 +159,15 @@ internal class GiuliaSurfaceRenderer(
             else -> (area.width() / 2)
         }
 
-    private inline fun splitIntoChunks(metrics: List<Metric>): MutableList<List<Metric>> {
+    private inline fun metrics(): MutableList<List<Metric>> {
+
+        val metrics = metricsCollector.getMetrics().subList(
+            0, min(
+                metricsCollector.getMetrics().size,
+                settings.getMaxItems()
+            )
+        )
+
         val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
         if (lists.size == 3) {
             lists[0] = lists[0]
@@ -157,4 +176,10 @@ internal class GiuliaSurfaceRenderer(
         }
         return lists
     }
+
+    private inline fun initialLeft(area: Rect): Float =
+        when (settings.getMaxColumns()) {
+            1 -> area.left + ((area.width()) - 42).toFloat()
+            else -> area.left + ((area.width() / 2) - 32).toFloat()
+        }
 }

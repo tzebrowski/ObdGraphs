@@ -24,24 +24,38 @@ import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.*
-import org.obd.graphs.renderer.AbstractSurfaceRenderer
+import org.obd.graphs.renderer.CoreSurfaceRenderer
 import kotlin.math.min
 
 
 @Suppress("NOTHING_TO_INLINE")
 internal class GaugeSurfaceRenderer(
     context: Context,
-    settings: ScreenSettings,
-    metricsCollector: MetricsCollector,
-    fps: Fps,
+    private val settings: ScreenSettings,
+    private val metricsCollector: MetricsCollector,
+    private val fps: Fps,
     viewSettings: ViewSettings
-) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
+) : CoreSurfaceRenderer(viewSettings) {
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
         drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
     )
+
+    override fun applyMetricsFilter(query: Query) {
+        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
+        } else {
+            val ids = query.getIDs()
+            val selection = settings.getSelectedPIDs()
+            val intersection = selection.filter { ids.contains(it) }.toSet()
+            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+        }
+    }
+
 
     override fun getTop(area: Rect): Float   = if (settings.isStatusPanelEnabled()) {
         area.top + viewSettings.marginTop.toFloat() + getDefaultTopMargin()
@@ -183,4 +197,12 @@ internal class GaugeSurfaceRenderer(
         8 -> 1.02f
         else -> 1f
     }
+
+
+    private fun metrics() = metricsCollector.getMetrics().subList(
+        0, min(
+            metricsCollector.getMetrics().size,
+            settings.getMaxItems()
+        )
+    )
 }

@@ -32,11 +32,11 @@ private const val LOG_TAG = "TripInfoSurfaceRenderer"
 @Suppress("NOTHING_TO_INLINE")
 internal class TripInfoSurfaceRenderer(
     context: Context,
-    settings: ScreenSettings,
-    metricsCollector: MetricsCollector,
-    fps: Fps,
+    private val settings: ScreenSettings,
+    private val metricsCollector: MetricsCollector,
+    private val fps: Fps,
     viewSettings: ViewSettings
-) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
+) : CoreSurfaceRenderer(viewSettings) {
     private val tripInfo = TripInfoDetails()
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
     override fun applyMetricsFilter(query: Query) {

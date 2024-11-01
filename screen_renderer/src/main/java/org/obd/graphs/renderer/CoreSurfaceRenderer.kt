@@ -18,37 +18,17 @@
  **/
 package org.obd.graphs.renderer
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.bl.query.Query
-import kotlin.math.min
 
 const val MARGIN_TOP = 8
 
 @Suppress("NOTHING_TO_INLINE")
-internal abstract class AbstractSurfaceRenderer(
-    protected val settings: ScreenSettings,
-    protected val context: Context,
-    protected val fps: Fps,
-    protected val metricsCollector: MetricsCollector,
+internal abstract class CoreSurfaceRenderer(
     protected val viewSettings: ViewSettings
 ) : SurfaceRenderer {
     open fun getTop(area: Rect): Float = area.top + getDefaultTopMargin() + viewSettings.marginTop
     fun getDefaultTopMargin(): Float =  20f
-
-    override fun applyMetricsFilter(query: Query) {
-        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
-        } else {
-            val ids = query.getIDs()
-            val selection = settings.getSelectedPIDs()
-            val intersection = selection.filter { ids.contains(it) }.toSet()
-            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
-        }
-    }
 
     protected fun getArea(area: Rect, canvas: Canvas, margin: Int): Rect {
         val newArea = Rect()
@@ -60,16 +40,4 @@ internal abstract class AbstractSurfaceRenderer(
         }
         return newArea
     }
-
-    protected fun metrics() = metricsCollector.getMetrics().subList(
-        0, min(
-            metricsCollector.getMetrics().size,
-            settings.getMaxItems()
-        )
-    )
-    protected inline fun initialLeft(area: Rect): Float =
-        when (settings.getMaxColumns()) {
-            1 -> area.left + ((area.width()) - 42).toFloat()
-            else -> area.left + ((area.width() / 2) - 32).toFloat()
-        }
 }

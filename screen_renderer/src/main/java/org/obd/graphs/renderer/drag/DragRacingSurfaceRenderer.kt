@@ -22,6 +22,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
@@ -32,15 +33,16 @@ import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.renderer.*
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
+private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingSurfaceRenderer(
     context: Context,
-    settings: ScreenSettings,
-    metricsCollector: MetricsCollector,
-    fps: Fps,
+    private val settings: ScreenSettings,
+    private val metricsCollector: MetricsCollector,
+    private val fps: Fps,
     viewSettings: ViewSettings
-) : AbstractSurfaceRenderer(settings, context, fps, metricsCollector, viewSettings) {
+) : CoreSurfaceRenderer(viewSettings) {
 
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
     override fun applyMetricsFilter(query: Query) {
@@ -140,6 +142,7 @@ internal class DragRacingSurfaceRenderer(
     }
 
     init {
+        Log.i(LOG_TAG,"Init Drag Racing Surface Renderer")
         applyMetricsFilter(Query.instance(QueryStrategyType.DRAG_RACING_QUERY))
     }
 }
