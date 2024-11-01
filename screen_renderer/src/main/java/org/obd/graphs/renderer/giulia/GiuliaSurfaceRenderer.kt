@@ -24,13 +24,13 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
-import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.round
 
 
 private const val LOG_TAG = "GiuliaScreenRenderer"
@@ -91,12 +91,14 @@ internal class GiuliaSurfaceRenderer(
             val topCpy = top
             var initialLeft = initialLeft(area)
 
-            metrics().forEach { chunk ->
-                chunk.forEach lit@{ metric ->
+            val pageSize = pageSize()
+            if (pageSize > 0){
+                val metrics = metricsCollector.getMetrics()
+                for (i in 0 until pageSize){
                     top = giuliaDrawer.drawMetric(
                         canvas = canvas,
                         area = area,
-                        metric = metric,
+                        metric =  metrics[i],
                         textSizeBase = textSizeBase,
                         valueTextSize = valueTextSize,
                         left = left,
@@ -105,13 +107,26 @@ internal class GiuliaSurfaceRenderer(
                     )
                 }
 
-                if (settings.getMaxColumns() > 1) {
+                if (settings.getMaxColumns() > 1 && metrics.size > pageSize){
                     initialLeft += area.width() / 2 - 18
-                }
+                    left += calculateLeftMargin(area)
+                    top = calculateTop(textSizeBase, top, topCpy)
 
-                left += calculateLeftMargin(area)
-                top = calculateTop(textSizeBase, top, topCpy)
+                    for (i in pageSize until min(metrics.size, settings.getMaxItems())){
+                        top = giuliaDrawer.drawMetric(
+                            canvas = canvas,
+                            area = area,
+                            metric =  metrics[i],
+                            textSizeBase = textSizeBase,
+                            valueTextSize = valueTextSize,
+                            left = left,
+                            top = top,
+                            valueLeft = initialLeft
+                        )
+                    }
+                }
             }
+
         }
     }
 
@@ -159,23 +174,8 @@ internal class GiuliaSurfaceRenderer(
             else -> (area.width() / 2)
         }
 
-    private inline fun metrics(): MutableList<List<Metric>> {
+    private inline fun pageSize(): Int = max(min( metricsCollector.getMetrics().size,  round(settings.getMaxItems() / settings.getMaxColumns().toFloat()).toInt()),1)
 
-        val metrics = metricsCollector.getMetrics().subList(
-            0, min(
-                metricsCollector.getMetrics().size,
-                settings.getMaxItems()
-            )
-        )
-
-        val lists = metrics.chunked(max(metrics.size / settings.getMaxColumns(), 1)).toMutableList()
-        if (lists.size == 3) {
-            lists[0] = lists[0]
-            lists[1] = lists[1] + lists[2]
-            lists.removeAt(2)
-        }
-        return lists
-    }
 
     private inline fun initialLeft(area: Rect): Float =
         when (settings.getMaxColumns()) {
