@@ -186,8 +186,6 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
 
-    fun getSurfaceRendererType(): SurfaceRendererType =
-        SurfaceRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type", "GIULIA"))
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
     private fun loadItemsSortOrder(key: String) = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
 }

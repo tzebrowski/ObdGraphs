@@ -50,7 +50,7 @@ class SurfaceRendererController(
 ) : DefaultLifecycleObserver {
 
     private var surfaceRenderer: SurfaceRenderer =
-        SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, settings.getSurfaceRendererType())
+        SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, SurfaceRendererType.GIULIA)
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -126,7 +126,7 @@ class SurfaceRendererController(
     }
 
 
-    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType = settings.getSurfaceRendererType()) {
+    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType) {
         Log.i(LOG_KEY, "Allocating Surface renderer, type=$surfaceRendererType")
         surfaceRenderer.recycle()
         surfaceRenderer  =

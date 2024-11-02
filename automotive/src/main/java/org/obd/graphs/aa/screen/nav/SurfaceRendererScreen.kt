@@ -27,6 +27,7 @@ private const val NOT_SET = -1
 private const val GIULIA_SCREEN_ID = 0
 private const val DRAG_RACING_SCREEN_ID = 1
 private const val TRIP_INFO_SCREEN_ID = 3
+private const val GAUGE_SCREEN_ID = 4
 
 private const val LOW_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.low.event.changed"
 private const val LOG_TAG = "SurfaceRendererScreen"
@@ -48,14 +49,14 @@ internal class SurfaceRendererScreen(
         override fun onReceive(context: Context?, intent: Intent?) {
 
             when (intent?.action) {
-                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceRendererController.allocateSurfaceRenderer()
+                AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
 
                 AA_REFRESH_EVENT -> {
                     Log.i(LOG_TAG,"Received forced refresh screen event for screen ${screenId}. Is renderer: ${isSurfaceRendererScreen(screenId)}")
                     if (isSurfaceRendererScreen(screenId)) {
 
-                        if (screenId == GIULIA_SCREEN_ID) {
+                        if (screenId == GIULIA_SCREEN_ID || screenId == GAUGE_SCREEN_ID) {
                             when (settings.getCurrentVirtualScreen()) {
                                 VIRTUAL_SCREEN_1 -> settings.applyVirtualScreen1()
                                 VIRTUAL_SCREEN_2 -> settings.applyVirtualScreen2()
@@ -122,13 +123,13 @@ internal class SurfaceRendererScreen(
 
                 PROFILE_CHANGED_EVENT -> {
                     updateQuery()
-                    surfaceRendererController.allocateSurfaceRenderer()
+                    surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
                     renderFrame()
                 }
 
                 PROFILE_RESET_EVENT -> {
                     updateQuery()
-                    surfaceRendererController.allocateSurfaceRenderer()
+                    surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
                     renderFrame()
                 }
             }
@@ -140,6 +141,17 @@ internal class SurfaceRendererScreen(
     fun resetSurfaceRenderer(){
         screenId = NOT_SET
     }
+
+    private fun getSurfaceRendererType (): SurfaceRendererType =
+        when(screenId){
+            GIULIA_SCREEN_ID -> SurfaceRendererType.GIULIA
+            GAUGE_SCREEN_ID -> SurfaceRendererType.GAUGE
+            TRIP_INFO_SCREEN_ID -> SurfaceRendererType.TRIP_INFO
+            DRAG_RACING_SCREEN_ID -> SurfaceRendererType.DRAG_RACING
+
+            else -> SurfaceRendererType.GIULIA
+        }
+
 
     fun switchSurfaceRenderer(newScreen: Int) {
         screenId = newScreen
@@ -157,8 +169,23 @@ internal class SurfaceRendererScreen(
                 }
 
                 dataLogger.updateQuery(query = query)
-                surfaceRendererController.allocateSurfaceRenderer()
+                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.GIULIA)
             }
+
+            GAUGE_SCREEN_ID -> {
+                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
+
+                if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                    query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+                } else {
+                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                }
+
+                dataLogger.updateQuery(query = query)
+                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.GAUGE)
+            }
+
 
             DRAG_RACING_SCREEN_ID -> {
                 dataLogger.updateQuery(query = query.apply {
@@ -192,6 +219,17 @@ internal class SurfaceRendererScreen(
                 dataLogger.start(query)
             }
 
+            GAUGE_SCREEN_ID -> {
+                if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                    query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+                } else {
+                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
+                }
+                dataLogger.start(query)
+            }
+
+
             DRAG_RACING_SCREEN_ID ->
                 dataLogger.start(query.apply{
                     setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
@@ -205,10 +243,15 @@ internal class SurfaceRendererScreen(
     }
 
     fun isSurfaceRendererScreen(newScreen: Int) =
-        newScreen == GIULIA_SCREEN_ID || newScreen == DRAG_RACING_SCREEN_ID || newScreen == TRIP_INFO_SCREEN_ID
+                newScreen == GAUGE_SCREEN_ID ||
+                newScreen == GIULIA_SCREEN_ID ||
+                newScreen == DRAG_RACING_SCREEN_ID ||
+                newScreen == TRIP_INFO_SCREEN_ID
 
     override fun getFeatureDescription(): List<FeatureDescription>  = mutableListOf(
         FeatureDescription(DRAG_RACING_SCREEN_ID, R.drawable.action_drag_race_screen, carContext.getString(R.string.available_features_drag_race_screen_title)),
+
+        FeatureDescription(GAUGE_SCREEN_ID, R.drawable.action_giulia, carContext.getString(R.string.available_features_gauge_screen_title)),
         FeatureDescription(GIULIA_SCREEN_ID, R.drawable.action_giulia, carContext.getString(R.string.available_features_giulia_screen_title))).apply {
             if (settings.getTripInfoScreenSettings().viewEnabled) {
                 add(FeatureDescription(TRIP_INFO_SCREEN_ID, R.drawable.action_giulia,  carContext.getString(R.string.available_features_trip_info_screen_title)))
@@ -231,7 +274,7 @@ internal class SurfaceRendererScreen(
     override fun onGetTemplate(): Template {
         var template = NavigationTemplate.Builder()
 
-        if (screenId == GIULIA_SCREEN_ID) {
+        if (screenId == GIULIA_SCREEN_ID || screenId == GAUGE_SCREEN_ID) {
             getVerticalActionStrip()?.let {
                 template = template.setMapActionStrip(it)
             }

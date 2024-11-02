@@ -976,17 +976,6 @@
                         android:title="@string/pref.aa.display_pid_history"
                         app:singleLineTitle="false" />
 
-
-                    <org.obd.graphs.preferences.aa.AAListPreference
-                        android:defaultValue="GIULIA"
-                        android:dialogTitle="@string/pref.aa.renderer_type"
-                        android:entries="@array/pref.aa_renderer_type"
-                        android:entryValues="@array/pref.aa_renderer_type"
-                        android:key="pref.aa.virtual_screens.screen.renderer_type"
-                        android:title="@string/pref.aa.renderer_type"
-                        app:singleLineTitle="false"
-                        app:useSimpleSummaryProvider="true" />
-
                     <org.obd.graphs.preferences.aa.AASeekBar
                         android:defaultValue="6"
                         android:dialogTitle="@string/pref.aa.virtual_screens.screen.max_items"
