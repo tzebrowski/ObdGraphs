@@ -37,6 +37,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.Identity
 import org.obd.graphs.sendBroadcastEvent
 
 
@@ -57,10 +58,10 @@ internal abstract class CarScreen(
     open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
     abstract fun actionStartDataLogging()
 
-    protected open fun gotoScreen(newScreen: Int) {}
+    protected open fun gotoScreen(identity: Identity) {}
 
-    protected open fun updateLastVisitedScreen(newScreen: Int) {
-        settings.setLastVisitedScreen(newScreen)
+    protected open fun updateLastVisitedScreen(identity: Identity) {
+        settings.setLastVisitedScreen(identity)
     }
 
     protected open fun renderAction() {}
@@ -91,8 +92,7 @@ internal abstract class CarScreen(
     protected open fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
         exitEnabled: Boolean = true,
-        featureListsEnabledSetting: Boolean = true,
-        screenId: Int = 0
+        featureListsEnabledSetting: Boolean = true
     ): ActionStrip {
         var builder = ActionStrip.Builder()
 
