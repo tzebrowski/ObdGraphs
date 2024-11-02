@@ -29,7 +29,6 @@ import org.obd.graphs.renderer.*
 
 private const val LOG_TAG = "TripInfoSurfaceRenderer"
 
-@Suppress("NOTHING_TO_INLINE")
 internal class TripInfoSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,

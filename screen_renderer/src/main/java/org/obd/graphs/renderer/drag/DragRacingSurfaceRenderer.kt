@@ -35,7 +35,6 @@ import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
-@Suppress("NOTHING_TO_INLINE")
 internal class DragRacingSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
