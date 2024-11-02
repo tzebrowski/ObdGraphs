@@ -24,6 +24,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.ValueScaler
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.query.Query
@@ -95,16 +96,7 @@ internal class GiuliaSurfaceRenderer(
             if (pageSize > 0){
                 val metrics = metricsCollector.getMetrics()
                 for (i in 0 until pageSize){
-                    top = giuliaDrawer.drawMetric(
-                        canvas = canvas,
-                        area = area,
-                        metric =  metrics[i],
-                        textSizeBase = textSizeBase,
-                        valueTextSize = valueTextSize,
-                        left = left,
-                        top = top,
-                        valueLeft = initialLeft
-                    )
+                    top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
                 }
 
                 if (settings.getMaxColumns() > 1 && metrics.size > pageSize){
@@ -113,22 +105,14 @@ internal class GiuliaSurfaceRenderer(
                     top = calculateTop(textSizeBase, top, topCpy)
 
                     for (i in pageSize until min(metrics.size, settings.getMaxItems())){
-                        top = giuliaDrawer.drawMetric(
-                            canvas = canvas,
-                            area = area,
-                            metric =  metrics[i],
-                            textSizeBase = textSizeBase,
-                            valueTextSize = valueTextSize,
-                            left = left,
-                            top = top,
-                            valueLeft = initialLeft
-                        )
+                        top = draw(canvas, area, metrics[i],  textSizeBase, valueTextSize, left, top, initialLeft)
                     }
                 }
             }
-
         }
     }
+
+
 
     override fun recycle() {
         giuliaDrawer.recycle()
@@ -182,4 +166,25 @@ internal class GiuliaSurfaceRenderer(
             1 -> area.left + ((area.width()) - 42).toFloat()
             else -> area.left + ((area.width() / 2) - 32).toFloat()
         }
+
+
+    private fun draw(
+        canvas: Canvas,
+        area: Rect,
+        metric: Metric,
+        textSizeBase: Float,
+        valueTextSize: Float,
+        left: Float,
+        top: Float,
+        initialLeft: Float
+    ) = giuliaDrawer.drawMetric(
+        canvas = canvas,
+        area = area,
+        metric = metric,
+        textSizeBase = textSizeBase,
+        valueTextSize = valueTextSize,
+        left = left,
+        top = top,
+        valueLeft = initialLeft
+    )
 }
