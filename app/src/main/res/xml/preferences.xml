@@ -938,14 +938,6 @@
                     android:title="@string/pref.aa.general_category"
                     app:singleLineTitle="false">
 
-                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.aa.virtual_screens.sort_order.enabled"
-                        android:summary="@string/pref.aa.virtual_screens.sort_order.enabled_summary"
-                        android:title="@string/pref.aa.virtual_screens.sort_order.enabled"
-                        app:experimental="true"
-                        app:singleLineTitle="false" />
-
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.aa.connection.auto.enabled"
@@ -963,29 +955,6 @@
                         android:key="pref.aa.virtual_screens.status_panel.enabled"
                         android:title="@string/pref.aa.display_status_panel"
                         app:singleLineTitle="false" />
-
-                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="pref.aa.virtual_screens.scale.enabled"
-                        android:title="@string/pref.aa.display_pid_scale"
-                        app:singleLineTitle="false" />
-
-                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.aa.pids.history.enabled"
-                        android:title="@string/pref.aa.display_pid_history"
-                        app:singleLineTitle="false" />
-
-
-                    <org.obd.graphs.preferences.aa.AAListPreference
-                        android:defaultValue="GIULIA"
-                        android:dialogTitle="@string/pref.aa.renderer_type"
-                        android:entries="@array/pref.aa_renderer_type"
-                        android:entryValues="@array/pref.aa_renderer_type"
-                        android:key="pref.aa.virtual_screens.screen.renderer_type"
-                        android:title="@string/pref.aa.renderer_type"
-                        app:singleLineTitle="false"
-                        app:useSimpleSummaryProvider="true" />
 
                     <org.obd.graphs.preferences.aa.AASeekBar
                         android:defaultValue="6"
@@ -1009,12 +978,34 @@
                         android:title="@string/pref.screen.fps"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.aa.virtual_screens.sort_order.enabled"
+                        android:summary="@string/pref.aa.virtual_screens.sort_order.enabled_summary"
+                        android:title="@string/pref.aa.virtual_screens.sort_order.enabled"
+                        app:experimental="true"
+                        app:singleLineTitle="false" />
+
                 </PreferenceCategory>
 
 
                 <PreferenceCategory
-                    android:title="@string/pref.aa.renderer.gauge.category"
+                    android:title="@string/pref.aa.virtual_screens.category"
                     app:singleLineTitle="false">
+
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.virtual_screens.scale.enabled"
+                        android:title="@string/pref.aa.display_pid_scale"
+                        app:singleLineTitle="false" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.aa.pids.history.enabled"
+                        android:title="@string/pref.aa.display_pid_history"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AAListPreference
                         android:defaultValue="LONG"
@@ -1036,11 +1027,6 @@
                         app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
-                </PreferenceCategory>
-
-                <PreferenceCategory
-                    android:title="@string/pref.aa.virtual_screens.category"
-                    app:singleLineTitle="false">
 
                     <PreferenceScreen
                         android:key="pref.aa.displayed.pids"
@@ -1281,68 +1267,6 @@
                     </PreferenceScreen>
                 </PreferenceCategory>
 
-
-                <PreferenceCategory
-                    android:title="@string/pref.aa.alerting_category"
-                    app:singleLineTitle="false">
-
-                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.aa.alerting.enabled"
-                        android:summary="@string/pref.aa.alerting.enabled_summary"
-                        android:title="@string/pref.aa.alerting.enabled"
-                        app:singleLineTitle="false" />
-
-                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.aa.alerting.legend.enabled"
-                        android:summary="@string/pref.aa.alerting.legend.enabled_summary"
-                        android:title="@string/pref.aa.alerting.legend.enabled"
-                        app:singleLineTitle="false" />
-                </PreferenceCategory>
-
-                <PreferenceCategory android:title="@string/pref.theme">
-                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="pref.aa.theme.background.enabled"
-                        android:title="@string/pref.aa.theme.background.enabled"
-                        app:singleLineTitle="false" />
-
-                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.aa.theme.dynamic-selector.enabled"
-                        android:summary="@string/pref.aa.theme.dynamic_selector.enabled_summary"
-                        android:title="@string/pref.aa.theme.dynamic_selector.enabled"
-                        app:singleLineTitle="false" />
-
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="0xffff0000"
-                        android:key="pref.aa.theme.progressColor"
-                        android:title="@string/pref.aa.theme.progress_bar_color" />
-
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="0xffffffff"
-                        android:key="pref.aa.theme.dividerColor"
-                        android:title="@string/pref.aa.theme.divider_color" />
-
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="0xffffffff"
-                        android:key="pref.aa.theme.currentValueColor"
-                        android:title="@string/pref.aa.theme.current_value_color" />
-
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="0xffff0000"
-                        android:key="pref.aa.theme.inAlertValueColor"
-                        android:title="@string/pref.aa.theme.inalert_value_color" />
-
-                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-                        android:defaultValue="0xffffffff"
-                        android:key="pref.aa.theme.btn.virtual-screen.color"
-                        android:title="@string/pref.aa.theme.virtual_screen_color"
-                        app:colorChoices="@array/pref.colors" />
-
-                </PreferenceCategory>
-
                 <PreferenceCategory
                     android:title="@string/pref.aa.routines.category"
                     app:singleLineTitle="false">
@@ -1472,6 +1396,69 @@
                         app:useSimpleSummaryProvider="true" />
 
                 </PreferenceCategory>
+
+
+                <PreferenceCategory
+                    android:title="@string/pref.aa.alerting_category"
+                    app:singleLineTitle="false">
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.aa.alerting.enabled"
+                        android:summary="@string/pref.aa.alerting.enabled_summary"
+                        android:title="@string/pref.aa.alerting.enabled"
+                        app:singleLineTitle="false" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.aa.alerting.legend.enabled"
+                        android:summary="@string/pref.aa.alerting.legend.enabled_summary"
+                        android:title="@string/pref.aa.alerting.legend.enabled"
+                        app:singleLineTitle="false" />
+                </PreferenceCategory>
+
+                <PreferenceCategory android:title="@string/pref.theme">
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.theme.background.enabled"
+                        android:title="@string/pref.aa.theme.background.enabled"
+                        app:singleLineTitle="false" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="false"
+                        android:key="pref.aa.theme.dynamic-selector.enabled"
+                        android:summary="@string/pref.aa.theme.dynamic_selector.enabled_summary"
+                        android:title="@string/pref.aa.theme.dynamic_selector.enabled"
+                        app:singleLineTitle="false" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffff0000"
+                        android:key="pref.aa.theme.progressColor"
+                        android:title="@string/pref.aa.theme.progress_bar_color" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffffffff"
+                        android:key="pref.aa.theme.dividerColor"
+                        android:title="@string/pref.aa.theme.divider_color" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffffffff"
+                        android:key="pref.aa.theme.currentValueColor"
+                        android:title="@string/pref.aa.theme.current_value_color" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffff0000"
+                        android:key="pref.aa.theme.inAlertValueColor"
+                        android:title="@string/pref.aa.theme.inalert_value_color" />
+
+                    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+                        android:defaultValue="0xffffffff"
+                        android:key="pref.aa.theme.btn.virtual-screen.color"
+                        android:title="@string/pref.aa.theme.virtual_screen_color"
+                        app:colorChoices="@array/pref.colors" />
+
+                </PreferenceCategory>
+
 
                 <PreferenceCategory
                     android:title="@string/pref.aa.debug_category"

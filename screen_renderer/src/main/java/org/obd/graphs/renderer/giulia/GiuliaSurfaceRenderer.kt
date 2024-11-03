@@ -91,20 +91,26 @@ internal class GiuliaSurfaceRenderer(
 
             val topCpy = top
             var initialLeft = initialLeft(area)
+            val metricsCount = min(settings.getMaxItems(),metricsCollector.getMetrics().size)
+            val pageSize = max(min( metricsCount,  round(metricsCount / settings.getMaxColumns().toFloat()).toInt()),1)
 
-            val pageSize = pageSize()
+            if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {
+                Log.v(LOG_TAG, "metricsCount=${metricsCollector.getMetrics().size}," +
+                        "metricsLimit=$${ settings.getMaxItems()}  pageSize=$pageSize")
+            }
+
             if (pageSize > 0){
                 val metrics = metricsCollector.getMetrics()
                 for (i in 0 until pageSize){
                     top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
                 }
 
-                if (settings.getMaxColumns() > 1 && metrics.size > pageSize){
+                if (settings.getMaxColumns() > 1 && metricsCount > pageSize){
                     initialLeft += area.width() / 2 - 18
                     left += calculateLeftMargin(area)
                     top = calculateTop(textSizeBase, top, topCpy)
 
-                    for (i in pageSize until min(metrics.size, settings.getMaxItems())){
+                    for (i in pageSize until metricsCount){
                         top = draw(canvas, area, metrics[i],  textSizeBase, valueTextSize, left, top, initialLeft)
                     }
                 }
@@ -157,9 +163,6 @@ internal class GiuliaSurfaceRenderer(
             1 -> 0
             else -> (area.width() / 2)
         }
-
-    private inline fun pageSize(): Int = max(min( metricsCollector.getMetrics().size,  round(settings.getMaxItems() / settings.getMaxColumns().toFloat()).toInt()),1)
-
 
     private inline fun initialLeft(area: Rect): Float =
         when (settings.getMaxColumns()) {

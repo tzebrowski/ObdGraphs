@@ -38,10 +38,17 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.Identity
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 
-private const val ROUTINES_SCREEN_ID = 222
+
+private enum class RoutineScreen(private val code: Int): Identity {
+    ROUTINES(222);
+
+    override fun id(): Int = this.code
+}
+
 private const val LOG_TAG = "RoutinesScreen"
 
 internal class RoutinesScreen(
@@ -129,7 +136,7 @@ internal class RoutinesScreen(
 
     override fun getFeatureDescription(): List<FeatureDescription>  = mutableListOf<FeatureDescription>().apply {
         if (settings.getRoutinesScreenSettings().viewEnabled) {
-            add(FeatureDescription( ROUTINES_SCREEN_ID,
+            add(FeatureDescription( RoutineScreen.ROUTINES,
                 R.drawable.action_features,
                 carContext.getString(R.string.available_features_routine_screen_title)))
         }

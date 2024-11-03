@@ -117,10 +117,12 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     fun isLoadLastVisitedScreenEnabled(): Boolean = Prefs.getBoolean("pref.aa.screen.load_last_visited.enabled", false)
 
-    fun getLastVisitedScreen(): Int = Prefs.getInt(LAST_USER_SCREEN, 0)
+    fun getLastVisitedScreen(): Identity = SurfaceRendererType.fromInt(Prefs.getInt(LAST_USER_SCREEN, 0))
 
-    fun setLastVisitedScreen(newScreen: Int){
-        Prefs.updateInt(LAST_USER_SCREEN, newScreen)
+    fun setLastVisitedScreen(identity: Identity){
+        if (identity is SurfaceRendererType) {
+            Prefs.updateInt(LAST_USER_SCREEN, identity.id())
+        }
     }
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
@@ -186,8 +188,6 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
 
-    fun getSurfaceRendererType(): SurfaceRendererType =
-        SurfaceRendererType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.renderer_type", "GIULIA"))
     private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
     private fun loadItemsSortOrder(key: String) = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
 }

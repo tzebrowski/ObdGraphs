@@ -28,8 +28,22 @@ import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
 import org.obd.graphs.renderer.trip.TripInfoSurfaceRenderer
 
-enum class SurfaceRendererType {
-    GIULIA, GAUGE, DRAG_RACING, TRIP_INFO
+
+interface Identity {
+    fun id(): Int
+}
+
+enum class SurfaceRendererType(private val code: Int) : Identity {
+    GIULIA(0),
+    GAUGE(4),
+    DRAG_RACING(1),
+    TRIP_INFO(3);
+
+    override fun id(): Int  = this.code
+
+    companion object {
+        fun fromInt(value: Int) = SurfaceRendererType.values().first { it.code == value }
+    }
 }
 
 data class ViewSettings(var marginTop: Int = 0)

@@ -133,9 +133,8 @@
     <string name="pref.aa.surface.fps.display_status">Display Head unit refresh rate (FPS)</string>
 
     <string name="pref.aa.renderer_type">Screen type</string>
-    <string name="pref.aa.renderer.gauge.progress_type">Gauge screen progress-bar type</string>
-    <string name="pref.aa.renderer.gauge.top_offset">Label top offset</string>
-    <string name="pref.aa.renderer.gauge.category">Gauge settings</string>
+    <string name="pref.aa.renderer.gauge.progress_type"><b><i>Gauge</i></b> screen progress bar type</string>
+    <string name="pref.aa.renderer.gauge.top_offset"><b><i>Gauge</i></b> screen label top offset</string>
 
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Number of columns</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category.summary">Choose number of columns for each individual virtual screen</string>
@@ -148,7 +147,7 @@
     <string name="pref.aa.virtual_screens.number_of_items_in_column.6">Number of columns for screen 6</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.7">Number ofs columns for screen 7</string>
 
-    <string name="pref.aa.virtual_screens.category">Virtual screens individual preferences</string>
+    <string name="pref.aa.virtual_screens.category">Giulia and Gauge</string>
 
     <string name="pref.aa.virtual_screens.visibility.category">Visibility</string>
     <string name="pref.aa.virtual_screens.visibility.category.summary">Choose how many virtual screens should be rendered</string>
@@ -170,9 +169,9 @@
     <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
     <string name="pref.aa.display_pid_scale">Display PIDs scale</string>
 
-    <string name="pref.aa.screen.load_last_visited.enabled">Load automatically last visited screen</string>
+    <string name="pref.aa.screen.load_last_visited.enabled">Automatically load the last used screen</string>
     <string name="pref.aa.display_status_panel">Display status panel</string>
-    <string name="pref.aa.connection_auto">Automatic connection to the OBD2 adapter when enter AA mode</string>
+    <string name="pref.aa.connection_auto">Automatically connect when entering AA mode</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled">Enable PIDs sort order</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled_summary">This is an EXPERIMENTAL feature.\nDefine PIDs order on the screen through drag and drop on the PIDs selection list.\nWhen selected App restart is required.</string>
 

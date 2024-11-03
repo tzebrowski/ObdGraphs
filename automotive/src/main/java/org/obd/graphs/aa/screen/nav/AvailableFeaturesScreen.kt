@@ -26,11 +26,12 @@ import androidx.core.graphics.drawable.IconCompat
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.renderer.Identity
 
 private const val LOG_TAG = "AvailableFeaturesScreen"
 
 
-data class FeatureDescription(val id: Int, val iconId: Int, val title: String)
+data class FeatureDescription(val identity: Identity, val iconId: Int, val title: String)
 
 internal class AvailableFeaturesScreen(
     carContext: CarContext,
@@ -58,7 +59,7 @@ internal class AvailableFeaturesScreen(
     private fun listTemplate(): ListTemplate {
         val items = ItemList.Builder().apply {
             screenMapping.forEach {
-                addItem(row(it.id, it.iconId, it.title))
+                addItem(row(it.identity, it.iconId, it.title))
             }
         }.build()
 
@@ -71,7 +72,7 @@ internal class AvailableFeaturesScreen(
             .build()
     }
 
-    private fun row(screenId: Int, iconId: Int, title: String) = Row.Builder()
+    private fun row(identity: Identity, iconId: Int, title: String) = Row.Builder()
         .setImage(
             CarIcon.Builder(
                 IconCompat.createWithResource(
@@ -79,7 +80,7 @@ internal class AvailableFeaturesScreen(
             ).build()
         )
         .setOnClickListener {
-            setResult(screenId)
+            setResult(identity)
             finish()
         }
         .setBrowsable(false)

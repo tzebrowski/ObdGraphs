@@ -42,6 +42,7 @@ import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.Identity
 
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
@@ -71,7 +72,7 @@ internal class NavTemplateCarScreen(
                     screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures())) {
                         Log.d(LOG_TAG, "Going to the new screen id=$it")
                         it?.let {
-                            val newScreen = it.toString().toInt()
+                            val newScreen:Identity = it as Identity
 
                             if (surfaceRendererScreen.isSurfaceRendererScreen(newScreen)) {
                                 updateLastVisitedScreen(newScreen)
@@ -190,9 +191,9 @@ internal class NavTemplateCarScreen(
         }
     }
 
-    override fun gotoScreen(newScreen: Int) {
-        if (surfaceRendererScreen.isSurfaceRendererScreen(newScreen)) {
-            surfaceRendererScreen.switchSurfaceRenderer(newScreen)
+    override fun gotoScreen(identity: Identity) {
+        if (surfaceRendererScreen.isSurfaceRendererScreen(identity)) {
+            surfaceRendererScreen.switchSurfaceRenderer(identity)
             invalidate()
         } else {
             surfaceRendererScreen.resetSurfaceRenderer()
