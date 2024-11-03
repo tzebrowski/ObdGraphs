@@ -45,6 +45,11 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
 
+    private val background: Bitmap =
+        BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
+
+    override fun getBackground(): Bitmap = background
+
     inline fun drawShiftLights(
         canvas: Canvas,
         area: Rect,
@@ -113,9 +118,9 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         val bestXPos = area.centerX() * 1.60f
 
         // legend
-        drawText(canvas, "Current", currentXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Last", lastXPos, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, "Best", bestXPos, top, textSizeBase, color = Color.LTGRAY)
+        drawText(canvas, "Current", currentXPos, top, textSizeBase, color = Color.LTGRAY, typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
+        drawText(canvas, "Last", lastXPos, top, textSizeBase, color = Color.LTGRAY, typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
+        drawText(canvas, "Best", bestXPos, top, textSizeBase, color = Color.LTGRAY, typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC))
 
         // 0-60
         var rowTop = top + textSizeBase + 12f
@@ -367,7 +372,8 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         val bestXPos = area.centerX() * 1.60f
 
         drawText(canvas, label, left, top, textSizeBase, color = Color.LTGRAY)
-        drawText(canvas, timeToString(dragRacingEntry.current), currentXPos, top, textSizeBase)
+        drawText(canvas, timeToString(dragRacingEntry.current), currentXPos, top, textSizeBase,
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD))
 
         if (settings.getDragRacingScreenSettings().vehicleSpeedDisplayDebugEnabled) {
             val width = getTextWidth(timeToString(dragRacingEntry.current), titlePaint) * 1.25f
@@ -391,7 +397,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     }
 
 
-    private inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "---" else (value / 1000.0).round(2).toString()
+    private inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "--.--" else (value / 1000.0).round(2).toString()
     private inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "" else "$value km/h"
-
 }

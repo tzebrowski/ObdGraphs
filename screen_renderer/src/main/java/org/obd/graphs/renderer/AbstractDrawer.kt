@@ -61,8 +61,10 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
     private val atmPressureLabel: String
 
 
-    protected val background: Bitmap =
+    private val defaultBackground: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.drawable.background)
+
+    open fun getBackground(): Bitmap = defaultBackground
 
     init {
 
@@ -90,7 +92,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
     }
 
     fun recycle() {
-        background.recycle()
+        getBackground().recycle()
     }
 
     fun drawDivider(
@@ -117,7 +119,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         canvas.drawRect(rect, paint)
         canvas.drawColor(color)
         if (settings.isBackgroundDrawingEnabled()) {
-            canvas.drawBitmap(background, rect.left.toFloat(), rect.top.toFloat(), backgroundPaint)
+            canvas.drawBitmap(getBackground(), rect.left.toFloat(), rect.top.toFloat(), backgroundPaint)
         }
     }
 
