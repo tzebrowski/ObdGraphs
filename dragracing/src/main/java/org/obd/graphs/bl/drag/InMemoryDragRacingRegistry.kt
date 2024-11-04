@@ -104,6 +104,7 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         Prefs.getString(id.last, null)?.let {
             entry.last = it.toLong()
         }
+        Log.e("EEEEEEE","Read entry ${entry}")
     }
 
     private fun updateEntry(entry: DragRacingEntry, id: PreferencesIds, metric: DragRacingMetric) {
@@ -113,16 +114,19 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         if (time <= 0L) {
             Log.v(LOG_KEY, "Invalid value")
         } else {
-            entry.last = if (entry.last == VALUE_NOT_SET) {
+
+
+            entry.last = if (entry.last == VALUE_NOT_SET ||   entry.current == VALUE_NOT_SET) {
                 time
             } else {
                 entry.current
             }
 
-            Prefs.updateString(id.last, entry.last.toString())
-
             entry.current = time
             entry.currentSpeed = speed
+
+
+            Prefs.updateString(id.last, entry.last.toString())
 
             if (entry.best > time || entry.best == VALUE_NOT_SET) {
 
