@@ -196,7 +196,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                 if (metric.source.command.pid.historgam.isMinEnabled) {
                     left1 = drawText(
                         canvas,
-                        "min",
+                        "avg",
                         left,
                         top1,
                         Color.LTGRAY,
@@ -205,7 +205,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                     )
                     left1 = drawText(
                         canvas,
-                        metric.toNumber(metric.min),
+                        metric.toNumber(metric.mean),
                         left1,
                         top1,
                         Color.LTGRAY,

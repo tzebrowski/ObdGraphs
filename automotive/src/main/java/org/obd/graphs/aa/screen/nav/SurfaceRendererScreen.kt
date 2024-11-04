@@ -215,8 +215,8 @@ internal class SurfaceRendererScreen(
     override fun getFeatureDescription(): List<FeatureDescription>  = mutableListOf(
         FeatureDescription(SurfaceRendererType.DRAG_RACING, R.drawable.action_drag_race_screen, carContext.getString(R.string.available_features_drag_race_screen_title)),
 
-        FeatureDescription(SurfaceRendererType.GAUGE, R.drawable.action_giulia, carContext.getString(R.string.available_features_gauge_screen_title)),
-        FeatureDescription(SurfaceRendererType.GIULIA, R.drawable.action_giulia, carContext.getString(R.string.available_features_giulia_screen_title))).apply {
+        FeatureDescription(SurfaceRendererType.GAUGE, R.drawable.action_gauge, carContext.getString(R.string.available_features_gauge_screen_title)),
+        FeatureDescription(SurfaceRendererType.GIULIA, R.drawable.action_giulia_metics, carContext.getString(R.string.available_features_giulia_screen_title))).apply {
             if (settings.getTripInfoScreenSettings().viewEnabled) {
                 add(FeatureDescription(SurfaceRendererType.TRIP_INFO, R.drawable.action_giulia,  carContext.getString(R.string.available_features_trip_info_screen_title)))
             }

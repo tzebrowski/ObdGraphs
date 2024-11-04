@@ -16,8 +16,8 @@
     <string name="available_features.page_title">Available screens</string>
     <string name="available_features.routine_screen.title">Routines</string>
     <string name="available_features.drag_race_screen.title">Drag Racing</string>
-    <string name="available_features.giulia_screen.title">Metrics - Giulia</string>
-    <string name="available_features.gauge_screen.title">Metrics - Gauge </string>
+    <string name="available_features.giulia_screen.title">Giulia - Metrics</string>
+    <string name="available_features.gauge_screen.title">Gauge - Metrics</string>
     <string name="available_features.trip_info_screen.title">Trip Info</string>
 
 </resources>
