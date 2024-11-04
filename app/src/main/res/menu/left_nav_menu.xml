@@ -82,7 +82,7 @@
         <menu>
             <item
                android:id="@+id/navigation_drag_racing"
-               android:icon="@drawable/action_drag_race_screen"
+               android:icon="@drawable/action_drag_race"
                android:checkable="true"
                android:title="@string/navigation.title_drag_racing">
             </item>
