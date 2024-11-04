@@ -104,7 +104,6 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         Prefs.getString(id.last, null)?.let {
             entry.last = it.toLong()
         }
-        Log.e("EEEEEEE","Read entry ${entry}")
     }
 
     private fun updateEntry(entry: DragRacingEntry, id: PreferencesIds, metric: DragRacingMetric) {
