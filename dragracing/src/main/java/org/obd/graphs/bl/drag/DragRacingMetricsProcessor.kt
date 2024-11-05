@@ -79,97 +79,124 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
 
         } else if (obdMetric.isVehicleSpeed()) {
 
-            if (obdMetric.value.toInt() == SPEED_0_KM_H) {
-                reset0()
+            processVehicleSpeedData(obdMetric)
+        }
+    }
 
-                if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                    Log.v(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
-                }
+    private fun processVehicleSpeedData(obdMetric: ObdMetric) {
+        if (obdMetric.value.toInt() == SPEED_0_KM_H) {
+            reset0()
 
-                registry.readyToRace(true)
-                _0ts = obdMetric.timestamp
-
-            } else {
-                registry.readyToRace(false)
+            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                Log.v(LOG_KEY, "Ready to measure, current speed: ${obdMetric.value}")
             }
 
+            registry.readyToRace(true)
+            _0ts = obdMetric.timestamp
 
-            if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H - 5) && obdMetric.value.toInt() < SPEED_60_KM_H) {
-                Log.i(LOG_KEY, "Reset 60-140 measurement at speed: ${obdMetric.value.toInt()}")
-                result60_140 = null
-                _60ts = null
+        } else {
+            registry.readyToRace(false)
+        }
+
+
+        if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H - 5) && obdMetric.value.toInt() < SPEED_60_KM_H) {
+            Log.i(LOG_KEY, "Reset 60-140 measurement at speed: ${obdMetric.value.toInt()}")
+            result60_140 = null
+            _60ts = null
+        }
+
+        if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H)) {
+            if (_60ts == null) {
+                _60ts = obdMetric.timestamp
+                Log.i(LOG_KEY, "Setting 60km/h ts: ${obdMetric.timestamp}")
             }
 
-            if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H)) {
-                if (_60ts == null) {
-                    _60ts = obdMetric.timestamp
-                    Log.i(LOG_KEY, "Setting 60km/h ts: ${obdMetric.timestamp}")
-                }
+            if (result0_60 == null) {
 
-                if (result0_60 == null) {
-
-                    _0ts?.let { _0_ts ->
-                        result0_60 = obdMetric.timestamp - _0_ts
-                        registry.update060(DragRacingMetric(time = result0_60!!,speed = obdMetric.value.toInt(),
-                            ambientTemp = ambientTemp, atmPressure = atmPressure))
-                        Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
-                    }
-                }
-            }
-
-
-
-            if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H - 5) && obdMetric.value.toInt() < SPEED_100_KM_H) {
-                Log.i(LOG_KEY, "Reset 100-200 measurement at speed: ${obdMetric.value.toInt()}")
-                result100_200 = null
-                _100ts = null
-            }
-
-            if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H)) {
-                if (_100ts == null) {
-                    _100ts = obdMetric.timestamp
-                    Log.i(LOG_KEY, "Setting 100km/h ts: ${obdMetric.timestamp}")
-                }
-
-                if (result0_100 == null) {
-
-                    _0ts?.let { _0_ts ->
-                        result0_100 = obdMetric.timestamp - _0_ts
-                        registry.update0100(DragRacingMetric(time = result0_100!!,speed = obdMetric.value.toInt(),
-                            ambientTemp = ambientTemp, atmPressure = atmPressure))
-
-                        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                            Log.v(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
-                        }
-                    }
-                }
-            }
-
-            if (result0_160 == null && isGivenSpeedReached(obdMetric, SPEED_160_KM_H)) {
                 _0ts?.let { _0_ts ->
-                    result0_160 = obdMetric.timestamp - _0_ts
-                    registry.update0160(DragRacingMetric(time = result0_160!!,speed =  obdMetric.value.toInt(),
-                        ambientTemp = ambientTemp, atmPressure = atmPressure))
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
+                    result0_60 = obdMetric.timestamp - _0_ts
+                    registry.update060(
+                        DragRacingMetric(
+                            time = result0_60!!, speed = obdMetric.value.toInt(),
+                            ambientTemp = ambientTemp, atmPressure = atmPressure
+                        )
+                    )
+                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
                 }
             }
+        }
 
-            if (result100_200 == null && _100ts != null && isGivenSpeedReached(obdMetric, SPEED_200_KM_H)) {
-                _100ts?.let { _100_ts ->
-                    result100_200 = obdMetric.timestamp - _100_ts
-                    registry.update100200(DragRacingMetric(time = result100_200!!,speed =  obdMetric.value.toInt(),
-                        ambientTemp = ambientTemp, atmPressure = atmPressure))
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
-                }
+
+
+        if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H - 5) && obdMetric.value.toInt() < SPEED_100_KM_H) {
+            Log.i(LOG_KEY, "Reset 100-200 measurement at speed: ${obdMetric.value.toInt()}")
+            result100_200 = null
+            _100ts = null
+        }
+
+        if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H)) {
+            if (_100ts == null) {
+                _100ts = obdMetric.timestamp
+                Log.i(LOG_KEY, "Setting 100km/h ts: ${obdMetric.timestamp}")
             }
 
-            if (result60_140 == null && _60ts != null && isGivenSpeedReached(obdMetric, SPEED_140_KM_H)) {
-                _60ts?.let { _60_ts ->
-                    result60_140 = obdMetric.timestamp - _60_ts
-                    registry.update60140(DragRacingMetric(time = result60_140!!,speed =  obdMetric.value.toInt(),
-                        ambientTemp = ambientTemp, atmPressure = atmPressure))
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.value}, _60ts=${_60ts}, _140ts=${obdMetric.timestamp},  Result: 60-140 ${result60_140}ms")
+            if (result0_100 == null) {
+
+                _0ts?.let { _0_ts ->
+                    result0_100 = obdMetric.timestamp - _0_ts
+                    registry.update0100(
+                        DragRacingMetric(
+                            time = result0_100!!, speed = obdMetric.value.toInt(),
+                            ambientTemp = ambientTemp, atmPressure = atmPressure
+                        )
+                    )
+
+                    if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                        Log.v(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-100 ${result0_100}ms")
+                    }
                 }
+            }
+        }
+
+        if (result0_160 == null && isGivenSpeedReached(obdMetric, SPEED_160_KM_H)) {
+            _0ts?.let { _0_ts ->
+                result0_160 = obdMetric.timestamp - _0_ts
+                registry.update0160(
+                    DragRacingMetric(
+                        time = result0_160!!, speed = obdMetric.value.toInt(),
+                        ambientTemp = ambientTemp, atmPressure = atmPressure
+                    )
+                )
+                Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
+            }
+        }
+
+        if (result100_200 == null && _100ts != null && isGivenSpeedReached(obdMetric, SPEED_200_KM_H)) {
+            _100ts?.let { _100_ts ->
+                result100_200 = obdMetric.timestamp - _100_ts
+                registry.update100200(
+                    DragRacingMetric(
+                        time = result100_200!!, speed = obdMetric.value.toInt(),
+                        ambientTemp = ambientTemp, atmPressure = atmPressure
+                    )
+                )
+                Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
+            }
+        }
+
+        if (result60_140 == null && _60ts != null && isGivenSpeedReached(obdMetric, SPEED_140_KM_H)) {
+            _60ts?.let { _60_ts ->
+                result60_140 = obdMetric.timestamp - _60_ts
+                registry.update60140(
+                    DragRacingMetric(
+                        time = result60_140!!, speed = obdMetric.value.toInt(),
+                        ambientTemp = ambientTemp, atmPressure = atmPressure
+                    )
+                )
+                Log.i(
+                    LOG_KEY,
+                    "Current speed: ${obdMetric.value}, _60ts=${_60ts}, _140ts=${obdMetric.timestamp},  Result: 60-140 ${result60_140}ms"
+                )
             }
         }
     }
