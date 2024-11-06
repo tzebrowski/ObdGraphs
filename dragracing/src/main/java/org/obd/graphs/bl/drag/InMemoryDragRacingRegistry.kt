@@ -111,21 +111,16 @@ internal class InMemoryDragRacingRegistry : DragRacingResultRegistry {
         val speed = metric.speed
 
         if (time <= 0L) {
-            Log.v(LOG_KEY, "Invalid value")
+            Log.v(LOG_KEY, "Invalid value=$time")
         } else {
 
-
-            entry.last = if (entry.last == VALUE_NOT_SET ||   entry.current == VALUE_NOT_SET) {
-                time
-            } else {
-                entry.current
+            if ( entry.current != VALUE_NOT_SET) {
+                entry.last = entry.current
+                Prefs.updateString(id.last, entry.last.toString())
             }
 
             entry.current = time
             entry.currentSpeed = speed
-
-
-            Prefs.updateString(id.last, entry.last.toString())
 
             if (entry.best > time || entry.best == VALUE_NOT_SET) {
 
