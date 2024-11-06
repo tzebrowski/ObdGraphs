@@ -640,7 +640,7 @@
                     android:key="pref.profile.2_0_GME_extension.enabled"
                     android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
                     android:title="@string/pref.profile.2_0_GME_extension.enabled"
-                    app:experimental="true"
+                    app:experimental="false"
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.aa.AASeekBar
@@ -1358,6 +1358,7 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.drag_race.vehicle_speed.enabled"
+                        android:summary="@string/pref.aa.performance_meter.display_context_metrics_summary"
                         android:title="@string/pref.aa.performance_meter.display_context_metrics"
                         app:singleLineTitle="false" />
 
@@ -1368,7 +1369,7 @@
                         app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:defaultValue="true"
+                        android:defaultValue="false"
                         android:key="pref.aa.drag_race.debug.vehicle_speed_measurement"
                         android:title="@string/pref.aa.performance_meter.display_vehicle_speed_measurement"
                         app:singleLineTitle="false" />

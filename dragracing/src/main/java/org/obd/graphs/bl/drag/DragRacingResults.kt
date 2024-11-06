@@ -43,8 +43,8 @@ data class DragRacingResults(
 )
 
 data class DragRacingMetric(
-    val time: Long,
-    val speed: Int,
-    val ambientTemp: Int? = 0,
-    val atmPressure: Int? = 0
+    var time: Long,
+    var speed: Int,
+    var ambientTemp: Int? = 0,
+    var atmPressure: Int? = 0
 )
