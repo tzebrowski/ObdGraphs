@@ -50,8 +50,10 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
     private var result60_140: Long? = null
     private var result0_160: Long? = null
     private var result100_200: Long? = null
-    private var ambientTemp: Int?  = null
-    private var atmPressure: Int?  = null
+    private var ambientTemperature: Int?  = null
+    private var atmosphericPressure: Int?  = null
+
+    private val dragRacingMetric = DragRacingMetric(0,0)
 
     override fun onStopped() {
         registry.readyToRace(false)
@@ -73,9 +75,9 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
             }
             registry.enableShiftLights(obdMetric.value.toInt() > registry.getShiftLightsRevThreshold())
         } else if (obdMetric.isAtmPressure()) {
-            atmPressure = obdMetric.value.toInt()
+            atmosphericPressure = obdMetric.value.toInt()
         } else if (obdMetric.isAmbientTemp()) {
-            ambientTemp = obdMetric.value.toInt()
+            ambientTemperature = obdMetric.value.toInt()
 
         } else if (obdMetric.isVehicleSpeed()) {
 
@@ -84,6 +86,7 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
     }
 
     private fun processVehicleSpeedData(obdMetric: ObdMetric) {
+
         if (obdMetric.value.toInt() == SPEED_0_KM_H) {
             reset0()
 
@@ -116,17 +119,18 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                 _0ts?.let { _0_ts ->
                     result0_60 = obdMetric.timestamp - _0_ts
                     registry.update060(
-                        DragRacingMetric(
-                            time = result0_60!!, speed = obdMetric.value.toInt(),
-                            ambientTemp = ambientTemp, atmPressure = atmPressure
-                        )
+                        dragRacingMetric.apply {
+                            time = result0_60!!
+                            speed = obdMetric.value.toInt()
+                            ambientTemp = ambientTemperature
+                            atmPressure = atmosphericPressure
+                        }
+
                     )
                     Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-60 ${result0_60}ms")
                 }
             }
         }
-
-
 
         if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H - 5) && obdMetric.value.toInt() < SPEED_100_KM_H) {
             Log.i(LOG_KEY, "Reset 100-200 measurement at speed: ${obdMetric.value.toInt()}")
@@ -145,10 +149,13 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                 _0ts?.let { _0_ts ->
                     result0_100 = obdMetric.timestamp - _0_ts
                     registry.update0100(
-                        DragRacingMetric(
-                            time = result0_100!!, speed = obdMetric.value.toInt(),
-                            ambientTemp = ambientTemp, atmPressure = atmPressure
-                        )
+                        dragRacingMetric.apply {
+                            time = result0_100!!
+                            speed = obdMetric.value.toInt()
+                            ambientTemp = ambientTemperature
+                            atmPressure = atmosphericPressure
+                        }
+
                     )
 
                     if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
@@ -162,10 +169,13 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
             _0ts?.let { _0_ts ->
                 result0_160 = obdMetric.timestamp - _0_ts
                 registry.update0160(
-                    DragRacingMetric(
-                        time = result0_160!!, speed = obdMetric.value.toInt(),
-                        ambientTemp = ambientTemp, atmPressure = atmPressure
-                    )
+                    dragRacingMetric.apply {
+                        time = result0_160!!
+                        speed = obdMetric.value.toInt()
+                        ambientTemp = ambientTemperature
+                        atmPressure = atmosphericPressure
+                    }
+
                 )
                 Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 0-160 ${result0_160}ms")
             }
@@ -175,10 +185,12 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
             _100ts?.let { _100_ts ->
                 result100_200 = obdMetric.timestamp - _100_ts
                 registry.update100200(
-                    DragRacingMetric(
-                        time = result100_200!!, speed = obdMetric.value.toInt(),
-                        ambientTemp = ambientTemp, atmPressure = atmPressure
-                    )
+                    dragRacingMetric.apply {
+                        time = result100_200!!
+                        speed = obdMetric.value.toInt()
+                        ambientTemp = ambientTemperature
+                        atmPressure = atmosphericPressure
+                    }
                 )
                 Log.i(LOG_KEY, "Current speed: ${obdMetric.value}. Result: 100-200 ${result100_200}ms")
             }
@@ -188,10 +200,12 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
             _60ts?.let { _60_ts ->
                 result60_140 = obdMetric.timestamp - _60_ts
                 registry.update60140(
-                    DragRacingMetric(
-                        time = result60_140!!, speed = obdMetric.value.toInt(),
-                        ambientTemp = ambientTemp, atmPressure = atmPressure
-                    )
+                    dragRacingMetric.apply {
+                        time = result60_140!!
+                        speed = obdMetric.value.toInt()
+                        ambientTemp = ambientTemperature
+                        atmPressure = atmosphericPressure
+                    }
                 )
                 Log.i(
                     LOG_KEY,
