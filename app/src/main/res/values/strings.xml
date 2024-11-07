@@ -135,6 +135,12 @@
     <string name="pref.aa.renderer_type">Screen type</string>
     <string name="pref.aa.renderer.gauge.progress_type"><b><i>Gauge</i></b> screen progress bar type</string>
     <string name="pref.aa.renderer.gauge.top_offset"><b><i>Gauge</i></b> screen label top offset</string>
+    <string name="pref.aa.renderer.gauge.top_offset.1"><b><i>Gauge</i></b> screen label top offset for screen 1</string>
+    <string name="pref.aa.renderer.gauge.top_offset.2"><b><i>Gauge</i></b> screen label top offset for screen 2</string>
+    <string name="pref.aa.renderer.gauge.top_offset.3"><b><i>Gauge</i></b> screen label top offset for screen 3</string>
+    <string name="pref.aa.renderer.gauge.top_offset.4"><b><i>Gauge</i></b> screen label top offset for screen 4</string>
+
+    <string name="pref.aa.renderer.gauge.top_offset_summary">Choose label top offset each individual virtual screen</string>
 
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Number of columns</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.category.summary">Choose number of columns for each individual virtual screen</string>

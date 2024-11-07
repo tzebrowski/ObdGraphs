@@ -1017,16 +1017,63 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
-                    <org.obd.graphs.preferences.aa.AASeekBar
-                        android:defaultValue="0"
-                        android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
-                        android:key="pref.aa.virtual_screens.gauge.top_offset"
-                        android:max="80"
+
+                    <PreferenceScreen
+                        android:key="pref.aa.screen.gauge.top_offset.category"
+                        android:summary="@string/pref.aa.renderer.gauge.top_offset_summary"
                         android:title="@string/pref.aa.renderer.gauge.top_offset"
-                        app:min="-30"
-                        app:showSeekBarValue="true"
-                        app:singleLineTitle="false"
-                        app:useSimpleSummaryProvider="true" />
+                        app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.renderer.gauge.top_offset"
+
+                            app:singleLineTitle="false">
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="0"
+                                android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
+                                android:key="pref.aa.virtual_screens.gauge.top_offset.1"
+                                android:max="80"
+                                android:title="@string/pref.aa.renderer.gauge.top_offset.1"
+                                app:min="-30"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="0"
+                                android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
+                                android:key="pref.aa.virtual_screens.gauge.top_offset.2"
+                                android:max="80"
+                                android:title="@string/pref.aa.renderer.gauge.top_offset.2"
+                                app:min="-30"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="0"
+                                android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
+                                android:key="pref.aa.virtual_screens.gauge.top_offset.3"
+                                android:max="80"
+                                android:title="@string/pref.aa.renderer.gauge.top_offset.3"
+                                app:min="-30"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="0"
+                                android:dialogTitle="@string/pref.aa.renderer.gauge.top_offset"
+                                android:key="pref.aa.virtual_screens.gauge.top_offset.4"
+                                android:max="80"
+                                android:title="@string/pref.aa.renderer.gauge.top_offset.4"
+                                app:min="-30"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+
 
                     <PreferenceScreen
                         android:key="pref.aa.displayed.pids"
@@ -1075,6 +1122,7 @@
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
+
 
                     <PreferenceScreen
                         android:key="pref.aa.screen.columns.category"

@@ -260,8 +260,7 @@ internal class GaugeDrawer(
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
         var centerY = (area.centerY() + labelCenterYPadding - (if (settings.isStatisticsEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
-        val topOffset = settings.getGaugeRendererSetting().topOffset
-        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + topOffset
+        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
         val valueY = centerY - valueHeight
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), valueY, valuePaint)
 
