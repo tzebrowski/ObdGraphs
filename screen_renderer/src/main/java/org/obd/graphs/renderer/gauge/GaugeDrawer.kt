@@ -278,34 +278,23 @@ internal class GaugeDrawer(
         labelPaint.textSize = drawerSettings.labelTextSize * scaleRatio
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
-        var singleLineLabel = false
         var labelY = 0f
 
-        if (settings.isBreakLabelTextEnabled()) {
-            val text = metric.source.command.pid.description.split("\n")
-
-            if (text.size == 1) {
-                singleLineLabel = true
-            } else {
-
-                labelPaint.textSize *= 0.95f
-                text.forEachIndexed { i, it ->
-                    val labelRect = Rect()
-                    labelPaint.getTextBounds( it, 0,  it.length, labelRect)
-                    labelY = unitY + (i+1) *  labelPaint.textSize
-                    canvas.drawText(
-                        it,
-                        area.centerX() - (labelRect.width() / 2),
-                        labelY,
-                        labelPaint
-                    )
-                }
-           }
+        val text = metric.source.command.pid.description.split("\n")
+        if (settings.isBreakLabelTextEnabled()  && text.size > 1) {
+            labelPaint.textSize *= 0.95f
+            text.forEachIndexed { i, it ->
+                val labelRect = Rect()
+                labelPaint.getTextBounds( it, 0,  it.length, labelRect)
+                labelY = unitY + (i+1) *  labelPaint.textSize
+                canvas.drawText(
+                    it,
+                    area.centerX() - (labelRect.width() / 2),
+                    labelY,
+                    labelPaint
+                )
+            }
         } else {
-           singleLineLabel = true
-        }
-
-        if (singleLineLabel){
             val label = metric.source.command.pid.description
 
             val labelRect = Rect()
