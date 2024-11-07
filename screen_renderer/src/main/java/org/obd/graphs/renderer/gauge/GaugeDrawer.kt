@@ -260,8 +260,10 @@ internal class GaugeDrawer(
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
         var centerY = (area.centerY() + labelCenterYPadding - (if (settings.isStatisticsEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
-        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
-        canvas.drawText(value, area.centerX() - (textRect.width() / 2), centerY - valueHeight, valuePaint)
+        val topOffset = settings.getGaugeRendererSetting().topOffset
+        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + topOffset
+        val valueY = centerY - valueHeight
+        canvas.drawText(value, area.centerX() - (textRect.width() / 2), valueY, valuePaint)
 
         valuePaint.textSize = (drawerSettings.valueTextSize / 4) * scaleRatio
         valuePaint.color = color(R.color.gray)
@@ -269,42 +271,36 @@ internal class GaugeDrawer(
         val unitRect = Rect()
         val unitTxt = metric.source.command.pid.units
         valuePaint.getTextBounds(unitTxt, 0, unitTxt.length, unitRect)
-        canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2  + 4, centerY - valueHeight, valuePaint)
+        val unitY = centerY - valueHeight
+        canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2  + 4, unitY, valuePaint)
         centerY += unitRect.height() / 2
 
         labelPaint.textSize = drawerSettings.labelTextSize * scaleRatio
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
-        var labelRect = Rect()
-        var labelY = 0f
         var singleLineLabel = false
+        var labelY = 0f
 
         if (settings.isBreakLabelTextEnabled()) {
-            labelY = centerY - valueHeight / 2
             val text = metric.source.command.pid.description.split("\n")
+
             if (text.size == 1) {
                 singleLineLabel = true
             } else {
 
-                labelY = centerY - valueHeight / 2
-                var vPos = labelY
                 labelPaint.textSize *= 0.95f
-
-                text.forEach {
-                    labelRect = Rect()
+                text.forEachIndexed { i, it ->
+                    val labelRect = Rect()
                     labelPaint.getTextBounds( it, 0,  it.length, labelRect)
+                    labelY = unitY + (i+1) *  labelPaint.textSize
                     canvas.drawText(
                         it,
                         area.centerX() - (labelRect.width() / 2),
-                        vPos,
+                        labelY,
                         labelPaint
                     )
-                    vPos += labelPaint.textSize
                 }
-                labelY = vPos
-                labelY -= 14f
-            }
-
+           }
         } else {
            singleLineLabel = true
         }
@@ -312,12 +308,11 @@ internal class GaugeDrawer(
         if (singleLineLabel){
             val label = metric.source.command.pid.description
 
-            labelRect = Rect()
+            val labelRect = Rect()
             labelPaint.getTextBounds(label, 0, label.length, labelRect)
 
-            labelY = centerY - valueHeight / 2
-            canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY -
-                    settings.getGaugeRendererSetting().topOffset, labelPaint)
+            labelY = unitY + labelRect.height()
+            canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
         }
 
         if (settings.isStatisticsEnabled()) {
@@ -328,8 +323,8 @@ internal class GaugeDrawer(
             histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area) * userScaleRatio
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
-            canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), labelY + labelRect.height() + 8
-                    -  settings.getGaugeRendererSetting().topOffset, histogramPaint)
+            val histY = labelY + histsRect.height()
+            canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), histY + 8, histogramPaint)
         }
     }
 
