@@ -48,7 +48,13 @@ data class ColorTheme(
 data class GaugeRendererSettings (
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     var topOffset:Int = 0,
+    var selectedPIDs: Set<Long> = emptySet()
 )
+
+data class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet())
+
+
+
 
 data class DragRacingScreenSettings(
     var shiftLightsRevThreshold: Int = 5000,
@@ -57,7 +63,8 @@ data class DragRacingScreenSettings(
     var metricsFrequencyReadEnabled: Boolean = true,
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var contextInfoEnabled: Boolean = false,
-    var fontSize: Int = 32
+    var fontSize: Int = 32,
+    var selectedPIDs: Set<Long>  = emptySet()
 )
 
 
@@ -87,6 +94,10 @@ interface ScreenSettings {
 
     fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
 
+
+    fun getGiuliaRendererSetting(): GiuliaRendererSettings = GiuliaRendererSettings()
+
+
     fun isScaleEnabled(): Boolean = true
 
     fun getHeightPixels(): Int = getContext()!!.resources.displayMetrics.heightPixels
@@ -114,7 +125,6 @@ interface ScreenSettings {
     fun applyVirtualScreen2() {}
     fun applyVirtualScreen3() {}
     fun applyVirtualScreen4() {}
-    fun getSelectedPIDs(): Set<Long> = emptySet()
 
     fun getMaxColumns(): Int = 1
     fun isStatisticsEnabled(): Boolean

@@ -246,7 +246,7 @@ internal class IotTemplateCarScreen(
             }
 
     private fun applyMetricsFilter() {
-        metricsCollector.applyFilter(settings.getSelectedPIDs())
+        metricsCollector.applyFilter(settings.getGiuliaRendererSetting().selectedPIDs)
 
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())

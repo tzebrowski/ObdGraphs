@@ -67,6 +67,8 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private val dragRacingScreenSettings = DragRacingScreenSettings()
     private val colorTheme = ColorTheme()
     private val gaugeRendererSettings = GaugeRendererSettings()
+    private val giuliaRendererSettings = GiuliaRendererSettings()
+
     private val tripInfoScreenSettings = TripInfoScreenSettings()
     private val routinesScreenSettings = RoutinesScreenSettings()
 
@@ -128,6 +130,11 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
         gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.LONG.name))
         topOffset = Prefs.getS("pref.aa.virtual_screens.gauge.top_offset.${getCurrentVirtualScreenId()}","0").toInt()
+        selectedPIDs = Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
+    }
+
+    override fun getGiuliaRendererSetting(): GiuliaRendererSettings = giuliaRendererSettings.apply {
+        selectedPIDs = Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
     }
 
     override fun getMaxItems(): Int  =  Prefs.getS("pref.aa.virtual_screens.screen.max_items","6").toInt()
@@ -144,12 +151,9 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun applyVirtualScreen3() = applyVirtualScreen(VIRTUAL_SCREEN_3)
     override fun applyVirtualScreen4() = applyVirtualScreen(VIRTUAL_SCREEN_4)
 
-    override fun getSelectedPIDs() =
-        Prefs.getStringSet(PREF_SELECTED_PIDS).map { s -> s.toLong() }.toSet()
 
     override fun getMaxColumns(): Int =
         Prefs.getS("pref.aa.max_pids_in_column.${getCurrentVirtualScreenId()}", DEFAULT_ITEMS_IN_COLUMN).toInt()
-
 
     override fun getBackgroundColor(): Int = if (carContext.isDarkMode) Color.BLACK else Color.BLACK
 

@@ -153,7 +153,8 @@ internal class SurfaceRendererScreen(
 
         when (this.screenId as SurfaceRendererType){
             SurfaceRendererType.GIULIA, SurfaceRendererType.GAUGE -> {
-                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
+
+                metricsCollector.applyFilter(enabled = getSelectedPIDs())
 
                 if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
                     query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
@@ -271,6 +272,12 @@ internal class SurfaceRendererScreen(
     private fun updateQuery() {
 
         if (isSurfaceRendererScreen(screenId)) {
+
+            val selectedPIDs = getSelectedPIDs()
+
+            metricsCollector.applyFilter(enabled = selectedPIDs)
+
+
             if (screenId == SurfaceRendererType.DRAG_RACING) {
                 Log.i(LOG_TAG, "Updating query for  DRAG_RACING_SCREEN_ID screen")
 
@@ -290,11 +297,11 @@ internal class SurfaceRendererScreen(
             } else if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
                 Log.i(LOG_TAG, "Updating query for  individualQueryStrategyEnabled")
 
-                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
+                metricsCollector.applyFilter(enabled = selectedPIDs, order = settings.getPIDsSortOrder())
 
                 query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
                 query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-                Log.i(LOG_TAG, "User selection PIDs=${settings.getSelectedPIDs()}")
+                Log.i(LOG_TAG, "User selection PIDs=${selectedPIDs}")
 
                 dataLogger.updateQuery(query)
             } else {
@@ -302,10 +309,9 @@ internal class SurfaceRendererScreen(
 
                 query.setStrategy(QueryStrategyType.SHARED_QUERY)
                 val query = query.getIDs()
-                val selection = settings.getSelectedPIDs()
-                val intersection = selection.filter { query.contains(it) }.toSet()
+                val intersection = selectedPIDs.filter { query.contains(it) }.toSet()
 
-                Log.i(LOG_TAG, "Query=$query,user selection=$selection, intersection=$intersection")
+                Log.i(LOG_TAG, "Query=$query,user selection=$selectedPIDs, intersection=$intersection")
 
                 metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
             }
@@ -313,6 +319,12 @@ internal class SurfaceRendererScreen(
             Log.i(LOG_TAG, "Do not update the query. Its not surface renderer screen.")
         }
     }
+
+    private fun getSelectedPIDs(): Set<Long>  =  if (this.screenId == SurfaceRendererType.GIULIA) {
+            settings.getGiuliaRendererSetting().selectedPIDs
+        } else {
+            settings.getGaugeRendererSetting().selectedPIDs
+        }
 
     private fun getVerticalActionStrip(): ActionStrip? {
 

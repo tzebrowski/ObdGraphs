@@ -296,7 +296,7 @@ internal class NavTemplateCarScreen(
         lifecycle.addObserver(surfaceRendererScreen.getLifecycleObserver())
 
         dataLogger.observe(this) {
-            metricsCollector.append(it)
+            metricsCollector.append(it, forceAppend = false)
         }
 
         dataLogger.observe(dynamicSelectorModeEventBroadcaster)
