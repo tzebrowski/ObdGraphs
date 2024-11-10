@@ -56,6 +56,8 @@ open class GaugeRendererSettings (
     open fun applyVirtualScreen3() {}
     open fun applyVirtualScreen4() {}
     open fun getCurrentVirtualScreen(): String = ""
+    open fun isPIDsSortOrderEnabled(): Boolean = false
+    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
 }
 
@@ -65,8 +67,9 @@ open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
     open fun applyVirtualScreen2() {}
     open fun applyVirtualScreen3() {}
     open fun applyVirtualScreen4() {}
-
     open fun getCurrentVirtualScreen(): String = ""
+    open fun isPIDsSortOrderEnabled(): Boolean = false
+    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 }
 
 
@@ -101,9 +104,6 @@ interface ScreenSettings {
 
     fun getTripInfoScreenSettings(): TripInfoScreenSettings = TripInfoScreenSettings()
 
-    fun isPIDsSortOrderEnabled(): Boolean = false
-
-    fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
 
     fun getMaxItems (): Int = 6

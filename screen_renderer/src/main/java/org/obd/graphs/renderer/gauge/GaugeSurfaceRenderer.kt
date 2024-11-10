@@ -46,13 +46,13 @@ internal class GaugeSurfaceRenderer(
     )
 
     override fun applyMetricsFilter(query: Query) {
+        val gaugeSettings  = settings.getGaugeRendererSetting()
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            metricsCollector.applyFilter(enabled = settings.getGaugeRendererSetting().selectedPIDs, order = settings.getPIDsSortOrder())
+            metricsCollector.applyFilter(enabled = gaugeSettings.selectedPIDs, order = gaugeSettings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()
-            val selection = settings.getGaugeRendererSetting().selectedPIDs
-            val intersection = selection.filter { ids.contains(it) }.toSet()
-            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+            val intersection = gaugeSettings.selectedPIDs.filter { ids.contains(it) }.toSet()
+            metricsCollector.applyFilter(enabled = intersection, order = gaugeSettings.getPIDsSortOrder())
         }
     }
 

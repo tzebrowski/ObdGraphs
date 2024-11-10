@@ -55,13 +55,13 @@ internal class GiuliaSurfaceRenderer(
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
+        val giuliaSettings =  settings.getGiuliaRendererSetting()
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            metricsCollector.applyFilter(enabled = settings.getGiuliaRendererSetting().selectedPIDs, order = settings.getPIDsSortOrder())
+            metricsCollector.applyFilter(enabled = giuliaSettings.selectedPIDs, order = giuliaSettings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()
-            val selection = settings.getGiuliaRendererSetting().selectedPIDs
-            val intersection = selection.filter { ids.contains(it) }.toSet()
-            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+            val intersection = giuliaSettings.selectedPIDs.filter { ids.contains(it) }.toSet()
+            metricsCollector.applyFilter(enabled = intersection, order = giuliaSettings.getPIDsSortOrder())
         }
     }
 
