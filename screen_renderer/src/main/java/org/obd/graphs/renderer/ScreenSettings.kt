@@ -45,6 +45,7 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
+
 open class GaugeRendererSettings (
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     var topOffset:Int = 0,

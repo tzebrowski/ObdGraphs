@@ -300,27 +300,15 @@ internal class SurfaceRendererScreen(
     }
 
     private fun setCurrentVirtualScreen(id: Int) = when (screenId) {
-        SurfaceRendererType.GIULIA -> {
-            settings.getGiuliaRendererSetting().setVirtualScreen(id)
-        }
-        SurfaceRendererType.GAUGE -> {
-            settings.getGaugeRendererSetting().setVirtualScreen(id)
-        }
-        else -> {
-            //
-        }
+        SurfaceRendererType.GIULIA -> settings.getGiuliaRendererSetting().setVirtualScreen(id)
+        SurfaceRendererType.GAUGE -> settings.getGaugeRendererSetting().setVirtualScreen(id)
+        else -> {}
     }
 
     private fun getCurrentVirtualScreen() = when (screenId) {
-        SurfaceRendererType.GIULIA -> {
-            settings.getGiuliaRendererSetting().getVirtualScreen()
-        }
-        SurfaceRendererType.GAUGE -> {
-            settings.getGaugeRendererSetting().getVirtualScreen()
-        }
-        else -> {
-            -1
-        }
+        SurfaceRendererType.GIULIA ->  settings.getGiuliaRendererSetting().getVirtualScreen()
+        SurfaceRendererType.GAUGE -> settings.getGaugeRendererSetting().getVirtualScreen()
+        else -> -1
     }
 
 
