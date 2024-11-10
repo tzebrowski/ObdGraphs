@@ -45,13 +45,29 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
-data class GaugeRendererSettings (
+open class GaugeRendererSettings (
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     var topOffset:Int = 0,
     var selectedPIDs: Set<Long> = emptySet()
-)
+){
 
-data class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet())
+    open fun applyVirtualScreen1() {}
+    open fun applyVirtualScreen2() {}
+    open fun applyVirtualScreen3() {}
+    open fun applyVirtualScreen4() {}
+    open fun getCurrentVirtualScreen(): String = ""
+
+}
+
+open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
+
+    open fun applyVirtualScreen1() {}
+    open fun applyVirtualScreen2() {}
+    open fun applyVirtualScreen3() {}
+    open fun applyVirtualScreen4() {}
+
+    open fun getCurrentVirtualScreen(): String = ""
+}
 
 
 
@@ -121,18 +137,12 @@ interface ScreenSettings {
 
     fun getColorTheme(): ColorTheme = ColorTheme()
 
-    fun applyVirtualScreen1() {}
-    fun applyVirtualScreen2() {}
-    fun applyVirtualScreen3() {}
-    fun applyVirtualScreen4() {}
 
     fun getMaxColumns(): Int = 1
     fun isStatisticsEnabled(): Boolean
     fun isFpsCounterEnabled(): Boolean
     fun getSurfaceFrameRate(): Int
     fun getFontSize(): Int = 30
-    fun getCurrentVirtualScreen(): String = ""
-    fun applyVirtualScreen(key: String) {}
 
     fun isStatusPanelEnabled(): Boolean = true
 
