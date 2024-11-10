@@ -85,43 +85,12 @@ internal class SurfaceRendererScreen(
                     updateQuery()
                     renderFrame()
                 }
-                VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
-                    if (getCurrentVirtualScreen() == 1) {
-                        setCurrentVirtualScreen(1)
-                    }
-                    updateQuery()
-                    renderFrame()
-                }
 
-                VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
+                VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> handlePIDsListChangedEvent(1)
+                VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> handlePIDsListChangedEvent(2)
+                VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> handlePIDsListChangedEvent(3)
+                VIRTUAL_SCREEN_4_SETTINGS_CHANGED ->  handlePIDsListChangedEvent(4)
 
-                    if (getCurrentVirtualScreen() == 2) {
-                        setCurrentVirtualScreen(2)
-                    }
-
-                    updateQuery()
-                    renderFrame()
-                }
-
-                VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
-
-                    if (getCurrentVirtualScreen() == 3) {
-                        setCurrentVirtualScreen(3)
-                    }
-
-                    updateQuery()
-                    renderFrame()
-                }
-
-                VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
-
-                    if (getCurrentVirtualScreen() == 4) {
-                        setCurrentVirtualScreen(4)
-                    }
-
-                    updateQuery()
-                    renderFrame()
-                }
 
                 PROFILE_CHANGED_EVENT -> {
                     updateQuery()
@@ -136,7 +105,15 @@ internal class SurfaceRendererScreen(
                 }
             }
         }
+        private fun handlePIDsListChangedEvent(id: Int) {
+            if (getCurrentVirtualScreen() == id) {
+                setCurrentVirtualScreen(id)
+            }
+            updateQuery()
+            renderFrame()
+        }
     }
+
 
     fun getLifecycleObserver() = surfaceRendererController
 
