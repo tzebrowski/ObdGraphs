@@ -364,7 +364,14 @@ internal class SurfaceRendererScreen(
             4 to R.drawable.action_virtual_screen_4).forEach { (k, v) ->
             if (settings.isVirtualScreenEnabled(k)) {
                 added = true
-                builder = builder.addAction(createAction(carContext, v, actionStripColor(k)) {
+
+                val color = if (getCurrentVirtualScreen() == k) {
+                    CarColor.GREEN
+                } else {
+                    mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
+                }
+
+                builder = builder.addAction(createAction(carContext, v, color) {
                     parent.invalidate()
                     setCurrentVirtualScreen(k)
                     updateQuery()
@@ -380,13 +387,6 @@ internal class SurfaceRendererScreen(
         }
     }
 
-    private fun actionStripColor(id: Int): CarColor = if (getCurrentVirtualScreen() == id) {
-        CarColor.GREEN
-    } else {
-        mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
-    }
-
     private fun getSurfaceRendererType (): SurfaceRendererType =
         if (screenId is SurfaceRendererType) screenId as SurfaceRendererType else  SurfaceRendererType.GIULIA
-
 }
