@@ -62,20 +62,8 @@ internal class SurfaceRendererScreen(
 
                     if (isSurfaceRendererScreen(screenId)) {
 
-                        if (screenId == SurfaceRendererType.GAUGE) {
-                            when (settings.getGaugeRendererSetting().getCurrentVirtualScreen()) {
-                                VIRTUAL_SCREEN_1 -> applyVirtualScreen1()
-                                VIRTUAL_SCREEN_2 -> applyVirtualScreen2()
-                                VIRTUAL_SCREEN_3 -> applyVirtualScreen3()
-                                VIRTUAL_SCREEN_4 -> applyVirtualScreen4()
-                            }
-                        } else if (screenId == SurfaceRendererType.GIULIA) {
-                            when (settings.getGiuliaRendererSetting().getCurrentVirtualScreen()) {
-                                VIRTUAL_SCREEN_1 -> applyVirtualScreen1()
-                                VIRTUAL_SCREEN_2 -> applyVirtualScreen2()
-                                VIRTUAL_SCREEN_3 -> applyVirtualScreen3()
-                                VIRTUAL_SCREEN_4 -> applyVirtualScreen4()
-                            }
+                        if (screenId == SurfaceRendererType.GAUGE || screenId == SurfaceRendererType.GIULIA) {
+                            setCurrentVirtualScreen(getCurrentVirtualScreen())
                         }
 
                         updateQuery()
@@ -98,9 +86,8 @@ internal class SurfaceRendererScreen(
                     renderFrame()
                 }
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_1 ||
-                        settings.getGaugeRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
-                        applyVirtualScreen1()
+                    if (getCurrentVirtualScreen() == 1) {
+                        setCurrentVirtualScreen(1)
                     }
                     updateQuery()
                     renderFrame()
@@ -108,9 +95,8 @@ internal class SurfaceRendererScreen(
 
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
 
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_2 ||
-                        settings.getGaugeRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
-                        applyVirtualScreen2()
+                    if (getCurrentVirtualScreen() == 2) {
+                        setCurrentVirtualScreen(2)
                     }
 
                     updateQuery()
@@ -119,9 +105,8 @@ internal class SurfaceRendererScreen(
 
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
 
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_3 ||
-                        settings.getGaugeRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
-                        applyVirtualScreen3()
+                    if (getCurrentVirtualScreen() == 3) {
+                        setCurrentVirtualScreen(3)
                     }
 
                     updateQuery()
@@ -130,9 +115,8 @@ internal class SurfaceRendererScreen(
 
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
 
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_4 ||
-                        settings.getGaugeRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
-                        applyVirtualScreen4()
+                    if (getCurrentVirtualScreen() == 4) {
+                        setCurrentVirtualScreen(4)
                     }
 
                     updateQuery()
@@ -338,32 +322,32 @@ internal class SurfaceRendererScreen(
         }
     }
 
-    private fun applyVirtualScreen1() =  if (this.screenId == SurfaceRendererType.GIULIA) {
-        settings.getGiuliaRendererSetting().applyVirtualScreen1()
-    } else {
-        settings.getGaugeRendererSetting().applyVirtualScreen1()
+    private fun setCurrentVirtualScreen(id: Int) = when (screenId) {
+        SurfaceRendererType.GIULIA -> {
+            settings.getGiuliaRendererSetting().setVirtualScreen(id)
+        }
+        SurfaceRendererType.GAUGE -> {
+            settings.getGaugeRendererSetting().setVirtualScreen(id)
+        }
+        else -> {
+            //
+        }
     }
 
-    private fun applyVirtualScreen2() =  if (this.screenId == SurfaceRendererType.GIULIA) {
-        settings.getGiuliaRendererSetting().applyVirtualScreen2()
-    } else {
-        settings.getGaugeRendererSetting().applyVirtualScreen2()
-    }
-
-    private fun applyVirtualScreen3() =  if (this.screenId == SurfaceRendererType.GIULIA) {
-        settings.getGiuliaRendererSetting().applyVirtualScreen3()
-    } else {
-        settings.getGaugeRendererSetting().applyVirtualScreen3()
-    }
-
-    private fun applyVirtualScreen4() =  if (this.screenId == SurfaceRendererType.GIULIA) {
-        settings.getGiuliaRendererSetting().applyVirtualScreen4()
-    } else {
-        settings.getGaugeRendererSetting().applyVirtualScreen4()
+    private fun getCurrentVirtualScreen() = when (screenId) {
+        SurfaceRendererType.GIULIA -> {
+            settings.getGiuliaRendererSetting().getVirtualScreen()
+        }
+        SurfaceRendererType.GAUGE -> {
+            settings.getGaugeRendererSetting().getVirtualScreen()
+        }
+        else -> {
+            -1
+        }
     }
 
 
-    private fun getSelectedPIDs(): Set<Long>  =  if (this.screenId == SurfaceRendererType.GIULIA) {
+    private fun getSelectedPIDs(): Set<Long>  =  if (screenId == SurfaceRendererType.GIULIA) {
             settings.getGiuliaRendererSetting().selectedPIDs
         } else {
             settings.getGaugeRendererSetting().selectedPIDs
@@ -377,9 +361,9 @@ internal class SurfaceRendererScreen(
         if (settings.isVirtualScreenEnabled(1)) {
             added = true
 
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_1, actionStripColor(1)) {
                 parent.invalidate()
-                applyVirtualScreen1()
+                setCurrentVirtualScreen(1)
                 updateQuery()
                 renderFrame()
             })
@@ -388,9 +372,9 @@ internal class SurfaceRendererScreen(
         if (settings.isVirtualScreenEnabled(2)) {
 
             added = true
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_2, actionStripColor(VIRTUAL_SCREEN_2)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_2, actionStripColor(2)) {
                 parent.invalidate()
-                applyVirtualScreen2()
+                setCurrentVirtualScreen(2)
                 updateQuery()
                 renderFrame()
             })
@@ -399,9 +383,9 @@ internal class SurfaceRendererScreen(
         if (settings.isVirtualScreenEnabled(3)) {
 
             added = true
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_3, actionStripColor(3)) {
                 parent.invalidate()
-                applyVirtualScreen3()
+                setCurrentVirtualScreen(3)
                 updateQuery()
                 renderFrame()
             })
@@ -410,9 +394,9 @@ internal class SurfaceRendererScreen(
         if (settings.isVirtualScreenEnabled(4)) {
             added = true
 
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_4, actionStripColor(VIRTUAL_SCREEN_4)) {
+            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_4, actionStripColor(4)) {
                 parent.invalidate()
-                applyVirtualScreen4()
+                setCurrentVirtualScreen(4)
                 updateQuery()
                 renderFrame()
             })
@@ -424,8 +408,7 @@ internal class SurfaceRendererScreen(
         }
     }
 
-    private fun actionStripColor(key: String): CarColor = if (screenId  == SurfaceRendererType.GAUGE &&  settings.getGaugeRendererSetting().getCurrentVirtualScreen() == key
-        || screenId  == SurfaceRendererType.GIULIA &&  settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == key) {
+    private fun actionStripColor(id: Int): CarColor = if (getCurrentVirtualScreen() == id) {
         CarColor.GREEN
     } else {
         mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)

@@ -51,28 +51,22 @@ open class GaugeRendererSettings (
     var selectedPIDs: Set<Long> = emptySet()
 ){
 
-    open fun applyVirtualScreen1() {}
-    open fun applyVirtualScreen2() {}
-    open fun applyVirtualScreen3() {}
-    open fun applyVirtualScreen4() {}
-    open fun getCurrentVirtualScreen(): String = ""
+    open fun getVirtualScreen(): Int = 0
     open fun isPIDsSortOrderEnabled(): Boolean = false
     open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
+    open fun setVirtualScreen(id: Int) {}
 }
 
 open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
 
-    open fun applyVirtualScreen1() {}
-    open fun applyVirtualScreen2() {}
-    open fun applyVirtualScreen3() {}
-    open fun applyVirtualScreen4() {}
-    open fun getCurrentVirtualScreen(): String = ""
     open fun isPIDsSortOrderEnabled(): Boolean = false
     open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
+
+    open fun getVirtualScreen(): Int = 0
+
+    open fun setVirtualScreen(id: Int) {}
 }
-
-
 
 
 data class DragRacingScreenSettings(
@@ -104,15 +98,11 @@ interface ScreenSettings {
 
     fun getTripInfoScreenSettings(): TripInfoScreenSettings = TripInfoScreenSettings()
 
-
-
     fun getMaxItems (): Int = 6
 
     fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
 
-
     fun getGiuliaRendererSetting(): GiuliaRendererSettings = GiuliaRendererSettings()
-
 
     fun isScaleEnabled(): Boolean = true
 
@@ -136,7 +126,6 @@ interface ScreenSettings {
     fun isAlertingEnabled(): Boolean = false
 
     fun getColorTheme(): ColorTheme = ColorTheme()
-
 
     fun getMaxColumns(): Int = 1
     fun isStatisticsEnabled(): Boolean

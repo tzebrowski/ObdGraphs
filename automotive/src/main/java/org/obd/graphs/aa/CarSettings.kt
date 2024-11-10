@@ -54,10 +54,7 @@ private const val DEFAULT_ITEMS_IN_COLUMN = "1"
 private const val DEFAULT_FONT_SIZE = "32"
 private const val DEFAULT_FRAME_RATE = "5"
 
-const val VIRTUAL_SCREEN_1 = "pref.aa.pids.profile_1"
-const val VIRTUAL_SCREEN_2 = "pref.aa.pids.profile_2"
-const val VIRTUAL_SCREEN_3 = "pref.aa.pids.profile_3"
-const val VIRTUAL_SCREEN_4 = "pref.aa.pids.profile_4"
+private const val VIRTUAL_SCREEN_KEY = "pref.aa.pids.profile_"
 
 enum class ScreenTemplateType {
     NAV, IOT
@@ -66,26 +63,20 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private var itemsSortOrder: Map<Long, Int>? = emptyMap()
     private val dragRacingScreenSettings = DragRacingScreenSettings()
     private val colorTheme = ColorTheme()
+
     private val gaugeRendererSettings = object: GaugeRendererSettings(){
 
-        override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
-        override fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
-        override fun applyVirtualScreen3() = applyVirtualScreen(VIRTUAL_SCREEN_3)
-        override fun applyVirtualScreen4() = applyVirtualScreen(VIRTUAL_SCREEN_4)
-        override fun getCurrentVirtualScreen(): String =  currentVirtualScreen()
-
+        override fun setVirtualScreen(id: Int) = setVirtualScreenById(id)
+        override fun getVirtualScreen(): Int =  getCurrentVirtualScreenId()
 
         override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
         override fun getPIDsSortOrder(): Map<Long, Int>? = if (isPIDsSortOrderEnabled()) itemsSortOrder else null
     }
 
     private val giuliaRendererSettings = object:  GiuliaRendererSettings(){
-        override fun applyVirtualScreen1() = applyVirtualScreen(VIRTUAL_SCREEN_1)
-        override fun applyVirtualScreen2() = applyVirtualScreen(VIRTUAL_SCREEN_2)
-        override fun applyVirtualScreen3() = applyVirtualScreen(VIRTUAL_SCREEN_3)
-        override fun applyVirtualScreen4() = applyVirtualScreen(VIRTUAL_SCREEN_4)
-        override fun getCurrentVirtualScreen(): String =  currentVirtualScreen()
 
+        override fun setVirtualScreen(id: Int) = setVirtualScreenById(id)
+        override fun getVirtualScreen(): Int =  getCurrentVirtualScreenId()
 
         override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
         override fun getPIDsSortOrder(): Map<Long, Int>? = if (isPIDsSortOrderEnabled()) itemsSortOrder else null
@@ -190,24 +181,23 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     override fun isBreakLabelTextEnabled(): Boolean = Prefs.getBoolean("pref.aa.break_label.${getCurrentVirtualScreenId()}", true)
 
-    private fun currentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
-
-
-
-    private fun applyVirtualScreen(key: String) {
+    private fun setVirtualScreenById(id: Int) {
+        val key = "${VIRTUAL_SCREEN_KEY}${id}"
         Prefs.updateString(PREF_CURRENT_VIRTUAL_SCREEN, key)
         Prefs.updateStringSet(PREF_SELECTED_PIDS, Prefs.getStringSet(key).toList())
         itemsSortOrder = loadItemsSortOrder(key)
     }
 
     fun initItemsSortOrder() {
-        itemsSortOrder = loadItemsSortOrder(currentVirtualScreen())
+        itemsSortOrder = loadItemsSortOrder(getCurrentVirtualScreen())
     }
 
     fun isVirtualScreenEnabled(id: Int): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
 
     fun getScreenTemplate(): ScreenTemplateType = ScreenTemplateType.NAV
 
-    private fun getCurrentVirtualScreenId(): Int = currentVirtualScreen().last().digitToInt()
+    private fun getCurrentVirtualScreenId(): Int = getCurrentVirtualScreen().last().digitToInt()
+    private fun getCurrentVirtualScreen(): String = Prefs.getS(PREF_CURRENT_VIRTUAL_SCREEN, "pref.aa.pids.profile_1")
+
     private fun loadItemsSortOrder(key: String) = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
 }

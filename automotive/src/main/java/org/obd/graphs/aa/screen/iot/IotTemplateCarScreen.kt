@@ -74,32 +74,32 @@ internal class IotTemplateCarScreen(
                 }
 
                 VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
-                        settings.getGiuliaRendererSetting().applyVirtualScreen1()
+                    if (settings.getGiuliaRendererSetting().getVirtualScreen() == 1) {
+                        settings.getGiuliaRendererSetting().setVirtualScreen(1)
                         applyMetricsFilter()
                         invalidate()
                     }
                 }
 
                 VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
-                        settings.getGiuliaRendererSetting().applyVirtualScreen2()
+                    if (settings.getGiuliaRendererSetting().getVirtualScreen() == 2) {
+                        settings.getGiuliaRendererSetting().setVirtualScreen(2)
                         applyMetricsFilter()
                         invalidate()
                     }
                 }
 
                 VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
-                        settings.getGiuliaRendererSetting().applyVirtualScreen3()
+                    if (settings.getGiuliaRendererSetting().getVirtualScreen() == 3) {
+                        settings.getGiuliaRendererSetting().setVirtualScreen(3)
                         applyMetricsFilter()
                         invalidate()
                     }
                 }
 
                 VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
-                    if (settings.getGiuliaRendererSetting().getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
-                        settings.getGiuliaRendererSetting().applyVirtualScreen4()
+                    if (settings.getGiuliaRendererSetting().getVirtualScreen() == 4) {
+                        settings.getGiuliaRendererSetting().setVirtualScreen(4)
                         applyMetricsFilter()
                         invalidate()
                     }
@@ -213,7 +213,7 @@ internal class IotTemplateCarScreen(
                     mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
                 ) {
 
-                    settings.getGiuliaRendererSetting().applyVirtualScreen1()
+                    settings.getGiuliaRendererSetting().setVirtualScreen(1)
                     applyMetricsFilter()
                     invalidate()
                 })
@@ -223,7 +223,7 @@ internal class IotTemplateCarScreen(
                     mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
                 ) {
 
-                    settings.getGiuliaRendererSetting().applyVirtualScreen2()
+                    settings.getGiuliaRendererSetting().setVirtualScreen(2)
                     applyMetricsFilter()
                     invalidate()
                 })
