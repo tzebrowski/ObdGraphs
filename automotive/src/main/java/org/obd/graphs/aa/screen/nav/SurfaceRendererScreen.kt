@@ -358,49 +358,21 @@ internal class SurfaceRendererScreen(
         var added = false
         var builder = ActionStrip.Builder()
 
-        if (settings.isVirtualScreenEnabled(1)) {
-            added = true
-
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_1, actionStripColor(1)) {
-                parent.invalidate()
-                setCurrentVirtualScreen(1)
-                updateQuery()
-                renderFrame()
-            })
+        mapOf(1 to R.drawable.action_virtual_screen_1,
+            2 to R.drawable.action_virtual_screen_2,
+            3 to R.drawable.action_virtual_screen_3,
+            4 to R.drawable.action_virtual_screen_4).forEach { (k, v) ->
+            if (settings.isVirtualScreenEnabled(k)) {
+                added = true
+                builder = builder.addAction(createAction(carContext, v, actionStripColor(k)) {
+                    parent.invalidate()
+                    setCurrentVirtualScreen(k)
+                    updateQuery()
+                    renderFrame()
+                })
+            }
         }
 
-        if (settings.isVirtualScreenEnabled(2)) {
-
-            added = true
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_2, actionStripColor(2)) {
-                parent.invalidate()
-                setCurrentVirtualScreen(2)
-                updateQuery()
-                renderFrame()
-            })
-        }
-
-        if (settings.isVirtualScreenEnabled(3)) {
-
-            added = true
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_3, actionStripColor(3)) {
-                parent.invalidate()
-                setCurrentVirtualScreen(3)
-                updateQuery()
-                renderFrame()
-            })
-        }
-
-        if (settings.isVirtualScreenEnabled(4)) {
-            added = true
-
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_4, actionStripColor(4)) {
-                parent.invalidate()
-                setCurrentVirtualScreen(4)
-                updateQuery()
-                renderFrame()
-            })
-        }
         return if (added) {
             builder.build()
         } else {
