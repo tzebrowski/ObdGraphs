@@ -24,6 +24,11 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.Identity
 
+const val GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_1.event.changed"
+const val GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_2.event.changed"
+const val GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_3.event.changed"
+const val GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_4.event.changed"
+
 
 private enum class DefaultScreen(private val code: Int): Identity {
     NOT_SET(-1);
@@ -86,10 +91,10 @@ internal class SurfaceRendererScreen(
                     renderFrame()
                 }
 
-                VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> handlePIDsListChangedEvent(1)
-                VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> handlePIDsListChangedEvent(2)
-                VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> handlePIDsListChangedEvent(3)
-                VIRTUAL_SCREEN_4_SETTINGS_CHANGED ->  handlePIDsListChangedEvent(4)
+                GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> handlePIDsListChangedEvent(1)
+                GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> handlePIDsListChangedEvent(2)
+                GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> handlePIDsListChangedEvent(3)
+                GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED ->  handlePIDsListChangedEvent(4)
 
 
                 PROFILE_CHANGED_EVENT -> {
@@ -227,16 +232,21 @@ internal class SurfaceRendererScreen(
         registerReceiver(carContext,broadcastReceiver) {
             it.addAction(AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
             it.addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
-            it.addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
             it.addAction(PROFILE_CHANGED_EVENT)
             it.addAction(PROFILE_RESET_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             it.addAction(AA_REFRESH_EVENT)
             it.addAction(AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT)
+
+            it.addAction(GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
+            it.addAction(GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
+            it.addAction(GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
+            it.addAction(GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
         }
     }
 

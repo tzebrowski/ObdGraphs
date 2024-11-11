@@ -73,7 +73,7 @@ internal class IotTemplateCarScreen(
                     invalidate()
                 }
 
-                VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
+                GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
                     if (settings.getGiuliaRendererSetting().getVirtualScreen() == 1) {
                         settings.getGiuliaRendererSetting().setVirtualScreen(1)
                         applyMetricsFilter()
@@ -81,7 +81,7 @@ internal class IotTemplateCarScreen(
                     }
                 }
 
-                VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
+                GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
                     if (settings.getGiuliaRendererSetting().getVirtualScreen() == 2) {
                         settings.getGiuliaRendererSetting().setVirtualScreen(2)
                         applyMetricsFilter()
@@ -89,7 +89,7 @@ internal class IotTemplateCarScreen(
                     }
                 }
 
-                VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
+                GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
                     if (settings.getGiuliaRendererSetting().getVirtualScreen() == 3) {
                         settings.getGiuliaRendererSetting().setVirtualScreen(3)
                         applyMetricsFilter()
@@ -97,7 +97,7 @@ internal class IotTemplateCarScreen(
                     }
                 }
 
-                VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
+                GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
                     if (settings.getGiuliaRendererSetting().getVirtualScreen() == 4) {
                         settings.getGiuliaRendererSetting().setVirtualScreen(4)
                         applyMetricsFilter()
@@ -159,10 +159,10 @@ internal class IotTemplateCarScreen(
             it.addAction(DATA_LOGGER_NO_NETWORK_EVENT)
             it.addAction(DATA_LOGGER_ERROR_CONNECT_EVENT)
             it.addAction(PROFILE_CHANGED_EVENT)
-            it.addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
             it.addAction(MAIN_ACTIVITY_EVENT_DESTROYED)
             it.addAction(MAIN_ACTIVITY_EVENT_PAUSE)
 

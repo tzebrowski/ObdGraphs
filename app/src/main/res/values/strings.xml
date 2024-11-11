@@ -110,6 +110,12 @@
 
     <!-- Android Auto -->
     <string name="pref.aa.virtual_screens.screen.max_items">Max visible metrics</string>
+    <string name="pref.aa.giulia.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors for <b>Giulia</b> screen</string>
+    <string name="pref.aa.gauge.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors for <b>Gauge</b> screen</string>
+
+    <string name="pref.aa.gauge.displayed_parameter_ids">Edit displayed <b>Gauge</b> OBD2 PIDs</string>
+    <string name="pref.aa.giulia.displayed_parameter_ids">Edit displayed <b>Giulia</b> OBD2 PIDs</string>
+
 
     <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
     <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>

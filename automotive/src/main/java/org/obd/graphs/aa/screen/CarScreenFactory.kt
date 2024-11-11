@@ -37,8 +37,10 @@ internal interface CarScreenFactory {
         ): CarScreen =
             if (settings.getScreenTemplate() == ScreenTemplateType.NAV) {
                 NavTemplateCarScreen(carContext, settings, metricsCollector, fps)
-            } else {
+            } else if  (settings.getScreenTemplate() == ScreenTemplateType.IOT) {
                 IotTemplateCarScreen(carContext, settings, metricsCollector)
+            } else {
+                NavTemplateCarScreen(carContext, settings, metricsCollector, fps)
             }
     }
 }

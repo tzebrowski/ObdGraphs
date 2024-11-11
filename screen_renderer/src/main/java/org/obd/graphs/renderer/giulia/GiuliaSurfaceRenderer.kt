@@ -118,8 +118,6 @@ internal class GiuliaSurfaceRenderer(
         }
     }
 
-
-
     override fun recycle() {
         giuliaDrawer.recycle()
     }
