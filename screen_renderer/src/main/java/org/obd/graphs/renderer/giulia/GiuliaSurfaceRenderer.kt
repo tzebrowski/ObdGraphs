@@ -99,8 +99,8 @@ internal class GiuliaSurfaceRenderer(
                         "metricsLimit=$${ settings.getMaxItems()}  pageSize=$pageSize")
             }
 
-            if (pageSize > 0){
-                val metrics = metricsCollector.getMetrics()
+            val metrics = metricsCollector.getMetrics()
+            if (pageSize > 0 && metrics.isNotEmpty()){
                 for (i in 0 until pageSize){
                     top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
                 }
