@@ -159,7 +159,9 @@
     <string name="pref.aa.virtual_screens.number_of_items_in_column.6">Number of columns for screen 6</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.7">Number ofs columns for screen 7</string>
 
-    <string name="pref.aa.virtual_screens.category">Giulia and Gauge</string>
+    <string name="pref.aa.gauge.category">Gauge</string>
+
+    <string name="pref.aa.virtual_screens.category">Giulia</string>
 
     <string name="pref.aa.virtual_screens.visibility.category">Visibility</string>
     <string name="pref.aa.virtual_screens.visibility.category.summary">Choose how many virtual screens should be rendered</string>
@@ -191,7 +193,9 @@
 
     <string name="pref.aa.alerting_category">Alerting</string>
     <string name="pref.aa.debug_category">Debug</string>
-    <string name="pref.aa.general_category">General</string>
+    <string name="pref.aa.general_category">General app settings</string>
+
+    <string name="pref.aa.general_views_category">General views settings </string>
 
     <string name="pref.aa.trip_info.category">Trip Info</string>
     <string name="pref.aa.trip_info.enabled">Enable trip info screen</string>

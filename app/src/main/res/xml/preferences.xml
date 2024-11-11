@@ -986,15 +986,12 @@
                         android:title="@string/pref.aa.virtual_screens.sort_order.enabled"
                         app:experimental="true"
                         app:singleLineTitle="false" />
-
                 </PreferenceCategory>
 
 
                 <PreferenceCategory
-                    android:title="@string/pref.aa.virtual_screens.category"
+                    android:title="@string/pref.aa.general_views_category"
                     app:singleLineTitle="false">
-
-
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.virtual_screens.scale.enabled"
@@ -1006,7 +1003,12 @@
                         android:key="pref.aa.pids.history.enabled"
                         android:title="@string/pref.aa.display_pid_history"
                         app:singleLineTitle="false" />
+                </PreferenceCategory>
 
+
+                <PreferenceCategory
+                    android:title="@string/pref.aa.gauge.category"
+                    app:singleLineTitle="false">
                     <org.obd.graphs.preferences.aa.AAListPreference
                         android:defaultValue="LONG"
                         android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
@@ -1122,6 +1124,11 @@
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
+                </PreferenceCategory>
+
+                <PreferenceCategory
+                    android:title="@string/pref.aa.virtual_screens.category"
+                    app:singleLineTitle="false">
 
 
                     <PreferenceScreen
