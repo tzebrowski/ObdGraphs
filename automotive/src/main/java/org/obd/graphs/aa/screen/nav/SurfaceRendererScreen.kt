@@ -96,8 +96,8 @@ internal class SurfaceRendererScreen(
                 GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> handlePIDsListChangedEvent(3)
                 GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED ->  handlePIDsListChangedEvent(4)
 
-
                 PROFILE_CHANGED_EVENT -> {
+                    settings.handleProfileChanged()
                     updateQuery()
                     surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
                     renderFrame()

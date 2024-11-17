@@ -78,6 +78,7 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
+
     <PreferenceCategory android:title="@string/pref.adapter_category">
         <PreferenceScreen
             android:key="pref.adapter"

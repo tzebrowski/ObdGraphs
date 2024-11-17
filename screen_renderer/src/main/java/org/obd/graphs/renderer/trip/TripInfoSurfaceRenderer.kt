@@ -39,7 +39,7 @@ internal class TripInfoSurfaceRenderer(
     private val tripInfo = TripInfoDetails()
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
     override fun applyMetricsFilter(query: Query) {
-        Log.e(LOG_TAG,"Query strategy ${query.getStrategy()}, selected ids: ${query.getIDs()}")
+        Log.d(LOG_TAG,"Query strategy ${query.getStrategy()}, selected ids: ${query.getIDs()}")
 
         metricsCollector.applyFilter(
             enabled = query.getIDs()

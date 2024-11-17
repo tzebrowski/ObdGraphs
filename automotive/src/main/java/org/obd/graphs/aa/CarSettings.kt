@@ -19,6 +19,7 @@
 package org.obd.graphs.aa
 
 import android.graphics.Color
+import android.util.Log
 import androidx.car.app.CarContext
 import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.ViewPreferencesSerializer
@@ -57,7 +58,9 @@ enum class ScreenTemplateType {
     NAV, IOT
 }
 
-data class DataPrefs(val virtualScreenPrefixKey:String, val currentVirtualScreenKey: String, val selectedPIDsKey: String)
+private data class DataPrefs(val virtualScreenPrefixKey:String, val currentVirtualScreenKey: String, val selectedPIDsKey: String)
+
+private const val LOG_TAG = "CAR_SETTINGS"
 
 class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private var itemsSortOrder: Map<Long, Int>? = emptyMap()
@@ -72,28 +75,32 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
         override fun setVirtualScreen(id: Int) = setVirtualScreenById(dataPrefs=dataPrefs, screenId=id)
         override fun getVirtualScreen(): Int =  getCurrentVirtualScreenId(dataPrefs)
-
         override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
         override fun getPIDsSortOrder(): Map<Long, Int>? = if (isPIDsSortOrderEnabled()) itemsSortOrder else null
     }
 
     private val giuliaRendererSettings = object:  GiuliaRendererSettings(){
-
         val dataPrefs = DataPrefs(
             virtualScreenPrefixKey="pref.aa.pids.profile_",
             currentVirtualScreenKey = "pref.aa.pids.vs.current",
             selectedPIDsKey = "pref.aa.pids.selected")
 
-
         override fun setVirtualScreen(id: Int) = setVirtualScreenById(screenId=id, dataPrefs=dataPrefs)
         override fun getVirtualScreen(): Int =  getCurrentVirtualScreenId(dataPrefs)
-
         override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
         override fun getPIDsSortOrder(): Map<Long, Int>? = if (isPIDsSortOrderEnabled()) itemsSortOrder else null
     }
 
     private val tripInfoScreenSettings = TripInfoScreenSettings()
     private val routinesScreenSettings = RoutinesScreenSettings()
+
+    init {
+        copyGiuliaSettings()
+    }
+
+    override fun handleProfileChanged() {
+        copyGiuliaSettings()
+    }
 
     override fun getDragRacingScreenSettings(): DragRacingScreenSettings = dragRacingScreenSettings.apply {
         metricsFrequencyReadEnabled = Prefs.getBoolean("pref.aa.drag_race.debug.display_frequency", true)
@@ -134,7 +141,6 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
             }
         }
     }
-
 
     fun isAutomaticConnectEnabled(): Boolean = Prefs.getBoolean("pref.aa.connection.auto.enabled", false)
 
@@ -208,4 +214,22 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private fun getCurrentVirtualScreen(dataPrefs: DataPrefs): String = Prefs.getS(dataPrefs.currentVirtualScreenKey, "pref.aa.pids.profile_1")
 
     private fun loadItemsSortOrder(key: String) = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
+
+    private fun copyGiuliaSettings() {
+        val gauge = gaugeRendererSettings.dataPrefs
+        if (!Prefs.contains(gauge.selectedPIDsKey)) {
+            Log.e(LOG_TAG, "No Gauge settings found. Copy Giulia Settings...")
+            val giulia = giuliaRendererSettings.dataPrefs
+            val list = Prefs.getStringSet(giulia.selectedPIDsKey).toList()
+
+            (1..4).forEach {
+                val list = Prefs.getStringSet("${giulia.virtualScreenPrefixKey}$it").toList()
+                Log.e(LOG_TAG, "Giulia virtual screen $it=$list")
+                Prefs.updateStringSet("${gauge.virtualScreenPrefixKey}$it", list)
+            }
+
+            Log.e(LOG_TAG, "Updating Gauge Selected PIDs $list")
+            Prefs.updateStringSet(gauge.selectedPIDsKey, list)
+        }
+    }
 }

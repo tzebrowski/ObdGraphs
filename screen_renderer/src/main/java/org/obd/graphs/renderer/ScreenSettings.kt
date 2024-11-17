@@ -93,6 +93,8 @@ data class RoutinesScreenSettings(
 
 interface ScreenSettings {
 
+    fun handleProfileChanged(){}
+
     fun getRoutinesScreenSettings(): RoutinesScreenSettings = RoutinesScreenSettings()
 
     fun getDragRacingScreenSettings(): DragRacingScreenSettings = DragRacingScreenSettings()
