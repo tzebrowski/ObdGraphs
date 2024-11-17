@@ -216,20 +216,25 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private fun loadItemsSortOrder(key: String) = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
 
     private fun copyGiuliaSettings() {
-        val gauge = gaugeRendererSettings.dataPrefs
-        if (!Prefs.contains(gauge.selectedPIDsKey)) {
-            Log.e(LOG_TAG, "No Gauge settings found. Copy Giulia Settings...")
-            val giulia = giuliaRendererSettings.dataPrefs
-            val list = Prefs.getStringSet(giulia.selectedPIDsKey).toList()
+        try{
+            val gauge = gaugeRendererSettings.dataPrefs
+            if (!Prefs.contains(gauge.selectedPIDsKey)) {
+                Log.i(LOG_TAG, "No Gauge settings found. Copy Giulia Settings...")
+                val giulia = giuliaRendererSettings.dataPrefs
+                val list = Prefs.getStringSet(giulia.selectedPIDsKey).toList()
 
-            (1..4).forEach {
-                val list = Prefs.getStringSet("${giulia.virtualScreenPrefixKey}$it").toList()
-                Log.e(LOG_TAG, "Giulia virtual screen $it=$list")
-                Prefs.updateStringSet("${gauge.virtualScreenPrefixKey}$it", list)
+                (1..4).forEach {
+                    val list = Prefs.getStringSet("${giulia.virtualScreenPrefixKey}$it").toList()
+                    Log.i(LOG_TAG, "Giulia virtual screen $it=$list")
+                    Prefs.updateStringSet("${gauge.virtualScreenPrefixKey}$it", list)
+                }
+
+                Log.i(LOG_TAG, "Updating Gauge Selected PIDs $list")
+                Prefs.updateStringSet(gauge.selectedPIDsKey, list)
             }
-
-            Log.e(LOG_TAG, "Updating Gauge Selected PIDs $list")
-            Prefs.updateStringSet(gauge.selectedPIDsKey, list)
+        }catch (e: Exception){
+            Log.e(LOG_TAG, "Failed to set copy Giulia settings",e)
         }
+
     }
 }
