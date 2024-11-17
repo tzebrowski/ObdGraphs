@@ -63,10 +63,18 @@
                 tools:targetApi="o" />
 
             <item
-                android:id="@+id/navigation_android_auto_pids"
+                android:id="@+id/navigation_android_giulia_auto_pids"
                 android:checkable="true"
-                android:title="@string/context_menu.parameters_id_to_display"
+                android:title="@string/context_menu.giulia_parameters_id_to_display"
                 tools:targetApi="o"/>
+
+            <item
+
+                android:id="@+id/navigation_android_gauge_auto_pids"
+                android:checkable="true"
+                android:title="@string/context_menu.gauge_parameters_id_to_display"
+                tools:targetApi="o"/>
+
 
             <item
                 android:id="@+id/navigation_android_auto_font_size"
