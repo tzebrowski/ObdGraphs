@@ -38,6 +38,9 @@
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
 
+    <string name="context_menu.giulia_parameters_id_to_display">Select Giulia OBD2 PIDs</string>
+    <string name="context_menu.gauge_parameters_id_to_display">Select Gauge OBD2 PIDs</string>
+
     <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs settings</string>
     <string name="context_menu.parameters_id_to_display">Select displayed OBD2 PIDs</string>
     <string name="context_menu.view_configuration">View Settings</string>
@@ -110,6 +113,12 @@
 
     <!-- Android Auto -->
     <string name="pref.aa.virtual_screens.screen.max_items">Max visible metrics</string>
+    <string name="pref.aa.giulia.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors for <b>Giulia</b> screen</string>
+    <string name="pref.aa.gauge.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors for <b>Gauge</b> screen</string>
+
+    <string name="pref.aa.gauge.displayed_parameter_ids">Edit displayed <b>Gauge</b> OBD2 PIDs</string>
+    <string name="pref.aa.giulia.displayed_parameter_ids">Edit displayed <b>Giulia</b> OBD2 PIDs</string>
+
 
     <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
     <string name="pref.aa.profile_2.displayed_parameter_ids">Edit Virtual Screen 2</string>
@@ -153,7 +162,9 @@
     <string name="pref.aa.virtual_screens.number_of_items_in_column.6">Number of columns for screen 6</string>
     <string name="pref.aa.virtual_screens.number_of_items_in_column.7">Number ofs columns for screen 7</string>
 
-    <string name="pref.aa.virtual_screens.category">Giulia and Gauge</string>
+    <string name="pref.aa.gauge.category">Gauge</string>
+
+    <string name="pref.aa.virtual_screens.category">Giulia</string>
 
     <string name="pref.aa.virtual_screens.visibility.category">Visibility</string>
     <string name="pref.aa.virtual_screens.visibility.category.summary">Choose how many virtual screens should be rendered</string>
@@ -185,7 +196,9 @@
 
     <string name="pref.aa.alerting_category">Alerting</string>
     <string name="pref.aa.debug_category">Debug</string>
-    <string name="pref.aa.general_category">General</string>
+    <string name="pref.aa.general_category">General app settings</string>
+
+    <string name="pref.aa.general_views_category">General views settings </string>
 
     <string name="pref.aa.trip_info.category">Trip Info</string>
     <string name="pref.aa.trip_info.enabled">Enable trip info screen</string>

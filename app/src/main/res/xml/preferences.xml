@@ -78,6 +78,7 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
+
     <PreferenceCategory android:title="@string/pref.adapter_category">
         <PreferenceScreen
             android:key="pref.adapter"
@@ -986,15 +987,12 @@
                         android:title="@string/pref.aa.virtual_screens.sort_order.enabled"
                         app:experimental="true"
                         app:singleLineTitle="false" />
-
                 </PreferenceCategory>
 
 
                 <PreferenceCategory
-                    android:title="@string/pref.aa.virtual_screens.category"
+                    android:title="@string/pref.aa.general_views_category"
                     app:singleLineTitle="false">
-
-
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.virtual_screens.scale.enabled"
@@ -1006,7 +1004,12 @@
                         android:key="pref.aa.pids.history.enabled"
                         android:title="@string/pref.aa.display_pid_history"
                         app:singleLineTitle="false" />
+                </PreferenceCategory>
 
+
+                <PreferenceCategory
+                    android:title="@string/pref.aa.gauge.category"
+                    app:singleLineTitle="false">
                     <org.obd.graphs.preferences.aa.AAListPreference
                         android:defaultValue="LONG"
                         android:dialogTitle="@string/pref.aa.renderer.gauge.progress_type"
@@ -1076,9 +1079,63 @@
 
 
                     <PreferenceScreen
+                        android:key="pref.aa.gauge.displayed.pids"
+                        android:summary="@string/pref.aa.gauge.displayed_parameter_ids_summary"
+                        android:title="@string/pref.aa.gauge.displayed_parameter_ids"
+                        app:singleLineTitle="false">
+
+                        <PreferenceCategory
+                            android:title="@string/pref.displayed_parameter_ids_summary"
+                            app:singleLineTitle="false">
+
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.gauge.pids.profile_1"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_1.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.gauge.pids.profile_2"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_2.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.gauge.pids.profile_3"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_3.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.gauge.pids.profile_4"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.aa.profile_4.displayed_parameter_ids"
+                                app:source="aa"
+                                app:useSimpleSummaryProvider="true" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
+                <PreferenceCategory
+                    android:title="@string/pref.aa.virtual_screens.category"
+                    app:singleLineTitle="false">
+
+
+                    <PreferenceScreen
                         android:key="pref.aa.displayed.pids"
-                        android:summary="@string/pref.displayed_parameter_ids_summary"
-                        android:title="@string/pref.displayed_parameter_ids"
+                        android:summary="@string/pref.aa.giulia.displayed_parameter_ids_summary"
+                        android:title="@string/pref.aa.giulia.displayed_parameter_ids"
                         app:singleLineTitle="false">
 
                         <PreferenceCategory

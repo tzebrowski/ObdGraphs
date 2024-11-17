@@ -35,10 +35,7 @@ class DragRacingSettings(private val query: Query): ScreenSettings {
         shiftLightsEnabled = Prefs.getBoolean("pref.drag_racing.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.drag_racing.shift_lights.rev_value", "5000").toInt()
         fontSize = Prefs.getS("pref.drag_racing.screen_font_size","30").toInt()
-    }
-
-    override fun getSelectedPIDs(): Set<Long> {
-        return query.getIDs()
+        selectedPIDs = query.getIDs()
     }
 
     override fun isBreakLabelTextEnabled(): Boolean = false

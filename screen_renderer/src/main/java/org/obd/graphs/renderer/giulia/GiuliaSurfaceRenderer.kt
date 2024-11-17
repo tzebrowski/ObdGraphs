@@ -55,13 +55,13 @@ internal class GiuliaSurfaceRenderer(
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
+        val giuliaSettings =  settings.getGiuliaRendererSetting()
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
+            metricsCollector.applyFilter(enabled = giuliaSettings.selectedPIDs, order = giuliaSettings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()
-            val selection = settings.getSelectedPIDs()
-            val intersection = selection.filter { ids.contains(it) }.toSet()
-            metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+            val intersection = giuliaSettings.selectedPIDs.filter { ids.contains(it) }.toSet()
+            metricsCollector.applyFilter(enabled = intersection, order = giuliaSettings.getPIDsSortOrder())
         }
     }
 
@@ -99,8 +99,8 @@ internal class GiuliaSurfaceRenderer(
                         "metricsLimit=$${ settings.getMaxItems()}  pageSize=$pageSize")
             }
 
-            if (pageSize > 0){
-                val metrics = metricsCollector.getMetrics()
+            val metrics = metricsCollector.getMetrics()
+            if (pageSize > 0 && metrics.isNotEmpty()){
                 for (i in 0 until pageSize){
                     top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
                 }
@@ -117,8 +117,6 @@ internal class GiuliaSurfaceRenderer(
             }
         }
     }
-
-
 
     override fun recycle() {
         giuliaDrawer.recycle()

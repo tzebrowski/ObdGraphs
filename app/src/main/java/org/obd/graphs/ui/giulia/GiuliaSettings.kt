@@ -21,11 +21,15 @@ package org.obd.graphs.ui.giulia
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.renderer.GiuliaRendererSettings
 import org.obd.graphs.renderer.ScreenSettings
 
 class GiuliaSettings(private val query: Query): ScreenSettings {
-    override fun getSelectedPIDs(): Set<Long> {
-        return query.getIDs()
+
+    private val giuliaRendererSettings = GiuliaRendererSettings()
+
+    override fun getGiuliaRendererSetting(): GiuliaRendererSettings = giuliaRendererSettings.apply {
+        selectedPIDs = query.getIDs()
     }
 
     override fun getMaxItems(): Int  =  Prefs.getS("pref.giulia.max_items","6").toInt()

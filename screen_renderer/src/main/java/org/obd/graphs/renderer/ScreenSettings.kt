@@ -45,10 +45,30 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
-data class GaugeRendererSettings (
+
+open class GaugeRendererSettings (
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     var topOffset:Int = 0,
-)
+    var selectedPIDs: Set<Long> = emptySet()
+){
+
+    open fun getVirtualScreen(): Int = 0
+    open fun isPIDsSortOrderEnabled(): Boolean = false
+    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
+
+    open fun setVirtualScreen(id: Int) {}
+}
+
+open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
+
+    open fun isPIDsSortOrderEnabled(): Boolean = false
+    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
+
+    open fun getVirtualScreen(): Int = 0
+
+    open fun setVirtualScreen(id: Int) {}
+}
+
 
 data class DragRacingScreenSettings(
     var shiftLightsRevThreshold: Int = 5000,
@@ -57,7 +77,8 @@ data class DragRacingScreenSettings(
     var metricsFrequencyReadEnabled: Boolean = true,
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var contextInfoEnabled: Boolean = false,
-    var fontSize: Int = 32
+    var fontSize: Int = 32,
+    var selectedPIDs: Set<Long>  = emptySet()
 )
 
 
@@ -72,20 +93,19 @@ data class RoutinesScreenSettings(
 
 interface ScreenSettings {
 
+    fun handleProfileChanged(){}
+
     fun getRoutinesScreenSettings(): RoutinesScreenSettings = RoutinesScreenSettings()
 
     fun getDragRacingScreenSettings(): DragRacingScreenSettings = DragRacingScreenSettings()
 
     fun getTripInfoScreenSettings(): TripInfoScreenSettings = TripInfoScreenSettings()
 
-    fun isPIDsSortOrderEnabled(): Boolean = false
-
-    fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
-
-
     fun getMaxItems (): Int = 6
 
     fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
+
+    fun getGiuliaRendererSetting(): GiuliaRendererSettings = GiuliaRendererSettings()
 
     fun isScaleEnabled(): Boolean = true
 
@@ -110,19 +130,11 @@ interface ScreenSettings {
 
     fun getColorTheme(): ColorTheme = ColorTheme()
 
-    fun applyVirtualScreen1() {}
-    fun applyVirtualScreen2() {}
-    fun applyVirtualScreen3() {}
-    fun applyVirtualScreen4() {}
-    fun getSelectedPIDs(): Set<Long> = emptySet()
-
     fun getMaxColumns(): Int = 1
     fun isStatisticsEnabled(): Boolean
     fun isFpsCounterEnabled(): Boolean
     fun getSurfaceFrameRate(): Int
     fun getFontSize(): Int = 30
-    fun getCurrentVirtualScreen(): String = ""
-    fun applyVirtualScreen(key: String) {}
 
     fun isStatusPanelEnabled(): Boolean = true
 

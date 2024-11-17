@@ -24,6 +24,11 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.Identity
 
+const val GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_1.event.changed"
+const val GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_2.event.changed"
+const val GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_3.event.changed"
+const val GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_4.event.changed"
+
 
 private enum class DefaultScreen(private val code: Int): Identity {
     NOT_SET(-1);
@@ -57,16 +62,13 @@ internal class SurfaceRendererScreen(
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
 
                 AA_REFRESH_EVENT -> {
-                    Log.i(LOG_TAG,"Received forced refresh screen event for screen ${screenId}. Is renderer: ${isSurfaceRendererScreen(screenId)}")
+                    Log.i(LOG_TAG,"Received forced refresh screen event for screen ${screenId}. " +
+                            "Is renderer: ${isSurfaceRendererScreen(screenId)}")
+
                     if (isSurfaceRendererScreen(screenId)) {
 
-                        if (screenId == SurfaceRendererType.GIULIA || screenId == SurfaceRendererType.GAUGE) {
-                            when (settings.getCurrentVirtualScreen()) {
-                                VIRTUAL_SCREEN_1 -> settings.applyVirtualScreen1()
-                                VIRTUAL_SCREEN_2 -> settings.applyVirtualScreen2()
-                                VIRTUAL_SCREEN_3 -> settings.applyVirtualScreen3()
-                                VIRTUAL_SCREEN_4 -> settings.applyVirtualScreen4()
-                            }
+                        if (screenId == SurfaceRendererType.GAUGE || screenId == SurfaceRendererType.GIULIA) {
+                            setCurrentVirtualScreen(getCurrentVirtualScreen())
                         }
 
                         updateQuery()
@@ -88,44 +90,14 @@ internal class SurfaceRendererScreen(
                     updateQuery()
                     renderFrame()
                 }
-                VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> {
-                    if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_1) {
-                        settings.applyVirtualScreen1()
-                    }
-                    updateQuery()
-                    renderFrame()
-                }
 
-                VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> {
-
-                    if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_2) {
-                        settings.applyVirtualScreen2()
-                    }
-
-                    updateQuery()
-                    renderFrame()
-                }
-
-                VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> {
-
-                    if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_3) {
-                        settings.applyVirtualScreen3()
-                    }
-                    updateQuery()
-                    renderFrame()
-                }
-
-                VIRTUAL_SCREEN_4_SETTINGS_CHANGED -> {
-
-                    if (settings.getCurrentVirtualScreen() == VIRTUAL_SCREEN_4) {
-                        settings.applyVirtualScreen4()
-                    }
-
-                    updateQuery()
-                    renderFrame()
-                }
+                GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED -> handlePIDsListChangedEvent(1)
+                GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED -> handlePIDsListChangedEvent(2)
+                GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED -> handlePIDsListChangedEvent(3)
+                GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED, GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED ->  handlePIDsListChangedEvent(4)
 
                 PROFILE_CHANGED_EVENT -> {
+                    settings.handleProfileChanged()
                     updateQuery()
                     surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
                     renderFrame()
@@ -138,7 +110,15 @@ internal class SurfaceRendererScreen(
                 }
             }
         }
+        private fun handlePIDsListChangedEvent(id: Int) {
+            if (getCurrentVirtualScreen() == id) {
+                setCurrentVirtualScreen(id)
+            }
+            updateQuery()
+            renderFrame()
+        }
     }
+
 
     fun getLifecycleObserver() = surfaceRendererController
 
@@ -153,7 +133,8 @@ internal class SurfaceRendererScreen(
 
         when (this.screenId as SurfaceRendererType){
             SurfaceRendererType.GIULIA, SurfaceRendererType.GAUGE -> {
-                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs())
+
+                metricsCollector.applyFilter(enabled = getSelectedPIDs())
 
                 if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
                     query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
@@ -251,16 +232,21 @@ internal class SurfaceRendererScreen(
         registerReceiver(carContext,broadcastReceiver) {
             it.addAction(AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
             it.addAction(LOW_FREQ_PID_SELECTION_CHANGED_EVENT)
-            it.addAction(VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
-            it.addAction(VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
+            it.addAction(GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
             it.addAction(PROFILE_CHANGED_EVENT)
             it.addAction(PROFILE_RESET_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             it.addAction(AA_REFRESH_EVENT)
             it.addAction(AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT)
+
+            it.addAction(GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
+            it.addAction(GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
+            it.addAction(GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
+            it.addAction(GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
         }
     }
 
@@ -271,6 +257,16 @@ internal class SurfaceRendererScreen(
     private fun updateQuery() {
 
         if (isSurfaceRendererScreen(screenId)) {
+
+            val selectedPIDs = getSelectedPIDs()
+            val order  =  if (this.screenId == SurfaceRendererType.GIULIA) {
+                settings.getGiuliaRendererSetting().getPIDsSortOrder()
+            } else {
+                settings.getGaugeRendererSetting().getPIDsSortOrder()
+            }
+
+            metricsCollector.applyFilter(enabled = selectedPIDs)
+
             if (screenId == SurfaceRendererType.DRAG_RACING) {
                 Log.i(LOG_TAG, "Updating query for  DRAG_RACING_SCREEN_ID screen")
 
@@ -290,11 +286,11 @@ internal class SurfaceRendererScreen(
             } else if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
                 Log.i(LOG_TAG, "Updating query for  individualQueryStrategyEnabled")
 
-                metricsCollector.applyFilter(enabled = settings.getSelectedPIDs(), order = settings.getPIDsSortOrder())
+                metricsCollector.applyFilter(enabled = selectedPIDs, order = order)
 
                 query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
                 query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-                Log.i(LOG_TAG, "User selection PIDs=${settings.getSelectedPIDs()}")
+                Log.i(LOG_TAG, "User selection PIDs=${selectedPIDs}")
 
                 dataLogger.updateQuery(query)
             } else {
@@ -302,66 +298,63 @@ internal class SurfaceRendererScreen(
 
                 query.setStrategy(QueryStrategyType.SHARED_QUERY)
                 val query = query.getIDs()
-                val selection = settings.getSelectedPIDs()
-                val intersection = selection.filter { query.contains(it) }.toSet()
+                val intersection = selectedPIDs.filter { query.contains(it) }.toSet()
 
-                Log.i(LOG_TAG, "Query=$query,user selection=$selection, intersection=$intersection")
+                Log.i(LOG_TAG, "Query=$query,user selection=$selectedPIDs, intersection=$intersection")
 
-                metricsCollector.applyFilter(enabled = intersection, order = settings.getPIDsSortOrder())
+                metricsCollector.applyFilter(enabled = intersection, order = order)
             }
         } else {
-            Log.i(LOG_TAG, "Do not update the query. Its not surface renderer screen.")
+            Log.i(LOG_TAG, "Do not update the query. It's not surface renderer screen.")
         }
     }
+
+    private fun setCurrentVirtualScreen(id: Int) = when (screenId) {
+        SurfaceRendererType.GIULIA -> settings.getGiuliaRendererSetting().setVirtualScreen(id)
+        SurfaceRendererType.GAUGE -> settings.getGaugeRendererSetting().setVirtualScreen(id)
+        else -> {}
+    }
+
+    private fun getCurrentVirtualScreen() = when (screenId) {
+        SurfaceRendererType.GIULIA ->  settings.getGiuliaRendererSetting().getVirtualScreen()
+        SurfaceRendererType.GAUGE -> settings.getGaugeRendererSetting().getVirtualScreen()
+        else -> -1
+    }
+
+
+    private fun getSelectedPIDs(): Set<Long>  =  if (screenId == SurfaceRendererType.GIULIA) {
+            settings.getGiuliaRendererSetting().selectedPIDs
+        } else {
+            settings.getGaugeRendererSetting().selectedPIDs
+        }
 
     private fun getVerticalActionStrip(): ActionStrip? {
 
         var added = false
         var builder = ActionStrip.Builder()
 
-        if (settings.isVirtualScreenEnabled(1)) {
-            added = true
+        mapOf(1 to R.drawable.action_virtual_screen_1,
+            2 to R.drawable.action_virtual_screen_2,
+            3 to R.drawable.action_virtual_screen_3,
+            4 to R.drawable.action_virtual_screen_4).forEach { (k, v) ->
+            if (settings.isVirtualScreenEnabled(k)) {
+                added = true
 
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_1, actionStripColor(VIRTUAL_SCREEN_1)) {
-                parent.invalidate()
-                settings.applyVirtualScreen1()
-                updateQuery()
-                renderFrame()
-            })
+                val color = if (getCurrentVirtualScreen() == k) {
+                    CarColor.GREEN
+                } else {
+                    mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
+                }
+
+                builder = builder.addAction(createAction(carContext, v, color) {
+                    parent.invalidate()
+                    setCurrentVirtualScreen(k)
+                    updateQuery()
+                    renderFrame()
+                })
+            }
         }
 
-        if (settings.isVirtualScreenEnabled(2)) {
-
-            added = true
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_2, actionStripColor(VIRTUAL_SCREEN_2)) {
-                parent.invalidate()
-                settings.applyVirtualScreen2()
-                updateQuery()
-                renderFrame()
-            })
-        }
-
-        if (settings.isVirtualScreenEnabled(3)) {
-
-            added = true
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_3, actionStripColor(VIRTUAL_SCREEN_3)) {
-                parent.invalidate()
-                settings.applyVirtualScreen3()
-                updateQuery()
-                renderFrame()
-            })
-        }
-
-        if (settings.isVirtualScreenEnabled(4)) {
-            added = true
-
-            builder = builder.addAction(createAction(carContext, R.drawable.action_virtual_screen_4, actionStripColor(VIRTUAL_SCREEN_4)) {
-                parent.invalidate()
-                settings.applyVirtualScreen4()
-                updateQuery()
-                renderFrame()
-            })
-        }
         return if (added) {
             builder.build()
         } else {
@@ -369,13 +362,6 @@ internal class SurfaceRendererScreen(
         }
     }
 
-    private fun actionStripColor(key: String): CarColor = if (settings.getCurrentVirtualScreen() == key) {
-        CarColor.GREEN
-    } else {
-        mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
-    }
-
     private fun getSurfaceRendererType (): SurfaceRendererType =
         if (screenId is SurfaceRendererType) screenId as SurfaceRendererType else  SurfaceRendererType.GIULIA
-
 }
