@@ -175,6 +175,9 @@
 
 
     <string name="pref.aa.virtual_screens.font_size.category">Font size</string>
+    <string name="pref.aa.gauge.virtual_screens.font_size.category">Gauge screen font size</string>
+    <string name="pref.aa.giulia.virtual_screens.font_size.category">Giulia screen font size</string>
+
     <string name="pref.aa.virtual_screens.font_size.category.summary">Choose font size for each individual virtual screen</string>
     <string name="pref.aa.font_size.1">Font size of the displayed OBD2 PIDs/Sensors for screen 1</string>
     <string name="pref.aa.font_size.2">Font size of the displayed OBD2 PIDs/Sensors for screen 2</string>

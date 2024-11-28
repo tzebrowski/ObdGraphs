@@ -71,7 +71,8 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_android_giulia_auto_pids -> navigateToPreferencesScreen("pref.aa.displayed.pids")
                 R.id.navigation_android_gauge_auto_pids -> navigateToPreferencesScreen("pref.aa.gauge.displayed.pids")
 
-                R.id.navigation_android_auto_font_size -> navigateToPreferencesScreen("pref.aa.screen.font_size.category")
+                R.id.navigation_android_giulia_auto_font_size -> navigateToPreferencesScreen("pref.aa.screen.font_size.category")
+                R.id.navigation_android_gauge_auto_font_size -> navigateToPreferencesScreen("pref.aa.gauge.screen.font_size.category")
 
                 R.id.navigation_gauge_pids -> navigateToPreferencesScreen(PREF_GAUGE_DISPLAYED_PARAMETERS_IDS)
                 R.id.navigation_graph_pids -> navigateToPreferencesScreen(PREF_GRAPH_DISPLAYED_PARAMETERS_IDS)

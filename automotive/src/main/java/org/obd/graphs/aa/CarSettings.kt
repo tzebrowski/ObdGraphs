@@ -58,11 +58,15 @@ enum class ScreenTemplateType {
     NAV, IOT
 }
 
-private data class DataPrefs(val virtualScreenPrefixKey:String, val currentVirtualScreenKey: String, val selectedPIDsKey: String)
+private data class DataPrefs(val virtualScreenPrefixKey: String,
+                             val currentVirtualScreenKey: String,
+                             val selectedPIDsKey: String,
+                             val fontSizeKey: String)
 
 private const val LOG_TAG = "CAR_SETTINGS"
 
 class CarSettings(private val carContext: CarContext) : ScreenSettings {
+
     private var itemsSortOrder: Map<Long, Int>? = emptyMap()
     private val dragRacingScreenSettings = DragRacingScreenSettings()
     private val colorTheme = ColorTheme()
@@ -71,8 +75,11 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         val dataPrefs = DataPrefs(
             virtualScreenPrefixKey="pref.aa.gauge.pids.profile_",
             currentVirtualScreenKey = "pref.aa.gauge.pids.vs.current",
-            selectedPIDsKey = "pref.aa.gauge.pids.selected")
+            selectedPIDsKey = "pref.aa.gauge.pids.selected",
+            fontSizeKey = "pref.aa.gauge.screen_font_size"
+            )
 
+        override fun getFontSize(): Int = Prefs.getS("${dataPrefs.fontSizeKey}.${getCurrentVirtualScreenId(dataPrefs)}", DEFAULT_FONT_SIZE).toInt()
         override fun setVirtualScreen(id: Int) = setVirtualScreenById(dataPrefs=dataPrefs, screenId=id)
         override fun getVirtualScreen(): Int =  getCurrentVirtualScreenId(dataPrefs)
         override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
@@ -83,8 +90,11 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         val dataPrefs = DataPrefs(
             virtualScreenPrefixKey="pref.aa.pids.profile_",
             currentVirtualScreenKey = "pref.aa.pids.vs.current",
-            selectedPIDsKey = "pref.aa.pids.selected")
+            selectedPIDsKey = "pref.aa.pids.selected",
+            fontSizeKey = "pref.aa.screen_font_size"
+        )
 
+        override fun getFontSize(): Int = Prefs.getS("${dataPrefs.fontSizeKey}.${getCurrentVirtualScreenId(dataPrefs)}", DEFAULT_FONT_SIZE).toInt()
         override fun setVirtualScreen(id: Int) = setVirtualScreenById(screenId=id, dataPrefs=dataPrefs)
         override fun getVirtualScreen(): Int =  getCurrentVirtualScreenId(dataPrefs)
         override fun isPIDsSortOrderEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.sort_order.enabled", false)
@@ -191,7 +201,6 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun isFpsCounterEnabled(): Boolean = Prefs.getBoolean(PREF_STATUS_FPS_VISIBLE, false)
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
-    override fun getFontSize(): Int = Prefs.getS("pref.aa.screen_font_size.${getCurrentVirtualScreenId(giuliaRendererSettings.dataPrefs)}", DEFAULT_FONT_SIZE).toInt()
 
     override fun isBreakLabelTextEnabled(): Boolean = Prefs.getBoolean("pref.aa.break_label.${getCurrentVirtualScreenId(giuliaRendererSettings.dataPrefs)}", true)
 
@@ -216,7 +225,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private fun loadItemsSortOrder(key: String) = ViewPreferencesSerializer("${key}.view.settings").getItemsSortOrder()
 
     private fun copyGiuliaSettings() {
-        try{
+        try {
             val gauge = gaugeRendererSettings.dataPrefs
             if (!Prefs.contains(gauge.selectedPIDsKey)) {
                 Log.i(LOG_TAG, "No Gauge settings found. Copy Giulia Settings...")
@@ -232,9 +241,8 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
                 Log.i(LOG_TAG, "Updating Gauge Selected PIDs $list")
                 Prefs.updateStringSet(gauge.selectedPIDsKey, list)
             }
-        }catch (e: Exception){
+        } catch (e: Exception){
             Log.e(LOG_TAG, "Failed to set copy Giulia settings",e)
         }
-
     }
 }

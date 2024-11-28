@@ -317,7 +317,7 @@ internal class GaugeDrawer(
     }
 
     private fun userScaleRatio() =
-        valueScaler.scaleToNewRange(settings.getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        valueScaler.scaleToNewRange(settings.getGaugeRendererSetting().getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
     private inline fun scaleColor(j: Int): Int = if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
         settings.getColorTheme().progressColor

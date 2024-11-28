@@ -126,7 +126,7 @@ internal class GiuliaSurfaceRenderer(
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        val scaleRatio = valueScaler.scaleToNewRange(settings.getGiuliaRendererSetting().getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = min(
             when (settings.getMaxColumns()) {

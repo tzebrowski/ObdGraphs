@@ -26,7 +26,9 @@ import org.obd.graphs.renderer.ScreenSettings
 
 class GiuliaSettings(private val query: Query): ScreenSettings {
 
-    private val giuliaRendererSettings = GiuliaRendererSettings()
+    private val giuliaRendererSettings = object: GiuliaRendererSettings(){
+        override fun getFontSize(): Int = giuliaVirtualScreen.getFontSize()
+    }
 
     override fun getGiuliaRendererSetting(): GiuliaRendererSettings = giuliaRendererSettings.apply {
         selectedPIDs = query.getIDs()
@@ -40,7 +42,6 @@ class GiuliaSettings(private val query: Query): ScreenSettings {
     override fun isStatisticsEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true
     override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.giulia.fps","5").toInt()
-    override fun getFontSize(): Int = giuliaVirtualScreen.getFontSize()
     override fun isStatusPanelEnabled(): Boolean = false
 
     override fun getMaxAllowedItemsInColumn(): Int  = 8

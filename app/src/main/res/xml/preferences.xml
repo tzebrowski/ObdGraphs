@@ -1125,6 +1125,60 @@
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
+                    <PreferenceScreen
+                        android:key="pref.aa.gauge.screen.font_size.category"
+                        android:summary="@string/pref.aa.virtual_screens.font_size.category.summary"
+                        android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.font_size.category"
+                            app:singleLineTitle="false">
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.1"
+                                android:key="pref.aa.gauge.screen_font_size.1"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.1"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false" />
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.2"
+                                android:key="pref.aa.gauge.screen_font_size.2"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.2"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.3"
+                                android:key="pref.aa.gauge.screen_font_size.3"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.3"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.4"
+                                android:key="pref.aa.gauge.screen_font_size.4"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.4"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                        </PreferenceCategory>
+                    </PreferenceScreen>
                 </PreferenceCategory>
 
                 <PreferenceCategory
@@ -1177,6 +1231,62 @@
                                 android:title="@string/pref.aa.profile_4.displayed_parameter_ids"
                                 app:source="aa"
                                 app:useSimpleSummaryProvider="true" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+
+
+                    <PreferenceScreen
+                        android:key="pref.aa.screen.font_size.category"
+                        android:summary="@string/pref.aa.virtual_screens.font_size.category.summary"
+                        android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:singleLineTitle="false">
+                        <PreferenceCategory
+                            android:title="@string/pref.aa.virtual_screens.font_size.category"
+                            app:singleLineTitle="false">
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.1"
+                                android:key="pref.aa.screen_font_size.1"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.1"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false" />
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.2"
+                                android:key="pref.aa.screen_font_size.2"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.2"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.3"
+                                android:key="pref.aa.screen_font_size.3"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.3"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
+
+                            <org.obd.graphs.preferences.aa.AASeekBar
+                                android:defaultValue="32"
+                                android:dialogTitle="@string/pref.aa.font_size.4"
+                                android:key="pref.aa.screen_font_size.4"
+                                android:max="74"
+                                android:title="@string/pref.aa.font_size.4"
+                                app:min="20"
+                                app:showSeekBarValue="true"
+                                app:singleLineTitle="false"
+                                app:useSimpleSummaryProvider="true" />
+
                         </PreferenceCategory>
                     </PreferenceScreen>
 
@@ -1276,60 +1386,6 @@
                         </PreferenceCategory>
                     </PreferenceScreen>
 
-                    <PreferenceScreen
-                        android:key="pref.aa.screen.font_size.category"
-                        android:summary="@string/pref.aa.virtual_screens.font_size.category.summary"
-                        android:title="@string/pref.aa.virtual_screens.font_size.category"
-                        app:singleLineTitle="false">
-                        <PreferenceCategory
-                            android:title="@string/pref.aa.virtual_screens.font_size.category"
-                            app:singleLineTitle="false">
-                            <org.obd.graphs.preferences.aa.AASeekBar
-                                android:defaultValue="32"
-                                android:dialogTitle="@string/pref.aa.font_size.1"
-                                android:key="pref.aa.screen_font_size.1"
-                                android:max="74"
-                                android:title="@string/pref.aa.font_size.1"
-                                app:min="20"
-                                app:showSeekBarValue="true"
-                                app:singleLineTitle="false" />
-
-                            <org.obd.graphs.preferences.aa.AASeekBar
-                                android:defaultValue="32"
-                                android:dialogTitle="@string/pref.aa.font_size.2"
-                                android:key="pref.aa.screen_font_size.2"
-                                android:max="74"
-                                android:title="@string/pref.aa.font_size.2"
-                                app:min="20"
-                                app:showSeekBarValue="true"
-                                app:singleLineTitle="false"
-                                app:useSimpleSummaryProvider="true" />
-
-                            <org.obd.graphs.preferences.aa.AASeekBar
-                                android:defaultValue="32"
-                                android:dialogTitle="@string/pref.aa.font_size.3"
-                                android:key="pref.aa.screen_font_size.3"
-                                android:max="74"
-                                android:title="@string/pref.aa.font_size.3"
-                                app:min="20"
-                                app:showSeekBarValue="true"
-                                app:singleLineTitle="false"
-                                app:useSimpleSummaryProvider="true" />
-
-
-                            <org.obd.graphs.preferences.aa.AASeekBar
-                                android:defaultValue="32"
-                                android:dialogTitle="@string/pref.aa.font_size.4"
-                                android:key="pref.aa.screen_font_size.4"
-                                android:max="74"
-                                android:title="@string/pref.aa.font_size.4"
-                                app:min="20"
-                                app:showSeekBarValue="true"
-                                app:singleLineTitle="false"
-                                app:useSimpleSummaryProvider="true" />
-
-                        </PreferenceCategory>
-                    </PreferenceScreen>
 
                     <PreferenceScreen
                         android:key="pref.aa.virtual_screens_category_visibility"

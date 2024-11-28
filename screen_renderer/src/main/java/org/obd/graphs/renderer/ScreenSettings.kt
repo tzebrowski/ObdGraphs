@@ -23,6 +23,8 @@ import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 
+const val DEFAULT_FONT_SIZE = "32"
+
 enum class GaugeProgressBarType {
     LONG, SHORT
 }
@@ -57,6 +59,7 @@ open class GaugeRendererSettings (
     open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     open fun setVirtualScreen(id: Int) {}
+    open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
 }
 
 open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
@@ -67,6 +70,7 @@ open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
     open fun getVirtualScreen(): Int = 0
 
     open fun setVirtualScreen(id: Int) {}
+    open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
 }
 
 
@@ -134,7 +138,6 @@ interface ScreenSettings {
     fun isStatisticsEnabled(): Boolean
     fun isFpsCounterEnabled(): Boolean
     fun getSurfaceFrameRate(): Int
-    fun getFontSize(): Int = 30
 
     fun isStatusPanelEnabled(): Boolean = true
 
