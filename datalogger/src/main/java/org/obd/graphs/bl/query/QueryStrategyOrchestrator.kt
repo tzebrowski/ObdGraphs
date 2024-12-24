@@ -17,10 +17,9 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
             this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = IndividualQueryStrategy()
             this[QueryStrategyType.ROUTINES_QUERY] = RoutinesQueryStrategy()
             this[QueryStrategyType.TRIP_INFO_QUERY] = TripInfoQueryStrategy()
+            this[QueryStrategyType.DYNAMIC] = DynamicQueryStrategy()
         }
     }
-
-
 
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
     override fun getDefaults(): Set<Long> = strategies[strategy]?.getDefaults() ?: emptySet()

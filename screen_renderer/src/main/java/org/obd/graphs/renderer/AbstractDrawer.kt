@@ -91,7 +91,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
-    fun recycle() {
+    open fun recycle() {
         getBackground().recycle()
     }
 

@@ -24,6 +24,7 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
+import org.obd.graphs.renderer.dynamic.DynamicSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
 import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
 import org.obd.graphs.renderer.trip.TripInfoSurfaceRenderer
@@ -37,7 +38,8 @@ enum class SurfaceRendererType(private val code: Int) : Identity {
     GIULIA(0),
     GAUGE(4),
     DRAG_RACING(1),
-    TRIP_INFO(3);
+    TRIP_INFO(3),
+    DYNAMIC(4);
 
     override fun id(): Int  = this.code
 
@@ -67,6 +69,7 @@ interface SurfaceRenderer {
                 SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
                 SurfaceRendererType.DRAG_RACING -> DragRacingSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
                 SurfaceRendererType.TRIP_INFO -> TripInfoSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
+                SurfaceRendererType.DYNAMIC -> DynamicSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
             }
     }
 }

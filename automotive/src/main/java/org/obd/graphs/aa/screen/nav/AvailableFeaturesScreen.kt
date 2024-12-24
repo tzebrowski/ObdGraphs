@@ -30,7 +30,6 @@ import org.obd.graphs.renderer.Identity
 
 private const val LOG_TAG = "AvailableFeaturesScreen"
 
-
 data class FeatureDescription(val identity: Identity, val iconId: Int, val title: String)
 
 internal class AvailableFeaturesScreen(
