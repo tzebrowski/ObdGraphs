@@ -1479,9 +1479,30 @@
                                 app:useSimpleSummaryProvider="true" />
                         </PreferenceCategory>
                     </PreferenceScreen>
-
                 </PreferenceCategory>
 
+                <PreferenceCategory
+                    android:title="@string/pref.aa.dynamic.category"
+                    app:singleLineTitle="false">
+
+                    <org.obd.graphs.preferences.aa.AASeekBar
+                        android:defaultValue="30"
+                        android:dialogTitle="@string/pref.aa.virtual_screens.font_size.category"
+                        android:key="pref.aa.dynamic.font_size"
+                        android:max="72"
+                        android:title="@string/pref.aa.virtual_screens.font_size.category"
+                        app:min="22"
+                        app:showSeekBarValue="true"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+
+                    <org.obd.graphs.preferences.aa.AACheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.dynamic.enabled"
+                        android:title="@string/pref.aa.trip_info.enabled"
+                        android:summary="@string/pref.aa.trip_info.enabled_summary"
+                        app:singleLineTitle="false" />
+                </PreferenceCategory>
 
                 <PreferenceCategory
                     android:title="@string/pref.aa.performance_meter.category"

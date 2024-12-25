@@ -24,6 +24,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.bl.query.valueToString
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
 import org.obd.graphs.renderer.gauge.DrawerSettings
@@ -42,7 +43,8 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
-        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
+        drawerSettings = DrawerSettings(
+            gaugeProgressBarType = GaugeProgressBarType.LONG)
     )
 
     private val background: Bitmap =
@@ -228,7 +230,7 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
     }
 
     private inline fun getScaleRatio() = valueScaler.scaleToNewRange(
-        settings.getTripInfoScreenSettings().fontSize.toFloat(),
+        settings.getDynamicScreenSettings().fontSize.toFloat(),
         CURRENT_MIN,
         CURRENT_MAX,
         NEW_MIN,
