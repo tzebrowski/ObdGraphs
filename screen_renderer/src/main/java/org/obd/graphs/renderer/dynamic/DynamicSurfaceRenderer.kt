@@ -36,7 +36,7 @@ internal class DynamicSurfaceRenderer(
     private val fps: Fps,
     viewSettings: ViewSettings
 ) : CoreSurfaceRenderer(viewSettings) {
-    private val tripInfo = DynamicInfoDetails()
+    private val dynamicInfoDetails = DynamicInfoDetails()
     private val dynamicDrawer = DynamicDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
@@ -72,30 +72,22 @@ internal class DynamicSurfaceRenderer(
                 area = area,
                 left = left,
                 top = top,
-                dynamicInfoDetails = tripInfo.apply {
+                dynamicInfoDetails = dynamicInfoDetails.apply {
                     airTemp = metricsCollector.getMetric(namesRegistry.getAirTempPID())
-                    totalMisfires = metricsCollector.getMetric(namesRegistry.getTotalMisfiresPID())
                     ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
                     atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
-                    fuellevel = metricsCollector.getMetric(namesRegistry.getFuelLevelPID())
-                    fuelConsumption = metricsCollector.getMetric(namesRegistry.getFuelConsumptionPID())
                     coolantTemp = metricsCollector.getMetric(namesRegistry.getCoolantTempPID())
                     exhaustTemp = metricsCollector.getMetric(namesRegistry.getExhaustTempPID())
                     oilTemp = metricsCollector.getMetric(namesRegistry.getOilTempPID())
                     gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
-                    oilLevel = metricsCollector.getMetric(namesRegistry.getOilLevelPID())
                     torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
                     intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
-                    distance = metricsCollector.getMetric(namesRegistry.getDistancePID())
-                    ibs = metricsCollector.getMetric(namesRegistry.getIbsPID())
-                    batteryVoltage = metricsCollector.getMetric(namesRegistry.getBatteryVoltagePID())
                     oilPressure = metricsCollector.getMetric(namesRegistry.getOilPressurePID())
                 }
             )
         }
     }
-
-
+    
     override fun recycle() {
         dynamicDrawer.recycle()
     }

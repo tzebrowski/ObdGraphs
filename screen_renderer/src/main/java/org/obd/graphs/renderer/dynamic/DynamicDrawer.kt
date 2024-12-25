@@ -26,6 +26,8 @@ import org.obd.graphs.bl.query.valueToString
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
+import org.obd.graphs.renderer.gauge.DrawerSettings
+import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.metrics.api.model.ObdMetric
 
 private const val CURRENT_MIN = 22f
@@ -37,6 +39,11 @@ private const val NEW_MIN = 0.6f
 internal class DynamicDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     private val metricBuilder = MetricsBuilder()
+
+    private val gaugeDrawer = GaugeDrawer(
+        settings = settings, context = context,
+        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
+    )
 
     private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
@@ -66,46 +73,30 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
         dynamicInfoDetails.oilTemp?.let{drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
         dynamicInfoDetails.exhaustTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
         dynamicInfoDetails.gearboxOilTemp?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        dynamicInfoDetails.distance?.let{drawMetric(diff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
-
-        //second row
-        leftAlignment = 0
-        rowTop = top + (textSizeBase) + 52f
-        dynamicInfoDetails.fuellevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
-        dynamicInfoDetails.fuelConsumption?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
-        dynamicInfoDetails.batteryVoltage?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        dynamicInfoDetails.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true)}
-        dynamicInfoDetails.oilLevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area = area) }
-        dynamicInfoDetails.totalMisfires?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area) }
+        dynamicInfoDetails.oilPressure?.let{drawMetric(diff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
-        //metrics
-        rowTop += 2.2f * textSizeBase
-        leftAlignment = 0
-
-        val bottomMetrics = mutableListOf<Metric>()
-
-        dynamicInfoDetails.intakePressure?.let {
-            bottomMetrics.add(it)
-        }
-
-        dynamicInfoDetails.oilPressure?.let {
-            bottomMetrics.add(it)
-        }
+        rowTop += textSizeBase + 16
 
         dynamicInfoDetails.torque?.let {
-            bottomMetrics.add(it)
+            gaugeDrawer.drawGauge(
+                canvas = canvas,
+                left = area.left.toFloat(),
+                top = rowTop,
+                width = area.width() / 2.2f,
+                metric = it,
+                labelCenterYPadding = 22f
+            )
         }
-
-        bottomMetrics.forEachIndexed { index, metric ->
-            drawMetric(
-                canvas,
-                area,
-                metric,
-                left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5),
-                rowTop,
-                bottomMetrics.size
+        dynamicInfoDetails.intakePressure?.let {
+            gaugeDrawer.drawGauge(
+                canvas = canvas,
+                left = (area.left + area.width() / 2f) - 10,
+                top =  rowTop,
+                width = area.width() / 2.2f,
+                metric = it,
+                labelCenterYPadding = 22f
             )
         }
     }

@@ -152,7 +152,7 @@ internal class GaugeDrawer(
             )
         }
 
-        drawMetric(canvas, area = rect, metric = metric, radius = calculateRadius(width),labelCenterYPadding=labelCenterYPadding)
+        drawGauge(canvas, area = rect, metric = metric, radius = calculateRadius(width),labelCenterYPadding=labelCenterYPadding)
     }
 
     private fun drawProgressBar(
@@ -240,7 +240,7 @@ internal class GaugeDrawer(
     }
 
 
-    private fun drawMetric(
+    private fun drawGauge(
         canvas: Canvas,
         area: RectF,
         metric: Metric,
