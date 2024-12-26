@@ -147,7 +147,6 @@ internal class SurfaceRendererScreen(
                 surfaceRendererController.allocateSurfaceRenderer(screenId as SurfaceRendererType)
             }
 
-
             SurfaceRendererType.DRAG_RACING -> {
                 dataLogger.updateQuery(query = query.apply {
                     setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
@@ -163,7 +162,6 @@ internal class SurfaceRendererScreen(
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.TRIP_INFO)
             }
 
-
             SurfaceRendererType.DYNAMIC -> {
 
                 dataLogger.updateQuery(query = query.apply {
@@ -171,7 +169,6 @@ internal class SurfaceRendererScreen(
                 })
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.DYNAMIC)
             }
-
         }
 
         renderFrame()
@@ -199,6 +196,12 @@ internal class SurfaceRendererScreen(
                 dataLogger.start(query.apply{
                     setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
                 })
+
+            SurfaceRendererType.DYNAMIC ->
+                dataLogger.start(query.apply{
+                    setStrategy(QueryStrategyType.DYNAMIC)
+                })
+
         }
     }
 
@@ -300,6 +303,14 @@ internal class SurfaceRendererScreen(
                 Log.i(LOG_TAG, "Updating query for  TRIP_INFO_SCREEN_ID screen")
 
                 query.setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+                metricsCollector.applyFilter(enabled = query.getIDs())
+                Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
+                dataLogger.updateQuery(query)
+
+            } else if (screenId == SurfaceRendererType.DYNAMIC) {
+                Log.i(LOG_TAG, "Updating query for  DYNAMIC_SCREEN_ID screen")
+
+                query.setStrategy(QueryStrategyType.DYNAMIC)
                 metricsCollector.applyFilter(enabled = query.getIDs())
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
                 dataLogger.updateQuery(query)
