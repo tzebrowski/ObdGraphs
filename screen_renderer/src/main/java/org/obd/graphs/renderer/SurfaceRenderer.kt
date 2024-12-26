@@ -39,7 +39,7 @@ enum class SurfaceRendererType(private val code: Int) : Identity {
     GAUGE(4),
     DRAG_RACING(1),
     TRIP_INFO(3),
-    DYNAMIC(4);
+    DYNAMIC(5);
 
     override fun id(): Int  = this.code
 

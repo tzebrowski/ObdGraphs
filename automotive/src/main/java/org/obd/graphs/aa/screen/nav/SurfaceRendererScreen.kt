@@ -205,9 +205,6 @@ internal class SurfaceRendererScreen(
     fun isSurfaceRendererScreen(identity: Identity) = identity is SurfaceRendererType
     override fun getFeatureDescription(): List<FeatureDescription>  = mutableListOf(
         FeatureDescription(SurfaceRendererType.DRAG_RACING, R.drawable.action_drag_race, carContext.getString(R.string.available_features_drag_race_screen_title)),
-
-
-
         FeatureDescription(SurfaceRendererType.GAUGE, R.drawable.action_gauge, carContext.getString(R.string.available_features_gauge_screen_title)),
         FeatureDescription(SurfaceRendererType.GIULIA, R.drawable.action_giulia_metics, carContext.getString(R.string.available_features_giulia_screen_title)))
             .apply {
