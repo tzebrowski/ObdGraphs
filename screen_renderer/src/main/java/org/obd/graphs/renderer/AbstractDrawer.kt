@@ -36,7 +36,6 @@ private const val STATUS_VALUE_FONT_SIZE = 18f
 internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
 
     protected val valueScaler: ValueScaler = ValueScaler()
-
     private val statusPaint = Paint()
 
     protected val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {

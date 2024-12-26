@@ -26,7 +26,6 @@ import org.obd.graphs.bl.query.valueToString
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
-import org.obd.metrics.api.model.ObdMetric
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
@@ -35,7 +34,6 @@ private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
 internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
-
     private val metricBuilder = MetricsBuilder()
 
     inline fun drawScreen(
@@ -56,7 +54,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
         tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
         tripInfo.gearboxOilTemp?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.distance?.let{drawMetric(diff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
+        tripInfo.distance?.let{drawMetric(metricBuilder.buildDiff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
 
         //second row
         leftAlignment = 0
@@ -98,18 +96,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 bottomMetrics.size
             )
         }
-    }
-
-    private fun diff(metric: Metric) : Metric  {
-        val value: Number? = if (metric.source.value == null){
-            null
-        } else {
-            metric.max - metric.min
-        }
-
-        return metricBuilder.buildFor(ObdMetric.builder()
-            .command(metric.source.command)
-            .value(value).build())
     }
 
     private inline fun calculateFontSize(
