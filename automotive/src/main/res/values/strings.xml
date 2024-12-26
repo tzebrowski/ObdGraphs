@@ -14,10 +14,10 @@
     <string name="routine.no_data">No data received from the ECU. Probably there is no connection to ECU established.</string>
 
     <string name="available_features.page_title">Available screens</string>
-    <string name="available_features.routine_screen.title">Routines Screen</string>
+    <string name="available_features.routine_screen.title">Routines</string>
     <string name="available_features.drag_race_screen.title">Drag Racing</string>
-    <string name="available_features.dynamic_screen.title">Dynamic Screen</string>
-    <string name="available_features.giulia_screen.title">Bars Screen</string>
-    <string name="available_features.gauge_screen.title">Gauge Screen</string>
+    <string name="available_features.dynamic_screen.title">Dynamic</string>
+    <string name="available_features.giulia_screen.title">Giulia</string>
+    <string name="available_features.gauge_screen.title">Gauge</string>
     <string name="available_features.trip_info_screen.title">Trip Info Screen</string>
 </resources>
