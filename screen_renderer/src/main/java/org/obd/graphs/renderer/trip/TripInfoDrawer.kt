@@ -334,7 +334,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
     private fun calculateProgressBarHeight() = 16
 
-    private inline fun drawMetric(
+    inline fun drawMetric(
         metric: Metric,
         top: Float,
         left: Float,
