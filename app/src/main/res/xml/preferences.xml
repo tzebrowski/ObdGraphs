@@ -1499,8 +1499,8 @@
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.dynamic.enabled"
-                        android:title="@string/pref.aa.trip_info.enabled"
-                        android:summary="@string/pref.aa.trip_info.enabled_summary"
+                        android:title="@string/pref.aa.dynamic.enabled"
+                        android:summary="@string/pref.aa.dynamic.enabled_summary"
                         app:singleLineTitle="false" />
                 </PreferenceCategory>
 
