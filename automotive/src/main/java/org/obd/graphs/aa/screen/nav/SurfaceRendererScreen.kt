@@ -165,7 +165,7 @@ internal class SurfaceRendererScreen(
             SurfaceRendererType.DYNAMIC -> {
 
                 dataLogger.updateQuery(query = query.apply {
-                    setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+                    setStrategy(QueryStrategyType.DYNAMIC)
                 })
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.DYNAMIC)
             }
