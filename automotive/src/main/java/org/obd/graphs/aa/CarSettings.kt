@@ -103,6 +103,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     private val tripInfoScreenSettings = TripInfoScreenSettings()
     private val routinesScreenSettings = RoutinesScreenSettings()
+    private val dynamicScreenSettings = DynamicScreenSettings()
 
     init {
         copyGiuliaSettings()
@@ -129,6 +130,11 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun getTripInfoScreenSettings(): TripInfoScreenSettings = tripInfoScreenSettings.apply {
         fontSize = Prefs.getS("pref.aa.trip_info.font_size", "24").toInt()
         viewEnabled = Prefs.getBoolean("pref.aa.trip_info.enabled", true)
+    }
+
+    override fun getDynamicScreenSettings(): DynamicScreenSettings = dynamicScreenSettings.apply {
+        fontSize = Prefs.getS("pref.aa.dynamic.font_size", "24").toInt()
+        viewEnabled = Prefs.getBoolean("pref.aa.dynamic.enabled", true)
     }
 
     override fun getColorTheme(): ColorTheme = colorTheme.apply {

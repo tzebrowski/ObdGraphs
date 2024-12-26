@@ -26,6 +26,20 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 
 class MetricsBuilder {
 
+    fun buildDiff(metric: Metric): Metric =
+        buildFor(
+            ObdMetric.builder()
+                .command(metric.source.command)
+                .value(
+                    if (metric.source.value == null) {
+                        null
+                    } else {
+                        metric.max - metric.min
+                    }
+                ).build()
+        )
+
+
     fun buildFor(obdMetric: ObdMetric): Metric {
         val histogramSupplier = dataLogger.getDiagnostics().histogram()
         val histogram = histogramSupplier.findBy(obdMetric.command.pid)

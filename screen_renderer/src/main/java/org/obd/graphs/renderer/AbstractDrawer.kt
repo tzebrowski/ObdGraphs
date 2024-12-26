@@ -36,7 +36,6 @@ private const val STATUS_VALUE_FONT_SIZE = 18f
 internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
 
     protected val valueScaler: ValueScaler = ValueScaler()
-
     private val statusPaint = Paint()
 
     protected val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -91,7 +90,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
-    fun recycle() {
+    open fun recycle() {
         getBackground().recycle()
     }
 

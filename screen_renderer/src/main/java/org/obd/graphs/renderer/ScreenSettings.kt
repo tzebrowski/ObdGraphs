@@ -91,6 +91,11 @@ data class TripInfoScreenSettings(
     var viewEnabled: Boolean = true
 )
 
+data class DynamicScreenSettings(
+    var fontSize: Int = 24,
+    var viewEnabled: Boolean = true
+)
+
 data class RoutinesScreenSettings(
     var viewEnabled: Boolean = true
 )
@@ -104,6 +109,8 @@ interface ScreenSettings {
     fun getDragRacingScreenSettings(): DragRacingScreenSettings = DragRacingScreenSettings()
 
     fun getTripInfoScreenSettings(): TripInfoScreenSettings = TripInfoScreenSettings()
+
+    fun getDynamicScreenSettings(): DynamicScreenSettings = DynamicScreenSettings()
 
     fun getMaxItems (): Int = 6
 
