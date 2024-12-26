@@ -19,5 +19,5 @@
     <string name="available_features.dynamic_screen.title">Dynamic</string>
     <string name="available_features.giulia_screen.title">Giulia</string>
     <string name="available_features.gauge_screen.title">Gauge</string>
-    <string name="available_features.trip_info_screen.title">Trip Info Screen</string>
+    <string name="available_features.trip_info_screen.title">Trip Info</string>
 </resources>

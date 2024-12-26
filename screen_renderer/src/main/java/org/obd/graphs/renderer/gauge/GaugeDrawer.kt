@@ -87,7 +87,9 @@ internal class GaugeDrawer(
         strokeCap = Paint.Cap.BUTT
     }
 
-    fun drawGauge(canvas: Canvas, metric: Metric, left: Float, top: Float, width: Float, labelCenterYPadding: Float = 0f) {
+    fun drawGauge(canvas: Canvas, metric: Metric, left: Float, top: Float, width: Float,
+                  fontSize: Int = settings.getGaugeRendererSetting().getFontSize(),
+                  labelCenterYPadding: Float = 0f) {
         paint.shader = null
 
         val rect = calculateRect(left, width, top)
@@ -152,7 +154,8 @@ internal class GaugeDrawer(
             )
         }
 
-        drawGauge(canvas, area = rect, metric = metric, radius = calculateRadius(width),labelCenterYPadding=labelCenterYPadding)
+        drawGauge(canvas, area = rect, metric = metric, radius = calculateRadius(width),labelCenterYPadding = labelCenterYPadding,
+            fontSize = fontSize)
     }
 
     private fun drawProgressBar(
@@ -245,10 +248,11 @@ internal class GaugeDrawer(
         area: RectF,
         metric: Metric,
         radius: Float,
-        labelCenterYPadding:Float = 0f
+        labelCenterYPadding:Float = 0f,
+        fontSize: Int
     ) {
 
-        val userScaleRatio = userScaleRatio()
+        val userScaleRatio = userScaleRatio(fontSize)
 
         val value = metric.valueToString()
         val scaleRatio = scaleRationBasedOnScreenSize(area) * userScaleRatio
@@ -316,8 +320,8 @@ internal class GaugeDrawer(
         }
     }
 
-    private fun userScaleRatio() =
-        valueScaler.scaleToNewRange(settings.getGaugeRendererSetting().getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+    private fun userScaleRatio(fontSize: Int) =
+        valueScaler.scaleToNewRange(fontSize.toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
     private inline fun scaleColor(j: Int): Int = if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
         settings.getColorTheme().progressColor

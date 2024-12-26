@@ -90,7 +90,8 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
                 top = rowTop,
                 width = area.width() / 2.2f,
                 metric = it,
-                labelCenterYPadding = 22f
+                labelCenterYPadding = 22f,
+                fontSize = settings.getDynamicScreenSettings().fontSize
             )
         }
         dynamicInfoDetails.intakePressure?.let {
@@ -100,7 +101,8 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
                 top =  rowTop,
                 width = area.width() / 2.2f,
                 metric = it,
-                labelCenterYPadding = 22f
+                labelCenterYPadding = 22f,
+                fontSize = settings.getDynamicScreenSettings().fontSize
             )
         }
     }
