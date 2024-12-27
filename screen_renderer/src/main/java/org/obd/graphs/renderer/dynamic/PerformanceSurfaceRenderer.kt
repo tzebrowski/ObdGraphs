@@ -27,17 +27,17 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
 
-private const val LOG_TAG = "DynamicSurfaceRenderer"
+private const val LOG_TAG = "PerformanceSurfaceRenderer"
 
-internal class DynamicSurfaceRenderer(
+internal class PerformanceSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
     viewSettings: ViewSettings
 ) : CoreSurfaceRenderer(viewSettings) {
-    private val dynamicInfoDetails = DynamicInfoDetails()
-    private val dynamicDrawer = DynamicDrawer(context, settings)
+    private val performanceInfoDetails = PerformanceInfoDetails()
+    private val performanceDrawer = PerformanceDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
         Log.d(LOG_TAG,"Query strategy ${query.getStrategy()}, selected ids: ${query.getIDs()}")
@@ -51,28 +51,28 @@ internal class DynamicSurfaceRenderer(
 
         drawArea?.let { it ->
 
-            dynamicDrawer.drawBackground(canvas, it)
+            performanceDrawer.drawBackground(canvas, it)
 
             val margin = 0
             val area = getArea(it, canvas, margin)
             var top = getTop(area)
-            val left = dynamicDrawer.getMarginLeft(area.left.toFloat())
+            val left = performanceDrawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                dynamicDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
+                performanceDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
                 top += MARGIN_TOP
-                dynamicDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                performanceDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
             } else {
                 top += MARGIN_TOP
             }
 
-            dynamicDrawer.drawScreen(
+            performanceDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
                 left = left,
                 top = top,
-                dynamicInfoDetails = dynamicInfoDetails.apply {
+                performanceInfoDetails = performanceInfoDetails.apply {
                     airTemp = metricsCollector.getMetric(namesRegistry.getAirTempPID())
                     ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
                     atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
@@ -89,11 +89,11 @@ internal class DynamicSurfaceRenderer(
     }
     
     override fun recycle() {
-        dynamicDrawer.recycle()
+        performanceDrawer.recycle()
     }
 
     init {
         Log.i(LOG_TAG,"Init Trip Info Surface renderer")
-        applyMetricsFilter(Query.instance(QueryStrategyType.DYNAMIC))
+        applyMetricsFilter(Query.instance(QueryStrategyType.PERFORMANCE))
     }
 }

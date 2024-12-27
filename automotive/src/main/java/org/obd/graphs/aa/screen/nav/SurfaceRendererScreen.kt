@@ -162,12 +162,12 @@ internal class SurfaceRendererScreen(
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.TRIP_INFO)
             }
 
-            SurfaceRendererType.DYNAMIC -> {
+            SurfaceRendererType.PERFORMANCE -> {
 
                 dataLogger.updateQuery(query = query.apply {
-                    setStrategy(QueryStrategyType.DYNAMIC)
+                    setStrategy(QueryStrategyType.PERFORMANCE)
                 })
-                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.DYNAMIC)
+                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.PERFORMANCE)
             }
         }
 
@@ -197,11 +197,10 @@ internal class SurfaceRendererScreen(
                     setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
                 })
 
-            SurfaceRendererType.DYNAMIC ->
+            SurfaceRendererType.PERFORMANCE ->
                 dataLogger.start(query.apply{
-                    setStrategy(QueryStrategyType.DYNAMIC)
+                    setStrategy(QueryStrategyType.PERFORMANCE)
                 })
-
         }
     }
 
@@ -222,8 +221,8 @@ internal class SurfaceRendererScreen(
                 }
                 if (settings.getDynamicScreenSettings().viewEnabled) {
                     add(
-                        FeatureDescription(SurfaceRendererType.DYNAMIC, R.drawable.action_drag_race,
-                            carContext.getString(R.string.available_features_dynamic_screen_title)),
+                        FeatureDescription(SurfaceRendererType.PERFORMANCE, R.drawable.action_drag_race,
+                            carContext.getString(R.string.available_features_performance_screen_title)),
                     )
                 }
              }
@@ -302,10 +301,10 @@ internal class SurfaceRendererScreen(
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
                 dataLogger.updateQuery(query)
 
-            } else if (screenId == SurfaceRendererType.DYNAMIC) {
+            } else if (screenId == SurfaceRendererType.PERFORMANCE) {
                 Log.i(LOG_TAG, "Updating query for  DYNAMIC_SCREEN_ID screen")
 
-                query.setStrategy(QueryStrategyType.DYNAMIC)
+                query.setStrategy(QueryStrategyType.PERFORMANCE)
                 metricsCollector.applyFilter(enabled = query.getIDs())
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
                 dataLogger.updateQuery(query)

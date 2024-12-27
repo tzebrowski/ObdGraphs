@@ -1482,13 +1482,13 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory
-                    android:title="@string/pref.aa.dynamic.category"
+                    android:title="@string/pref.aa.performance.category"
                     app:singleLineTitle="false">
 
                     <org.obd.graphs.preferences.aa.AASeekBar
                         android:defaultValue="30"
                         android:dialogTitle="@string/pref.aa.virtual_screens.font_size.category"
-                        android:key="pref.aa.dynamic.font_size"
+                        android:key="pref.aa.performance.font_size"
                         android:max="72"
                         android:title="@string/pref.aa.virtual_screens.font_size.category"
                         app:min="22"
@@ -1498,9 +1498,9 @@
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
                         android:defaultValue="true"
-                        android:key="pref.aa.dynamic.enabled"
-                        android:title="@string/pref.aa.dynamic.enabled"
-                        android:summary="@string/pref.aa.dynamic.enabled_summary"
+                        android:key="pref.aa.performance.enabled"
+                        android:title="@string/pref.aa.performance.enabled"
+                        android:summary="@string/pref.aa.performance.enabled_summary"
                         app:singleLineTitle="false" />
                 </PreferenceCategory>
 

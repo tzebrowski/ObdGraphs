@@ -23,5 +23,5 @@ enum class QueryStrategyType {
     TRIP_INFO_QUERY,
     SHARED_QUERY,
     INDIVIDUAL_QUERY_FOR_EACH_VIEW,
-    DYNAMIC
+    PERFORMANCE
 }

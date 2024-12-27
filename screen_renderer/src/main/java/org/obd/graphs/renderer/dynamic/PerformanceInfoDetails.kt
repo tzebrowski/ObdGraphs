@@ -2,7 +2,7 @@ package org.obd.graphs.renderer.dynamic
 
 import org.obd.graphs.bl.collector.Metric
 
-data class DynamicInfoDetails(
+data class PerformanceInfoDetails(
     var ambientTemp: Metric? = null,
     var atmPressure: Metric? = null,
     var oilTemp: Metric? = null,

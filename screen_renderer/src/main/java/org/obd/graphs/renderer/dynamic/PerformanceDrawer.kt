@@ -34,7 +34,7 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
-internal class DynamicDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
@@ -60,7 +60,7 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
         area: Rect,
         left: Float,
         top: Float,
-        dynamicInfoDetails: DynamicInfoDetails
+        performanceInfoDetails: PerformanceInfoDetails
     ) {
 
         val (textSizeBase) = calculateFontSize(area)
@@ -68,18 +68,18 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
 
         var rowTop = top + 12f
         var leftAlignment = 0
-        dynamicInfoDetails.airTemp?.let { tripInfoDrawer.drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        dynamicInfoDetails.coolantTemp?.let {  tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
-        dynamicInfoDetails.oilTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
-        dynamicInfoDetails.exhaustTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        dynamicInfoDetails.gearboxOilTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        dynamicInfoDetails.oilPressure?.let{ tripInfoDrawer.drawMetric(metricBuilder.buildDiff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
+        performanceInfoDetails.airTemp?.let { tripInfoDrawer.drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        performanceInfoDetails.coolantTemp?.let {  tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        performanceInfoDetails.oilTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
+        performanceInfoDetails.exhaustTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        performanceInfoDetails.gearboxOilTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        performanceInfoDetails.oilPressure?.let{ tripInfoDrawer.drawMetric(metricBuilder.buildDiff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
         rowTop += textSizeBase + 16
 
-        dynamicInfoDetails.torque?.let {
+        performanceInfoDetails.torque?.let {
             gaugeDrawer.drawGauge(
                 canvas = canvas,
                 left = area.left.toFloat(),
@@ -90,7 +90,7 @@ internal class DynamicDrawer(context: Context, settings: ScreenSettings) : Abstr
                 fontSize = settings.getDynamicScreenSettings().fontSize
             )
         }
-        dynamicInfoDetails.intakePressure?.let {
+        performanceInfoDetails.intakePressure?.let {
             gaugeDrawer.drawGauge(
                 canvas = canvas,
                 left = (area.left + area.width() / 2f) - 10,

@@ -133,8 +133,8 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     }
 
     override fun getDynamicScreenSettings(): DynamicScreenSettings = dynamicScreenSettings.apply {
-        fontSize = Prefs.getS("pref.aa.dynamic.font_size", "24").toInt()
-        viewEnabled = Prefs.getBoolean("pref.aa.dynamic.enabled", true)
+        fontSize = Prefs.getS("pref.aa.performance.font_size", "24").toInt()
+        viewEnabled = Prefs.getBoolean("pref.aa.performance.enabled", true)
     }
 
     override fun getColorTheme(): ColorTheme = colorTheme.apply {
