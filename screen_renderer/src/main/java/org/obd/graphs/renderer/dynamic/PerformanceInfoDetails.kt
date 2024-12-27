@@ -12,6 +12,5 @@ data class PerformanceInfoDetails(
     var gearboxOilTemp: Metric? = null,
     var intakePressure: Metric? = null,
     var torque: Metric? = null,
-    var oilPressure: Metric? = null,
     var gas: Metric? = null
 )

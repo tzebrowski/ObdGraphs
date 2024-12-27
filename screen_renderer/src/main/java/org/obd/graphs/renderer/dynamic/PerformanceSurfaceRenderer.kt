@@ -83,7 +83,6 @@ internal class PerformanceSurfaceRenderer(
                     gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
                     torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
                     intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
-                    oilPressure = metricsCollector.getMetric(namesRegistry.getOilPressurePID())
                 }
             )
         }

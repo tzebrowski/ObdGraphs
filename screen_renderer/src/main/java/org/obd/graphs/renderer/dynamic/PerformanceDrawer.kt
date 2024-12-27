@@ -73,7 +73,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         performanceInfoDetails.oilTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area) }
         performanceInfoDetails.exhaustTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
         performanceInfoDetails.gearboxOilTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        performanceInfoDetails.oilPressure?.let{ tripInfoDrawer.drawMetric(metricBuilder.buildDiff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
+        performanceInfoDetails.ambientTemp?.let{ tripInfoDrawer.drawMetric(metricBuilder.buildDiff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
@@ -86,7 +86,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 top = rowTop,
                 width = area.width() / 2.6f,
                 metric = it,
-                labelCenterYPadding = 22f,
+                labelCenterYPadding = 20f,
                 fontSize = settings.getDynamicScreenSettings().fontSize,
                 scaleEnabled = false
             )
@@ -112,7 +112,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 top =  rowTop,
                 width = area.width() / 2.6f,
                 metric = it,
-                labelCenterYPadding = 22f,
+                labelCenterYPadding = 20f,
                 fontSize = settings.getDynamicScreenSettings().fontSize,
                 scaleEnabled = false
             )
