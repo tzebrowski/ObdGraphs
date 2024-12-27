@@ -283,11 +283,6 @@ internal class SurfaceRendererScreen(
         if (isSurfaceRendererScreen(screenId)) {
 
             val selectedPIDs = getSelectedPIDs()
-            val order  =  if (this.screenId == SurfaceRendererType.GIULIA) {
-                settings.getGiuliaRendererSetting().getPIDsSortOrder()
-            } else {
-                settings.getGaugeRendererSetting().getPIDsSortOrder()
-            }
 
             metricsCollector.applyFilter(enabled = selectedPIDs)
 
@@ -318,7 +313,7 @@ internal class SurfaceRendererScreen(
             } else if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
                 Log.i(LOG_TAG, "Updating query for  individualQueryStrategyEnabled")
 
-                metricsCollector.applyFilter(enabled = selectedPIDs, order = order)
+                metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder())
 
                 query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
                 query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
@@ -334,12 +329,13 @@ internal class SurfaceRendererScreen(
 
                 Log.i(LOG_TAG, "Query=$query,user selection=$selectedPIDs, intersection=$intersection")
 
-                metricsCollector.applyFilter(enabled = intersection, order = order)
+                metricsCollector.applyFilter(enabled = intersection, order = sortOrder())
             }
         } else {
             Log.i(LOG_TAG, "Do not update the query. It's not surface renderer screen.")
         }
     }
+
 
     private fun setCurrentVirtualScreen(id: Int) = when (screenId) {
         SurfaceRendererType.GIULIA -> settings.getGiuliaRendererSetting().setVirtualScreen(id)
@@ -396,4 +392,10 @@ internal class SurfaceRendererScreen(
 
     private fun getSurfaceRendererType (): SurfaceRendererType =
         if (screenId is SurfaceRendererType) screenId as SurfaceRendererType else  SurfaceRendererType.GIULIA
+
+    private fun sortOrder(): Map<Long, Int>?  = if (this.screenId == SurfaceRendererType.GIULIA) {
+        settings.getGiuliaRendererSetting().getPIDsSortOrder()
+    } else {
+        settings.getGaugeRendererSetting().getPIDsSortOrder()
+    }
 }
