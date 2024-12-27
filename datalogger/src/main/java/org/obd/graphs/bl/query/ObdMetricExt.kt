@@ -55,9 +55,12 @@ private const val DISTANCE_PID_ID = 7076L
 private const val IBS_PID_ID = 7020L
 private const val BATTERY_VOLTAGE_PID_ID = 7019L
 private const val OIL_PRESSURE_PID_ID = 7018L
+private const val GAS_PID_ID = 7007L
 
 
 class PIDsNamesRegistry {
+
+    fun getGasPedalPID(): Long = GAS_PID_ID
 
     fun getIbsPID(): Long = IBS_PID_ID
     fun getBatteryVoltagePID(): Long = BATTERY_VOLTAGE_PID_ID

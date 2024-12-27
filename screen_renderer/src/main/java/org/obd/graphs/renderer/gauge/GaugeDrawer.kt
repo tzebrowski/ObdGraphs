@@ -89,7 +89,7 @@ internal class GaugeDrawer(
 
     fun drawGauge(canvas: Canvas, metric: Metric, left: Float, top: Float, width: Float,
                   fontSize: Int = settings.getGaugeRendererSetting().getFontSize(),
-                  labelCenterYPadding: Float = 0f) {
+                  labelCenterYPadding: Float = 0f, scaleEnabled: Boolean = settings.isScaleEnabled()) {
         paint.shader = null
 
         val rect = calculateRect(left, width, top)
@@ -145,7 +145,7 @@ internal class GaugeDrawer(
             rect
         )
 
-        if (settings.isScaleEnabled()) {
+        if (scaleEnabled) {
             drawNumerals(
                 metric,
                 canvas,

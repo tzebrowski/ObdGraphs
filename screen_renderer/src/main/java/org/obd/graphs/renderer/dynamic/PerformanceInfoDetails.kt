@@ -13,4 +13,5 @@ data class PerformanceInfoDetails(
     var intakePressure: Metric? = null,
     var torque: Metric? = null,
     var oilPressure: Metric? = null,
+    var gas: Metric? = null
 )

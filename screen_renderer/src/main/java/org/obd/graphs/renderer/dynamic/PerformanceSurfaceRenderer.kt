@@ -73,6 +73,7 @@ internal class PerformanceSurfaceRenderer(
                 left = left,
                 top = top,
                 performanceInfoDetails = performanceInfoDetails.apply {
+                    gas = metricsCollector.getMetric(namesRegistry.getGasPedalPID())
                     airTemp = metricsCollector.getMetric(namesRegistry.getAirTempPID())
                     ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
                     atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())

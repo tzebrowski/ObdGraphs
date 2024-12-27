@@ -15,6 +15,7 @@ internal class PerformanceQueryStrategy : QueryStrategy() {
         namesRegistry.getIntakePressurePID(),
         namesRegistry.getDynamicSelectorPID(),
         namesRegistry.getOilPressurePID(),
+        namesRegistry.getGasPedalPID()
     )
     override fun getDefaults() = defaults
 

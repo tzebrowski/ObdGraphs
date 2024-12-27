@@ -84,25 +84,40 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 canvas = canvas,
                 left = area.left.toFloat(),
                 top = rowTop,
-                width = area.width() / 2.2f,
+                width = area.width() / 2.6f,
                 metric = it,
                 labelCenterYPadding = 22f,
-                fontSize = settings.getDynamicScreenSettings().fontSize
+                fontSize = settings.getDynamicScreenSettings().fontSize,
+                scaleEnabled = false
             )
         }
+
+        performanceInfoDetails.gas?.let {
+            gaugeDrawer.drawGauge(
+                canvas = canvas,
+                left = (area.left + area.width() / 2.8f) - 6f,
+                top =  rowTop - 4f,
+                width = area.width() / 3.8f,
+                metric = it,
+                labelCenterYPadding = 26f,
+                fontSize = settings.getDynamicScreenSettings().fontSize,
+                scaleEnabled = false
+            )
+        }
+
         performanceInfoDetails.intakePressure?.let {
             gaugeDrawer.drawGauge(
                 canvas = canvas,
-                left = (area.left + area.width() / 2f) - 10,
+                left = (area.left + area.width() / 1.65f) ,
                 top =  rowTop,
-                width = area.width() / 2.2f,
+                width = area.width() / 2.6f,
                 metric = it,
                 labelCenterYPadding = 22f,
-                fontSize = settings.getDynamicScreenSettings().fontSize
+                fontSize = settings.getDynamicScreenSettings().fontSize,
+                scaleEnabled = false
             )
         }
     }
-
 
     private inline fun calculateFontSize(
         area: Rect
