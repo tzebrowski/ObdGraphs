@@ -93,7 +93,7 @@ internal class PerformanceSurfaceRenderer(
     }
 
     init {
-        Log.i(LOG_TAG,"Init Trip Info Surface renderer")
+        Log.i(LOG_TAG,"Init Performance Surface renderer")
         applyMetricsFilter(Query.instance(QueryStrategyType.PERFORMANCE))
     }
 }
