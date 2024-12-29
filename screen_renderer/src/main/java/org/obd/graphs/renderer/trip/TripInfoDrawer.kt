@@ -32,6 +32,8 @@ private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 
+const val MAX_ITEM_IN_THE_ROW = 6
+
 @Suppress("NOTHING_TO_INLINE")
 internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
     private val metricBuilder = MetricsBuilder()
@@ -65,6 +67,10 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         tripInfo.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true)}
         tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area = area) }
         tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area) }
+
+        if (leftAlignment < MAX_ITEM_IN_THE_ROW){
+            tripInfo.oilDegradation?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area) }
+        }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
@@ -239,7 +245,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         )
 
         canvas.drawRect(
-            left - 6,
+            left - MAX_ITEM_IN_THE_ROW,
             top + 4,
             progress,
             top + calculateProgressBarHeight(),
@@ -316,7 +322,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         }
     }
 
-    private inline fun maxItemWidth(area: Rect) = (area.width() / 6)
+    private inline fun maxItemWidth(area: Rect) = (area.width() / MAX_ITEM_IN_THE_ROW)
 
     private fun calculateProgressBarHeight() = 16
 

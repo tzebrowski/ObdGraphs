@@ -20,4 +20,5 @@ data class TripInfoDetails(
     var ibs: Metric? = null,
     var batteryVoltage: Metric? = null,
     var oilPressure: Metric? = null,
+    var oilDegradation: Metric? = null,
 )

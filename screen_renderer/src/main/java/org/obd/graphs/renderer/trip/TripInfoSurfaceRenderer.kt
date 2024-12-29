@@ -88,6 +88,7 @@ internal class TripInfoSurfaceRenderer(
                     ibs = metricsCollector.getMetric(namesRegistry.getIbsPID())
                     batteryVoltage = metricsCollector.getMetric(namesRegistry.getBatteryVoltagePID())
                     oilPressure = metricsCollector.getMetric(namesRegistry.getOilPressurePID())
+                    oilDegradation = metricsCollector.getMetric(namesRegistry.getOilDegradationPID())
                 }
             )
         }

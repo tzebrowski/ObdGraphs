@@ -45,6 +45,7 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
         namesRegistry.getBatteryVoltagePID(),
         namesRegistry.getIbsPID(),
         namesRegistry.getOilPressurePID(),
+        namesRegistry.getOilDegradationPID()
     )
     override fun getDefaults() = defaults
 
