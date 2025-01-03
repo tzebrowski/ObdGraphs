@@ -19,7 +19,6 @@
 package org.obd.graphs.bl.trip
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.github.mikephil.charting.data.Entry
 import org.obd.metrics.transport.message.ConnectorResponse
 
 data class TripFileDesc(
@@ -30,6 +29,15 @@ data class TripFileDesc(
     val tripTimeSec: String
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class Entry(
+    var x: Float = 0f,
+    var y: Float = 0f,
+    var data: Long,
+)
+
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Metric(
     val entry: Entry,
     val ts: Long,

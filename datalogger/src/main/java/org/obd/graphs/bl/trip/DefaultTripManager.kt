@@ -20,7 +20,6 @@ package org.obd.graphs.bl.trip
 
 import android.content.Context
 import android.util.Log
-import com.github.mikephil.charting.data.Entry
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.ValueScaler
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -57,14 +56,13 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
             tripCache.getTrip { trip ->
                 val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
                 val key = metric.command.pid.id
-                val newRecord =
-                    Entry(ts, valueScaler.scaleToNewRange(metric), key)
+                val newRecord = Entry(ts, valueScaler.scaleToNewRange(metric), key)
 
                 if (trip.entries.containsKey(key)) {
                     val tripEntry = trip.entries[key]!!
                     tripEntry.metrics.add(
                         Metric(
-                            entry = newRecord,
+                            entry =  newRecord,
                             ts = metric.timestamp,
                             rawAnswer = metric.raw
                         )
