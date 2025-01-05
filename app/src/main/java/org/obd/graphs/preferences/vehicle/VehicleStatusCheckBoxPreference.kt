@@ -16,20 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.preferences.aa
+package org.obd.graphs.preferences.vehicle
 
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
 
+const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
-class AACheckBoxPreference(
+class VehicleStatusCheckBoxPreference(
     context: Context,
     private val attrs: AttributeSet?
 ) :
@@ -39,7 +39,7 @@ class AACheckBoxPreference(
 
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, _ ->
-            sendBroadcastEvent(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+            sendBroadcastEvent(EVENT_VEHICLE_STATUS_CHANGED)
             true
         }
     }

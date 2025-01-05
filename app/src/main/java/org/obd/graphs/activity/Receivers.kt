@@ -32,9 +32,11 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.extra.*
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.preferences.vehicle.EVENT_VEHICLE_STATUS_CHANGED
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -227,10 +229,28 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(R.string.main_activity_toast_connection_error)
             handleStop()
         }
+
+        EVENT_VEHICLE_STATUS_VEHICLE_MOVING -> {
+            updateVehicleStatus("MOV")
+        }
+
+        EVENT_VEHICLE_STATUS_VEHICLE_IDLING -> {
+            updateVehicleStatus("IDL")
+        }
+
+        EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
+            updateVehicleStatus("OFF")
+        }
+
+        EVENT_VEHICLE_STATUS_IGNITION_ON -> {
+            updateVehicleStatus("ON")
+        }
+
+        EVENT_VEHICLE_STATUS_CHANGED->{
+            updateVehicleStatus("")
+        }
     }
 }
-
-
 
 private fun MainActivity.handleStop() {
 
@@ -299,6 +319,14 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
         it.addAction(REQUEST_LOCATION_PERMISSIONS)
         it.addAction(RESET_TOOLBAR_ANIMATION)
+
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_MOVING)
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_IDLING)
+        it.addAction(EVENT_VEHICLE_STATUS_IGNITION_OFF)
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING)
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING)
+        it.addAction(EVENT_VEHICLE_STATUS_IGNITION_ON)
+        it.addAction(EVENT_VEHICLE_STATUS_CHANGED)
     }
 
     registerReceiver(this, powerReceiver){

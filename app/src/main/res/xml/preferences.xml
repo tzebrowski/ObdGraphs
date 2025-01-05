@@ -372,6 +372,9 @@
                 app:showSeekBarValue="true"
                 app:singleLineTitle="false"
                 app:useSimpleSummaryProvider="true" />
+
+
+
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -446,6 +449,14 @@
                     android:key="pref.adapter.init.fetchDeviceProperties"
                     android:summary="@string/pref.pids.group.enableMetadataReadings_summary"
                     android:title="@string/pref.pids.group.enableMetadataReadings"
+                    app:singleLineTitle="false" />
+
+                <org.obd.graphs.preferences.vehicle.VehicleStatusCheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.vehicle_settings.vehicleStatusReading"
+                    android:summary="@string/pref.vehicle_settings.vehicleStatusReading_summary"
+                    android:title="@string/pref.vehicle_settings.vehicleStatusReading"
+                    app:experimental="false"
                     app:singleLineTitle="false" />
 
             </PreferenceCategory>

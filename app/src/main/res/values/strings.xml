@@ -216,13 +216,12 @@
     <string name="pref.aa.routines.category">Routines</string>
     <string name="pref.aa.routines.enabled">Enable routines screen</string>
     <string name="pref.aa.routines.enabled.enabled_summary">It enables routines screen which let you to execute different ECU functions. This feature is very risky, and you use it on your own risk</string>
-
-
     <string name="pref.aa.performance_meter.category">Drag Racing</string>
     <string name="pref.aa.performance_meter.metrics_read_freq">OBD2 Data reading frequency</string>
     <string name="pref.aa.performance_meter.display_frequency">Display OBD2 Data read frequency</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Display the speed at which the measurement was taken</string>
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>
+
     <string name="pref.profile.2_0_GME_extension.enabled">Get additional context information.\nIts valid just for 2.0GME engine.</string>
     <string name="pref.profile.2_0_GME_extension.enabled_summary">It pulls additional metrics during performance meter.</string>
 
@@ -255,6 +254,13 @@
     <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
     <string name="pref.vehicle.metadata.name">Name</string>
     <string name="pref.vehicle.metadata.value">Value</string>
+
+    <string name="pref.vehicle_settings.vehicleStatusReading">Enable vehicle status reading</string>
+    <string name="pref.vehicle_settings.vehicleStatusReading_summary">Enable vehicle status reading</string>
+
+
+
+
 
     <string name="pref.adapter_init_delay">Delay after init</string>
     <string name="pref.adapter_delay_reset">Delay after reset (ATZ)</string>
@@ -408,8 +414,10 @@
     <string name="trip_delete_dialog_ask_question_no">no</string>
 
     <string name="trip_action_load">Load</string>
-    <string name="adapter_connection_type">Adapter</string>
-    <string name="vehicle_profile">Profile</string>
+    <string name="status_panel.adapter_connection_type">Adapter</string>
+    <string name="status_panel.vehicle_profile">Profile</string>
+    <string name="status_panel.vehicle_status">Vehicle Status</string>
+
     <string name="pref.debug_category">Debug</string>
     <string name="pref.about_category">About</string>
     <string name="pref.vehicle_settings.category">Vehicle settings</string>
