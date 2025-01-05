@@ -3,6 +3,7 @@ package org.obd.graphs.aa.screen
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.query.isDynamicSelector
+import org.obd.graphs.bl.query.valueToNumber
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 
@@ -23,17 +24,17 @@ internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
         if (obdMetric.isDynamicSelector()) {
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                Log.v(LOG_TAG, "Received=${obdMetric.value.toInt()}, current=${currentMode} ")
+                Log.v(LOG_TAG, "Received=${obdMetric.valueToNumber()!!.toInt()}, current=${currentMode} ")
             }
 
-            if (currentMode != obdMetric.value) {
+            if (currentMode != obdMetric.valueToNumber()!!) {
 
                 if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                    Log.v(LOG_TAG, "Broadcasting Dynamic Selector Mode Change, new=${obdMetric.value.toInt()}")
+                    Log.v(LOG_TAG, "Broadcasting Dynamic Selector Mode Change, new=${obdMetric.valueToNumber()!!.toInt()}")
                 }
 
-                currentMode = obdMetric.value.toInt()
-                when (obdMetric.value.toInt()) {
+                currentMode = obdMetric.valueToNumber()!!.toInt()
+                when (obdMetric.valueToNumber()!!.toInt()) {
                     0 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
                     2 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
                     4 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_ECO)

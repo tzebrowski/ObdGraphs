@@ -21,6 +21,7 @@ package org.obd.graphs.renderer.giulia
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.query.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 
@@ -173,7 +174,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         paint.color = color
 
         val progress = valueScaler.scaleToNewRange(
-            it.source.value?.toFloat() ?: it.source.command.pid.min.toFloat(),
+            it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
             it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )
 

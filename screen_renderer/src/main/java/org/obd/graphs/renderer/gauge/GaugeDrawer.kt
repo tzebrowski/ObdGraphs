@@ -21,6 +21,7 @@ package org.obd.graphs.renderer.gauge
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.query.valueToNumber
 import org.obd.graphs.commons.R
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -177,7 +178,7 @@ internal class GaugeDrawer(
             setProgressGradient(rect)
         }
 
-        val value = metric.source.value?.toFloat() ?: metric.source.command.pid.min.toFloat()
+        val value = metric.source.valueToNumber()?.toFloat() ?: metric.source.command.pid.min.toFloat()
         val startValue = metric.source.command.pid.min.toFloat()
         val endValue = metric.source.command.pid.max.toFloat()
 

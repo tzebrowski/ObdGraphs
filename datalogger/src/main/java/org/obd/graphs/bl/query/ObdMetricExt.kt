@@ -11,13 +11,31 @@ fun ObdMetric.valueToString(castToInt: Boolean = false, precision: Int = 2): Str
     if (this.value == null) {
         "No data"
     } else {
-        if (castToInt)  value.toInt().toString()
-        else if (this.value is Double) value.toDouble().round(precision).toString()
-        else this.value.toString()
+        if (value is Number) {
+            if (castToInt) (value as Number).toInt().toString()
+            else if (this.value is Double) (value as Number).toDouble().round(precision).toString()
+            else this.value.toString()
+        } else {
+            "No data"
+        }
     }
+
+fun ObdMetric.valueToNumber(): Number? =
+    if (this.value == null) {
+        null
+    } else {
+        if (value is Number) {
+            value as Number
+        } else {
+            null
+        }
+    }
+
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == namesRegistry.getAtmPressurePID()
 fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == namesRegistry.getAmbientTempPID()
+
+fun ObdMetric.isVehicleStatus(): Boolean = command.pid.id == namesRegistry.getVehicleStatusPID()
 
 fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == namesRegistry.getDynamicSelectorPID()
 fun ObdMetric.isVehicleSpeed(): Boolean = command.pid.id == namesRegistry.getVehicleSpeedPID()
@@ -58,6 +76,7 @@ private const val OIL_PRESSURE_PID_ID = 7018L
 private const val GAS_PID_ID = 7007L
 private const val OIL_DEGRADATION_PID_ID = 7015L
 
+private const val VEHICLE_STATUS_PID_ID = 17091L
 
 class PIDsNamesRegistry {
 
@@ -97,4 +116,6 @@ class PIDsNamesRegistry {
     fun getEngineRpmPID(): Long = if (isGMEExtensionsEnabled()) EXT_ENGINE_RPM_PID_ID else ENGINE_RPM_PID_ID
 
     fun getDynamicSelectorPID(): Long = EXT_DYNAMIC_SELECTOR_PID_ID
+
+    fun getVehicleStatusPID(): Long = VEHICLE_STATUS_PID_ID
 }
