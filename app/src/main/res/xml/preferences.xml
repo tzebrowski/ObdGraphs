@@ -375,9 +375,9 @@
 
             <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                 android:defaultValue="false"
-                android:key="pref.vehicle_settings.vehicleStatusReading"
-                android:summary="@string/pref.vehicle_settings.vehicleStatusReading_summary"
-                android:title="@string/pref.vehicle_settings.vehicleStatusReading"
+                android:key="pref.vehicle_settings.vehicle_status_panel_enabled"
+                android:summary="@string/pref.vehicle_settings.vehicleStatusPanel_summary"
+                android:title="@string/pref.vehicle_settings.vehicleStatusPanel"
                 app:broadcastEvent="event.vehicle.status.CHANGED"
                 app:experimental="true"
                 app:singleLineTitle="false" />

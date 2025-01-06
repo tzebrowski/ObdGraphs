@@ -27,7 +27,8 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
     override fun getIDs(): MutableSet<Long>  {
         val pids = strategies[strategy]?.getPIDs() ?: mutableSetOf()
         //decorate with Vehicle Status PID
-        if (dataLoggerPreferences.instance.vehicleStatusReadingEnabled){
+        if (dataLoggerPreferences.instance.vehicleStatusPanelEnabled ||
+            dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
             pids.add(namesRegistry.getVehicleStatusPID())
         }
         return pids

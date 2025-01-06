@@ -38,7 +38,7 @@ internal fun MainActivity.updateVehicleStatus(status: String) {
         COLOR_CARDINAL,
         1.0f
     ){
-        it.isVisible = dataLoggerPreferences.instance.vehicleStatusReadingEnabled
+        it.isVisible = dataLoggerPreferences.instance.vehicleStatusPanelEnabled
     }
 }
 
