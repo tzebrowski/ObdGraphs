@@ -15,11 +15,11 @@ const val EVENT_VEHICLE_STATUS_IGNITION_ON = "event.vehicle.status.vehicle.ignit
 const val EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING = "event.vehicle.status.vehicle.accelerating"
 const val EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING = "event.vehicle.status.vehicle.decelerating"
 
-val vehicleStatusEventBroadcaster: MetricsProcessor = VehicleStatusEventBroadcaster()
+val vehicleStatusMetricsProcessor: MetricsProcessor = VehicleStatusMetricsProcessor()
 
-private const val LOG_TAG = "VehicleStatBroad"
+private const val LOG_TAG = "VehicleStatProcessor"
 
-internal class VehicleStatusEventBroadcaster : MetricsProcessor {
+internal class VehicleStatusMetricsProcessor : MetricsProcessor {
     private var currentVehicleRunning = false
     private var currentEngineRunning = false
     private var currentKeyStatusOn = false
@@ -28,7 +28,9 @@ internal class VehicleStatusEventBroadcaster : MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
 
-        if (dataLoggerPreferences.instance.vehicleStatusReadingEnabled && obdMetric.isVehicleStatus()) {
+        if ((dataLoggerPreferences.instance.vehicleStatusPanelEnabled ||
+                    dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff)
+            && obdMetric.isVehicleStatus()) {
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
                 Log.v(LOG_TAG, "Received vehicle status=${obdMetric.value}, ")

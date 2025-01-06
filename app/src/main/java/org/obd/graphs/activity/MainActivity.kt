@@ -43,7 +43,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
-import org.obd.graphs.bl.extra.vehicleStatusEventBroadcaster
+import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.profile
@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         dataLogger
             .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
-            .observe(vehicleStatusEventBroadcaster)
+            .observe(vehicleStatusMetricsProcessor)
 
         if (BuildConfig.DEBUG){
             dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
