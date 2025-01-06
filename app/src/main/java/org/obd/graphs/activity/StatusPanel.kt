@@ -55,7 +55,7 @@ internal fun MainActivity.updateAdapterConnectionType() {
 internal fun MainActivity.setupStatusPanel() {
     updateAdapterConnectionType()
     updateVehicleProfile()
-    updateVehicleStatus("OFF")
+    updateVehicleStatus("")
 
     (findViewById<TextView>(R.id.connection_status)).let {
         it.setOnClickListener {

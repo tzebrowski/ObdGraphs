@@ -36,7 +36,6 @@ import org.obd.graphs.bl.extra.*
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
-import org.obd.graphs.preferences.vehicle.EVENT_VEHICLE_STATUS_CHANGED
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -45,7 +44,6 @@ import org.obd.graphs.ui.common.toast
 
 
 internal val powerReceiver = PowerBroadcastReceiver()
-
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"
 const val NOTIFICATION_DASH_VIEW_TOGGLE = "view.dash.toggle"
 const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "view.gauge.toggle"
@@ -56,6 +54,7 @@ const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
 const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 
+private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
 
@@ -240,6 +239,10 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
             updateVehicleStatus("OFF")
+            if (dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
+                Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
+                dataLogger.stop()
+            }
         }
 
         EVENT_VEHICLE_STATUS_IGNITION_ON -> {

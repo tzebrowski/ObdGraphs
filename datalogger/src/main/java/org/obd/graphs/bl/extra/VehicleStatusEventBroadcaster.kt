@@ -31,7 +31,7 @@ internal class VehicleStatusEventBroadcaster : MetricsProcessor {
         if (dataLoggerPreferences.instance.vehicleStatusReadingEnabled && obdMetric.isVehicleStatus()) {
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                Log.v(LOG_TAG, "Received=${obdMetric.value}, ")
+                Log.v(LOG_TAG, "Received vehicle status=${obdMetric.value}, ")
             }
             val value: Map<String, Boolean> = obdMetric.value as Map<String, Boolean>
             val engineRunning = value["engine.running"]!!

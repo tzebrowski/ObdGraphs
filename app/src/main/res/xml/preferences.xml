@@ -373,7 +373,22 @@
                 app:singleLineTitle="false"
                 app:useSimpleSummaryProvider="true" />
 
+            <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.vehicle_settings.vehicleStatusReading"
+                android:summary="@string/pref.vehicle_settings.vehicleStatusReading_summary"
+                android:title="@string/pref.vehicle_settings.vehicleStatusReading"
+                app:broadcastEvent="event.vehicle.status.CHANGED"
+                app:experimental="true"
+                app:singleLineTitle="false" />
 
+            <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.vehicle_settings.disconnect_when_off"
+                android:summary="@string/pref.vehicle_settings.disconnect_when_off_summary"
+                android:title="@string/pref.vehicle_settings.disconnect_when_off"
+                app:experimental="true"
+                app:singleLineTitle="false" />
 
         </PreferenceScreen>
     </PreferenceCategory>
@@ -449,14 +464,6 @@
                     android:key="pref.adapter.init.fetchDeviceProperties"
                     android:summary="@string/pref.pids.group.enableMetadataReadings_summary"
                     android:title="@string/pref.pids.group.enableMetadataReadings"
-                    app:singleLineTitle="false" />
-
-                <org.obd.graphs.preferences.vehicle.VehicleStatusCheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref.vehicle_settings.vehicleStatusReading"
-                    android:summary="@string/pref.vehicle_settings.vehicleStatusReading_summary"
-                    android:title="@string/pref.vehicle_settings.vehicleStatusReading"
-                    app:experimental="false"
                     app:singleLineTitle="false" />
 
             </PreferenceCategory>

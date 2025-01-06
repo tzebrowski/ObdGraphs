@@ -256,10 +256,10 @@
     <string name="pref.vehicle.metadata.value">Value</string>
 
     <string name="pref.vehicle_settings.vehicleStatusReading">Enable vehicle status reading</string>
-    <string name="pref.vehicle_settings.vehicleStatusReading_summary">Enable vehicle status reading</string>
+    <string name="pref.vehicle_settings.vehicleStatusReading_summary">This is an EXPERIMENTAL feature.\nBy enabling it you read vehicle and engine status</string>
 
-
-
+    <string name="pref.vehicle_settings.disconnect_when_off">Automatically disconnect when vehicle off</string>
+    <string name="pref.vehicle_settings.disconnect_when_off_summary">This is an EXPERIMENTAL feature.\nBy enabling it session will be automatically disconnected when vehicle switch off</string>
 
 
     <string name="pref.adapter_init_delay">Delay after init</string>

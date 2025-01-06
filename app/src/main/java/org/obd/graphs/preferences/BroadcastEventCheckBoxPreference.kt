@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.preferences.vehicle
+package org.obd.graphs.preferences
 
 import android.content.Context
 import android.graphics.Typeface
@@ -27,19 +27,21 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
 
-const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
-class VehicleStatusCheckBoxPreference(
+class BroadcastEventCheckBoxPreference(
     context: Context,
     private val attrs: AttributeSet?
 ) :
     CheckBoxPreference(context, attrs) {
 
     private val experimental = getAttribute("experimental").toBooleanStrictOrNull() ?: false
+    private val broadcastEvent = getAttribute("broadcastEvent")
 
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, _ ->
-            sendBroadcastEvent(EVENT_VEHICLE_STATUS_CHANGED)
+            if (broadcastEvent != null && broadcastEvent.isNotEmpty()) {
+                sendBroadcastEvent(broadcastEvent)
+            }
             true
         }
     }
