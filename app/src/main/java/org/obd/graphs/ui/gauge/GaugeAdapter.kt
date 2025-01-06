@@ -33,7 +33,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
@@ -107,7 +107,7 @@ class GaugeAdapter(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val preferences: GaugePreferences by lazy { getGaugePreferences() }
-    private val valueScaler = ValueScaler()
+    private val valueConverter = ValueConverter()
 
     override fun getItemId(position: Int): Long {
         return data[position].source.command.pid.id
@@ -236,7 +236,7 @@ class GaugeAdapter(
             Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
         val currentSize = width * height
 
-        return valueScaler.scaleToNewRange(currentSize, 0.0f, targetSize, 1f, 3f)
+        return valueConverter.scaleToNewRange(currentSize, 0.0f, targetSize, 1f, 3f)
     }
 
     private fun rescaleTextSize(holder: ViewHolder, multiplier: Float) {

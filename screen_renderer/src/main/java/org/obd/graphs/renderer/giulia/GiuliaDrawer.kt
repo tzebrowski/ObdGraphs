@@ -173,7 +173,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
     ) {
         paint.color = color
 
-        val progress = valueScaler.scaleToNewRange(
+        val progress = valueConverter.scaleToNewRange(
             it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
             it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )

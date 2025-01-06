@@ -323,7 +323,7 @@ internal class GaugeDrawer(
     }
 
     private fun userScaleRatio(fontSize: Int) =
-        valueScaler.scaleToNewRange(fontSize.toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        valueConverter.scaleToNewRange(fontSize.toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
     private inline fun scaleColor(j: Int): Int = if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
         settings.getColorTheme().progressColor
@@ -449,7 +449,7 @@ internal class GaugeDrawer(
 
     private fun scaleRationBasedOnScreenSize(area: RectF):Float  = scaleRationBasedOnScreenSize(area = area, targetMin = 0.7f, targetMax = 2.4f)
 
-    private fun scaleRationBasedOnScreenSize(area: RectF, targetMin:Float = 0.7f, targetMax: Float = 2.4f): Float = valueScaler.scaleToNewRange(
+    private fun scaleRationBasedOnScreenSize(area: RectF, targetMin:Float = 0.7f, targetMax: Float = 2.4f): Float = valueConverter.scaleToNewRange(
         currentValue = area.width() * area.height(),
         currentMin = 8875f,
         currentMax = (settings.getHeightPixels() * settings.getWidthPixels()) * 0.9f,

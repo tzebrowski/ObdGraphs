@@ -23,7 +23,7 @@ import org.obd.metrics.api.model.ObdMetric
 const val NEW_RANGE_MIN_VAL = 0f
 const val NEW_RANGE_MAX_VAL = 3500f
 
-class ValueScaler {
+class ValueConverter {
     fun scaleToNewRange(
         obdMetric: ObdMetric
     ): Float {

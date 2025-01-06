@@ -21,8 +21,9 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.query.valueToNumber
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -43,7 +44,7 @@ private const val TRIP_FILE_PREFIX = "trip"
 
 internal class DefaultTripManager : TripManager, MetricsProcessor {
 
-    private val valueScaler = ValueScaler()
+    private val valueConverter = ValueConverter()
 
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
@@ -51,33 +52,39 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
     private val tripModelSerializer = TripModelSerializer()
     private val tripCache = TripCache()
 
-    override fun postValue(metric: ObdMetric) {
+    override fun postValue(obdMetric: ObdMetric) {
         try {
-            tripCache.getTrip { trip ->
-                val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
-                val key = metric.command.pid.id
-                val newRecord = Entry(ts, valueScaler.scaleToNewRange(metric), key)
+            if (obdMetric.valueToNumber() == null){
+                if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
+                    Log.v(LOGGER_TAG, "Accepting just Number metrics")
+                }
+            }else {
+                tripCache.getTrip { trip ->
+                    val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
+                    val key = obdMetric.command.pid.id
+                    val newRecord = Entry(ts, valueConverter.scaleToNewRange(obdMetric), key)
 
-                if (trip.entries.containsKey(key)) {
-                    val tripEntry = trip.entries[key]!!
-                    tripEntry.metrics.add(
-                        Metric(
-                            entry =  newRecord,
-                            ts = metric.timestamp,
-                            rawAnswer = metric.raw
-                        )
-                    )
-                } else {
-                    trip.entries[key] = SensorData(
-                        id = key,
-                        metrics = mutableListOf(
+                    if (trip.entries.containsKey(key)) {
+                        val tripEntry = trip.entries[key]!!
+                        tripEntry.metrics.add(
                             Metric(
                                 entry = newRecord,
-                                ts = metric.timestamp,
-                                rawAnswer = metric.raw
+                                ts = obdMetric.timestamp,
+                                rawAnswer = obdMetric.raw
                             )
                         )
-                    )
+                    } else {
+                        trip.entries[key] = SensorData(
+                            id = key,
+                            metrics = mutableListOf(
+                                Metric(
+                                    entry = newRecord,
+                                    ts = obdMetric.timestamp,
+                                    rawAnswer = obdMetric.raw
+                                )
+                            )
+                        )
+                    }
                 }
             }
         } catch (e: Throwable) {

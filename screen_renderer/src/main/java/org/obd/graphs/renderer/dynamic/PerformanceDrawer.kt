@@ -20,7 +20,6 @@ package org.obd.graphs.renderer.dynamic
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
@@ -43,7 +42,6 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
     )
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
-    private val metricBuilder = MetricsBuilder()
 
     private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
@@ -132,7 +130,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
     }
 
 
-    private inline fun getScaleRatio() = valueScaler.scaleToNewRange(
+    private inline fun getScaleRatio() = valueConverter.scaleToNewRange(
         settings.getDynamicScreenSettings().fontSize.toFloat(),
         CURRENT_MIN,
         CURRENT_MAX,

@@ -28,7 +28,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import org.obd.graphs.R
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
@@ -39,7 +39,7 @@ private const val LOG_KEY = "MarkerWindow"
 
 class MarkerWindow(context: Context?, layoutResource: Int, private val chart: LineChart) :
     MarkerView(context, layoutResource) {
-    private val valueScaler = ValueScaler()
+    private val valueConverter = ValueConverter()
 
     override fun refreshContent(e: Entry, highlight: Highlight?) {
         val metrics = findClosestMetrics(e)
@@ -108,7 +108,7 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
     private fun buildMetrics(id: Long, v: Float): ObdMetric {
         val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
         val pid = pidRegistry.findBy(id)
-        val value = valueScaler.scaleToPidRange(pid, v)
+        val value = valueConverter.scaleToPidRange(pid, v)
         return ObdMetric.builder().command(ObdCommand(pid)).value(value).build()
     }
 }

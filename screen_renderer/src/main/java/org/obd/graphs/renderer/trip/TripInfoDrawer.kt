@@ -219,7 +219,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         return top1
     }
 
-    private inline fun getScaleRatio() = valueScaler.scaleToNewRange(
+    private inline fun getScaleRatio() = valueConverter.scaleToNewRange(
         settings.getTripInfoScreenSettings().fontSize.toFloat(),
         CURRENT_MIN,
         CURRENT_MAX,
@@ -240,7 +240,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     ) {
         paint.color = color
 
-        val progress = valueScaler.scaleToNewRange(
+        val progress = valueConverter.scaleToNewRange(
             it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
             it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )

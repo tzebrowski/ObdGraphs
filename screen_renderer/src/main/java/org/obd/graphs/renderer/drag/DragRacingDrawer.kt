@@ -281,7 +281,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     ) {
         paint.color = color
 
-        val progress = valueScaler.scaleToNewRange(
+        val progress = valueConverter.scaleToNewRange(
             it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
             it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )
@@ -349,7 +349,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getDragRacingScreenSettings().fontSize.toFloat(),
+        val scaleRatio = valueConverter.scaleToNewRange(settings.getDragRacingScreenSettings().fontSize.toFloat(),
             CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = area.width()

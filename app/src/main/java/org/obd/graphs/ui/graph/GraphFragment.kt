@@ -62,7 +62,7 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun ValueScaler.scaleToPidRange(
+fun ValueConverter.scaleToPidRange(
     pid: PidDefinition,
     value: Float
 ): Float {
@@ -115,10 +115,10 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private class ReverseValueFormatter(val pid: PidDefinition, val valueScaler: ValueScaler) :
+    private class ReverseValueFormatter(val pid: PidDefinition, val valueConverter: ValueConverter) :
         ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
-                return valueScaler.scaleToPidRange(pid, value).toString()
+                return valueConverter.scaleToPidRange(pid, value).toString()
             }
         }
 
@@ -153,7 +153,7 @@ class GraphFragment : Fragment() {
 
     private val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     private lateinit var chart: LineChart
-    private val valueScaler = ValueScaler()
+    private val valueConverter = ValueConverter()
     private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
     private lateinit var root: View
@@ -333,7 +333,7 @@ class GraphFragment : Fragment() {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
                 val ts = (System.currentTimeMillis() - tripStartTs).toFloat()
                 val entry =
-                    Entry(ts, valueScaler.scaleToNewRange(obdMetric), obdMetric.command.pid.id)
+                    Entry(ts, valueConverter.scaleToNewRange(obdMetric), obdMetric.command.pid.id)
 
                 it.addEntry(entry)
                 data.notifyDataChanged()
@@ -420,7 +420,7 @@ class GraphFragment : Fragment() {
             setDrawValues(true)
             setDrawFilled(true)
             fillColor = col
-            valueFormatter = ReverseValueFormatter(pid, valueScaler)
+            valueFormatter = ReverseValueFormatter(pid, valueConverter)
             fillAlpha = 35
             fillColor = col
             highLightColor = Color.rgb(244, 117, 117)

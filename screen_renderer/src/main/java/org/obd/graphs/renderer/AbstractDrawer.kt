@@ -20,7 +20,7 @@ package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
@@ -35,7 +35,7 @@ private const val STATUS_VALUE_FONT_SIZE = 18f
 
 internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
 
-    protected val valueScaler: ValueScaler = ValueScaler()
+    protected val valueConverter: ValueConverter = ValueConverter()
     private val statusPaint = Paint()
 
     protected val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
