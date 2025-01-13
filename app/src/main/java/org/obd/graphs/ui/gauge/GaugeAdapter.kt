@@ -30,6 +30,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
@@ -90,6 +91,7 @@ class GaugeAdapter(
                 }
                 rescaleTextSize(this, multiplier)
             }
+
         }
 
         private fun updateDrawable() {
@@ -127,17 +129,23 @@ class GaugeAdapter(
         position: Int
     ) {
         val metric = data.elementAt(position)
+        val pid = metric.source.command.pid
+
         if (!holder.init) {
-            holder.label.text = metric.source.command.pid.longDescription ?: metric.source.command.pid.description
+            holder.label.text = pid.longDescription ?: pid.description
             holder.resourceFile?.run {
-                val resourceFile = modules.getDefaultModules()[metric.source.command.pid.resourceFile]
-                    ?: metric.source.command.pid.resourceFile
+                val resourceFile = modules.getDefaultModules()[pid.resourceFile]
+                    ?: pid.resourceFile
                 text = resourceFile
                 highLightText(
                     resourceFile, 0.5f,
                     Color.WHITE
                 )
             }
+
+            holder.avgValue?.isGone = !pid.historgam.isAvgEnabled
+            holder.minValue.isGone = !pid.historgam.isMinEnabled
+            holder.maxValue.isGone = !pid.historgam.isMaxEnabled
             holder.init = true
         }
 
@@ -152,39 +160,45 @@ class GaugeAdapter(
             )
         }
 
-
-        holder.minValue.run {
-            val txt = "min\n ${metric.toNumber(metric.min)}"
-            text = txt
-            highLightText(
-                "min", 0.5f,
-                COLOR_PHILIPPINE_GREEN
-            )
+        if (pid.historgam.isMinEnabled) {
+            holder.minValue.run {
+                val txt = "min\n ${metric.toNumber(metric.min)}"
+                text = txt
+                highLightText(
+                    "min", 0.5f,
+                    COLOR_PHILIPPINE_GREEN
+                )
+            }
         }
 
-        holder.maxValue.run {
-            val txt = "max\n  ${metric.toNumber(metric.max)} "
-            text = txt
-            highLightText(
-                "max", 0.5f,
-                COLOR_PHILIPPINE_GREEN
-            )
+
+        if (pid.historgam.isMaxEnabled) {
+            holder.maxValue.run {
+                val txt = "max\n  ${metric.toNumber(metric.max)} "
+                text = txt
+                highLightText(
+                    "max", 0.5f,
+                    COLOR_PHILIPPINE_GREEN
+                )
+            }
         }
 
-        holder.avgValue?.run {
-            val txt = "avg\n ${metric.toNumber(metric.mean)}"
-            text = txt
-            highLightText(
-                "avg", 0.5f,
-                COLOR_PHILIPPINE_GREEN
-            )
+        if (pid.historgam.isAvgEnabled) {
+            holder.avgValue?.run {
+                val txt = "avg\n ${metric.toNumber(metric.mean)}"
+                text = txt
+                highLightText(
+                    "avg", 0.5f,
+                    COLOR_PHILIPPINE_GREEN
+                )
+            }
         }
 
         holder.commandRate?.run {
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
                 val rate = dataLogger.getDiagnostics().rate()
-                    .findBy(RateType.MEAN, metric.source.command.pid)
+                    .findBy(RateType.MEAN, pid)
                 val txt = "rate ${rate.get().value.round(2)}"
                 text = txt
                 highLightText(
