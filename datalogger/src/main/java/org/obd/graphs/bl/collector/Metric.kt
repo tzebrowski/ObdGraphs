@@ -35,31 +35,39 @@ data class Metric(
     var rate: Double?
 ) {
     companion object {
-        fun newInstance(source: ObdMetric, value: Number, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0)
-        = Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
+        fun newInstance(source: ObdMetric, value: Number, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =
+            Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 
     fun toNumber(value: Double?, doublePrecision: Int = 2): String {
         return toNumber(source.command.pid, value, doublePrecision = doublePrecision).toString()
     }
 
-    fun isInAlert() : Boolean = source.isAlert
+    fun isInAlert(): Boolean = source.isAlert
 
     fun valueToString(): String =
-         if (source.value == null) {
-             NO_DATA
-        } else {
-            toNumber(source.valueToDouble())
-        }
-
-    fun toFloat(): Float =
         if (source.value == null) {
-            if (source.command.pid.min == null ) 0f else source.command.pid.min.toFloat()
+            NO_DATA
         } else {
-            source.valueToDouble().toFloat()
+            if (source.value is Number) {
+                toNumber(source.valueToDouble())
+            } else {
+                source.value.toString()
+            }
         }
 
-    override fun equals(other: Any?): Boolean{
+    fun valueToFloat(): Float =
+        if (source.value == null) {
+            if (source.command.pid.min == null) 0f else source.command.pid.min.toFloat()
+        } else {
+            if (source.value is Number) {
+                source.valueToDouble().toFloat()
+            }else {
+                0f
+            }
+        }
+
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
@@ -68,7 +76,7 @@ data class Metric(
         return this.source == other.source
     }
 
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         return this.source.hashCode()
     }
 }

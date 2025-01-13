@@ -223,7 +223,7 @@ class GaugeAdapter(
                     endValue = it.max.toFloat()
                 }
             }
-            value = metric.toFloat()
+            value = metric.valueToFloat()
             invalidate()
         }
     }
