@@ -50,10 +50,10 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
                 Log.d(LOG_KEY, "Rebuilding metrics configuration for: $enabled != ${metrics.keys}")
             }
             metricBuilder.buildFor(enabled).forEach {
-                val key = it.source.command.pid.id
+                val key = it.pid().id
 
                 if (metrics.keys.indexOf(key)  ==-1) {
-                    Log.i(LOG_KEY, "Adding PID($key = ${it.source.command.pid.description}) to metrics map.")
+                    Log.i(LOG_KEY, "Adding PID($key = ${it.pid().description}) to metrics map.")
                     metrics[key] = it
                 }
             }

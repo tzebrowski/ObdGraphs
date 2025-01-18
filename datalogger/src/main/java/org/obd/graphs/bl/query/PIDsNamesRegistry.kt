@@ -1,36 +1,9 @@
 package org.obd.graphs.bl.query
 
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.round
 import org.obd.metrics.api.model.ObdMetric
 
 fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
-
-
-fun ObdMetric.valueToString(castToInt: Boolean = false, precision: Int = 2): String  =
-    if (this.value == null) {
-        "No data"
-    } else {
-        if (value is Number) {
-            if (castToInt) (value as Number).toInt().toString()
-            else if (this.value is Double) (value as Number).toDouble().round(precision).toString()
-            else this.value.toString()
-        } else {
-            "No data"
-        }
-    }
-
-fun ObdMetric.valueToNumber(): Number? =
-    if (this.value == null) {
-        null
-    } else {
-        if (value is Number) {
-            value as Number
-        } else {
-            null
-        }
-    }
-
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == namesRegistry.getAtmPressurePID()
 fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == namesRegistry.getAmbientTempPID()

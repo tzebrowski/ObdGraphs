@@ -21,6 +21,7 @@ package org.obd.graphs.renderer.gauge
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.query.format
 import org.obd.graphs.bl.query.valueToNumber
 import org.obd.graphs.commons.R
 import org.obd.graphs.renderer.AbstractDrawer
@@ -256,7 +257,7 @@ internal class GaugeDrawer(
 
         val userScaleRatio = userScaleRatio(fontSize)
 
-        val value = metric.valueToString()
+        val value = metric.source.format(castToInt = false)
         val scaleRatio = scaleRationBasedOnScreenSize(area) * userScaleRatio
         valuePaint.textSize = drawerSettings.valueTextSize * scaleRatio
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
@@ -274,7 +275,8 @@ internal class GaugeDrawer(
         valuePaint.color = color(R.color.gray)
 
         val unitRect = Rect()
-        val unitTxt = metric.source.command.pid.units
+        val pid = metric.pid()
+        val unitTxt = pid.units
         valuePaint.getTextBounds(unitTxt, 0, unitTxt.length, unitRect)
         val unitY = centerY - valueHeight
         canvas.drawText(unitTxt, area.centerX() + textRect.width() / 2  + 4, unitY, valuePaint)
@@ -285,7 +287,7 @@ internal class GaugeDrawer(
 
         var labelY = 0f
 
-        val text = metric.source.command.pid.description.split("\n")
+        val text = pid.description.split("\n")
         if (settings.isBreakLabelTextEnabled()  && text.size > 1) {
             labelPaint.textSize *= 0.95f
             text.forEachIndexed { i, it ->
@@ -300,7 +302,7 @@ internal class GaugeDrawer(
                 )
             }
         } else {
-            val label = metric.source.command.pid.description
+            val label = pid.description
 
             val labelRect = Rect()
             labelPaint.getTextBounds(label, 0, label.length, labelRect)
@@ -310,10 +312,11 @@ internal class GaugeDrawer(
         }
 
         if (settings.isStatisticsEnabled()) {
+
             val hists =
-                "${if(metric.source.command.pid.historgam.isMinEnabled) metric.toNumber(metric.min) else ""}   " +
-                        "${if(metric.source.command.pid.historgam.isAvgEnabled) metric.toNumber(metric.mean) else ""}    " +
-                        "${if(metric.source.command.pid.historgam.isMaxEnabled) metric.toNumber(metric.max) else ""}"
+                "${if(pid.historgam.isMinEnabled) metric.min.format(pid) else ""}   " +
+                        "${if(pid.historgam.isAvgEnabled) metric.mean.format(pid) else ""}    " +
+                        "${if(pid.historgam.isMaxEnabled) metric.max.format(pid) else ""}"
             histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area) * userScaleRatio
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)

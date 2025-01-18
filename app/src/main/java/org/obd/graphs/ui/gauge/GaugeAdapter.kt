@@ -36,6 +36,8 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
 import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.query.format
+import org.obd.graphs.bl.query.valueToFloat
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
@@ -129,7 +131,7 @@ class GaugeAdapter(
         position: Int
     ) {
         val metric = data.elementAt(position)
-        val pid = metric.source.command.pid
+        val pid = metric.pid()
 
         if (!holder.init) {
             holder.label.text = pid.longDescription ?: pid.description
@@ -151,7 +153,7 @@ class GaugeAdapter(
 
         holder.value.run {
             val units = (metric.source.command as ObdCommand).pid.units?:""
-            val txt = "${metric.valueToString()} $units"
+            val txt = "${metric.source.format(castToInt = false)} $units"
             text = txt
 
             highLightText(
@@ -162,7 +164,7 @@ class GaugeAdapter(
 
         if (pid.historgam.isMinEnabled) {
             holder.minValue.run {
-                val txt = "min\n ${metric.toNumber(metric.min)}"
+                val txt = "min\n ${metric.min.format(pid)}"
                 text = txt
                 highLightText(
                     "min", 0.5f,
@@ -174,7 +176,7 @@ class GaugeAdapter(
 
         if (pid.historgam.isMaxEnabled) {
             holder.maxValue.run {
-                val txt = "max\n  ${metric.toNumber(metric.max)} "
+                val txt = "max\n  ${metric.max.format(pid)}"
                 text = txt
                 highLightText(
                     "max", 0.5f,
@@ -185,7 +187,7 @@ class GaugeAdapter(
 
         if (pid.historgam.isAvgEnabled) {
             holder.avgValue?.run {
-                val txt = "avg\n ${metric.toNumber(metric.mean)}"
+                val txt = "avg\n ${metric.mean.format(pid)}"
                 text = txt
                 highLightText(
                     "avg", 0.5f,
@@ -223,7 +225,7 @@ class GaugeAdapter(
                     endValue = it.max.toFloat()
                 }
             }
-            value = metric.valueToFloat()
+            value = metric.source.valueToFloat()
             invalidate()
         }
     }

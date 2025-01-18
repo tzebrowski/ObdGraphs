@@ -72,10 +72,13 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
             }
             registry.enableShiftLights(obdMetric.valueToNumber()!!.toInt() > registry.getShiftLightsRevThreshold())
         } else if (obdMetric.isAtmPressure()) {
-            atmosphericPressure = obdMetric.valueToNumber()!!.toInt()
+            obdMetric.valueToNumber()?.let {
+                atmosphericPressure = it.toInt()
+            }
         } else if (obdMetric.isAmbientTemp()) {
-            ambientTemperature = obdMetric.valueToNumber()!!.toInt()
-
+            obdMetric.valueToNumber()?.let {
+                ambientTemperature = it.toInt()
+            }
         } else if (obdMetric.isVehicleSpeed()) {
 
             processVehicleSpeedData(obdMetric)

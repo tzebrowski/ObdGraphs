@@ -21,6 +21,7 @@ package org.obd.graphs.renderer.giulia
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.query.format
 import org.obd.graphs.bl.query.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
@@ -75,7 +76,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 )
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.min),
+                    metric.min.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -93,7 +94,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 )
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.max),
+                    metric.max.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -113,7 +114,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
 
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.mean),
+                    metric.mean.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,

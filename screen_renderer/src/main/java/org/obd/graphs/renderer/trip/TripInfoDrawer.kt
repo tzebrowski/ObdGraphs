@@ -22,8 +22,8 @@ import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
+import org.obd.graphs.bl.query.format
 import org.obd.graphs.bl.query.valueToNumber
-import org.obd.graphs.bl.query.valueToString
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
@@ -166,7 +166,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 )
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.min),
+                    metric.min.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -186,7 +186,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 )
                 drawText(
                     canvas,
-                    metric.toNumber(metric.max),
+                    metric.max.format(metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -298,7 +298,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
-        val text =  metric.source.valueToString(castToInt = castToInt, precision = valueDoublePrecision)
+        val text =  metric.source.format(castToInt = castToInt, precision = valueDoublePrecision)
 
         canvas.drawText(text, left, top, valuePaint)
         var textWidth = getTextWidth(text, valuePaint) + 2
@@ -314,11 +314,12 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         if (settings.isStatisticsEnabled() && statsEnabled) {
             valuePaint.color = Color.LTGRAY
             valuePaint.textSize = (textSize * 0.60).toFloat()
-            val itemWidth = textWidth + getTextWidth(metric.toNumber(metric.max), valuePaint)
+            val pid =  metric.pid()
+            val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
             if (itemWidth <= maxItemWidth(area)) {
-                val min = metric.toNumber(metric.min, statsDoublePrecision)
+                val min = metric.min.format(pid = pid, precision = statsDoublePrecision)
                 canvas.drawText(min, (left + textWidth), top, valuePaint)
-                canvas.drawText(metric.toNumber(metric.max, statsDoublePrecision), (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
+                canvas.drawText(metric.max.format( pid = pid, precision = statsDoublePrecision), (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
             }
         }
     }

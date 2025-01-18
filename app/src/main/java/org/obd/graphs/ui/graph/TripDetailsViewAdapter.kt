@@ -26,8 +26,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.collector.toNumber
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.query.format
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText
@@ -58,24 +58,22 @@ class TripDetailsViewAdapter internal constructor(
             holder.metricName.setText(pid.description, COLOR_PHILIPPINE_GREEN, 1.0f)
             metric.run {
                 holder.metricMaxValue.setText(
-                    "${toNumber(pid, max)}",
+                    max.format(pid),
                     Color.GRAY,
                     1.0f
                 )
                 holder.metricMinValue.setText(
-                    "${toNumber(pid, min)}",
+                    min.format(pid),
                     Color.GRAY,
                     1.0f
                 )
                 holder.metricMeanValue.setText(
-                    "${toNumber(pid, mean)}",
+                    mean.format(pid),
                     Color.GRAY,
                     1.0f
                 )
             }
         }
-
-
     }
 
     override fun getItemCount(): Int {

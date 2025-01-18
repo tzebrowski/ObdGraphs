@@ -18,12 +18,9 @@
  **/
 package org.obd.graphs.bl.collector
 
-import org.obd.graphs.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
-import org.obd.metrics.pid.ValueType
 
-private const val NO_DATA = "----"
 
 data class Metric(
     var source: ObdMetric,
@@ -39,33 +36,9 @@ data class Metric(
             Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 
-    fun toNumber(value: Double?, doublePrecision: Int = 2): String {
-        return toNumber(source.command.pid, value, doublePrecision = doublePrecision).toString()
-    }
-
     fun isInAlert(): Boolean = source.isAlert
 
-    fun valueToString(): String =
-        if (source.value == null) {
-            NO_DATA
-        } else {
-            if (source.value is Number) {
-                toNumber(source.valueToDouble())
-            } else {
-                source.value.toString()
-            }
-        }
-
-    fun valueToFloat(): Float =
-        if (source.value == null) {
-            if (source.command.pid.min == null) 0f else source.command.pid.min.toFloat()
-        } else {
-            if (source.value is Number) {
-                source.valueToDouble().toFloat()
-            }else {
-                0f
-            }
-        }
+    fun pid(): PidDefinition = source.command.pid
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -79,25 +52,4 @@ data class Metric(
     override fun hashCode(): Int {
         return this.source.hashCode()
     }
-}
-
-fun toNumber(pid: PidDefinition, input: Number?, doublePrecision: Int = 2): Number {
-
-    if (input == null) {
-        return Double.NaN
-    }
-
-    val value = input.toDouble()
-    if (value.isNaN()) {
-        return 0.0
-    }
-    return if (pid.type == null) value.round(doublePrecision) else
-        pid.type.let {
-            return when (pid.type) {
-                ValueType.DOUBLE -> value.round(doublePrecision)
-                ValueType.INT -> value.toInt()
-                ValueType.SHORT -> value.toInt()
-                else -> value.round(1)
-            }
-        }
 }
