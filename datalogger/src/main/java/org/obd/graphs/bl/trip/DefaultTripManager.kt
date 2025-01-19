@@ -23,7 +23,7 @@ import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.valueToNumber
+import org.obd.graphs.valueToNumber
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled

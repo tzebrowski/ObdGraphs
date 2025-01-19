@@ -27,7 +27,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.format
+import org.obd.graphs.format
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.setText

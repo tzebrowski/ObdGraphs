@@ -39,7 +39,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.format
+import org.obd.graphs.format
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
 

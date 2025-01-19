@@ -24,7 +24,7 @@ import org.obd.metrics.pid.PidDefinition
 
 data class Metric(
     var source: ObdMetric,
-    var value: Number?,
+    var value: Any?,
     var min: Double,
     var max: Double,
     var mean: Double,
@@ -32,7 +32,7 @@ data class Metric(
     var rate: Double?
 ) {
     companion object {
-        fun newInstance(source: ObdMetric, value: Number, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =
+        fun newInstance(source: ObdMetric, value: Any, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =
             Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 

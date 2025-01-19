@@ -21,8 +21,8 @@ package org.obd.graphs.renderer.giulia
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.bl.query.format
-import org.obd.graphs.bl.query.valueToNumber
+import org.obd.graphs.format
+import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 

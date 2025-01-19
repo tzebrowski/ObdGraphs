@@ -85,7 +85,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
             metrics[metric.command.pid.id]?.let {
                 it.source = metric
 
-                it.value = metric.valueToDouble()
+                it.value = metric.value
                 val hist = dataLogger.findHistogramFor(metric)
                 val rate = dataLogger.findRateFor(metric)
 

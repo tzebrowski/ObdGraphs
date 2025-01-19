@@ -24,8 +24,8 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
-import org.obd.graphs.bl.query.format
-import org.obd.graphs.bl.query.valueToNumber
+import org.obd.graphs.format
+import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.round

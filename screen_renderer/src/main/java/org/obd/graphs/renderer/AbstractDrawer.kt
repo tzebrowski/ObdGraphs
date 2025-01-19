@@ -26,7 +26,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.namesRegistry
-import org.obd.graphs.bl.query.format
+import org.obd.graphs.format
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
 import org.obd.graphs.renderer.drag.MARGIN_END

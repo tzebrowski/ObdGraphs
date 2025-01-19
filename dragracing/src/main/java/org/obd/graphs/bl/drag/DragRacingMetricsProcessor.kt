@@ -21,6 +21,7 @@ package org.obd.graphs.bl.drag
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.query.*
+import org.obd.graphs.valueToNumber
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
 import kotlin.math.min

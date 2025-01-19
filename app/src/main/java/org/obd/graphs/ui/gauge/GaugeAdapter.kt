@@ -36,8 +36,8 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
 import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.format
-import org.obd.graphs.bl.query.valueToFloat
+import org.obd.graphs.format
+import org.obd.graphs.valueToFloat
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round

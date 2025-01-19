@@ -3,7 +3,7 @@ package org.obd.graphs.aa.screen
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.query.isDynamicSelector
-import org.obd.graphs.bl.query.valueToNumber
+import org.obd.graphs.valueToNumber
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 
