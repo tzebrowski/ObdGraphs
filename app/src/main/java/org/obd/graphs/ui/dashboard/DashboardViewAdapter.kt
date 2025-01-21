@@ -83,7 +83,7 @@ class DashboardViewAdapter(
         val obdCommand = metric.source.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        val segmentNum: Int = holder.segments.indexOf( metric.source.valueToNumber()?.toDouble()?: 0.0)
+        val segmentNum: Int = holder.segments.indexOf( (metric.source.valueToNumber() ?: 0).toDouble())
         (segmentNum > 0).apply {
             //reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
@@ -133,7 +133,7 @@ class DashboardViewAdapter(
 
         holder.chart.invalidate()
         holder.label.text = obdCommand.pid.description
-        val units = (metric.source.command as ObdCommand).pid.units
+        val units = (metric.source.command as ObdCommand).pid.units?:""
         val value = metric.source.valueToString() + " " + units
         holder.value.text = value
         holder.value.highLightText(units, 0.3f, COLOR_PHILIPPINE_GREEN)

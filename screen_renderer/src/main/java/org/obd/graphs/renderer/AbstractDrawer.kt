@@ -30,7 +30,6 @@ import org.obd.graphs.format
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
 import org.obd.graphs.renderer.drag.MARGIN_END
-
 private const val STATUS_KEY_FONT_SIZE = 12f
 private const val STATUS_VALUE_FONT_SIZE = 18f
 
@@ -246,7 +245,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.source.format(castToInt = false)}${it.pid().units}",
+                        "${it.source.format(castToInt = false)}${it.pid().units?:""}",
                         marginLeft,
                         top,
                         Color.WHITE,
@@ -271,7 +270,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.source.format(castToInt = false)}${it.pid().units}",
+                        "${it.source.format(castToInt = false)}${ it.pid().units?:""}",
                         marginLeft,
                         top,
                         Color.WHITE,

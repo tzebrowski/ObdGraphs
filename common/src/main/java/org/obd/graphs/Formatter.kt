@@ -34,6 +34,9 @@ fun ObdMetric.valueToNumber(): Number? =
     }
 
 
+fun ObdMetric.isNumber(): Boolean = this.value != null && this.value is Number
+
+
 fun Number.format(pid: PidDefinition, precision: Int = 2, castToInt: Boolean = false): String = format(
     input = this,
     pid = pid, precision = precision, castToInt = castToInt
@@ -65,7 +68,7 @@ private fun format(input: Any?, pid: PidDefinition? = null, precision: Int = 2, 
                 }
             }
 
-            if (number.toDouble().isNaN()) {
+            if (number is Double && number.toDouble().isNaN()) {
                 NO_DATA
             } else {
                 number.toString()

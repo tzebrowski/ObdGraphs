@@ -271,10 +271,12 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         val text = metric.source.valueToString()
         canvas.drawText(text, left, top, valuePaint)
 
-        valuePaint.color = Color.LTGRAY
-        valuePaint.textAlign = Paint.Align.LEFT
-        valuePaint.textSize = textSize * 0.4f
-        canvas.drawText(metric.source.command.pid.units, (left + 2), top, valuePaint)
+        metric.source.command.pid.units?.let {
+            valuePaint.color = Color.LTGRAY
+            valuePaint.textAlign = Paint.Align.LEFT
+            valuePaint.textSize = textSize * 0.4f
+            canvas.drawText(it, (left + 2), top, valuePaint)
+        }
     }
 
     private fun drawValue(
@@ -304,11 +306,12 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         var textWidth = getTextWidth(text, valuePaint) + 2
 
         if (unitEnabled) {
-            valuePaint.color = Color.LTGRAY
-            valuePaint.textSize = (textSize * 0.4).toFloat()
-            canvas.drawText(metric.source.command.pid.units, (left + textWidth), top, valuePaint)
-            textWidth += getTextWidth(metric.source.command.pid.units, valuePaint) + 2
-
+            metric.source.command.pid.units.let {
+                valuePaint.color = Color.LTGRAY
+                valuePaint.textSize = (textSize * 0.4).toFloat()
+                canvas.drawText(it, (left + textWidth), top, valuePaint)
+                textWidth += getTextWidth(it, valuePaint) + 2
+            }
         }
 
         if (settings.isStatisticsEnabled() && statsEnabled) {

@@ -315,10 +315,12 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         val text = metric.source.valueToString()
         canvas.drawText(text, x, top, valuePaint)
 
-        valuePaint.color = Color.LTGRAY
-        valuePaint.textAlign = Paint.Align.LEFT
-        valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas.drawText(metric.source.command.pid.units, (x + 2), top, valuePaint)
+        metric.source.command.pid.units?.let {
+            valuePaint.color = Color.LTGRAY
+            valuePaint.textAlign = Paint.Align.LEFT
+            valuePaint.textSize = (textSize * 0.4).toFloat()
+            canvas.drawText(it, (x + 2), top, valuePaint)
+        }
     }
 
     fun drawText(

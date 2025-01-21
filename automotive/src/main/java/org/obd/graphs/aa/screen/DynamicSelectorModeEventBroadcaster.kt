@@ -24,13 +24,13 @@ internal class DynamicSelectorModeEventBroadcaster: MetricsProcessor {
         if (obdMetric.isDynamicSelector()) {
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                Log.v(LOG_TAG, "Received=${obdMetric.valueToNumber()!!.toInt()}, current=${currentMode} ")
+                Log.v(LOG_TAG, "Received=${obdMetric.valueToNumber()}, current=${currentMode} ")
             }
 
             if (currentMode != obdMetric.valueToNumber()!!) {
 
                 if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                    Log.v(LOG_TAG, "Broadcasting Dynamic Selector Mode Change, new=${obdMetric.valueToNumber()!!.toInt()}")
+                    Log.v(LOG_TAG, "Broadcasting Dynamic Selector Mode Change, new=${obdMetric.valueToNumber()}")
                 }
 
                 currentMode = obdMetric.valueToNumber()!!.toInt()
