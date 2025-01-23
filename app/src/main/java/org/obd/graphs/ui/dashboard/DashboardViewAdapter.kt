@@ -1,21 +1,19 @@
-/**
- * Copyright 2019-2024, Tomasz Żebrowski
+ /**
+ * Copyright 2019-2025, Tomasz Żebrowski
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ */
 package org.obd.graphs.ui.dashboard
 
 import android.content.Context
@@ -37,14 +35,14 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.model.GradientColor
-import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
-import org.obd.graphs.valueToNumber
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
+import org.obd.graphs.valueToNumber
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 
@@ -52,20 +50,19 @@ class DashboardViewAdapter(
     context: Context,
     data: MutableList<Metric>,
     resourceId: Int,
-    height: Int? = null
-) :
-    RecyclerViewAdapter<DashboardViewAdapter.ViewHolder>(context, data, resourceId, height) {
+    height: Int? = null,
+) : RecyclerViewAdapter<DashboardViewAdapter.ViewHolder>(context, data, resourceId, height) {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
 
-    override fun getItemId(position: Int): Long {
-        return data[position].source.command.pid.id
-    }
+    override fun getItemId(position: Int): Long =
+        data[position]
+            .source.command.pid.id
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
         if (height != null) {
@@ -76,45 +73,46 @@ class DashboardViewAdapter(
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int
+        position: Int,
     ) {
         val metric = data.elementAt(position)
 
         val obdCommand = metric.source.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        val segmentNum: Int = holder.segments.indexOf( (metric.source.valueToNumber() ?: 0).toDouble())
+        val segmentNum: Int = holder.segments.indexOf((metric.source.valueToNumber() ?: 0).toDouble())
         (segmentNum > 0).apply {
-            //reset
+            // reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->
                 val dataSet = holder.chart.data.getDataSetByIndex(e) as BarDataSet
-                dataSet.color = Color.parseColor("#0D000000")//transparent
+                dataSet.color = Color.parseColor("#0D000000") // transparent
             }
 
             (0..segmentNum).forEach { e ->
                 (holder.chart.data.getDataSetByIndex(e) as BarDataSet).run {
                     color = Prefs.getInt("pref.dash.background_color_1", -1)
-                    gradientColors = listOf(
-                        GradientColor(
-                            Prefs.getInt("pref.dash.background_color_1", -1),
-                            Prefs.getInt("pref.dash.background_color_2", -1)
+                    gradientColors =
+                        listOf(
+                            GradientColor(
+                                Prefs.getInt("pref.dash.background_color_1", -1),
+                                Prefs.getInt("pref.dash.background_color_2", -1),
+                            ),
                         )
-                    )
                 }
             }
 
             val percent75: Int = (holder.segments.numOfSegments * 75) / 100
             if (segmentNum > percent75) {
-
                 if (dashboardPreferences.colorsEnabled) {
                     (percent75..segmentNum).forEach { e ->
-                        (holder.chart.data.getDataSetByIndex(e) as BarDataSet).run{
-                            gradientColors = listOf(
-                                GradientColor(
-                                    Prefs.getInt("pref.dash.background_color_1", -1),
-                                    Prefs.getInt("pref.dash.background_color_1", -1)
+                        (holder.chart.data.getDataSetByIndex(e) as BarDataSet).run {
+                            gradientColors =
+                                listOf(
+                                    GradientColor(
+                                        Prefs.getInt("pref.dash.background_color_1", -1),
+                                        Prefs.getInt("pref.dash.background_color_1", -1),
+                                    ),
                                 )
-                            )
                         }
                     }
                 }
@@ -133,18 +131,17 @@ class DashboardViewAdapter(
 
         holder.chart.invalidate()
         holder.label.text = obdCommand.pid.description
-        val units = (metric.source.command as ObdCommand).pid.units?:""
+        val units = (metric.source.command as ObdCommand).pid.units ?: ""
         val value = metric.source.valueToString() + " " + units
         holder.value.text = value
         holder.value.highLightText(units, 0.3f, COLOR_PHILIPPINE_GREEN)
     }
 
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount(): Int = data.size
 
-    inner class ViewHolder internal constructor(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder internal constructor(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView) {
         var chart: BarChart = itemView.findViewById(R.id.chart)
         var label: TextView = itemView.findViewById(R.id.dash_label)
         var value: TextView = itemView.findViewById(R.id.dash_value)

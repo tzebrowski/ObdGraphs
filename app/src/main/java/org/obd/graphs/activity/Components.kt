@@ -1,21 +1,19 @@
-/**
- * Copyright 2019-2024, Tomasz Żebrowski
+ /**
+ * Copyright 2019-2025, Tomasz Żebrowski
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ */
 package org.obd.graphs.activity
 
 import android.view.View
@@ -31,12 +29,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import org.obd.graphs.R
 
-
 fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
     func(findViewById(R.id.connect_btn))
 }
 
-fun BottomNavigationView.isUp (): Boolean = translationY == 0f
+fun BottomNavigationView.isUp(): Boolean = translationY == 0f
 
 fun MainActivity.toolbar(func: (p: BottomNavigationView, r: BottomAppBar, c: FloatingActionButton) -> Unit) {
     func(findViewById(R.id.bottom_nav_view), findViewById(R.id.bottom_app_bar), findViewById(R.id.connect_btn))
@@ -54,7 +51,6 @@ fun MainActivity.bottomAppBar(func: (p: BottomAppBar) -> Unit) {
     func(findViewById(R.id.bottom_app_bar))
 }
 
-
 fun MainActivity.leftAppBar(func: (p: NavigationView) -> Unit) {
     func(findViewById(R.id.leftNavView))
 }
@@ -63,11 +59,9 @@ fun MainActivity.navController(func: (p: NavController) -> Unit) {
     func((supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController)
 }
 
-
 fun MainActivity.lockScreenDialogShow(func: (dialogTitle: TextView) -> Unit) {
-
     lockScreenDialog?.let {
-        if (it.isShowing){
+        if (it.isShowing) {
             it.dismiss()
         }
     }
@@ -82,5 +76,3 @@ fun MainActivity.lockScreenDialogShow(func: (dialogTitle: TextView) -> Unit) {
         lockScreenDialog.show()
     }
 }
-
-

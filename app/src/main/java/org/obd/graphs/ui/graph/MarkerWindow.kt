@@ -1,21 +1,19 @@
-/**
- * Copyright 2019-2024, Tomasz Żebrowski
+ /**
+ * Copyright 2019-2025, Tomasz Żebrowski
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ */
 package org.obd.graphs.ui.graph
 
 import android.content.Context
@@ -37,11 +35,17 @@ import org.obd.metrics.pid.PidDefinitionRegistry
 private const val SEARCH_SCOPE = 300
 private const val LOG_KEY = "MarkerWindow"
 
-class MarkerWindow(context: Context?, layoutResource: Int, private val chart: LineChart) :
-    MarkerView(context, layoutResource) {
+class MarkerWindow(
+    context: Context?,
+    layoutResource: Int,
+    private val chart: LineChart,
+) : MarkerView(context, layoutResource) {
     private val valueConverter = ValueConverter()
 
-    override fun refreshContent(e: Entry, highlight: Highlight?) {
+    override fun refreshContent(
+        e: Entry,
+        highlight: Highlight?,
+    ) {
         val metrics = findClosestMetrics(e)
         val adapter = MarkerWindowViewAdapter(context, metrics)
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
@@ -50,7 +54,7 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
         super.refreshContent(e, highlight)
     }
 
-    override fun getOffset(): MPPointF  = MPPointF.getInstance( -(width / 2).toFloat(),-height.toFloat())
+    override fun getOffset(): MPPointF = MPPointF.getInstance(-(width / 2).toFloat(), -height.toFloat())
 
     private fun findClosestMetrics(e: Entry): MutableCollection<ObdMetric> {
         val metricsMap = mutableMapOf<Long, ObdMetric>()
@@ -80,7 +84,6 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
                     }
                     x = updateXValue(x)
                 }
-
             } while (entriesForXValue.isEmpty())
         }
         time = System.currentTimeMillis() - time
@@ -105,10 +108,17 @@ class MarkerWindow(context: Context?, layoutResource: Int, private val chart: Li
         return x1
     }
 
-    private fun buildMetrics(id: Long, v: Float): ObdMetric {
+    private fun buildMetrics(
+        id: Long,
+        v: Float,
+    ): ObdMetric {
         val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
         val pid = pidRegistry.findBy(id)
         val value = valueConverter.scaleToPidRange(pid, v)
-        return ObdMetric.builder().command(ObdCommand(pid)).value(value).build()
+        return ObdMetric
+            .builder()
+            .command(ObdCommand(pid))
+            .value(value)
+            .build()
     }
 }

@@ -1,21 +1,19 @@
-/**
- * Copyright 2019-2024, Tomasz Żebrowski
+ /**
+ * Copyright 2019-2025, Tomasz Żebrowski
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ */
 package org.obd.graphs
 
 import android.util.Log
@@ -34,19 +32,20 @@ private const val MOCK_SERVER_PORT = "192.0.0.2"
 
 private const val LOG_TAG = "tcpTestRunner"
 
-fun tcpTestRunner (givenProfile: String,
-                   expectedEventType: String,
-                   mockServerRequestResponse: Map<String,String> = emptyMap(),
-                   mockServerPort: Int,
-                   act: () -> Unit = {},
-                   assert: () -> Unit = {},
-                   arrange: () -> Unit){
-
+fun tcpTestRunner(
+    givenProfile: String,
+    expectedEventType: String,
+    mockServerRequestResponse: Map<String, String> = emptyMap(),
+    mockServerPort: Int,
+    act: () -> Unit = {},
+    assert: () -> Unit = {},
+    arrange: () -> Unit,
+) {
     val receiver = CountDownLatchBroadcastReceiver(expectedEventType)
     launchActivity<MainActivity>().use { it ->
 
         it.onActivity { activity ->
-            registerReceiver(activity,receiver.eventReceiver){
+            registerReceiver(activity, receiver.eventReceiver) {
                 it.addAction(receiver.broadcastEvent)
             }
         }
@@ -63,8 +62,8 @@ fun tcpTestRunner (givenProfile: String,
 
         try {
             arrange.invoke()
-        }catch (e: Exception){
-            Log.e(LOG_TAG, "Failed to execute 'arrange' test section",e)
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to execute 'arrange' test section", e)
         }
 
         dataLoggerPreferences.reload()
@@ -77,13 +76,10 @@ fun tcpTestRunner (givenProfile: String,
 
             try {
                 act.invoke()
-            }catch (e: Exception){
-                Log.e(LOG_TAG, "Failed to execute  'act' test section",e)
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "Failed to execute  'act' test section", e)
             }
-
-
         } finally {
-
             receiver.waitOnEvent()
 
             it.onActivity { activity ->
@@ -96,12 +92,13 @@ fun tcpTestRunner (givenProfile: String,
 
     Assert.assertEquals(
         "Did not receive broadcast event: ${receiver.broadcastEvent}",
-        receiver.eventGate.count, 0
+        receiver.eventGate.count,
+        0,
     )
 
     try {
         assert.invoke()
-    }catch (e: Exception){
-        Log.e(LOG_TAG, "Failed to execute 'assert' test  section",e)
+    } catch (e: Exception) {
+        Log.e(LOG_TAG, "Failed to execute 'assert' test  section", e)
     }
 }

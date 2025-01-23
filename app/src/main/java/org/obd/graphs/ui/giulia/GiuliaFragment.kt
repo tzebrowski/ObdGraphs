@@ -1,21 +1,19 @@
-/**
- * Copyright 2019-2024, Tomasz Żebrowski
+ /**
+ * Copyright 2019-2025, Tomasz Żebrowski
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ */
 package org.obd.graphs.ui.giulia
 
 import android.content.BroadcastReceiver
@@ -60,47 +58,50 @@ open class GiuliaFragment : Fragment() {
 
     private lateinit var surfaceController: SurfaceController
 
-    private val renderingThread: RenderingThread = RenderingThread(
-        id = "GiuliaFragmentRenderingThread",
-        renderAction = {
-            if (::surfaceController.isInitialized) {
-                surfaceController.renderFrame()
-            }
-        },
-        perfFrameRate = {
-            settings.getSurfaceFrameRate()
-        }
-    )
+    private val renderingThread: RenderingThread =
+        RenderingThread(
+            id = "GiuliaFragmentRenderingThread",
+            renderAction = {
+                if (::surfaceController.isInitialized) {
+                    surfaceController.renderFrame()
+                }
+            },
+            perfFrameRate = {
+                settings.getSurfaceFrameRate()
+            },
+        )
 
-    private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
+    private var broadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                when (intent?.action) {
+                    DATA_LOGGER_SCHEDULED_START_EVENT -> {
+                        if (isAdded && isVisible) {
+                            Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
+                            dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                        }
+                    }
 
-                DATA_LOGGER_SCHEDULED_START_EVENT -> {
-                    if (isAdded && isVisible) {
-                        Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                        dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                    DATA_LOGGER_CONNECTED_EVENT -> {
+                        applyFilter()
+                        renderingThread.start()
+                    }
+
+                    DATA_LOGGER_STOPPED_EVENT -> {
+                        renderingThread.stop()
+                        attachToFloatingButton(activity, query())
                     }
                 }
-
-                DATA_LOGGER_CONNECTED_EVENT -> {
-                    applyFilter()
-                    renderingThread.start()
-                }
-
-                DATA_LOGGER_STOPPED_EVENT -> {
-                    renderingThread.stop()
-                    attachToFloatingButton(activity, query())
-                }
             }
         }
-    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         surfaceController.renderFrame()
     }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -125,29 +126,29 @@ open class GiuliaFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         root = inflater.inflate(R.layout.fragment_giulia, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         setupVirtualViewPanel()
-        surfaceController = SurfaceController(
-            SurfaceRenderer.allocate(
-                context = requireContext(),
-                settings = settings,
-                metricsCollector = metricsCollector,
-                fps = fps,
-                surfaceRendererType = SurfaceRendererType.GIULIA,
-                viewSettings = ViewSettings(marginTop = 0)
+        surfaceController =
+            SurfaceController(
+                SurfaceRenderer.allocate(
+                    context = requireContext(),
+                    settings = settings,
+                    metricsCollector = metricsCollector,
+                    fps = fps,
+                    surfaceRendererType = SurfaceRendererType.GIULIA,
+                    viewSettings = ViewSettings(marginTop = 0),
+                ),
             )
-        )
         surfaceView.holder.addCallback(surfaceController)
 
         applyFilter()
 
         dataLogger.observe(viewLifecycleOwner) {
             it.run {
-                metricsCollector.append(it,forceAppend = false)
+                metricsCollector.append(it, forceAppend = false)
             }
         }
 
@@ -161,8 +162,11 @@ open class GiuliaFragment : Fragment() {
         return root
     }
 
-
-    private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
+    private fun setVirtualViewBtn(
+        btnId: Int,
+        selection: String,
+        viewId: String,
+    ) {
         (root.findViewById<Button>(btnId)).let {
             if (selection == viewId) {
                 it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
@@ -182,7 +186,6 @@ open class GiuliaFragment : Fragment() {
     }
 
     private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
-
 
     private fun query() = query.apply(giuliaVirtualScreen.getVirtualScreenPrefKey())
 

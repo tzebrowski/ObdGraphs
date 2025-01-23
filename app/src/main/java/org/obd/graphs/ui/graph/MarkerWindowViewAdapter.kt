@@ -1,21 +1,19 @@
-/**
- * Copyright 2019-2024, Tomasz Żebrowski
+ /**
+ * Copyright 2019-2025, Tomasz Żebrowski
  *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ */
 package org.obd.graphs.ui.graph
 
 import android.content.Context
@@ -32,14 +30,13 @@ import org.obd.metrics.api.model.ObdMetric
 
 class MarkerWindowViewAdapter internal constructor(
     context: Context?,
-    private var data: MutableCollection<ObdMetric>
-) :
-    RecyclerView.Adapter<MarkerWindowViewAdapter.ViewHolder>() {
+    private var data: MutableCollection<ObdMetric>,
+) : RecyclerView.Adapter<MarkerWindowViewAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): ViewHolder {
         val view: View = mInflater.inflate(R.layout.item_metric, parent, false)
         return ViewHolder(view)
@@ -47,20 +44,19 @@ class MarkerWindowViewAdapter internal constructor(
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int
+        position: Int,
     ) {
-
         data.elementAt(position).run {
             holder.metricName.setText(command.label, COLOR_PHILIPPINE_GREEN, 1.0f)
             holder.metricValue.setText(valueToString(), COLOR_LIGHT_SHADE_GRAY, 1.0f)
         }
     }
 
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount(): Int = data.size
 
-    inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView),
+    inner class ViewHolder internal constructor(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         val metricName: TextView = itemView.findViewById(R.id.metric_name)
         val metricValue: TextView = itemView.findViewById(R.id.metric_value)
@@ -81,6 +77,6 @@ class MarkerWindowViewAdapter internal constructor(
             itemView.findViewById<TextView>(R.id.metric_avg_value).apply {
                 visibility = View.GONE
             }
-       }
+        }
     }
 }

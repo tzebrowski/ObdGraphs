@@ -3,7 +3,10 @@ plugins {
     id 'kotlin-android'
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
+    id 'com.diffplug.spotless'
 }
+
+apply from: "$project.rootDir/spotless.gradle"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
