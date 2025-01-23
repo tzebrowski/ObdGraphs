@@ -39,6 +39,7 @@ import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
+import org.obd.graphs.bl.extra.*
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
@@ -182,6 +183,13 @@ internal class NavTemplateCarScreen(
                         Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
                     }
                 }
+
+                EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
+                    if (dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
+                        Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
+                        dataLogger.stop()
+                    }
+                }
             }
         }
 
@@ -231,6 +239,13 @@ internal class NavTemplateCarScreen(
             it.addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
             it.addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
             it.addAction(CHANGE_SCREEN_EVENT)
+
+            it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_RUNNING)
+            it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_IDLING)
+            it.addAction(EVENT_VEHICLE_STATUS_IGNITION_OFF)
+            it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING)
+            it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING)
+            it.addAction(EVENT_VEHICLE_STATUS_IGNITION_ON)
         }
     }
 
@@ -304,6 +319,7 @@ internal class NavTemplateCarScreen(
         dataLogger
             .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
+            .observe(vehicleStatusMetricsProcessor)
 
         submitRenderingTask()
 

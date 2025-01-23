@@ -24,6 +24,8 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
+import org.obd.graphs.format
+import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.round
@@ -193,7 +195,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             if (settings.isStatisticsEnabled()) {
                 val tt = textSizeBase * 0.6f
                 var left1 = left
-                if (metric.source.command.pid.historgam.isMinEnabled) {
+                if (metric.pid().historgam.isMinEnabled) {
                     left1 = drawText(
                         canvas,
                         "avg",
@@ -205,7 +207,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                     )
                     left1 = drawText(
                         canvas,
-                        metric.toNumber(metric.mean),
+                        metric.mean.format(pid = metric.pid()),
                         left1,
                         top1,
                         Color.LTGRAY,
@@ -213,7 +215,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                         valuePaint
                     )
                 }
-                if (metric.source.command.pid.historgam.isMaxEnabled) {
+                if (metric.pid().historgam.isMaxEnabled) {
                     left1 = drawText(
                         canvas,
                         "max",
@@ -225,7 +227,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                     )
                     drawText(
                         canvas,
-                        metric.toNumber(metric.max),
+                        metric.max.format(pid = metric.pid()),
                         left1,
                         top1,
                         Color.LTGRAY,
@@ -280,9 +282,10 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     ) {
         paint.color = color
 
-        val progress = valueScaler.scaleToNewRange(
-            it.source.value?.toFloat() ?: it.source.command.pid.min.toFloat(),
-            it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
+        val pid = it.pid()
+        val progress = valueConverter.scaleToNewRange(
+            it.source.valueToNumber()?.toFloat() ?: pid.min.toFloat(),
+            pid.min.toFloat(), pid.max.toFloat(), left, left + width - MARGIN_END
         )
 
         canvas.drawRect(
@@ -312,10 +315,12 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         val text = metric.source.valueToString()
         canvas.drawText(text, x, top, valuePaint)
 
-        valuePaint.color = Color.LTGRAY
-        valuePaint.textAlign = Paint.Align.LEFT
-        valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas.drawText(metric.source.command.pid.units, (x + 2), top, valuePaint)
+        metric.source.command.pid.units?.let {
+            valuePaint.color = Color.LTGRAY
+            valuePaint.textAlign = Paint.Align.LEFT
+            valuePaint.textSize = (textSize * 0.4).toFloat()
+            canvas.drawText(it, (x + 2), top, valuePaint)
+        }
     }
 
     fun drawText(
@@ -348,7 +353,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getDragRacingScreenSettings().fontSize.toFloat(),
+        val scaleRatio = valueConverter.scaleToNewRange(settings.getDragRacingScreenSettings().fontSize.toFloat(),
             CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = area.width()

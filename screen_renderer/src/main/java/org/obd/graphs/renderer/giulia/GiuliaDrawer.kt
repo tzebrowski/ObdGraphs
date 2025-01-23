@@ -21,6 +21,9 @@ package org.obd.graphs.renderer.giulia
 import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.format
+import org.obd.graphs.isNumber
+import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 
@@ -74,7 +77,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 )
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.min),
+                    metric.min.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -92,7 +95,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 )
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.max),
+                    metric.max.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -112,7 +115,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
 
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.mean),
+                    metric.mean.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -170,20 +173,21 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         it: Metric,
         color: Int
     ) {
-        paint.color = color
+        if (it.source.isNumber()){
+            paint.color = color
+            val progress =  valueConverter.scaleToNewRange(
+                it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
+                it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
+            )
 
-        val progress = valueScaler.scaleToNewRange(
-            it.source.value?.toFloat() ?: it.source.command.pid.min.toFloat(),
-            it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
-        )
-
-        canvas.drawRect(
-            left - 6,
-            top + 4,
-            progress,
-            top + calculateProgressBarHeight(),
-            paint
-        )
+            canvas.drawRect(
+                left - 6,
+                top + 4,
+                progress,
+                top + calculateProgressBarHeight(),
+                paint
+            )
+        }
     }
 
     fun drawAlertingLegend(canvas: Canvas, metric: Metric, left: Float, top: Float) {
@@ -247,10 +251,12 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         val text = metric.source.valueToString()
         canvas.drawText(text, left1, top, valuePaint)
 
-        valuePaint.color = Color.LTGRAY
-        valuePaint.textAlign = Paint.Align.LEFT
-        valuePaint.textSize = (textSize * 0.4).toFloat()
-        canvas.drawText(metric.source.command.pid.units, (left1 + 2), top, valuePaint)
+        metric.source.command.pid.units?.let {
+            valuePaint.color = Color.LTGRAY
+            valuePaint.textAlign = Paint.Align.LEFT
+            valuePaint.textSize = (textSize * 0.4).toFloat()
+            canvas.drawText(it, (left1 + 2), top, valuePaint)
+        }
 
         return getTextHeight(text, valuePaint) - 1f
     }

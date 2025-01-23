@@ -22,7 +22,8 @@ import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
-import org.obd.graphs.bl.query.valueToString
+import org.obd.graphs.format
+import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
@@ -165,7 +166,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 )
                 left1 = drawText(
                     canvas,
-                    metric.toNumber(metric.min),
+                    metric.min.format(pid = metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -185,7 +186,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 )
                 drawText(
                     canvas,
-                    metric.toNumber(metric.max),
+                    metric.max.format(metric.pid()),
                     left1,
                     top1,
                     Color.LTGRAY,
@@ -218,7 +219,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         return top1
     }
 
-    private inline fun getScaleRatio() = valueScaler.scaleToNewRange(
+    private inline fun getScaleRatio() = valueConverter.scaleToNewRange(
         settings.getTripInfoScreenSettings().fontSize.toFloat(),
         CURRENT_MIN,
         CURRENT_MAX,
@@ -239,8 +240,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     ) {
         paint.color = color
 
-        val progress = valueScaler.scaleToNewRange(
-            it.source.value?.toFloat() ?: it.source.command.pid.min.toFloat(),
+        val progress = valueConverter.scaleToNewRange(
+            it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
             it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )
 
@@ -270,10 +271,12 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         val text = metric.source.valueToString()
         canvas.drawText(text, left, top, valuePaint)
 
-        valuePaint.color = Color.LTGRAY
-        valuePaint.textAlign = Paint.Align.LEFT
-        valuePaint.textSize = textSize * 0.4f
-        canvas.drawText(metric.source.command.pid.units, (left + 2), top, valuePaint)
+        metric.source.command.pid.units?.let {
+            valuePaint.color = Color.LTGRAY
+            valuePaint.textAlign = Paint.Align.LEFT
+            valuePaint.textSize = textSize * 0.4f
+            canvas.drawText(it, (left + 2), top, valuePaint)
+        }
     }
 
     private fun drawValue(
@@ -297,27 +300,29 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
-        val text =  metric.source.valueToString(castToInt = castToInt, precision = valueDoublePrecision)
+        val text =  metric.source.format(castToInt = castToInt, precision = valueDoublePrecision)
 
         canvas.drawText(text, left, top, valuePaint)
         var textWidth = getTextWidth(text, valuePaint) + 2
 
         if (unitEnabled) {
-            valuePaint.color = Color.LTGRAY
-            valuePaint.textSize = (textSize * 0.4).toFloat()
-            canvas.drawText(metric.source.command.pid.units, (left + textWidth), top, valuePaint)
-            textWidth += getTextWidth(metric.source.command.pid.units, valuePaint) + 2
-
+            metric.source.command.pid.units.let {
+                valuePaint.color = Color.LTGRAY
+                valuePaint.textSize = (textSize * 0.4).toFloat()
+                canvas.drawText(it, (left + textWidth), top, valuePaint)
+                textWidth += getTextWidth(it, valuePaint) + 2
+            }
         }
 
         if (settings.isStatisticsEnabled() && statsEnabled) {
             valuePaint.color = Color.LTGRAY
             valuePaint.textSize = (textSize * 0.60).toFloat()
-            val itemWidth = textWidth + getTextWidth(metric.toNumber(metric.max), valuePaint)
+            val pid =  metric.pid()
+            val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
             if (itemWidth <= maxItemWidth(area)) {
-                val min = metric.toNumber(metric.min, statsDoublePrecision)
+                val min = metric.min.format(pid = pid, precision = statsDoublePrecision)
                 canvas.drawText(min, (left + textWidth), top, valuePaint)
-                canvas.drawText(metric.toNumber(metric.max, statsDoublePrecision), (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
+                canvas.drawText(metric.max.format( pid = pid, precision = statsDoublePrecision), (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
             }
         }
     }

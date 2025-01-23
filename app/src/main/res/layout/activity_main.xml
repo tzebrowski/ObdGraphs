@@ -20,7 +20,7 @@
             android:layout_marginStart="1sp"
             android:layout_marginEnd="1sp"
             android:orientation="horizontal"
-            android:weightSum="4"
+            android:weightSum="5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -28,12 +28,12 @@
                 android:id="@+id/connection_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.1"
+                android:layout_weight="1.4"
                 android:gravity="start"
                 android:paddingStart="6dp"
                 android:paddingTop="4sp"
                 android:paddingEnd="0dp"
-                android:text="@string/adapter_connection_type"
+                android:text="@string/status_panel.adapter_connection_type"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
 
@@ -41,10 +41,21 @@
                 android:id="@+id/vehicle_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.8"
+                android:layout_weight="1.2"
                 android:gravity="start"
                 android:paddingTop="4sp"
-                android:text="@string/vehicle_profile"
+                android:text="@string/status_panel.vehicle_profile"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/vehicle_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2"
+                android:gravity="start"
+                android:paddingTop="4sp"
+                android:text="@string/status_panel.vehicle_status"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
 
@@ -52,7 +63,7 @@
                 android:id="@+id/timer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:layout_weight="0.6"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
 

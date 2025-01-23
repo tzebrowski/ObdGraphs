@@ -24,7 +24,15 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
     override fun getDefaults(): Set<Long> = strategies[strategy]?.getDefaults() ?: emptySet()
 
-    override fun getIDs(): MutableSet<Long> = strategies[strategy]?.getPIDs() ?: mutableSetOf()
+    override fun getIDs(): MutableSet<Long>  {
+        val pids = strategies[strategy]?.getPIDs() ?: mutableSetOf()
+        //decorate with Vehicle Status PID
+        if (dataLoggerPreferences.instance.vehicleStatusPanelEnabled ||
+            dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
+            pids.add(namesRegistry.getVehicleStatusPID())
+        }
+        return pids
+    }
 
     override fun getStrategy(): QueryStrategyType = strategy
 

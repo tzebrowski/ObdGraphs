@@ -26,7 +26,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.obd.graphs.R
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.ui.common.isTablet
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
@@ -64,7 +64,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
     private val initialized = AtomicBoolean(false)
-    private val valueScaler = ValueScaler()
+    private val valueConverter = ValueConverter()
 
     private var strokeCap: String = Paint.Cap.BUTT.name
         set(newValue) {
@@ -264,7 +264,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
-    private fun calculateRescaleValue(): Float = (valueScaler.scaleToNewRange(
+    private fun calculateRescaleValue(): Float = (valueConverter.scaleToNewRange(
         measuredWidth.toFloat() * measuredHeight.toFloat(),
         0.0f,
         Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat(),

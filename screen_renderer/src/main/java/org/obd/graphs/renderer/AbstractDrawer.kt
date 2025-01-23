@@ -20,22 +20,22 @@ package org.obd.graphs.renderer
 
 import android.content.Context
 import android.graphics.*
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.namesRegistry
+import org.obd.graphs.format
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
 import org.obd.graphs.renderer.drag.MARGIN_END
-
 private const val STATUS_KEY_FONT_SIZE = 12f
 private const val STATUS_VALUE_FONT_SIZE = 18f
 
 internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
 
-    protected val valueScaler: ValueScaler = ValueScaler()
+    protected val valueConverter: ValueConverter = ValueConverter()
     private val statusPaint = Paint()
 
     protected val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -245,7 +245,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.valueToString()}${it.source.command.pid.units}",
+                        "${it.source.format(castToInt = false)}${it.pid().units?:""}",
                         marginLeft,
                         top,
                         Color.WHITE,
@@ -270,7 +270,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.valueToString()}${it.source.command.pid.units}",
+                        "${it.source.format(castToInt = false)}${ it.pid().units?:""}",
                         marginLeft,
                         top,
                         Color.WHITE,

@@ -30,11 +30,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.format
+import org.obd.graphs.valueToFloat
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
@@ -90,6 +93,7 @@ class GaugeAdapter(
                 }
                 rescaleTextSize(this, multiplier)
             }
+
         }
 
         private fun updateDrawable() {
@@ -107,7 +111,7 @@ class GaugeAdapter(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val preferences: GaugePreferences by lazy { getGaugePreferences() }
-    private val valueScaler = ValueScaler()
+    private val valueConverter = ValueConverter()
 
     override fun getItemId(position: Int): Long {
         return data[position].source.command.pid.id
@@ -127,23 +131,29 @@ class GaugeAdapter(
         position: Int
     ) {
         val metric = data.elementAt(position)
+        val pid = metric.pid()
+
         if (!holder.init) {
-            holder.label.text = metric.source.command.pid.longDescription ?: metric.source.command.pid.description
+            holder.label.text = pid.longDescription ?: pid.description
             holder.resourceFile?.run {
-                val resourceFile = modules.getDefaultModules()[metric.source.command.pid.resourceFile]
-                    ?: metric.source.command.pid.resourceFile
+                val resourceFile = modules.getDefaultModules()[pid.resourceFile]
+                    ?: pid.resourceFile
                 text = resourceFile
                 highLightText(
                     resourceFile, 0.5f,
                     Color.WHITE
                 )
             }
+
+            holder.avgValue?.isGone = !pid.historgam.isAvgEnabled
+            holder.minValue.isGone = !pid.historgam.isMinEnabled
+            holder.maxValue.isGone = !pid.historgam.isMaxEnabled
             holder.init = true
         }
 
         holder.value.run {
             val units = (metric.source.command as ObdCommand).pid.units?:""
-            val txt = "${metric.valueToString()} $units"
+            val txt = "${metric.source.format(castToInt = false)} $units"
             text = txt
 
             highLightText(
@@ -152,39 +162,45 @@ class GaugeAdapter(
             )
         }
 
-
-        holder.minValue.run {
-            val txt = "min\n ${metric.toNumber(metric.min)}"
-            text = txt
-            highLightText(
-                "min", 0.5f,
-                COLOR_PHILIPPINE_GREEN
-            )
+        if (pid.historgam.isMinEnabled) {
+            holder.minValue.run {
+                val txt = "min\n ${metric.min.format(pid)}"
+                text = txt
+                highLightText(
+                    "min", 0.5f,
+                    COLOR_PHILIPPINE_GREEN
+                )
+            }
         }
 
-        holder.maxValue.run {
-            val txt = "max\n  ${metric.toNumber(metric.max)} "
-            text = txt
-            highLightText(
-                "max", 0.5f,
-                COLOR_PHILIPPINE_GREEN
-            )
+
+        if (pid.historgam.isMaxEnabled) {
+            holder.maxValue.run {
+                val txt = "max\n  ${metric.max.format(pid)}"
+                text = txt
+                highLightText(
+                    "max", 0.5f,
+                    COLOR_PHILIPPINE_GREEN
+                )
+            }
         }
 
-        holder.avgValue?.run {
-            val txt = "avg\n ${metric.toNumber(metric.mean)}"
-            text = txt
-            highLightText(
-                "avg", 0.5f,
-                COLOR_PHILIPPINE_GREEN
-            )
+        if (pid.historgam.isAvgEnabled) {
+            holder.avgValue?.run {
+                val txt = "avg\n ${metric.mean.format(pid)}"
+                text = txt
+                highLightText(
+                    "avg", 0.5f,
+                    COLOR_PHILIPPINE_GREEN
+                )
+            }
         }
 
         holder.commandRate?.run {
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
                 val rate = dataLogger.getDiagnostics().rate()
-                    .findBy(RateType.MEAN, metric.source.command.pid)
+                    .findBy(RateType.MEAN, pid)
                 val txt = "rate ${rate.get().value.round(2)}"
                 text = txt
                 highLightText(
@@ -209,7 +225,7 @@ class GaugeAdapter(
                     endValue = it.max.toFloat()
                 }
             }
-            value = metric.toFloat()
+            value = metric.source.valueToFloat()
             invalidate()
         }
     }
@@ -236,7 +252,7 @@ class GaugeAdapter(
             Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
         val currentSize = width * height
 
-        return valueScaler.scaleToNewRange(currentSize, 0.0f, targetSize, 1f, 3f)
+        return valueConverter.scaleToNewRange(currentSize, 0.0f, targetSize, 1f, 3f)
     }
 
     private fun rescaleTextSize(holder: ViewHolder, multiplier: Float) {

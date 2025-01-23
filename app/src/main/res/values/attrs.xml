@@ -6,6 +6,7 @@
 
     <attr name="source" format="string" />
     <attr name="experimental" format="string" />
+    <attr name="broadcastEvent" format="string" />
 
     <declare-styleable name="Gauge">
         <attr name="gaugePointSize" format="integer" />

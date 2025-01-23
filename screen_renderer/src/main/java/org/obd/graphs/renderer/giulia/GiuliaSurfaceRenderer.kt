@@ -23,7 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
-import org.obd.graphs.ValueScaler
+import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
@@ -51,7 +51,7 @@ internal class GiuliaSurfaceRenderer(
     viewSettings: ViewSettings
 ) : CoreSurfaceRenderer(viewSettings) {
 
-    private val valueScaler = ValueScaler()
+    private val valueConverter = ValueConverter()
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
@@ -126,7 +126,7 @@ internal class GiuliaSurfaceRenderer(
         area: Rect
     ): Pair<Float, Float> {
 
-        val scaleRatio = valueScaler.scaleToNewRange(settings.getGiuliaRendererSetting().getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        val scaleRatio = valueConverter.scaleToNewRange(settings.getGiuliaRendererSetting().getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = min(
             when (settings.getMaxColumns()) {

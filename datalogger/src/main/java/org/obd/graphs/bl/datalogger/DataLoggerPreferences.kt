@@ -63,7 +63,9 @@ data class DataLoggerPreferences(
     var gracefulStop: Boolean,
     var dumpRawConnectorResponse: Boolean,
     var delayAfterReset: Long,
-    var fuelTankSize: Int
+    var fuelTankSize: Int,
+    var vehicleStatusPanelEnabled: Boolean,
+    var vehicleStatusDisconnectWhenOff: Boolean,
 )
 
 
@@ -157,10 +159,13 @@ class DataLoggerPreferencesManager {
 
         val resources  = Prefs.getStringSet(PREF_MODULE_LIST, modules.getDefaultModules().keys)!!
 
-
         val fuelTankSize = Prefs.getS("pref.vehicle_settings.fuelTankSize", "58").toInt()
+        val vehicleStatusPanel = Prefs.getBoolean("pref.vehicle_settings.vehicle_status_panel_enabled", false)
+        val vehicleStatusDisconnectWhenOff = Prefs.getBoolean("pref.vehicle_settings.disconnect_when_off", false)
 
         val dataLoggerPreferences = DataLoggerPreferences(
+            vehicleStatusDisconnectWhenOff = vehicleStatusDisconnectWhenOff,
+            vehicleStatusPanelEnabled = vehicleStatusPanel,
             dragRacingCommandFrequency = dragRacingCommandFrequency,
             otherModesBatchSize = mode22batchSize?.toInt(),
             mode01BatchSize = mode01batchSize?.toInt(),

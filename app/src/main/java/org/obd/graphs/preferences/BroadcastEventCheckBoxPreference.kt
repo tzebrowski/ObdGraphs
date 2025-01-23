@@ -16,30 +16,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package org.obd.graphs.preferences.aa
+package org.obd.graphs.preferences
 
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
 
 
-class AACheckBoxPreference(
+class BroadcastEventCheckBoxPreference(
     context: Context,
     private val attrs: AttributeSet?
 ) :
     CheckBoxPreference(context, attrs) {
 
     private val experimental = getAttribute("experimental").toBooleanStrictOrNull() ?: false
+    private val broadcastEvent = getAttribute("broadcastEvent")
 
     init {
         onPreferenceChangeListener = OnPreferenceChangeListener { _, _ ->
-            sendBroadcastEvent(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+            if (broadcastEvent != null && broadcastEvent.isNotEmpty()) {
+                sendBroadcastEvent(broadcastEvent)
+            }
             true
         }
     }

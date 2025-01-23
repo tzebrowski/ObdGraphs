@@ -18,16 +18,13 @@
  **/
 package org.obd.graphs.bl.collector
 
-import org.obd.graphs.round
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
-import org.obd.metrics.pid.ValueType
 
-private const val NO_DATA = "----"
 
 data class Metric(
     var source: ObdMetric,
-    var value: Number?,
+    var value: Any?,
     var min: Double,
     var max: Double,
     var mean: Double,
@@ -35,31 +32,15 @@ data class Metric(
     var rate: Double?
 ) {
     companion object {
-        fun newInstance(source: ObdMetric, value: Number, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0)
-        = Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
+        fun newInstance(source: ObdMetric, value: Any, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =
+            Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 
-    fun toNumber(value: Double?, doublePrecision: Int = 2): String {
-        return toNumber(source.command.pid, value, doublePrecision = doublePrecision).toString()
-    }
+    fun isInAlert(): Boolean = source.isAlert
 
-    fun isInAlert() : Boolean = source.isAlert
+    fun pid(): PidDefinition = source.command.pid
 
-    fun valueToString(): String =
-         if (source.value == null) {
-             NO_DATA
-        } else {
-            toNumber(source.valueToDouble())
-        }
-
-    fun toFloat(): Float =
-        if (source.value == null) {
-            if (source.command.pid.min == null ) 0f else source.command.pid.min.toFloat()
-        } else {
-            source.valueToDouble().toFloat()
-        }
-
-    override fun equals(other: Any?): Boolean{
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other?.javaClass != javaClass) return false
 
@@ -68,28 +49,7 @@ data class Metric(
         return this.source == other.source
     }
 
-    override fun hashCode(): Int{
+    override fun hashCode(): Int {
         return this.source.hashCode()
     }
-}
-
-fun toNumber(pid: PidDefinition, input: Number?, doublePrecision: Int = 2): Number {
-
-    if (input == null) {
-        return Double.NaN
-    }
-
-    val value = input.toDouble()
-    if (value.isNaN()) {
-        return 0.0
-    }
-    return if (pid.type == null) value.round(doublePrecision) else
-        pid.type.let {
-            return when (pid.type) {
-                ValueType.DOUBLE -> value.round(doublePrecision)
-                ValueType.INT -> value.toInt()
-                ValueType.SHORT -> value.toInt()
-                else -> value.round(1)
-            }
-        }
 }

@@ -32,6 +32,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.extra.*
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -43,7 +44,6 @@ import org.obd.graphs.ui.common.toast
 
 
 internal val powerReceiver = PowerBroadcastReceiver()
-
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"
 const val NOTIFICATION_DASH_VIEW_TOGGLE = "view.dash.toggle"
 const val NOTIFICATION_GAUGE_VIEW_TOGGLE = "view.gauge.toggle"
@@ -54,6 +54,7 @@ const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
 const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 
+private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
 
@@ -227,10 +228,32 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(R.string.main_activity_toast_connection_error)
             handleStop()
         }
+
+        EVENT_VEHICLE_STATUS_VEHICLE_RUNNING -> {
+            updateVehicleStatus("Running")
+        }
+
+        EVENT_VEHICLE_STATUS_VEHICLE_IDLING -> {
+            updateVehicleStatus("Idling")
+        }
+
+        EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
+            updateVehicleStatus("Key off")
+            if (dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
+                Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
+                dataLogger.stop()
+            }
+        }
+
+        EVENT_VEHICLE_STATUS_IGNITION_ON -> {
+            updateVehicleStatus("Key on")
+        }
+
+        EVENT_VEHICLE_STATUS_CHANGED->{
+            updateVehicleStatus("")
+        }
     }
 }
-
-
 
 private fun MainActivity.handleStop() {
 
@@ -299,6 +322,14 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
         it.addAction(REQUEST_LOCATION_PERMISSIONS)
         it.addAction(RESET_TOOLBAR_ANIMATION)
+
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_RUNNING)
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_IDLING)
+        it.addAction(EVENT_VEHICLE_STATUS_IGNITION_OFF)
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING)
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING)
+        it.addAction(EVENT_VEHICLE_STATUS_IGNITION_ON)
+        it.addAction(EVENT_VEHICLE_STATUS_CHANGED)
     }
 
     registerReceiver(this, powerReceiver){

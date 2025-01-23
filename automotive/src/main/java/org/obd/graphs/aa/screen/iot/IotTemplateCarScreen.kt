@@ -39,6 +39,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.format
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.renderer.DynamicSelectorMode
 
@@ -231,7 +232,7 @@ internal class IotTemplateCarScreen(
                 metricsCollector.getMetrics().forEach {
                     paneBuilder.addRow(
                         Row.Builder()
-                        .setImage(valueDrawable.draw(it.valueToString(),settings.getColorTheme().progressColor),
+                        .setImage(valueDrawable.draw(it.source.format(castToInt = false),settings.getColorTheme().progressColor),
                             Row.IMAGE_TYPE_LARGE
                         )
                         .setMetadata(Metadata.Builder().build())
@@ -258,7 +259,8 @@ internal class IotTemplateCarScreen(
         val title = StringBuilder()
         title.append(metric.source.command.pid.description.replace("\n",""))
         title.append("\n")
-        title.append("· min:${metric.toNumber(metric.min)} avg: ${metric.toNumber(metric.mean)} max: ${metric.toNumber(metric.max)}")
+        val pid = metric.pid()
+        title.append("· min:${metric.min.format(pid)} avg: ${metric.mean.format(pid)} max: ${metric.max.format(pid)}")
         return SpannableString(title)
     }
 

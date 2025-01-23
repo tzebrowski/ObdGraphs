@@ -372,6 +372,24 @@
                 app:showSeekBarValue="true"
                 app:singleLineTitle="false"
                 app:useSimpleSummaryProvider="true" />
+
+            <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.vehicle_settings.vehicle_status_panel_enabled"
+                android:summary="@string/pref.vehicle_settings.vehicleStatusPanel_summary"
+                android:title="@string/pref.vehicle_settings.vehicleStatusPanel"
+                app:broadcastEvent="event.vehicle.status.CHANGED"
+                app:experimental="true"
+                app:singleLineTitle="false" />
+
+            <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.vehicle_settings.disconnect_when_off"
+                android:summary="@string/pref.vehicle_settings.disconnect_when_off_summary"
+                android:title="@string/pref.vehicle_settings.disconnect_when_off"
+                app:experimental="true"
+                app:singleLineTitle="false" />
+
         </PreferenceScreen>
     </PreferenceCategory>
 
