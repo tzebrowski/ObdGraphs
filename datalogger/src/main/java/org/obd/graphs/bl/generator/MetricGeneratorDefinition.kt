@@ -7,7 +7,8 @@ import org.obd.metrics.pid.PidDefinition
 private const val VEHICLE_RUNNING_KEY = "vehicle.running"
 private const val KEY_STATUS_KEY = "key.status"
 private const val ENGINE_RUNNING_KEY = "engine.running"
-class ToStringHashMap<T, V>(private val converter: ToStringConverter<T, V>) : HashMap<T, V>() {
+
+private class ToStringHashMap<T, V>(private val converter: ToStringConverter<T, V>) : HashMap<T, V>() {
     fun interface ToStringConverter<TT, VV> {
         fun convert(items: Map<TT, VV>): String
     }
@@ -91,9 +92,6 @@ internal val baseMetrics = mutableMapOf(
             }
 
         }),
-
-
-
 
     namesRegistry.getVehicleStatusPID() to MetricGeneratorDefinition(
         pid = dataLogger.getPidDefinitionRegistry().findBy(namesRegistry.getVehicleStatusPID()),

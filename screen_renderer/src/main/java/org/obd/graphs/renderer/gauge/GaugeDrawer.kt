@@ -213,7 +213,7 @@ internal class GaugeDrawer(
                 }
             }
             paint.shader = null
-        } 
+        }
     }
 
 
@@ -416,8 +416,8 @@ internal class GaugeDrawer(
         area: RectF,
     ) {
         if (metric.source.isNumber()) {
-            val pid = metric
-                .pid()
+
+            val pid = metric.pid()
             val startValue = pid.min.toDouble()
             val endValue = pid.max.toDouble()
 
