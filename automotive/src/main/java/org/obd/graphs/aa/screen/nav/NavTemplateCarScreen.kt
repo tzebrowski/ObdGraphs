@@ -240,7 +240,7 @@ internal class NavTemplateCarScreen(
             it.addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
             it.addAction(CHANGE_SCREEN_EVENT)
 
-            it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_MOVING)
+            it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_RUNNING)
             it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_IDLING)
             it.addAction(EVENT_VEHICLE_STATUS_IGNITION_OFF)
             it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING)

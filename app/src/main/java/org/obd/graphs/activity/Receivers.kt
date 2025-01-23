@@ -229,16 +229,16 @@ internal fun MainActivity.receive(intent: Intent?) {
             handleStop()
         }
 
-        EVENT_VEHICLE_STATUS_VEHICLE_MOVING -> {
-            updateVehicleStatus("MOV")
+        EVENT_VEHICLE_STATUS_VEHICLE_RUNNING -> {
+            updateVehicleStatus("Running")
         }
 
         EVENT_VEHICLE_STATUS_VEHICLE_IDLING -> {
-            updateVehicleStatus("IDL")
+            updateVehicleStatus("Idling")
         }
 
         EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
-            updateVehicleStatus("OFF")
+            updateVehicleStatus("Key off")
             if (dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
                 Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
                 dataLogger.stop()
@@ -246,7 +246,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         EVENT_VEHICLE_STATUS_IGNITION_ON -> {
-            updateVehicleStatus("ON")
+            updateVehicleStatus("Key on")
         }
 
         EVENT_VEHICLE_STATUS_CHANGED->{
@@ -323,7 +323,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(REQUEST_LOCATION_PERMISSIONS)
         it.addAction(RESET_TOOLBAR_ANIMATION)
 
-        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_MOVING)
+        it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_RUNNING)
         it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_IDLING)
         it.addAction(EVENT_VEHICLE_STATUS_IGNITION_OFF)
         it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING)

@@ -7,7 +7,7 @@ import org.obd.graphs.bl.query.isVehicleStatus
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 
-const val EVENT_VEHICLE_STATUS_VEHICLE_MOVING = "event.vehicle.status.vehicle.moving"
+const val EVENT_VEHICLE_STATUS_VEHICLE_RUNNING = "event.vehicle.status.vehicle.running"
 const val EVENT_VEHICLE_STATUS_VEHICLE_IDLING = "event.vehicle.status.vehicle.idling"
 const val EVENT_VEHICLE_STATUS_IGNITION_OFF = "event.vehicle.status.vehicle.ignition_off"
 const val EVENT_VEHICLE_STATUS_IGNITION_ON = "event.vehicle.status.vehicle.ignition_on"
@@ -48,7 +48,7 @@ internal class VehicleStatusMetricsProcessor : MetricsProcessor {
                 currentVehicleDecelerating = value["vehicle.decelerating"]!!
 
                 if (currentEngineRunning && currentVehicleRunning) {
-                    sendBroadcastEvent(EVENT_VEHICLE_STATUS_VEHICLE_MOVING)
+                    sendBroadcastEvent(EVENT_VEHICLE_STATUS_VEHICLE_RUNNING)
                 }
 
                 if (currentEngineRunning && !currentVehicleRunning) {
