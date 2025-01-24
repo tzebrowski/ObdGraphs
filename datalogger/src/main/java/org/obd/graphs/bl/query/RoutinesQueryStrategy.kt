@@ -18,4 +18,3 @@ package org.obd.graphs.bl.query
 
 
 internal class RoutinesQueryStrategy : QueryStrategy() {}
-

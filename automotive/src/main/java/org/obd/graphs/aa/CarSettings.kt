@@ -234,16 +234,18 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
             if (!Prefs.contains(gauge.selectedPIDsKey)) {
                 Log.i(LOG_TAG, "No Gauge settings found. Copy Giulia Settings...")
                 val giulia = giuliaRendererSettings.dataPrefs
-                val list = Prefs.getStringSet(giulia.selectedPIDsKey).toList()
 
                 (1..4).forEach {
-                    val list = Prefs.getStringSet("${giulia.virtualScreenPrefixKey}$it").toList()
-                    Log.i(LOG_TAG, "Giulia virtual screen $it=$list")
-                    Prefs.updateStringSet("${gauge.virtualScreenPrefixKey}$it", list)
+                    Prefs.getStringSet("${giulia.virtualScreenPrefixKey}$it").toList().let { list ->
+                        Log.i(LOG_TAG, "Giulia virtual screen $it=$list")
+                        Prefs.updateStringSet("${gauge.virtualScreenPrefixKey}$it", list)
+                    }
                 }
 
-                Log.i(LOG_TAG, "Updating Gauge Selected PIDs $list")
-                Prefs.updateStringSet(gauge.selectedPIDsKey, list)
+               Prefs.getStringSet(giulia.selectedPIDsKey).toList().let { list ->
+                    Log.i(LOG_TAG, "Updating Gauge Selected PIDs $list")
+                    Prefs.updateStringSet(gauge.selectedPIDsKey, list)
+               }
             }
         } catch (e: Exception){
             Log.e(LOG_TAG, "Failed to set copy Giulia settings",e)

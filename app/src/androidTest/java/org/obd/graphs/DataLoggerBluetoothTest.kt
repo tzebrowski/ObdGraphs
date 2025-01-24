@@ -66,5 +66,3 @@ class DataLoggerBluetoothTest {
             countDownLatchBroadcastReceiver.eventGate.count,0)
     }
 }
-
-

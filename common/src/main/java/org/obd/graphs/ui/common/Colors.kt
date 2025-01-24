@@ -120,5 +120,3 @@ val COLOR_DYNAMIC_SELECTOR_NORMAL: Int = color(R.color.dynamic_selector_normal)
 val COLOR_WHITE: Int  = color(R.color.white)
 
 fun color(id: Int) = ContextCompat.getColor(getContext()!!, id)
-
-

@@ -37,4 +37,3 @@ const val ROUTINE_WORKFLOW_NOT_RUNNING_EVENT = "data.logger.routine.workflow_not
 const val ROUTINE_UNKNOWN_STATUS_EVENT = "data.logger.routine.unknown_status"
 
 internal const val LOG_TAG = "DataLogger"
-

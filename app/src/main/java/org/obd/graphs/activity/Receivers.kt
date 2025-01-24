@@ -340,4 +340,3 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(PROFILE_CHANGED_EVENT)
     }
 }
-

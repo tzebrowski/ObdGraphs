@@ -85,7 +85,7 @@ internal class PerformanceSurfaceRenderer(
             )
         }
     }
-    
+
     override fun recycle() {
         performanceDrawer.recycle()
     }

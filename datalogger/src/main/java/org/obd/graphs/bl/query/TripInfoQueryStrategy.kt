@@ -49,4 +49,3 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
 
     override fun getPIDs() = Prefs.getLongSet(TRIP_INFO_QUERY_PREF_KEY).toMutableSet()
 }
-

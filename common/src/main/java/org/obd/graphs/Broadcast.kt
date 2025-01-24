@@ -47,4 +47,3 @@ fun registerReceiver(context: Context?, receiver: BroadcastReceiver, func: (filt
         }
     }
 }
-
