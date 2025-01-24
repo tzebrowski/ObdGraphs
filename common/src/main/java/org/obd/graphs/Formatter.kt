@@ -52,7 +52,6 @@ fun ObdMetric.valueToNumber(): Number? =
 
 fun ObdMetric.isNumber(): Boolean = this.value != null && this.value is Number
 
-
 fun Number.format(pid: PidDefinition, precision: Int = 2, castToInt: Boolean = false): String = format(
     input = this,
     pid = pid, precision = precision, castToInt = castToInt
@@ -64,15 +63,10 @@ private fun format(input: Any?, pid: PidDefinition? = null, precision: Int = 2, 
         NO_DATA
     } else {
         if (input is Number) {
-
             val number = if (pid == null || pid.type == null) {
-                if (input is Number) {
-                    if (castToInt) input.toInt()
-                    else if (input is Double) (input as Number).toDouble().round(precision)
-                    else input
-                } else {
-                    input
-                }
+                if (castToInt) input.toInt()
+                else if (input is Double) (input as Number).toDouble().round(precision)
+                else input
             } else {
                 pid.type.let {
                     when (pid.type) {
