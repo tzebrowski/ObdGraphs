@@ -16,11 +16,10 @@
  */
 package org.obd.graphs.bl.query
 
-import org.obd.graphs.preferences.Prefs
 
 internal class DragRacingQueryStrategy : QueryStrategy() {
     override fun getPIDs(): MutableSet<Long> {
-        return if (Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)) {
+        return if (namesRegistry.isGMEExtensionsEnabled()) {
             mutableSetOf(
                 namesRegistry.getVehicleSpeedPID(),
                 namesRegistry.getEngineRpmPID(),

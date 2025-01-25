@@ -21,6 +21,7 @@ import android.util.Log
 import androidx.car.app.CarContext
 import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.ViewPreferencesSerializer
+import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.preferences.*
 import org.obd.graphs.renderer.*
 import org.obd.graphs.runAsync
@@ -117,7 +118,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         displayMetricsEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
         shiftLightsEnabled = Prefs.getBoolean("pref.aa.drag_race.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.aa.drag_race.shift_lights.rev_value", "5000").toInt()
-        contextInfoEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
+        contextInfoEnabled = namesRegistry.isGMEExtensionsEnabled()
         fontSize = Prefs.getS("pref.aa.drag_race.font_size", "30").toInt()
     }
 

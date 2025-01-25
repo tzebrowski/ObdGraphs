@@ -106,7 +106,6 @@ internal val baseMetrics = mutableMapOf(
             (1..100).forEach{
                 add(it)
             }
-
         }),
 
     namesRegistry.getVehicleStatusPID() to MetricGeneratorDefinition(

@@ -19,7 +19,6 @@ package org.obd.graphs.bl.query
 import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 
-fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == namesRegistry.getAtmPressurePID()
 fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == namesRegistry.getAmbientTempPID()
@@ -32,7 +31,7 @@ fun ObdMetric.isEngineRpm(): Boolean = command.pid.id == namesRegistry.getEngine
 
 val namesRegistry = PIDsNamesRegistry()
 
-const val PREF_PROFILE_2_0_GME_EXTENSION_ENABLED = "pref.profile.2_0_GME_extension.enabled"
+private const val PREF_PROFILE_2_0_GME_EXTENSION_ENABLED = "pref.profile.2_0_GME_extension.enabled"
 private const val EXT_ATM_PRESSURE_PID_ID = 7021L
 private const val EXT_AMBIENT_TEMP_PID_ID = 7047L
 private const val EXT_MEASURED_INTAKE_PRESSURE_PID_ID = 7005L
@@ -68,6 +67,8 @@ private const val OIL_DEGRADATION_PID_ID = 7015L
 private const val VEHICLE_STATUS_PID_ID = 17091L
 
 class PIDsNamesRegistry {
+
+    fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
 
     fun getOilDegradationPID(): Long = OIL_DEGRADATION_PID_ID
 
