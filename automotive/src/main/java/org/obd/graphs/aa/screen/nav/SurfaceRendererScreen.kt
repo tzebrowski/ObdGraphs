@@ -75,8 +75,6 @@ internal class SurfaceRendererScreen(
 
             when (intent?.action) {
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
-                AA_VIRTUAL_SCREEN_REFRESH_EVENT -> renderFrame()
-
                 AA_REFRESH_EVENT -> {
                     Log.i(LOG_TAG,"Received forced refresh screen event for screen ${screenId}. " +
                             "Is renderer: ${isSurfaceRendererScreen(screenId)}")
@@ -90,6 +88,11 @@ internal class SurfaceRendererScreen(
                         updateQuery()
                         renderFrame()
                     }
+                }
+
+                AA_VIRTUAL_SCREEN_REFRESH_EVENT -> {
+                    updateQuery()
+                    renderFrame()
                 }
 
                 AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT -> {

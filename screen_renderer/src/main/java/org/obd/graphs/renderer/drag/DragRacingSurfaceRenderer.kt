@@ -26,7 +26,6 @@ import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.isGMEExtensionsEnabled
 import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.renderer.*
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
@@ -78,7 +77,9 @@ internal class DragRacingSurfaceRenderer(
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = settings.getDragRacingScreenSettings().contextInfoEnabled)
+                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector,
+                    drawContextInfo = settings.getDragRacingScreenSettings().contextInfoEnabled)
+
                 top += MARGIN_TOP
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 40
@@ -86,39 +87,40 @@ internal class DragRacingSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
-            if (isGMEExtensionsEnabled()){
-                val width =  (area.width() / 2f ) - 10
-                metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
-                    dragRacingDrawer.drawMetric(
-                        canvas = canvas,
-                        area = area,
-                        metric = it,
-                        left = left,
-                        top = top,
-                        width = width
-                    )
-                }
+            if (settings.getDragRacingScreenSettings().displayMetricsEnabled){
+                if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
+                    val width = (area.width() / 2f) - 10
+                    metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
+                        dragRacingDrawer.drawMetric(
+                            canvas = canvas,
+                            area = area,
+                            metric = it,
+                            left = left,
+                            top = top,
+                            width = width
+                        )
+                    }
 
-                metricsCollector.getMetric(namesRegistry.getMeasuredIntakePressurePID())?.let {
-                    top = dragRacingDrawer.drawMetric(
-                        canvas = canvas,
-                        area = area,
-                        metric = it,
-                        left = left + width,
-                        top = top,
-                        width = width
-                    )
-                }
-
-            } else {
-                metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
-                    top = dragRacingDrawer.drawMetric(
-                        canvas = canvas,
-                        area = area,
-                        metric = it,
-                        left = left,
-                        top = top
-                    )
+                    metricsCollector.getMetric(namesRegistry.getMeasuredIntakePressurePID())?.let {
+                        top = dragRacingDrawer.drawMetric(
+                            canvas = canvas,
+                            area = area,
+                            metric = it,
+                            left = left + width,
+                            top = top,
+                            width = width
+                        )
+                    }
+                } else {
+                  metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
+                        top = dragRacingDrawer.drawMetric(
+                            canvas = canvas,
+                            area = area,
+                            metric = it,
+                            left = left,
+                            top = top
+                        )
+                    }
                 }
             }
 
