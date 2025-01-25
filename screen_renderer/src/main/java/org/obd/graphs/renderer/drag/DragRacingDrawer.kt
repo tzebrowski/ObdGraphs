@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,12 +23,13 @@ import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
 import org.obd.graphs.format
-import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.round
+import org.obd.graphs.toFloat
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_WHITE
+
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
@@ -67,10 +68,12 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             val top = area.top + (i * segmentHeight)
             val bottom = top + segmentHeight - topMargin
 
-            canvas.drawRect(area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
-                bottom, shiftLightPaint)
+            canvas.drawRect(
+                area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                bottom, shiftLightPaint
+            )
 
-            val left = area.left +  area.width().toFloat() - leftMargin
+            val left = area.left + area.width().toFloat() - leftMargin
             canvas.drawRect(
                 left, top, left + shiftLightsWidth,
                 bottom, shiftLightPaint
@@ -84,10 +87,12 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                 val top = area.top + (i * segmentHeight)
                 val bottom = top + segmentHeight - topMargin
 
-                canvas.drawRect(area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
-                    bottom, shiftLightPaint)
+                canvas.drawRect(
+                    area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                    bottom, shiftLightPaint
+                )
 
-                val left = area.left +  area.width().toFloat() - leftMargin
+                val left = area.left + area.width().toFloat() - leftMargin
 
                 canvas.drawRect(
                     left, top, left + shiftLightsWidth,
@@ -177,13 +182,13 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
                 val frequencyTextSize = textSizeBase * 0.45f
                 val text = "${metric.rate?.round(2)} read/sec"
-                val ww = getTextWidth(text,titlePaint) * 0.6F
+                val ww = getTextWidth(text, titlePaint) * 0.6F
 
                 drawText(
                     canvas,
                     text,
                     left + width - ww,
-                    top ,
+                    top,
                     Color.WHITE,
                     frequencyTextSize
                 )
@@ -282,7 +287,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
         val pid = it.pid()
         val progress = valueConverter.scaleToNewRange(
-            it.source.valueToNumber()?.toFloat() ?: pid.min.toFloat(),
+            it.source.toFloat(),
             pid.min.toFloat(), pid.max.toFloat(), left, left + width - MARGIN_END
         )
 
@@ -361,13 +366,15 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     }
 
 
-    private inline fun drawDragRacingEntry(area: Rect,
-                                           dragRacingEntry: DragRacingEntry,
-                                           label: String,
-                                           top: Float,
-                                           left:Float,
-                                           canvas: Canvas,
-                                           textSizeBase: Float) {
+    private inline fun drawDragRacingEntry(
+        area: Rect,
+        dragRacingEntry: DragRacingEntry,
+        label: String,
+        top: Float,
+        left: Float,
+        canvas: Canvas,
+        textSizeBase: Float
+    ) {
 
 
         val currentXPos = area.centerX() / 1.5f

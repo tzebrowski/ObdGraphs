@@ -26,7 +26,7 @@ class ValueConverter {
         obdMetric: ObdMetric
     ): Float {
         return scaleToNewRange(
-            obdMetric.valueToFloat(), obdMetric.command.pid.min.toFloat(),
+            obdMetric.toFloat(), obdMetric.command.pid.min.toFloat(),
             obdMetric.command.pid.max.toFloat(), NEW_RANGE_MIN_VAL, NEW_RANGE_MAX_VAL
         )
     }

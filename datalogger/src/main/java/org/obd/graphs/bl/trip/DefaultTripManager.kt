@@ -21,8 +21,8 @@ import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.valueToNumber
 import org.obd.graphs.getContext
+import org.obd.graphs.isNumber
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.profile.profile
@@ -52,11 +52,8 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
         try {
-            if (obdMetric.valueToNumber() == null){
-                if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
-                    Log.v(LOGGER_TAG, "Accepting just Number metrics")
-                }
-            }else {
+
+            if (obdMetric.isNumber()){
                 tripCache.getTrip { trip ->
                     val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
                     val key = obdMetric.command.pid.id
@@ -83,6 +80,10 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                             )
                         )
                     }
+                }
+            }else {
+                if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
+                    Log.v(LOGGER_TAG, "Rejecting Non-Number metrics")
                 }
             }
         } catch (e: Throwable) {

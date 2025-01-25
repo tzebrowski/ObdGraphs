@@ -35,7 +35,7 @@ import org.obd.graphs.R
 import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.format
-import org.obd.graphs.valueToFloat
+import org.obd.graphs.toFloat
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
@@ -223,7 +223,7 @@ class GaugeAdapter(
                     endValue = it.max.toFloat()
                 }
             }
-            value = metric.source.valueToFloat()
+            value = metric.source.toFloat()
             invalidate()
         }
     }

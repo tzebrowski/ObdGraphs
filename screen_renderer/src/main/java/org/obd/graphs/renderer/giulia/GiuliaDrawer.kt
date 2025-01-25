@@ -21,11 +21,11 @@ import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.format
 import org.obd.graphs.isNumber
-import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.toFloat
 
-private const val FOOTER_SIZE_RATIO = 1.3f
+ private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
@@ -174,7 +174,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         if (it.source.isNumber()){
             paint.color = color
             val progress =  valueConverter.scaleToNewRange(
-                it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
+                it.source.toFloat(),
                 it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
             )
 

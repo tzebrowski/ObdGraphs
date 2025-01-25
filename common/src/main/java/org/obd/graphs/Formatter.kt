@@ -22,14 +22,25 @@ import org.obd.metrics.pid.ValueType
 
 private const val NO_DATA = "No data"
 
-fun ObdMetric.format(castToInt: Boolean = false, precision: Int = 2): String = format(
-    input = this.value,
-    pid = null, precision = precision, castToInt = castToInt
-)
+fun ObdMetric.format(
+    castToInt: Boolean = false,
+    precision: Int = 2,
+): String =
+    format(
+        input = this.value,
+        pid = null,
+        precision = precision,
+        castToInt = castToInt,
+    )
 
-fun ObdMetric.valueToFloat(): Float =
+fun ObdMetric.toFloat(): Float =
     if (this.value == null) {
-        if (this.command.pid.min == null) 0f else this.command.pid.min.toFloat()
+        if (this.command.pid.min == null) {
+            0f
+        } else {
+            this.command.pid.min
+                .toFloat()
+        }
     } else {
         if (this.value is Number && !(this.value as Number).toDouble().isNaN()) {
             this.valueToDouble().toFloat()
@@ -38,45 +49,66 @@ fun ObdMetric.valueToFloat(): Float =
         }
     }
 
-fun ObdMetric.valueToNumber(): Number? =
-    if (this.value == null) {
-        null
+fun ObdMetric.toInt(): Int =
+    if (isNumber()) {
+        (value as Number).toInt()
     } else {
-        if (value is Number) {
-            value as Number
-        } else {
-            null
-        }
+        0
     }
 
+fun ObdMetric.toDouble(): Double = (toNumber() ?: 0).toDouble()
 
 fun ObdMetric.isNumber(): Boolean = this.value != null && this.value is Number
 
-fun Number.format(pid: PidDefinition, precision: Int = 2, castToInt: Boolean = false): String = format(
-    input = this,
-    pid = pid, precision = precision, castToInt = castToInt
-)
+private fun ObdMetric.toNumber(): Number? =
+    if (isNumber()) {
+        value as Number
+    } else {
+        null
+    }
 
-private fun format(input: Any?, pid: PidDefinition? = null, precision: Int = 2, castToInt: Boolean = false): String =
+fun Number.format(
+    pid: PidDefinition,
+    precision: Int = 2,
+    castToInt: Boolean = false,
+): String =
+    format(
+        input = this,
+        pid = pid,
+        precision = precision,
+        castToInt = castToInt,
+    )
+
+private fun format(
+    input: Any?,
+    pid: PidDefinition? = null,
+    precision: Int = 2,
+    castToInt: Boolean = false,
+): String =
 
     if (input == null) {
         NO_DATA
     } else {
         if (input is Number) {
-            val number = if (pid == null || pid.type == null) {
-                if (castToInt) input.toInt()
-                else if (input is Double) (input as Number).toDouble().round(precision)
-                else input
-            } else {
-                pid.type.let {
-                    when (pid.type) {
-                        ValueType.DOUBLE -> input.toDouble().round(precision)
-                        ValueType.INT -> input.toInt()
-                        ValueType.SHORT -> input.toInt()
-                        else -> input.toDouble().round(1)
+            val number =
+                if (pid == null || pid.type == null) {
+                    if (castToInt) {
+                        input.toInt()
+                    } else if (input is Double) {
+                        (input as Number).toDouble().round(precision)
+                    } else {
+                        input
+                    }
+                } else {
+                    pid.type.let {
+                        when (pid.type) {
+                            ValueType.DOUBLE -> input.toDouble().round(precision)
+                            ValueType.INT -> input.toInt()
+                            ValueType.SHORT -> input.toInt()
+                            else -> input.toDouble().round(1)
+                        }
                     }
                 }
-            }
 
             if (number is Double && number.toDouble().isNaN()) {
                 NO_DATA

@@ -38,11 +38,11 @@ import com.github.mikephil.charting.model.GradientColor
 import org.obd.graphs.R
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.toDouble
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.highLightText
 import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
-import org.obd.graphs.valueToNumber
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
 
@@ -80,7 +80,7 @@ class DashboardViewAdapter(
         val obdCommand = metric.source.command as ObdCommand
         holder.buildChart(obdCommand.pid)
 
-        val segmentNum: Int = holder.segments.indexOf((metric.source.valueToNumber() ?: 0).toDouble())
+        val segmentNum: Int = holder.segments.indexOf(metric.source.toDouble())
         (segmentNum > 0).apply {
             // reset
             (0 until holder.chart.data.dataSetCount).reversed().forEach { e ->

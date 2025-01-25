@@ -18,15 +18,12 @@ package org.obd.graphs.renderer.gauge
 
 import android.content.Context
 import android.graphics.*
+import org.obd.graphs.*
 import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.format
-import org.obd.graphs.valueToNumber
 import org.obd.graphs.commons.R
-import org.obd.graphs.isNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.round
 import org.obd.graphs.ui.common.*
 import kotlin.math.*
 
@@ -178,9 +175,9 @@ internal class GaugeDrawer(
                 setProgressGradient(rect)
             }
 
-            val value = metric.source.valueToNumber()?.toFloat() ?: metric.source.command.pid.min.toFloat()
-            val startValue = metric.source.command.pid.min.toFloat()
-            val endValue = metric.source.command.pid.max.toFloat()
+            val value = metric.source.toFloat()
+            val startValue = metric.pid().min.toFloat()
+            val endValue = metric.pid().max.toFloat()
 
             if (value == startValue) {
                 canvas.drawArc(

@@ -21,12 +21,12 @@ import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.format
-import org.obd.graphs.valueToNumber
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.drag.MARGIN_END
+import org.obd.graphs.toFloat
 
-private const val CURRENT_MIN = 22f
+ private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
@@ -239,7 +239,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         paint.color = color
 
         val progress = valueConverter.scaleToNewRange(
-            it.source.valueToNumber()?.toFloat() ?: it.source.command.pid.min.toFloat(),
+            it.source.toFloat(),
             it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )
 

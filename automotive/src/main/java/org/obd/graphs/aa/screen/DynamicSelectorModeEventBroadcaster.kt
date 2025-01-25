@@ -19,10 +19,10 @@ package org.obd.graphs.aa.screen
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.query.isDynamicSelector
+import org.obd.graphs.isNumber
 import org.obd.graphs.sendBroadcastEvent
-import org.obd.graphs.valueToNumber
+import org.obd.graphs.toInt
 import org.obd.metrics.api.model.ObdMetric
-
 
 const val EVENT_DYNAMIC_SELECTOR_MODE_NORMAL = "event.dynamic.selector.mode.normal"
 const val EVENT_DYNAMIC_SELECTOR_MODE_ECO = "event.dynamic.selector.mode.eco"
@@ -37,26 +37,23 @@ internal class DynamicSelectorModeEventBroadcaster : MetricsProcessor {
     private var currentMode = -1
 
     override fun postValue(obdMetric: ObdMetric) {
-        if (obdMetric.isDynamicSelector()) {
+        if (obdMetric.isDynamicSelector() && obdMetric.isNumber()) {
+            val it = obdMetric.toInt()
+            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                Log.v(LOG_TAG, "Received=$it, current=$currentMode ")
+            }
 
-            obdMetric.valueToNumber()?.let {
+            if (currentMode != it) {
                 if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                    Log.v(LOG_TAG, "Received=${it}, current=${currentMode} ")
+                    Log.v(LOG_TAG, "Broadcasting Dynamic Selector Mode Change, new=$it")
                 }
 
-                if (currentMode != it) {
-
-                    if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                        Log.v(LOG_TAG, "Broadcasting Dynamic Selector Mode Change, new=${it}")
-                    }
-
-                    currentMode = it.toInt()
-                    when (it.toInt()) {
-                        0 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
-                        2 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
-                        4 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
-                        else -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
-                    }
+                currentMode = it
+                when (it) {
+                    0 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_NORMAL)
+                    2 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
+                    4 -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
+                    else -> sendBroadcastEvent(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
                 }
             }
         }

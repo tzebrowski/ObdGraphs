@@ -19,7 +19,8 @@ package org.obd.graphs.bl.drag
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.query.*
-import org.obd.graphs.valueToNumber
+import org.obd.graphs.isNumber
+import org.obd.graphs.toInt
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
 import kotlin.math.min
@@ -61,36 +62,34 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
     }
 
     override fun postValue(obdMetric: ObdMetric) {
-
-        if (obdMetric.isEngineRpm()) {
-            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                Log.v(
-                    LOG_KEY, "Current revLimit='${registry.getShiftLightsRevThreshold()}', " +
-                            "current rev: ${obdMetric.valueToNumber()!!.toInt()}, rising: ${obdMetric.valueToNumber()!!.toInt() > registry.getShiftLightsRevThreshold()}"
-                )
+        if (obdMetric.isNumber()) {
+            val intValue = obdMetric.toInt()
+            if (obdMetric.isEngineRpm()) {
+                if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                    Log.v(
+                        LOG_KEY, "Current revLimit='${registry.getShiftLightsRevThreshold()}', " +
+                                "current rev: $intValue, rising: ${intValue > registry.getShiftLightsRevThreshold()}"
+                    )
+                }
+                registry.enableShiftLights(intValue > registry.getShiftLightsRevThreshold())
+            } else if (obdMetric.isAtmPressure()) {
+                atmosphericPressure = intValue
+            } else if (obdMetric.isAmbientTemp()) {
+                ambientTemperature = intValue
+            } else if (obdMetric.isVehicleSpeed()) {
+               processVehicleSpeedData(obdMetric)
             }
-            registry.enableShiftLights(obdMetric.valueToNumber()!!.toInt() > registry.getShiftLightsRevThreshold())
-        } else if (obdMetric.isAtmPressure()) {
-            obdMetric.valueToNumber()?.let {
-                atmosphericPressure = it.toInt()
-            }
-        } else if (obdMetric.isAmbientTemp()) {
-            obdMetric.valueToNumber()?.let {
-                ambientTemperature = it.toInt()
-            }
-        } else if (obdMetric.isVehicleSpeed()) {
-
-            processVehicleSpeedData(obdMetric)
         }
     }
 
     private fun processVehicleSpeedData(obdMetric: ObdMetric) {
+        val valueToInt = obdMetric.toInt()
 
-        if (obdMetric.valueToNumber()!!.toInt() == SPEED_0_KM_H) {
+        if (valueToInt == SPEED_0_KM_H) {
             reset0()
 
             if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                Log.v(LOG_KEY, "Ready to measure, current speed: ${obdMetric.valueToNumber()!!}")
+                Log.v(LOG_KEY, "Ready to measure, current speed: $valueToInt")
             }
 
             registry.readyToRace(true)
@@ -101,8 +100,8 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
         }
 
 
-        if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H - 5) && obdMetric.valueToNumber()!!.toInt() < SPEED_60_KM_H) {
-            Log.i(LOG_KEY, "Reset 60-140 measurement at speed: ${obdMetric.valueToNumber()!!.toInt()}")
+        if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H - 5) && valueToInt < SPEED_60_KM_H) {
+            Log.i(LOG_KEY, "Reset 60-140 measurement at speed: $valueToInt")
             result60_140 = null
             _60ts = null
         }
@@ -120,19 +119,19 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                     registry.update060(
                         dragRacingMetric.apply {
                             time = result0_60!!
-                            speed = obdMetric.valueToNumber()!!.toInt()
+                            speed = valueToInt
                             ambientTemp = ambientTemperature
                             atmPressure = atmosphericPressure
                         }
 
                     )
-                    Log.i(LOG_KEY, "Current speed: ${obdMetric.valueToNumber()!!}. Result: 0-60 ${result0_60}ms")
+                    Log.i(LOG_KEY, "Current speed: $valueToInt. Result: 0-60 ${result0_60}ms")
                 }
             }
         }
 
-        if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H - 5) && obdMetric.valueToNumber()!!.toInt() < SPEED_100_KM_H) {
-            Log.i(LOG_KEY, "Reset 100-200 measurement at speed: ${obdMetric.valueToNumber()!!.toInt()}")
+        if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H - 5) && valueToInt < SPEED_100_KM_H) {
+            Log.i(LOG_KEY, "Reset 100-200 measurement at speed: $valueToInt")
             result100_200 = null
             _100ts = null
         }
@@ -150,7 +149,7 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                     registry.update0100(
                         dragRacingMetric.apply {
                             time = result0_100!!
-                            speed = obdMetric.valueToNumber()!!.toInt()
+                            speed = valueToInt
                             ambientTemp = ambientTemperature
                             atmPressure = atmosphericPressure
                         }
@@ -158,7 +157,7 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                     )
 
                     if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                        Log.v(LOG_KEY, "Current speed: ${obdMetric.valueToNumber()!!}. Result: 0-100 ${result0_100}ms")
+                        Log.v(LOG_KEY, "Current speed: $valueToInt. Result: 0-100 ${result0_100}ms")
                     }
                 }
             }
@@ -170,13 +169,13 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                 registry.update0160(
                     dragRacingMetric.apply {
                         time = result0_160!!
-                        speed = obdMetric.valueToNumber()!!.toInt()
+                        speed = valueToInt
                         ambientTemp = ambientTemperature
                         atmPressure = atmosphericPressure
                     }
 
                 )
-                Log.i(LOG_KEY, "Current speed: ${obdMetric.valueToNumber()!!}. Result: 0-160 ${result0_160}ms")
+                Log.i(LOG_KEY, "Current speed: $valueToInt. Result: 0-160 ${result0_160}ms")
             }
         }
 
@@ -186,12 +185,12 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                 registry.update100200(
                     dragRacingMetric.apply {
                         time = result100_200!!
-                        speed = obdMetric.valueToNumber()!!.toInt()
+                        speed = valueToInt
                         ambientTemp = ambientTemperature
                         atmPressure = atmosphericPressure
                     }
                 )
-                Log.i(LOG_KEY, "Current speed: ${obdMetric.valueToNumber()!!}. Result: 100-200 ${result100_200}ms")
+                Log.i(LOG_KEY, "Current speed: $valueToInt. Result: 100-200 ${result100_200}ms")
             }
         }
 
@@ -201,20 +200,20 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
                 registry.update60140(
                     dragRacingMetric.apply {
                         time = result60_140!!
-                        speed = obdMetric.valueToNumber()!!.toInt()
+                        speed = valueToInt
                         ambientTemp = ambientTemperature
                         atmPressure = atmosphericPressure
                     }
                 )
                 Log.i(
                     LOG_KEY,
-                    "Current speed: ${obdMetric.valueToNumber()!!}, _60ts=${_60ts}, _140ts=${obdMetric.timestamp},  Result: 60-140 ${result60_140}ms"
+                    "Current speed: $valueToInt, _60ts=${_60ts}, _140ts=${obdMetric.timestamp},  Result: 60-140 ${result60_140}ms"
                 )
             }
         }
     }
 
-    private fun isGivenSpeedReached(obdMetric: ObdMetric, givenSpeed: Int): Boolean = min(obdMetric.valueToNumber()!!.toInt(), givenSpeed) == givenSpeed
+    private fun isGivenSpeedReached(obdMetric: ObdMetric, givenSpeed: Int): Boolean = min(obdMetric.toInt(), givenSpeed) == givenSpeed
 
     private fun reset0() {
         _0ts = null
