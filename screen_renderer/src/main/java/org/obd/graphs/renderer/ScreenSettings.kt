@@ -79,8 +79,7 @@ data class DragRacingScreenSettings(
     var metricsFrequencyReadEnabled: Boolean = true,
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var contextInfoEnabled: Boolean = false,
-    var fontSize: Int = 32,
-    var selectedPIDs: Set<Long>  = emptySet()
+    var fontSize: Int = 32
 )
 
 

@@ -46,7 +46,7 @@ open class DragRacingFragment : Fragment() {
 
     private val metricsCollector = MetricsCollector.instance()
     private val fps = Fps()
-    private val settings = DragRacingSettings(query)
+    private val settings = DragRacingSettings()
     private lateinit var surfaceController: SurfaceController
 
     private val renderingThread: RenderingThread = RenderingThread(

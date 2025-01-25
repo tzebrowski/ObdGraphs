@@ -16,13 +16,12 @@
  */
 package org.obd.graphs.ui.drag_racing
 
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.DragRacingScreenSettings
 import org.obd.graphs.renderer.ScreenSettings
 
-class DragRacingSettings(private val query: Query): ScreenSettings {
+class DragRacingSettings: ScreenSettings {
 
     private val dragRacingScreenSettings = DragRacingScreenSettings()
 
@@ -33,7 +32,6 @@ class DragRacingSettings(private val query: Query): ScreenSettings {
         shiftLightsEnabled = Prefs.getBoolean("pref.drag_racing.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.drag_racing.shift_lights.rev_value", "5000").toInt()
         fontSize = Prefs.getS("pref.drag_racing.screen_font_size","30").toInt()
-        selectedPIDs = query.getIDs()
     }
 
     override fun isBreakLabelTextEnabled(): Boolean = false
