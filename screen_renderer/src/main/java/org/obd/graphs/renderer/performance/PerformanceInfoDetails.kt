@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer.dynamic
+package org.obd.graphs.renderer.performance
 
 import org.obd.graphs.bl.collector.Metric
 
