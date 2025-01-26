@@ -87,40 +87,13 @@ internal class DragRacingSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
-            if (settings.getDragRacingScreenSettings().displayMetricsEnabled){
-                if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
+            if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
+                top = if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
                     val width = (area.width() / 2f) - 10
-                    metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
-                        dragRacingDrawer.drawMetric(
-                            canvas = canvas,
-                            area = area,
-                            metric = it,
-                            left = left,
-                            top = top,
-                            width = width
-                        )
-                    }
-
-                    metricsCollector.getMetric(namesRegistry.getMeasuredIntakePressurePID())?.let {
-                        top = dragRacingDrawer.drawMetric(
-                            canvas = canvas,
-                            area = area,
-                            metric = it,
-                            left = left + width,
-                            top = top,
-                            width = width
-                        )
-                    }
+                    drawMetric(namesRegistry.getVehicleSpeedPID(), canvas, area, left, top, width)
+                    drawMetric(namesRegistry.getMeasuredIntakePressurePID(), canvas, area, left + width, top, width)
                 } else {
-                  metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())?.let {
-                        top = dragRacingDrawer.drawMetric(
-                            canvas = canvas,
-                            area = area,
-                            metric = it,
-                            left = left,
-                            top = top
-                        )
-                    }
+                    drawMetric(namesRegistry.getVehicleSpeedPID(), canvas, area, left, top)
                 }
             }
 
@@ -131,6 +104,27 @@ internal class DragRacingSurfaceRenderer(
                 top = top,
                 dragRacingResults = dragRaceResults)
         }
+    }
+    private fun drawMetric(
+        id: Long,
+        canvas: Canvas,
+        area: Rect,
+        left: Float,
+        top: Float,
+        width: Float = area.width().toFloat()
+    ): Float {
+        metricsCollector.getMetric(id)?.let {
+            return dragRacingDrawer.drawMetric(
+                canvas = canvas,
+                area = area,
+                metric = it,
+                left = left,
+                top = top,
+                width = width
+            )
+
+        }
+        return top
     }
 
     private fun isShiftLight(dragRaceResults: DragRacingResults) =

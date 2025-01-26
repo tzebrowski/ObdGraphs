@@ -154,7 +154,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         metric: Metric,
         left: Float,
         top: Float,
-        width: Float =  getAreaWidth(area)
+        width: Float
     ): Float {
 
         var top1 = top
@@ -348,7 +348,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
     private fun calculateProgressBarHeight() = 16
 
-    private inline fun getAreaWidth(area: Rect): Float = area.width().toFloat()
 
     private inline fun calculateDividerSpacing(): Int = 14
 
