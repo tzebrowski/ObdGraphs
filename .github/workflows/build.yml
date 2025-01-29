@@ -74,7 +74,7 @@ jobs:
         run: sh ./gradlew app:bundleGiuliaAA
 
 
-      - name: Upload artifcats
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Build Artifacts
