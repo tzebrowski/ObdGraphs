@@ -2,10 +2,10 @@ name: Build
 on:
   workflow_dispatch:
   push:
-    branches: [ "main", "master", "feat/*" ]
+    branches: [ "main", "master", "feat/*", "fix/*" ]
     tags: [ "v*" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "feat/*", "fix/*" ]
 jobs:
   build:
     runs-on: ubuntu-latest
