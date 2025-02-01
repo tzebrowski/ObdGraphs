@@ -5,11 +5,12 @@ buildscript {
         kotlin_version = '1.7.20'
         gms_version = '4.3.15'
     }
+
     repositories {
         google()
-        jcenter()
-
+        mavenCentral()
     }
+
     dependencies {
         classpath "com.android.tools.build:gradle:$gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -31,12 +32,8 @@ allprojects {
     repositories {
         mavenLocal()
         google()
-        jcenter()
+        mavenCentral()
         maven { url 'https://jitpack.io' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

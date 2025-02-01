@@ -9,8 +9,7 @@ plugins {
 apply from: "$project.rootDir/spotless.gradle"
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion "30.0.3"
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "org.obd.graphs.app"
@@ -54,7 +53,7 @@ android {
         }
     }
 
-    flavorDimensions "version"
+    flavorDimensions = ["version" ]
     productFlavors {
 
         giuliaAA {
