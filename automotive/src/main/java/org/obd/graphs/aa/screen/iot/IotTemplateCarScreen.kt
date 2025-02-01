@@ -114,34 +114,34 @@ internal class IotTemplateCarScreen(
                 }
 
                 DATA_LOGGER_NO_NETWORK_EVENT -> {
-                    toast.show(carContext, R.string.main_activity_toast_connection_no_network)
+                    toast.show(carContext, org.obd.graphs.commons.R.string.main_activity_toast_connection_no_network)
                 }
 
                 DATA_LOGGER_ERROR_EVENT -> {
                     invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_connection_error)
+                    toast.show(carContext, org.obd.graphs.commons.R.string.main_activity_toast_connection_error)
                 }
 
                 DATA_LOGGER_STOPPED_EVENT -> {
-                    toast.show(carContext, R.string.main_activity_toast_connection_stopped)
+                    toast.show(carContext, org.obd.graphs.commons.R.string.main_activity_toast_connection_stopped)
                     renderingThread.stop()
                     invalidate()
                 }
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    toast.show(carContext, R.string.main_activity_toast_connection_established)
+                    toast.show(carContext, org.obd.graphs.commons.R.string.main_activity_toast_connection_established)
                     renderingThread.start()
                     invalidate()
                 }
 
                 DATA_LOGGER_ERROR_CONNECT_EVENT -> {
                     invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
+                    toast.show(carContext, org.obd.graphs.commons.R.string.main_activity_toast_connection_connect_error)
                 }
 
                 DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
                     invalidate()
-                    toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
+                    toast.show(carContext, org.obd.graphs.commons.R.string.main_activity_toast_adapter_is_not_selected)
                 }
             }
         }

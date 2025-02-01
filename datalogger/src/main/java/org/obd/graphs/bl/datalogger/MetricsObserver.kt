@@ -21,6 +21,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import org.obd.metrics.api.model.*
 
+private const val TAG = "MetricsObserver"
+
 internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
 
     private val metrics: MutableLiveData<ObdMetric> = MutableLiveData<ObdMetric>()
@@ -57,8 +59,8 @@ internal class MetricsObserver : Lifecycle, ReplyObserver<Reply<*>>() {
                     try {
                         it.postValue(reply)
                     } catch (e: java.lang.Exception) {
-                        if (Log.isLoggable("MetricsObserver",Log.VERBOSE)){
-                            Log.v("MetricsObserver","Failed to process metric",e)
+                        if (Log.isLoggable(TAG,Log.VERBOSE)){
+                            Log.v(TAG,"Failed to process metric",e)
                         }
                     }
                 }

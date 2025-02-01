@@ -34,10 +34,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    lintOptions {
+    lint {
         disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor', 'IconLauncherShape'
     }
+    namespace "org.obd.graphs.dragracing"
 }
 
 dependencies {

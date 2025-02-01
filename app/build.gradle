@@ -61,7 +61,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 166
+            versionCode 169
         }
 
         giuliaPerformanceMonitor {
@@ -75,7 +75,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 61
+            versionCode 63
         }
     }
 
@@ -127,9 +127,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    lintOptions {
+    lint {
         disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor', 'IconLauncherShape'
+    }
+    namespace "org.obd.graphs"
+
+    buildFeatures {
+        buildConfig true
     }
 }
 

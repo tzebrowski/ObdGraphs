@@ -1,5 +1,11 @@
 name: Build
-on: [ pull_request, push ]
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -68,8 +74,37 @@ jobs:
         run: sh ./gradlew app:bundleGiuliaAA
 
 
-      - name: Upload artifcats
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Build Artifacts
           path: app/build/outputs/
+
+      - name: Build Giulia APK
+        env:
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
+        run: sh ./gradlew app:assembleGiulia
+
+      - name: Build Giulia AA APK
+        env:
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          ANDROID_RELEASE_KEYSTORE: "/home/runner/work/_temp/keystore/release_keystore.jks"
+        run: sh ./gradlew app:assembleGiuliaAA
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            app/build/outputs/apk/**/release/*.apk
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
