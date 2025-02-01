@@ -31,7 +31,6 @@ import androidx.car.app.navigation.model.RoutingInfo
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
 import org.obd.graphs.aa.CarSettings
-import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.*
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -42,6 +41,7 @@ import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.Identity
+import org.obd.graphs.commons.R
 
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
@@ -293,7 +293,7 @@ internal class NavTemplateCarScreen(
         Log.e(LOG_TAG, "Failed to build template", e)
         PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
             .setHeaderAction(Action.BACK)
-            .setTitle(carContext.getString(R.string.pref_aa_car_error))
+            .setTitle(carContext.getString(org.obd.graphs.aa.R.string.pref_aa_car_error))
             .build()
     }
 

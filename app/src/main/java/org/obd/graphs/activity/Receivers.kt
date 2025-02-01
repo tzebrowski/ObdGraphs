@@ -63,12 +63,12 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         DATA_LOGGER_WIFI_NOT_CONNECTED -> {
             getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-            toast(R.string.main_activity_toast_connection_wifi_not_connected)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_wifi_not_connected)
         }
 
         DATA_LOGGER_WIFI_INCORRECT -> {
             getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-            toast(R.string.main_activity_toast_connection_wifi_incorrect_ssid)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_wifi_incorrect_ssid)
         }
         SCREEN_LOCK_PROGRESS_EVENT -> {
             lockScreenDialogShow { dialogTitle ->
@@ -137,12 +137,12 @@ internal fun MainActivity.receive(intent: Intent?) {
             screen.changeScreenBrightness(this,1f)
         }
         DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-            toast(R.string.main_activity_toast_connection_connect_error)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connect_error)
         }
 
         DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
             navigateToPreferencesScreen("pref.adapter.connection")
-            toast(R.string.main_activity_toast_adapter_is_not_selected)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_adapter_is_not_selected)
         }
 
         NOTIFICATION_GIULIA_VIEW_TOGGLE -> {
@@ -162,7 +162,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         DATA_LOGGER_CONNECTING_EVENT -> {
-            toast(R.string.main_activity_toast_connection_connecting)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connecting)
 
             progressBar {
                 it.visibility = View.VISIBLE
@@ -174,7 +174,7 @@ internal fun MainActivity.receive(intent: Intent?) {
 
             floatingActionButton {
                 it.backgroundTintList =
-                    ContextCompat.getColorStateList(applicationContext, R.color.cardinal)
+                    ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.cardinal)
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
                     dataLogger.stop()
@@ -188,12 +188,12 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         DATA_LOGGER_NO_NETWORK_EVENT -> {
-            toast(R.string.main_activity_toast_connection_no_network)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_no_network)
             handleStop()
         }
 
         DATA_LOGGER_CONNECTED_EVENT -> {
-            toast(R.string.main_activity_toast_connection_established)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_established)
 
             progressBar {
                 it.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
@@ -218,12 +218,12 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         DATA_LOGGER_STOPPED_EVENT -> {
-            toast(R.string.main_activity_toast_connection_stopped)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_stopped)
             handleStop()
         }
 
         DATA_LOGGER_ERROR_EVENT -> {
-            toast(R.string.main_activity_toast_connection_error)
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_error)
             handleStop()
         }
 
@@ -261,7 +261,7 @@ private fun MainActivity.handleStop() {
 
     floatingActionButton {
         it.backgroundTintList =
-            ContextCompat.getColorStateList(applicationContext, R.color.philippine_green)
+            ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.philippine_green)
     }
 
     toolbar { a, b, c ->

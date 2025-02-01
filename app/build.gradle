@@ -9,8 +9,7 @@ plugins {
 apply from: "$project.rootDir/spotless.gradle"
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion "30.0.3"
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "org.obd.graphs.app"
@@ -54,14 +53,14 @@ android {
         }
     }
 
-    flavorDimensions "version"
+    flavorDimensions = ["version" ]
     productFlavors {
 
         giuliaAA {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 166
+            versionCode 169
         }
 
         giuliaPerformanceMonitor {
@@ -75,7 +74,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 61
+            versionCode 63
         }
     }
 
@@ -127,9 +126,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    lintOptions {
+    lint {
         disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor', 'IconLauncherShape'
+    }
+    namespace "org.obd.graphs"
+
+    buildFeatures {
+        buildConfig true
     }
 }
 

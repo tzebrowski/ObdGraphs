@@ -43,6 +43,7 @@ fun attachToFloatingButton(
         }
 
         btn?.backgroundTintList =
-            ContextCompat.getColorStateList(activity, if (dataLogger.isRunning()) R.color.cardinal else R.color.philippine_green)
+            ContextCompat.getColorStateList(activity, if (dataLogger.isRunning()) org.obd.graphs.commons.R.color.cardinal
+            else org.obd.graphs.commons.R.color.philippine_green)
     }
 }

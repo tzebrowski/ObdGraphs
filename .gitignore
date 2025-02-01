@@ -25,3 +25,6 @@ local.properties
 .idea/deploymentTargetDropDown.xml
 /.idea/androidTestResultsUserPreferences.xml
 /app/google-services.json
+/.idea/runConfigurations.xml
+/.idea/migrations.xml
+/.idea/deploymentTargetSelector.xml
