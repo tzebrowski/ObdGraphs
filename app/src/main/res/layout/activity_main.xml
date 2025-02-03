@@ -14,23 +14,22 @@
         android:layout_height="match_parent"
         android:background="@color/black">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginStart="1sp"
             android:layout_marginEnd="1sp"
             android:orientation="horizontal"
-            android:weightSum="5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/connection_status"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.4"
+                android:layout_alignParentStart="true"
                 android:gravity="start"
-                android:paddingStart="6dp"
+                android:paddingStart="2dp"
                 android:paddingTop="4sp"
                 android:paddingEnd="0dp"
                 android:text="@string/status_panel.adapter_connection_type"
@@ -39,10 +38,12 @@
 
             <TextView
                 android:id="@+id/vehicle_profile"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
                 android:gravity="start"
+                android:paddingStart="3sp"
+                android:paddingEnd="0sp"
+                android:layout_toEndOf="@id/connection_status"
                 android:paddingTop="4sp"
                 android:text="@string/status_panel.vehicle_profile"
                 android:textColor="@color/white"
@@ -50,29 +51,35 @@
 
             <TextView
                 android:id="@+id/vehicle_status"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
-                android:gravity="start"
+                android:layout_toEndOf="@id/vehicle_profile"
+                android:layout_toStartOf="@id/timer"
+                android:paddingStart="3sp"
+                android:paddingEnd="0sp"
                 android:paddingTop="4sp"
                 android:text="@string/status_panel.vehicle_status"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
 
             <Chronometer
+                android:paddingStart="3sp"
+                android:paddingEnd="0sp"
+                android:paddingTop="4sp"
                 android:id="@+id/timer"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6"
+                android:layout_toStartOf="@id/toggle_fullscreen"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
 
             <ImageView
+                android:paddingEnd="1sp"
+                android:paddingStart="2sp"
                 android:id="@+id/toggle_fullscreen"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="0.4"
+                android:layout_alignParentEnd="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/main_activity.toggle_toolbar"
@@ -80,7 +87,7 @@
                 android:tooltipText="@string/main_activity.toggle_toolbar"
                 app:srcCompat="?attr/actionModeCopyDrawable"
                 tools:targetApi="o" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <ProgressBar
             android:id="@+id/p_bar"

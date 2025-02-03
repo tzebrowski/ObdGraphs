@@ -16,10 +16,11 @@
  */
 package org.obd.graphs.activity
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.isVisible
+import androidx.core.view.isGone
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.profile.profile
@@ -36,7 +37,7 @@ internal fun MainActivity.updateVehicleStatus(status: String) {
         COLOR_CARDINAL,
         1.0f
     ){
-        it.isVisible = dataLoggerPreferences.instance.vehicleStatusPanelEnabled
+        it.isGone = !dataLoggerPreferences.instance.vehicleStatusPanelEnabled
     }
 }
 
@@ -84,6 +85,7 @@ internal fun MainActivity.updateVehicleProfile() {
     )
 }
 
+@SuppressLint("SetTextI18n")
 private fun MainActivity.updateTextField(
     viewId: Int,
     text1: String,
