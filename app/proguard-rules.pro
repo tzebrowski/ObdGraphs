@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-sourcefileattribute SourceFile
+
+-keep class org.slf4j.LoggerFactory {*;}
+-keep class org.slf4j.Logger {*;}
+-dontwarn lombok.**
+-dontwarn sun.reflect.**
+
