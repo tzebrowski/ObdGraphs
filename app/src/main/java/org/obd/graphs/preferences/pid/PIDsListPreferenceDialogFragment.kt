@@ -281,7 +281,9 @@ open class PIDsListPreferenceDialogFragment(
         val sourceList: List<PidDefinitionDetails> =
             if (source == "trip_info"){
                 val pidRegistry = dataLogger.getPidDefinitionRegistry()
-                val list = Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaults().map { pidRegistry.findBy(it) }.toMutableList()
+                val list = Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaults()
+                    .mapNotNull { pidRegistry.findBy(it) }
+                    .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }
             } else if (individualQuery) {
                 findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
