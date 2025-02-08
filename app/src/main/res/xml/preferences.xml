@@ -1529,7 +1529,7 @@
 
 
                     <org.obd.graphs.preferences.aa.AACheckBoxPreference
-                        android:enabled="false"
+                        app:enabled="@bool/FF_SHIFT_LIGHTS_ENABLED"
                         android:defaultValue="false"
                         android:key="pref.aa.drag_race.shift_lights.enabled"
                         android:summary="@string/pref.aa.performance_meter.shift_lights_enabled_summary"
@@ -1538,7 +1538,7 @@
                         app:singleLineTitle="false" />
 
                     <ListPreference
-                        android:enabled="false"
+                        app:enabled="@bool/FF_SHIFT_LIGHTS_ENABLED"
                         android:defaultValue="5000"
                         android:entries="@array/pref.numbers_4500_5000"
                         android:entryValues="@array/pref.numbers_4500_5000"
