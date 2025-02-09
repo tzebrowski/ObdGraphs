@@ -11,6 +11,16 @@ apply from: "$project.rootDir/spotless.gradle"
 android {
     compileSdk rootProject.ext.compileSdkVersion
 
+    packaging {
+        resources {
+            it.excludes += '**/design.drawio'
+            it.excludes += '**/highlevel.drawio'
+            it.excludes += '**/highlevel.jpg'
+            it.excludes += '**/component.png'
+            it.excludes += '**/model.png'
+        }
+    }
+
     defaultConfig {
         applicationId "org.obd.graphs.app"
         minSdkVersion rootProject.ext.minSdkVersion
