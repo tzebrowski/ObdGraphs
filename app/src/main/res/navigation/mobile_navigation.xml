@@ -17,6 +17,12 @@
         android:label="@string/navigation.title_drag_racing"
         tools:layout="@layout/fragment_drag_racing" />
 
+    <fragment
+        android:id="@+id/navigation_trip_info"
+        android:name="org.obd.graphs.ui.trip_info.TripInfoFragment"
+        android:label="@string/navigation.title_drag_racing"
+        tools:layout="@layout/fragment_trip_info" />
+
 
     <fragment
         android:id="@+id/navigation_giulia"
