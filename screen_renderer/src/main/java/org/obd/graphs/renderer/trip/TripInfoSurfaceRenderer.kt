@@ -34,8 +34,11 @@ internal class TripInfoSurfaceRenderer(
     private val fps: Fps,
     viewSettings: ViewSettings
 ) : CoreSurfaceRenderer(viewSettings) {
+
     private val tripInfo = TripInfoDetails()
+
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
+
     override fun applyMetricsFilter(query: Query) {
         Log.d(LOG_TAG,"Query strategy ${query.getStrategy()}, selected ids: ${query.getIDs()}")
 
@@ -45,7 +48,7 @@ internal class TripInfoSurfaceRenderer(
     }
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
-        drawArea?.let { it ->
+        drawArea?.let {
 
             tripInfoDrawer.drawBackground(canvas, it)
 

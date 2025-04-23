@@ -359,6 +359,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             castToInt = castToInt
         )
 
-        drawTitle(canvas, metric, left, top + 24, textSizeBase * 0.35F)
+        drawTitle(canvas, metric, left, top + (textSizeBase * 0.40f) , textSizeBase * 0.35F)
     }
 }
