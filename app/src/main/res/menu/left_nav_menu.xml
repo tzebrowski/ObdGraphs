@@ -122,7 +122,6 @@
             </item>
 
             <item
-                android:tooltipText="@string/navigation.title_drag_racing"
                 android:id="@+id/navigation_trip_info_prefs"
                 android:checkable="true"
                 android:title="@string/pref.settings"
@@ -130,6 +129,20 @@
 
         </menu>
     </item>
+
+
+    <item
+        android:title="@string/navigation.title_performance">
+        <menu>
+            <item
+                android:id="@+id/navigation_performance"
+                android:icon="@drawable/action_drag_race"
+                android:checkable="true"
+                android:title="@string/navigation.title_performance">
+            </item>
+        </menu>
+    </item>
+
 
     <item
         android:title="@string/navigation.title_gauge">

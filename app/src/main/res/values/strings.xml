@@ -20,6 +20,7 @@
     <string name="navigation.title_giulia">Giulia</string>
     <string name="navigation.title_drag_racing">Drag Racing</string>
     <string name="navigation.title_trip_info">Trip Info</string>
+    <string name="navigation.title_performance">Performance</string>
 
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>

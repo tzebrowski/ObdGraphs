@@ -83,7 +83,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 width = area.width() / 2.6f,
                 metric = it,
                 labelCenterYPadding = 18f,
-                fontSize = settings.getDynamicScreenSettings().fontSize,
+                fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
         }
@@ -96,7 +96,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 width = area.width() / 3.8f,
                 metric = it,
                 labelCenterYPadding = 26f,
-                fontSize = settings.getDynamicScreenSettings().fontSize,
+                fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
         }
@@ -109,7 +109,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 width = area.width() / 2.6f,
                 metric = it,
                 labelCenterYPadding = 18f,
-                fontSize = settings.getDynamicScreenSettings().fontSize,
+                fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
         }
@@ -129,7 +129,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
 
     private inline fun getScaleRatio() = valueConverter.scaleToNewRange(
-        settings.getDynamicScreenSettings().fontSize.toFloat(),
+        settings.getPerformanceScreenSettings().fontSize.toFloat(),
         CURRENT_MIN,
         CURRENT_MAX,
         NEW_MIN,
