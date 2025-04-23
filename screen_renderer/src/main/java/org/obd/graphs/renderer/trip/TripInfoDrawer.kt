@@ -143,7 +143,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             metric,
             top1 + textSizeBase,
             valueTextSize * 0.9f,
-            left = left + areaWidth - 50f
+            left = left + areaWidth - valueTextSize
         )
         val scaleRatio = getScaleRatio()
 
