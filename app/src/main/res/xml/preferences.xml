@@ -650,6 +650,24 @@
 
 
             <PreferenceScreen
+                android:summary="@string/pref.trip_info_category"
+                android:title="@string/navigation.title_trip_info"
+                app:key="pref.title_trip_info">
+
+                <org.obd.graphs.preferences.aa.AASeekBar
+                    android:defaultValue="30"
+                    android:dialogTitle="@string/pref.drag_racing.font_size"
+                    android:key="pref.trip_info.screen_font_size"
+                    android:max="70"
+                    android:title="@string/pref.drag_racing.font_size"
+                    app:min="22"
+                    app:showSeekBarValue="true"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
+
+            </PreferenceScreen>
+
+            <PreferenceScreen
                 android:summary="@string/pref.drag_racing_category"
                 android:title="@string/navigation.title_drag_racing"
                 app:key="pref.title_drag_racing">

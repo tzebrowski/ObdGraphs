@@ -112,6 +112,26 @@
     </item>
 
     <item
+        android:title="@string/navigation.title_trip_info">
+        <menu>
+            <item
+                android:id="@+id/navigation_trip_info"
+                android:icon="@android:drawable/ic_dialog_dialer"
+                android:checkable="true"
+                android:title="@string/navigation.title_trip_info">
+            </item>
+
+            <item
+                android:tooltipText="@string/navigation.title_drag_racing"
+                android:id="@+id/navigation_trip_info_prefs"
+                android:checkable="true"
+                android:title="@string/pref.settings"
+                tools:targetApi="o"/>
+
+        </menu>
+    </item>
+
+    <item
         android:title="@string/navigation.title_gauge">
         <menu>
             <item

@@ -19,6 +19,7 @@
 
     <string name="navigation.title_giulia">Giulia</string>
     <string name="navigation.title_drag_racing">Drag Racing</string>
+    <string name="navigation.title_trip_info">Trip Info</string>
 
     <string name="navigation.title_graph">Graph</string>
     <string name="navigation.title_aa">Android Auto</string>
@@ -280,6 +281,7 @@
     <string name="pref.giulia_category">Giulia view configuration</string>
     <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
 
+    <string name="pref.trip_info_category">TripInfo view configuration</string>
 
     <string name="pref.drag_racing_category">Drag racing view configuration</string>
     <string name="pref.drag_racing.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
