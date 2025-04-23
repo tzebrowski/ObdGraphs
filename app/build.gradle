@@ -147,12 +147,6 @@ android {
     buildFeatures {
         buildConfig true
     }
-
-    sourceSets {
-        main {
-            assets.srcDirs += ['defs/']
-        }
-    }
 }
 
 dependencies {
