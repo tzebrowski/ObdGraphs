@@ -47,7 +47,7 @@ internal class PerformanceSurfaceRenderer(
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
-        drawArea?.let { it ->
+        drawArea?.let {
 
             performanceDrawer.drawBackground(canvas, it)
 

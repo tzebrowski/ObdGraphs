@@ -19,7 +19,7 @@ package org.obd.graphs.renderer
 import android.graphics.Canvas
 import android.graphics.Rect
 
-const val MARGIN_TOP = 8
+ const val MARGIN_TOP = 8
 
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class CoreSurfaceRenderer(
@@ -28,14 +28,10 @@ internal abstract class CoreSurfaceRenderer(
     open fun getTop(area: Rect): Float = area.top + getDefaultTopMargin() + viewSettings.marginTop
     fun getDefaultTopMargin(): Float =  20f
 
-    protected fun getArea(area: Rect, canvas: Canvas, margin: Int): Rect {
-        val newArea = Rect()
+    protected fun getArea(area: Rect, canvas: Canvas, margin: Int): Rect  =
         if (area.isEmpty) {
-            newArea[0 + margin, viewSettings.marginTop, canvas.width - 1 - margin] = canvas.height - 1
+            Rect(0 + margin, viewSettings.marginTop, canvas.width - 1 - margin, canvas.height)
         } else {
-            val width = area.width() - 1 - (margin)
-            newArea[area.left + margin, area.top + viewSettings.marginTop, width] = area.height()
+            Rect(area.left + margin,area.top + viewSettings.marginTop, area.right, area.bottom)
         }
-        return newArea
-    }
 }
