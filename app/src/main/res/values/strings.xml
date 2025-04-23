@@ -283,6 +283,7 @@
     <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>
 
     <string name="pref.trip_info_category">TripInfo view configuration</string>
+    <string name="pref.performance_category">Performance view configuration</string>
 
     <string name="pref.drag_racing_category">Drag racing view configuration</string>
     <string name="pref.drag_racing.virtual_screens.number_of_items_in_column.category">Number of items in the column</string>

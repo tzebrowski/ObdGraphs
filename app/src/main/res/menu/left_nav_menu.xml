@@ -140,6 +140,13 @@
                 android:checkable="true"
                 android:title="@string/navigation.title_performance">
             </item>
+
+            <item
+                android:id="@+id/navigation_performance_prefs"
+                android:checkable="true"
+                android:title="@string/pref.settings"
+                tools:targetApi="o"/>
+
         </menu>
     </item>
 
