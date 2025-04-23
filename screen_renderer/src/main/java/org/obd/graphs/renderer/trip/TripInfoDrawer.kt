@@ -141,7 +141,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         drawValue(
             canvas,
             metric,
-            top1 + 44,
+            top1 + textSizeBase,
             valueTextSize * 0.9f,
             left = left + areaWidth - 50f
         )
