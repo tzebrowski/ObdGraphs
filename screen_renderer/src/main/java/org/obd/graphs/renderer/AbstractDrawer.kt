@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,9 +28,16 @@ import org.obd.graphs.format
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
 import org.obd.graphs.renderer.drag.MARGIN_END
+
 private const val STATUS_KEY_FONT_SIZE = 12f
 private const val STATUS_VALUE_FONT_SIZE = 18f
 
+private const val CURRENT_MIN = 22f
+private const val CURRENT_MAX = 72f
+private const val NEW_MAX = 1.6f
+private const val NEW_MIN = 0.6f
+
+@Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
 
     protected val valueConverter: ValueConverter = ValueConverter()
@@ -91,6 +98,16 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
     open fun recycle() {
         getBackground().recycle()
     }
+
+
+    inline fun calculateFontSize(multiplier: Float, fontSize: Int): Float =
+        multiplier * valueConverter.scaleToNewRange(
+            fontSize.toFloat(),
+            CURRENT_MIN,
+            CURRENT_MAX,
+            NEW_MIN,
+            NEW_MAX
+        )
 
     fun drawDivider(
         canvas: Canvas,
@@ -243,7 +260,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.source.format(castToInt = false)}${it.pid().units?:""}",
+                        "${it.source.format(castToInt = false)}${it.pid().units ?: ""}",
                         marginLeft,
                         top,
                         Color.WHITE,
@@ -268,7 +285,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.source.format(castToInt = false)}${ it.pid().units?:""}",
+                        "${it.source.format(castToInt = false)}${it.pid().units ?: ""}",
                         marginLeft,
                         top,
                         Color.WHITE,
@@ -301,7 +318,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         left: Float,
         top: Float,
         textSize: Float,
-        color: Int  = Color.WHITE
+        color: Int = Color.WHITE
     ): Int {
 
         var top1 = top

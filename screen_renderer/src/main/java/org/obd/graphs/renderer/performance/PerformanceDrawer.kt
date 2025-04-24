@@ -25,10 +25,6 @@ import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 
-private const val CURRENT_MIN = 22f
-private const val CURRENT_MAX = 72f
-private const val NEW_MAX = 1.6f
-private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
@@ -59,7 +55,9 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         performanceInfoDetails: PerformanceInfoDetails
     ) {
 
-        val (textSizeBase) = calculateFontSize(area)
+        val textSizeBase = calculateFontSize(multiplier = area.width() / 17f,
+            fontSize = settings.getPerformanceScreenSettings().fontSize)
+
         val x = maxItemWidth(area) + 4
 
         var rowTop = top + 12f
@@ -115,26 +113,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         }
     }
 
-    private inline fun calculateFontSize(
-        area: Rect
-    ): Pair<Float, Float> {
 
-        val scaleRatio = getScaleRatio()
-
-        val areaWidth = area.width()
-        val valueTextSize = (areaWidth / 17f) * scaleRatio
-        val textSizeBase = (areaWidth / 22f) * scaleRatio
-        return Pair(valueTextSize, textSizeBase)
-    }
-
-
-    private inline fun getScaleRatio() = valueConverter.scaleToNewRange(
-        settings.getPerformanceScreenSettings().fontSize.toFloat(),
-        CURRENT_MIN,
-        CURRENT_MAX,
-        NEW_MIN,
-        NEW_MAX
-    )
 
     private inline fun maxItemWidth(area: Rect) = (area.width() / 6)
 }

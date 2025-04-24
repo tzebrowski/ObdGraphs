@@ -27,14 +27,8 @@ import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.ui.common.*
 import kotlin.math.*
 
-private const val CURRENT_MIN = 22f
-private const val CURRENT_MAX = 72f
-private const val NEW_MAX = 1.6f
-private const val NEW_MIN = 0.6f
 private const val MIN_TEXT_VALUE_HEIGHT = 30
 private const val NUMERALS_RADIUS_SCALE_FACTOR = 0.75f
-
-
 
 data class DrawerSettings(
     val gaugeProgressWidth: Float = 1.5f,
@@ -241,7 +235,6 @@ internal class GaugeDrawer(
         paint.shader = gradient
     }
 
-
     private fun drawGauge(
         canvas: Canvas,
         area: RectF,
@@ -250,12 +243,10 @@ internal class GaugeDrawer(
         labelCenterYPadding:Float = 0f,
         fontSize: Int
     ) {
-
-        val userScaleRatio = userScaleRatio(fontSize)
+        val calculatedFontSize = calculateFontSize(multiplier = area.width() / 22f, fontSize=fontSize) *  3.4f
 
         val value = metric.source.format(castToInt = false)
-        val scaleRatio = scaleRationBasedOnScreenSize(area) * userScaleRatio
-        valuePaint.textSize = drawerSettings.valueTextSize * scaleRatio
+        valuePaint.textSize = calculatedFontSize
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
         valuePaint.color = COLOR_WHITE
 
@@ -267,7 +258,7 @@ internal class GaugeDrawer(
         val valueY = centerY - valueHeight
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), valueY, valuePaint)
 
-        valuePaint.textSize = (drawerSettings.valueTextSize / 4) * scaleRatio
+        valuePaint.textSize = calculatedFontSize * 0.4f
         valuePaint.color = color(R.color.gray)
 
         val unitRect = Rect()
@@ -281,7 +272,7 @@ internal class GaugeDrawer(
             centerY += unitRect.height() / 2
         }
 
-        labelPaint.textSize = drawerSettings.labelTextSize * scaleRatio
+        labelPaint.textSize = calculatedFontSize * 0.6f
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
         var labelY = 0f
@@ -316,7 +307,7 @@ internal class GaugeDrawer(
                 "${if(pid.historgam.isMinEnabled) metric.min.format(pid) else ""}   " +
                         "${if(pid.historgam.isAvgEnabled) metric.mean.format(pid) else ""}    " +
                         "${if(pid.historgam.isMaxEnabled) metric.max.format(pid) else ""}"
-            histogramPaint.textSize = 18f * scaleRationBasedOnScreenSize(area) * userScaleRatio
+            histogramPaint.textSize = calculatedFontSize * 0.4f
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
             val histY = labelY + histsRect.height()
@@ -324,8 +315,6 @@ internal class GaugeDrawer(
         }
     }
 
-    private fun userScaleRatio(fontSize: Int) =
-        valueConverter.scaleToNewRange(fontSize.toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
     private inline fun scaleColor(j: Int): Int = if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
         settings.getColorTheme().progressColor
