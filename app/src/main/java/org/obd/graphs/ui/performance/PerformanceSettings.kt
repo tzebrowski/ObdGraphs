@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,17 +22,19 @@ import org.obd.graphs.renderer.PerformanceScreenSettings
 import org.obd.graphs.renderer.ScreenSettings
 
 class PerformanceSettings : ScreenSettings {
-
     private val settings = PerformanceScreenSettings()
 
-    override fun getPerformanceScreenSettings() = settings.apply {
-        fontSize = Prefs.getS("pref.performance.screen_font_size", "30").toInt()
-    }
+    override fun getPerformanceScreenSettings() =
+        settings.apply {
+            fontSize = Prefs.getS("pref.performance.screen_font_size", "30").toInt()
+        }
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
     override fun isStatisticsEnabled(): Boolean = true
+
     override fun isFpsCounterEnabled(): Boolean = true
+
     override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.performance.fps", "5").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
