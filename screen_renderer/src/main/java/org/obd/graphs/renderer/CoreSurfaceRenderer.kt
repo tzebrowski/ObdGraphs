@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,12 +22,17 @@ import android.graphics.Rect
 const val MARGIN_TOP = 8
 
 internal abstract class CoreSurfaceRenderer(
-    protected val viewSettings: ViewSettings
+    protected val viewSettings: ViewSettings,
 ) : SurfaceRenderer {
     open fun getTop(area: Rect): Float = area.top + getDefaultTopMargin() + viewSettings.marginTop
+
     fun getDefaultTopMargin(): Float = 20f
 
-    protected fun getArea(area: Rect, canvas: Canvas, margin: Int): Rect =
+    protected fun getArea(
+        area: Rect,
+        canvas: Canvas,
+        margin: Int,
+    ): Rect =
         if (area.isEmpty) {
             Rect(0 + margin, viewSettings.marginTop, canvas.width - 1 - margin, canvas.height)
         } else {
