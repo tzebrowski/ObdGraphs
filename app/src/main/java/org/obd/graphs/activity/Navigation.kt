@@ -55,6 +55,8 @@ internal fun MainActivity.setupLeftNavigationPanel() {
 
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
+
+                R.id.navigation_performance_prefs -> navigateToPreferencesScreen("pref.title_performance_screen")
                 R.id.navigation_trip_info_prefs -> navigateToPreferencesScreen("pref.title_trip_info")
                 R.id.navigation_drag_racing_prefs -> navigateToPreferencesScreen("pref.title_drag_racing")
                 R.id.navigation_graph_prefs -> navigateToPreferencesScreen("pref.graph")

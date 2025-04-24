@@ -102,7 +102,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     private val tripInfoScreenSettings = TripInfoScreenSettings()
     private val routinesScreenSettings = RoutinesScreenSettings()
-    private val dynamicScreenSettings = DynamicScreenSettings()
+    private val performanceScreenSettings = PerformanceScreenSettings()
 
     init {
         copyGiuliaSettings()
@@ -131,7 +131,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         viewEnabled = Prefs.getBoolean("pref.aa.trip_info.enabled", true)
     }
 
-    override fun getDynamicScreenSettings(): DynamicScreenSettings = dynamicScreenSettings.apply {
+    override fun getPerformanceScreenSettings(): PerformanceScreenSettings = performanceScreenSettings.apply {
         fontSize = Prefs.getS("pref.aa.performance.font_size", "24").toInt()
         viewEnabled = Prefs.getBoolean("pref.aa.performance.enabled", true)
     }

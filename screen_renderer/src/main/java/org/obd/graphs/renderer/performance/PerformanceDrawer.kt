@@ -25,10 +25,6 @@ import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 
-private const val CURRENT_MIN = 22f
-private const val CURRENT_MAX = 72f
-private const val NEW_MAX = 1.6f
-private const val NEW_MIN = 0.6f
 
 @Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
@@ -59,21 +55,23 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         performanceInfoDetails: PerformanceInfoDetails
     ) {
 
-        val (textSizeBase) = calculateFontSize(area)
+        val textSize = calculateFontSize(multiplier = area.width() / 17f,
+            fontSize = settings.getPerformanceScreenSettings().fontSize)
+
         val x = maxItemWidth(area) + 4
 
         var rowTop = top + 12f
         var leftAlignment = 0
-        performanceInfoDetails.airTemp?.let { tripInfoDrawer.drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, castToInt = true) }
-        performanceInfoDetails.coolantTemp?.let {  tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
-        performanceInfoDetails.oilTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
-        performanceInfoDetails.exhaustTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, castToInt = true) }
-        performanceInfoDetails.gearboxOilTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, castToInt = true) }
-        performanceInfoDetails.ambientTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
+        performanceInfoDetails.airTemp?.let { tripInfoDrawer.drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
+        performanceInfoDetails.coolantTemp?.let {  tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true,area=area, castToInt = true) }
+        performanceInfoDetails.oilTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true,area=area, castToInt = true) }
+        performanceInfoDetails.exhaustTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
+        performanceInfoDetails.gearboxOilTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
+        performanceInfoDetails.ambientTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, area=area) }
 
-        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
+        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
 
-        rowTop += textSizeBase + 16
+        rowTop += textSize + 16
 
         performanceInfoDetails.torque?.let {
             gaugeDrawer.drawGauge(
@@ -83,7 +81,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 width = area.width() / 2.6f,
                 metric = it,
                 labelCenterYPadding = 18f,
-                fontSize = settings.getDynamicScreenSettings().fontSize,
+                fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
         }
@@ -96,7 +94,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 width = area.width() / 3.8f,
                 metric = it,
                 labelCenterYPadding = 26f,
-                fontSize = settings.getDynamicScreenSettings().fontSize,
+                fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
         }
@@ -109,32 +107,11 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 width = area.width() / 2.6f,
                 metric = it,
                 labelCenterYPadding = 18f,
-                fontSize = settings.getDynamicScreenSettings().fontSize,
+                fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
         }
     }
-
-    private inline fun calculateFontSize(
-        area: Rect
-    ): Pair<Float, Float> {
-
-        val scaleRatio = getScaleRatio()
-
-        val areaWidth = area.width()
-        val valueTextSize = (areaWidth / 17f) * scaleRatio
-        val textSizeBase = (areaWidth / 22f) * scaleRatio
-        return Pair(valueTextSize, textSizeBase)
-    }
-
-
-    private inline fun getScaleRatio() = valueConverter.scaleToNewRange(
-        settings.getDynamicScreenSettings().fontSize.toFloat(),
-        CURRENT_MIN,
-        CURRENT_MAX,
-        NEW_MIN,
-        NEW_MAX
-    )
 
     private inline fun maxItemWidth(area: Rect) = (area.width() / 6)
 }

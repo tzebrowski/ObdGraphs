@@ -38,7 +38,7 @@ internal class PerformanceSurfaceRenderer(
     private val performanceDrawer = PerformanceDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
-        Log.d(LOG_TAG,"Query strategy ${query.getStrategy()}, selected ids: ${query.getIDs()}")
+        Log.d(LOG_TAG, "Query strategy ${query.getStrategy()}, selected id's: ${query.getIDs()}")
 
         metricsCollector.applyFilter(
             enabled = query.getIDs()
@@ -47,7 +47,7 @@ internal class PerformanceSurfaceRenderer(
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
-        drawArea?.let { it ->
+        drawArea?.let {
 
             performanceDrawer.drawBackground(canvas, it)
 
@@ -91,7 +91,7 @@ internal class PerformanceSurfaceRenderer(
     }
 
     init {
-        Log.i(LOG_TAG,"Init Performance Surface renderer")
+        Log.i(LOG_TAG, "Init Performance Surface renderer")
         applyMetricsFilter(Query.instance(QueryStrategyType.PERFORMANCE))
     }
 }

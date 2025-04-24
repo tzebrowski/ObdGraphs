@@ -239,7 +239,7 @@ internal class SurfaceRendererScreen(
                         )
                     )
                 }
-                if (settings.getDynamicScreenSettings().viewEnabled) {
+                if (settings.getPerformanceScreenSettings().viewEnabled) {
                     add(
                         FeatureDescription(SurfaceRendererType.PERFORMANCE, org.obd.graphs.commons.R.drawable.action_drag_race,
                             carContext.getString(R.string.available_features_performance_screen_title)),

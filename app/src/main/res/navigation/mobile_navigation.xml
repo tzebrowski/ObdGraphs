@@ -23,6 +23,11 @@
         android:label="@string/navigation.title_drag_racing"
         tools:layout="@layout/fragment_trip_info" />
 
+    <fragment
+        android:id="@+id/navigation_performance"
+        android:name="org.obd.graphs.ui.performance.PerformanceFragment"
+        android:label="@string/navigation.title_performance"
+        tools:layout="@layout/fragment_performance" />
 
     <fragment
         android:id="@+id/navigation_giulia"
