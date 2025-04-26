@@ -45,6 +45,8 @@ const val GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_
 const val GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_3.event.changed"
 const val GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_4.event.changed"
 
+private const val AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT = "pref.aa.trip_info.pids.selected.event.changed"
+private const val AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT = "pref.aa.performance.pids.selected.event.changed"
 
 private enum class DefaultScreen(private val code: Int): Identity {
     NOT_SET(-1);
@@ -95,7 +97,7 @@ internal class SurfaceRendererScreen(
                     renderFrame()
                 }
 
-                AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT -> {
+                AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT, AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT -> {
                     updateQuery()
                     renderFrame()
                 }
@@ -285,6 +287,7 @@ internal class SurfaceRendererScreen(
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             it.addAction(AA_REFRESH_EVENT)
             it.addAction(AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT)
+            it.addAction(AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT)
 
             it.addAction(GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED)
             it.addAction(GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED)
