@@ -72,7 +72,7 @@ internal class TripInfoSurfaceRenderer(
                 left = left,
                 top = top,
                 tripInfo = tripInfo.apply {
-                    airTemp = metricsCollector.getMetric(namesRegistry.getAirTempPID())
+                    airTemp = metricsCollector.getMetric(namesRegistry.getPostICAirTempPID())
                     totalMisfires = metricsCollector.getMetric(namesRegistry.getTotalMisfiresPID())
                     ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
                     atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())

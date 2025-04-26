@@ -37,9 +37,9 @@ import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
 
-fun navigateToPreferencesScreen(prefKey: String) {
+fun navigateToPreferencesScreen(navigateToPrefKey: String) {
     (getContext() as MainActivity).navController {
-        it.navigate(R.id.navigation_preferences, bundleOf(PREFERENCE_SCREEN_KEY to prefKey))
+        it.navigate(R.id.navigation_preferences, bundleOf(PREFERENCE_SCREEN_KEY to navigateToPrefKey))
     }
 }
 
@@ -75,13 +75,13 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_android_giulia_auto_font_size -> navigateToPreferencesScreen("pref.aa.screen.font_size.category")
                 R.id.navigation_android_gauge_auto_font_size -> navigateToPreferencesScreen("pref.aa.gauge.screen.font_size.category")
 
-                R.id.navigation_gauge_pids -> navigateToPreferencesScreen(PREF_GAUGE_DISPLAYED_PARAMETERS_IDS)
-                R.id.navigation_graph_pids -> navigateToPreferencesScreen(PREF_GRAPH_DISPLAYED_PARAMETERS_IDS)
-                R.id.navigation_giulia_pids -> navigateToPreferencesScreen(PREF_GIULIA_DISPLAYED_PARAMETERS_IDS)
+                R.id.navigation_gauge_pids -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_GAUGE)
+                R.id.navigation_graph_pids -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_GRAPH)
+                R.id.navigation_giulia_pids -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_GIULIA)
                 R.id.navigation_giulia_font_size -> navigateToPreferencesScreen("pref.giulia.screen.font_size.category")
                 R.id.navigation_giulia_number_of_columns -> navigateToPreferencesScreen("pref.aa.number_of_items_in_column.category")
 
-                R.id.navigation_dashboard_pids -> navigateToPreferencesScreen(PREF_DASH_DISPLAYED_PARAMETERS_IDS)
+                R.id.navigation_dashboard_pids -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_DASH)
                 R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
                 R.id.ctx_menu_pids_to_query -> navigateToPreferencesScreen("pref.registry")
                 R.id.navigation_preferences -> navigateToPreferencesScreen("pref.root")
@@ -208,10 +208,10 @@ internal fun MainActivity.setupNavigationBarButtons() {
 
                 R.id.ctx_menu_pids_to_display -> {
                     val screenId = when (getCurrentScreenId()) {
-                        R.id.navigation_gauge -> PREF_GAUGE_DISPLAYED_PARAMETERS_IDS
-                        R.id.navigation_graph -> PREF_GRAPH_DISPLAYED_PARAMETERS_IDS
-                        R.id.navigation_giulia -> PREF_GIULIA_DISPLAYED_PARAMETERS_IDS
-                        R.id.navigation_dashboard -> PREF_DASH_DISPLAYED_PARAMETERS_IDS
+                        R.id.navigation_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
+                        R.id.navigation_graph -> PREFERENCE_SCREEN_KEY_GRAPH
+                        R.id.navigation_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
+                        R.id.navigation_dashboard -> PREFERENCE_SCREEN_KEY_DASH
                         else -> null
                     }
                     screenId?.apply {

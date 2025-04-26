@@ -50,7 +50,7 @@ private const val GEARBOX_OIL_TEMP_PID_ID = 7025L
 private const val OIL_TEMP_PID_ID = 7003L
 private const val COOLANT_TEMP_PID_ID = 7009L
 private const val EXHAUST_TEMP_PID_ID = 7016L
-private const val AIR_TEMP_PID_ID = 7002L
+private const val POST_IC_AIR_TEMP_PID_ID = 7002L
 private const val TOTAL_MISFIRES_PID_ID = 17078L
 private const val OIL_LEVEL_PID_ID = 7014L
 
@@ -66,9 +66,18 @@ private const val OIL_DEGRADATION_PID_ID = 7015L
 
 private const val VEHICLE_STATUS_PID_ID = 17091L
 
+private const val WCA_TEMP_PID_ID = 17079L
+private const val PRE_IC_AIR_TEMP_PID_ID = 7017L
+
+
+
 class PIDsNamesRegistry {
 
     fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
+
+    fun getPreICAirPID(): Long = PRE_IC_AIR_TEMP_PID_ID
+
+    fun getWcaTempPID(): Long = WCA_TEMP_PID_ID
 
     fun getOilDegradationPID(): Long = OIL_DEGRADATION_PID_ID
 
@@ -96,7 +105,7 @@ class PIDsNamesRegistry {
 
     fun getExhaustTempPID(): Long = EXHAUST_TEMP_PID_ID
 
-    fun getAirTempPID(): Long = AIR_TEMP_PID_ID
+    fun getPostICAirTempPID(): Long = POST_IC_AIR_TEMP_PID_ID
 
     fun getAtmPressurePID(): Long = EXT_ATM_PRESSURE_PID_ID
     fun getAmbientTempPID(): Long = EXT_AMBIENT_TEMP_PID_ID

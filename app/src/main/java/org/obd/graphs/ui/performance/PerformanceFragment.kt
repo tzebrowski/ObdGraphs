@@ -43,7 +43,7 @@ import org.obd.graphs.ui.common.attachToFloatingButton
 open class PerformanceFragment : Fragment() {
     private lateinit var root: View
 
-    private val query = Query.instance(QueryStrategyType.PERFORMANCE)
+    private val query = Query.instance(QueryStrategyType.PERFORMANCE_QUERY)
 
     private val metricsCollector = MetricsCollector.instance()
     private val fps = Fps()

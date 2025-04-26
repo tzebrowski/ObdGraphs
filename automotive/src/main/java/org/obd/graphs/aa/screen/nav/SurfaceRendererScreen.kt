@@ -156,7 +156,7 @@ internal class SurfaceRendererScreen(
                 metricsCollector.applyFilter(enabled = getSelectedPIDs())
 
                 if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                     query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
                 } else {
                     query.setStrategy(QueryStrategyType.SHARED_QUERY)
@@ -184,7 +184,7 @@ internal class SurfaceRendererScreen(
             SurfaceRendererType.PERFORMANCE -> {
 
                 dataLogger.updateQuery(query = query.apply {
-                    setStrategy(QueryStrategyType.PERFORMANCE)
+                    setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
                 })
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.PERFORMANCE)
             }
@@ -198,7 +198,7 @@ internal class SurfaceRendererScreen(
         when (screenId) {
             SurfaceRendererType.GIULIA , SurfaceRendererType.GAUGE -> {
                 if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                     query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
                 } else {
                     query.setStrategy(QueryStrategyType.SHARED_QUERY)
@@ -218,7 +218,7 @@ internal class SurfaceRendererScreen(
 
             SurfaceRendererType.PERFORMANCE ->
                 dataLogger.start(query.apply{
-                    setStrategy(QueryStrategyType.PERFORMANCE)
+                    setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
                 })
         }
     }
@@ -324,7 +324,7 @@ internal class SurfaceRendererScreen(
             } else if (screenId == SurfaceRendererType.PERFORMANCE) {
                 Log.i(LOG_TAG, "Updating query for  DYNAMIC_SCREEN_ID screen")
 
-                query.setStrategy(QueryStrategyType.PERFORMANCE)
+                query.setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
                 metricsCollector.applyFilter(enabled = query.getIDs())
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
                 dataLogger.updateQuery(query)
@@ -334,7 +334,7 @@ internal class SurfaceRendererScreen(
 
                 metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder())
 
-                query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+                query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                 query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
                 Log.i(LOG_TAG, "User selection PIDs=${selectedPIDs}")
 

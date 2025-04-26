@@ -49,7 +49,7 @@ internal class IotTemplateCarScreen(
 ) : CarScreen(carContext, settings, metricsCollector) {
 
     private val valueDrawable = ValueDrawable(carContext)
-    private val query = Query.instance(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+    private val query = Query.instance(QueryStrategyType.INDIVIDUAL_QUERY)
 
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -178,7 +178,7 @@ internal class IotTemplateCarScreen(
 
     override fun actionStartDataLogging() {
         if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
-            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)

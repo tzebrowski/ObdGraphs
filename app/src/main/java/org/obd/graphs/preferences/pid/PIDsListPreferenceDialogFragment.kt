@@ -38,6 +38,8 @@ import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_PERFORMANCE
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_TRIP_INFO
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateStringSet
@@ -279,9 +281,16 @@ open class PIDsListPreferenceDialogFragment(
         val individualQuery = dataLoggerPreferences.instance.individualQueryStrategyEnabled
 
         val sourceList: List<PidDefinitionDetails> =
-            if (source == "trip_info"){
+            if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO){
                 val pidRegistry = dataLogger.getPidDefinitionRegistry()
                 val list = Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaults()
+                    .mapNotNull { pidRegistry.findBy(it) }
+                    .toMutableList()
+                list.map { PidDefinitionDetails(it, checked = false, supported = true) }
+
+            } else if (source == PREFERENCE_SCREEN_SOURCE_PERFORMANCE) {
+                val pidRegistry = dataLogger.getPidDefinitionRegistry()
+                val list = Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getDefaults()
                     .mapNotNull { pidRegistry.findBy(it) }
                     .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }

@@ -16,8 +16,12 @@
  */
 package org.obd.graphs.bl.query
 
+ import org.obd.graphs.preferences.Prefs
+ import org.obd.graphs.preferences.getLongSet
 
-internal class PerformanceQueryStrategy : QueryStrategy() {
+ private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selected"
+
+ internal class PerformanceQueryStrategy : QueryStrategy() {
 
     private val defaults  = mutableSetOf(
         namesRegistry.getAtmPressurePID(),
@@ -26,13 +30,15 @@ internal class PerformanceQueryStrategy : QueryStrategy() {
         namesRegistry.getOilTempPID(),
         namesRegistry.getCoolantTempPID(),
         namesRegistry.getExhaustTempPID(),
-        namesRegistry.getAirTempPID(),
+        namesRegistry.getPostICAirTempPID(),
         namesRegistry.getTorquePID(),
         namesRegistry.getIntakePressurePID(),
         namesRegistry.getDynamicSelectorPID(),
-        namesRegistry.getGasPedalPID()
+        namesRegistry.getGasPedalPID(),
+        namesRegistry.getWcaTempPID(),
+        namesRegistry.getPreICAirPID()
     )
     override fun getDefaults() = defaults
 
-    override fun getPIDs() = getDefaults()
+    override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY).toMutableSet()
 }
