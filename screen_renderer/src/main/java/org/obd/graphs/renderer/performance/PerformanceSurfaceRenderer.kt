@@ -72,7 +72,7 @@ internal class PerformanceSurfaceRenderer(
                 top = top,
                 performanceInfoDetails = performanceInfoDetails.apply {
                     gas = metricsCollector.getMetric(namesRegistry.getGasPedalPID())
-                    airTemp = metricsCollector.getMetric(namesRegistry.getAirTempPID())
+                    postICAirTemp = metricsCollector.getMetric(namesRegistry.getPostICAirTempPID())
                     ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
                     atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
                     coolantTemp = metricsCollector.getMetric(namesRegistry.getCoolantTempPID())
@@ -81,6 +81,8 @@ internal class PerformanceSurfaceRenderer(
                     gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
                     torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
                     intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
+                    preICAirTemp = metricsCollector.getMetric(namesRegistry.getPreICAirPID())
+                    wcaTemp = metricsCollector.getMetric(namesRegistry.getWcaTempPID())
                 }
             )
         }
@@ -92,6 +94,6 @@ internal class PerformanceSurfaceRenderer(
 
     init {
         Log.i(LOG_TAG, "Init Performance Surface renderer")
-        applyMetricsFilter(Query.instance(QueryStrategyType.PERFORMANCE))
+        applyMetricsFilter(Query.instance(QueryStrategyType.PERFORMANCE_QUERY))
     }
 }

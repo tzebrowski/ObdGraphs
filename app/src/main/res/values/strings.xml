@@ -209,11 +209,13 @@
     <string name="pref.aa.performance.category">Performance Screen</string>
     <string name="pref.aa.performance.enabled">Enable performance screen</string>
     <string name="pref.aa.performance.enabled_summary">It enables Performance screen  with predefined set of metrics. Screen is dedicated to 2.0 GME engines</string>
+    <string name="pref.aa.performance.select_pids">Select Performance OBD2 PIDs</string>
 
 
     <string name="pref.aa.trip_info.category">Trip Info Screen</string>
     <string name="pref.aa.trip_info.enabled">Enable trip info screen</string>
     <string name="pref.aa.trip_info.enabled_summary">It enables trip info screen  with predefined set of metrics. Screen is dedicated to 2.0 GME engines</string>
+    <string name="pref.aa.trip_info.select_pids">Select TripInfo OBD2 PIDs</string>
 
     <string name="pref.aa.routines.category">Routines</string>
     <string name="pref.aa.routines.enabled">Enable routines screen</string>

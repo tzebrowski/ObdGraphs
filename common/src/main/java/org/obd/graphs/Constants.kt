@@ -27,7 +27,6 @@ const val AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT = "pref.aa.virtual_screens.
 const val AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT = "pref.aa.screen_renderer.changed"
 const val AA_VIRTUAL_SCREEN_REFRESH_EVENT = "pref.aa.screen_refresh.event"
 const val AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.high.event.changed"
-const val AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT = "pref.aa.trip_info.pids.selected.event.changed"
 const val AA_REFRESH_EVENT = "pref.pids.refresh.event"
 
 const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"

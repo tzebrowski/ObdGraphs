@@ -45,14 +45,23 @@ const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
 const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
-const val PREF_TRIP_INFO_DISPLAYED_PARAMETERS_IDS = "pref.trip_info.displayed_parameter_ids"
-const val PREF_DASH_DISPLAYED_PARAMETERS_IDS = "pref.dash.displayed_parameter_ids"
-const val PREF_GAUGE_DISPLAYED_PARAMETERS_IDS = "pref.gauge.displayed_parameter_ids"
-const val PREF_GRAPH_DISPLAYED_PARAMETERS_IDS = "pref.graph.displayed_parameter_ids"
-const val PREF_GIULIA_DISPLAYED_PARAMETERS_IDS = "pref.giulia.displayed_parameter_ids"
 const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
-
 private const val LOG_KEY = "Prefs"
+
+const val PREFERENCE_SCREEN_KEY_TRIP_INFO = "pref.trip_info.displayed_parameter_ids"
+const val PREFERENCE_SCREEN_KEY_PERFORMANCE = "pref.performance.displayed_parameter_ids"
+const val PREFERENCE_SCREEN_KEY_DASH = "pref.dash.displayed_parameter_ids"
+const val PREFERENCE_SCREEN_KEY_GAUGE = "pref.gauge.displayed_parameter_ids"
+const val PREFERENCE_SCREEN_KEY_GRAPH = "pref.graph.displayed_parameter_ids"
+const val PREFERENCE_SCREEN_KEY_GIULIA = "pref.giulia.displayed_parameter_ids"
+const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
+const val PREFERENCE_SCREEN_SOURCE_PERFORMANCE = "performance"
+private const val PREFERENCE_SCREEN_SOURCE_GIULIA = "giulia"
+private const val PREFERENCE_SCREEN_SOURCE_GAUGE = "gauge"
+private const val PREFERENCE_SCREEN_SOURCE_GRAPH = "graph"
+private const val NAVIGATE_TO_PREF_KEY = "pref.aa"
+
+private const val PREFERENCE_SCREEN_SOURCE_DASHBOARD = "dashboard"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
 
@@ -76,28 +85,35 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 openPreferenceDialogFor(preference.source)
                 when (preference.source) {
                     "dash" -> {
-                        openPIDsDialog("pref.dash.pids.selected","dashboard")
-                            { navigateToScreen(R.id.navigation_dashboard) }
+                        openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD)
+                        { navigateToScreen(R.id.navigation_dashboard) }
                     }
-                    "graph" -> {
-                        openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(),preference.source)
+
+                    PREFERENCE_SCREEN_SOURCE_GRAPH -> {
+                        openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(), preference.source)
                         { navigateToScreen(R.id.navigation_graph) }
                     }
 
-                    "giulia" -> {
-                        openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(),preference.source)
+                    PREFERENCE_SCREEN_SOURCE_GIULIA -> {
+                        openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(), preference.source)
                         { navigateToScreen(R.id.navigation_giulia) }
                     }
 
-                    "gauge" -> {
+                    PREFERENCE_SCREEN_SOURCE_GAUGE -> {
                         openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), preference.source)
                         { navigateToScreen(R.id.navigation_gauge) }
                     }
 
-                    "trip_info" -> {
+                    PREFERENCE_SCREEN_SOURCE_TRIP_INFO -> {
                         openPIDsDialog(preference.key, preference.source)
-                        { navigateToPreferencesScreen("pref.aa") }
+                        { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
                     }
+
+                    PREFERENCE_SCREEN_SOURCE_PERFORMANCE -> {
+                        openPIDsDialog(preference.key, preference.source)
+                        { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
+                    }
+
 
                     else -> {
                         openPIDsDialog(preference.key, preference.source)
@@ -191,6 +207,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 p3?.isVisible = false
 
             }
+
             "wifi" -> {
                 p1?.isVisible = false
                 p2?.isVisible = true
@@ -218,6 +235,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         p3?.isVisible = false
 
                     }
+
                     "wifi" -> {
                         p1?.isVisible = false
                         p2?.isVisible = true
@@ -229,6 +247,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         p2?.isVisible = false
                         p3?.isVisible = true
                     }
+
                     else -> {
                         p1?.isVisible = false
                         p2?.isVisible = true
@@ -243,32 +262,37 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         when (preferenceKey) {
             PREF_GAUGE_RECORDINGS -> TripsPreferenceDialogFragment().show(parentFragmentManager, null)
 
-            PREF_TRIP_INFO_DISPLAYED_PARAMETERS_IDS ->
-                openPIDsDialog("pref.aa.trip_info.pids.selected","trip_info")
-                { navigateToPreferencesScreen("pref.aa") }
+            PREFERENCE_SCREEN_KEY_TRIP_INFO ->
+                openPIDsDialog("pref.aa.trip_info.pids.selected", PREFERENCE_SCREEN_SOURCE_TRIP_INFO)
+                { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
 
+            PREFERENCE_SCREEN_KEY_PERFORMANCE ->
+                openPIDsDialog("pref.aa.performance.pids.selected", PREFERENCE_SCREEN_SOURCE_PERFORMANCE)
+                { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
 
-            PREF_DASH_DISPLAYED_PARAMETERS_IDS ->
-                openPIDsDialog("pref.dash.pids.selected","dashboard")
+            PREFERENCE_SCREEN_KEY_DASH ->
+                openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD)
                 { navigateToScreen(R.id.navigation_dashboard) }
 
-            PREF_GAUGE_DISPLAYED_PARAMETERS_IDS ->
-                openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(),"gauge")
+            PREFERENCE_SCREEN_KEY_GAUGE ->
+                openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GAUGE)
                 { navigateToScreen(R.id.navigation_gauge) }
 
-            PREF_GIULIA_DISPLAYED_PARAMETERS_IDS ->
-                openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(),"giulia")
+            PREFERENCE_SCREEN_KEY_GIULIA ->
+                openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GIULIA)
                 { navigateToScreen(R.id.navigation_giulia) }
 
-            PREF_GRAPH_DISPLAYED_PARAMETERS_IDS ->
-                openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(),"graph")
+            PREFERENCE_SCREEN_KEY_GRAPH ->
+                openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GRAPH)
                 { navigateToScreen(R.id.navigation_graph) }
         }
     }
 
     private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
-        PIDsListPreferenceDialogFragment(key = key, source = source,
-            onDialogCloseListener = onDialogCloseListener)
+        PIDsListPreferenceDialogFragment(
+            key = key, source = source,
+            onDialogCloseListener = onDialogCloseListener
+        )
             .show(parentFragmentManager, null)
     }
 

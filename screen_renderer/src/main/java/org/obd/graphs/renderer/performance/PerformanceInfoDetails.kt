@@ -23,10 +23,13 @@ data class PerformanceInfoDetails(
     var atmPressure: Metric? = null,
     var oilTemp: Metric? = null,
     var coolantTemp: Metric? = null,
-    var airTemp: Metric? = null,
+    var postICAirTemp: Metric? = null,
     var exhaustTemp: Metric? = null,
     var gearboxOilTemp: Metric? = null,
     var intakePressure: Metric? = null,
     var torque: Metric? = null,
-    var gas: Metric? = null
+    var gas: Metric? = null,
+    var preICAirTemp: Metric? = null,
+    var wcaTemp: Metric? = null
+
 )

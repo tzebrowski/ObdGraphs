@@ -30,10 +30,10 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
         runAsync {
             this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
             this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
-            this[QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW] = IndividualQueryStrategy()
+            this[QueryStrategyType.INDIVIDUAL_QUERY] = IndividualQueryStrategy()
             this[QueryStrategyType.ROUTINES_QUERY] = RoutinesQueryStrategy()
             this[QueryStrategyType.TRIP_INFO_QUERY] = TripInfoQueryStrategy()
-            this[QueryStrategyType.PERFORMANCE] = PerformanceQueryStrategy()
+            this[QueryStrategyType.PERFORMANCE_QUERY] = PerformanceQueryStrategy()
         }
     }
 
@@ -80,7 +80,7 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
     }
     override fun apply(filter: String): Query =
         if (isIndividualQuerySelected()) {
-            setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                 .update(filterBy(filter))
         } else {
             setStrategy(QueryStrategyType.SHARED_QUERY)
@@ -88,7 +88,7 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
 
     override fun apply(filter: Set<Long>): Query =
         if (isIndividualQuerySelected()) {
-            setStrategy(QueryStrategyType.INDIVIDUAL_QUERY_FOR_EACH_VIEW)
+            setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                 .update(filter)
         } else {
             setStrategy(QueryStrategyType.SHARED_QUERY)

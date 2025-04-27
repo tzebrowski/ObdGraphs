@@ -1556,6 +1556,25 @@
                         android:title="@string/pref.aa.performance.enabled"
                         android:summary="@string/pref.aa.performance.enabled_summary"
                         app:singleLineTitle="false" />
+
+
+                    <PreferenceScreen
+                        android:key="pref.performance.displayed_parameter_ids"
+                        android:summary="@string/pref.displayed_parameter_ids_summary"
+                        android:title="@string/pref.displayed_parameter_ids">
+                        <PreferenceCategory android:title="@string/pref.pids_category">
+                            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:dialogTitle="@string/pref.displayed_parameter_ids"
+                                android:key="pref.aa.performance.pids.selected"
+                                android:summary="@string/pref.displayed_parameter_ids_summary"
+                                android:title="@string/pref.displayed_parameter_ids"
+                                app:source="performance"
+                                app:useSimpleSummaryProvider="true" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+
+
                 </PreferenceCategory>
 
                 <PreferenceCategory
