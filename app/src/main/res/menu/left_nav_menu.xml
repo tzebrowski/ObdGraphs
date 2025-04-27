@@ -127,6 +127,12 @@
                 android:title="@string/pref.settings"
                 tools:targetApi="o"/>
 
+            <item
+                android:id="@+id/navigation_trip_info_pids_list_prefs"
+                android:checkable="true"
+                android:title="@string/pref.aa.trip_info.select_pids"
+                tools:targetApi="o"/>
+
         </menu>
     </item>
 
@@ -145,6 +151,12 @@
                 android:id="@+id/navigation_performance_prefs"
                 android:checkable="true"
                 android:title="@string/pref.settings"
+                tools:targetApi="o"/>
+
+            <item
+                android:id="@+id/navigation_performance_pids_list_prefs"
+                android:checkable="true"
+                android:title="@string/pref.aa.performance.select_pids"
                 tools:targetApi="o"/>
 
         </menu>

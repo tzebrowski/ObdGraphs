@@ -57,7 +57,10 @@ internal fun MainActivity.setupLeftNavigationPanel() {
             when (item.itemId) {
 
                 R.id.navigation_performance_prefs -> navigateToPreferencesScreen("pref.title_performance_screen")
+                R.id.navigation_performance_pids_list_prefs -> navigateToPreferencesScreen("pref.performance.displayed_parameter_ids")
+
                 R.id.navigation_trip_info_prefs -> navigateToPreferencesScreen("pref.title_trip_info")
+                R.id.navigation_trip_info_pids_list_prefs -> navigateToPreferencesScreen("pref.trip_info.displayed_parameter_ids")
                 R.id.navigation_drag_racing_prefs -> navigateToPreferencesScreen("pref.title_drag_racing")
                 R.id.navigation_graph_prefs -> navigateToPreferencesScreen("pref.graph")
                 R.id.navigation_dashboard_prefs -> navigateToPreferencesScreen("pref.dashboard")
