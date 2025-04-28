@@ -1,0 +1,52 @@
+{	
+	"dtcRead": [
+
+	],
+	
+	"dtcClear": [
+
+	],
+	
+	"routine": [
+
+	],
+	
+	"metadata": [
+
+	],
+	
+	"livedata": [
+		{
+			"priority": 0,
+			"id": "12345",
+			"mode": "22",
+			"pid": "195A",
+			"length": 2,
+			"description": "Measured Boost\nPressure (Mazda)",
+			"min": 0,
+			"max": 3500,
+			"units": "mbar",
+			"type": "INT",
+			"formula": "(A*256+B) | 0",
+			"alert": {
+				"upperThreshold": 3000
+			}
+		},
+		{
+			"priority": 0,
+			"id": "12346",
+			"mode": "22",
+			"pid": "195A",
+			"length": 2,
+			"description": "Target Boost\nPressure (Mazda)",
+			"min": 0,
+			"max": 3500,
+			"units": "mbar",
+			"type": "INT",
+			"formula": "(A*256+B) | 0",
+			"alert": {
+				"upperThreshold": 3000
+			}
+		}
+	]
+}
