@@ -77,20 +77,6 @@ internal class SurfaceRendererScreen(
 
             when (intent?.action) {
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
-                AA_REFRESH_EVENT -> {
-                    Log.i(LOG_TAG,"Received forced refresh screen event for screen ${screenId}. " +
-                            "Is renderer: ${isSurfaceRendererScreen(screenId)}")
-
-                    if (isSurfaceRendererScreen(screenId)) {
-
-                        if (screenId == SurfaceRendererType.GAUGE || screenId == SurfaceRendererType.GIULIA) {
-                            setCurrentVirtualScreen(getCurrentVirtualScreen())
-                        }
-
-                        updateQuery()
-                        renderFrame()
-                    }
-                }
 
                 AA_VIRTUAL_SCREEN_REFRESH_EVENT -> {
                     updateQuery()
@@ -285,7 +271,6 @@ internal class SurfaceRendererScreen(
             it.addAction(PROFILE_RESET_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
-            it.addAction(AA_REFRESH_EVENT)
             it.addAction(AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT)
             it.addAction(AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT)
 

@@ -154,7 +154,6 @@ internal class NavTemplateCarScreen(
                     try {
                         renderingThread.start()
                         fps.start()
-//                        sendBroadcastEvent(AA_REFRESH_EVENT)
                         navigationManager().navigationStarted()
                         toast.show(carContext, R.string.main_activity_toast_connection_established)
                         invalidate()
