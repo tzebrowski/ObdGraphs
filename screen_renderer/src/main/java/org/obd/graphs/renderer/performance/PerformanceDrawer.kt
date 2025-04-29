@@ -18,6 +18,8 @@ package org.obd.graphs.renderer.performance
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
@@ -82,40 +84,65 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         rowTop += textSize + 16
 
-        performanceInfoDetails.torque?.let {
-            gaugeDrawer.drawGauge(
-                canvas = canvas,
-                left = area.left.toFloat(),
-                top = rowTop,
-                width = area.width() / 2.6f,
-                metric = it,
-                labelCenterYPadding = 18f,
-                fontSize = settings.getPerformanceScreenSettings().fontSize,
-                scaleEnabled = false
-            )
-        }
+        if (performanceInfoDetails.vehicleSpeed == null && performanceInfoDetails.gas == null){
+            if (performanceInfoDetails.torque == null) {
+                drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
+            } else if (performanceInfoDetails.intakePressure == null) {
+                drawGaugeSingle(performanceInfoDetails.torque, canvas, rowTop, area)
+            } else {
+                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f),  (area.width() / 2f) - 10f, labelCenterYPadding = 18f)
+            }
+        } else {
 
-        performanceInfoDetails.gas?.let {
-            gaugeDrawer.drawGauge(
-                canvas = canvas,
-                left = (area.left + area.width() / 2.8f) - 6f,
-                top =  rowTop - 4f,
-                width = area.width() / 3.8f,
-                metric = it,
-                labelCenterYPadding = 26f,
-                fontSize = settings.getPerformanceScreenSettings().fontSize,
-                scaleEnabled = false
-            )
-        }
+            drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
+            drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
 
-        performanceInfoDetails.intakePressure?.let {
+            if (performanceInfoDetails.vehicleSpeed == null) {
+                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.8f) - 6f, area.width() / 3.8f)
+            } else {
+                if (performanceInfoDetails.gas == null) {
+                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop - 4f, (area.left + area.width() / 2.8f) - 6f, area.width() / 3.8f)
+                } else {
+                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
+                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
+                }
+            }
+        }
+    }
+
+    fun drawGaugeSingle(
+        metric: Metric?,
+        canvas: Canvas,
+        rowTop: Float,
+        area: Rect
+    ) {
+        drawGauge(
+            metric,
+            canvas,
+            rowTop,
+            area.left.toFloat() + (area.width() / 4f),
+            area.height().toFloat() + 24,
+            labelCenterYPadding = 8f
+        )
+    }
+
+    fun drawGauge(
+        metric: Metric?,
+        canvas: Canvas,
+        top: Float,
+        left: Float,
+        width: Float,
+        labelCenterYPadding: Float = 26f,
+    ) {
+        metric?.let {
             gaugeDrawer.drawGauge(
                 canvas = canvas,
-                left = (area.left + area.width() / 1.65f) ,
-                top =  rowTop,
-                width = area.width() / 2.6f,
+                left = left,
+                top = top ,
+                width = width,
                 metric = it,
-                labelCenterYPadding = 18f,
+                labelCenterYPadding =  labelCenterYPadding,
                 fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )

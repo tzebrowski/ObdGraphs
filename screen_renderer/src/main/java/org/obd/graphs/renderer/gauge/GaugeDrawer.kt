@@ -18,6 +18,7 @@ package org.obd.graphs.renderer.gauge
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import org.obd.graphs.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
