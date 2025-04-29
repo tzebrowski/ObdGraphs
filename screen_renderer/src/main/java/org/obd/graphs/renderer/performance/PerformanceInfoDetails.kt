@@ -30,6 +30,6 @@ data class PerformanceInfoDetails(
     var torque: Metric? = null,
     var gas: Metric? = null,
     var preICAirTemp: Metric? = null,
-    var wcaTemp: Metric? = null
-
+    var wcaTemp: Metric? = null,
+    var vehicleSpeed: Metric? = null
 )

@@ -94,19 +94,48 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 scaleEnabled = false
             )
         }
+        if (performanceInfoDetails.vehicleSpeed == null) {
+            performanceInfoDetails.gas?.let {
+                gaugeDrawer.drawGauge(
+                    canvas = canvas,
+                    left = (area.left + area.width() / 2.8f) - 6f,
+                    top =  rowTop - 4f,
+                    width = area.width() / 3.8f,
+                    metric = it,
+                    labelCenterYPadding = 26f,
+                    fontSize = settings.getPerformanceScreenSettings().fontSize,
+                    scaleEnabled = false
+                )
+            }
+        } else {
+            performanceInfoDetails.gas?.let {
+                gaugeDrawer.drawGauge(
+                    canvas = canvas,
+                    left = (area.left + area.width() / 2.6f) ,
+                    top =  rowTop - 4f,
+                    width = area.width() / 4.5f,
+                    metric = it,
+                    labelCenterYPadding = 26f,
+                    fontSize = settings.getPerformanceScreenSettings().fontSize,
+                    scaleEnabled = false
+                )
+            }
 
-        performanceInfoDetails.gas?.let {
-            gaugeDrawer.drawGauge(
-                canvas = canvas,
-                left = (area.left + area.width() / 2.8f) - 6f,
-                top =  rowTop - 4f,
-                width = area.width() / 3.8f,
-                metric = it,
-                labelCenterYPadding = 26f,
-                fontSize = settings.getPerformanceScreenSettings().fontSize,
-                scaleEnabled = false
-            )
+
+            performanceInfoDetails.vehicleSpeed?.let {
+                gaugeDrawer.drawGauge(
+                    canvas = canvas,
+                    left = (area.left + area.width() / 2.65f) ,
+                    top =  rowTop  + area.height() / 3f,
+                    width = area.width() / 4.1f,
+                    metric = it,
+                    labelCenterYPadding = 26f,
+                    fontSize = settings.getPerformanceScreenSettings().fontSize,
+                    scaleEnabled = false
+                )
+            }
         }
+
 
         performanceInfoDetails.intakePressure?.let {
             gaugeDrawer.drawGauge(
