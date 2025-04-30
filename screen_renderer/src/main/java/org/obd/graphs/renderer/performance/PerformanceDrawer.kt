@@ -18,7 +18,6 @@ package org.obd.graphs.renderer.performance
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -28,7 +27,8 @@ import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 
 
-@Suppress("NOTHING_TO_INLINE")
+private const val MAX_ITEMS_IN_ROW = 6
+ @Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     private val gaugeDrawer = GaugeDrawer(
@@ -66,17 +66,18 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         var leftAlignment = 0
 
         performanceInfoDetails.postICAirTemp?.let { tripInfoDrawer
-            .drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
+            .drawMetric(it, top = rowTop, left = left + leftAlignment++, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
         performanceInfoDetails.coolantTemp?.let {  tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true,area=area, castToInt = true) }
         performanceInfoDetails.oilTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true,area=area, castToInt = true) }
         performanceInfoDetails.exhaustTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
         performanceInfoDetails.gearboxOilTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
         performanceInfoDetails.ambientTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, area=area) }
 
-        if (leftAlignment < 6){
+
+        if (leftAlignment < MAX_ITEMS_IN_ROW){
             performanceInfoDetails.preICAirTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, area=area) }
         }
-        if (leftAlignment < 6){
+        if (leftAlignment < MAX_ITEMS_IN_ROW){
             performanceInfoDetails.wcaTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, area=area) }
         }
 
@@ -84,29 +85,53 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         rowTop += textSize + 16
 
-        if (performanceInfoDetails.vehicleSpeed == null && performanceInfoDetails.gas == null){
-            if (performanceInfoDetails.torque == null) {
-                drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
-            } else if (performanceInfoDetails.intakePressure == null) {
-                drawGaugeSingle(performanceInfoDetails.torque, canvas, rowTop, area)
-            } else {
-                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2f, labelCenterYPadding = 18f)
-                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f),  (area.width() / 2f) - 10f, labelCenterYPadding = 18f)
+        var numGauges = 4
+        if (performanceInfoDetails.vehicleSpeed == null) numGauges--
+        if (performanceInfoDetails.gas == null) numGauges--
+        if (performanceInfoDetails.torque == null) numGauges--
+        if (performanceInfoDetails.intakePressure == null) numGauges--
+
+        when (numGauges) {
+            4 ->{
+                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
+                drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
             }
-        } else {
-
-            drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
-            drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
-
-            if (performanceInfoDetails.vehicleSpeed == null) {
-                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.8f) - 6f, area.width() / 3.8f)
-            } else {
-                if (performanceInfoDetails.gas == null) {
-                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop - 4f, (area.left + area.width() / 2.8f) - 6f, area.width() / 3.8f)
+            3  -> {
+                if (drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)){
+                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() /2.9f) , area.width() / 3.7f)
                 } else {
-                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
-                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
+                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
                 }
+                if (drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)){
+                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop - 4f, (area.left + area.width() / 2.9f) , area.width() / 3.7f)
+                } else {
+                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                }
+            }
+
+
+            2 -> {
+                // left side
+                if (!drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)){
+                    if (!drawGauge(performanceInfoDetails.gas, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)){
+                        drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)
+                    }
+                }
+                //right side
+                if (!drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)){
+                   if (!drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)){
+                        drawGauge(performanceInfoDetails.gas, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)
+                    }
+                }
+            }
+
+            1 -> {
+                drawGaugeSingle(performanceInfoDetails.torque, canvas, rowTop, area)
+                drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
+                drawGaugeSingle(performanceInfoDetails.gas, canvas, rowTop, area)
+                drawGaugeSingle(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area)
             }
         }
     }
@@ -133,21 +158,23 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         top: Float,
         left: Float,
         width: Float,
-        labelCenterYPadding: Float = 26f,
-    ) {
-        metric?.let {
+        labelCenterYPadding: Float = 22f,
+    ): Boolean  =
+        if (metric == null){
+            false
+        }else {
             gaugeDrawer.drawGauge(
                 canvas = canvas,
                 left = left,
                 top = top ,
                 width = width,
-                metric = it,
+                metric = metric,
                 labelCenterYPadding =  labelCenterYPadding,
                 fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
+            true
         }
-    }
 
     private inline fun maxItemWidth(area: Rect) = (area.width() / 6)
 }
