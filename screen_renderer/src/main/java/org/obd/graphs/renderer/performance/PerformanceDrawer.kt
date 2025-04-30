@@ -28,7 +28,7 @@ import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 
 
-@Suppress("NOTHING_TO_INLINE")
+ @Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     private val gaugeDrawer = GaugeDrawer(
@@ -84,29 +84,42 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         rowTop += textSize + 16
 
-        if (performanceInfoDetails.vehicleSpeed == null && performanceInfoDetails.gas == null){
-            if (performanceInfoDetails.torque == null) {
-                drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
-            } else if (performanceInfoDetails.intakePressure == null) {
-                drawGaugeSingle(performanceInfoDetails.torque, canvas, rowTop, area)
-            } else {
-                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2f, labelCenterYPadding = 18f)
-                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f),  (area.width() / 2f) - 10f, labelCenterYPadding = 18f)
+        var numGauges = 4
+        if (performanceInfoDetails.vehicleSpeed == null) numGauges--
+        if (performanceInfoDetails.gas == null) numGauges--
+        if (performanceInfoDetails.torque == null) numGauges--
+        if (performanceInfoDetails.intakePressure == null) numGauges--
+
+        when (numGauges){
+            3, 4  -> {
+                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
+                drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
             }
-        } else {
 
-            drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
-            drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
-
-            if (performanceInfoDetails.vehicleSpeed == null) {
-                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.8f) - 6f, area.width() / 3.8f)
-            } else {
-                if (performanceInfoDetails.gas == null) {
-                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop - 4f, (area.left + area.width() / 2.8f) - 6f, area.width() / 3.8f)
-                } else {
-                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
-                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
+            2 -> {
+                var leftGauge = drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)
+                var rightGauge = drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)
+                if (!leftGauge){
+                    leftGauge = drawGauge(performanceInfoDetails.gas, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)
+                    if (!leftGauge){
+                        drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)
+                    }
                 }
+                if (!rightGauge){
+                    rightGauge = drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)
+                    if (!rightGauge){
+                        drawGauge(performanceInfoDetails.gas, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)
+                    }
+                }
+            }
+
+            1 -> {
+                drawGaugeSingle(performanceInfoDetails.torque, canvas, rowTop, area)
+                drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
+                drawGaugeSingle(performanceInfoDetails.gas, canvas, rowTop, area)
+                drawGaugeSingle(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area)
             }
         }
     }
@@ -133,21 +146,23 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         top: Float,
         left: Float,
         width: Float,
-        labelCenterYPadding: Float = 26f,
-    ) {
-        metric?.let {
+        labelCenterYPadding: Float = 22f,
+    ): Boolean  =
+        if (metric == null){
+            false
+        }else {
             gaugeDrawer.drawGauge(
                 canvas = canvas,
                 left = left,
                 top = top ,
                 width = width,
-                metric = it,
+                metric = metric,
                 labelCenterYPadding =  labelCenterYPadding,
                 fontSize = settings.getPerformanceScreenSettings().fontSize,
                 scaleEnabled = false
             )
+            true
         }
-    }
 
     private inline fun maxItemWidth(area: Rect) = (area.width() / 6)
 }
