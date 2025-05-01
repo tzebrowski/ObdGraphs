@@ -75,10 +75,12 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
 
         if (leftAlignment < MAX_ITEMS_IN_ROW){
-            performanceInfoDetails.preICAirTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, area=area) }
+            performanceInfoDetails.preICAirTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
+                statsEnabled = true, area=area) }
         }
         if (leftAlignment < MAX_ITEMS_IN_ROW){
-            performanceInfoDetails.wcaTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, area=area) }
+            performanceInfoDetails.wcaTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
+                statsEnabled = true, area=area) }
         }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
