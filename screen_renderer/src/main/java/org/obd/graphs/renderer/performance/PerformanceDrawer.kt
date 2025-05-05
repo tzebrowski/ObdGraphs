@@ -79,7 +79,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 statsEnabled = true, area=area) }
         }
         if (leftAlignment < MAX_ITEMS_IN_ROW){
-            performanceInfoDetails.wcaTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
+            performanceInfoDetails.wcacTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
                 statsEnabled = true, area=area) }
         }
 
@@ -87,18 +87,26 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         rowTop += textSize + 16
 
-        var numGauges = 4
+        var numGauges = 5
         if (performanceInfoDetails.vehicleSpeed == null) numGauges--
         if (performanceInfoDetails.gas == null) numGauges--
         if (performanceInfoDetails.torque == null) numGauges--
         if (performanceInfoDetails.intakePressure == null) numGauges--
+        if (performanceInfoDetails.gearEngaged == null) numGauges--
 
         when (numGauges) {
+            5 ->{
+                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
+                drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
+            }
             4 ->{
                 drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
                 drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
                 drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
                 drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
+                drawGauge(performanceInfoDetails.gearEngaged, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
             }
             3  -> {
                 if (drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)){
@@ -116,15 +124,26 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
             2 -> {
                 // left side
-                if (!drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)){
-                    if (!drawGauge(performanceInfoDetails.gas, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)){
-                        drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area.left.toFloat(),  area.height() + 10f, labelCenterYPadding = 10f)
+                val labelCenterYPadding = 10f
+                val width = area.width() / 2.0f
+
+                if (!drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
+                    if (!drawGauge(performanceInfoDetails.gas, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
+                        if (!drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
+                            drawGauge(performanceInfoDetails.gearEngaged, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)
+                        }
                     }
                 }
                 //right side
-                if (!drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)){
-                   if (!drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)){
-                        drawGauge(performanceInfoDetails.gas, canvas, rowTop, (area.left + area.width() / 2f) - 6f,  area.height() + 10f, labelCenterYPadding = 10f)
+                if (!drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f) - 6f,
+                        width, labelCenterYPadding = labelCenterYPadding
+                    )){
+                   if (!drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 2f) - 6f,
+                           width, labelCenterYPadding = labelCenterYPadding
+                       )){
+                        drawGauge(performanceInfoDetails.gas, canvas, rowTop, (area.left + area.width() / 2f) - 6f,
+                            width, labelCenterYPadding = labelCenterYPadding
+                        )
                     }
                 }
             }
@@ -134,6 +153,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
                 drawGaugeSingle(performanceInfoDetails.gas, canvas, rowTop, area)
                 drawGaugeSingle(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area)
+                drawGaugeSingle(performanceInfoDetails.gearEngaged, canvas, rowTop, area)
             }
         }
     }
@@ -149,8 +169,8 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
             canvas,
             rowTop,
             area.left.toFloat() + (area.width() / 4f),
-            area.height().toFloat() + 24,
-            labelCenterYPadding = 8f
+            area.width().toFloat() / 2f,
+            labelCenterYPadding = 6f
         )
     }
 

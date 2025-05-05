@@ -82,8 +82,9 @@ internal class PerformanceSurfaceRenderer(
                     torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
                     intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
                     preICAirTemp = metricsCollector.getMetric(namesRegistry.getPreICAirPID())
-                    wcaTemp = metricsCollector.getMetric(namesRegistry.getWcaTempPID())
+                    wcacTemp = metricsCollector.getMetric(namesRegistry.getWcaTempPID())
                     vehicleSpeed = metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())
+                    gearEngaged =  metricsCollector.getMetric(namesRegistry.getGearEngagedPID())
                 }
             )
         }
