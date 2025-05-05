@@ -78,8 +78,14 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
             performanceInfoDetails.preICAirTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
                 statsEnabled = true, area=area) }
         }
+
         if (leftAlignment < MAX_ITEMS_IN_ROW){
             performanceInfoDetails.wcacTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
+                statsEnabled = true, area=area) }
+        }
+
+        if (leftAlignment < MAX_ITEMS_IN_ROW){
+            performanceInfoDetails.gearEngaged?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
                 statsEnabled = true, area=area) }
         }
 
@@ -87,26 +93,20 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         rowTop += textSize + 16
 
-        var numGauges = 5
+        var numGauges = 4
         if (performanceInfoDetails.vehicleSpeed == null) numGauges--
         if (performanceInfoDetails.gas == null) numGauges--
         if (performanceInfoDetails.torque == null) numGauges--
         if (performanceInfoDetails.intakePressure == null) numGauges--
-        if (performanceInfoDetails.gearEngaged == null) numGauges--
+
+
 
         when (numGauges) {
-            5 ->{
-                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
-                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
-                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
-                drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
-            }
             4 ->{
                 drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
                 drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
                 drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
                 drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
-                drawGauge(performanceInfoDetails.gearEngaged, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
             }
             3  -> {
                 if (drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)){
@@ -153,7 +153,6 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
                 drawGaugeSingle(performanceInfoDetails.gas, canvas, rowTop, area)
                 drawGaugeSingle(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area)
-                drawGaugeSingle(performanceInfoDetails.gearEngaged, canvas, rowTop, area)
             }
         }
     }
