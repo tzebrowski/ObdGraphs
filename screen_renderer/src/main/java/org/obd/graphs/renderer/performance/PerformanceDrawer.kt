@@ -129,9 +129,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
                 if (!drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
                     if (!drawGauge(performanceInfoDetails.gas, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
-                        if (!drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
-                            drawGauge(performanceInfoDetails.gearEngaged, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)
-                        }
+                        drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding))
                     }
                 }
                 //right side
