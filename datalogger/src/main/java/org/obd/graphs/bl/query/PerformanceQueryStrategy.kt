@@ -37,7 +37,8 @@ package org.obd.graphs.bl.query
         namesRegistry.getGasPedalPID(),
         namesRegistry.getWcaTempPID(),
         namesRegistry.getPreICAirPID(),
-        namesRegistry.getVehicleSpeedPID()
+        namesRegistry.getVehicleSpeedPID(),
+        namesRegistry.getGearEngagedPID()
     )
     override fun getDefaults() = defaults
 

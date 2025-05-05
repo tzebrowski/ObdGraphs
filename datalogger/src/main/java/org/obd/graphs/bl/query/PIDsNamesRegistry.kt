@@ -47,6 +47,8 @@ private const val ENGINE_RPM_PID_ID = 13L
 private const val FUEL_CONSUMPTION_PID_ID = 7035L
 private const val FUEL_LEVEL_PID_ID = 7037L
 private const val GEARBOX_OIL_TEMP_PID_ID = 7025L
+private const val GEAR_ENGAGED_PID_ID = 7029L
+
 private const val OIL_TEMP_PID_ID = 7003L
 private const val COOLANT_TEMP_PID_ID = 7009L
 private const val EXHAUST_TEMP_PID_ID = 7016L
@@ -99,6 +101,9 @@ class PIDsNamesRegistry {
     fun getFuelConsumptionPID(): Long = FUEL_CONSUMPTION_PID_ID
     fun getFuelLevelPID(): Long = FUEL_LEVEL_PID_ID
     fun getGearboxOilTempPID(): Long = GEARBOX_OIL_TEMP_PID_ID
+
+    fun getGearEngagedPID(): Long = GEAR_ENGAGED_PID_ID
+
     fun getOilTempPID(): Long = OIL_TEMP_PID_ID
 
     fun getCoolantTempPID(): Long = COOLANT_TEMP_PID_ID
