@@ -32,6 +32,7 @@ import org.obd.graphs.bl.trip.RESERVED_SCREEN_ID
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.*
+import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
@@ -141,14 +142,21 @@ internal fun MainActivity.setupNavigationBar() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
-                val aaMenuItem = it.menu.findItem(R.id.ctx_menu_android_auto)
-                if (isAndroidAutoEnabled()) {
-                    val spanString = SpannableString(aaMenuItem.title.toString())
-                    spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
-                    aaMenuItem.title = spanString
-                    aaMenuItem.isVisible = true
-                } else {
-                    aaMenuItem.isVisible = false
+                it.menu.findItem(R.id.ctx_menu_android_auto).let {
+                    if (isAndroidAutoEnabled()) {
+                        val spanString = SpannableString(it.title.toString())
+                        spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
+                        it.title = spanString
+                        it.isVisible = true
+                    } else {
+                        it.isVisible = false
+                    }
+                }
+
+                it.menu.findItem(R.id.ctx_menu_views).let {
+                    val spanString = SpannableString(it.title.toString()).apply {  }
+                    spanString.setSpan(ForegroundColorSpan(COLOR_CARDINAL), 0, spanString.length, 0)
+                    it.title = spanString
                 }
 
                 when (destination.label.toString()) {
@@ -184,6 +192,14 @@ internal fun MainActivity.setupNavigationBarButtons() {
     bottomAppBar {
         it.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+
+                R.id.ctx_menu_performance_view -> {
+                    navigateToScreen(R.id.navigation_performance)
+                }
+
+                R.id.ctx_menu_drag_racing_view -> {
+                    navigateToScreen(R.id.navigation_drag_racing)
+                }
 
                 R.id.ctx_menu_view_custom_action_1 -> {
                     when (getCurrentScreenId()) {

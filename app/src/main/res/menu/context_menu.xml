@@ -2,6 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/ctx_menu_views"
+        android:title="@string/context_menu.jump_to_view">
+        <menu>
+
+            <item
+                android:id="@+id/ctx_menu_drag_racing_view"
+                android:title="@string/context_menu.drag_racing" />
+
+            <item
+                android:id="@+id/ctx_menu_performance_view"
+                android:title="@string/context_menu.performance" />
+
+        </menu>
+    </item>
+    <item
         android:id="@+id/ctx_menu_view_configuration"
         android:title="@string/context_menu.view_configuration" />
 
