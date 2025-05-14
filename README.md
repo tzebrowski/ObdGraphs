@@ -13,7 +13,7 @@ Application offers integration with `Android Auto` and it is available in google
 
 ## Template App
 This application can serve as a template to support various vehicles, each with its own set of custom PIDs. 
-Example for such use-case  can be found [here] (https://github.com/tzebrowski/ObdGraphs/compare/master...feat/custom_pids_example "custom pids")
+Example for such use-case  can be found [here](https://github.com/tzebrowski/ObdGraphs/compare/master...feat/custom_pids_example "custom pids")
 
 
 ## Features
