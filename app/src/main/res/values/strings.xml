@@ -51,6 +51,10 @@
     <string name="context_menu.custom_action_1">Custom</string>
     <string name="context_menu.drag_racing">Drag Racing View</string>
     <string name="context_menu.performance">Performance View</string>
+    <string name="context_menu.giulia">Giulia View</string>
+    <string name="context_menu.gauge">Gauge View</string>
+    <string name="context_menu.graph">Graph View</string>
+    <string name="context_menu.dashboard">Dashboard View</string>
     <string name="context_menu.jump_to_view">Jump to view</string>
 
 

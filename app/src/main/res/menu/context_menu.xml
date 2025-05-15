@@ -14,6 +14,23 @@
                 android:id="@+id/ctx_menu_performance_view"
                 android:title="@string/context_menu.performance" />
 
+            <item
+                android:id="@+id/ctx_menu_giulia_view"
+                android:title="@string/context_menu.giulia" />
+
+            <item
+                android:id="@+id/ctx_menu_gauge_view"
+                android:title="@string/context_menu.gauge" />
+
+            <item
+                android:id="@+id/ctx_menu_graph_view"
+                android:title="@string/context_menu.graph" />
+
+            <item
+                android:id="@+id/ctx_menu_dashboard_view"
+                android:title="@string/context_menu.dashboard" />
+
+
         </menu>
     </item>
     <item

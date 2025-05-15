@@ -193,29 +193,19 @@ internal fun MainActivity.setupNavigationBarButtons() {
         it.setOnMenuItemClickListener { item ->
             when (item.itemId) {
 
-                R.id.ctx_menu_performance_view -> {
-                    navigateToScreen(R.id.navigation_performance)
-                }
+                R.id.ctx_menu_performance_view -> navigateToScreen(R.id.navigation_performance)
+                R.id.ctx_menu_drag_racing_view ->  navigateToScreen(R.id.navigation_drag_racing)
+                R.id.ctx_menu_giulia_view ->  navigateToScreen(R.id.navigation_giulia)
+                R.id.ctx_menu_graph_view ->  navigateToScreen(R.id.navigation_graph)
+                R.id.ctx_menu_gauge_view ->  navigateToScreen(R.id.navigation_gauge)
+                R.id.ctx_menu_dashboard_view ->  navigateToScreen(R.id.navigation_dashboard)
 
-                R.id.ctx_menu_drag_racing_view -> {
-                    navigateToScreen(R.id.navigation_drag_racing)
-                }
-
-                R.id.ctx_menu_view_custom_action_1 -> {
-                    when (getCurrentScreenId()) {
-                        R.id.navigation_graph -> {
-                            navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
-                        }
-                        R.id.navigation_giulia -> {
-                           tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList())
-                           tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
-
-                           navigateToScreen(R.id.navigation_graph)
-                        }
-
-                        else -> {}
-                    }
-                }
+                R.id.ctx_menu_vehicle_properties -> navigateToPreferencesScreen("pref.vehicle.properties")
+                R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
+                R.id.ctx_menu_pids_to_query -> navigateToPreferencesScreen("pref.registry")
+                R.id.ctx_menu_view_profiles -> navigateToPreferencesScreen("pref.profiles")
+                R.id.ctx_menu_dtc -> navigateToPreferencesScreen("pref.dtc")
+                R.id.ctx_menu_android_auto -> navigateToPreferencesScreen("pref.aa")
 
                 R.id.ctx_menu_submenu_filters_filter_1 -> applyGraphViewFilter(1)
                 R.id.ctx_menu_submenu_filters_filter_2 -> applyGraphViewFilter(2)
@@ -224,6 +214,22 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 R.id.ctx_menu_submenu_filters_filter_5 -> applyGraphViewFilter(5)
                 R.id.ctx_menu_submenu_filters_filter_6 -> applyGraphViewFilter(6)
                 R.id.ctx_menu_submenu_filters_filter_7 -> applyGraphViewFilter(7)
+
+                R.id.ctx_menu_view_custom_action_1 -> {
+                    when (getCurrentScreenId()) {
+                        R.id.navigation_graph -> {
+                            navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
+                        }
+                        R.id.navigation_giulia -> {
+                            tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList())
+                            tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
+
+                            navigateToScreen(R.id.navigation_graph)
+                        }
+
+                        else -> {}
+                    }
+                }
 
                 R.id.ctx_menu_pids_to_display -> {
                     val screenId = when (getCurrentScreenId()) {
@@ -236,30 +242,6 @@ internal fun MainActivity.setupNavigationBarButtons() {
                     screenId?.apply {
                         navigateToPreferencesScreen(this)
                     }
-                }
-
-                R.id.ctx_menu_vehicle_properties -> {
-                    navigateToPreferencesScreen("pref.vehicle.properties")
-                }
-
-                R.id.ctx_menu_about -> {
-                    navigateToPreferencesScreen("pref.about")
-                }
-
-                R.id.ctx_menu_pids_to_query -> {
-                    navigateToPreferencesScreen("pref.registry")
-                }
-
-                R.id.ctx_menu_view_profiles -> {
-                    navigateToPreferencesScreen("pref.profiles")
-                }
-
-                R.id.ctx_menu_dtc -> {
-                    navigateToPreferencesScreen("pref.dtc")
-                }
-
-                R.id.ctx_menu_android_auto -> {
-                    navigateToPreferencesScreen("pref.aa")
                 }
 
                 R.id.ctx_menu_view_configuration -> {
