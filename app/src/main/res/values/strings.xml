@@ -50,6 +50,7 @@
     <string name="context_menu.about">About</string>
     <string name="context_menu.custom_action_1">Custom</string>
     <string name="context_menu.drag_racing">Drag Racing View</string>
+    <string name="context_menu.trip_info">Trip Info View</string>
     <string name="context_menu.performance">Performance View</string>
     <string name="context_menu.giulia">Giulia View</string>
     <string name="context_menu.gauge">Gauge View</string>

@@ -151,6 +151,7 @@ internal fun MainActivity.setupNavigationBar() {
                     } else {
                         it.isVisible = false
                     }
+
                 }
 
                 it.menu.findItem(R.id.ctx_menu_views).let {
@@ -193,6 +194,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
         it.setOnMenuItemClickListener { item ->
             when (item.itemId) {
 
+                R.id.ctx_menu_trip_info_view -> navigateToScreen(R.id.navigation_trip_info)
                 R.id.ctx_menu_performance_view -> navigateToScreen(R.id.navigation_performance)
                 R.id.ctx_menu_drag_racing_view ->  navigateToScreen(R.id.navigation_drag_racing)
                 R.id.ctx_menu_giulia_view ->  navigateToScreen(R.id.navigation_giulia)

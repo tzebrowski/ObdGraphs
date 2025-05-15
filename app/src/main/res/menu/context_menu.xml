@@ -1,35 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/ctx_menu_views"
         android:title="@string/context_menu.jump_to_view">
         <menu>
-
             <item
+                android:icon="@drawable/action_drag_race"
+                app:showAsAction="ifRoom|withText"
                 android:id="@+id/ctx_menu_drag_racing_view"
                 android:title="@string/context_menu.drag_racing" />
 
             <item
+                app:showAsAction="ifRoom|withText"
+                android:icon="@drawable/action_drag_race"
                 android:id="@+id/ctx_menu_performance_view"
                 android:title="@string/context_menu.performance" />
 
             <item
+                android:icon="@android:drawable/ic_dialog_dialer"
+                app:showAsAction="ifRoom|withText"
+                android:id="@+id/ctx_menu_trip_info_view"
+                android:title="@string/context_menu.trip_info" />
+
+            <item
+                app:showAsAction="ifRoom|withText"
+                android:icon="@android:drawable/ic_dialog_dialer"
                 android:id="@+id/ctx_menu_giulia_view"
                 android:title="@string/context_menu.giulia" />
 
+
             <item
+                app:showAsAction="ifRoom|withText"
+                android:icon="@android:drawable/ic_menu_gallery"
                 android:id="@+id/ctx_menu_gauge_view"
                 android:title="@string/context_menu.gauge" />
 
             <item
+                app:showAsAction="ifRoom|withText"
+                android:icon="@android:drawable/ic_menu_gallery"
                 android:id="@+id/ctx_menu_graph_view"
                 android:title="@string/context_menu.graph" />
 
             <item
+                app:showAsAction="ifRoom|withText"
+                android:icon="@android:drawable/ic_menu_gallery"
+
                 android:id="@+id/ctx_menu_dashboard_view"
                 android:title="@string/context_menu.dashboard" />
-
 
         </menu>
     </item>

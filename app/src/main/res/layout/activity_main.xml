@@ -127,7 +127,7 @@
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
                 android:layout_width="match_parent"
-                android:layout_height="118dp"
+                android:layout_height="140dp"
                 android:layout_gravity="bottom"
                 android:backgroundTint="@color/gray"
                 app:contentInsetStart="0dp"
