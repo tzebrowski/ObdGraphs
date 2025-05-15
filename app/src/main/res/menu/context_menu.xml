@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:icon="@android:drawable/ic_dialog_dialer"
+        app:showAsAction="ifRoom|withText"
         android:id="@+id/ctx_menu_views"
         android:title="@string/context_menu.jump_to_view">
         <menu>
-
             <item
+                android:icon="@drawable/action_drag_race"
+                app:showAsAction="ifRoom|withText"
                 android:id="@+id/ctx_menu_drag_racing_view"
                 android:title="@string/context_menu.drag_racing" />
 
             <item
+                app:showAsAction="ifRoom|withText"
+                android:icon="@drawable/action_drag_race"
                 android:id="@+id/ctx_menu_performance_view"
                 android:title="@string/context_menu.performance" />
 
+            <item
+                android:icon="@android:drawable/ic_dialog_dialer"
+                app:showAsAction="ifRoom|withText"
+                android:id="@+id/ctx_menu_trip_info_view"
+                android:title="@string/context_menu.trip_info" />
         </menu>
     </item>
     <item
@@ -41,6 +51,8 @@
         android:title="@string/pref.vehicle.metadata_title" />
 
     <item
+        app:showAsAction="ifRoom|withText"
+        android:icon="@drawable/android_auto_icon"
         android:id="@+id/ctx_menu_android_auto"
         android:title="@string/pref.aa.title" />
 
