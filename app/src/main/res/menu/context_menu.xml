@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:icon="@android:drawable/ic_dialog_dialer"
+        app:showAsAction="ifRoom|withText"
         android:id="@+id/ctx_menu_views"
         android:title="@string/context_menu.jump_to_view">
         <menu>
@@ -22,33 +24,6 @@
                 app:showAsAction="ifRoom|withText"
                 android:id="@+id/ctx_menu_trip_info_view"
                 android:title="@string/context_menu.trip_info" />
-
-            <item
-                app:showAsAction="ifRoom|withText"
-                android:icon="@android:drawable/ic_dialog_dialer"
-                android:id="@+id/ctx_menu_giulia_view"
-                android:title="@string/context_menu.giulia" />
-
-
-            <item
-                app:showAsAction="ifRoom|withText"
-                android:icon="@android:drawable/ic_menu_gallery"
-                android:id="@+id/ctx_menu_gauge_view"
-                android:title="@string/context_menu.gauge" />
-
-            <item
-                app:showAsAction="ifRoom|withText"
-                android:icon="@android:drawable/ic_menu_gallery"
-                android:id="@+id/ctx_menu_graph_view"
-                android:title="@string/context_menu.graph" />
-
-            <item
-                app:showAsAction="ifRoom|withText"
-                android:icon="@android:drawable/ic_menu_gallery"
-
-                android:id="@+id/ctx_menu_dashboard_view"
-                android:title="@string/context_menu.dashboard" />
-
         </menu>
     </item>
     <item
@@ -76,6 +51,8 @@
         android:title="@string/pref.vehicle.metadata_title" />
 
     <item
+        app:showAsAction="ifRoom|withText"
+        android:icon="@drawable/android_auto_icon"
         android:id="@+id/ctx_menu_android_auto"
         android:title="@string/pref.aa.title" />
 

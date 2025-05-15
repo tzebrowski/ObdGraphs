@@ -197,10 +197,6 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 R.id.ctx_menu_trip_info_view -> navigateToScreen(R.id.navigation_trip_info)
                 R.id.ctx_menu_performance_view -> navigateToScreen(R.id.navigation_performance)
                 R.id.ctx_menu_drag_racing_view ->  navigateToScreen(R.id.navigation_drag_racing)
-                R.id.ctx_menu_giulia_view ->  navigateToScreen(R.id.navigation_giulia)
-                R.id.ctx_menu_graph_view ->  navigateToScreen(R.id.navigation_graph)
-                R.id.ctx_menu_gauge_view ->  navigateToScreen(R.id.navigation_gauge)
-                R.id.ctx_menu_dashboard_view ->  navigateToScreen(R.id.navigation_dashboard)
 
                 R.id.ctx_menu_vehicle_properties -> navigateToPreferencesScreen("pref.vehicle.properties")
                 R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
