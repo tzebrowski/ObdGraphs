@@ -6,11 +6,11 @@
 
 
     <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
-    <string name="pref.experimental_switch_network_enabled">This is an EXPERIMENTAL feature.\nIts controlled by FF_SWITCH_NETWORK_ENABLED Feature Flag</string>
-    <string name="pref.experimental_result_cache_enabled">This is an EXPERIMENTAL feature.\nIts controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
-    <string name="pref.experimental_read_external_storage_enabled">This is an EXPERIMENTAL feature.\nIts controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
+    <string name="pref.experimental_switch_network_enabled">This is an EXPERIMENTAL feature, controlled by the FF_SWITCH_NETWORK_ENABLED feature flag</string>
+    <string name="pref.experimental_result_cache_enabled">This is an EXPERIMENTAL feature, controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
+    <string name="pref.experimental_read_external_storage_enabled">This is an EXPERIMENTAL feature, controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
 
-    <string name="permissions.missing.bt_msg">In order to connect to the Adapter, Bluetooth permissions must be granted.</string>
+    <string name="permissions.missing.bt_msg">To establish a connection with the adapter, Bluetooth permissions must be granted.</string>
 
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_gauge">Gauge</string>
@@ -105,7 +105,7 @@
     <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>
     <string name="pref.pids.group.enableDTCReadings">Enable DTC readings</string>
     <string name="pref.pids.group.show_notification">Enable DTC notifications</string>
-    <string name="pref.pids.group.enableDTCCleanup">Enable DTC cleanup after session initialized</string>
+    <string name="pref.pids.group.enableDTCCleanup">Perform DTC cleanup after the session starts</string>
 
     <string name="pref.pids.group.show_notification_summary">When enabled, you will receive notification whenever DTC becomes available.</string>
 
@@ -114,7 +114,7 @@
 
     <string name="pref.pids.group.enableDTCReadings_summary">When enabled, Diagnostic Trouble Codes (DTCs) will be read during the ECU session.</string>
     <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session.</string>
-    <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will cause OBD2 PIDs/Sensors will be read during the session with ECU</string>
+    <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will allow supported OBD2 PIDs/Sensors to be read during the session with the ECU.</string>
 
     <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
 
@@ -138,7 +138,7 @@
     <string name="pref.aa.theme.virtual_screen_color">Virtual screen buttons color</string>
 
     <string name="pref.aa.virtual_screens.split_pids_labels.category">Split PIDs label</string>
-    <string name="pref.aa.virtual_screens.split_pids_labels.category.summary">Enable splitting PIDs label into 2 lines for each virtual screen</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.category.summary">Enable the option to display PID labels in two lines per virtual screen.</string>
 
     <string name="pref.aa.virtual_screens.split_pids_labels.1">Split PIDs label into 2 lines for screen 1</string>
     <string name="pref.aa.virtual_screens.split_pids_labels.2">Split PIDs label into 2 lines for screen 2</string>
@@ -186,22 +186,22 @@
     <string name="pref.aa.giulia.virtual_screens.font_size.category">Giulia screen font size</string>
 
     <string name="pref.aa.virtual_screens.font_size.category.summary">Choose font size for each individual virtual screen</string>
-    <string name="pref.aa.font_size.1">Font size of the displayed OBD2 PIDs/Sensors for screen 1</string>
-    <string name="pref.aa.font_size.2">Font size of the displayed OBD2 PIDs/Sensors for screen 2</string>
-    <string name="pref.aa.font_size.3">Font size of the displayed OBD2 PIDs/Sensors for screen 3</string>
-    <string name="pref.aa.font_size.4">Font size of the displayed OBD2 PIDs/Sensors for screen 4</string>
-    <string name="pref.aa.font_size.5">Font size of the displayed OBD2 PIDs/Sensors for screen 5</string>
-    <string name="pref.aa.font_size.6">Font size of the displayed OBD2 PIDs/Sensors for screen 6</string>
-    <string name="pref.aa.font_size.7">Font size of the displayed OBD2 PIDs/Sensors for screen 7</string>
-    <string name="pref.aa.display_pid_history">Display PIDs min and max value collected</string>
+    <string name="pref.aa.font_size.1">Font size for displaying OBD2 PIDs/Sensors on Screen 1.</string>
+    <string name="pref.aa.font_size.2">Font size for displaying OBD2 PIDs/Sensors on Screen 2.</string>
+    <string name="pref.aa.font_size.3">Font size for displaying OBD2 PIDs/Sensors on Screen 3.</string>
+    <string name="pref.aa.font_size.4">Font size for displaying OBD2 PIDs/Sensors on Screen 4.</string>
+    <string name="pref.aa.font_size.5">Font size for displaying OBD2 PIDs/Sensors on Screen 5.</string>
+    <string name="pref.aa.font_size.6">Font size for displaying OBD2 PIDs/Sensors on Screen 6.</string>
+    <string name="pref.aa.font_size.7">Font size for displaying OBD2 PIDs/Sensors on Screen 7.</string>
+    <string name="pref.aa.display_pid_history">Show collected minimum and maximum PID values</string>
     <string name="pref.aa.display_pid_scale">Display PIDs scale</string>
 
-    <string name="pref.aa.screen.load_last_visited.enabled">Automatically load the last used screen</string>
+    <string name="pref.aa.screen.load_last_visited.enabled">Automatically load the previously used screen.</string>
     <string name="pref.aa.display_status_panel">Display status panel</string>
     <string name="pref.aa.connect_dialog.enabled">Display the connection dialog while establishing a connection with the OBD2 adapter</string>
-    <string name="pref.aa.connection_auto">Automatically connect when entering AA mode</string>
+    <string name="pref.aa.connection_auto">Auto-connect when AA mode is activated.</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled">Enable PIDs sort order</string>
-    <string name="pref.aa.virtual_screens.sort_order.enabled_summary">This is an EXPERIMENTAL feature.\nDefine PIDs order on the screen through drag and drop on the PIDs selection list.\nWhen selected App restart is required.</string>
+    <string name="pref.aa.virtual_screens.sort_order.enabled_summary">This is an EXPERIMENTAL feature.\nIt allows you to define the order of PIDs on the screen using drag-and-drop within the PID selection list. An app restart is required after enabling this option.</string>
 
     <string name="pref.aa.title">Android Auto</string>
 
