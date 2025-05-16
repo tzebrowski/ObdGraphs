@@ -280,7 +280,7 @@ internal class NavTemplateCarScreen(
     override fun onGetTemplate(): Template  = try {
         settings.initItemsSortOrder()
 
-        if (dataLogger.status() == WorkflowStatus.Connecting) {
+        if (settings.isConnectionDialogEnabled() && dataLogger.status() == WorkflowStatus.Connecting) {
             NavigationTemplate.Builder()
                 .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
                 .setActionStrip(getHorizontalActionStrip())
