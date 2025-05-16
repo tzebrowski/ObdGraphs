@@ -161,6 +161,8 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     fun isLoadLastVisitedScreenEnabled(): Boolean = Prefs.getBoolean("pref.aa.screen.load_last_visited.enabled", false)
 
+    fun isConnectionDialogEnabled(): Boolean = Prefs.getBoolean("pref.aa.connect_dialog.enabled", true)
+
     fun getLastVisitedScreen(): Identity = SurfaceRendererType.fromInt(Prefs.getInt(LAST_USER_SCREEN, 0))
 
     fun setLastVisitedScreen(identity: Identity){
