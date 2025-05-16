@@ -56,12 +56,12 @@
 
 
     <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
-    <string name="pref.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors you would like to see on the screen</string>
+    <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
 
     <string name="pref.pids_generic_high">High frequency OBD2 PIDs/Sensors</string>
-    <string name="pref.pids_generic_high_summary">Choose High frequency OBD2 PIDs/Sensors you would like to query from ECU</string>
+    <string name="pref.pids_generic_high_summary">Pick the high-frequency OBD2 sensors or PIDs you would like to retrieve from the ECU.</string>
     <string name="pref.pids_generic_low">Low frequency OBD2 PIDs/Sensors</string>
-    <string name="pref.pids_generic_low_summary">Choose Low frequency OBD2 PIDs/Sensors you would like to query from ECU</string>
+    <string name="pref.pids_generic_low_summary">Pick the low-frequency OBD2 sensors or PIDs you would like to retrieve from the ECU.</string>
 
     <string name="prefs.adapter_batch_mode_01_batch_size">Batch Size for Mode 01</string>
     <string name="prefs.adapter_batch_mode_22_batch_size">Batch Size for Mode 22</string>
@@ -69,17 +69,17 @@
     <string name="pref.adapter_batch__strict_validation_enabled">Enable strict messages validation</string>
 
     <string name="pref.adapter_stn_enabled">Enable STN extensions</string>
-    <string name="pref.adapter_stn_enabled_summary">Enabling this option will cause that STNxx chip specific commands are used during session with ECU which might increase performance. This option should be turned on only when STNxx based adapter is in use, otherwise it will cause errors. </string>
+    <string name="pref.adapter_stn_enabled_summary">Enable this only if you are using an STNxx-based adapter—doing so may boost performance by using chip-specific commands. Using it with other adapters may lead to errors </string>
     <string name="pref.adapter_cache_result_enabled">Enable result cache</string>
     <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
     <string name="pref.adapter_reconnect">Enable OBD2 Adapter automatic reconnect when connectivity errors occur</string>
     <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts</string>
-    <string name="pref.adapter.query.view_individual.enabled">Fetch PIDs based on the current screen selection</string>
-    <string name="pref.adapter.query.view_individual.enabled_summary">By setting this parameter, only selected PIDs on the current screen are fetched from vehicle. This feature increase performance and its recommend for slow adapters.</string>
-    <string name="pref.adapter.query.view_individual.dialog_disabled_warning">Dialog is disabled because individual query strategy is enabled.</string>
+    <string name="pref.adapter.query.view_individual.enabled">Retrieve PIDs based on the current screen selection</string>
+    <string name="pref.adapter.query.view_individual.enabled_summary">Fetch only the PIDs shown on screen to boost performance—recommended for slow adapters.</string>
+    <string name="pref.adapter.query.view_individual.dialog_disabled_warning">This dialog is disabled because individual query strategy is enabled.</string>
 
     <string name="pref.connection.category">OBD2 Adapter Connection</string>
-    <string name="pref.connection.category.summary">Under this section you can find preferences related to the adapter type. You can configure here WIFI or Bluetooth parameters of your adapter</string>
+    <string name="pref.connection.category.summary">This section contains settings related to your adapter type. Here, you can configure the Wi-Fi or Bluetooth parameters of your adapter.</string>
 
     <string name="pref.connection.connection_type">Type of connection</string>
     <string name="pref.connection.connection_timeout">Connection timeout</string>
@@ -107,13 +107,13 @@
     <string name="pref.pids.group.show_notification">Enable DTC notifications</string>
     <string name="pref.pids.group.enableDTCCleanup">Enable DTC cleanup after session initialized</string>
 
-    <string name="pref.pids.group.show_notification_summary">Enabling this option will cause you will receive notification when DTC available.</string>
+    <string name="pref.pids.group.show_notification_summary">When enabled, you will receive notification whenever DTC becomes available.</string>
 
-    <string name="pref.pids.group.enableDTCCleanup_summary">Enabling this option will cause DTC codes will be automatically cleanup from the ECU memory</string>
+    <string name="pref.pids.group.enableDTCCleanup_summary">When enabled, this option will automatically erase Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
 
 
-    <string name="pref.pids.group.enableDTCReadings_summary">Enabling this option will cause DTC codes will be read during the session with ECU</string>
-    <string name="pref.pids.group.enableMetadataReadings_summary">Enabling this option will cause Vehicle metadata will be read during the session with ECU</string>
+    <string name="pref.pids.group.enableDTCReadings_summary">When enabled, Diagnostic Trouble Codes (DTCs) will be read during the ECU session.</string>
+    <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session.</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will cause OBD2 PIDs/Sensors will be read during the session with ECU</string>
 
     <string name="pref.screen.fps">Screen refresh rate (FPS)</string>
