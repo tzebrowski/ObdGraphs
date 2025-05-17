@@ -68,11 +68,11 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
 
-    override fun importBackup() {
+    override fun restoreBackup() {
         runAsync {
             try {
 
-                Log.i(LOG_TAG, "Start importing backup file")
+                Log.i(LOG_TAG, "Start restoring backup file")
                 val backupFile = getBackupFile()
 
                 loadProfileFilesIntoPreferences(
@@ -85,12 +85,12 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
                     prop
                 }
 
-                Log.i(LOG_TAG, "Exporting backup file completed")
+                Log.i(LOG_TAG, "Restoring backup file completed")
 
                 sendBroadcastEvent(PROFILE_CHANGED_EVENT)
 
             } catch (e: Throwable) {
-                Log.e(LOG_TAG, "Failed to load backup file", e)
+                Log.e(LOG_TAG, "Failed to restore backup file", e)
             } finally {
                 bulkActionEnabled = false
             }

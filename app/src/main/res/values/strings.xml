@@ -214,30 +214,30 @@
 
     <string name="pref.aa.performance.category">Performance Screen</string>
     <string name="pref.aa.performance.enabled">Enable performance screen</string>
-    <string name="pref.aa.performance.enabled_summary">It enables Performance screen  with predefined set of metrics. Screen is dedicated to 2.0 GME engines</string>
+    <string name="pref.aa.performance.enabled_summary">Activates the Performance screen, which displays a predefined set of metrics tailored for 2.0 GME engines.</string>
     <string name="pref.aa.performance.select_pids">Select Performance OBD2 PIDs</string>
 
 
     <string name="pref.aa.trip_info.category">Trip Info Screen</string>
     <string name="pref.aa.trip_info.enabled">Enable trip info screen</string>
-    <string name="pref.aa.trip_info.enabled_summary">It enables trip info screen  with predefined set of metrics. Screen is dedicated to 2.0 GME engines</string>
+    <string name="pref.aa.trip_info.enabled_summary">Activates the Trip Info screen, which displays a predefined set of metrics tailored for 2.0 GME engines.</string>
     <string name="pref.aa.trip_info.select_pids">Select TripInfo OBD2 PIDs</string>
 
     <string name="pref.aa.routines.category">Routines</string>
     <string name="pref.aa.routines.enabled">Enable routines screen</string>
-    <string name="pref.aa.routines.enabled.enabled_summary">It enables routines screen which let you to execute different ECU functions. This feature is very risky, and you use it on your own risk</string>
+    <string name="pref.aa.routines.enabled.enabled_summary">Activates the Routines screen, which permits execution of specific ECU functions. Use of this feature carries risk and is entirely at your own responsibility.</string>
     <string name="pref.aa.performance_meter.category">Drag Racing</string>
     <string name="pref.aa.performance_meter.metrics_read_freq">OBD2 Data reading frequency</string>
     <string name="pref.aa.performance_meter.display_frequency">Display OBD2 Data read frequency</string>
-    <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Display the speed at which the measurement was taken</string>
+    <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Displays the vehicle speed corresponding to the recorded measurement.</string>
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>
 
     <string name="pref.profile.2_0_GME_extension.enabled">Display additional context metrics</string>
-    <string name="pref.profile.2_0_GME_extension.enabled_summary">It queries additional metrics during performance meter. \nIts valid just for 2.0GME engine.</string>
+    <string name="pref.profile.2_0_GME_extension.enabled_summary">Queries additional metrics during the performance measurement session. Applicable only to 2.0 GME engines</string>
 
     <string name="pref.aa.performance_meter.shift_lights_enabled_summary">This is an EXPERIMENTAL feature.\nEnable gear shift lights</string>
     <string name="pref.aa.performance_meter.display_context_metrics">Display context metrics</string>
-    <string name="pref.aa.performance_meter.display_context_metrics_summary">Display additional context information like vehicle speed</string>
+    <string name="pref.aa.performance_meter.display_context_metrics_summary">Provides supplementary context data, including vehicle speed.</string>
 
 
     <string name="ref.aa.performance_meter.shift_lights.rev">Shift lights revs threshold</string>
@@ -245,15 +245,15 @@
     <string name="pref.aa.renderer.category">Screen settings</string>
 
     <string name="pref.aa.alerting.enabled">Enable Alerting</string>
-    <string name="pref.aa.alerting.enabled_summary">When enabled, additional information appears on the screen if upper or lower threshold of given PIDs overflow: OIL_TEMP > 110</string>
+    <string name="pref.aa.alerting.enabled_summary">When enabled, additional information is displayed on the screen if a PID exceeds its defined upper or lower threshold—for example, OIL_TEMP > 110</string>
 
     <string name="pref.aa.alerting.legend.enabled">Enable Alerting Legend</string>
-    <string name="pref.aa.alerting.legend.enabled_summary">When enabled, rules for alerting are displayed on the screen if available for given PID: ENGINE_TEMP > 110</string>
+    <string name="pref.aa.alerting.legend.enabled_summary">When enabled, alert rules are shown on the screen if available for the selected PID—for example, ENGINE_TEMP > 110</string>
 
     <string name="pref.aa.theme.background.enabled">Background enabled</string>
 
     <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector enabled</string>
-    <string name="pref.aa.theme.dynamic_selector.enabled_summary">When enabled, colors are applied based on selected dynamic mode: SPORT,NORMAL,ECO</string>
+    <string name="pref.aa.theme.dynamic_selector.enabled_summary">When enabled, colors are applied according to the selected dynamic mode: SPORT, NORMAL, or ECO.</string>
 
 
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
@@ -266,10 +266,10 @@
     <string name="pref.vehicle.metadata.value">Value</string>
 
     <string name="pref.vehicle_settings.vehicleStatusPanel">Enable vehicle status panel</string>
-    <string name="pref.vehicle_settings.vehicleStatusPanel_summary">This is an EXPERIMENTAL feature.\nBy enabling it you read enable vehicle status panel</string>
+    <string name="pref.vehicle_settings.vehicleStatusPanel_summary">This is an EXPERIMENTAL feature.\nEnabling it will activate the vehicle status panel on the top.</string>
 
     <string name="pref.vehicle_settings.disconnect_when_off">Automatically disconnect when vehicle off</string>
-    <string name="pref.vehicle_settings.disconnect_when_off_summary">This is an EXPERIMENTAL feature.\nBy enabling it session will be automatically disconnected when vehicle switch off</string>
+    <string name="pref.vehicle_settings.disconnect_when_off_summary">This is an EXPERIMENTAL feature.\nWhen enabled, the session will automatically disconnect when the vehicle is turned off.</string>
 
 
     <string name="pref.adapter_init_delay">Delay after init</string>
@@ -300,7 +300,7 @@
     <string name="pref.graph.category">Graph view configuration</string>
     <string name="pref.gauge.category">Gauge view configuration</string>
     <string name="pref.aa.category">Android Auto view configuration</string>
-    <string name="pref.aa.category_summary">This page collects Android Auto specific configuration parameters.</string>
+    <string name="pref.aa.category_summary">This page contains configuration settings specific to Android Auto.</string>
 
     <string name="pref.adapter_category">OBD2 Adapter Settings</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
@@ -313,25 +313,25 @@
     <string name="pref.adapter_connection_tcp_ssid">SSID</string>
     <string name="pref.adapter_connection_tcp_host">Host</string>
     <string name="pref.adapter_connection_tcp_port">Port</string>
-    <string name="pref.adapter_command_freq_summary">This parameter allows to set target OBD commands frequency. This is just desired frequency which is limited by the hardware capabilities. This option typically should be conducted with adaptive timeout.</string>
+    <string name="pref.adapter_command_freq_summary">This parameter sets the target frequency for OBD commands. It represents the desired rate but may be limited by hardware capabilities. It is recommended to use this option together with adaptive timeout.</string>
     <string name="pref.adapter_command_freq">Desired refresh rate(PIDs/second)</string>
 
-    <string name="pref.adapter_power_connect_adapter">Automatically connect to the OBD adapter when external power supply</string>
-    <string name="pref.adapter_power_connect_adapter_summary">By enabling this option application automatically connects with the OBD adapter once external power supply connected</string>
+    <string name="pref.adapter_power_connect_adapter">Automatically connect to the OBD adapter when an external power supply is detected.</string>
+    <string name="pref.adapter_power_connect_adapter_summary">When enabled, the application will automatically establish a connection with the OBD adapter upon detection of an external power supply</string>
 
     <string name="pref.adapter_power_screen_off">Maintain screen brightness</string>
-    <string name="pref.adapter_power_screen_off_summary">By enabling this option, application takes responsibility for maintaining screen brightness</string>
+    <string name="pref.adapter_power_screen_off_summary">When enabled, the application assumes control of screen brightness management</string>
 
     <string name="pref.adapter_power_bt_off">Switch network Off/On</string>
-    <string name="pref.adapter_power_start_data_logging_after">Start data logging after specified period of time (in seconds)</string>
+    <string name="pref.adapter_power_start_data_logging_after">Start data logging after a set time delay (seconds).</string>
 
     <string name="pref.power_category">Power</string>
     <string name="pref.toolbar_hide_landscape">Hide toolbar when landscape</string>
     <string name="pref.toolbar_hide_doubleclick">Hide toolbar when double click</string>
     <string name="pref.toolbar_hide_connected">Hide toolbar when connected</string>
 
-    <string name="pref.enable_view_summary">Enabling this option will cause additionally button appear on the task bar which shortcuts to the view</string>
-    <string name="pref.enable_view">Show view shortcut on the taskbar</string>
+    <string name="pref.enable_view_summary">When enabled, an extra button will appear on the taskbar, providing a shortcut to the view.</string>
+    <string name="pref.enable_view">Display view shortcut on the taskbar</string>
 
     <string name="pref.graph.trips_recordings_display_info">Display trip info</string>
     <string name="pref.graph.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
@@ -368,11 +368,11 @@
     <string name="pref.dash_top_values_blink">Alarm for highest values</string>
     <string name="pref.trips_category">Trips</string>
     <string name="pref.trips_recordings">Recorded trips</string>
-    <string name="pref.view_category_summary">Under this section you can find preferences related to the Gauge, Graph, Giulia views</string>
+    <string name="pref.view_category_summary">In this section, you can adjust settings related to the Gauge, Graph, and Giulia views.</string>
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>
     <string name="pref.init_category">Initialization&amp;Protocols</string>
-    <string name="pref.init_category_summary">Under this section you can find preferences related to the Adapter initialization process, e.g: CAN protocol, CAN headers</string>
+    <string name="pref.init_category_summary">In this section, you can configure settings for the adapter initialization process, including CAN protocol and CAN headers.</string>
 
     <string name="main_activity.toggle_toolbar">Toggle toolbar</string>
     <string name="main_activity.btn_start">Start/Stop session with the vehicle</string>
@@ -395,13 +395,13 @@
 
     <string name="pref.profile.available_list">Available vehicle profiles</string>
 
-    <string name="pref.profile.import">Import user preferences from backup</string>
-    <string name="pref.profile.import_summary">This operation imports a user preferences from backup</string>
+    <string name="pref.profile.restore">Restore user preferences from backup</string>
+    <string name="pref.profile.restore_summary">This process restores user preferences from a backup file.</string>
 
-    <string name="pref.profile.export">Make a backup from user preferences</string>
-    <string name="pref.profile.export_summary">This operation makes a backup from user preferences</string>
+    <string name="pref.profile.export">Create a backup of user preferences</string>
+    <string name="pref.profile.export_summary">This operation makes a backup from user preferences.</string>
 
-    <string name="pref.profile.reset_confirmation_dialog">This operation resets all the custom settings to the factory defaults. Are you sure u want to execute it?</string>
+    <string name="pref.profile.reset_confirmation_dialog">Executing this will restore all custom settings to their factory defaults. Do you want to continue?</string>
     <string name="pref.profile.reset">Reset to factory settings</string>
     <string name="pref.profile.save_user_settings">Save current vehicle profile preferences</string>
     <string name="pref.profile.reset_summary">This operation resets profile preferences</string>

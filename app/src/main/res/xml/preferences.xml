@@ -434,10 +434,10 @@
                     android:title="@string/pref.profile.export"
                     app:singleLineTitle="false" />
 
-                <org.obd.graphs.preferences.profile.ProfileImportAction
+                <org.obd.graphs.preferences.profile.ProfileRestoreAction
                     android:key="pref.profile.import"
-                    android:summary="@string/pref.profile.import_summary"
-                    android:title="@string/pref.profile.import"
+                    android:summary="@string/pref.profile.restore_summary"
+                    android:title="@string/pref.profile.restore"
                     app:singleLineTitle="false" />
             </PreferenceCategory>
 
