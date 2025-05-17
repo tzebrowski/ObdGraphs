@@ -297,9 +297,10 @@
 
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:dialogTitle="@string/pref.adapter_batch__strict_validation_enabled"
+                    android:dialogTitle="@string/pref.adapter_batch_strict_validation_enabled"
                     android:key="pref.adapter.batch.strict_validation.enabled"
-                    android:title="@string/pref.adapter_batch__strict_validation_enabled"
+                    android:title="@string/pref.adapter_batch_strict_validation_enabled"
+                    android:summary="@string/pref.adapter_batch_strict_validation_enabled_summary"
                     app:singleLineTitle="false" />
 
             </PreferenceCategory>
@@ -313,12 +314,13 @@
                     android:summary="@string/pref.adapter_stn_enabled_summary"
                     android:title="@string/pref.adapter_stn_enabled" />
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.aa.AACheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_cache_result_enabled"
                     android:key="pref.adapter.cache.result.enabled"
                     android:summary="@string/pref.experimental_result_cache_enabled"
                     android:title="@string/pref.adapter_cache_result_enabled"
+                    app:experimental="true"
                     app:enabled="@bool/FF_RESULT_CACHE_ENABLED" />
 
                 <CheckBoxPreference
@@ -340,6 +342,7 @@
                 <CheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_adaptive_enabled"
+                    android:summary="@string/pref.adapter_adaptive_enabled_summary"
                     android:key="pref.adapter.adaptive.enabled"
                     android:title="@string/pref.adapter_adaptive_enabled" />
 

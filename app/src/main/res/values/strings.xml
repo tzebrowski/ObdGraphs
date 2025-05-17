@@ -10,7 +10,7 @@
     <string name="pref.experimental_result_cache_enabled">This is an EXPERIMENTAL feature, controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
     <string name="pref.experimental_read_external_storage_enabled">This is an EXPERIMENTAL feature, controlled by FF_PID_EXTERNAL_STORAGE_ENABLED Feature Flag</string>
 
-    <string name="permissions.missing.bt_msg">To establish a connection with the adapter, Bluetooth permissions must be granted.</string>
+    <string name="permissions.missing.bt_msg">Granting Bluetooth permissions is necessary to establish a connection with the BT adapter.</string>
 
     <string name="app_name">ObdGraphs</string>
     <string name="navigation.title_gauge">Gauge</string>
@@ -40,8 +40,8 @@
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
 
-    <string name="context_menu.giulia_parameters_id_to_display">Select Giulia OBD2 PIDs</string>
-    <string name="context_menu.gauge_parameters_id_to_display">Select Gauge OBD2 PIDs</string>
+    <string name="context_menu.giulia_parameters_id_to_display">Customize visible Giulia OBD2 PIDs</string>
+    <string name="context_menu.gauge_parameters_id_to_display">Customize visible Gauge OBD2 PIDs</string>
 
     <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs settings</string>
     <string name="context_menu.parameters_id_to_display">Select displayed OBD2 PIDs</string>
@@ -55,7 +55,7 @@
     <string name="context_menu.jump_to_view">Jump to view</string>
 
 
-    <string name="pref.displayed_parameter_ids">Edit displayed OBD2 PIDs</string>
+    <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
 
     <string name="pref.pids_generic_high">High frequency OBD2 PIDs/Sensors</string>
@@ -66,14 +66,16 @@
     <string name="prefs.adapter_batch_mode_01_batch_size">Batch Size for Mode 01</string>
     <string name="prefs.adapter_batch_mode_22_batch_size">Batch Size for Mode 22</string>
     <string name="pref.adapter_batch_enabled">Enable batch mode</string>
-    <string name="pref.adapter_batch__strict_validation_enabled">Enable strict messages validation</string>
+    <string name="pref.adapter_batch_strict_validation_enabled">Enable strict messages validation</string>
+    <string name="pref.adapter_batch_strict_validation_enabled_summary">Ignores OBD2 responses with structural errors.</string>
 
     <string name="pref.adapter_stn_enabled">Enable STN extensions</string>
     <string name="pref.adapter_stn_enabled_summary">Enable this only if you are using an STNxx-based adapter—doing so may boost performance by using chip-specific commands. Using it with other adapters may lead to errors </string>
     <string name="pref.adapter_cache_result_enabled">Enable result cache</string>
     <string name="pref.adapter_adaptive_enabled">Enable adaptive timeout</string>
-    <string name="pref.adapter_reconnect">Enable OBD2 Adapter automatic reconnect when connectivity errors occur</string>
-    <string name="pref.adapter_reconnect_max_retry">Maximum number of reconnecting attempts</string>
+    <string name="pref.adapter_adaptive_enabled_summary">When enabled, the software will attempt to insert optimal delays between consecutive commands to enhance performance</string>
+    <string name="pref.adapter_reconnect">Automatically reconnect the OBD2 adapter when a connection error occurs.</string>
+    <string name="pref.adapter_reconnect_max_retry">Maximum reconnect attempts</string>
     <string name="pref.adapter.query.view_individual.enabled">Retrieve PIDs based on the current screen selection</string>
     <string name="pref.adapter.query.view_individual.enabled_summary">Fetch only the PIDs shown on screen to boost performance—recommended for slow adapters.</string>
     <string name="pref.adapter.query.view_individual.dialog_disabled_warning">This dialog is disabled because individual query strategy is enabled.</string>
@@ -123,8 +125,8 @@
     <string name="pref.aa.giulia.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors for <b>Giulia</b> screen</string>
     <string name="pref.aa.gauge.displayed_parameter_ids_summary">Choose OBD2 PIDs/Sensors for <b>Gauge</b> screen</string>
 
-    <string name="pref.aa.gauge.displayed_parameter_ids">Edit displayed <b>Gauge</b> OBD2 PIDs</string>
-    <string name="pref.aa.giulia.displayed_parameter_ids">Edit displayed <b>Giulia</b> OBD2 PIDs</string>
+    <string name="pref.aa.gauge.displayed_parameter_ids">Customize visible <b>Gauge</b> OBD2 PIDs</string>
+    <string name="pref.aa.giulia.displayed_parameter_ids">Customize visible <b>Giulia</b> OBD2 PIDs</string>
 
 
     <string name="pref.aa.profile_1.displayed_parameter_ids">Edit Virtual Screen 1</string>
@@ -272,8 +274,8 @@
     <string name="pref.vehicle_settings.disconnect_when_off_summary">This is an EXPERIMENTAL feature.\nWhen enabled, the session will automatically disconnect when the vehicle is turned off.</string>
 
 
-    <string name="pref.adapter_init_delay">Delay after init</string>
-    <string name="pref.adapter_delay_reset">Delay after reset (ATZ)</string>
+    <string name="pref.adapter_init_delay">Delay after init command</string>
+    <string name="pref.adapter_delay_reset">Delay after reset command (ATZ)</string>
 
     <string name="pref.adapter_init_protocol">Protocol</string>
     <string name="pref.general_settings">General settings</string>
@@ -441,13 +443,13 @@
     <string name="pref.about_build_time">Build time</string>
     <string name="pref.about_build_version">Build version</string>
 
-    <string name="pref.adapter_response_length_enabled">Enable number of lines in request enabled</string>
+    <string name="pref.adapter_response_length_enabled">Set the number of lines to include in the query</string>
     <string name="pref.adapter_response_length_enabled_summary">Enabling this option allows the firmware to inform the adapter of the expected number of response lines, eliminating the need for the adapter to wait for the final timeout. Enabling this feature improves performance.</string>
     <string name="pref.adapter_graceful_stop_enabled">Enable graceful stop</string>
     <string name="pref.adapter_graceful_stop_enabled_summary">Enabling this option ensures a graceful shutdown of the session between the ECU and the adapter. Please note that ending the session may take longer when this option is enabled.</string>
     <string name="pref.pids_display_only_ecu_supported">Display unsupported OBD2 PIDs/Sensors</string>
     <string name="pref.pids_display_only_ecu_supported_summary">When this option is enabled, you may select PIDs even if the ECU does not support them.</string>
-    <string name="pref.adapter_batch_enabled_summary">Enabling this option sends batch queries to the adapter, allowing up to 6 PIDs/Sensors to be fetched in a single ECU query. This feature improves performance when enabled.</string>
+    <string name="pref.adapter_batch_enabled_summary">Enabling this option sends batch queries to the adapter, allowing up to 6 PIDs/Sensors to be fetched in a single ECU query. This feature enhances performance and is linked to the "Batch Size for Mode 22 and 01" settings.</string>
     <string name="pref.adapter_error_handling">Errors handling</string>
     <string name="pref.adapter_error_handling_summary">Under this category, you’ll find options for error handling, including reconnect strategies.</string>
 
@@ -459,7 +461,7 @@
     <string name="pref_vehicle_metadata_summary">In this section, you can view vehicle metadata fetched from the ECU, including VIN, ECU type, hardware serial number, etc.</string>
     <string name="pref_vehicle_profile_settings_summary">This section contains preferences related to Vehicle Profiles. You can change the vehicle profile here.</string>
     <string name="pref_power_settings_summary">Power-related settings are available in this section, allowing you to define the application’s behavior when the charger is plugged in or removed.</string>
-    <string name="pref_dtc_settings_summary">Diagnostic Trouble Codes read from the ECU are shown in this section.</string>
+    <string name="pref_dtc_settings_summary">Diagnostic Trouble Codes (DTCs) retrieved from the ECU are displayed in this section.</string>
 
     <string name="pids_stable">Stable</string>
     <string name="pids_alert">Alert\nrule</string>
