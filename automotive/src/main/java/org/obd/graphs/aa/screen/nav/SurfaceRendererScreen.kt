@@ -78,7 +78,7 @@ internal class SurfaceRendererScreen(
             when (intent?.action) {
                 AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
 
-                AA_VIRTUAL_SCREEN_REFRESH_EVENT -> {
+                SCREEN_REFRESH_EVENT -> {
                     updateQuery()
                     renderFrame()
                 }
@@ -269,7 +269,7 @@ internal class SurfaceRendererScreen(
             it.addAction(GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
             it.addAction(PROFILE_CHANGED_EVENT)
             it.addAction(PROFILE_RESET_EVENT)
-            it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+            it.addAction(SCREEN_REFRESH_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             it.addAction(AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT)
             it.addAction(AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT)

@@ -14,33 +14,24 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.preferences.aa
+package org.obd.graphs.preferences.components
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import androidx.preference.SeekBarPreference
-import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.updateString
+import org.obd.graphs.AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
-class AASeekBar(
+class VirtualScreenCheckBox(
     context: Context,
     attrs: AttributeSet?,
-) : SeekBarPreference(context, attrs) {
+) : CheckBoxPreference(context, attrs) {
     init {
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
-                sendBroadcastEvent(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+                sendBroadcastEvent(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
                 true
             }
-    }
-
-    override fun getPersistedInt(defaultReturnValue: Int): Int = (Prefs.all[key] ?: defaultReturnValue).toString().toInt()
-
-    override fun persistInt(value: Int): Boolean {
-        Prefs.updateString(key, value.toString()).commit()
-        return true
     }
 }

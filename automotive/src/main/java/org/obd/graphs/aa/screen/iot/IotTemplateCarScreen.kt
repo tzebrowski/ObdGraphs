@@ -61,7 +61,7 @@ internal class IotTemplateCarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
 
                 AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
-                AA_VIRTUAL_SCREEN_REFRESH_EVENT -> invalidate()
+                SCREEN_REFRESH_EVENT -> invalidate()
 
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
                     Log.v(LOG_TAG, "Main activity has been destroyed.")
@@ -171,7 +171,7 @@ internal class IotTemplateCarScreen(
             it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
 
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
-            it.addAction(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+            it.addAction(SCREEN_REFRESH_EVENT)
             it.addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
         }
     }

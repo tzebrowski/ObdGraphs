@@ -25,9 +25,9 @@ const val MAIN_ACTIVITY_EVENT_PAUSE = "main_activity.on_pause"
 
 const val AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT = "pref.aa.virtual_screens.visibility.changed"
 const val AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT = "pref.aa.screen_renderer.changed"
-const val AA_VIRTUAL_SCREEN_REFRESH_EVENT = "pref.aa.screen_refresh.event"
 const val AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT = "pref.pids.generic.high.event.changed"
 
+const val SCREEN_REFRESH_EVENT = "pref.screen_refresh.event"
 const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
 const val PREF_MODULE_LIST = "pref.pids.registry.list"
 const val PREF_DRAG_RACE_KEY_PREFIX = "pref.drag_race"
