@@ -1,10 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
-
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
-
-
     <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
     <string name="pref.experimental_switch_network_enabled">This is an EXPERIMENTAL feature, controlled by the FF_SWITCH_NETWORK_ENABLED feature flag</string>
     <string name="pref.experimental_result_cache_enabled">This is an EXPERIMENTAL feature, controlled by FF_RESULT_CACHE_ENABLED Feature Flag</string>
@@ -40,11 +36,11 @@
     <string name="pid.value_max">Max</string>
     <string name="pid.mode">Mode</string>
 
-    <string name="context_menu.giulia_parameters_id_to_display">Customize visible Giulia OBD2 PIDs</string>
-    <string name="context_menu.gauge_parameters_id_to_display">Customize visible Gauge OBD2 PIDs</string>
+    <string name="context_menu.giulia_parameters_id_to_display">Customize visible Giulia PIDs</string>
+    <string name="context_menu.gauge_parameters_id_to_display">Customize visible Gauge PIDs</string>
 
     <string name="context_menu.parameters_id_to_query">Manage OBD2 PIDs settings</string>
-    <string name="context_menu.parameters_id_to_display">Select displayed OBD2 PIDs</string>
+    <string name="context_menu.parameters_id_to_display">Customize visible OBD2 PIDs</string>
     <string name="context_menu.view_configuration">Current View Settings</string>
     <string name="context_menu.profiles">Vehicle Profiles</string>
     <string name="context_menu.about">About</string>
@@ -58,9 +54,9 @@
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
 
-    <string name="pref.pids_generic_high">High frequency OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_generic_high">Choose Fast-Updating OBD2 Data to Show</string>
     <string name="pref.pids_generic_high_summary">Pick the high-frequency OBD2 sensors or PIDs you would like to retrieve from the ECU.</string>
-    <string name="pref.pids_generic_low">Low frequency OBD2 PIDs/Sensors</string>
+    <string name="pref.pids_generic_low">Choose Slow-Updating OBD2 Data to Show</string>
     <string name="pref.pids_generic_low_summary">Pick the low-frequency OBD2 sensors or PIDs you would like to retrieve from the ECU.</string>
 
     <string name="prefs.adapter_batch_mode_01_batch_size">Batch Size for Mode 01</string>
@@ -76,9 +72,9 @@
     <string name="pref.adapter_adaptive_enabled_summary">When enabled, the software will attempt to insert optimal delays between consecutive commands to enhance performance</string>
     <string name="pref.adapter_reconnect">Automatically reconnect the OBD2 adapter when a connection error occurs.</string>
     <string name="pref.adapter_reconnect_max_retry">Maximum reconnect attempts</string>
-    <string name="pref.adapter.query.view_individual.enabled">Retrieve PIDs based on the current screen selection</string>
-    <string name="pref.adapter.query.view_individual.enabled_summary">Fetch only the PIDs shown on screen to boost performance—recommended for slow adapters.</string>
-    <string name="pref.adapter.query.view_individual.dialog_disabled_warning">This dialog is disabled because individual query strategy is enabled.</string>
+    <string name="pref.adapter.query.view_individual.enabled">Retrieve Data Based on What\'s Shown on the current Screen</string>
+    <string name="pref.adapter.query.view_individual.enabled_summary">Fetch from ECU only PIDs shown on current screen to boost performance—recommended for slow adapters. Note: this disables high/low freq PIDs polling.</string>
+    <string name="pref.adapter.query.view_individual.dialog_disabled_warning">This setting is disabled because individual query strategy is enabled.</string>
 
     <string name="pref.connection.category">OBD2 Adapter Connection</string>
     <string name="pref.connection.category.summary">This section contains settings related to your adapter type. Here, you can configure the Wi-Fi or Bluetooth parameters of your adapter.</string>
@@ -328,9 +324,12 @@
     <string name="pref.adapter_power_start_data_logging_after">Start data logging after a set time delay (seconds).</string>
 
     <string name="pref.power_category">Power</string>
-    <string name="pref.toolbar_hide_landscape">Hide toolbar when landscape</string>
-    <string name="pref.toolbar_hide_doubleclick">Hide toolbar when double click</string>
-    <string name="pref.toolbar_hide_connected">Hide toolbar when connected</string>
+    <string name="pref.toolbar_hide_landscape">Auto-Hide Toolbar in Landscape Mode</string>
+    <string name="pref.toolbar_hide_landscape_summary">Toolbar disappears when Rotated to Landscape</string>
+    <string name="pref.toolbar_hide_doubleclick">Auto-Hide toolbar when double click</string>
+    <string name="pref.toolbar_hide_doubleclick_summary">Toolbar disappears when double click on the app</string>
+    <string name="pref.toolbar_hide_connected">Auto-Hide toolbar when connected to the adapter</string>
+    <string name="pref.toolbar_hide_connected_summary">Toolbar disappears when connection with adapter is established</string>
 
     <string name="pref.enable_view_summary">When enabled, an extra button will appear on the taskbar, providing a shortcut to the view.</string>
     <string name="pref.enable_view">Display view shortcut on the taskbar</string>
@@ -373,6 +372,7 @@
     <string name="pref.view_category_summary">In this section, you can adjust settings related to the Gauge, Graph, and Giulia views.</string>
     <string name="pref.view_category">Views</string>
     <string name="pref.toolbar_category">Toolbar</string>
+    <string name="pref.toolbar_category_summary">In this section, you can configure Toolbar behaviour.</string>
     <string name="pref.init_category">Initialization&amp;Protocols</string>
     <string name="pref.init_category_summary">In this section, you can configure settings for the adapter initialization process, including CAN protocol and CAN headers.</string>
 
@@ -457,7 +457,7 @@
     <string name="pref.pids_display_only_stable_pids_summary">By choosing this option, you can view PIDs featuring experimental formula calculations.</string>
     <string name="gauge_item_bg_content_description">Gauge background</string>
     <string name="pref_adapter_settings_summary">In this section, you’ll find all adapter-related preferences. You can configure the connection type (Bluetooth or Wi-Fi), adjust CAN settings, and manage error handling options.</string>
-    <string name="pref_pid_registry_settings_summary">In this section, you can configure OBD2 PIDs/Sensors and choose which ones to retrieve from the ECU.</string>
+    <string name="pref_pid_registry_settings_summary">In this section, you can configure OBD2 PIDs/Sensors and choose which ones and how to retrieve from the ECU.</string>
     <string name="pref_vehicle_metadata_summary">In this section, you can view vehicle metadata fetched from the ECU, including VIN, ECU type, hardware serial number, etc.</string>
     <string name="pref_vehicle_profile_settings_summary">This section contains preferences related to Vehicle Profiles. You can change the vehicle profile here.</string>
     <string name="pref_power_settings_summary">Power-related settings are available in this section, allowing you to define the application’s behavior when the charger is plugged in or removed.</string>

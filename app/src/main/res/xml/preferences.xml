@@ -31,6 +31,7 @@
                     android:key="pref.pids.generic.low"
                     android:summary="@string/pref.pids_generic_low_summary"
                     android:title="@string/pref.pids_generic_low"
+                    app:singleLineTitle="false"
                     app:source="low" />
 
                 <CheckBoxPreference
@@ -1917,22 +1918,26 @@
     <PreferenceCategory android:title="@string/pref.toolbar_category">
         <PreferenceScreen
             android:key="pref.toolbar"
+            android:summary="@string/pref.toolbar_category_summary"
             android:title="@string/pref.settings">
 
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.toolbar.hide.landscape"
                 android:title="@string/pref.toolbar_hide_landscape"
+                android:summary="@string/pref.toolbar_hide_landscape_summary"
                 app:singleLineTitle="false" />
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="pref.toolbar.hide.doubleclick"
+                android:summary="@string/pref.toolbar_hide_doubleclick_summary"
                 android:title="@string/pref.toolbar_hide_doubleclick"
                 app:singleLineTitle="false" />
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="pref.toolbar.hide.connected"
                 android:title="@string/pref.toolbar_hide_connected"
+                android:summary="@string/pref.toolbar_hide_connected_summary"
                 app:singleLineTitle="false" />
         </PreferenceScreen>
     </PreferenceCategory>
