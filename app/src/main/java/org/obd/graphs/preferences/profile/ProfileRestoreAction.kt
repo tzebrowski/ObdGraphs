@@ -21,13 +21,13 @@ import android.util.AttributeSet
 import androidx.preference.Preference
 import org.obd.graphs.profile.profile
 
-class ProfileImportAction(
+class ProfileRestoreAction(
     context: Context,
     attrs: AttributeSet?,
 ) : Preference(context, attrs) {
     init {
         setOnPreferenceClickListener {
-            profile.importBackup()
+            profile.restoreBackup()
             true
         }
     }
