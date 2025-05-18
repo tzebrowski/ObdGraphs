@@ -251,6 +251,7 @@
                         android:dialogTitle="@string/pref.adapter_reconnect"
                         android:key="pref.adapter.reconnect"
                         android:title="@string/pref.adapter_reconnect"
+                        android:summary="@string/pref.adapter_reconnect_summary"
                         app:singleLineTitle="false" />
 
                     <ListPreference
@@ -372,6 +373,7 @@
                 android:key="pref.vehicle_settings.fuelTankSize"
                 android:max="80"
                 android:title="@string/pref.vehicle_settings.fuel_tank_size"
+                android:summary="@string/pref.vehicle_settings.fuel_tank_size_summary"
                 app:min="40"
                 app:showSeekBarValue="true"
                 app:singleLineTitle="false"
