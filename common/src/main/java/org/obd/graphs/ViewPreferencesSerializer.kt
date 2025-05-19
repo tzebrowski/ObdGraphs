@@ -27,7 +27,7 @@ internal class ItemPreference(var id: Long, var position: Int)
 
 private const val LOG_TAG = "RecycleViewPreferences"
 
-class ViewPreferencesSerializer constructor(private val prefName: String) {
+class ViewPreferencesSerializer(private val prefName: String) {
 
     private var mapper = ObjectMapper().apply {
         registerModule(KotlinModule())

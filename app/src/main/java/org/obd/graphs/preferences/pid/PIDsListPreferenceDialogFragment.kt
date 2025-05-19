@@ -42,7 +42,6 @@ import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_PERFORMANCE
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_TRIP_INFO
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
-import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
@@ -82,7 +81,7 @@ open class PIDsListPreferenceDialogFragment(
 
         listOfItems = sourceList()
 
-        val adapter = PIDsViewAdapter(root, context, listOfItems, detailsViewEnabled)
+        val adapter = PIDsViewAdapter(root, context, listOfItems, key, detailsViewEnabled)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -151,11 +150,6 @@ open class PIDsListPreferenceDialogFragment(
             }
         }
 
-        root.findViewById<Button>(R.id.pid_list_save).apply {
-            setOnClickListener {
-                persistSelection(getAdapter().data)
-            }
-        }
 
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
             setOnClickListener {
@@ -206,23 +200,10 @@ open class PIDsListPreferenceDialogFragment(
             ItemTouchHelper.ACTION_STATE_DRAG, swappableAdapter
         )
 
-
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
     }
 
 
-    private fun persistSelection(list: List<PidDefinitionDetails>) {
-        val newList = list.filter { it.checked }
-            .map { it.source.id.toString() }.toList()
-
-        Log.e(LOG_TAG, "Key=$key, selected PIDs=$newList")
-
-        if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
-            notifyListChanged()
-        }
-
-        Prefs.updateStringSet(key, newList)
-    }
 
     private fun notifyListChanged() {
         sendBroadcastEvent("${key}.event.changed")

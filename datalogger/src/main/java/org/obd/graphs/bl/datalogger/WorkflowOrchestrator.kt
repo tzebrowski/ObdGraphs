@@ -125,7 +125,16 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    private val workflow: Workflow = workflow()
+    private val workflow: Workflow = workflow().apply {
+        pidRegistry.findAll().forEach { p ->
+            p.deserialize()?.let {
+                p.formula = it.formula
+                p.alert.lowerThreshold = it.alert.lowerThreshold
+                p.alert.upperThreshold = it.alert.upperThreshold
+            }
+        }
+    }
+
     private var status = WorkflowStatus.Disconnected
 
     private val metricsProcessorsRegistry = mutableSetOf<MetricsProcessor>()
@@ -409,9 +418,7 @@ internal class WorkflowOrchestrator internal constructor() {
     private fun workflow() = Workflow.instance()
         .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build())
         .pids(
-            Pids.builder().resources(
-                getSelectedModules()
-            ).build()
+            pids()
         )
         .observer(metricsObserver)
         .lifecycle(lifecycle)
@@ -420,19 +427,17 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun updateModulesRegistry() = runAsync {
         workflow.updatePidRegistry(
-            Pids.builder().resources(
-                getSelectedModules()
-            ).build()
+            pids()
         )
     }
 
-    private fun getSelectedModules() = dataLoggerPreferences.instance.resources.map {
+    private fun pids(): Pids? = Pids.builder().resources(dataLoggerPreferences.instance.resources.map {
         if (modules.isExternalStorageModule(it)) {
             modules.externalModuleToURL(it)
         } else {
             Urls.resourceToUrl(it)
         }
-    }.toMutableList()
+    }.toMutableList()).build()
 
     private fun queryToAdjustments(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
         QueryStrategyType.DRAG_RACING_QUERY ->

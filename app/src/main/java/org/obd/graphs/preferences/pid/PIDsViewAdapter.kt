@@ -26,26 +26,37 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.serialize
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.updateStringSet
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.setText
+import org.obd.metrics.pid.PidDefinition
 import java.util.*
 
-class PIDsViewAdapter internal constructor(
+
+ private const val LOG_TAG = "PIDsView"
+
+ class PIDsViewAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
+    private val key: String,
     private val detailsViewEnabled: Boolean
     ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>(){
 
-    private val mInflater: LayoutInflater = LayoutInflater.from(context)
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     fun swapItems(fromPosition: Int, toPosition: Int){
         Collections.swap(data, fromPosition, toPosition)
@@ -56,7 +67,7 @@ class PIDsViewAdapter internal constructor(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.item_pids, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.item_pids, parent, false))
     }
 
     override fun onBindViewHolder(
@@ -87,6 +98,7 @@ class PIDsViewAdapter internal constructor(
                 }
             }
         }
+
     }
 
     fun updateData(data: List<PidDefinitionDetails>){
@@ -110,7 +122,7 @@ class PIDsViewAdapter internal constructor(
         override fun afterTextChanged(editable: Editable?) {
             pid?.let {
                 it.source.formula  = editable.toString()
-                Log.e("TextWatcher", "Setting new formula=${editable.toString()}")
+                Log.d("formulaTextWatcher", "Setting new formula=${editable.toString()}")
             }
         }
     }
@@ -129,7 +141,7 @@ class PIDsViewAdapter internal constructor(
             pid?.let {
                 if (editable.toString().isNotEmpty() && editable.toString().isDigitsOnly()) {
                     it.source.alert.upperThreshold = editable.toString().toInt()
-                    Log.e("upperAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
+                    Log.d("upperAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
                 }
             }
         }
@@ -149,7 +161,7 @@ class PIDsViewAdapter internal constructor(
             pid?.let {
                 if (editable.toString().isNotEmpty() && editable.toString().isDigitsOnly()) {
                     it.source.alert.lowerThreshold = editable.toString().toInt()
-                    Log.e("lowerAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
+                    Log.d("lowerAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
                 }
             }
         }
@@ -225,8 +237,31 @@ class PIDsViewAdapter internal constructor(
                     } else {
                         pidDetailsSortedMap.text = "No"
                     }
+
+                    root.findViewById<Button>(R.id.pid_list_save).apply {
+                        setOnClickListener {
+
+
+                            persistSelection(item.source)
+                        }
+                    }
                 }
             }
         }
     }
+
+    private fun persistSelection(pid: PidDefinition) {
+        val newList = data.filter { it.checked }
+            .map { it.source.id.toString() }.toList()
+
+        Log.e(LOG_TAG, "Key=$key, selected PIDs=$newList")
+
+        if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
+            sendBroadcastEvent("${key}.event.changed")
+        }
+
+        pid.serialize()
+        Prefs.updateStringSet(key, newList)
+    }
 }
+
