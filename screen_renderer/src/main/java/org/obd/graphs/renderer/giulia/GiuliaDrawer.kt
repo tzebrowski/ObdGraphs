@@ -234,7 +234,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         top: Float,
         textSize: Float
     ): Float {
-        valuePaint.color = colorScheme(metric)
+        valuePaint.color = valueColorScheme(metric)
 
         val left1 = left - 4
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)

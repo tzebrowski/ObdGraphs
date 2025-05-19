@@ -18,7 +18,6 @@ package org.obd.graphs.renderer.gauge
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import org.obd.graphs.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
@@ -249,7 +248,7 @@ internal class GaugeDrawer(
         val value = metric.source.format(castToInt = false)
         valuePaint.textSize = calculatedFontSize
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
-        valuePaint.color = colorScheme(metric)
+        valuePaint.color = valueColorScheme(metric)
 
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)

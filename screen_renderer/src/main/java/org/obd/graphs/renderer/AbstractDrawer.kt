@@ -95,7 +95,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
-    fun colorScheme(metric: Metric) = if (inAlertState(metric)) {
+    fun valueColorScheme(metric: Metric) = if (inAlertState(metric)) {
         settings.getColorTheme().currentValueInAlertColor
     } else {
         settings.getColorTheme().currentValueColor
