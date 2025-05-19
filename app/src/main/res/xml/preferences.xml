@@ -1464,28 +1464,28 @@
                             android:title="@string/pref.aa.virtual_screens.visibility.category"
                             app:singleLineTitle="false">
 
-                            <org.obd.graphs.preferences.components.VirtualScreenCheckBox
+                            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.1"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.1"
                                 android:title="@string/pref.aa.virtual_screens.visibility.1"
                                 app:singleLineTitle="false" />
 
-                            <org.obd.graphs.preferences.components.VirtualScreenCheckBox
+                            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.2"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.2"
                                 android:title="@string/pref.aa.virtual_screens.visibility.2"
                                 app:singleLineTitle="false" />
 
-                            <org.obd.graphs.preferences.components.VirtualScreenCheckBox
+                            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.3"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.3"
                                 android:title="@string/pref.aa.virtual_screens.visibility.3"
                                 app:singleLineTitle="false" />
 
-                            <org.obd.graphs.preferences.components.VirtualScreenCheckBox
+                            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                                 android:defaultValue="true"
                                 android:key="pref.aa.virtual_screens.enabled.4"
                                 android:summary="@string/pref.aa.virtual_screens.visibility.4"

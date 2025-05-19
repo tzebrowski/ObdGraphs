@@ -86,7 +86,7 @@ internal class NavTemplateCarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
-                AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
+                SCREEN_REFRESH_EVENT -> invalidate()
 
                 SURFACE_BROKEN_EVENT -> {
                     Log.d(LOG_TAG, "Received event about ")
@@ -233,7 +233,7 @@ internal class NavTemplateCarScreen(
             it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_ECO)
             it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_SPORT)
             it.addAction(EVENT_DYNAMIC_SELECTOR_MODE_RACE)
-            it.addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
+            it.addAction(SCREEN_REFRESH_EVENT)
             it.addAction(CarConnection.ACTION_CAR_CONNECTION_UPDATED)
             it.addAction(CHANGE_SCREEN_EVENT)
 

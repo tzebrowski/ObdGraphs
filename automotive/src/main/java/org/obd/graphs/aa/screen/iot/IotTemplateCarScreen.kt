@@ -60,7 +60,6 @@ internal class IotTemplateCarScreen(
                 EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
                 EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
 
-                AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT -> invalidate()
                 SCREEN_REFRESH_EVENT -> invalidate()
 
                 MAIN_ACTIVITY_EVENT_DESTROYED -> {
@@ -172,7 +171,6 @@ internal class IotTemplateCarScreen(
 
             it.addAction(AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT)
             it.addAction(SCREEN_REFRESH_EVENT)
-            it.addAction(AA_VIRTUAL_SCREEN_VISIBILITY_CHANGED_EVENT)
         }
     }
 
