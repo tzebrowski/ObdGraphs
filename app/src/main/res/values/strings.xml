@@ -466,7 +466,8 @@
     <string name="pref_dtc_settings_summary">Diagnostic Trouble Codes (DTCs) retrieved from the ECU are displayed in this section.</string>
 
     <string name="pids_stable">Stable</string>
-    <string name="pids_alert">Alert\nrule</string>
+    <string name="pids_alert_lower_threshold">Alert\nlower threshold</string>
+    <string name="pids_alert_upper_threshold">Alert\nupper threshold</string>
     <string name="pids_formula">Calculation\nformula</string>
 
     <string name="pids_name">Name</string>

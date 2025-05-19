@@ -29,6 +29,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
@@ -114,6 +115,47 @@ class PIDsViewAdapter internal constructor(
         }
     }
 
+    private val upperAlertTextWatcher =  object: TextWatcher {
+        var pid: PidDefinitionDetails? = null
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+            pid?.let {
+                if (editable.toString().isNotEmpty() && editable.toString().isDigitsOnly()) {
+                    it.source.alert.upperThreshold = editable.toString().toInt()
+                    Log.e("upperAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
+                }
+            }
+        }
+    }
+
+    private val lowerAlertTextWatcher =  object: TextWatcher {
+        var pid: PidDefinitionDetails? = null
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+            pid?.let {
+                if (editable.toString().isNotEmpty() && editable.toString().isDigitsOnly()) {
+                    it.source.alert.lowerThreshold = editable.toString().toInt()
+                    Log.e("lowerAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
+                }
+            }
+        }
+    }
+
+
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val module: TextView = itemView.findViewById(R.id.pid_module)
         val description: TextView = itemView.findViewById(R.id.pid_description)
@@ -139,31 +181,42 @@ class PIDsViewAdapter internal constructor(
                         item.source.longDescription
                     }
 
-                    val pidDetailsCalculationFormula = root.findViewById<EditText>(R.id.pid_details_calculation_formula)
-                    pidDetailsCalculationFormula.removeTextChangedListener(formulaTextWatcher)
-                    pidDetailsCalculationFormula.setText(item.source.formula)
-                    pidDetailsCalculationFormula.clearFocus()
-                    formulaTextWatcher.pid = item
-                    pidDetailsCalculationFormula.addTextChangedListener(formulaTextWatcher)
+                    root.findViewById<EditText>(R.id.pid_details_calculation_formula).let {
+                        it.removeTextChangedListener(formulaTextWatcher)
+                        it.setText(item.source.formula)
+                        it.clearFocus()
+                        formulaTextWatcher.pid = item
+                        it.addTextChangedListener(formulaTextWatcher)
+                    }
 
                     val pidDetailsFile = root.findViewById<TextView>(R.id.pid_details_file)
                     pidDetailsFile.text = item.source.resourceFile
-                    val pidDetailsAlert = root.findViewById<TextView>(R.id.pid_details_alert_rule)
 
-                    val lowerThreshold = item.source.alert.lowerThreshold
-                    val upperThreshold = item.source.alert.upperThreshold
-                    if (lowerThreshold != null || upperThreshold != null) {
-                        var text = ""
-                        if (lowerThreshold != null) {
-                            text += " x<$lowerThreshold"
-                        }
+                    root.findViewById<EditText>(R.id.pid_details_alert_lower_threshold).let{ edit ->
+                        edit.removeTextChangedListener(lowerAlertTextWatcher)
 
-                        if (upperThreshold != null) {
-                            text += " x>$upperThreshold"
-                        }
-                        pidDetailsAlert.text = text
-                    } else {
-                        pidDetailsAlert.text = ""
+                        edit.setText(if (item.source.alert.lowerThreshold == null){
+                            ""
+                        } else {
+                            item.source.alert.lowerThreshold.toString()
+                        })
+
+                        edit.clearFocus()
+                        lowerAlertTextWatcher.pid = item
+                        edit.addTextChangedListener(lowerAlertTextWatcher)
+                    }
+
+                    root.findViewById<EditText>(R.id.pid_details_alert_upper_threshold).let{ edit ->
+                        edit.removeTextChangedListener(upperAlertTextWatcher)
+
+                        edit.setText(if (item.source.alert.upperThreshold == null){
+                            ""
+                        } else {
+                            item.source.alert.upperThreshold.toString()
+                        })
+                        edit.clearFocus()
+                        upperAlertTextWatcher.pid = item
+                        edit.addTextChangedListener(upperAlertTextWatcher)
                     }
 
                     val pidDetailsSortedMap = root.findViewById<TextView>(R.id.pid_details_supported)

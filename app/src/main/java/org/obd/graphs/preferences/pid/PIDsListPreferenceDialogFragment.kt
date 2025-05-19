@@ -154,8 +154,6 @@ open class PIDsListPreferenceDialogFragment(
         root.findViewById<Button>(R.id.pid_list_save).apply {
             setOnClickListener {
                 persistSelection(getAdapter().data)
-                dialog?.dismiss()
-                onDialogCloseListener.invoke()
             }
         }
 
@@ -217,7 +215,7 @@ open class PIDsListPreferenceDialogFragment(
         val newList = list.filter { it.checked }
             .map { it.source.id.toString() }.toList()
 
-        Log.i(LOG_TAG, "Key=$key, selected PIDs=$newList")
+        Log.e(LOG_TAG, "Key=$key, selected PIDs=$newList")
 
         if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
             notifyListChanged()

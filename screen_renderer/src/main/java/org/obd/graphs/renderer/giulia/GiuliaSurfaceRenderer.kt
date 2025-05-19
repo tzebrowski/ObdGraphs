@@ -166,7 +166,6 @@ internal class GiuliaSurfaceRenderer(
             else -> area.left + ((area.width() / 2) - 32).toFloat()
         }
 
-
     private fun draw(
         canvas: Canvas,
         area: Rect,
