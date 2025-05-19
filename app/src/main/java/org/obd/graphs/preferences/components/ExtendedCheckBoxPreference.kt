@@ -14,33 +14,48 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.preferences.aa
+package org.obd.graphs.preferences.components
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
+import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
-import androidx.preference.SeekBarPreference
-import org.obd.graphs.AA_VIRTUAL_SCREEN_REFRESH_EVENT
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.updateString
+import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.colorize
 
-class AASeekBar(
+class ExtendedCheckBoxPreference(
     context: Context,
-    attrs: AttributeSet?,
-) : SeekBarPreference(context, attrs) {
+    private val attrs: AttributeSet?,
+) : CheckBoxPreference(context, attrs) {
+    private val experimental = getAttribute("experimental").toBooleanStrictOrNull() ?: false
+
     init {
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
-                sendBroadcastEvent(AA_VIRTUAL_SCREEN_REFRESH_EVENT)
+                sendBroadcastEvent(SCREEN_REFRESH_EVENT)
                 true
             }
     }
 
-    override fun getPersistedInt(defaultReturnValue: Int): Int = (Prefs.all[key] ?: defaultReturnValue).toString().toInt()
+    override fun getSummary(): CharSequence? =
+        if (experimental) {
+            super.getSummary().toString().colorize(COLOR_CARDINAL, Typeface.NORMAL, 0, 33, 1.0f)
+        } else {
+            super.getSummary()
+        }
 
-    override fun persistInt(value: Int): Boolean {
-        Prefs.updateString(key, value.toString()).commit()
-        return true
-    }
+    private fun getAttribute(attrName: String): String =
+        if (attrs == null) {
+            ""
+        } else {
+            val givenValue: String? =
+                (0 until attrs.attributeCount)
+                    .filter { index -> attrs.getAttributeName(index) == attrName }
+                    .map { index -> attrs.getAttributeValue(index) }
+                    .firstOrNull()
+            givenValue ?: ""
+        }
 }

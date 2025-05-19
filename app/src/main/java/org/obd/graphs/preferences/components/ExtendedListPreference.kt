@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.preferences.aa
+package org.obd.graphs.preferences.components
 
 import android.content.Context
 import android.util.AttributeSet
@@ -23,7 +23,7 @@ import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
-class AAListPreference(
+class ExtendedListPreference(
     context: Context,
     attrs: AttributeSet?,
 ) : ListPreference(context, attrs) {
