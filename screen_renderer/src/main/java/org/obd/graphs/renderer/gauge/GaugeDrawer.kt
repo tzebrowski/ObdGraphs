@@ -249,7 +249,7 @@ internal class GaugeDrawer(
         val value = metric.source.format(castToInt = false)
         valuePaint.textSize = calculatedFontSize
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
-        valuePaint.color = COLOR_WHITE
+        valuePaint.color = colorScheme(metric)
 
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)

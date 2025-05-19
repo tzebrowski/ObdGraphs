@@ -234,12 +234,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         top: Float,
         textSize: Float
     ): Float {
-        val colorTheme = settings.getColorTheme()
-        valuePaint.color = if (inAlert(metric)) {
-            colorTheme.currentValueInAlertColor
-        } else {
-            colorTheme.currentValueColor
-        }
+        valuePaint.color = colorScheme(metric)
 
         val left1 = left - 4
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
@@ -258,6 +253,8 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
 
         return getTextHeight(text, valuePaint) - 1f
     }
+
+
 
     fun drawTitle(
         canvas: Canvas,
@@ -321,7 +318,6 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         else -> 10
     }
 
-    private fun inAlert(metric: Metric) = settings.isAlertingEnabled() && metric.isInAlert()
 
     private inline fun itemWidth(area: Rect): Int =
         when (settings.getMaxColumns()) {

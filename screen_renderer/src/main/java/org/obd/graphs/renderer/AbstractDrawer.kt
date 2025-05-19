@@ -95,6 +95,13 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
+    fun colorScheme(metric: Metric) = if (inAlertState(metric)) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
+
     open fun recycle() {
         getBackground().recycle()
     }
@@ -386,4 +393,6 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
     }
 
     fun getMarginLeft(left: Float): Float = 10 + left
+
+    private fun inAlertState(metric: Metric) = settings.isAlertingEnabled() && metric.isInAlert()
 }
