@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,39 +26,34 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TableLayout
 import android.widget.TextView
 import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.serialize
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getStringSet
-import org.obd.graphs.preferences.updateStringSet
-import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.setText
-import org.obd.metrics.pid.PidDefinition
 import java.util.*
 
 
- private const val LOG_TAG = "PIDsView"
+private const val LOG_TAG = "PIDsView"
 
- class PIDsViewAdapter internal constructor(
+class PIDsViewAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
-    private val key: String,
     private val detailsViewEnabled: Boolean
-    ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>(){
+) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private var lastSelectedPosition = -1
+    var currentSelectedPosition = -1
 
-    fun swapItems(fromPosition: Int, toPosition: Int){
+    fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
@@ -97,11 +92,16 @@ import java.util.*
                     checked = isChecked
                 }
             }
-        }
 
+            if (holder.adapterPosition == currentSelectedPosition) {
+                holder.layout.setBackgroundColor(Color.LTGRAY)
+            } else {
+                holder.layout.setBackgroundColor(Color.WHITE)
+            }
+        }
     }
 
-    fun updateData(data: List<PidDefinitionDetails>){
+    fun updateData(data: List<PidDefinitionDetails>) {
         this.data = data
     }
 
@@ -109,7 +109,7 @@ import java.util.*
         return data.size
     }
 
-   private val formulaTextWatcher =  object: TextWatcher {
+    private val formulaTextWatcher = object : TextWatcher {
         var pid: PidDefinitionDetails? = null
 
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -121,13 +121,13 @@ import java.util.*
 
         override fun afterTextChanged(editable: Editable?) {
             pid?.let {
-                it.source.formula  = editable.toString()
+                it.source.formula = editable.toString()
                 Log.d("formulaTextWatcher", "Setting new formula=${editable.toString()}")
             }
         }
     }
 
-    private val upperAlertTextWatcher =  object: TextWatcher {
+    private val upperAlertTextWatcher = object : TextWatcher {
         var pid: PidDefinitionDetails? = null
 
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -147,7 +147,7 @@ import java.util.*
         }
     }
 
-    private val lowerAlertTextWatcher =  object: TextWatcher {
+    private val lowerAlertTextWatcher = object : TextWatcher {
         var pid: PidDefinitionDetails? = null
 
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -167,23 +167,28 @@ import java.util.*
         }
     }
 
-
-    inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val module: TextView = itemView.findViewById(R.id.pid_module)
-        val description: TextView = itemView.findViewById(R.id.pid_description)
-        val status: TextView = itemView.findViewById(R.id.pid_status)
-        val selected: CheckBox = itemView.findViewById(R.id.pid_selected)
+    inner class ViewHolder internal constructor(private val binding: View) : RecyclerView.ViewHolder(binding) {
+        val module: TextView = binding.findViewById(R.id.pid_module)
+        val description: TextView = binding.findViewById(R.id.pid_description)
+        val status: TextView = binding.findViewById(R.id.pid_status)
+        val selected: CheckBox = binding.findViewById(R.id.pid_selected)
+        val layout: TableLayout = binding.findViewById(R.id.tablelayout)
 
         init {
             selected.visibility = if (detailsViewEnabled) View.GONE else View.VISIBLE
 
-            if (detailsViewEnabled) {
+            binding.setOnClickListener {
+                val item = data[adapterPosition]
 
-                itemView.setOnClickListener {
+                if (detailsViewEnabled) {
+                    lastSelectedPosition = currentSelectedPosition
+                    currentSelectedPosition = adapterPosition
 
-                    val item = data[adapterPosition]
-                    itemView.isSelected = true
+                    binding.isSelected = true
                     notifyItemChanged(adapterPosition)
+
+                    notifyItemChanged(lastSelectedPosition)
+                    notifyItemChanged(currentSelectedPosition)
 
                     val pidDetailsModule = root.findViewById<TextView>(R.id.pid_details_module)
                     pidDetailsModule.text = item.source.module
@@ -207,64 +212,49 @@ import java.util.*
                     val pidDetailsFile = root.findViewById<TextView>(R.id.pid_details_file)
                     pidDetailsFile.text = item.source.resourceFile
 
-                    root.findViewById<EditText>(R.id.pid_details_alert_lower_threshold).let{ edit ->
+                    root.findViewById<EditText>(R.id.pid_details_alert_lower_threshold).let { edit ->
                         edit.removeTextChangedListener(lowerAlertTextWatcher)
 
-                        edit.setText(if (item.source.alert.lowerThreshold == null){
-                            ""
-                        } else {
-                            item.source.alert.lowerThreshold.toString()
-                        })
+                        edit.setText(
+                            if (item.source.alert.lowerThreshold == null) {
+                                ""
+                            } else {
+                                item.source.alert.lowerThreshold.toString()
+                            }
+                        )
 
                         edit.clearFocus()
                         lowerAlertTextWatcher.pid = item
                         edit.addTextChangedListener(lowerAlertTextWatcher)
                     }
 
-                    root.findViewById<EditText>(R.id.pid_details_alert_upper_threshold).let{ edit ->
+                    root.findViewById<EditText>(R.id.pid_details_alert_upper_threshold).let { edit ->
                         edit.removeTextChangedListener(upperAlertTextWatcher)
 
-                        edit.setText(if (item.source.alert.upperThreshold == null){
-                            ""
-                        } else {
-                            item.source.alert.upperThreshold.toString()
-                        })
+                        edit.setText(
+                            if (item.source.alert.upperThreshold == null) {
+                                ""
+                            } else {
+                                item.source.alert.upperThreshold.toString()
+                            }
+                        )
                         edit.clearFocus()
                         upperAlertTextWatcher.pid = item
                         edit.addTextChangedListener(upperAlertTextWatcher)
                     }
 
                     val pidDetailsSortedMap = root.findViewById<TextView>(R.id.pid_details_supported)
-                    if (item.supported){
+                    if (item.supported) {
                         pidDetailsSortedMap.text = "Yes"
                     } else {
                         pidDetailsSortedMap.text = "No"
                     }
 
-                    root.findViewById<Button>(R.id.pid_list_save).apply {
-                        setOnClickListener {
-
-
-                            persistSelection(item.source)
-                        }
-                    }
                 }
+
             }
         }
     }
 
-    private fun persistSelection(pid: PidDefinition) {
-        val newList = data.filter { it.checked }
-            .map { it.source.id.toString() }.toList()
-
-        Log.e(LOG_TAG, "Key=$key, selected PIDs=$newList")
-
-        if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
-            sendBroadcastEvent("${key}.event.changed")
-        }
-
-        pid.serialize()
-        Prefs.updateStringSet(key, newList)
-    }
 }
 

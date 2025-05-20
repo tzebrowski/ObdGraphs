@@ -34,6 +34,7 @@ import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -42,6 +43,7 @@ import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_PERFORMANCE
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_SOURCE_TRIP_INFO
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
@@ -81,7 +83,7 @@ open class PIDsListPreferenceDialogFragment(
 
         listOfItems = sourceList()
 
-        val adapter = PIDsViewAdapter(root, context, listOfItems, key, editableViewEnabled)
+        val adapter = PIDsViewAdapter(root, context, listOfItems, editableViewEnabled)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -142,6 +144,12 @@ open class PIDsListPreferenceDialogFragment(
     }
 
     private fun attachActionButtons() {
+        root.findViewById<Button>(R.id.pid_list_save).apply {
+            setOnClickListener {
+                persistSelection()
+            }
+        }
+
         root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
@@ -381,4 +389,23 @@ open class PIDsListPreferenceDialogFragment(
     ): Boolean = if (p.mode == "01") {
         ecuSupportedPIDs.contains(p.pid.lowercase())
     } else true
+
+
+    private fun persistSelection() {
+        val newList = getAdapter().data.filter { it.checked }
+            .map { it.source.id.toString() }.toList()
+
+        if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
+            Log.i(LOG_TAG, "Persisting PID list for key=$key,new list=$newList")
+            sendBroadcastEvent("${key}.event.changed")
+            Prefs.updateStringSet(key, newList)
+
+        } else {
+            Log.i(LOG_TAG, "Do not persist PID list for key=$key, it did not changed")
+        }
+
+        if (editableViewEnabled){
+           getAdapter().data[getAdapter().currentSelectedPosition].source.serialize()
+        }
+    }
 }
