@@ -19,6 +19,7 @@ package org.obd.graphs.bl.datalogger
 import android.content.BroadcastReceiver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.query.Query
+import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
@@ -44,4 +45,5 @@ interface DataLogger {
     fun updateQuery(query: Query)
     fun stop()
     fun getCurrentQuery(): Query?
+    fun findAlertFor(metric: ObdMetric): List<Alert>
 }

@@ -29,6 +29,7 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
+import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*
@@ -166,9 +167,12 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun findRateFor(metric: ObdMetric): Optional<Rate> = workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
 
+    fun findAlertFor(metric: ObdMetric): List<Alert> = workflow.alerts.findBy(metric.command.pid)
+
     fun pidDefinitionRegistry(): PidDefinitionRegistry = workflow.pidRegistry
 
     fun stop() {
+
         Log.i(
             LOG_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
                     "${dataLoggerPreferences.instance.gracefulStop}"

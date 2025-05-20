@@ -101,6 +101,18 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         settings.getColorTheme().currentValueColor
     }
 
+    fun minValueColorScheme(metric: Metric) = if (metric.inLowerAlertBreached) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
+    fun maxValueColorScheme(metric: Metric) = if (metric.inUpperAlertBreached) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
 
     open fun recycle() {
         getBackground().recycle()

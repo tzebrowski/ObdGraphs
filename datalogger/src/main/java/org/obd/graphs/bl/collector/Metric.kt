@@ -19,7 +19,6 @@ package org.obd.graphs.bl.collector
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
-
 data class Metric(
     var source: ObdMetric,
     var value: Any?,
@@ -27,14 +26,16 @@ data class Metric(
     var max: Double,
     var mean: Double,
     var enabled: Boolean = true,
-    var rate: Double?
-) {
+    var rate: Double?,
+    var inLowerAlertBreached: Boolean = false,
+    var inUpperAlertBreached: Boolean = false) {
+
     companion object {
         fun newInstance(source: ObdMetric, value: Any, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =
             Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
 
-    fun isInAlert(): Boolean = source.isAlert
+    fun isInAlert(): Boolean = inLowerAlertBreached ||inUpperAlertBreached
 
     fun pid(): PidDefinition = source.command.pid
 

@@ -78,10 +78,11 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     metric.min.format(pid = metric.pid()),
                     left1,
                     top1,
-                    Color.LTGRAY,
+                    minValueColorScheme(metric),
                     footerValueTextSize
                 )
             }
+            metric.isInAlert()
             if (metric.source.command.pid.historgam.isMaxEnabled) {
                 left1 = drawText(
                     canvas,
@@ -96,7 +97,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     metric.max.format(pid = metric.pid()),
                     left1,
                     top1,
-                    Color.LTGRAY,
+                    maxValueColorScheme(metric),
                     footerValueTextSize
                 )
             }
@@ -253,8 +254,6 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
 
         return getTextHeight(text, valuePaint) - 1f
     }
-
-
 
     fun drawTitle(
         canvas: Canvas,

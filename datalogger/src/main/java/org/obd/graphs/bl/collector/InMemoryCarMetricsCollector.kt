@@ -87,6 +87,9 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
                 val hist = dataLogger.findHistogramFor(metric)
                 val rate = dataLogger.findRateFor(metric)
 
+                it.inLowerAlertBreached =  metric.isLowerAlert
+                it.inUpperAlertBreached =  metric.isUpperAlert
+
                 rate.ifPresent { r ->
                     it.rate = r.value
                 }
