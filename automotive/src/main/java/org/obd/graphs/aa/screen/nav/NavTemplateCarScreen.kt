@@ -119,6 +119,7 @@ internal class NavTemplateCarScreen(
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     surfaceRendererScreen.renderFrame()
                     try {
+                        metricsCollector.reset()
                         invalidate()
                     } catch (e: Exception){
                         Log.w(LOG_TAG,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
