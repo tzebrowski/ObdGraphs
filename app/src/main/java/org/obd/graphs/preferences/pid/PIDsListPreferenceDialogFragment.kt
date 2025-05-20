@@ -25,6 +25,7 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.Button
 import android.widget.TableLayout
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
@@ -50,7 +51,6 @@ import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
-
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
@@ -92,7 +92,6 @@ open class PIDsListPreferenceDialogFragment(
         attachDragManager(recyclerView)
         attachActionButtons()
         adjustItemsVisibility()
-
         adjustRecyclerViewHeight(recyclerView)
 
         return root
@@ -110,6 +109,13 @@ open class PIDsListPreferenceDialogFragment(
     private fun adjustItemsVisibility() {
         root.findViewById<TableLayout>(R.id.details_view).apply {
             visibility = if (editableViewEnabled) View.VISIBLE else View.GONE
+        }
+
+        root.findViewById<TextView>(R.id.pid_details_stable_header).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
+        }
+        root.findViewById<TextView>(R.id.pid_details_selection_header).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
         }
     }
 
@@ -143,6 +149,7 @@ open class PIDsListPreferenceDialogFragment(
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun attachActionButtons() {
         root.findViewById<Button>(R.id.pid_list_save).apply {
             setOnClickListener {
@@ -156,7 +163,6 @@ open class PIDsListPreferenceDialogFragment(
                 onDialogCloseListener.invoke()
             }
         }
-
 
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
@@ -212,8 +218,6 @@ open class PIDsListPreferenceDialogFragment(
 
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
     }
-
-
 
     private fun notifyListChanged() {
         sendBroadcastEvent("${key}.event.changed")

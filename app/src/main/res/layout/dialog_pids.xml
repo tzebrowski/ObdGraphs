@@ -24,12 +24,13 @@
             android:layout_height="fill_parent">
 
             <TextView
+                android:id="@+id/pid_details_selection_header"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:text=""
+                android:text="@string/pids_selection"
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -56,6 +57,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/pid_details_stable_header"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="start"
@@ -64,7 +66,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
 
         </TableRow>
 

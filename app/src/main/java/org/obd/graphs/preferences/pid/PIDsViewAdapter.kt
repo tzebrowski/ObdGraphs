@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -37,18 +37,58 @@ import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.setText
-import java.util.*
+import java.util.Collections
+
+private const val TAG = "PID_VIEW"
 
 class PIDsViewAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
-    private val detailsViewEnabled: Boolean
+    private val editModeEnabled: Boolean
 ) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var lastSelectedPosition = -1
     var currentSelectedPosition = -1
+
+    class CallableTextWatcher(val callable: (pid: PidDefinitionDetails, editable: Editable?) -> Unit) : TextWatcher {
+        var pid: PidDefinitionDetails? = null
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun afterTextChanged(editable: Editable?) {
+            pid?.let {
+                callable(it, editable)
+            }
+        }
+    }
+
+    private val formulaTextWatcher = CallableTextWatcher { pid, editable ->
+        pid.source.formula = editable.toString()
+        Log.d(TAG, "Setting new formula=${editable.toString()}")
+    }
+
+    private val upperAlertTextWatcher = CallableTextWatcher { pid, editable ->
+        if (editable.toString().isEmpty()) {
+            pid.source.alert.upperThreshold = null
+        } else {
+            if (editable.toString().isDigitsOnly()) {
+                Log.d(TAG, "Setting new upperThreshold=${editable.toString()}")
+                pid.source.alert.upperThreshold = editable.toString().toInt()
+            }
+        }
+    }
+
+    private val lowerAlertTextWatcher = CallableTextWatcher { pid, editable ->
+        if (editable.toString().isEmpty()) {
+            pid.source.alert.lowerThreshold = null
+        } else {
+            if (editable.toString().isDigitsOnly()) {
+                Log.d(TAG, "Setting new lowerThreshold=${editable.toString()}")
+                pid.source.alert.lowerThreshold = editable.toString().toInt()
+            }
+        }
+    }
 
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(data, fromPosition, toPosition)
@@ -106,64 +146,6 @@ class PIDsViewAdapter internal constructor(
         return data.size
     }
 
-    private val formulaTextWatcher = object : TextWatcher {
-        var pid: PidDefinitionDetails? = null
-
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-        }
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun afterTextChanged(editable: Editable?) {
-            pid?.let {
-                it.source.formula = editable.toString()
-                Log.d("formulaTextWatcher", "Setting new formula=${editable.toString()}")
-            }
-        }
-    }
-
-    private val upperAlertTextWatcher = object : TextWatcher {
-        var pid: PidDefinitionDetails? = null
-
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-        }
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun afterTextChanged(editable: Editable?) {
-            pid?.let {
-                if (editable.toString().isNotEmpty() && editable.toString().isDigitsOnly()) {
-                    it.source.alert.upperThreshold = editable.toString().toInt()
-                    Log.d("upperAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
-                }
-            }
-        }
-    }
-
-    private val lowerAlertTextWatcher = object : TextWatcher {
-        var pid: PidDefinitionDetails? = null
-
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-        }
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        }
-
-        override fun afterTextChanged(editable: Editable?) {
-            pid?.let {
-                if (editable.toString().isNotEmpty() && editable.toString().isDigitsOnly()) {
-                    it.source.alert.lowerThreshold = editable.toString().toInt()
-                    Log.d("lowerAlertTextWatcher", "Setting new upperAlertTextWatcher=${editable.toString()}")
-                }
-            }
-        }
-    }
-
     inner class ViewHolder internal constructor(private val binding: View) : RecyclerView.ViewHolder(binding) {
         val module: TextView = binding.findViewById(R.id.pid_module)
         val description: TextView = binding.findViewById(R.id.pid_description)
@@ -172,12 +154,13 @@ class PIDsViewAdapter internal constructor(
         val layout: TableLayout = binding.findViewById(R.id.tablelayout)
 
         init {
-            selected.visibility = if (detailsViewEnabled) View.GONE else View.VISIBLE
+            selected.visibility = if (editModeEnabled) View.GONE else View.VISIBLE
+            status.visibility = if (editModeEnabled) View.GONE else View.VISIBLE
 
             binding.setOnClickListener {
                 val item = data[adapterPosition]
 
-                if (detailsViewEnabled) {
+                if (editModeEnabled) {
                     lastSelectedPosition = currentSelectedPosition
                     currentSelectedPosition = adapterPosition
 
@@ -250,5 +233,4 @@ class PIDsViewAdapter internal constructor(
             }
         }
     }
-
 }

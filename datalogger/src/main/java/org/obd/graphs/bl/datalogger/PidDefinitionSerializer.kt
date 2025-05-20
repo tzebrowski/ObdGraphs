@@ -35,7 +35,6 @@ private var mapper = ObjectMapper().apply {
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
 
-
 private const val PREF_KEY = "pref.pid.registry.overrides.pid"
 private const val TAG = "PID_SER"
 
@@ -46,14 +45,14 @@ fun PidDefinition.serialize(
     }
     Prefs.updateString(key(), mapper.writeValueAsString(this)).commit()
 } catch (e: Throwable) {
-    Log.e(TAG, "Failed to serialize", e)
+    Log.e(TAG, "Failed to serialize, PID id=$id", e)
     null
 }
 
-fun PidDefinition.deserialize(): PidDefinition? {
+fun PidDefinition.deserialize(): PidDefinition? =
     try {
         val data = Prefs.getString(key(), null)
-        return if (data == null) {
+        if (data == null) {
             null
         } else {
             if (Log.isLoggable(TAG, Log.DEBUG)) {
@@ -62,9 +61,8 @@ fun PidDefinition.deserialize(): PidDefinition? {
             mapper.readValue(data, PidDefinition::class.java)
         }
     } catch (e: Throwable) {
-        Log.e(TAG, "Failed to deserialize", e)
-        return null
+        Log.e(TAG, "Failed to deserialize, PID id=$id", e)
+        null
     }
-}
 
 private fun PidDefinition.key() = "$PREF_KEY.$id"
