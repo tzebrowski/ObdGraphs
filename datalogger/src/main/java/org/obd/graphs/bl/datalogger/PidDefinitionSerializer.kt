@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,27 +27,28 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
 import org.obd.metrics.pid.PidDefinition
 
-private var mapper = ObjectMapper().apply {
-    registerModule(KotlinModule())
-    configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
-    configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
-    configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
-    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-}
+private var mapper =
+    ObjectMapper().apply {
+        registerModule(KotlinModule())
+        configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+        configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
+        configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    }
 
 private const val PREF_KEY = "pref.pid.registry.overrides.pid"
 private const val TAG = "PID_SER"
 
-fun PidDefinition.serialize(
-) = try {
-    if (Log.isLoggable(TAG, Log.DEBUG)) {
-        Log.d(TAG, "Serialize PID $id=${key()}")
+fun PidDefinition.serialize() =
+    try {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            Log.d(TAG, "Serialize PID $id=${key()}")
+        }
+        Prefs.updateString(key(), mapper.writeValueAsString(this)).commit()
+    } catch (e: Throwable) {
+        Log.e(TAG, "Failed to serialize, PID id=$id", e)
+        null
     }
-    Prefs.updateString(key(), mapper.writeValueAsString(this)).commit()
-} catch (e: Throwable) {
-    Log.e(TAG, "Failed to serialize, PID id=$id", e)
-    null
-}
 
 fun PidDefinition.deserialize(): PidDefinition? =
     try {

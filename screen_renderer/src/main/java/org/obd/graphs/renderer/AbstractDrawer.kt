@@ -101,13 +101,19 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         settings.getColorTheme().currentValueColor
     }
 
-    fun minValueColorScheme(metric: Metric) = if (metric.inLowerAlertBreached) {
+    fun histogramColorScheme(metric: Metric) = if (metric.inLowerAlertRisedHist || metric.inUpperAlertRisedHist) {
         settings.getColorTheme().currentValueInAlertColor
     } else {
         settings.getColorTheme().currentValueColor
     }
 
-    fun maxValueColorScheme(metric: Metric) = if (metric.inUpperAlertBreached) {
+    fun minValueColorScheme(metric: Metric) = if (metric.inLowerAlertRisedHist) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
+    fun maxValueColorScheme(metric: Metric) = if (metric.inUpperAlertRisedHist) {
         settings.getColorTheme().currentValueInAlertColor
     } else {
         settings.getColorTheme().currentValueColor
@@ -406,5 +412,6 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
 
     fun getMarginLeft(left: Float): Float = 10 + left
 
-    private fun inAlertState(metric: Metric) = settings.isAlertingEnabled() && metric.isInAlert()
+    private fun inAlertState(metric: Metric) = settings.isAlertingEnabled() &&
+            (metric.source.isUpperAlert || metric.source.isLowerAlert)
 }

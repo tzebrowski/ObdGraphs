@@ -82,7 +82,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     footerValueTextSize
                 )
             }
-            metric.isInAlert()
+
             if (metric.source.command.pid.historgam.isMaxEnabled) {
                 left1 = drawText(
                     canvas,

@@ -308,13 +308,13 @@ internal class GaugeDrawer(
                         "${if(pid.historgam.isAvgEnabled) metric.mean.format(pid) else ""}    " +
                         "${if(pid.historgam.isMaxEnabled) metric.max.format(pid) else ""}"
             histogramPaint.textSize = calculatedFontSize * 0.4f
+            histogramPaint.color = histogramColorScheme(metric)
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
             val histY = labelY + histsRect.height()
             canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), histY + 8, histogramPaint)
         }
     }
-
 
     private inline fun scaleColor(j: Int): Int = if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
         settings.getColorTheme().progressColor
