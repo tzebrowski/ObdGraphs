@@ -429,6 +429,14 @@ internal class WorkflowOrchestrator internal constructor() {
         workflow.updatePidRegistry(
             pids()
         )
+
+        workflow.pidRegistry.findAll().forEach { p ->
+            p.deserialize()?.let {
+                p.formula = it.formula
+                p.alert.lowerThreshold = it.alert.lowerThreshold
+                p.alert.upperThreshold = it.alert.upperThreshold
+            }
+        }
     }
 
     private fun pids(): Pids? = Pids.builder().resources(dataLoggerPreferences.instance.resources.map {

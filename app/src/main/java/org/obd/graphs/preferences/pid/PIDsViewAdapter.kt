@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -38,9 +38,6 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 import org.obd.graphs.ui.common.setText
 import java.util.*
-
-
-private const val LOG_TAG = "PIDsView"
 
 class PIDsViewAdapter internal constructor(
     private val root: View,
@@ -249,12 +246,9 @@ class PIDsViewAdapter internal constructor(
                     } else {
                         pidDetailsSortedMap.text = "No"
                     }
-
                 }
-
             }
         }
     }
 
 }
-
