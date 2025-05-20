@@ -54,6 +54,9 @@
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
 
+    <string name="pref.pids.edit">Modify individual PID settings</string>
+    <string name="pref.pids.edit_summary">Adjust the configuration of individual PIDs, including setting alert thresholds.</string>
+
     <string name="pref.pids_generic_high">Choose Fast-Updating OBD2 Data to Show</string>
     <string name="pref.pids_generic_high_summary">Pick the high-frequency OBD2 sensors or PIDs you would like to retrieve from the ECU.</string>
     <string name="pref.pids_generic_low">Choose Slow-Updating OBD2 Data to Show</string>

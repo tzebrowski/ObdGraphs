@@ -175,7 +175,10 @@ import java.util.*
         val selected: CheckBox = itemView.findViewById(R.id.pid_selected)
 
         init {
+            selected.visibility = if (detailsViewEnabled) View.GONE else View.VISIBLE
+
             if (detailsViewEnabled) {
+
                 itemView.setOnClickListener {
 
                     val item = data[adapterPosition]

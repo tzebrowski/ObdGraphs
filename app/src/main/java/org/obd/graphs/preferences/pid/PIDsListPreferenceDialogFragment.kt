@@ -66,7 +66,7 @@ open class PIDsListPreferenceDialogFragment(
 
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
-    private val detailsViewEnabled: Boolean = (source == "low" || source == "high")
+    private val editableViewEnabled: Boolean = (source == "edit")
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -81,7 +81,7 @@ open class PIDsListPreferenceDialogFragment(
 
         listOfItems = sourceList()
 
-        val adapter = PIDsViewAdapter(root, context, listOfItems, key, detailsViewEnabled)
+        val adapter = PIDsViewAdapter(root, context, listOfItems, key, editableViewEnabled)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -107,7 +107,7 @@ open class PIDsListPreferenceDialogFragment(
 
     private fun adjustItemsVisibility() {
         root.findViewById<TableLayout>(R.id.details_view).apply {
-            visibility = if (detailsViewEnabled) View.VISIBLE else View.GONE
+            visibility = if (editableViewEnabled) View.VISIBLE else View.GONE
         }
     }
 
@@ -142,7 +142,6 @@ open class PIDsListPreferenceDialogFragment(
     }
 
     private fun attachActionButtons() {
-
         root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
@@ -152,6 +151,8 @@ open class PIDsListPreferenceDialogFragment(
 
 
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
+
             setOnClickListener {
                 val adapter: PIDsViewAdapter = getAdapter()
 
@@ -163,6 +164,7 @@ open class PIDsListPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
             setOnClickListener {
                 val adapter: PIDsViewAdapter = getAdapter()
 
@@ -279,32 +281,19 @@ open class PIDsListPreferenceDialogFragment(
                 when (source) {
                     "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
                     "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
-
-                    "dashboard" -> {
-                        map(all)
-                    }
-
-                    "graph" -> {
-                        map(all)
-                    }
-
-                    "gauge" -> {
-                        map(all)
-                    }
-
-                    "giulia" -> {
-                        map(all)
-                    }
-
-                    "aa" -> {
-                        map(all)
-                    }
-
+                    "edit" -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
+                    "dashboard" -> map(all)
+                    "graph" -> map(all)
+                    "gauge" -> map(all)
+                    "giulia" -> map(all)
+                    "aa" -> map(all)
                     else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
                 }
             }
 
-        Log.e(LOG_TAG,"source=${source}, size=${sourceList.size}")
+        if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+            Log.d(LOG_TAG, "source=${source}, size=${sourceList.size}")
+        }
 
         val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
         sourceList.let {

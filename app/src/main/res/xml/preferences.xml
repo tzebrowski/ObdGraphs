@@ -19,6 +19,14 @@
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.pid.PIDsListPreferences
+                    android:dialogTitle="@string/pref.pids.edit"
+                    android:key="pref.pids.edit"
+                    android:summary="@string/pref.pids.edit_summary"
+                    android:title="@string/pref.pids.edit"
+                    app:singleLineTitle="false"
+                    app:source="edit" />
+
+                <org.obd.graphs.preferences.pid.PIDsListPreferences
                     android:dialogTitle="@string/pref.pids_generic_high"
                     android:key="pref.pids.generic.high"
                     android:summary="@string/pref.pids_generic_high_summary"
