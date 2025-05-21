@@ -468,6 +468,7 @@
     <string name="pref_power_settings_summary">Power-related settings are available in this section, allowing you to define the application’s behavior when the charger is plugged in or removed.</string>
     <string name="pref_dtc_settings_summary">Diagnostic Trouble Codes (DTCs) retrieved from the ECU are displayed in this section.</string>
 
+
     <string name="pids_stable">Stable</string>
     <string name="pids_alert_lower_threshold">Alert\nlower threshold</string>
     <string name="pids_alert_upper_threshold">Alert\nupper threshold</string>

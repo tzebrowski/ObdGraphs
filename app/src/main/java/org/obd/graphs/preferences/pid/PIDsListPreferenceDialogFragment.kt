@@ -83,7 +83,7 @@ open class PIDsListPreferenceDialogFragment(
 
         listOfItems = sourceList()
 
-        val adapter = PIDsViewAdapter(root, context, listOfItems, editableViewEnabled)
+        val adapter = PIDsDetailsAdapter(root, context, listOfItems, editableViewEnabled)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -114,6 +114,11 @@ open class PIDsListPreferenceDialogFragment(
         root.findViewById<TextView>(R.id.pid_details_stable_header).apply {
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
         }
+
+        root.findViewById<TextView>(R.id.pid_details_formula_header).apply {
+            visibility = if (editableViewEnabled) View.VISIBLE else View.GONE
+        }
+
         root.findViewById<TextView>(R.id.pid_details_selection_header).apply {
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
         }
@@ -168,7 +173,7 @@ open class PIDsListPreferenceDialogFragment(
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
 
             setOnClickListener {
-                val adapter: PIDsViewAdapter = getAdapter()
+                val adapter: PIDsDetailsAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = true
@@ -180,7 +185,7 @@ open class PIDsListPreferenceDialogFragment(
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
             setOnClickListener {
-                val adapter: PIDsViewAdapter = getAdapter()
+                val adapter: PIDsDetailsAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = false
@@ -267,7 +272,7 @@ open class PIDsListPreferenceDialogFragment(
         }
     }
 
-    private fun getAdapter() = (getRecyclerView(root).adapter as PIDsViewAdapter)
+    private fun getAdapter() = (getRecyclerView(root).adapter as PIDsDetailsAdapter)
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()

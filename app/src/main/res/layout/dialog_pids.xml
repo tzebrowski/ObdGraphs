@@ -67,6 +67,18 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/pid_details_formula_header"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="start"
+                android:text="@string/pids_formula"
+                android:textAllCaps="false"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+
         </TableRow>
 
         <TableRow
@@ -292,6 +304,7 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp" />
         </TableRow>
+
     </TableLayout>
 
     <LinearLayout

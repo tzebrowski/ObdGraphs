@@ -40,12 +40,12 @@ import java.util.Collections
 
 private const val TAG = "PID_VIEW"
 
-class PIDsViewAdapter internal constructor(
+class PIDsDetailsAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
-) : RecyclerView.Adapter<PIDsViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PIDsDetailsAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var lastSelectedPosition = -1
     var currentSelectedPosition = -1
@@ -141,6 +141,23 @@ class PIDsViewAdapter internal constructor(
                 holder.status.setText("No", COLOR_DYNAMIC_SELECTOR_SPORT, Typeface.NORMAL, 0.7f)
             }
 
+            val lowerThreshold = source.alert.lowerThreshold
+            val upperThreshold = source.alert.upperThreshold
+
+            if (lowerThreshold != null || upperThreshold != null) {
+                var text = ""
+                if (lowerThreshold != null) {
+                    text += " x<$lowerThreshold"
+                }
+
+                if (upperThreshold != null) {
+                    text += " x>$upperThreshold"
+                }
+                holder.formula.text = text
+            } else {
+                holder.formula.text = ""
+            }
+
             holder.selected.isChecked = checked
             holder.selected.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (buttonView.isShown) {
@@ -170,10 +187,13 @@ class PIDsViewAdapter internal constructor(
         val status: TextView = binding.findViewById(R.id.pid_status)
         val selected: CheckBox = binding.findViewById(R.id.pid_selected)
         val layout: TableLayout = binding.findViewById(R.id.tablelayout)
+        val formula: TextView = binding.findViewById(R.id.pid_formula)
+
 
         init {
             selected.visibility = if (editModeEnabled) View.GONE else View.VISIBLE
             status.visibility = if (editModeEnabled) View.GONE else View.VISIBLE
+            formula.visibility = if (editModeEnabled) View.VISIBLE else View.GONE
 
             binding.setOnClickListener {
                 val item = data[adapterPosition]

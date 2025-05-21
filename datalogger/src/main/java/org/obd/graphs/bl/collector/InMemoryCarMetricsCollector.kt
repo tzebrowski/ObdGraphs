@@ -32,7 +32,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
     override fun getMetrics(enabled: Boolean): List<Metric> = metrics.values.filter { it.enabled == enabled }
 
     override fun reset() {
-        metrics.forEach { (k, v) ->
+        metrics.forEach { (_, v) ->
             v.inLowerAlertRisedHist = false
             v.inUpperAlertRisedHist = false
         }
