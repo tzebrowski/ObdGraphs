@@ -30,3 +30,6 @@ const val SCREEN_REFRESH_EVENT = "pref.screen_refresh.event"
 const val PREF_DYNAMIC_SELECTOR_ENABLED = "pref.aa.theme.dynamic-selector.enabled"
 const val PREF_MODULE_LIST = "pref.pids.registry.list"
 const val PREF_DRAG_RACE_KEY_PREFIX = "pref.drag_race"
+
+const val PREF_ALERT_LEGEND_ENABLED = "pref.alerting.legend.enabled"
+const val PREF_ALERTING_ENABLED = "pref.alerting.enabled"

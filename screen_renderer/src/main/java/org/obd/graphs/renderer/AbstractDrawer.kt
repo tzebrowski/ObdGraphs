@@ -95,25 +95,26 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
-    fun valueColorScheme(metric: Metric) = if (inAlertState(metric)) {
+    fun valueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() &&
+            (metric.source.isUpperAlert || metric.source.isLowerAlert)) {
         settings.getColorTheme().currentValueInAlertColor
     } else {
         settings.getColorTheme().currentValueColor
     }
 
-    fun histogramColorScheme(metric: Metric) = if (metric.inLowerAlertRisedHist || metric.inUpperAlertRisedHist) {
+    fun histogramColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && (metric.inLowerAlertRisedHist || metric.inUpperAlertRisedHist)) {
         settings.getColorTheme().currentValueInAlertColor
     } else {
         settings.getColorTheme().currentValueColor
     }
 
-    fun minValueColorScheme(metric: Metric) = if (metric.inLowerAlertRisedHist) {
+    fun minValueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && metric.inLowerAlertRisedHist) {
         settings.getColorTheme().currentValueInAlertColor
     } else {
         settings.getColorTheme().currentValueColor
     }
 
-    fun maxValueColorScheme(metric: Metric) = if (metric.inUpperAlertRisedHist) {
+    fun maxValueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && metric.inUpperAlertRisedHist) {
         settings.getColorTheme().currentValueInAlertColor
     } else {
         settings.getColorTheme().currentValueColor
@@ -411,7 +412,4 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
     }
 
     fun getMarginLeft(left: Float): Float = 10 + left
-
-    private fun inAlertState(metric: Metric) = settings.isAlertingEnabled() &&
-            (metric.source.isUpperAlert || metric.source.isLowerAlert)
 }

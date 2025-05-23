@@ -208,7 +208,6 @@
 
     <string name="pref.aa.title">Android Auto</string>
 
-    <string name="pref.aa.alerting_category">Alerting</string>
     <string name="pref.aa.debug_category">Debug</string>
     <string name="pref.aa.general_category">General app settings</string>
 
@@ -447,6 +446,10 @@
 
     <string name="pref.about_build_time">Build time</string>
     <string name="pref.about_build_version">Build version</string>
+
+    <string name="pref.alerting.category">Alerts</string>
+    <string name="pref.alerting.category_summary">In this section, you can find settings related to alerting</string>
+
 
     <string name="pref.adapter_response_length_enabled">Set the number of lines to include in the query</string>
     <string name="pref.adapter_response_length_enabled_summary">Enabling this option allows the firmware to inform the adapter of the expected number of response lines, eliminating the need for the adapter to wait for the final timeout. Enabling this feature improves performance.</string>
