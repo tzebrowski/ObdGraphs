@@ -54,7 +54,7 @@
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
 
-    <string name="pref.pids.edit">Modify individual PID settings</string>
+    <string name="pref.pids.edit">Modify individual alert thresholds</string>
     <string name="pref.pids.edit_summary">Adjust the configuration of individual PIDs, including setting alert thresholds.</string>
 
     <string name="pref.pids_generic_high">Choose Fast-Updating OBD2 Data to Show</string>
@@ -256,7 +256,6 @@
 
     <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector enabled</string>
     <string name="pref.aa.theme.dynamic_selector.enabled_summary">When enabled, colors are applied according to the selected dynamic mode: SPORT, NORMAL, or ECO.</string>
-
 
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
     <string name="pref.dtc.code">Code</string>

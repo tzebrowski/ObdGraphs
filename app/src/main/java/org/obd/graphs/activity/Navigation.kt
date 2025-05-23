@@ -56,7 +56,7 @@ internal fun MainActivity.setupLeftNavigationPanel() {
 
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-
+                R.id.navigation_preferences_alerts -> navigateToPreferencesScreen("pref.alerts.settings")
                 R.id.navigation_performance_prefs -> navigateToPreferencesScreen("pref.title_performance_screen")
                 R.id.navigation_performance_pids_list_prefs -> navigateToPreferencesScreen("pref.performance.displayed_parameter_ids")
 
