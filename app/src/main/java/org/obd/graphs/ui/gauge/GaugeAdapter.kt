@@ -30,6 +30,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.PREF_ALERTING_ENABLED
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
 import org.obd.graphs.ValueConverter
@@ -153,11 +154,17 @@ class GaugeAdapter(
             val units = (metric.source.command as ObdCommand).pid.units?:""
             val txt = "${metric.source.format(castToInt = false)} $units"
             text = txt
+            setTextColor(if (inAlertState(metric)) {
+                Color.RED
+            } else {
+                Color.WHITE
+            })
 
             highLightText(
                 units, 0.3f,
                 COLOR_PHILIPPINE_GREEN
             )
+
         }
 
         if (pid.historgam.isMinEnabled) {
@@ -284,4 +291,7 @@ class GaugeAdapter(
             view.layoutParams.height = height
         }
     }
+
+    private fun inAlertState(metric: Metric) =  Prefs.getBoolean(PREF_ALERTING_ENABLED, false) &&
+            (metric.source.isUpperAlert || metric.source.isLowerAlert)
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
@@ -23,12 +24,13 @@
             android:layout_height="fill_parent">
 
             <TextView
+                android:id="@+id/pid_details_selection_header"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:text=""
+                android:text="@string/pids_selection"
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -55,10 +57,22 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/pid_details_stable_header"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:gravity="start"
                 android:text="@string/pids_stable"
+                android:textAllCaps="false"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pid_details_formula_header"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:gravity="start"
+                android:text="@string/pids_formula"
                 android:textAllCaps="false"
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
@@ -217,13 +231,43 @@
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:text="@string/pids_alert"
+                android:text="@string/pids_alert_lower_threshold"
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
+            <EditText
+                android:inputType="number"
+                android:id="@+id/pid_details_alert_lower_threshold"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text=""
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
             <TextView
-                android:id="@+id/pid_details_alert_rule"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:text="@string/pids_alert_upper_threshold"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:inputType="number"
+                android:id="@+id/pid_details_alert_upper_threshold"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="start"
@@ -260,10 +304,12 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp" />
         </TableRow>
+
     </TableLayout>
 
     <LinearLayout
         android:id="@+id/status_panel"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/details_view"
@@ -272,37 +318,45 @@
 
         <Button
             android:id="@+id/pid_list_select_all"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_select_all_action"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
 
         <Button
             android:id="@+id/pid_list_deselect_all"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_deselect_all_action"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
 
         <Button
             android:id="@+id/action_close_window"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_close_window_action"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
 
         <Button
             android:id="@+id/pid_list_save"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:text="@string/dialog_save_action"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
     </LinearLayout>
 </RelativeLayout>
 

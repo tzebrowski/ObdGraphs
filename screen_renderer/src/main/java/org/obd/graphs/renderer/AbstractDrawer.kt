@@ -95,6 +95,32 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         atmPressureLabel = context.resources.getString(R.string.status_bar_atm_pressure)
     }
 
+    fun valueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() &&
+            (metric.source.isUpperAlert || metric.source.isLowerAlert)) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
+    fun histogramColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && (metric.inLowerAlertRisedHist || metric.inUpperAlertRisedHist)) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
+    fun minValueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && metric.inLowerAlertRisedHist) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
+    fun maxValueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && metric.inUpperAlertRisedHist) {
+        settings.getColorTheme().currentValueInAlertColor
+    } else {
+        settings.getColorTheme().currentValueColor
+    }
+
+
     open fun recycle() {
         getBackground().recycle()
     }

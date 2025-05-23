@@ -18,7 +18,6 @@ package org.obd.graphs.renderer.gauge
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import org.obd.graphs.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
@@ -249,7 +248,7 @@ internal class GaugeDrawer(
         val value = metric.source.format(castToInt = false)
         valuePaint.textSize = calculatedFontSize
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
-        valuePaint.color = COLOR_WHITE
+        valuePaint.color = valueColorScheme(metric)
 
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
@@ -309,13 +308,13 @@ internal class GaugeDrawer(
                         "${if(pid.historgam.isAvgEnabled) metric.mean.format(pid) else ""}    " +
                         "${if(pid.historgam.isMaxEnabled) metric.max.format(pid) else ""}"
             histogramPaint.textSize = calculatedFontSize * 0.4f
+            histogramPaint.color = histogramColorScheme(metric)
             val histsRect = Rect()
             histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
             val histY = labelY + histsRect.height()
             canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), histY + 8, histogramPaint)
         }
     }
-
 
     private inline fun scaleColor(j: Int): Int = if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
         settings.getColorTheme().progressColor

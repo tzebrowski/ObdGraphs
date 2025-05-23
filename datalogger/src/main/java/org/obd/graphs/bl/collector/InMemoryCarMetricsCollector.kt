@@ -31,6 +31,13 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     override fun getMetrics(enabled: Boolean): List<Metric> = metrics.values.filter { it.enabled == enabled }
 
+    override fun reset() {
+        metrics.forEach { (_, v) ->
+            v.inLowerAlertRisedHist = false
+            v.inUpperAlertRisedHist = false
+        }
+    }
+
     override fun getMetric(id: Long, enabled: Boolean): Metric?   =
         if (metrics.containsKey(id) && metrics[id]!!.enabled) {
             metrics[id]
@@ -86,6 +93,14 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
                 it.value = metric.value
                 val hist = dataLogger.findHistogramFor(metric)
                 val rate = dataLogger.findRateFor(metric)
+
+                if (metric.isLowerAlert) {
+                    it.inLowerAlertRisedHist = metric.isLowerAlert
+                }
+
+                if (metric.isUpperAlert) {
+                    it.inUpperAlertRisedHist = metric.isUpperAlert
+                }
 
                 rate.ifPresent { r ->
                     it.rate = r.value

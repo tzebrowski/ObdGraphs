@@ -24,6 +24,7 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.getContext
 import org.obd.graphs.runAsync
+import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
@@ -133,6 +134,7 @@ internal class DataLoggerService : JobIntentService(), DataLogger {
     }
 
     override fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
+    override fun findAlertFor(metric: ObdMetric): List<Alert>  =  workflowOrchestrator.findAlertFor(metric)
 
     override fun isRunning(): Boolean = workflowOrchestrator.isRunning()
 

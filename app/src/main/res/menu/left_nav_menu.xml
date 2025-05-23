@@ -2,6 +2,11 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/navigation_preferences_alerts"
+        android:checkable="true"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="@string/pref.alerting.category" />
 
     <item
         android:id="@+id/ctx_menu_dtc"
@@ -15,7 +20,7 @@
         android:icon="@android:drawable/ic_dialog_map"
         android:title="@string/context_menu.profiles" />
     <item
-        android:icon="@android:drawable/ic_lock_idle_low_battery"
+        android:icon="@android:drawable/ic_dialog_dialer"
         android:checkable="true"
         android:id="@+id/ctx_menu_vehicle_properties"
         android:title="@string/pref.vehicle.metadata_title" />

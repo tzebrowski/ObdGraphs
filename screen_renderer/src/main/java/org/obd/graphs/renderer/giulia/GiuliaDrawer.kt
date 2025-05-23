@@ -78,10 +78,11 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     metric.min.format(pid = metric.pid()),
                     left1,
                     top1,
-                    Color.LTGRAY,
+                    minValueColorScheme(metric),
                     footerValueTextSize
                 )
             }
+
             if (metric.source.command.pid.historgam.isMaxEnabled) {
                 left1 = drawText(
                     canvas,
@@ -96,7 +97,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     metric.max.format(pid = metric.pid()),
                     left1,
                     top1,
-                    Color.LTGRAY,
+                    maxValueColorScheme(metric),
                     footerValueTextSize
                 )
             }
@@ -234,12 +235,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         top: Float,
         textSize: Float
     ): Float {
-        val colorTheme = settings.getColorTheme()
-        valuePaint.color = if (inAlert(metric)) {
-            colorTheme.currentValueInAlertColor
-        } else {
-            colorTheme.currentValueColor
-        }
+        valuePaint.color = valueColorScheme(metric)
 
         val left1 = left - 4
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
@@ -321,7 +317,6 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         else -> 10
     }
 
-    private fun inAlert(metric: Metric) = settings.isAlertingEnabled() && metric.isInAlert()
 
     private inline fun itemWidth(area: Rect): Int =
         when (settings.getMaxColumns()) {

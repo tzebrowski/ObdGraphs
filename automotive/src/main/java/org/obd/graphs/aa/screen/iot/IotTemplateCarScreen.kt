@@ -110,6 +110,7 @@ internal class IotTemplateCarScreen(
 
                 DATA_LOGGER_CONNECTING_EVENT -> {
                     invalidate()
+                    metricsCollector.reset()
                 }
 
                 DATA_LOGGER_NO_NETWORK_EVENT -> {

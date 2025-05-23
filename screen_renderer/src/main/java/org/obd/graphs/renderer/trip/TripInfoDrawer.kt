@@ -50,7 +50,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         var rowTop = top + 12f
         var leftAlignment = 0
-        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left + leftAlignment++, canvas, textSizeBase, statsEnabled = true, area=area) }
         tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
         tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
         tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, castToInt = true) }
@@ -60,7 +60,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         //second row
         leftAlignment = 0
         rowTop = top + (textSizeBase) + 52f
-        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
+        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left + leftAlignment++, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
         tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
         tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
         tripInfo.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true)}
@@ -284,7 +284,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         textSize: Float,
         left: Float,
         typeface: Typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
-        color: Int = Color.WHITE,
         statsEnabled: Boolean,
         unitEnabled: Boolean,
         area: Rect,
@@ -294,7 +293,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     ) {
 
         valuePaint.typeface = typeface
-        valuePaint.color = color
+        valuePaint.color = valueColorScheme(metric)
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
@@ -349,7 +348,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             top = top,
             textSize = textSizeBase * 0.8f,
             left = left,
-            color = Color.WHITE,
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
             statsEnabled = statsEnabled,
             unitEnabled = unitEnabled,

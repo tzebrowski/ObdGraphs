@@ -362,6 +362,37 @@
         </PreferenceScreen>
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref.alerting.category">
+        <PreferenceScreen
+            android:title="@string/pref.settings"
+            android:summary="@string/pref.alerting.category_summary"
+            app:key="pref.alerts.settings">
+
+            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.alerting.enabled"
+                android:summary="@string/pref.aa.alerting.enabled_summary"
+                android:title="@string/pref.aa.alerting.enabled"
+                app:singleLineTitle="false" />
+
+            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.alerting.legend.enabled"
+                android:summary="@string/pref.aa.alerting.legend.enabled_summary"
+                android:title="@string/pref.aa.alerting.legend.enabled"
+                app:singleLineTitle="false" />
+
+            <org.obd.graphs.preferences.pid.PIDsListPreferences
+                android:dialogTitle="@string/pref.pids.edit"
+                android:key="pref.pids.edit"
+                android:summary="@string/pref.pids.edit_summary"
+                android:title="@string/pref.pids.edit"
+                app:singleLineTitle="false"
+                app:source="edit" />
+
+        </PreferenceScreen>
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref.vehicle_settings.category">
         <PreferenceScreen
             android:title="@string/pref.settings"
@@ -1666,26 +1697,6 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
-                </PreferenceCategory>
-
-
-                <PreferenceCategory
-                    android:title="@string/pref.aa.alerting_category"
-                    app:singleLineTitle="false">
-
-                    <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.aa.alerting.enabled"
-                        android:summary="@string/pref.aa.alerting.enabled_summary"
-                        android:title="@string/pref.aa.alerting.enabled"
-                        app:singleLineTitle="false" />
-
-                    <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
-                        android:defaultValue="false"
-                        android:key="pref.aa.alerting.legend.enabled"
-                        android:summary="@string/pref.aa.alerting.legend.enabled_summary"
-                        android:title="@string/pref.aa.alerting.legend.enabled"
-                        app:singleLineTitle="false" />
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.theme">

@@ -19,6 +19,8 @@ package org.obd.graphs.aa
 import android.graphics.Color
 import android.util.Log
 import androidx.car.app.CarContext
+import org.obd.graphs.PREF_ALERTING_ENABLED
+import org.obd.graphs.PREF_ALERT_LEGEND_ENABLED
 import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.query.namesRegistry
@@ -38,8 +40,6 @@ private const val PREF_THEME_IN_ALLERT_VALUE_COLOR = "pref.aa.theme.inAlertValue
 
 private const val BACKGROUND_ENABLED = "pref.aa.theme.background.enabled"
 
-private const val PREF_ALERT_LEGEND_ENABLED = "pref.aa.alerting.legend.enabled"
-private const val PREF_ALERTING_ENABLED = "pref.aa.alerting.enabled"
 private const val PREF_THEME_PROGRESS_BAR_COLOR = "pref.aa.theme.progressColor"
 private const val PREF_THEME_DIVIDER_COLOR = "pref.aa.theme.dividerColor"
 private const val PREF_THEME_CURR_VALUE_COLOR = "pref.aa.theme.currentValueColor"

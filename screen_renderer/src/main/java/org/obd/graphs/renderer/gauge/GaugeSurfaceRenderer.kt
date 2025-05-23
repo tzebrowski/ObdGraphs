@@ -54,7 +54,6 @@ internal class GaugeSurfaceRenderer(
         }
     }
 
-
     override fun getTop(area: Rect): Float   = if (settings.isStatusPanelEnabled()) {
         area.top + viewSettings.marginTop.toFloat() + getDefaultTopMargin()
     } else {
@@ -68,7 +67,6 @@ internal class GaugeSurfaceRenderer(
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
-
 
             gaugeDrawer.drawBackground(canvas, area)
 

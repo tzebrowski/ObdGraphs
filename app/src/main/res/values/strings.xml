@@ -54,6 +54,9 @@
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
 
+    <string name="pref.pids.edit">Modify individual alert thresholds</string>
+    <string name="pref.pids.edit_summary">Adjust the configuration of individual PIDs, including setting alert thresholds.</string>
+
     <string name="pref.pids_generic_high">Choose Fast-Updating OBD2 Data to Show</string>
     <string name="pref.pids_generic_high_summary">Pick the high-frequency OBD2 sensors or PIDs you would like to retrieve from the ECU.</string>
     <string name="pref.pids_generic_low">Choose Slow-Updating OBD2 Data to Show</string>
@@ -205,7 +208,6 @@
 
     <string name="pref.aa.title">Android Auto</string>
 
-    <string name="pref.aa.alerting_category">Alerting</string>
     <string name="pref.aa.debug_category">Debug</string>
     <string name="pref.aa.general_category">General app settings</string>
 
@@ -254,7 +256,6 @@
 
     <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector enabled</string>
     <string name="pref.aa.theme.dynamic_selector.enabled_summary">When enabled, colors are applied according to the selected dynamic mode: SPORT, NORMAL, or ECO.</string>
-
 
     <string name="pref.dtc.title">Diagnostic Trouble Code</string>
     <string name="pref.dtc.code">Code</string>
@@ -445,6 +446,10 @@
     <string name="pref.about_build_time">Build time</string>
     <string name="pref.about_build_version">Build version</string>
 
+    <string name="pref.alerting.category">Alerts</string>
+    <string name="pref.alerting.category_summary">In this section, you can find settings related to alerting</string>
+
+
     <string name="pref.adapter_response_length_enabled">Set the number of lines to include in the query</string>
     <string name="pref.adapter_response_length_enabled_summary">Enabling this option allows the firmware to inform the adapter of the expected number of response lines, eliminating the need for the adapter to wait for the final timeout. Enabling this feature improves performance.</string>
     <string name="pref.adapter_graceful_stop_enabled">Enable graceful stop</string>
@@ -465,12 +470,15 @@
     <string name="pref_power_settings_summary">Power-related settings are available in this section, allowing you to define the application’s behavior when the charger is plugged in or removed.</string>
     <string name="pref_dtc_settings_summary">Diagnostic Trouble Codes (DTCs) retrieved from the ECU are displayed in this section.</string>
 
+
     <string name="pids_stable">Stable</string>
-    <string name="pids_alert">Alert\nrule</string>
+    <string name="pids_alert_lower_threshold">Alert\nlower threshold</string>
+    <string name="pids_alert_upper_threshold">Alert\nupper threshold</string>
     <string name="pids_formula">Calculation\nformula</string>
 
     <string name="pids_name">Name</string>
     <string name="pids_module">Module</string>
+    <string name="pids_selection">Selection</string>
 
     <string name="pref.usb_event_receiver_activity_label">Grant permissions to access USB device</string>
     <string name="virtual_screen_1">1</string>

@@ -25,6 +25,7 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.Button
 import android.widget.TableLayout
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,6 +35,7 @@ import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -49,7 +51,6 @@ import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
-
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
@@ -67,7 +68,7 @@ open class PIDsListPreferenceDialogFragment(
 
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
-    private val detailsViewEnabled: Boolean = (source == "low" || source == "high")
+    private val editableViewEnabled: Boolean = (source == "edit")
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -82,7 +83,7 @@ open class PIDsListPreferenceDialogFragment(
 
         listOfItems = sourceList()
 
-        val adapter = PIDsViewAdapter(root, context, listOfItems, detailsViewEnabled)
+        val adapter = PIDsDetailsAdapter(root, context, listOfItems, editableViewEnabled)
         val recyclerView: RecyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -91,7 +92,6 @@ open class PIDsListPreferenceDialogFragment(
         attachDragManager(recyclerView)
         attachActionButtons()
         adjustItemsVisibility()
-
         adjustRecyclerViewHeight(recyclerView)
 
         return root
@@ -108,7 +108,19 @@ open class PIDsListPreferenceDialogFragment(
 
     private fun adjustItemsVisibility() {
         root.findViewById<TableLayout>(R.id.details_view).apply {
-            visibility = if (detailsViewEnabled) View.VISIBLE else View.GONE
+            visibility = if (editableViewEnabled) View.VISIBLE else View.GONE
+        }
+
+        root.findViewById<TextView>(R.id.pid_details_stable_header).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
+        }
+
+        root.findViewById<TextView>(R.id.pid_details_formula_header).apply {
+            visibility = if (editableViewEnabled) View.VISIBLE else View.GONE
+        }
+
+        root.findViewById<TextView>(R.id.pid_details_selection_header).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
         }
     }
 
@@ -142,7 +154,13 @@ open class PIDsListPreferenceDialogFragment(
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun attachActionButtons() {
+        root.findViewById<Button>(R.id.pid_list_save).apply {
+            setOnClickListener {
+                persistSelection()
+            }
+        }
 
         root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {
@@ -151,17 +169,11 @@ open class PIDsListPreferenceDialogFragment(
             }
         }
 
-        root.findViewById<Button>(R.id.pid_list_save).apply {
-            setOnClickListener {
-                persistSelection(getAdapter().data)
-                dialog?.dismiss()
-                onDialogCloseListener.invoke()
-            }
-        }
-
         root.findViewById<Button>(R.id.pid_list_select_all).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
+
             setOnClickListener {
-                val adapter: PIDsViewAdapter = getAdapter()
+                val adapter: PIDsDetailsAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = true
@@ -171,8 +183,9 @@ open class PIDsListPreferenceDialogFragment(
         }
 
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
+            visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
             setOnClickListener {
-                val adapter: PIDsViewAdapter = getAdapter()
+                val adapter: PIDsDetailsAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = false
@@ -208,22 +221,7 @@ open class PIDsListPreferenceDialogFragment(
             ItemTouchHelper.ACTION_STATE_DRAG, swappableAdapter
         )
 
-
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
-    }
-
-
-    private fun persistSelection(list: List<PidDefinitionDetails>) {
-        val newList = list.filter { it.checked }
-            .map { it.source.id.toString() }.toList()
-
-        Log.i(LOG_TAG, "Key=$key, selected PIDs=$newList")
-
-        if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
-            notifyListChanged()
-        }
-
-        Prefs.updateStringSet(key, newList)
     }
 
     private fun notifyListChanged() {
@@ -274,7 +272,7 @@ open class PIDsListPreferenceDialogFragment(
         }
     }
 
-    private fun getAdapter() = (getRecyclerView(root).adapter as PIDsViewAdapter)
+    private fun getAdapter() = (getRecyclerView(root).adapter as PIDsDetailsAdapter)
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()
@@ -300,32 +298,19 @@ open class PIDsListPreferenceDialogFragment(
                 when (source) {
                     "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
                     "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
-
-                    "dashboard" -> {
-                        map(all)
-                    }
-
-                    "graph" -> {
-                        map(all)
-                    }
-
-                    "gauge" -> {
-                        map(all)
-                    }
-
-                    "giulia" -> {
-                        map(all)
-                    }
-
-                    "aa" -> {
-                        map(all)
-                    }
-
+                    "edit" -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
+                    "dashboard" -> map(all)
+                    "graph" -> map(all)
+                    "gauge" -> map(all)
+                    "giulia" -> map(all)
+                    "aa" -> map(all)
                     else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
                 }
             }
 
-        Log.e(LOG_TAG,"source=${source}, size=${sourceList.size}")
+        if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+            Log.d(LOG_TAG, "source=${source}, size=${sourceList.size}")
+        }
 
         val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
         sourceList.let {
@@ -413,4 +398,23 @@ open class PIDsListPreferenceDialogFragment(
     ): Boolean = if (p.mode == "01") {
         ecuSupportedPIDs.contains(p.pid.lowercase())
     } else true
+
+
+    private fun persistSelection() {
+        val newList = getAdapter().data.filter { it.checked }
+            .map { it.source.id.toString() }.toList()
+
+        if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
+            Log.i(LOG_TAG, "Persisting PID list for key=$key,new list=$newList")
+            sendBroadcastEvent("${key}.event.changed")
+            Prefs.updateStringSet(key, newList)
+
+        } else {
+            Log.i(LOG_TAG, "Do not persist PID list for key=$key, it did not changed")
+        }
+
+        if (editableViewEnabled){
+           getAdapter().data[getAdapter().currentSelectedPosition].source.serialize()
+        }
+    }
 }

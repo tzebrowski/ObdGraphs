@@ -29,6 +29,7 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
+import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*
@@ -125,7 +126,16 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    private val workflow: Workflow = workflow()
+    private val workflow: Workflow = workflow().apply {
+        pidRegistry.findAll().forEach { p ->
+            p.deserialize()?.let {
+                p.formula = it.formula
+                p.alert.lowerThreshold = it.alert.lowerThreshold
+                p.alert.upperThreshold = it.alert.upperThreshold
+            }
+        }
+    }
+
     private var status = WorkflowStatus.Disconnected
 
     private val metricsProcessorsRegistry = mutableSetOf<MetricsProcessor>()
@@ -157,9 +167,12 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun findRateFor(metric: ObdMetric): Optional<Rate> = workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
 
+    fun findAlertFor(metric: ObdMetric): List<Alert> = workflow.alerts.findBy(metric.command.pid)
+
     fun pidDefinitionRegistry(): PidDefinitionRegistry = workflow.pidRegistry
 
     fun stop() {
+
         Log.i(
             LOG_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
                     "${dataLoggerPreferences.instance.gracefulStop}"
@@ -409,9 +422,7 @@ internal class WorkflowOrchestrator internal constructor() {
     private fun workflow() = Workflow.instance()
         .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build())
         .pids(
-            Pids.builder().resources(
-                getSelectedModules()
-            ).build()
+            pids()
         )
         .observer(metricsObserver)
         .lifecycle(lifecycle)
@@ -420,19 +431,25 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun updateModulesRegistry() = runAsync {
         workflow.updatePidRegistry(
-            Pids.builder().resources(
-                getSelectedModules()
-            ).build()
+            pids()
         )
+
+        workflow.pidRegistry.findAll().forEach { p ->
+            p.deserialize()?.let {
+                p.formula = it.formula
+                p.alert.lowerThreshold = it.alert.lowerThreshold
+                p.alert.upperThreshold = it.alert.upperThreshold
+            }
+        }
     }
 
-    private fun getSelectedModules() = dataLoggerPreferences.instance.resources.map {
+    private fun pids(): Pids? = Pids.builder().resources(dataLoggerPreferences.instance.resources.map {
         if (modules.isExternalStorageModule(it)) {
             modules.externalModuleToURL(it)
         } else {
             Urls.resourceToUrl(it)
         }
-    }.toMutableList()
+    }.toMutableList()).build()
 
     private fun queryToAdjustments(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
         QueryStrategyType.DRAG_RACING_QUERY ->
