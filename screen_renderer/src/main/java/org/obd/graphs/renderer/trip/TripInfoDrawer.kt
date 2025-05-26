@@ -50,7 +50,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         var rowTop = top + 12f
         var leftAlignment = 0
-        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left + leftAlignment++, canvas, textSizeBase, statsEnabled = true, area=area) }
+        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left + leftAlignment++, canvas, textSizeBase, statsEnabled = true, area=area,  castToInt = true) }
         tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
         tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
         tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, castToInt = true) }
@@ -63,7 +63,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         tripInfo.fuellevel?.let { drawMetric(it, rowTop, left + leftAlignment++, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
         tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
         tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true)}
+        tripInfo.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true, statsEnabled = true)}
         tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area = area) }
         tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area, castToInt = true) }
 
@@ -312,14 +312,18 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         }
 
         if (settings.isStatisticsEnabled() && statsEnabled) {
-            valuePaint.color = Color.LTGRAY
             valuePaint.textSize = (textSize * 0.60).toFloat()
             val pid =  metric.pid()
             val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
             if (itemWidth <= maxItemWidth(area)) {
-                val min = metric.min.format(pid = pid, precision = statsDoublePrecision)
+
+                val min = metric.min.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
+                valuePaint.color = minValueColorScheme(metric)
                 canvas.drawText(min, (left + textWidth), top, valuePaint)
-                canvas.drawText(metric.max.format( pid = pid, precision = statsDoublePrecision), (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
+
+                valuePaint.color = maxValueColorScheme(metric)
+                canvas.drawText(metric.max.format( pid = pid, precision = statsDoublePrecision, castToInt = castToInt),
+                    (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
             }
         }
     }
