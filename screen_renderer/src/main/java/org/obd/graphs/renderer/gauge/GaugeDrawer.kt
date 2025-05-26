@@ -302,17 +302,30 @@ internal class GaugeDrawer(
         }
 
         if (settings.isStatisticsEnabled()) {
-
-            val hists =
-                "${if(pid.historgam.isMinEnabled) metric.min.format(pid) else ""}   " +
-                        "${if(pid.historgam.isAvgEnabled) metric.mean.format(pid) else ""}    " +
-                        "${if(pid.historgam.isMaxEnabled) metric.max.format(pid) else ""}"
             histogramPaint.textSize = calculatedFontSize * 0.4f
-            histogramPaint.color = histogramColorScheme(metric)
             val histsRect = Rect()
-            histogramPaint.getTextBounds(hists, 0, hists.length, histsRect)
-            val histY = labelY + histsRect.height()
-            canvas.drawText(hists, area.centerX() - (histsRect.width() / 2), histY + 8, histogramPaint)
+            histogramPaint.getTextBounds( "0000", 0, "0000".length, histsRect)
+            var left = area.centerX() - (histsRect.width() * 1.5f)
+
+            if (pid.historgam.isMinEnabled){
+                histogramPaint.color = minValueColorScheme(metric)
+                val histY = labelY + histsRect.height()
+                canvas.drawText(metric.min.format(pid), left , histY + 8, histogramPaint)
+                left +=  (histsRect.width() * 1.2f)
+            }
+
+            if (pid.historgam.isAvgEnabled){
+                histogramPaint.color =  settings.getColorTheme().valueColor
+                val histY = labelY + histsRect.height()
+                canvas.drawText(metric.mean.format(pid), left, histY + 8, histogramPaint)
+                left += (histsRect.width() * 1.5f)
+            }
+
+            if (pid.historgam.isMaxEnabled){
+                histogramPaint.color = maxValueColorScheme(metric)
+                val histY = labelY + histsRect.height()
+                canvas.drawText(metric.max.format(pid), left, histY + 8, histogramPaint)
+            }
         }
     }
 

@@ -139,8 +139,8 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun getColorTheme(): ColorTheme = colorTheme.apply {
         progressColor = Prefs.getInt(PREF_THEME_PROGRESS_BAR_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
         dividerColor = Prefs.getInt(PREF_THEME_DIVIDER_COLOR, Color.WHITE)
-        currentValueColor = Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE)
-        currentValueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
+        valueColor = Prefs.getInt(PREF_THEME_CURR_VALUE_COLOR, Color.WHITE)
+        valueInAlertColor = Prefs.getInt(PREF_THEME_IN_ALLERT_VALUE_COLOR, COLOR_DYNAMIC_SELECTOR_SPORT)
         actionsBtnVirtualScreensColor = Prefs.getInt(PREF_THEME_VIRTUAL_SCREEN_COLOR, Color.WHITE)
     }
 
