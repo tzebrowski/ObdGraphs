@@ -97,27 +97,21 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
 
     fun valueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() &&
             (metric.source.isUpperAlert || metric.source.isLowerAlert)) {
-        settings.getColorTheme().currentValueInAlertColor
+        settings.getColorTheme().valueInAlertColor
     } else {
-        settings.getColorTheme().currentValueColor
-    }
-
-    fun histogramColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && (metric.inLowerAlertRisedHist || metric.inUpperAlertRisedHist)) {
-        settings.getColorTheme().currentValueInAlertColor
-    } else {
-        settings.getColorTheme().currentValueColor
+        settings.getColorTheme().valueColor
     }
 
     fun minValueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && metric.inLowerAlertRisedHist) {
-        settings.getColorTheme().currentValueInAlertColor
+        settings.getColorTheme().valueInAlertColor
     } else {
-        settings.getColorTheme().currentValueColor
+        settings.getColorTheme().valueColor
     }
 
     fun maxValueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() && metric.inUpperAlertRisedHist) {
-        settings.getColorTheme().currentValueInAlertColor
+        settings.getColorTheme().valueInAlertColor
     } else {
-        settings.getColorTheme().currentValueColor
+        settings.getColorTheme().valueColor
     }
 
 
