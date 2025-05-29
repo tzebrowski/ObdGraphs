@@ -52,7 +52,8 @@ import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.*
 
-private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
+
+ private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
@@ -66,9 +67,16 @@ open class PIDsListPreferenceDialogFragment(
     private val onDialogCloseListener: (() -> Unit) = {}
 ) : CoreDialogFragment() {
 
+    private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
     private val editableViewEnabled: Boolean = (source == "edit")
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        adjustRecyclerViewHeight(recyclerView = recyclerView, newConfig.orientation)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -79,12 +87,12 @@ open class PIDsListPreferenceDialogFragment(
 
         requestWindowFeatures()
 
-        root = inflater.inflate(R.layout.dialog_pids, container, false)
+        root = inflater.inflate(R.layout.dialog_pid_detail, container, false)
 
         listOfItems = sourceList()
 
-        val adapter = PIDsDetailsAdapter(root, context, listOfItems, editableViewEnabled)
-        val recyclerView: RecyclerView = getRecyclerView(root)
+        val adapter = PIDsAdapter(root, context, listOfItems, editableViewEnabled)
+        recyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
@@ -92,17 +100,25 @@ open class PIDsListPreferenceDialogFragment(
         attachDragManager(recyclerView)
         attachActionButtons()
         adjustItemsVisibility()
-        adjustRecyclerViewHeight(recyclerView)
 
+        adjustRecyclerViewHeight(recyclerView, resources.configuration.orientation)
         return root
     }
 
-    private fun adjustRecyclerViewHeight(recyclerView: RecyclerView) {
-        val orientation = resources.configuration.orientation
-        recyclerView.layoutParams.height = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 350f, resources.displayMetrics).toInt()
-        } else {
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 450f, resources.displayMetrics).toInt()
+    private fun adjustRecyclerViewHeight(recyclerView: RecyclerView,orientation: Int) {
+
+        recyclerView.layoutParams.height = if (editableViewEnabled) {
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100f, resources.displayMetrics).toInt()
+            } else {
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, resources.displayMetrics).toInt()
+            }
+        }else {
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 350f, resources.displayMetrics).toInt()
+            } else {
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 500f, resources.displayMetrics).toInt()
+            }
         }
     }
 
@@ -173,7 +189,7 @@ open class PIDsListPreferenceDialogFragment(
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
 
             setOnClickListener {
-                val adapter: PIDsDetailsAdapter = getAdapter()
+                val adapter: PIDsAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = true
@@ -185,7 +201,7 @@ open class PIDsListPreferenceDialogFragment(
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
             setOnClickListener {
-                val adapter: PIDsDetailsAdapter = getAdapter()
+                val adapter: PIDsAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = false
@@ -272,7 +288,7 @@ open class PIDsListPreferenceDialogFragment(
         }
     }
 
-    private fun getAdapter() = (getRecyclerView(root).adapter as PIDsDetailsAdapter)
+    private fun getAdapter() = (getRecyclerView(root).adapter as PIDsAdapter)
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()

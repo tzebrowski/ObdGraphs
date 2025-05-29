@@ -40,12 +40,12 @@ import java.util.Collections
 
 private const val TAG = "PID_VIEW"
 
-class PIDsDetailsAdapter internal constructor(
+class PIDsAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
-) : RecyclerView.Adapter<PIDsDetailsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PIDsAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var lastSelectedPosition = -1
     var currentSelectedPosition = -1
@@ -208,9 +208,6 @@ class PIDsDetailsAdapter internal constructor(
                     notifyItemChanged(lastSelectedPosition)
                     notifyItemChanged(currentSelectedPosition)
 
-                    val pidDetailsModule = root.findViewById<TextView>(R.id.pid_details_module)
-                    pidDetailsModule.text = item.source.module
-
                     val pidDetailsDescription = root.findViewById<TextView>(R.id.pid_details_name)
 
                     pidDetailsDescription.text =
@@ -227,9 +224,6 @@ class PIDsDetailsAdapter internal constructor(
                         formulaTextWatcher.pid = item
                         it.addTextChangedListener(formulaTextWatcher)
                     }
-
-                    val pidDetailsFile = root.findViewById<TextView>(R.id.pid_details_file)
-                    pidDetailsFile.text = item.source.resourceFile
 
                     root.findViewById<EditText>(R.id.pid_details_alert_lower_threshold).let { edit ->
                         edit.removeTextChangedListener(lowerAlertTextWatcher)
