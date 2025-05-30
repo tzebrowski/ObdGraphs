@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,7 +22,9 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TableLayout
 import android.widget.TextView
@@ -50,10 +52,10 @@ import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
-import java.util.*
+import java.util.Locale
 
 
- private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
+private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
@@ -61,7 +63,7 @@ private const val LOG_TAG = "PIDsDialog"
 
 data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean = true)
 
-open class PIDsListPreferenceDialogFragment(
+open class PidDefinitionPreferenceDialogFragment(
     private val key: String,
     private val source: String,
     private val onDialogCloseListener: (() -> Unit) = {}
@@ -91,7 +93,7 @@ open class PIDsListPreferenceDialogFragment(
 
         listOfItems = sourceList()
 
-        val adapter = PIDsAdapter(root, context, listOfItems, editableViewEnabled)
+        val adapter = PidDefinitionAdapter(root, context, listOfItems, editableViewEnabled)
         recyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -105,7 +107,7 @@ open class PIDsListPreferenceDialogFragment(
         return root
     }
 
-    private fun adjustRecyclerViewHeight(recyclerView: RecyclerView,orientation: Int) {
+    private fun adjustRecyclerViewHeight(recyclerView: RecyclerView, orientation: Int) {
 
         recyclerView.layoutParams.height = if (editableViewEnabled) {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -113,11 +115,11 @@ open class PIDsListPreferenceDialogFragment(
             } else {
                 TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, resources.displayMetrics).toInt()
             }
-        }else {
+        } else {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 350f, resources.displayMetrics).toInt()
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200f, resources.displayMetrics).toInt()
             } else {
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 500f, resources.displayMetrics).toInt()
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550f, resources.displayMetrics).toInt()
             }
         }
     }
@@ -189,7 +191,7 @@ open class PIDsListPreferenceDialogFragment(
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
 
             setOnClickListener {
-                val adapter: PIDsAdapter = getAdapter()
+                val adapter: PidDefinitionAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = true
@@ -201,7 +203,7 @@ open class PIDsListPreferenceDialogFragment(
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
             setOnClickListener {
-                val adapter: PIDsAdapter = getAdapter()
+                val adapter: PidDefinitionAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = false
@@ -288,14 +290,14 @@ open class PIDsListPreferenceDialogFragment(
         }
     }
 
-    private fun getAdapter() = (getRecyclerView(root).adapter as PIDsAdapter)
+    private fun getAdapter() = (getRecyclerView(root).adapter as PidDefinitionAdapter)
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()
         val individualQuery = dataLoggerPreferences.instance.individualQueryStrategyEnabled
 
         val sourceList: List<PidDefinitionDetails> =
-            if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO){
+            if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO) {
                 val pidRegistry = dataLogger.getPidDefinitionRegistry()
                 val list = Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaults()
                     .mapNotNull { pidRegistry.findBy(it) }
@@ -429,8 +431,8 @@ open class PIDsListPreferenceDialogFragment(
             Log.i(LOG_TAG, "Do not persist PID list for key=$key, it did not changed")
         }
 
-        if (editableViewEnabled){
-           getAdapter().data[getAdapter().currentSelectedPosition].source.serialize()
+        if (editableViewEnabled) {
+            getAdapter().data[getAdapter().currentSelectedPosition].source.serialize()
         }
     }
 }

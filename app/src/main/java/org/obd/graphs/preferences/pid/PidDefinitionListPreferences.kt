@@ -25,7 +25,7 @@ import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
 
-class PIDsListPreferences(
+class PidDefinitionListPreferences(
     context: Context,
     private val attrs: AttributeSet?,
 ) : DialogPreference(context, attrs) {

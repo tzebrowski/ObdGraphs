@@ -29,7 +29,7 @@ fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == namesRegistry.get
 fun ObdMetric.isVehicleSpeed(): Boolean = command.pid.id == namesRegistry.getVehicleSpeedPID()
 fun ObdMetric.isEngineRpm(): Boolean = command.pid.id == namesRegistry.getEngineRpmPID()
 
-val namesRegistry = PIDsNamesRegistry()
+val namesRegistry = PidDefinitionNamesRegistry()
 
 private const val PREF_PROFILE_2_0_GME_EXTENSION_ENABLED = "pref.profile.2_0_GME_extension.enabled"
 private const val EXT_ATM_PRESSURE_PID_ID = 7021L
@@ -73,7 +73,7 @@ private const val PRE_IC_AIR_TEMP_PID_ID = 7017L
 
 
 
-class PIDsNamesRegistry {
+class PidDefinitionNamesRegistry {
 
     fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
 

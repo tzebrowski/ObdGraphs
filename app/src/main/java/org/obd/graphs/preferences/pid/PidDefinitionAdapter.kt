@@ -40,12 +40,12 @@ import java.util.Collections
 
 private const val TAG = "PID_VIEW"
 
-class PIDsAdapter internal constructor(
+class PidDefinitionAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
-) : RecyclerView.Adapter<PIDsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PidDefinitionAdapter.ViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var lastSelectedPosition = -1
     var currentSelectedPosition = -1
