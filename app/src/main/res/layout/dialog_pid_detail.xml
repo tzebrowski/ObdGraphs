@@ -98,7 +98,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="0dp"
         android:layout_below="@id/tablelayout"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="2dp"
@@ -110,60 +110,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/recycler_view">
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text="@string/pids_module"
-                android:textColor="@color/gray_dark"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/pid_details_module"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text=""
-                android:textColor="@color/gray_dark"
-                android:textSize="14sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text="@string/pids_module"
-                android:textColor="@color/gray_dark"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/pid_details_file"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text=""
-                android:textColor="@color/gray_dark"
-                android:textSize="14sp" />
-        </TableRow>
-
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">

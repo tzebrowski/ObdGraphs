@@ -32,8 +32,8 @@ import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
 import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragment
-import org.obd.graphs.preferences.pid.PIDsListPreferenceDialogFragment
-import org.obd.graphs.preferences.pid.PIDsListPreferences
+import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
+import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
 import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripsPreferenceDialogFragment
 import org.obd.graphs.sendBroadcastEvent
@@ -81,7 +81,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 VehicleMetadataPreferenceDialogFragment().show(parentFragmentManager, null)
             }
 
-            is PIDsListPreferences -> {
+            is PidDefinitionListPreferences -> {
                 openPreferenceDialogFor(preference.source)
                 when (preference.source) {
                     "dash" -> {
@@ -289,7 +289,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
-        PIDsListPreferenceDialogFragment(
+        PidDefinitionPreferenceDialogFragment(
             key = key, source = source,
             onDialogCloseListener = onDialogCloseListener
         )
