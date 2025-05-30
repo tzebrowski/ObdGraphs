@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -54,21 +54,23 @@ import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.Locale
 
-
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
 private const val LOG_TAG = "PIDsDialog"
 
-data class PidDefinitionDetails(val source: PidDefinition, var checked: Boolean = false, var supported: Boolean = true)
+data class PidDefinitionDetails(
+    val source: PidDefinition,
+    var checked: Boolean = false,
+    var supported: Boolean = true,
+)
 
 open class PidDefinitionPreferenceDialogFragment(
     private val key: String,
     private val source: String,
-    private val onDialogCloseListener: (() -> Unit) = {}
+    private val onDialogCloseListener: (() -> Unit) = {},
 ) : CoreDialogFragment() {
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var root: View
     private lateinit var listOfItems: MutableList<PidDefinitionDetails>
@@ -84,9 +86,8 @@ open class PidDefinitionPreferenceDialogFragment(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         requestWindowFeatures()
 
         root = inflater.inflate(R.layout.dialog_pid_detail, container, false)
@@ -107,21 +108,24 @@ open class PidDefinitionPreferenceDialogFragment(
         return root
     }
 
-    private fun adjustRecyclerViewHeight(recyclerView: RecyclerView, orientation: Int) {
-
-        recyclerView.layoutParams.height = if (editableViewEnabled) {
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100f, resources.displayMetrics).toInt()
+    private fun adjustRecyclerViewHeight(
+        recyclerView: RecyclerView,
+        orientation: Int,
+    ) {
+        recyclerView.layoutParams.height =
+            if (editableViewEnabled) {
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100f, resources.displayMetrics).toInt()
+                } else {
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, resources.displayMetrics).toInt()
+                }
             } else {
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, resources.displayMetrics).toInt()
+                if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200f, resources.displayMetrics).toInt()
+                } else {
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550f, resources.displayMetrics).toInt()
+                }
             }
-        } else {
-            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200f, resources.displayMetrics).toInt()
-            } else {
-                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550f, resources.displayMetrics).toInt()
-            }
-        }
     }
 
     private fun adjustItemsVisibility() {
@@ -143,33 +147,33 @@ open class PidDefinitionPreferenceDialogFragment(
     }
 
     private fun attachSearchView() {
-
         val toolbar = root.findViewById<Toolbar>(R.id.custom_dialog_layout_toolbar)
         toolbar.inflateMenu(R.menu.pids_dialog_menu)
         val searchView = toolbar.menu.findItem(R.id.menu_searchview).actionView as SearchView
         searchView.setIconifiedByDefault(true)
         searchView.isIconified = false
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                        Log.d(LOG_TAG, "OnQueryTextSubmit newText=$query")
+                    }
 
-            override fun onQueryTextSubmit(query: String): Boolean {
-                if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
-                    Log.d(LOG_TAG, "OnQueryTextSubmit newText=$query")
+                    filterListOfItems(query)
+                    return false
                 }
 
-                filterListOfItems(query)
-                return false
-            }
+                override fun onQueryTextChange(newValue: String): Boolean {
+                    if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                        Log.d(LOG_TAG, "OnQueryTextChange newValue=$newValue")
+                    }
 
-            override fun onQueryTextChange(newValue: String): Boolean {
-                if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
-                    Log.d(LOG_TAG, "OnQueryTextChange newValue=$newValue")
+                    filterListOfItems(newValue)
+                    return false
                 }
-
-                filterListOfItems(newValue)
-                return false
-            }
-        })
+            },
+        )
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -215,35 +219,41 @@ open class PidDefinitionPreferenceDialogFragment(
 
     private fun attachDragManager(recyclerView: RecyclerView) {
         val viewSerializer = viewPreferencesSerializer()
-        val swappableAdapter: SwappableAdapter = object : SwappableAdapter {
-            override fun swapItems(fromPosition: Int, toPosition: Int) {
-                if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                    Log.v(LOG_TAG, "swappableAdapter fromPosition=$fromPosition toPosition=$toPosition")
+        val swappableAdapter: SwappableAdapter =
+            object : SwappableAdapter {
+                override fun swapItems(
+                    fromPosition: Int,
+                    toPosition: Int,
+                ) {
+                    if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                        Log.v(LOG_TAG, "swappableAdapter fromPosition=$fromPosition toPosition=$toPosition")
+                    }
+                    getAdapter().swapItems(fromPosition, toPosition)
                 }
-                getAdapter().swapItems(fromPosition, toPosition)
+
+                override fun storePreferences(context: Context) {
+                    if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                        Log.v(LOG_TAG, "storePreferences for $key")
+                    }
+
+                    viewSerializer.store(getAdapter().data.map { it.source.id })
+                    notifyListChanged()
+                }
             }
 
-            override fun storePreferences(context: Context) {
-                if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                    Log.v(LOG_TAG, "storePreferences for $key")
-                }
-
-                viewSerializer.store(getAdapter().data.map { it.source.id })
-                notifyListChanged()
-            }
-        }
-
-        val callback = DragManageAdapter(
-            requireContext(),
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.ACTION_STATE_DRAG, swappableAdapter
-        )
+        val callback =
+            DragManageAdapter(
+                requireContext(),
+                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                ItemTouchHelper.ACTION_STATE_DRAG,
+                swappableAdapter,
+            )
 
         ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
     }
 
     private fun notifyListChanged() {
-        sendBroadcastEvent("${key}.event.changed")
+        sendBroadcastEvent("$key.event.changed")
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -256,9 +266,10 @@ open class PidDefinitionPreferenceDialogFragment(
                     it.checked = pp.checked
                 }
             }
-            var filtered: MutableList<PidDefinitionDetails> = mutableListOf<PidDefinitionDetails>().apply {
-                addAll(listOfItems)
-            }
+            var filtered: MutableList<PidDefinitionDetails> =
+                mutableListOf<PidDefinitionDetails>().apply {
+                    addAll(listOfItems)
+                }
 
             var text = newText
             if (newText.contains("m:")) {
@@ -274,12 +285,24 @@ open class PidDefinitionPreferenceDialogFragment(
                     module = newText.substring(colon, newText.length)
                 }
 
-                filtered = filtered.filter { it.source.resourceFile.lowercase(Locale.getDefault()).contains(module) }.toMutableList()
+                filtered =
+                    filtered
+                        .filter {
+                            it.source.resourceFile
+                                .lowercase(Locale.getDefault())
+                                .contains(module)
+                        }.toMutableList()
                 Log.e(LOG_TAG, "Filtered module=$module and query=$text")
             }
 
             if (text.isNotEmpty()) {
-                filtered = filtered.filter { it.source.description.lowercase(Locale.getDefault()).contains(text) }.toMutableList()
+                filtered =
+                    filtered
+                        .filter {
+                            it.source.description
+                                .lowercase(Locale.getDefault())
+                                .contains(text)
+                        }.toMutableList()
             }
 
             val sorted = sortItems(filtered)
@@ -299,16 +322,21 @@ open class PidDefinitionPreferenceDialogFragment(
         val sourceList: List<PidDefinitionDetails> =
             if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO) {
                 val pidRegistry = dataLogger.getPidDefinitionRegistry()
-                val list = Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getDefaults()
-                    .mapNotNull { pidRegistry.findBy(it) }
-                    .toMutableList()
+                val list =
+                    Query
+                        .instance(QueryStrategyType.TRIP_INFO_QUERY)
+                        .getDefaults()
+                        .mapNotNull { pidRegistry.findBy(it) }
+                        .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }
-
             } else if (source == PREFERENCE_SCREEN_SOURCE_PERFORMANCE) {
                 val pidRegistry = dataLogger.getPidDefinitionRegistry()
-                val list = Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getDefaults()
-                    .mapNotNull { pidRegistry.findBy(it) }
-                    .toMutableList()
+                val list =
+                    Query
+                        .instance(QueryStrategyType.PERFORMANCE_QUERY)
+                        .getDefaults()
+                        .mapNotNull { pidRegistry.findBy(it) }
+                        .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }
             } else if (individualQuery) {
                 findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
@@ -327,7 +355,7 @@ open class PidDefinitionPreferenceDialogFragment(
             }
 
         if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
-            Log.d(LOG_TAG, "source=${source}, size=${sourceList.size}")
+            Log.d(LOG_TAG, "source=$source, size=${sourceList.size}")
         }
 
         val pref = Prefs.getStringSet(key).map { s -> s.toLong() }
@@ -342,10 +370,7 @@ open class PidDefinitionPreferenceDialogFragment(
         return sortItems(sourceList)
     }
 
-    private fun sortItems(
-        input: List<PidDefinitionDetails>
-    ): MutableList<PidDefinitionDetails> {
-
+    private fun sortItems(input: List<PidDefinitionDetails>): MutableList<PidDefinitionDetails> {
         val viewSerializer = viewPreferencesSerializer()
         val checked = input.filter { it.checked }.toMutableList()
         val sortOrder = viewSerializer.getItemsSortOrder()
@@ -361,8 +386,9 @@ open class PidDefinitionPreferenceDialogFragment(
                 } else {
                     try {
                         checked.sortWith { m1: PidDefinitionDetails, m2: PidDefinitionDetails ->
-                            if (order.containsKey(m1.source.id) && order.containsKey(
-                                    m2.source.id
+                            if (order.containsKey(m1.source.id) &&
+                                order.containsKey(
+                                    m2.source.id,
                                 )
                             ) {
                                 order[m1.source.id]!!
@@ -376,7 +402,6 @@ open class PidDefinitionPreferenceDialogFragment(
                     }
                 }
             }
-
         }
 
         return (checked + input.filter { !it.checked }).toMutableList()
@@ -394,9 +419,8 @@ open class PidDefinitionPreferenceDialogFragment(
 
     private fun findPidDefinitionByPriority(
         source: Collection<PidDefinition>,
-        predicate: (PidDefinition) -> Boolean
+        predicate: (PidDefinition) -> Boolean,
     ): List<PidDefinitionDetails> {
-
         val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
         val ecuSupportedPIDsEnabled = Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF, false)
         val stablePIDsEnabled = Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF, false)
@@ -412,21 +436,27 @@ open class PidDefinitionPreferenceDialogFragment(
     }
 
     private fun isSupported(
-        ecuSupportedPIDs: MutableList<String>, p: PidDefinition
-    ): Boolean = if (p.mode == "01") {
-        ecuSupportedPIDs.contains(p.pid.lowercase())
-    } else true
-
+        ecuSupportedPIDs: MutableList<String>,
+        p: PidDefinition,
+    ): Boolean =
+        if (p.mode == "01") {
+            ecuSupportedPIDs.contains(p.pid.lowercase())
+        } else {
+            true
+        }
 
     private fun persistSelection() {
-        val newList = getAdapter().data.filter { it.checked }
-            .map { it.source.id.toString() }.toList()
+        val newList =
+            getAdapter()
+                .data
+                .filter { it.checked }
+                .map { it.source.id.toString() }
+                .toList()
 
         if (Prefs.getStringSet(key).toSet() != newList.toSet()) {
             Log.i(LOG_TAG, "Persisting PID list for key=$key,new list=$newList")
-            sendBroadcastEvent("${key}.event.changed")
+            sendBroadcastEvent("$key.event.changed")
             Prefs.updateStringSet(key, newList)
-
         } else {
             Log.i(LOG_TAG, "Do not persist PID list for key=$key, it did not changed")
         }
