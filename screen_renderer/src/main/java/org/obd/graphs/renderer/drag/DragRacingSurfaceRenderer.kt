@@ -61,7 +61,7 @@ internal class DragRacingSurfaceRenderer(
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
-        drawArea?.let { it ->
+        drawArea?.let {
 
             val dragRaceResults = dragRacingResultRegistry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)

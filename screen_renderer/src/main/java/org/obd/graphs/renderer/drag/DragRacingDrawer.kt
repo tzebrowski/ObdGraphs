@@ -122,23 +122,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                     dragRacingResults: DragRacingResults,
                     dragRaceDetails: DragRaceDetails){
 
-//
-//        if (settings.getDragRacingScreenSettings().metricsFrequencyReadEnabled) {
-//
-//            val frequencyTextSize = textSizeBase * 0.45f
-//            val text = "${metric.rate?.round(2)} read/sec"
-//            val ww = getTextWidth(text, titlePaint) * 0.6F
-//
-//            drawText(
-//                canvas,
-//                text,
-//                left + width - ww,
-//                top,
-//                Color.WHITE,
-//                frequencyTextSize
-//            )
-//        }
-
         var top = pTop
 
         if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
@@ -173,7 +156,25 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                     gaugeWidth, labelCenterYPadding = 18f
                 )
             }
+
             top += area.height() / 2.2f
+
+            if (settings.getDragRacingScreenSettings().metricsFrequencyReadEnabled) {
+                dragRaceDetails.vehicleSpeed?.let {
+
+                    val textSizeBase = calculateFontSize(area)
+                    val frequencyTextSize = textSizeBase * 0.45f
+                    val text = "Read frequency: ${it.rate?.round(2)} read/sec"
+
+                    drawText(
+                        canvas,
+                        text,
+                        left,
+                        top,
+                        frequencyTextSize
+                    )
+                }
+            }
         }
 
         drawDragRaceResults(
@@ -256,10 +257,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         drawDragRacingEntry(area, dragRacingResults._100_200, "100-200 km/h", rowTop, left, canvas, textSizeBase)
     }
 
-
-
-
-    fun drawText(
+    private fun drawText(
         canvas: Canvas,
         text: String,
         left: Float,
