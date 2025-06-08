@@ -142,31 +142,38 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         var top = pTop
 
         if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
+            top -=30f
 
             if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
-                top -=30f
-
                 val gaugeWidth = area.width() / 4.2f
                 drawGauge(
-                    dragRaceDetails.intakePressure, canvas, top, area.left.toFloat(),
-                    gaugeWidth, labelCenterYPadding = 18f
-                )
-                drawGauge(
-                    dragRaceDetails.vehicleSpeed, canvas, top, (area.left + area.width() / 1.40f),
+                    dragRaceDetails.gas, canvas, top, area.left.toFloat(),
                     gaugeWidth, labelCenterYPadding = 18f
                 )
 
                 drawGauge(
-                    dragRaceDetails.gas, canvas, top, (area.left + gaugeWidth),
+                    dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth),
                     gaugeWidth
                 )
                 drawGauge(
-                    dragRaceDetails.torque, canvas, top, (area.left + gaugeWidth + gaugeWidth),
+                    dragRaceDetails.vehicleSpeed, canvas, top, (area.left + gaugeWidth + gaugeWidth),
                     gaugeWidth
                 )
 
-                top += area.height() / 2.2f
+                drawGauge(
+                    dragRaceDetails.torque, canvas, top, (area.left + area.width() / 1.40f),
+                    gaugeWidth, labelCenterYPadding = 18f
+                )
+
+
+            } else {
+                val gaugeWidth = area.width() / 3.8f
+                drawGauge(
+                    dragRaceDetails.vehicleSpeed,  canvas, top, area.width().toFloat()/2 - gaugeWidth/2,
+                    gaugeWidth, labelCenterYPadding = 18f
+                )
             }
+            top += area.height() / 2.2f
         }
 
         drawDragRaceResults(
