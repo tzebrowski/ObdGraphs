@@ -21,6 +21,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
@@ -32,6 +33,16 @@ import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
+
+ data class DragRaceDetails(
+     var ambientTemp: Metric? = null,
+     var atmPressure: Metric? = null,
+     var intakePressure: Metric? = null,
+     var torque: Metric? = null,
+     var gas: Metric? = null,
+     var vehicleSpeed: Metric? = null,
+ )
+
 internal class DragRacingSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
@@ -40,6 +51,7 @@ internal class DragRacingSurfaceRenderer(
     viewSettings: ViewSettings
 ) : CoreSurfaceRenderer(viewSettings) {
 
+    private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
@@ -87,44 +99,20 @@ internal class DragRacingSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
-            if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
-                top = if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
-                    val width = (area.width() / 2f) - 10
-                    drawMetric(namesRegistry.getVehicleSpeedPID(), canvas, area, left, top, width)
-                    drawMetric(namesRegistry.getMeasuredIntakePressurePID(), canvas, area, left + width, top, width)
-                } else {
-                    drawMetric(namesRegistry.getVehicleSpeedPID(), canvas, area, left, top)
-                }
-            }
-
-            dragRacingDrawer.drawDragRaceResults(
+            dragRacingDrawer.draw(
                 canvas = canvas,
                 area = area,
                 left = left,
-                top = top,
-                dragRacingResults = dragRaceResults)
+                pTop = top,
+                dragRacingResults = dragRaceResults,dragRaceDetails = dragRaceDetails.apply {
+                    gas = metricsCollector.getMetric(namesRegistry.getGasPedalPID())
+                    ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
+                    atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
+                    torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
+                    intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
+                    vehicleSpeed = metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())
+                })
         }
-    }
-    private fun drawMetric(
-        id: Long,
-        canvas: Canvas,
-        area: Rect,
-        left: Float,
-        top: Float,
-        width: Float = area.width().toFloat()
-    ): Float {
-        metricsCollector.getMetric(id)?.let {
-            return dragRacingDrawer.drawMetric(
-                canvas = canvas,
-                area = area,
-                metric = it,
-                left = left,
-                top = top,
-                width = width
-            )
-
-        }
-        return top
     }
 
     private fun isShiftLight(dragRaceResults: DragRacingResults) =

@@ -22,9 +22,13 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
+import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.format
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.gauge.DrawerSettings
+import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.round
 import org.obd.graphs.toFloat
 import org.obd.graphs.ui.common.COLOR_CARDINAL
@@ -40,8 +44,17 @@ const val MARGIN_END = 30
 private const val SHIFT_LIGHTS_MAX_SEGMENTS = 14
 const val SHIFT_LIGHTS_WIDTH = 30
 
+
+
+
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+
+    private val gaugeDrawer = GaugeDrawer(
+        settings = settings, context = context,
+        drawerSettings = DrawerSettings(
+            gaugeProgressBarType = GaugeProgressBarType.LONG)
+    )
 
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
@@ -108,7 +121,77 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         }
     }
 
-    inline fun drawDragRaceResults(
+    fun draw (canvas: Canvas,
+              area: Rect,
+              left: Float,
+              pTop: Float,
+              dragRacingResults: DragRacingResults,
+              dragRaceDetails: DragRaceDetails){
+
+        var top = pTop
+
+        if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
+
+            if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
+                top -=30f
+
+                val gaugeWidth = area.width() / 4.2f
+                drawGauge(
+                    dragRaceDetails.intakePressure, canvas, top, area.left.toFloat(),
+                    gaugeWidth, labelCenterYPadding = 18f
+                )
+                drawGauge(
+                    dragRaceDetails.vehicleSpeed, canvas, top, (area.left + area.width() / 1.40f),
+                    gaugeWidth, labelCenterYPadding = 18f
+                )
+
+                drawGauge(
+                    dragRaceDetails.gas, canvas, top, (area.left + gaugeWidth),
+                    gaugeWidth
+                )
+                drawGauge(
+                    dragRaceDetails.torque, canvas, top, (area.left + gaugeWidth + gaugeWidth),
+                    gaugeWidth
+                )
+
+                top += area.height() / 2.2f
+            }
+        }
+
+        drawDragRaceResults(
+            canvas = canvas,
+            area = area,
+            left = left,
+            top = top,
+            dragRacingResults = dragRacingResults)
+
+    }
+
+    private fun drawGauge(
+        metric: Metric?,
+        canvas: Canvas,
+        top: Float,
+        left: Float,
+        width: Float,
+        labelCenterYPadding: Float = 22f,
+    ): Boolean  =
+        if (metric == null){
+            false
+        }else {
+            gaugeDrawer.drawGauge(
+                canvas = canvas,
+                left = left,
+                top = top ,
+                width = width,
+                metric = metric,
+                labelCenterYPadding =  labelCenterYPadding,
+                fontSize = settings.getPerformanceScreenSettings().fontSize,
+                scaleEnabled = false
+            )
+            true
+        }
+
+    private inline fun drawDragRaceResults(
         canvas: Canvas,
         area: Rect,
         left: Float,
