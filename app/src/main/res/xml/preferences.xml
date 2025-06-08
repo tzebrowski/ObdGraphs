@@ -309,7 +309,7 @@
 
             <PreferenceCategory android:title="@string/pref.adapter.general_settings">
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_stn_enabled"
                     android:key="pref.adapter.stn.enabled"
