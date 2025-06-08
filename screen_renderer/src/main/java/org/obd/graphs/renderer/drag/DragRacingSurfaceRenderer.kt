@@ -99,7 +99,7 @@ internal class DragRacingSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
-            dragRacingDrawer.draw(
+            dragRacingDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
                 left = left,
