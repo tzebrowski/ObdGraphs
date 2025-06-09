@@ -90,7 +90,7 @@ internal class DragRacingSurfaceRenderer(
 
             if (settings.isStatusPanelEnabled()) {
                 dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector,
-                    drawContextInfo = settings.getDragRacingScreenSettings().contextInfoEnabled)
+                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled)
 
                 top += MARGIN_TOP
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)

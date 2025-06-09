@@ -756,16 +756,23 @@
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="true"
-                    android:key="pref.drag_racing.vehicle_speed.enabled"
+                    android:key="pref.drag_racing.metrics_reading.display_frequency.enabled"
+                    android:title="@string/pref.aa.performance_meter.display_frequency"
+                    app:singleLineTitle="false" />
+
+
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.drag_racing.metrics_reading.enabled"
                     android:title="@string/pref.aa.performance_meter.display_context_metrics"
                     android:summary="@string/pref.aa.performance_meter.display_context_metrics_summary"
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"
-                    android:key="pref.profile.2_0_GME_extension.enabled"
+                    android:key="pref.drag_racing.metrics_reading.extended.enabled"
                     android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
                     android:title="@string/pref.profile.2_0_GME_extension.enabled"
                     app:experimental="false"

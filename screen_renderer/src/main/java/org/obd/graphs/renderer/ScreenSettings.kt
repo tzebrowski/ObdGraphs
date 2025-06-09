@@ -78,7 +78,7 @@ data class DragRacingScreenSettings(
     var displayMetricsEnabled: Boolean = true,
     var metricsFrequencyReadEnabled: Boolean = true,
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
-    var contextInfoEnabled: Boolean = false,
+    var displayMetricsExtendedEnabled: Boolean = false,
     var fontSize: Int = 32
 )
 

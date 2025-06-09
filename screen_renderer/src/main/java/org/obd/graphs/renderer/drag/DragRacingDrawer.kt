@@ -127,7 +127,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
             top -=30f
 
-            if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
+            if (settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled) {
                 val gaugeWidth = area.width() / 4.2f
                 drawGauge(
                     dragRaceDetails.gas, canvas, top, area.left.toFloat(),
