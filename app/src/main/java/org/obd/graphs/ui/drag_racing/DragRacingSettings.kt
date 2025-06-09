@@ -35,6 +35,7 @@ class DragRacingSettings: ScreenSettings {
         fontSize = Prefs.getS("pref.drag_racing.screen_font_size","30").toInt()
     }
 
+    override fun isAA(): Boolean = false
     override fun isBreakLabelTextEnabled(): Boolean = false
 
     override fun isStatisticsEnabled(): Boolean  = true

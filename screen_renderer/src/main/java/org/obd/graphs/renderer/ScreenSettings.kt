@@ -99,6 +99,8 @@ data class RoutinesScreenSettings(
 
 interface ScreenSettings {
 
+    fun isAA(): Boolean = true
+
     fun handleProfileChanged(){}
 
     fun getRoutinesScreenSettings(): RoutinesScreenSettings = RoutinesScreenSettings()

@@ -17,11 +17,13 @@
 package org.obd.graphs.renderer.drag
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
+import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
@@ -128,29 +130,53 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             top -=30f
 
             if (settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled) {
-                val gaugeWidth = area.width() / 4.2f
-                drawGauge(
-                    dragRaceDetails.gas, canvas, top, area.left.toFloat(),
-                    gaugeWidth, labelCenterYPadding = 18f
-                )
+                var gaugeWidth = area.width() / 3.8f
 
-                drawGauge(
-                    dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth),
-                    gaugeWidth
-                )
-                drawGauge(
-                    dragRaceDetails.vehicleSpeed, canvas, top, (area.left + gaugeWidth + gaugeWidth),
-                    gaugeWidth
-                )
+                if (settings.isAA() || getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    drawGauge(
+                        dragRaceDetails.gas, canvas, top, area.left.toFloat() - 10f,
+                        gaugeWidth, labelCenterYPadding = 18f
+                    )
 
-                drawGauge(
-                    dragRaceDetails.torque, canvas, top, (area.left + area.width() / 1.40f),
-                    gaugeWidth, labelCenterYPadding = 18f
-                )
+                    drawGauge(
+                        dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth) - 20f,
+                        gaugeWidth
+                    )
 
+                    drawGauge(
+                        dragRaceDetails.vehicleSpeed, canvas, top, (area.left + 2 * gaugeWidth) - 30f,
+                        gaugeWidth
+                    )
+
+                    drawGauge(
+                        dragRaceDetails.torque, canvas, top, (area.left + 3 * gaugeWidth) - 40f,
+                        gaugeWidth, labelCenterYPadding = 18f
+                    )
+                } else {
+                    gaugeWidth = area.width() / 2.0f
+                    drawGauge(
+                        dragRaceDetails.intakePressure, canvas, top, (area.left ) - 20f,
+                        gaugeWidth
+                    )
+
+                    drawGauge(
+                        dragRaceDetails.vehicleSpeed, canvas, top, (area.left +  gaugeWidth) - 30f,
+                        gaugeWidth
+                    )
+
+                    drawGauge(
+                        dragRaceDetails.gas, canvas, top + gaugeWidth , (area.left ) - 20f,
+                        gaugeWidth, labelCenterYPadding = 18f
+                    )
+
+                    drawGauge(
+                        dragRaceDetails.torque, canvas, top + gaugeWidth, (area.left +  gaugeWidth) - 30f,
+                        gaugeWidth, labelCenterYPadding = 18f
+                    )
+                }
 
             } else {
-                val gaugeWidth = area.width() / 3.8f
+                val gaugeWidth = area.width() / 3.2f
                 drawGauge(
                     dragRaceDetails.vehicleSpeed,  canvas, top, area.width().toFloat()/2 - gaugeWidth/2,
                     gaugeWidth, labelCenterYPadding = 18f
