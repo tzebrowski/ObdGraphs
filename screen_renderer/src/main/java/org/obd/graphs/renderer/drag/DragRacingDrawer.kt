@@ -39,9 +39,7 @@ private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
-const val MARGIN_END = 30
-
-private const val SHIFT_LIGHTS_MAX_SEGMENTS = 14
+private const val SHIFT_LIGHTS_MAX_SEGMENTS = 10
 const val SHIFT_LIGHTS_WIDTH = 22
 
 
@@ -329,14 +327,15 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH,
         blinking: Boolean = false
     ) {
-        val segmentHeight = area.height().toFloat() / SHIFT_LIGHTS_MAX_SEGMENTS
+        val height = area.height() / 2.0f
+        val segmentHeight = height / SHIFT_LIGHTS_MAX_SEGMENTS
         val leftMargin = 4f
         val topMargin = 6f
 
         shiftLightPaint.color = Color.WHITE
         for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {
 
-            val top = area.top + (i * segmentHeight)
+            val top = area.top + height + (i * segmentHeight)
             val bottom = top + segmentHeight - topMargin
 
             canvas.drawRect(
@@ -355,7 +354,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
             for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
 
-                val top = area.top + (i * segmentHeight)
+                val top = area.top + height + (i * segmentHeight)
                 val bottom = top + segmentHeight - topMargin
 
                 canvas.drawRect(
