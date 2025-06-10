@@ -130,30 +130,33 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             top -=30f
 
             if (settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled) {
-                var gaugeWidth = area.width() / 3.8f
 
                 if (settings.isAA() || getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+                    val gaugeWidth = area.width() / 3.7f
                     drawGauge(
-                        dragRaceDetails.gas, canvas, top, area.left.toFloat() - 10f,
-                        gaugeWidth, labelCenterYPadding = 18f
+                        dragRaceDetails.gas, canvas, top, area.left.toFloat() - 8f,
+                        gaugeWidth * 0.95f, labelCenterYPadding = 18f
                     )
 
                     drawGauge(
-                        dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth) - 20f,
+                        dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth) - 26,
                         gaugeWidth
                     )
 
                     drawGauge(
-                        dragRaceDetails.vehicleSpeed, canvas, top, (area.left + 2 * gaugeWidth) - 30f,
+                        dragRaceDetails.vehicleSpeed, canvas, top, (area.left + 2 * gaugeWidth) - 38,
                         gaugeWidth
                     )
 
                     drawGauge(
-                        dragRaceDetails.torque, canvas, top, (area.left + 3 * gaugeWidth) - 40f,
-                        gaugeWidth, labelCenterYPadding = 18f
+                        dragRaceDetails.torque, canvas, top, (area.left + 3 * gaugeWidth) - 50,
+                        gaugeWidth * 0.95f, labelCenterYPadding = 18f
                     )
+
+
                 } else {
-                    gaugeWidth = area.width() / 2.0f
+                    val gaugeWidth = area.width() / 2.0f
                     drawGauge(
                         dragRaceDetails.intakePressure, canvas, top, (area.left ) - 20f,
                         gaugeWidth
@@ -231,7 +234,8 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                 metric = metric,
                 labelCenterYPadding =  labelCenterYPadding,
                 fontSize = settings.getPerformanceScreenSettings().fontSize,
-                scaleEnabled = false
+                scaleEnabled = false,
+                statsEnabled = false
             )
             true
         }
