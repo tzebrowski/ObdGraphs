@@ -52,8 +52,7 @@ internal class TripInfoSurfaceRenderer(
 
             tripInfoDrawer.drawBackground(canvas, it)
 
-            val margin = 0
-            val area = getArea(it, canvas, margin)
+            val area = getArea(it, canvas)
             var top = getTop(area)
             val left = tripInfoDrawer.getMarginLeft(area.left.toFloat())
 
