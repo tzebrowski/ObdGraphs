@@ -27,6 +27,7 @@ import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.alert.Alert
@@ -379,13 +380,15 @@ internal class WorkflowOrchestrator internal constructor() {
             BatchPolicy.builder()
                 .enabled(preferences.batchEnabled)
                 .responseLengthEnabled(preferences.responseLengthEnabled)
-                .mode01BatchSize(3)
-                .otherModesBatchSize(3).build()
+                .mode01BatchSize(preferences.mode01BatchSize)
+                .otherModesBatchSize(preferences.otherModesBatchSize).build()
         )
         .collectRawConnectorResponseEnabled(false)
         .stNxx(
             STNxxExtensions.builder()
-                .enabled(false)
+                .enabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
+                .promoteSlowGroupsEnabled(preferences.stnExtensionsEnabled)
+                .promoteAllGroupsEnabled(preferences.stnExtensionsEnabled)
                 .build()
         )
         .vehicleMetadataReadingEnabled(false)
@@ -400,7 +403,13 @@ internal class WorkflowOrchestrator internal constructor() {
             ProducerPolicy
                 .builder()
                 .pidPriority(0,0) // vehicle speed, rpm
-                .pidPriority(5,300) // atm pressure, ambient temp
+                .pidPriority(5,10) // atm pressure, ambient temp
+                .pidPriority(namesRegistry.getVehicleSpeedPID().toInt(),0)
+                .pidPriority(namesRegistry.getTorquePID().toInt(),5)
+                .pidPriority(namesRegistry.getMeasuredIntakePressurePID().toInt(),3)
+                .pidPriority(namesRegistry.getEngineRpmPID().toInt(),0)
+                .pidPriority(namesRegistry.getAmbientTempPID().toInt(),10)
+                .pidPriority(namesRegistry.getAtmPressurePID().toInt(),10)
                 .conditionalSleepEnabled(false)
                 .build()
         )

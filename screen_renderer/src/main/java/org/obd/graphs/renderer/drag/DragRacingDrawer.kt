@@ -42,7 +42,6 @@ private const val NEW_MIN = 0.6f
 private const val SHIFT_LIGHTS_MAX_SEGMENTS = 10
 const val SHIFT_LIGHTS_WIDTH = 22
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
