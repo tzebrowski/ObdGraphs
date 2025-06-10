@@ -66,25 +66,10 @@ internal class DragRacingSurfaceRenderer(
             val dragRaceResults = dragRacingResultRegistry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
-            val dragRacingSettings = settings.getDragRacingScreenSettings()
-            val margin = if (dragRacingSettings.shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
+            val margin = if (settings.getDragRacingScreenSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
             var top = getTop(area)
             var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
-
-            if (dragRacingSettings.shiftLightsEnabled) {
-                dragRacingResultRegistry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
-                // permanent white boxes
-                dragRacingDrawer.drawShiftLights(canvas, area, blinking = false)
-            }
-
-            if (isShiftLight(dragRaceResults)) {
-                dragRacingDrawer.drawShiftLights(canvas, area, blinking = true)
-            }
-
-            if (dragRaceResults.readyToRace){
-                dragRacingDrawer.drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
-            }
 
             left += 5
 
@@ -115,8 +100,6 @@ internal class DragRacingSurfaceRenderer(
         }
     }
 
-    private fun isShiftLight(dragRaceResults: DragRacingResults) =
-        settings.getDragRacingScreenSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
 
     override fun recycle() {
         dragRacingDrawer.recycle()

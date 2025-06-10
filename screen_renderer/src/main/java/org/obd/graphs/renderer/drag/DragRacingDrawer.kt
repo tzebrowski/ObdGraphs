@@ -23,6 +23,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -31,9 +32,10 @@ import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.round
 import org.obd.graphs.ui.common.COLOR_CARDINAL
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
 
-private const val CURRENT_MIN = 22f
+ private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
@@ -60,62 +62,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
     override fun getBackground(): Bitmap = background
 
-    inline fun drawShiftLights(
-        canvas: Canvas,
-        area: Rect,
-        color: Int = settings.getColorTheme().progressColor,
-        shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH,
-        blinking: Boolean = false
-    ) {
-        val segmentHeight = area.height().toFloat() / SHIFT_LIGHTS_MAX_SEGMENTS
-        val leftMargin = 4f
-        val topMargin = 6f
-
-        shiftLightPaint.color = Color.WHITE
-        for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {
-
-            val top = area.top + (i * segmentHeight)
-            val bottom = top + segmentHeight - topMargin
-
-            canvas.drawRect(
-                area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
-                bottom, shiftLightPaint
-            )
-
-            val left = area.left + area.width().toFloat() - leftMargin
-            canvas.drawRect(
-                left, top, left + shiftLightsWidth,
-                bottom, shiftLightPaint
-            )
-        }
-        if (blinking) {
-            shiftLightPaint.color = color
-
-            for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
-
-                val top = area.top + (i * segmentHeight)
-                val bottom = top + segmentHeight - topMargin
-
-                canvas.drawRect(
-                    area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
-                    bottom, shiftLightPaint
-                )
-
-                val left = area.left + area.width().toFloat() - leftMargin
-
-                canvas.drawRect(
-                    left, top, left + shiftLightsWidth,
-                    bottom, shiftLightPaint
-                )
-            }
-
-            segmentCounter--
-
-            if (segmentCounter == 0) {
-                segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
-            }
-        }
-    }
 
     fun drawScreen (canvas: Canvas,
                     area: Rect,
@@ -123,6 +69,23 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                     pTop: Float,
                     dragRacingResults: DragRacingResults,
                     dragRaceDetails: DragRaceDetails){
+
+
+        val dragRacingSettings = settings.getDragRacingScreenSettings()
+        if (dragRacingSettings.shiftLightsEnabled) {
+            dragRacingResultRegistry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
+            // permanent white boxes
+            drawShiftLights(canvas, area, blinking = false)
+        }
+
+        if (isShiftLight(dragRacingResults)) {
+            drawShiftLights(canvas, area, blinking = true)
+        }
+
+        if (dragRacingResults.readyToRace){
+            drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
+        }
+
 
         var top = pTop
 
@@ -361,7 +324,68 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         }
     }
 
+    private inline fun drawShiftLights(
+        canvas: Canvas,
+        area: Rect,
+        color: Int = settings.getColorTheme().progressColor,
+        shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH,
+        blinking: Boolean = false
+    ) {
+        val segmentHeight = area.height().toFloat() / SHIFT_LIGHTS_MAX_SEGMENTS
+        val leftMargin = 4f
+        val topMargin = 6f
 
+        shiftLightPaint.color = Color.WHITE
+        for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {
+
+            val top = area.top + (i * segmentHeight)
+            val bottom = top + segmentHeight - topMargin
+
+            canvas.drawRect(
+                area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                bottom, shiftLightPaint
+            )
+
+            val left = calculateShiftLightMargin(area, leftMargin)
+            canvas.drawRect(
+                left, top, left + shiftLightsWidth,
+                bottom, shiftLightPaint
+            )
+        }
+        if (blinking) {
+            shiftLightPaint.color = color
+
+            for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
+
+                val top = area.top + (i * segmentHeight)
+                val bottom = top + segmentHeight - topMargin
+
+                canvas.drawRect(
+                    area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                    bottom, shiftLightPaint
+                )
+
+                val left = calculateShiftLightMargin(area, leftMargin)
+
+                canvas.drawRect(
+                    left, top, left + shiftLightsWidth,
+                    bottom, shiftLightPaint
+                )
+            }
+
+            segmentCounter--
+
+            if (segmentCounter == 0) {
+                segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
+            }
+        }
+    }
+
+    private fun isShiftLight(dragRaceResults: DragRacingResults) =
+        settings.getDragRacingScreenSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
+
+
+    private inline fun calculateShiftLightMargin(area: Rect, leftMargin: Float): Float  = area.left + area.width().toFloat() - leftMargin
     private inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "--.--" else (value / 1000.0).round(2).toString()
     private inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "" else "$value km/h"
 }
