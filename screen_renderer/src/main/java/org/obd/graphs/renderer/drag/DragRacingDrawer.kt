@@ -35,14 +35,14 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
 
- private const val CURRENT_MIN = 22f
+private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 const val MARGIN_END = 30
 
 private const val SHIFT_LIGHTS_MAX_SEGMENTS = 14
-const val SHIFT_LIGHTS_WIDTH = 30
+const val SHIFT_LIGHTS_WIDTH = 22
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -61,7 +61,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
 
     override fun getBackground(): Bitmap = background
-
 
     fun drawScreen (canvas: Canvas,
                     area: Rect,
@@ -86,7 +85,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
         }
 
-
         var top = pTop
 
         if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
@@ -98,8 +96,8 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
                     val gaugeWidth = area.width() / 3.7f
                     drawGauge(
-                        dragRaceDetails.gas, canvas, top, area.left.toFloat() - 8f,
-                        gaugeWidth * 0.95f, labelCenterYPadding = 18f
+                        dragRaceDetails.gas, canvas, top, area.left.toFloat() ,
+                        gaugeWidth * 0.9f, labelCenterYPadding = 18f
                     )
 
                     drawGauge(
@@ -114,7 +112,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
                     drawGauge(
                         dragRaceDetails.torque, canvas, top, (area.left + 3 * gaugeWidth) - 50,
-                        gaugeWidth * 0.95f, labelCenterYPadding = 18f
+                        gaugeWidth * 0.9f, labelCenterYPadding = 18f
                     )
 
 
