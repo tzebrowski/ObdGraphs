@@ -151,7 +151,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
                     val textSizeBase = calculateFontSize(area)
                     val frequencyTextSize = textSizeBase * 0.45f
-                    val text = "Read frequency: ${it.rate?.round(2)} read/sec"
+                    val text = "Frequency: ${it.rate?.round(2)} read/sec"
 
                     drawText(
                         canvas,
@@ -191,7 +191,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                 width = width,
                 metric = metric,
                 labelCenterYPadding =  labelCenterYPadding,
-                fontSize = settings.getPerformanceScreenSettings().fontSize,
+                fontSize = settings.getDragRacingScreenSettings().fontSize,
                 scaleEnabled = false,
                 statsEnabled = false
             )
