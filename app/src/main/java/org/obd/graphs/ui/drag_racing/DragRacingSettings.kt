@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.ui.drag_racing
 
+import android.util.Log
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.DragRacingScreenSettings
@@ -28,7 +29,7 @@ class DragRacingSettings: ScreenSettings {
     override fun getDragRacingScreenSettings(): DragRacingScreenSettings  = dragRacingScreenSettings.apply {
         metricsFrequencyReadEnabled = Prefs.getBoolean("pref.drag_racing.metrics_reading.display_frequency.enabled", true)
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.drag_racing.debug.vehicle_speed_measurement", false)
-        displayMetricsExtendedEnabled= Prefs.getBoolean("pref.drag_racing.metrics_reading.extended.enabled", true)
+        displayMetricsExtendedEnabled= Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
         displayMetricsEnabled = Prefs.getBoolean("pref.drag_racing.metrics_reading.enabled", true)
         shiftLightsEnabled = Prefs.getBoolean("pref.drag_racing.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.drag_racing.shift_lights.rev_value", "5000").toInt()

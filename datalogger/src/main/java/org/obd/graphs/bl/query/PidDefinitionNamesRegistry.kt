@@ -31,7 +31,6 @@ fun ObdMetric.isEngineRpm(): Boolean = command.pid.id == namesRegistry.getEngine
 
 val namesRegistry = PidDefinitionNamesRegistry()
 
-private const val PREF_PROFILE_2_0_GME_EXTENSION_ENABLED = "pref.profile.2_0_GME_extension.enabled"
 private const val EXT_ATM_PRESSURE_PID_ID = 7021L
 private const val EXT_AMBIENT_TEMP_PID_ID = 7047L
 private const val EXT_MEASURED_INTAKE_PRESSURE_PID_ID = 7005L
@@ -75,7 +74,7 @@ private const val PRE_IC_AIR_TEMP_PID_ID = 7017L
 
 class PidDefinitionNamesRegistry {
 
-    fun isGMEExtensionsEnabled() = Prefs.getBoolean(PREF_PROFILE_2_0_GME_EXTENSION_ENABLED, false)
+    fun isGMEExtensionsEnabled() = Prefs.getBoolean( "pref.profile.2_0_GME_extension.enabled", false)
 
     fun getPreICAirPID(): Long = PRE_IC_AIR_TEMP_PID_ID
 

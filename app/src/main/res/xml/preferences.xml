@@ -772,7 +772,7 @@
 
                 <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"
-                    android:key="pref.drag_racing.metrics_reading.extended.enabled"
+                    android:key="pref.profile.2_0_GME_extension.enabled"
                     android:summary="@string/pref.profile.2_0_GME_extension.enabled_summary"
                     android:title="@string/pref.profile.2_0_GME_extension.enabled"
                     app:experimental="false"

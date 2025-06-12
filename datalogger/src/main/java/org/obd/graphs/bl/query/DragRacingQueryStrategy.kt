@@ -18,8 +18,7 @@ package org.obd.graphs.bl.query
 
  import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 
-
- internal class DragRacingQueryStrategy : QueryStrategy() {
+internal class DragRacingQueryStrategy : QueryStrategy() {
     override fun getPIDs(): MutableSet<Long> {
         return if (namesRegistry.isGMEExtensionsEnabled()) {
             val pids =  mutableSetOf(
