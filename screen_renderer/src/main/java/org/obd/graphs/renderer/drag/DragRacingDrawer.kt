@@ -48,7 +48,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
         drawerSettings = DrawerSettings(
-            gaugeProgressBarType = GaugeProgressBarType.LONG)
+            gaugeProgressBarType = GaugeProgressBarType.LONG, startAngle = 180f, sweepAngle = 120f)
     )
 
     private val shiftLightPaint = Paint()
@@ -91,24 +91,24 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
                 if (settings.isAA() || getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
-                    val gaugeWidth = area.width() / 3.7f
+                    val gaugeWidth = area.width() / 3.3f
                     drawGauge(
                         dragRaceDetails.gas, canvas, top, area.left.toFloat() ,
                         gaugeWidth * 0.9f, labelCenterYPadding = 18f
                     )
 
                     drawGauge(
-                        dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth) - 26,
+                        dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth) - 60,
                         gaugeWidth
                     )
 
                     drawGauge(
-                        dragRaceDetails.vehicleSpeed, canvas, top, (area.left + 2 * gaugeWidth) - 38,
+                        dragRaceDetails.vehicleSpeed, canvas, top, (area.left + 1.65f * gaugeWidth),
                         gaugeWidth
                     )
 
                     drawGauge(
-                        dragRaceDetails.torque, canvas, top, (area.left + 3 * gaugeWidth) - 50,
+                        dragRaceDetails.torque, canvas, top, (area.left + 2.55f * gaugeWidth),
                         gaugeWidth * 0.9f, labelCenterYPadding = 18f
                     )
 
