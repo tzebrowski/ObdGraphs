@@ -36,7 +36,7 @@ class DragRacingSettings: ScreenSettings {
     }
 
     override fun isAA(): Boolean = false
-    override fun isBreakLabelTextEnabled(): Boolean = false
+    override fun isBreakLabelTextEnabled(): Boolean = true
 
     override fun isStatisticsEnabled(): Boolean  = true
     override fun isFpsCounterEnabled(): Boolean  = true

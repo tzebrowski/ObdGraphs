@@ -89,8 +89,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
             if (settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled) {
 
-                if (settings.isAA() || getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
+                if (settings.isAA() || isLandscape()) {
                     val gaugeWidth = area.width() / 3.3f
                     drawGauge(
                         dragRaceDetails.gas, canvas, top, area.left.toFloat() ,
@@ -98,7 +97,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                     )
 
                     drawGauge(
-                        dragRaceDetails.intakePressure, canvas, top, (area.left + gaugeWidth) - 60,
+                        dragRaceDetails.intakePressure, canvas, top, (area.left + 0.8f * gaugeWidth) ,
                         gaugeWidth
                     )
 
@@ -115,33 +114,73 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
                 } else {
                     val gaugeWidth = area.width() / 2.0f
-                    drawGauge(
-                        dragRaceDetails.intakePressure, canvas, top, (area.left ) - 20f,
-                        gaugeWidth
-                    )
+                    var numGauges = 4
+                    if (dragRaceDetails.intakePressure == null) numGauges--
+                    if (dragRaceDetails.vehicleSpeed == null) numGauges--
+                    if (dragRaceDetails.gas == null) numGauges--
+                    if (dragRaceDetails.torque == null) numGauges--
 
-                    drawGauge(
-                        dragRaceDetails.vehicleSpeed, canvas, top, (area.left +  gaugeWidth) - 30f,
-                        gaugeWidth
-                    )
+                    when (numGauges){
+                        4 -> {
+                            drawGauge(
+                                dragRaceDetails.intakePressure, canvas, top, (area.left ) - 20f,
+                                gaugeWidth
+                            )
 
-                    drawGauge(
-                        dragRaceDetails.gas, canvas, top + gaugeWidth , (area.left ) - 20f,
-                        gaugeWidth, labelCenterYPadding = 18f
-                    )
+                            drawGauge(
+                                dragRaceDetails.vehicleSpeed, canvas, top, (area.left +  gaugeWidth) - 30f,
+                                gaugeWidth
+                            )
 
-                    drawGauge(
-                        dragRaceDetails.torque, canvas, top + gaugeWidth, (area.left +  gaugeWidth) - 30f,
-                        gaugeWidth, labelCenterYPadding = 18f
-                    )
+                            drawGauge(
+                                dragRaceDetails.gas, canvas, top + gaugeWidth , (area.left ) - 20f,
+                                gaugeWidth, labelCenterYPadding = 18f
+                            )
+
+                            drawGauge(
+                                dragRaceDetails.torque, canvas, top + gaugeWidth, (area.left +  gaugeWidth) - 30f,
+                                gaugeWidth, labelCenterYPadding = 18f
+                            )
+                        }
+                        2 -> {
+                            if (isLandscape()){
+                                drawGauge(
+                                    dragRaceDetails.intakePressure, canvas, top, (area.left ) - 20f,
+                                    gaugeWidth
+                                )
+
+                                drawGauge(
+                                    dragRaceDetails.vehicleSpeed, canvas, top, (area.left +  gaugeWidth) - 30f,
+                                    gaugeWidth
+                                )
+                            } else {
+                                drawGauge(
+                                    dragRaceDetails.intakePressure, canvas, top, area.left.toFloat() + area.width()/5,
+                                    area.width().toFloat() / 1.5f
+                                )
+
+                                drawGauge(
+                                    dragRaceDetails.vehicleSpeed, canvas, top + area.width().toFloat()/ 2f, area.left.toFloat() + area.width()/5,
+                                    area.width().toFloat() / 1.5f
+                                )
+                            }
+                        }
+                    }
                 }
 
             } else {
-                val gaugeWidth = area.width() / 3.2f
-                drawGauge(
-                    dragRaceDetails.vehicleSpeed,  canvas, top, area.width().toFloat()/2 - gaugeWidth/2,
-                    gaugeWidth, labelCenterYPadding = 18f
-                )
+
+                if (isLandscape()){
+                    drawGauge(
+                        dragRaceDetails.vehicleSpeed, canvas, top, area.left.toFloat() + area.width() /3,
+                        0.75f * area.height().toFloat()
+                    )
+                } else {
+                    drawGauge(
+                        dragRaceDetails.vehicleSpeed, canvas, top, area.left.toFloat(),
+                        area.width().toFloat()
+                    )
+                }
             }
 
             top += area.height() / 2.2f
@@ -172,6 +211,8 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             dragRacingResults = dragRacingResults)
 
     }
+
+    private fun isLandscape() = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     private fun drawGauge(
         metric: Metric?,
