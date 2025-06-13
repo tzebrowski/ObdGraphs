@@ -70,21 +70,21 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 181
+            versionCode 182
         }
 
         giuliaPerformanceMonitor {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.performance_monitor"
-            versionCode 82
+            versionCode 86
         }
 
         giulia {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 67
+            versionCode 68
         }
     }
 

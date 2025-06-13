@@ -27,6 +27,7 @@ import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.alert.Alert
@@ -187,35 +188,49 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun start(query: Query) {
         currentQuery = query
-        queryToAdjustments(query).let {
-            connection()?.run {
-                Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
 
-                val status = workflow.start(
-                    this, it.first, init(),
-                    it.second
-                )
-                Log.i(LOG_TAG, "Collecting process started. Strategy: ${query.getStrategy()}. Status=$status")
+        val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
+        Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
+
+        when (query.getStrategy()) {
+            QueryStrategyType.DRAG_RACING_QUERY -> {
+                connection()?.run {
+                    val status = workflow.start(
+                        this,dataLoggerQuery, init(),
+                        getDragRacingAdjustments()
+                    )
+                    Log.i(LOG_TAG, "Collecting process started. Strategy: ${query.getStrategy()}. Status=$status")
+                }
+            }
+            else -> {
+                connection()?.run {
+                    val status = workflow.start(
+                        this,dataLoggerQuery, init(),
+                        getDefaultAdjustments()
+                    )
+                    Log.i(LOG_TAG, "Collecting process started. Strategy: ${query.getStrategy()}. Status=$status")
+                }
             }
         }
     }
 
     fun executeRoutine(query: Query) {
         currentQuery = query
-        queryToAdjustments(query).let {
-            connection()?.run {
-                Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${it.first.pids}")
 
-                val status = workflow.executeRoutine(it.first.pids.first(), init())
-                Log.i(LOG_TAG, "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status")
+        connection()?.run {
+            val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
+            Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
 
-                when (status) {
-                    WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
-                    WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
-                    else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
-                }
+            val status = workflow.executeRoutine(dataLoggerQuery.pids.first(), init())
+            Log.i(LOG_TAG, "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status")
+
+            when (status) {
+                WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
+                WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
+                else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
             }
         }
+
     }
 
     private lateinit var currentQuery: Query
@@ -227,9 +242,10 @@ internal class WorkflowOrchestrator internal constructor() {
             Log.w(LOG_TAG,"Received same query=${query.getIDs()}. Do not update.")
         } else {
             queryToAdjustments(query).let {
+                val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
                 val result = workflow.updateQuery(
-                    it.first,
-                    init(), it.second)
+                    dataLoggerQuery,
+                    init(), it)
                 Log.i(LOG_TAG, "Query=${query.getStrategy()} update result=$result")
             }
         }
@@ -313,7 +329,7 @@ internal class WorkflowOrchestrator internal constructor() {
         .protocol(Init.Protocol.valueOf(preferences.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
-    private fun getMetricsAdjustments(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Adjustments.builder()
+    private fun getDefaultAdjustments(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Adjustments.builder()
         .debugEnabled(preferences.debugLogging)
         .formulaExternalParams(FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize).build())
         .errorsPolicy(
@@ -368,56 +384,71 @@ internal class WorkflowOrchestrator internal constructor() {
 
         ).build()
 
-    private fun getDragRacingAdjustments(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Adjustments.builder()
-        .debugEnabled(preferences.debugLogging)
-        .errorsPolicy(
-            ErrorsPolicy.builder()
-                .numberOfRetries(preferences.maxReconnectNum)
-                .reconnectEnabled(preferences.reconnectWhenError).build()
-        )
-        .batchPolicy(
-            BatchPolicy.builder()
-                .enabled(preferences.batchEnabled)
-                .responseLengthEnabled(preferences.responseLengthEnabled)
-                .mode01BatchSize(3)
-                .otherModesBatchSize(3).build()
-        )
-        .collectRawConnectorResponseEnabled(false)
-        .stNxx(
-            STNxxExtensions.builder()
-                .enabled(false)
-                .build()
-        )
-        .vehicleMetadataReadingEnabled(false)
-        .vehicleCapabilitiesReadingEnabled(false)
-        .vehicleDtcReadingEnabled(false)
-        .vehicleDtcCleaningEnabled(false)
-        .cachePolicy(
-            CachePolicy.builder()
-                .resultCacheEnabled(false).build()
-        )
-        .producerPolicy(
-            ProducerPolicy
-                .builder()
-                .pidPriority(0,0) // vehicle speed, rpm
-                .pidPriority(5,300) // atm pressure, ambient temp
-                .conditionalSleepEnabled(false)
-                .build()
-        )
-        .generatorPolicy(
-            GeneratorPolicy
-                .builder()
-                .enabled(preferences.generatorEnabled)
-                .increment(0.5).build()
-        ).adaptiveTimeoutPolicy(
-            AdaptiveTimeoutPolicy
-                .builder()
-                .enabled(preferences.adaptiveConnectionEnabled)
-                .checkInterval(5000)
-                .commandFrequency(preferences.dragRacingCommandFrequency)
-                .minimumTimeout(10)
-                .build()
-        ).build()
+    private fun getDragRacingAdjustments(preferences: DataLoggerPreferences = dataLoggerPreferences.instance): Adjustments {
+        var builder = Adjustments.builder()
+            .debugEnabled(preferences.debugLogging)
+            .errorsPolicy(
+                ErrorsPolicy.builder()
+                    .numberOfRetries(preferences.maxReconnectNum)
+                    .reconnectEnabled(preferences.reconnectWhenError).build()
+            )
+            .batchPolicy(
+                BatchPolicy.builder()
+                    .enabled(preferences.batchEnabled)
+                    .responseLengthEnabled(preferences.responseLengthEnabled)
+                    .mode01BatchSize(preferences.mode01BatchSize)
+                    .otherModesBatchSize(preferences.otherModesBatchSize).build()
+            )
+            .collectRawConnectorResponseEnabled(false)
+            .stNxx(
+                STNxxExtensions.builder()
+                    .enabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
+                    .promoteSlowGroupsEnabled(false)
+                    .promoteAllGroupsEnabled(false)
+                    .build()
+            )
+            .vehicleMetadataReadingEnabled(false)
+            .vehicleCapabilitiesReadingEnabled(false)
+            .vehicleDtcReadingEnabled(false)
+            .vehicleDtcCleaningEnabled(false)
+            .cachePolicy(
+                CachePolicy.builder()
+                    .resultCacheEnabled(false).build()
+            )
+            .producerPolicy(
+                ProducerPolicy
+                    .builder()
+                    .pidPriority(0,0) // vehicle speed, rpm
+                    .pidPriority(5,10) // atm pressure, ambient temp
+                    .pidPriority(4,4) // atm pressure, ambient temp
+                    .conditionalSleepEnabled(false)
+                    .build()
+            )
+            .generatorPolicy(
+                GeneratorPolicy
+                    .builder()
+                    .enabled(preferences.generatorEnabled)
+                    .increment(0.5).build()
+            ).adaptiveTimeoutPolicy(
+                AdaptiveTimeoutPolicy
+                    .builder()
+                    .enabled(preferences.adaptiveConnectionEnabled)
+                    .checkInterval(5000)
+                    .commandFrequency(preferences.dragRacingCommandFrequency)
+                    .minimumTimeout(10)
+                    .build()
+            )
+
+        if (dataLoggerPreferences.instance.stnExtensionsEnabled){
+            builder = builder.override(namesRegistry.getVehicleSpeedPID(),PidDefinitionOverride.builder().priority(0).build())
+                    .override(namesRegistry.getMeasuredIntakePressurePID(),PidDefinitionOverride.builder().priority(0).build())
+                    .override(namesRegistry.getAtmPressurePID(),PidDefinitionOverride.builder().priority(0).build())
+                    .override(namesRegistry.getAmbientTempPID(),PidDefinitionOverride.builder().priority(0).build())
+                    .override(namesRegistry.getTorquePID(),PidDefinitionOverride.builder().priority(4).build())
+        }
+
+        return builder.build()
+    }
 
     private fun workflow() = Workflow.instance()
         .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build())
@@ -451,10 +482,10 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }.toMutableList()).build()
 
-    private fun queryToAdjustments(query: Query): Pair<org.obd.metrics.api.model.Query, Adjustments>  = when (query.getStrategy()) {
+    private fun queryToAdjustments(query: Query): Adjustments  = when (query.getStrategy()) {
         QueryStrategyType.DRAG_RACING_QUERY ->
-            Pair(org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build(), getDragRacingAdjustments())
+            getDragRacingAdjustments()
         else ->
-            Pair( org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build(), getMetricsAdjustments())
+            getDefaultAdjustments()
     }
 }

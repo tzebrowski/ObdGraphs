@@ -31,11 +31,11 @@ internal abstract class CoreSurfaceRenderer(
     protected fun getArea(
         area: Rect,
         canvas: Canvas,
-        margin: Int,
+        margin: Int = 0,
     ): Rect =
         if (area.isEmpty) {
             Rect(0 + margin, viewSettings.marginTop, canvas.width - 1 - margin, canvas.height)
         } else {
-            Rect(area.left + margin, area.top + viewSettings.marginTop, area.right, area.bottom)
+            Rect(area.left + margin, area.top + viewSettings.marginTop, area.right - margin, area.bottom)
         }
 }

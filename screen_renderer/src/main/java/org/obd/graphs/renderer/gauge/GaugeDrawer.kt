@@ -83,7 +83,8 @@ internal class GaugeDrawer(
         canvas: Canvas, metric: Metric, left: Float, top: Float, width: Float,
         fontSize: Int = settings.getGaugeRendererSetting().getFontSize(),
         labelCenterYPadding: Float = 0f,
-        scaleEnabled: Boolean = settings.isScaleEnabled()
+        scaleEnabled: Boolean = settings.isScaleEnabled(),
+        statsEnabled: Boolean = settings.isStatisticsEnabled()
     ) {
         paint.shader = null
 
@@ -150,8 +151,11 @@ internal class GaugeDrawer(
         }
 
         drawGauge(
-            canvas, area = rect, metric = metric, radius = calculateRadius(width), labelCenterYPadding = labelCenterYPadding,
-            fontSize = fontSize
+            canvas, area = rect, metric = metric,
+            radius = calculateRadius(width),
+            labelCenterYPadding = labelCenterYPadding,
+            fontSize = fontSize,
+            statsEnabled = statsEnabled
         )
     }
 
@@ -246,7 +250,8 @@ internal class GaugeDrawer(
         metric: Metric,
         radius: Float,
         labelCenterYPadding: Float = 0f,
-        fontSize: Int
+        fontSize: Int,
+        statsEnabled: Boolean
     ) {
         val calculatedFontSize = calculateFontSize(multiplier = area.width() / 22f, fontSize = fontSize) * 3.4f
 
@@ -307,7 +312,7 @@ internal class GaugeDrawer(
             canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
         }
 
-        if (settings.isStatisticsEnabled()) {
+        if (statsEnabled) {
             histogramPaint.textSize = calculatedFontSize * 0.4f
             val histsRect = Rect()
             histogramPaint.getTextBounds("0000", 0, "0000".length, histsRect)

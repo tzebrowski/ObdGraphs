@@ -21,16 +21,25 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.renderer.*
-import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
+
+
+ data class DragRaceDetails(
+     var ambientTemp: Metric? = null,
+     var atmPressure: Metric? = null,
+     var intakePressure: Metric? = null,
+     var torque: Metric? = null,
+     var gas: Metric? = null,
+     var vehicleSpeed: Metric? = null,
+ )
 
 internal class DragRacingSurfaceRenderer(
     context: Context,
@@ -40,6 +49,7 @@ internal class DragRacingSurfaceRenderer(
     viewSettings: ViewSettings
 ) : CoreSurfaceRenderer(viewSettings) {
 
+    private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
@@ -49,36 +59,21 @@ internal class DragRacingSurfaceRenderer(
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
-        drawArea?.let { it ->
+        drawArea?.let {
 
             val dragRaceResults = dragRacingResultRegistry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
-            val dragRacingSettings = settings.getDragRacingScreenSettings()
-            val margin = if (dragRacingSettings.shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
+            val margin = if (settings.getDragRacingScreenSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
             var top = getTop(area)
             var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
-
-            if (dragRacingSettings.shiftLightsEnabled) {
-                dragRacingResultRegistry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
-                // permanent white boxes
-                dragRacingDrawer.drawShiftLights(canvas, area, blinking = false)
-            }
-
-            if (isShiftLight(dragRaceResults)) {
-                dragRacingDrawer.drawShiftLights(canvas, area, blinking = true)
-            }
-
-            if (dragRaceResults.readyToRace){
-                dragRacingDrawer.drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
-            }
 
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
                 dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector,
-                    drawContextInfo = settings.getDragRacingScreenSettings().contextInfoEnabled)
+                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled)
 
                 top += MARGIN_TOP
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
@@ -87,48 +82,22 @@ internal class DragRacingSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
-            if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
-                top = if (settings.getDragRacingScreenSettings().contextInfoEnabled) {
-                    val width = (area.width() / 2f) - 10
-                    drawMetric(namesRegistry.getVehicleSpeedPID(), canvas, area, left, top, width)
-                    drawMetric(namesRegistry.getMeasuredIntakePressurePID(), canvas, area, left + width, top, width)
-                } else {
-                    drawMetric(namesRegistry.getVehicleSpeedPID(), canvas, area, left, top)
-                }
-            }
-
-            dragRacingDrawer.drawDragRaceResults(
+            dragRacingDrawer.drawScreen(
                 canvas = canvas,
                 area = area,
                 left = left,
-                top = top,
-                dragRacingResults = dragRaceResults)
+                pTop = top,
+                dragRacingResults = dragRaceResults,dragRaceDetails = dragRaceDetails.apply {
+                    gas = metricsCollector.getMetric(namesRegistry.getGasPedalPID())
+                    ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
+                    atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
+                    torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
+                    intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
+                    vehicleSpeed = metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())
+                })
         }
     }
-    private fun drawMetric(
-        id: Long,
-        canvas: Canvas,
-        area: Rect,
-        left: Float,
-        top: Float,
-        width: Float = area.width().toFloat()
-    ): Float {
-        metricsCollector.getMetric(id)?.let {
-            return dragRacingDrawer.drawMetric(
-                canvas = canvas,
-                area = area,
-                metric = it,
-                left = left,
-                top = top,
-                width = width
-            )
 
-        }
-        return top
-    }
-
-    private fun isShiftLight(dragRaceResults: DragRacingResults) =
-        settings.getDragRacingScreenSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
 
     override fun recycle() {
         dragRacingDrawer.recycle()

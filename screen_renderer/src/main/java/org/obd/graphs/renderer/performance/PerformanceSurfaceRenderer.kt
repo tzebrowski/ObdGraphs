@@ -51,8 +51,7 @@ internal class PerformanceSurfaceRenderer(
 
             performanceDrawer.drawBackground(canvas, it)
 
-            val margin = 0
-            val area = getArea(it, canvas, margin)
+            val area = getArea(it, canvas)
             var top = getTop(area)
             val left = performanceDrawer.getMarginLeft(area.left.toFloat())
 

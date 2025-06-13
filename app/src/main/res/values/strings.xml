@@ -229,7 +229,7 @@
     <string name="pref.aa.routines.enabled">Enable routines screen</string>
     <string name="pref.aa.routines.enabled.enabled_summary">Activates the Routines screen, which permits execution of specific ECU functions. Use of this feature carries risk and is entirely at your own responsibility.</string>
     <string name="pref.aa.performance_meter.category">Drag Racing</string>
-    <string name="pref.aa.performance_meter.metrics_read_freq">OBD2 Data reading frequency</string>
+    <string name="pref.aa.performance_meter.metrics_read_freq">Desired OBD2 Data reading frequency</string>
     <string name="pref.aa.performance_meter.display_frequency">Display OBD2 Data read frequency</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Displays the vehicle speed corresponding to the recorded measurement.</string>
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>

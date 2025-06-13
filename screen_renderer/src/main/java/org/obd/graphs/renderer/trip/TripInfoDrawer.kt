@@ -22,8 +22,8 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.format
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.MARGIN_END
 import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.drag.MARGIN_END
 import org.obd.graphs.toFloat
 
  private const val CURRENT_MIN = 22f

@@ -17,31 +17,43 @@
 package org.obd.graphs.renderer.drag
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
-import org.obd.graphs.format
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.gauge.DrawerSettings
+import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.round
-import org.obd.graphs.toFloat
 import org.obd.graphs.ui.common.COLOR_CARDINAL
-import org.obd.graphs.ui.common.COLOR_WHITE
+import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
-const val MARGIN_END = 30
+private const val SHIFT_LIGHTS_MAX_SEGMENTS = 10
+const val SHIFT_LIGHTS_WIDTH = 22
 
-private const val SHIFT_LIGHTS_MAX_SEGMENTS = 14
-const val SHIFT_LIGHTS_WIDTH = 30
+private const val EXTENDED_METRICS_WITH_STN = 4
+private const val EXTENDED_METRICS_NO_STN = 2
+private const val NO_EXTENDED_METRICS = 1
 
 @Suppress("NOTHING_TO_INLINE")
 internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+
+    private val gaugeDrawer = GaugeDrawer(
+        settings = settings, context = context,
+        drawerSettings = DrawerSettings(
+            gaugeProgressBarType = GaugeProgressBarType.LONG, startAngle = 180f, sweepAngle = 120f)
+    )
 
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
@@ -51,72 +63,203 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
 
     override fun getBackground(): Bitmap = background
 
-    inline fun drawShiftLights(
-        canvas: Canvas,
-        area: Rect,
-        color: Int = settings.getColorTheme().progressColor,
-        shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH,
-        blinking: Boolean = false
-    ) {
-        val segmentHeight = area.height().toFloat() / SHIFT_LIGHTS_MAX_SEGMENTS
-        val leftMargin = 4f
-        val topMargin = 6f
+    fun drawScreen (canvas: Canvas,
+                    area: Rect,
+                    left: Float,
+                    pTop: Float,
+                    dragRacingResults: DragRacingResults,
+                    dragRaceDetails: DragRaceDetails){
 
-        shiftLightPaint.color = Color.WHITE
-        for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {
 
-            val top = area.top + (i * segmentHeight)
-            val bottom = top + segmentHeight - topMargin
+        val dragRacingSettings = settings.getDragRacingScreenSettings()
 
-            canvas.drawRect(
-                area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
-                bottom, shiftLightPaint
-            )
-
-            val left = area.left + area.width().toFloat() - leftMargin
-            canvas.drawRect(
-                left, top, left + shiftLightsWidth,
-                bottom, shiftLightPaint
-            )
+        if (dragRacingSettings.shiftLightsEnabled) {
+            dragRacingResultRegistry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
+            // permanent white boxes
+            drawShiftLights(canvas, area, blinking = false)
         }
-        if (blinking) {
-            shiftLightPaint.color = color
 
-            for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
+        if (isShiftLight(dragRacingResults)) {
+            drawShiftLights(canvas, area, blinking = true)
+        }
 
-                val top = area.top + (i * segmentHeight)
-                val bottom = top + segmentHeight - topMargin
+        if (dragRacingResults.readyToRace){
+            drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
+        }
 
-                canvas.drawRect(
-                    area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
-                    bottom, shiftLightPaint
-                )
+        var top = pTop
 
-                val left = area.left + area.width().toFloat() - leftMargin
+        if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
+            top -=30f
 
-                canvas.drawRect(
-                    left, top, left + shiftLightsWidth,
-                    bottom, shiftLightPaint
-                )
+            var numGauges = 4
+            if (dragRaceDetails.intakePressure == null) numGauges--
+            if (dragRaceDetails.vehicleSpeed == null) numGauges--
+            if (dragRaceDetails.gas == null) numGauges--
+            if (dragRaceDetails.torque == null) numGauges--
+
+            when (numGauges){
+                EXTENDED_METRICS_WITH_STN -> {
+                    if (settings.isAA() || isLandscape()) {
+                        val gaugeWidth = area.width() / 3.3f
+                        drawGauge(
+                            dragRaceDetails.gas, canvas, top, area.left.toFloat() ,
+                            gaugeWidth * 0.9f, labelCenterYPadding = 18f
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.intakePressure, canvas, top, (area.left + 0.8f * gaugeWidth) ,
+                            gaugeWidth
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.vehicleSpeed, canvas, top, (area.left + 1.65f * gaugeWidth),
+                            gaugeWidth
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.torque, canvas, top, (area.left + 2.55f * gaugeWidth),
+                            gaugeWidth * 0.9f, labelCenterYPadding = 18f
+                        )
+                    } else {
+                        val gaugeWidth = area.width() / 2.0f
+                        drawGauge(
+                            dragRaceDetails.intakePressure, canvas, top, (area.left ) - 20f,
+                            gaugeWidth
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.vehicleSpeed, canvas, top, (area.left +  gaugeWidth) - 30f,
+                            gaugeWidth
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.gas, canvas, top + gaugeWidth , (area.left ) - 20f,
+                            gaugeWidth, labelCenterYPadding = 18f
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.torque, canvas, top + gaugeWidth, (area.left +  gaugeWidth) - 30f,
+                            gaugeWidth, labelCenterYPadding = 18f
+                        )
+                    }
+                }
+
+                EXTENDED_METRICS_NO_STN -> {
+                    if (settings.isAA() || isLandscape()){
+                        val gaugeWidth = area.width() / 3.3f
+                        drawGauge(
+                            dragRaceDetails.intakePressure, canvas, top, (area.left + 0.8f * gaugeWidth) ,
+                            gaugeWidth
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.vehicleSpeed, canvas, top, (area.left + 1.65f * gaugeWidth),
+                            gaugeWidth
+                        )
+
+
+                    } else {
+                        drawGauge(
+                            dragRaceDetails.intakePressure, canvas, top, area.left.toFloat() + area.width()/5,
+                            area.width().toFloat() / 1.5f
+                        )
+
+                        drawGauge(
+                            dragRaceDetails.vehicleSpeed, canvas, top + area.width().toFloat()/ 2f, area.left.toFloat() + area.width()/5,
+                            area.width().toFloat() / 1.5f
+                        )
+                    }
+                }
+
+                NO_EXTENDED_METRICS -> {
+                    if (settings.isAA() || isLandscape()){
+                        drawGauge(
+                            dragRaceDetails.vehicleSpeed, canvas, top, area.left.toFloat() + area.width() /3,
+                            0.75f * area.height().toFloat()
+                        )
+                    } else {
+                        drawGauge(
+                            dragRaceDetails.vehicleSpeed, canvas, top, area.left.toFloat(),
+                            area.width().toFloat()
+                        )
+                    }
+                }
+
             }
 
-            segmentCounter--
+            top += area.height() / 2.2f
 
-            if (segmentCounter == 0) {
-                segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
+            if (settings.getDragRacingScreenSettings().metricsFrequencyReadEnabled) {
+                dragRaceDetails.vehicleSpeed?.let {
+
+                    val textSizeBase = calculateFontSize(area)
+                    val frequencyTextSize = textSizeBase * 0.45f
+                    val text = "Frequency: ${it.rate?.round(2)} read/sec"
+
+                    drawText(
+                        canvas,
+                        text,
+                        left,
+                        top,
+                        frequencyTextSize
+                    )
+                }
             }
         }
+
+        drawDragRaceResults(
+            canvas = canvas,
+            area = area,
+            left = left,
+            top = top,
+            dragRacingResults = dragRacingResults)
+
     }
 
-    inline fun drawDragRaceResults(
+    private fun isLandscape() = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    private fun drawGauge(
+        metric: Metric?,
+        canvas: Canvas,
+        top: Float,
+        left: Float,
+        width: Float,
+        labelCenterYPadding: Float = 10f,
+    ): Boolean  =
+        if (metric == null){
+            false
+        }else {
+            gaugeDrawer.drawGauge(
+                canvas = canvas,
+                left = left,
+                top = top ,
+                width = width,
+                metric = metric,
+                labelCenterYPadding =  labelCenterYPadding,
+                fontSize = settings.getDragRacingScreenSettings().fontSize,
+                scaleEnabled = false,
+                statsEnabled = false
+            )
+            true
+        }
+
+    private inline fun drawDragRaceResults(
         canvas: Canvas,
         area: Rect,
         left: Float,
         top: Float,
         dragRacingResults: DragRacingResults
+
     ) {
 
-        val (_, textSizeBase) = calculateFontSize(area)
+        val fontSizeFactor : Float  = if (settings.getDragRacingScreenSettings().displayMetricsEnabled){
+            0.7f
+        } else {
+            1f
+        }
+
+        val  textSizeBase = calculateFontSize(area) * fontSizeFactor
 
         val currentXPos = area.centerX() / 1.5f
         val lastXPos = area.centerX() + 60f
@@ -148,185 +291,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         drawDragRacingEntry(area, dragRacingResults._100_200, "100-200 km/h", rowTop, left, canvas, textSizeBase)
     }
 
-    inline fun drawMetric(
-        canvas: Canvas,
-        area: Rect,
-        metric: Metric,
-        left: Float,
-        top: Float,
-        width: Float
-    ): Float {
-
-        var top1 = top
-        val (valueTextSize, textSizeBase) = calculateFontSize(area)
-
-        if (settings.getDragRacingScreenSettings().displayMetricsEnabled) {
-
-            top1 += drawTitle(
-                canvas,
-                metric,
-                left = left,
-                top = top1,
-                textSizeBase
-            )
-
-            drawValue(
-                canvas,
-                metric,
-                left + width,
-                top1 + 1,
-                valueTextSize
-            )
-
-            if (settings.getDragRacingScreenSettings().metricsFrequencyReadEnabled) {
-
-                val frequencyTextSize = textSizeBase * 0.45f
-                val text = "${metric.rate?.round(2)} read/sec"
-                val ww = getTextWidth(text, titlePaint) * 0.6F
-
-                drawText(
-                    canvas,
-                    text,
-                    left + width - ww,
-                    top,
-                    Color.WHITE,
-                    frequencyTextSize
-                )
-            }
-
-
-            if (settings.isStatisticsEnabled()) {
-                val tt = textSizeBase * 0.6f
-                var left1 = left
-                if (metric.pid().historgam.isMinEnabled) {
-                    left1 = drawText(
-                        canvas,
-                        "avg",
-                        left,
-                        top1,
-                        Color.LTGRAY,
-                        tt * 0.8f,
-                        valuePaint
-                    )
-                    left1 = drawText(
-                        canvas,
-                        metric.mean.format(pid = metric.pid()),
-                        left1,
-                        top1,
-                        Color.LTGRAY,
-                        tt,
-                        valuePaint
-                    )
-                }
-                if (metric.pid().historgam.isMaxEnabled) {
-                    left1 = drawText(
-                        canvas,
-                        "max",
-                        left1,
-                        top1,
-                        Color.LTGRAY,
-                        tt * 0.8f,
-                        valuePaint
-                    )
-                    drawText(
-                        canvas,
-                        metric.max.format(pid = metric.pid()),
-                        left1,
-                        top1,
-                        Color.LTGRAY,
-                        tt,
-                        valuePaint
-                    )
-                }
-
-                top1 += getTextHeight("min", paint) / 2
-            } else {
-                top1 += 4f
-            }
-
-            drawProgressBar(
-                canvas,
-                left,
-                width, top1, metric,
-                color = settings.getColorTheme().progressColor
-            )
-
-            top1 += calculateDividerSpacing()
-
-            drawDivider(
-                canvas,
-                left, width, top1,
-                color = settings.getColorTheme().dividerColor
-            )
-        }
-
-        top1 += 10f + (textSizeBase).toInt()
-        return top1
-    }
-
-
-    fun drawText(
-        canvas: Canvas,
-        text: String,
-        left: Float,
-        top: Float,
-        color: Int,
-        textSize: Float
-
-    ): Float = drawText(canvas, text, left, top, color, textSize, paint)
-
-    fun drawProgressBar(
-        canvas: Canvas,
-        left: Float,
-        width: Float,
-        top: Float,
-        it: Metric,
-        color: Int
-    ) {
-        paint.color = color
-
-        val pid = it.pid()
-        val progress = valueConverter.scaleToNewRange(
-            it.source.toFloat(),
-            pid.min.toFloat(), pid.max.toFloat(), left, left + width - MARGIN_END
-        )
-
-        canvas.drawRect(
-            left - 6,
-            top + 4,
-            progress,
-            top + calculateProgressBarHeight(),
-            paint
-        )
-    }
-
-
-    fun drawValue(
-        canvas: Canvas,
-        metric: Metric,
-        width: Float,
-        top: Float,
-        textSize: Float
-    ) {
-
-        valuePaint.color = COLOR_WHITE
-        val x = width - 50f
-
-        valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
-        valuePaint.textSize = textSize
-        valuePaint.textAlign = Paint.Align.RIGHT
-        val text = metric.source.valueToString()
-        canvas.drawText(text, x, top, valuePaint)
-
-        metric.source.command.pid.units?.let {
-            valuePaint.color = Color.LTGRAY
-            valuePaint.textAlign = Paint.Align.LEFT
-            valuePaint.textSize = (textSize * 0.4).toFloat()
-            canvas.drawText(it, (x + 2), top, valuePaint)
-        }
-    }
-
-    fun drawText(
+    private fun drawText(
         canvas: Canvas,
         text: String,
         left: Float,
@@ -346,22 +311,17 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         )
     }
 
-    private fun calculateProgressBarHeight() = 16
-
-
-    private inline fun calculateDividerSpacing(): Int = 14
 
     private inline fun calculateFontSize(
         area: Rect
-    ): Pair<Float, Float> {
+    ): Float {
 
         val scaleRatio = valueConverter.scaleToNewRange(settings.getDragRacingScreenSettings().fontSize.toFloat(),
             CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
         val areaWidth = area.width()
-        val valueTextSize = (areaWidth / 18f) * scaleRatio
         val textSizeBase = (areaWidth / 21f) * scaleRatio
-        return Pair(valueTextSize, textSizeBase)
+        return textSizeBase
     }
 
 
@@ -405,7 +365,69 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         }
     }
 
+    private inline fun drawShiftLights(
+        canvas: Canvas,
+        area: Rect,
+        color: Int = settings.getColorTheme().progressColor,
+        shiftLightsWidth: Int = SHIFT_LIGHTS_WIDTH,
+        blinking: Boolean = false
+    ) {
+        val height = area.height() / 2.0f
+        val segmentHeight = height / SHIFT_LIGHTS_MAX_SEGMENTS
+        val leftMargin = 4f
+        val topMargin = 6f
 
+        shiftLightPaint.color = Color.WHITE
+        for (i in 1..SHIFT_LIGHTS_MAX_SEGMENTS) {
+
+            val top = area.top + height + (i * segmentHeight)
+            val bottom = top + segmentHeight - topMargin
+
+            canvas.drawRect(
+                area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                bottom, shiftLightPaint
+            )
+
+            val left = calculateShiftLightMargin(area, leftMargin)
+            canvas.drawRect(
+                left, top, left + shiftLightsWidth,
+                bottom, shiftLightPaint
+            )
+        }
+        if (blinking) {
+            shiftLightPaint.color = color
+
+            for (i in SHIFT_LIGHTS_MAX_SEGMENTS downTo segmentCounter) {
+
+                val top = area.top + height + (i * segmentHeight)
+                val bottom = top + segmentHeight - topMargin
+
+                canvas.drawRect(
+                    area.left - shiftLightsWidth + leftMargin, top, area.left.toFloat() + leftMargin,
+                    bottom, shiftLightPaint
+                )
+
+                val left = calculateShiftLightMargin(area, leftMargin)
+
+                canvas.drawRect(
+                    left, top, left + shiftLightsWidth,
+                    bottom, shiftLightPaint
+                )
+            }
+
+            segmentCounter--
+
+            if (segmentCounter == 0) {
+                segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
+            }
+        }
+    }
+
+    private fun isShiftLight(dragRaceResults: DragRacingResults) =
+        settings.getDragRacingScreenSettings().shiftLightsEnabled && dragRaceResults.enableShiftLights
+
+
+    private inline fun calculateShiftLightMargin(area: Rect, leftMargin: Float): Float  = area.left + area.width().toFloat() - leftMargin
     private inline fun timeToString(value: Long): String = if (value == VALUE_NOT_SET) "--.--" else (value / 1000.0).round(2).toString()
     private inline fun speedToString(value: Int): String = if (value == VALUE_NOT_SET.toInt()) "" else "$value km/h"
 }

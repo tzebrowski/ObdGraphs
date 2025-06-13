@@ -27,7 +27,6 @@ import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.format
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile
-import org.obd.graphs.renderer.drag.MARGIN_END
 
 private const val STATUS_KEY_FONT_SIZE = 12f
 private const val STATUS_VALUE_FONT_SIZE = 18f
@@ -36,6 +35,7 @@ private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
+const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
