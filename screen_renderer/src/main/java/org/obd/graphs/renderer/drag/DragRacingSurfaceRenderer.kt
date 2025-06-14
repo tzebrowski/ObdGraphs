@@ -65,7 +65,8 @@ internal class DragRacingSurfaceRenderer(
             val dragRaceResults = dragRacingResultRegistry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
-            val margin = if (settings.getDragRacingScreenSettings().shiftLightsEnabled || dragRaceResults.readyToRace) SHIFT_LIGHTS_WIDTH else 0
+            val margin = if (settings.getDragRacingScreenSettings().shiftLightsEnabled || dragRaceResults.readyToRace)
+                SHIFT_LIGHTS_WIDTH else 0
             val area = getArea(it, canvas, margin)
             var top = getTop(area)
             var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
@@ -94,7 +95,8 @@ internal class DragRacingSurfaceRenderer(
                     atmPressure = metricsCollector.getMetric(PidId.EXT_ATM_PRESSURE_PID_ID)
                     torque = metricsCollector.getMetric(PidId.ENGINE_TORQUE_PID_ID)
                     intakePressure = metricsCollector.getMetric(PidId.INTAKE_PRESSURE_PID_ID)
-                    vehicleSpeed = metricsCollector.getMetric(if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_VEHICLE_SPEED_PID_ID else PidId.VEHICLE_SPEED_PID_ID)
+                    vehicleSpeed = metricsCollector.getMetric(if (dataLoggerPreferences.instance.gmeExtensionsEnabled)
+                        PidId.EXT_VEHICLE_SPEED_PID_ID else PidId.VEHICLE_SPEED_PID_ID)
                 })
         }
     }
