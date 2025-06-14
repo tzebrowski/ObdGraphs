@@ -27,7 +27,7 @@ internal class IndividualQueryStrategy : QueryStrategy() {
         val pids = super.getPIDs()
 
         if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
-            pids.add(namesRegistry.getDynamicSelectorPID())
+            pids.add(PidId.EXT_DYNAMIC_SELECTOR_PID_ID.value)
         }
 
         return pids

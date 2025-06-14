@@ -24,23 +24,23 @@ package org.obd.graphs.bl.query
  internal class PerformanceQueryStrategy : QueryStrategy() {
 
     private val defaults  = mutableSetOf(
-        namesRegistry.getAtmPressurePID(),
-        namesRegistry.getAmbientTempPID(),
-        namesRegistry.getGearboxOilTempPID(),
-        namesRegistry.getOilTempPID(),
-        namesRegistry.getCoolantTempPID(),
-        namesRegistry.getExhaustTempPID(),
-        namesRegistry.getPostICAirTempPID(),
-        namesRegistry.getTorquePID(),
-        namesRegistry.getIntakePressurePID(),
-        namesRegistry.getDynamicSelectorPID(),
-        namesRegistry.getGasPedalPID(),
-        namesRegistry.getWcaTempPID(),
-        namesRegistry.getPreICAirPID(),
-        namesRegistry.getVehicleSpeedPID(),
-        namesRegistry.getGearEngagedPID()
+        PidId.EXT_ATM_PRESSURE_PID_ID,
+        PidId.EXT_AMBIENT_TEMP_PID_ID,
+        PidId.GEARBOX_OIL_TEMP_PID_ID,
+        PidId.OIL_TEMP_PID_ID,
+        PidId.COOLANT_TEMP_PID_ID,
+        PidId.EXHAUST_TEMP_PID_ID,
+        PidId.POST_IC_AIR_TEMP_PID_ID,
+        PidId.ENGINE_TORQUE_PID_ID,
+        PidId.INTAKE_PRESSURE_PID_ID,
+        PidId.EXT_DYNAMIC_SELECTOR_PID_ID,
+        PidId.GAS_PID_ID,
+        PidId.WCA_TEMP_PID_ID,
+        PidId.PRE_IC_AIR_TEMP_PID_ID,
+        PidId.EXT_VEHICLE_SPEED_PID_ID,
+        PidId.GEAR_ENGAGED_PID_ID
     )
-    override fun getDefaults() = defaults
+    override fun getDefaults() = defaults.map { it.value }.toSet()
 
     override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY).toMutableSet()
 }

@@ -64,6 +64,7 @@ data class DataLoggerPreferences(
     var fuelTankSize: Int,
     var vehicleStatusPanelEnabled: Boolean,
     var vehicleStatusDisconnectWhenOff: Boolean,
+    var gmeExtensionsEnabled: Boolean
 )
 
 
@@ -160,6 +161,7 @@ class DataLoggerPreferencesManager {
         val fuelTankSize = Prefs.getS("pref.vehicle_settings.fuelTankSize", "58").toInt()
         val vehicleStatusPanel = Prefs.getBoolean("pref.vehicle_settings.vehicle_status_panel_enabled", false)
         val vehicleStatusDisconnectWhenOff = Prefs.getBoolean("pref.vehicle_settings.disconnect_when_off", false)
+        val gmeExtensionsEnabled = Prefs.getBoolean( "pref.profile.2_0_GME_extension.enabled", false)
 
         val dataLoggerPreferences = DataLoggerPreferences(
             vehicleStatusDisconnectWhenOff = vehicleStatusDisconnectWhenOff,
@@ -196,7 +198,8 @@ class DataLoggerPreferencesManager {
             debugLogging = debugLogging,
             individualQueryStrategyEnabled = queryForEachViewStrategyEnabled,
             batchStricValidationEnabled = batchStrictValidationEnabled,
-            fuelTankSize = fuelTankSize
+            fuelTankSize = fuelTankSize,
+            gmeExtensionsEnabled = gmeExtensionsEnabled
         )
 
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {

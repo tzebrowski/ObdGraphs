@@ -23,10 +23,11 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.query.PidId
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.renderer.*
 
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
@@ -88,12 +89,12 @@ internal class DragRacingSurfaceRenderer(
                 left = left,
                 pTop = top,
                 dragRacingResults = dragRaceResults,dragRaceDetails = dragRaceDetails.apply {
-                    gas = metricsCollector.getMetric(namesRegistry.getGasPedalPID())
-                    ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
-                    atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
-                    torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
-                    intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
-                    vehicleSpeed = metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())
+                    gas = metricsCollector.getMetric(PidId.GAS_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(PidId.EXT_AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(PidId.EXT_ATM_PRESSURE_PID_ID)
+                    torque = metricsCollector.getMetric(PidId.ENGINE_TORQUE_PID_ID)
+                    intakePressure = metricsCollector.getMetric(PidId.INTAKE_PRESSURE_PID_ID)
+                    vehicleSpeed = metricsCollector.getMetric(if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_VEHICLE_SPEED_PID_ID else PidId.VEHICLE_SPEED_PID_ID)
                 })
         }
     }

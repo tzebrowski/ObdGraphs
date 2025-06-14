@@ -45,7 +45,7 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
         //decorate with Vehicle Status PID
         if (dataLoggerPreferences.instance.vehicleStatusPanelEnabled ||
             dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
-            pids.add(namesRegistry.getVehicleStatusPID())
+            pids.add(PidId.VEHICLE_STATUS_PID_ID.value)
         }
         return pids
     }
