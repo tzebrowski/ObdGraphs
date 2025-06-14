@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -16,13 +16,13 @@
  */
 package org.obd.graphs.bl.query
 
- import org.obd.graphs.bl.datalogger.PidId
- import org.obd.graphs.preferences.Prefs
- import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.bl.datalogger.PidId
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 
- private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selected"
+private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selected"
 
- internal class PerformanceQueryStrategy : QueryStrategy() {
+internal class PerformanceQueryStrategy : QueryStrategy() {
 
     private val defaults = setOf(
         PidId.EXT_ATM_PRESSURE_PID_ID,
@@ -40,8 +40,8 @@ package org.obd.graphs.bl.query
         PidId.PRE_IC_AIR_TEMP_PID_ID,
         PidId.EXT_VEHICLE_SPEED_PID_ID,
         PidId.GEAR_ENGAGED_PID_ID
-    )
+    ).map { it.value }.toSet()
 
-    override fun getDefaults() = defaults.map { it.value }.toSet()
+    override fun getDefaults() = defaults
     override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY).toMutableSet()
 }

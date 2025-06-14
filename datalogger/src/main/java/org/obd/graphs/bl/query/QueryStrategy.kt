@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.obd.graphs.bl.query
+
 internal open class QueryStrategy(protected val pids: MutableSet<Long> = mutableSetOf()) : java.io.Serializable {
     open fun update(newPIDs: Set<Long>) {
         pids.clear()
         pids.addAll(newPIDs)
     }
 
-    open fun getDefaults():  Set<Long> = emptySet()
+    open fun getDefaults(): Set<Long> = emptySet()
 
     open fun getPIDs(): MutableSet<Long> = pids
 }

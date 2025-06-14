@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ private const val TRIP_INFO_QUERY_PREF_KEY = "pref.aa.trip_info.pids.selected"
 
 internal class TripInfoQueryStrategy : QueryStrategy() {
 
-    private val defaults  = setOf(
+    private val defaults = setOf(
         PidId.FUEL_CONSUMPTION_PID_ID,
         PidId.FUEL_LEVEL_PID_ID,
         PidId.EXT_ATM_PRESSURE_PID_ID,
@@ -45,8 +45,9 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
         PidId.IBS_PID_ID,
         PidId.OIL_PRESSURE_PID_ID,
         PidId.OIL_DEGRADATION_PID_ID
-    )
-    override fun getDefaults() = defaults.map { it.value }.toSet()
+    ).map { it.value }.toSet()
+
+    override fun getDefaults() = defaults
 
     override fun getPIDs() = Prefs.getLongSet(TRIP_INFO_QUERY_PREF_KEY).toMutableSet()
 }
