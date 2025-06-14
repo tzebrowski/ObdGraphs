@@ -24,7 +24,7 @@ private const val TRIP_INFO_QUERY_PREF_KEY = "pref.aa.trip_info.pids.selected"
 
 internal class TripInfoQueryStrategy : QueryStrategy() {
 
-    private val defaults  = mutableSetOf(
+    private val defaults  = setOf(
         PidId.FUEL_CONSUMPTION_PID_ID,
         PidId.FUEL_LEVEL_PID_ID,
         PidId.EXT_ATM_PRESSURE_PID_ID,

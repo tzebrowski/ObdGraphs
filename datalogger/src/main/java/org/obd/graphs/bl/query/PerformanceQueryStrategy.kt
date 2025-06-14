@@ -23,7 +23,7 @@ package org.obd.graphs.bl.query
 
  internal class PerformanceQueryStrategy : QueryStrategy() {
 
-    private val defaults  = mutableSetOf(
+    private val defaults = setOf(
         PidId.EXT_ATM_PRESSURE_PID_ID,
         PidId.EXT_AMBIENT_TEMP_PID_ID,
         PidId.GEARBOX_OIL_TEMP_PID_ID,
@@ -40,7 +40,7 @@ package org.obd.graphs.bl.query
         PidId.EXT_VEHICLE_SPEED_PID_ID,
         PidId.GEAR_ENGAGED_PID_ID
     )
-    override fun getDefaults() = defaults.map { it.value }.toSet()
 
+    override fun getDefaults() = defaults.map { it.value }.toSet()
     override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY).toMutableSet()
 }
