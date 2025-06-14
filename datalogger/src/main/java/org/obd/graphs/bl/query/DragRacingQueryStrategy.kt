@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,25 +20,27 @@ import org.obd.graphs.bl.datalogger.PidId
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 
 internal class DragRacingQueryStrategy : QueryStrategy() {
-    override fun getPIDs(): MutableSet<Long> {
-        return (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) {
-            val pids = mutableSetOf(
-                PidId.EXT_VEHICLE_SPEED_PID_ID,
-                PidId.EXT_ENGINE_RPM_PID_ID,
-                PidId.EXT_MEASURED_INTAKE_PRESSURE_PID_ID,
-                PidId.EXT_ATM_PRESSURE_PID_ID,
-                PidId.EXT_AMBIENT_TEMP_PID_ID,
-            )
-            if (dataLoggerPreferences.instance.stnExtensionsEnabled) {
-                pids.add(PidId.ENGINE_TORQUE_PID_ID)
-                pids.add(PidId.GAS_PID_ID)
+    override fun getPIDs(): MutableSet<Long> =
+        (
+            if (dataLoggerPreferences.instance.gmeExtensionsEnabled) {
+                val pids =
+                    mutableSetOf(
+                        PidId.EXT_VEHICLE_SPEED_PID_ID,
+                        PidId.EXT_ENGINE_RPM_PID_ID,
+                        PidId.EXT_MEASURED_INTAKE_PRESSURE_PID_ID,
+                        PidId.EXT_ATM_PRESSURE_PID_ID,
+                        PidId.EXT_AMBIENT_TEMP_PID_ID,
+                    )
+                if (dataLoggerPreferences.instance.stnExtensionsEnabled) {
+                    pids.add(PidId.ENGINE_TORQUE_PID_ID)
+                    pids.add(PidId.GAS_PID_ID)
+                }
+                pids
+            } else {
+                mutableSetOf(
+                    PidId.VEHICLE_SPEED_PID_ID,
+                    PidId.ENGINE_RPM_PID_ID,
+                )
             }
-            pids
-        } else {
-            mutableSetOf(
-                PidId.VEHICLE_SPEED_PID_ID,
-                PidId.ENGINE_RPM_PID_ID
-            )
-        }).map { it.value }.toMutableSet()
-    }
+        ).map { it.value }.toMutableSet()
 }
