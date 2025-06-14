@@ -25,7 +25,6 @@ import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
 import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
-import org.obd.graphs.bl.query.PidId
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.tripManager

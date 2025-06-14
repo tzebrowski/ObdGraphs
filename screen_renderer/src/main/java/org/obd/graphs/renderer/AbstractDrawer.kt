@@ -23,7 +23,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.PidId
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.graphs.format
 import org.obd.graphs.commons.R
 import org.obd.graphs.profile.profile

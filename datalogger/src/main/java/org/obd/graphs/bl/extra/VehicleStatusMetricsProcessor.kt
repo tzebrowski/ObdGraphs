@@ -19,7 +19,7 @@ package org.obd.graphs.bl.extra
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
-import org.obd.graphs.bl.query.isVehicleStatus
+import org.obd.graphs.bl.datalogger.isVehicleStatus
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 

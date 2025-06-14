@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
 

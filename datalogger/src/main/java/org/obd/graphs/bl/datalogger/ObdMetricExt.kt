@@ -14,23 +14,22 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.bl.collector
+package org.obd.graphs.bl.datalogger
 
-import org.obd.graphs.bl.datalogger.PidId
 import org.obd.metrics.api.model.ObdMetric
 
-interface MetricsCollector {
-    fun reset()
+fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == PidId.EXT_ATM_PRESSURE_PID_ID.value
 
-    fun getMetric(id: PidId, enabled: Boolean = true): Metric?
+fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == PidId.EXT_AMBIENT_TEMP_PID_ID.value
 
-    fun getMetrics(enabled: Boolean = true): List<Metric>
+fun ObdMetric.isVehicleStatus(): Boolean = command.pid.id == PidId.VEHICLE_STATUS_PID_ID.value
 
-    fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
+fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == PidId.EXT_DYNAMIC_SELECTOR_PID_ID.value
 
-    fun append(input: ObdMetric?, forceAppend:Boolean = true)
+fun ObdMetric.isVehicleSpeed(): Boolean =
+    command.pid.id ==
+        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_VEHICLE_SPEED_PID_ID else PidId.VEHICLE_SPEED_PID_ID).value
 
-    companion object {
-        fun instance(): MetricsCollector = InMemoryCarMetricsCollector()
-    }
-}
+fun ObdMetric.isEngineRpm(): Boolean =
+    command.pid.id ==
+        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_ENGINE_RPM_PID_ID else PidId.ENGINE_RPM_PID_ID).value

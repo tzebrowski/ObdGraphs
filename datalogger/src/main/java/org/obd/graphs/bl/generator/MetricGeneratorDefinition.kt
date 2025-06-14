@@ -17,7 +17,7 @@
 package org.obd.graphs.bl.generator
 
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.PidId
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.metrics.pid.PidDefinition
 
 private const val VEHICLE_RUNNING_KEY = "vehicle.running"

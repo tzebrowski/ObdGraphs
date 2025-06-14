@@ -17,6 +17,7 @@
 package org.obd.graphs.bl.query
 
 import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.graphs.preferences.Prefs
 
 

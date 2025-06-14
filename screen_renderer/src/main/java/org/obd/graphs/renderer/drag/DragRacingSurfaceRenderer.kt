@@ -25,7 +25,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
-import org.obd.graphs.bl.query.PidId
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.*

@@ -18,7 +18,7 @@ package org.obd.graphs.bl.collector
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.query.PidId
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.metrics.api.model.ObdMetric
 import java.util.*
 import kotlin.Comparator

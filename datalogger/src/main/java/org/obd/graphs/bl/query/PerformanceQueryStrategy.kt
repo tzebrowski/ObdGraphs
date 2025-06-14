@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.query
 
+ import org.obd.graphs.bl.datalogger.PidId
  import org.obd.graphs.preferences.Prefs
  import org.obd.graphs.preferences.getLongSet
 
