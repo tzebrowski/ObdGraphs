@@ -16,10 +16,12 @@
  */
 package org.obd.graphs.bl.query
 
+import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.preferences.Prefs
 
-internal class DragRacingQueryStrategy : QueryStrategy() {
+ internal class DragRacingQueryStrategy : QueryStrategy() {
     override fun getPIDs(): MutableSet<Long> =
         (
             if (dataLoggerPreferences.instance.gmeExtensionsEnabled) {
@@ -35,6 +37,11 @@ internal class DragRacingQueryStrategy : QueryStrategy() {
                     pids.add(Pid.ENGINE_TORQUE_PID_ID)
                     pids.add(Pid.GAS_PID_ID)
                 }
+
+                if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
+                    pids.add(Pid.DYNAMIC_SELECTOR_PID_ID)
+                }
+
                 pids
             } else {
                 mutableSetOf(
