@@ -234,11 +234,11 @@
     <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Displays the vehicle speed corresponding to the recorded measurement.</string>
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>
 
-    <string name="pref.profile.2_0_GME_extension.enabled">Display additional context metrics</string>
-    <string name="pref.profile.2_0_GME_extension.enabled_summary">Queries additional metrics during the performance measurement session. Applicable only to 2.0 GME engines</string>
+    <string name="pref.profile.2_0_GME_extension.enabled">Display additional Gauges with metrics</string>
+    <string name="pref.profile.2_0_GME_extension.enabled_summary">For 2.0 GME engines, you can now gather additional metrics such as intake pressure, ambient temperature, and pressure during performance measurements. With STNxxx extensions, engine torque and gas pedal is also displayed, which is useful for brake boosting</string>
 
     <string name="pref.aa.performance_meter.shift_lights_enabled_summary">This is an EXPERIMENTAL feature.\nEnable gear shift lights</string>
-    <string name="pref.aa.performance_meter.display_context_metrics">Display context metrics</string>
+    <string name="pref.aa.performance_meter.display_context_metrics">Display Gauges for context metrics</string>
     <string name="pref.aa.performance_meter.display_context_metrics_summary">Provides supplementary context data, including vehicle speed.</string>
 
 
