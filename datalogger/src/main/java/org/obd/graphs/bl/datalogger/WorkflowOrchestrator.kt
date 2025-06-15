@@ -441,11 +441,11 @@ internal class WorkflowOrchestrator internal constructor() {
         if (dataLoggerPreferences.instance.stnExtensionsEnabled){
             val overrideSettings = PidDefinitionOverride.builder().priority(0).build()
             builder = builder
-                    .override(PidId.EXT_VEHICLE_SPEED_PID_ID.value,overrideSettings)
-                    .override(PidId.INTAKE_PRESSURE_PID_ID.value,overrideSettings)
-                    .override(PidId.ATM_PRESSURE_PID_ID.value,overrideSettings)
-                    .override(PidId.AMBIENT_TEMP_PID_ID.value,overrideSettings)
-                    .override(PidId.ENGINE_TORQUE_PID_ID.value,overrideSettings)
+                    .override(Pid.EXT_VEHICLE_SPEED_PID_ID.id,overrideSettings)
+                    .override(Pid.INTAKE_PRESSURE_PID_ID.id,overrideSettings)
+                    .override(Pid.ATM_PRESSURE_PID_ID.id,overrideSettings)
+                    .override(Pid.AMBIENT_TEMP_PID_ID.id,overrideSettings)
+                    .override(Pid.ENGINE_TORQUE_PID_ID.id, PidDefinitionOverride.builder().priority(4).build())
         }
 
         return builder.build()

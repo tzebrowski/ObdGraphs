@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.bl.query
 
-import org.obd.graphs.bl.datalogger.PidId
+import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 
@@ -25,22 +25,22 @@ private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selecte
 internal class PerformanceQueryStrategy : QueryStrategy() {
     private val defaults =
         setOf(
-            PidId.ATM_PRESSURE_PID_ID,
-            PidId.AMBIENT_TEMP_PID_ID,
-            PidId.GEARBOX_OIL_TEMP_PID_ID,
-            PidId.OIL_TEMP_PID_ID,
-            PidId.COOLANT_TEMP_PID_ID,
-            PidId.EXHAUST_TEMP_PID_ID,
-            PidId.POST_IC_AIR_TEMP_PID_ID,
-            PidId.ENGINE_TORQUE_PID_ID,
-            PidId.INTAKE_PRESSURE_PID_ID,
-            PidId.DYNAMIC_SELECTOR_PID_ID,
-            PidId.GAS_PID_ID,
-            PidId.WCA_TEMP_PID_ID,
-            PidId.PRE_IC_AIR_TEMP_PID_ID,
-            PidId.EXT_VEHICLE_SPEED_PID_ID,
-            PidId.GEAR_ENGAGED_PID_ID,
-        ).map { it.value }.toSet()
+            Pid.ATM_PRESSURE_PID_ID,
+            Pid.AMBIENT_TEMP_PID_ID,
+            Pid.GEARBOX_OIL_TEMP_PID_ID,
+            Pid.OIL_TEMP_PID_ID,
+            Pid.COOLANT_TEMP_PID_ID,
+            Pid.EXHAUST_TEMP_PID_ID,
+            Pid.POST_IC_AIR_TEMP_PID_ID,
+            Pid.ENGINE_TORQUE_PID_ID,
+            Pid.INTAKE_PRESSURE_PID_ID,
+            Pid.DYNAMIC_SELECTOR_PID_ID,
+            Pid.GAS_PID_ID,
+            Pid.WCA_TEMP_PID_ID,
+            Pid.PRE_IC_AIR_TEMP_PID_ID,
+            Pid.EXT_VEHICLE_SPEED_PID_ID,
+            Pid.GEAR_ENGAGED_PID_ID,
+        ).map { it.id }.toSet()
 
     override fun getDefaults() = defaults
 

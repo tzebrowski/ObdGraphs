@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.bl.datalogger
 
-enum class PidId(val value: Long) {
+enum class Pid(val id: Long) {
     EXT_VEHICLE_SPEED_PID_ID(7046),
     EXT_ENGINE_SPEED_PID_ID(7008),
     DYNAMIC_SELECTOR_PID_ID(7036),

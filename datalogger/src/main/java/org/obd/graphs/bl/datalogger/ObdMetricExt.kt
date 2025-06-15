@@ -18,18 +18,18 @@ package org.obd.graphs.bl.datalogger
 
 import org.obd.metrics.api.model.ObdMetric
 
-fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == PidId.ATM_PRESSURE_PID_ID.value
+fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == Pid.ATM_PRESSURE_PID_ID.id
 
-fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == PidId.AMBIENT_TEMP_PID_ID.value
+fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == Pid.AMBIENT_TEMP_PID_ID.id
 
-fun ObdMetric.isVehicleStatus(): Boolean = command.pid.id == PidId.VEHICLE_STATUS_PID_ID.value
+fun ObdMetric.isVehicleStatus(): Boolean = command.pid.id == Pid.VEHICLE_STATUS_PID_ID.id
 
-fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == PidId.DYNAMIC_SELECTOR_PID_ID.value
+fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == Pid.DYNAMIC_SELECTOR_PID_ID.id
 
 fun ObdMetric.isVehicleSpeed(): Boolean =
     command.pid.id ==
-        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_VEHICLE_SPEED_PID_ID else PidId.VEHICLE_SPEED_PID_ID).value
+        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID).id
 
 fun ObdMetric.isEngineRpm(): Boolean =
     command.pid.id ==
-        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_ENGINE_SPEED_PID_ID else PidId.ENGINE_SPEED_PID_ID).value
+        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) Pid.EXT_ENGINE_SPEED_PID_ID else Pid.ENGINE_SPEED_PID_ID).id

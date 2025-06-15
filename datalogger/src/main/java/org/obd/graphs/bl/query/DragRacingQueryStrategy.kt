@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.bl.query
 
-import org.obd.graphs.bl.datalogger.PidId
+import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 
 internal class DragRacingQueryStrategy : QueryStrategy() {
@@ -25,22 +25,22 @@ internal class DragRacingQueryStrategy : QueryStrategy() {
             if (dataLoggerPreferences.instance.gmeExtensionsEnabled) {
                 val pids =
                     mutableSetOf(
-                        PidId.EXT_VEHICLE_SPEED_PID_ID,
-                        PidId.EXT_ENGINE_SPEED_PID_ID,
-                        PidId.INTAKE_PRESSURE_PID_ID,
-                        PidId.ATM_PRESSURE_PID_ID,
-                        PidId.AMBIENT_TEMP_PID_ID,
+                        Pid.EXT_VEHICLE_SPEED_PID_ID,
+                        Pid.EXT_ENGINE_SPEED_PID_ID,
+                        Pid.INTAKE_PRESSURE_PID_ID,
+                        Pid.ATM_PRESSURE_PID_ID,
+                        Pid.AMBIENT_TEMP_PID_ID,
                     )
                 if (dataLoggerPreferences.instance.stnExtensionsEnabled) {
-                    pids.add(PidId.ENGINE_TORQUE_PID_ID)
-                    pids.add(PidId.GAS_PID_ID)
+                    pids.add(Pid.ENGINE_TORQUE_PID_ID)
+                    pids.add(Pid.GAS_PID_ID)
                 }
                 pids
             } else {
                 mutableSetOf(
-                    PidId.VEHICLE_SPEED_PID_ID,
-                    PidId.ENGINE_SPEED_PID_ID,
+                    Pid.VEHICLE_SPEED_PID_ID,
+                    Pid.ENGINE_SPEED_PID_ID,
                 )
             }
-        ).map { it.value }.toMutableSet()
+        ).map { it.id }.toMutableSet()
 }

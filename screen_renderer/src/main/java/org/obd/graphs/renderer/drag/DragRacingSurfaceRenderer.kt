@@ -25,7 +25,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
-import org.obd.graphs.bl.datalogger.PidId
+import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.*
@@ -90,13 +90,13 @@ internal class DragRacingSurfaceRenderer(
                 left = left,
                 pTop = top,
                 dragRacingResults = dragRaceResults,dragRaceDetails = dragRaceDetails.apply {
-                    gas = metricsCollector.getMetric(PidId.GAS_PID_ID)
-                    ambientTemp = metricsCollector.getMetric(PidId.AMBIENT_TEMP_PID_ID)
-                    atmPressure = metricsCollector.getMetric(PidId.ATM_PRESSURE_PID_ID)
-                    torque = metricsCollector.getMetric(PidId.ENGINE_TORQUE_PID_ID)
-                    intakePressure = metricsCollector.getMetric(PidId.INTAKE_PRESSURE_PID_ID)
+                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
+                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+                    intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
                     vehicleSpeed = metricsCollector.getMetric(if (dataLoggerPreferences.instance.gmeExtensionsEnabled)
-                        PidId.EXT_VEHICLE_SPEED_PID_ID else PidId.VEHICLE_SPEED_PID_ID)
+                        Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID)
                 })
         }
     }

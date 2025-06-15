@@ -17,7 +17,7 @@
 package org.obd.graphs.bl.query
 
 import android.util.Log
-import org.obd.graphs.bl.datalogger.PidId
+import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
@@ -46,7 +46,7 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
         //decorate with Vehicle Status PID
         if (dataLoggerPreferences.instance.vehicleStatusPanelEnabled ||
             dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
-            pids.add(PidId.VEHICLE_STATUS_PID_ID.value)
+            pids.add(Pid.VEHICLE_STATUS_PID_ID.id)
         }
         return pids
     }
