@@ -61,8 +61,8 @@ private val toString: ToStringHashMap.ToStringConverter<String, Boolean> = objec
 internal data class MetricGeneratorDefinition(val pid: PidDefinition, val data: MutableList<*>, var counter: Int = 0)
 
 internal val baseMetrics = mutableMapOf(
-    PidId.EXT_DYNAMIC_SELECTOR_PID_ID to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(PidId.EXT_DYNAMIC_SELECTOR_PID_ID.value),
+    PidId.DYNAMIC_SELECTOR_PID_ID to MetricGeneratorDefinition(
+        pid = dataLogger.getPidDefinitionRegistry().findBy(PidId.DYNAMIC_SELECTOR_PID_ID.value),
         data = mutableListOf<Number>().apply {
             (0..100).forEach{ _ ->
                 add(0)
@@ -78,8 +78,8 @@ internal val baseMetrics = mutableMapOf(
 
     }),
 
-    PidId.EXT_ATM_PRESSURE_PID_ID.value to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(PidId.EXT_ATM_PRESSURE_PID_ID.value),
+    PidId.ATM_PRESSURE_PID_ID.value to MetricGeneratorDefinition(
+        pid = dataLogger.getPidDefinitionRegistry().findBy(PidId.ATM_PRESSURE_PID_ID.value),
         data = mutableListOf<Number>().apply {
             (0..125).forEach{ _ ->
                 add(1020)
@@ -89,8 +89,8 @@ internal val baseMetrics = mutableMapOf(
             }
         }),
 
-    PidId.EXT_AMBIENT_TEMP_PID_ID.value to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(PidId.EXT_AMBIENT_TEMP_PID_ID.value),
+    PidId.AMBIENT_TEMP_PID_ID.value to MetricGeneratorDefinition(
+        pid = dataLogger.getPidDefinitionRegistry().findBy(PidId.AMBIENT_TEMP_PID_ID.value),
         data = mutableListOf<Number>().apply {
             (5..25).forEach{
                 add(it)

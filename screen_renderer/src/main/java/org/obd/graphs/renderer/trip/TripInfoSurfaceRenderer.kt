@@ -74,8 +74,8 @@ internal class TripInfoSurfaceRenderer(
                 tripInfo = tripInfo.apply {
                     airTemp = metricsCollector.getMetric(PidId.POST_IC_AIR_TEMP_PID_ID)
                     totalMisfires = metricsCollector.getMetric(PidId.TOTAL_MISFIRES_PID_ID)
-                    ambientTemp = metricsCollector.getMetric(PidId.EXT_AMBIENT_TEMP_PID_ID)
-                    atmPressure = metricsCollector.getMetric(PidId.EXT_ATM_PRESSURE_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(PidId.AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(PidId.ATM_PRESSURE_PID_ID)
                     fuellevel = metricsCollector.getMetric(PidId.FUEL_LEVEL_PID_ID)
                     fuelConsumption = metricsCollector.getMetric(PidId.FUEL_CONSUMPTION_PID_ID)
                     coolantTemp = metricsCollector.getMetric(PidId.COOLANT_TEMP_PID_ID)

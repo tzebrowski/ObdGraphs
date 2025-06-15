@@ -264,7 +264,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         if (drawContextInfo) {
             metricsCollector?.let {
 
-                metricsCollector.getMetric(PidId.EXT_AMBIENT_TEMP_PID_ID)?.let {
+                metricsCollector.getMetric(PidId.AMBIENT_TEMP_PID_ID)?.let {
                     marginLeft += getTextWidth(text, statusPaint) + 12F
                     text = ambientTempLabel
                     drawText(
@@ -289,7 +289,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     )
                 }
 
-                metricsCollector.getMetric(PidId.EXT_ATM_PRESSURE_PID_ID)?.let {
+                metricsCollector.getMetric(PidId.ATM_PRESSURE_PID_ID)?.let {
                     marginLeft += getTextWidth(text, statusPaint) + 12F
                     text = atmPressureLabel
                     drawText(

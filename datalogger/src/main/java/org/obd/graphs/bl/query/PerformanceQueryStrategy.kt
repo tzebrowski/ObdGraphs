@@ -25,8 +25,8 @@ private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selecte
 internal class PerformanceQueryStrategy : QueryStrategy() {
     private val defaults =
         setOf(
-            PidId.EXT_ATM_PRESSURE_PID_ID,
-            PidId.EXT_AMBIENT_TEMP_PID_ID,
+            PidId.ATM_PRESSURE_PID_ID,
+            PidId.AMBIENT_TEMP_PID_ID,
             PidId.GEARBOX_OIL_TEMP_PID_ID,
             PidId.OIL_TEMP_PID_ID,
             PidId.COOLANT_TEMP_PID_ID,
@@ -34,7 +34,7 @@ internal class PerformanceQueryStrategy : QueryStrategy() {
             PidId.POST_IC_AIR_TEMP_PID_ID,
             PidId.ENGINE_TORQUE_PID_ID,
             PidId.INTAKE_PRESSURE_PID_ID,
-            PidId.EXT_DYNAMIC_SELECTOR_PID_ID,
+            PidId.DYNAMIC_SELECTOR_PID_ID,
             PidId.GAS_PID_ID,
             PidId.WCA_TEMP_PID_ID,
             PidId.PRE_IC_AIR_TEMP_PID_ID,

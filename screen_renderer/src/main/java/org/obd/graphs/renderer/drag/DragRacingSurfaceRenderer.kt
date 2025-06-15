@@ -91,8 +91,8 @@ internal class DragRacingSurfaceRenderer(
                 pTop = top,
                 dragRacingResults = dragRaceResults,dragRaceDetails = dragRaceDetails.apply {
                     gas = metricsCollector.getMetric(PidId.GAS_PID_ID)
-                    ambientTemp = metricsCollector.getMetric(PidId.EXT_AMBIENT_TEMP_PID_ID)
-                    atmPressure = metricsCollector.getMetric(PidId.EXT_ATM_PRESSURE_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(PidId.AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(PidId.ATM_PRESSURE_PID_ID)
                     torque = metricsCollector.getMetric(PidId.ENGINE_TORQUE_PID_ID)
                     intakePressure = metricsCollector.getMetric(PidId.INTAKE_PRESSURE_PID_ID)
                     vehicleSpeed = metricsCollector.getMetric(if (dataLoggerPreferences.instance.gmeExtensionsEnabled)

@@ -73,8 +73,8 @@ internal class PerformanceSurfaceRenderer(
                 performanceInfoDetails = performanceInfoDetails.apply {
                     gas = metricsCollector.getMetric(PidId.GAS_PID_ID)
                     postICAirTemp = metricsCollector.getMetric(PidId.POST_IC_AIR_TEMP_PID_ID)
-                    ambientTemp = metricsCollector.getMetric(PidId.EXT_AMBIENT_TEMP_PID_ID)
-                    atmPressure = metricsCollector.getMetric(PidId.EXT_ATM_PRESSURE_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(PidId.AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(PidId.ATM_PRESSURE_PID_ID)
                     coolantTemp = metricsCollector.getMetric(PidId.COOLANT_TEMP_PID_ID)
                     exhaustTemp = metricsCollector.getMetric(PidId.EXHAUST_TEMP_PID_ID)
                     oilTemp = metricsCollector.getMetric(PidId.OIL_TEMP_PID_ID)

@@ -26,10 +26,10 @@ internal class DragRacingQueryStrategy : QueryStrategy() {
                 val pids =
                     mutableSetOf(
                         PidId.EXT_VEHICLE_SPEED_PID_ID,
-                        PidId.EXT_ENGINE_RPM_PID_ID,
-                        PidId.EXT_MEASURED_INTAKE_PRESSURE_PID_ID,
-                        PidId.EXT_ATM_PRESSURE_PID_ID,
-                        PidId.EXT_AMBIENT_TEMP_PID_ID,
+                        PidId.EXT_ENGINE_SPEED_PID_ID,
+                        PidId.INTAKE_PRESSURE_PID_ID,
+                        PidId.ATM_PRESSURE_PID_ID,
+                        PidId.AMBIENT_TEMP_PID_ID,
                     )
                 if (dataLoggerPreferences.instance.stnExtensionsEnabled) {
                     pids.add(PidId.ENGINE_TORQUE_PID_ID)
@@ -39,7 +39,7 @@ internal class DragRacingQueryStrategy : QueryStrategy() {
             } else {
                 mutableSetOf(
                     PidId.VEHICLE_SPEED_PID_ID,
-                    PidId.ENGINE_RPM_PID_ID,
+                    PidId.ENGINE_SPEED_PID_ID,
                 )
             }
         ).map { it.value }.toMutableSet()
