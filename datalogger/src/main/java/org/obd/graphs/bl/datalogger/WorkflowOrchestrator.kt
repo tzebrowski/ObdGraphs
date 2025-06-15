@@ -442,7 +442,7 @@ internal class WorkflowOrchestrator internal constructor() {
             val overrideSettings = PidDefinitionOverride.builder().priority(0).build()
             builder = builder
                     .override(PidId.EXT_VEHICLE_SPEED_PID_ID.value,overrideSettings)
-                    .override(PidId.EXT_MEASURED_INTAKE_PRESSURE_PID_ID.value,overrideSettings)
+                    .override(PidId.INTAKE_PRESSURE_PID_ID.value,overrideSettings)
                     .override(PidId.ATM_PRESSURE_PID_ID.value,overrideSettings)
                     .override(PidId.AMBIENT_TEMP_PID_ID.value,overrideSettings)
                     .override(PidId.ENGINE_TORQUE_PID_ID.value,overrideSettings)
