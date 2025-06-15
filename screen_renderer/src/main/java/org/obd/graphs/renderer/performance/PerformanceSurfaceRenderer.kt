@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
 
@@ -70,20 +71,20 @@ internal class PerformanceSurfaceRenderer(
                 left = left,
                 top = top,
                 performanceInfoDetails = performanceInfoDetails.apply {
-                    gas = metricsCollector.getMetric(namesRegistry.getGasPedalPID())
-                    postICAirTemp = metricsCollector.getMetric(namesRegistry.getPostICAirTempPID())
-                    ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
-                    atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
-                    coolantTemp = metricsCollector.getMetric(namesRegistry.getCoolantTempPID())
-                    exhaustTemp = metricsCollector.getMetric(namesRegistry.getExhaustTempPID())
-                    oilTemp = metricsCollector.getMetric(namesRegistry.getOilTempPID())
-                    gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
-                    torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
-                    intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
-                    preICAirTemp = metricsCollector.getMetric(namesRegistry.getPreICAirPID())
-                    wcacTemp = metricsCollector.getMetric(namesRegistry.getWcaTempPID())
-                    vehicleSpeed = metricsCollector.getMetric(namesRegistry.getVehicleSpeedPID())
-                    gearEngaged =  metricsCollector.getMetric(namesRegistry.getGearEngagedPID())
+                    gas = metricsCollector.getMetric(PidId.GAS_PID_ID)
+                    postICAirTemp = metricsCollector.getMetric(PidId.POST_IC_AIR_TEMP_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(PidId.AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(PidId.ATM_PRESSURE_PID_ID)
+                    coolantTemp = metricsCollector.getMetric(PidId.COOLANT_TEMP_PID_ID)
+                    exhaustTemp = metricsCollector.getMetric(PidId.EXHAUST_TEMP_PID_ID)
+                    oilTemp = metricsCollector.getMetric(PidId.OIL_TEMP_PID_ID)
+                    gearboxOilTemp = metricsCollector.getMetric(PidId.GEARBOX_OIL_TEMP_PID_ID)
+                    torque = metricsCollector.getMetric(PidId.ENGINE_TORQUE_PID_ID)
+                    intakePressure = metricsCollector.getMetric(PidId.INTAKE_PRESSURE_PID_ID)
+                    preICAirTemp = metricsCollector.getMetric(PidId.PRE_IC_AIR_TEMP_PID_ID)
+                    wcacTemp = metricsCollector.getMetric(PidId.WCA_TEMP_PID_ID)
+                    vehicleSpeed = metricsCollector.getMetric(PidId.EXT_VEHICLE_SPEED_PID_ID)
+                    gearEngaged =  metricsCollector.getMetric(PidId.GEAR_ENGAGED_PID_ID)
                 }
             )
         }

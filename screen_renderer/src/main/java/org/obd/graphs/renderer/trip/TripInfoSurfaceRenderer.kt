@@ -22,6 +22,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
 
@@ -71,24 +72,24 @@ internal class TripInfoSurfaceRenderer(
                 left = left,
                 top = top,
                 tripInfo = tripInfo.apply {
-                    airTemp = metricsCollector.getMetric(namesRegistry.getPostICAirTempPID())
-                    totalMisfires = metricsCollector.getMetric(namesRegistry.getTotalMisfiresPID())
-                    ambientTemp = metricsCollector.getMetric(namesRegistry.getAmbientTempPID())
-                    atmPressure = metricsCollector.getMetric(namesRegistry.getAtmPressurePID())
-                    fuellevel = metricsCollector.getMetric(namesRegistry.getFuelLevelPID())
-                    fuelConsumption = metricsCollector.getMetric(namesRegistry.getFuelConsumptionPID())
-                    coolantTemp = metricsCollector.getMetric(namesRegistry.getCoolantTempPID())
-                    exhaustTemp = metricsCollector.getMetric(namesRegistry.getExhaustTempPID())
-                    oilTemp = metricsCollector.getMetric(namesRegistry.getOilTempPID())
-                    gearboxOilTemp = metricsCollector.getMetric(namesRegistry.getGearboxOilTempPID())
-                    oilLevel = metricsCollector.getMetric(namesRegistry.getOilLevelPID())
-                    torque = metricsCollector.getMetric(namesRegistry.getTorquePID())
-                    intakePressure = metricsCollector.getMetric(namesRegistry.getIntakePressurePID())
-                    distance = metricsCollector.getMetric(namesRegistry.getDistancePID())
-                    ibs = metricsCollector.getMetric(namesRegistry.getIbsPID())
-                    batteryVoltage = metricsCollector.getMetric(namesRegistry.getBatteryVoltagePID())
-                    oilPressure = metricsCollector.getMetric(namesRegistry.getOilPressurePID())
-                    oilDegradation = metricsCollector.getMetric(namesRegistry.getOilDegradationPID())
+                    airTemp = metricsCollector.getMetric(PidId.POST_IC_AIR_TEMP_PID_ID)
+                    totalMisfires = metricsCollector.getMetric(PidId.TOTAL_MISFIRES_PID_ID)
+                    ambientTemp = metricsCollector.getMetric(PidId.AMBIENT_TEMP_PID_ID)
+                    atmPressure = metricsCollector.getMetric(PidId.ATM_PRESSURE_PID_ID)
+                    fuellevel = metricsCollector.getMetric(PidId.FUEL_LEVEL_PID_ID)
+                    fuelConsumption = metricsCollector.getMetric(PidId.FUEL_CONSUMPTION_PID_ID)
+                    coolantTemp = metricsCollector.getMetric(PidId.COOLANT_TEMP_PID_ID)
+                    exhaustTemp = metricsCollector.getMetric(PidId.EXHAUST_TEMP_PID_ID)
+                    oilTemp = metricsCollector.getMetric(PidId.OIL_TEMP_PID_ID)
+                    gearboxOilTemp = metricsCollector.getMetric(PidId.GEARBOX_OIL_TEMP_PID_ID)
+                    oilLevel = metricsCollector.getMetric(PidId.OIL_LEVEL_PID_ID)
+                    torque = metricsCollector.getMetric(PidId.ENGINE_TORQUE_PID_ID)
+                    intakePressure = metricsCollector.getMetric(PidId.INTAKE_PRESSURE_PID_ID)
+                    distance = metricsCollector.getMetric( PidId.DISTANCE_PID_ID)
+                    ibs = metricsCollector.getMetric(PidId.IBS_PID_ID)
+                    batteryVoltage = metricsCollector.getMetric(PidId.BATTERY_VOLTAGE_PID_ID)
+                    oilPressure = metricsCollector.getMetric(PidId.OIL_PRESSURE_PID_ID)
+                    oilDegradation = metricsCollector.getMetric(PidId.OIL_DEGRADATION_PID_ID)
                 }
             )
         }

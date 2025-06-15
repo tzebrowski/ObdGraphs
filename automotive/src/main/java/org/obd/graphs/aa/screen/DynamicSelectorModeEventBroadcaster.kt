@@ -18,7 +18,7 @@ package org.obd.graphs.aa.screen
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.bl.query.isDynamicSelector
+import org.obd.graphs.bl.datalogger.isDynamicSelector
 import org.obd.graphs.isNumber
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.toInt

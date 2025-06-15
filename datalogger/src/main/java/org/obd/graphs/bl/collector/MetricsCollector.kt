@@ -16,12 +16,13 @@
  */
 package org.obd.graphs.bl.collector
 
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.metrics.api.model.ObdMetric
 
 interface MetricsCollector {
     fun reset()
 
-    fun getMetric(id: Long,enabled: Boolean = true): Metric?
+    fun getMetric(id: PidId, enabled: Boolean = true): Metric?
 
     fun getMetrics(enabled: Boolean = true): List<Metric>
 

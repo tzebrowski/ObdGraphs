@@ -18,6 +18,7 @@ package org.obd.graphs.bl.collector
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.PidId
 import org.obd.metrics.api.model.ObdMetric
 import java.util.*
 import kotlin.Comparator
@@ -38,13 +39,12 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
         }
     }
 
-    override fun getMetric(id: Long, enabled: Boolean): Metric?   =
-        if (metrics.containsKey(id) && metrics[id]!!.enabled) {
-            metrics[id]
+    override fun getMetric(id: PidId, enabled: Boolean): Metric?   =
+        if (metrics.containsKey(id.value) && metrics[id.value]!!.enabled) {
+            metrics[id.value]
         } else {
             null
         }
-
 
     override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
         Log.i(LOG_KEY, "Updating visible PIDs=$enabled with order=$order")

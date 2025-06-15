@@ -16,28 +16,31 @@
  */
 package org.obd.graphs.bl.query
 
- import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.PidId
+import org.obd.graphs.bl.datalogger.dataLoggerPreferences
 
 internal class DragRacingQueryStrategy : QueryStrategy() {
-    override fun getPIDs(): MutableSet<Long> {
-        return if (namesRegistry.isGMEExtensionsEnabled()) {
-            val pids =  mutableSetOf(
-                namesRegistry.getVehicleSpeedPID(),
-                namesRegistry.getEngineRpmPID(),
-                namesRegistry.getMeasuredIntakePressurePID(),
-                namesRegistry.getAtmPressurePID(),
-                namesRegistry.getAmbientTempPID(),
-            )
-            if (dataLoggerPreferences.instance.stnExtensionsEnabled){
-                pids.add(namesRegistry.getTorquePID())
-                pids.add(namesRegistry.getGasPedalPID())
+    override fun getPIDs(): MutableSet<Long> =
+        (
+            if (dataLoggerPreferences.instance.gmeExtensionsEnabled) {
+                val pids =
+                    mutableSetOf(
+                        PidId.EXT_VEHICLE_SPEED_PID_ID,
+                        PidId.EXT_ENGINE_SPEED_PID_ID,
+                        PidId.INTAKE_PRESSURE_PID_ID,
+                        PidId.ATM_PRESSURE_PID_ID,
+                        PidId.AMBIENT_TEMP_PID_ID,
+                    )
+                if (dataLoggerPreferences.instance.stnExtensionsEnabled) {
+                    pids.add(PidId.ENGINE_TORQUE_PID_ID)
+                    pids.add(PidId.GAS_PID_ID)
+                }
+                pids
+            } else {
+                mutableSetOf(
+                    PidId.VEHICLE_SPEED_PID_ID,
+                    PidId.ENGINE_SPEED_PID_ID,
+                )
             }
-            pids
-        } else {
-            mutableSetOf(
-                namesRegistry.getVehicleSpeedPID(),
-                namesRegistry.getEngineRpmPID()
-            )
-        }
-    }
+        ).map { it.value }.toMutableSet()
 }

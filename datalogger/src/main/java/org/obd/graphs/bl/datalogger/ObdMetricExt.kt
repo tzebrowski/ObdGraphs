@@ -14,23 +14,22 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.bl.query
+package org.obd.graphs.bl.datalogger
 
-import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
-import org.obd.graphs.bl.datalogger.PidId
-import org.obd.graphs.preferences.Prefs
+import org.obd.metrics.api.model.ObdMetric
 
+fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == PidId.ATM_PRESSURE_PID_ID.value
 
+fun ObdMetric.isAmbientTemp(): Boolean = command.pid.id == PidId.AMBIENT_TEMP_PID_ID.value
 
-internal class IndividualQueryStrategy : QueryStrategy() {
+fun ObdMetric.isVehicleStatus(): Boolean = command.pid.id == PidId.VEHICLE_STATUS_PID_ID.value
 
-    override fun getPIDs(): MutableSet<Long> {
-        val pids = super.getPIDs()
+fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == PidId.DYNAMIC_SELECTOR_PID_ID.value
 
-        if (Prefs.getBoolean(PREF_DYNAMIC_SELECTOR_ENABLED, false)) {
-            pids.add(PidId.DYNAMIC_SELECTOR_PID_ID.value)
-        }
+fun ObdMetric.isVehicleSpeed(): Boolean =
+    command.pid.id ==
+        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_VEHICLE_SPEED_PID_ID else PidId.VEHICLE_SPEED_PID_ID).value
 
-        return pids
-    }
-}
+fun ObdMetric.isEngineRpm(): Boolean =
+    command.pid.id ==
+        (if (dataLoggerPreferences.instance.gmeExtensionsEnabled) PidId.EXT_ENGINE_SPEED_PID_ID else PidId.ENGINE_SPEED_PID_ID).value

@@ -18,7 +18,10 @@ package org.obd.graphs.bl.drag
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.bl.query.*
+import org.obd.graphs.bl.datalogger.isAmbientTemp
+import org.obd.graphs.bl.datalogger.isAtmPressure
+import org.obd.graphs.bl.datalogger.isEngineRpm
+import org.obd.graphs.bl.datalogger.isVehicleSpeed
 import org.obd.graphs.isNumber
 import org.obd.graphs.toInt
 import org.obd.metrics.api.model.ObdMetric

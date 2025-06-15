@@ -27,7 +27,6 @@ import org.obd.graphs.bl.datalogger.connectors.UsbConnection
 import org.obd.graphs.bl.datalogger.connectors.WifiConnection
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.query.namesRegistry
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.metrics.alert.Alert
@@ -440,11 +439,13 @@ internal class WorkflowOrchestrator internal constructor() {
             )
 
         if (dataLoggerPreferences.instance.stnExtensionsEnabled){
-            builder = builder.override(namesRegistry.getVehicleSpeedPID(),PidDefinitionOverride.builder().priority(0).build())
-                    .override(namesRegistry.getMeasuredIntakePressurePID(),PidDefinitionOverride.builder().priority(0).build())
-                    .override(namesRegistry.getAtmPressurePID(),PidDefinitionOverride.builder().priority(0).build())
-                    .override(namesRegistry.getAmbientTempPID(),PidDefinitionOverride.builder().priority(0).build())
-                    .override(namesRegistry.getTorquePID(),PidDefinitionOverride.builder().priority(4).build())
+            val overrideSettings = PidDefinitionOverride.builder().priority(0).build()
+            builder = builder
+                    .override(PidId.EXT_VEHICLE_SPEED_PID_ID.value,overrideSettings)
+                    .override(PidId.INTAKE_PRESSURE_PID_ID.value,overrideSettings)
+                    .override(PidId.ATM_PRESSURE_PID_ID.value,overrideSettings)
+                    .override(PidId.AMBIENT_TEMP_PID_ID.value,overrideSettings)
+                    .override(PidId.ENGINE_TORQUE_PID_ID.value,overrideSettings)
         }
 
         return builder.build()
