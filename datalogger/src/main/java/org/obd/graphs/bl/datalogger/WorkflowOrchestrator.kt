@@ -330,6 +330,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun getDefaultAdjustments(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Adjustments.builder()
         .debugEnabled(preferences.debugLogging)
+        .override(Pid.DISTANCE_PID_ID.id, PidDefinitionCustomization.builder().lastInTheQuery(true).build())
         .formulaExternalParams(FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize).build())
         .errorsPolicy(
             ErrorsPolicy.builder()
@@ -439,12 +440,12 @@ internal class WorkflowOrchestrator internal constructor() {
             )
 
         if (dataLoggerPreferences.instance.stnExtensionsEnabled){
-            val highPriorityOverridePolicy = PidDefinitionOverride.builder().priority(0).build()
+            val highPriorityOverridePolicy = PidDefinitionCustomization.builder().priority(0).build()
             builder = builder
                     .override(Pid.ATM_PRESSURE_PID_ID.id,highPriorityOverridePolicy)
                     .override(Pid.AMBIENT_TEMP_PID_ID.id,highPriorityOverridePolicy)
                     .override(Pid.DYNAMIC_SELECTOR_PID_ID.id,highPriorityOverridePolicy)
-                    .override(Pid.ENGINE_TORQUE_PID_ID.id,PidDefinitionOverride.builder().priority(4).build())
+                    .override(Pid.ENGINE_TORQUE_PID_ID.id,PidDefinitionCustomization.builder().priority(4).build())
         }
 
         return builder.build()

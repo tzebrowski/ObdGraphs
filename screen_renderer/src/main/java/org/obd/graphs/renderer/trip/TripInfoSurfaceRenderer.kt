@@ -85,7 +85,7 @@ internal class TripInfoSurfaceRenderer(
                     oilLevel = metricsCollector.getMetric(Pid.OIL_LEVEL_PID_ID)
                     torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
                     intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                    distance = metricsCollector.getMetric( Pid.DISTANCE_PID_ID)
+                    distance = metricsCollector.getMetric(Pid.DISTANCE_PID_ID)
                     ibs = metricsCollector.getMetric(Pid.IBS_PID_ID)
                     batteryVoltage = metricsCollector.getMetric(Pid.BATTERY_VOLTAGE_PID_ID)
                     oilPressure = metricsCollector.getMetric(Pid.OIL_PRESSURE_PID_ID)
