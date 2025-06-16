@@ -167,7 +167,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                     metric.min.format(pid = metric.pid()),
                     left1,
                     top1,
-                    Color.LTGRAY,
+                    minValueColorScheme(metric),
                     tt,
                     valuePaint
                 )
@@ -187,7 +187,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                     metric.max.format(metric.pid()),
                     left1,
                     top1,
-                    Color.LTGRAY,
+                    maxValueColorScheme(metric),
                     tt,
                     valuePaint
                 )
