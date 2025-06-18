@@ -41,6 +41,7 @@
         android:smallScreens="false" />
 
     <application
+        android:name=".MyApplication"
         android:requestLegacyExternalStorage="true"
         android:largeHeap="true"
         android:hardwareAccelerated="true"

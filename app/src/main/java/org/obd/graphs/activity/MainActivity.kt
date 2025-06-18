@@ -38,8 +38,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.hilt.android.AndroidEntryPoint
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.drag.DragRacingResultRegistry
+import org.obd.graphs.bl.drag.SimpleInt
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
@@ -47,11 +50,17 @@ import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import javax.inject.Inject
 
 
-const val LOG_TAG = "MainActivity"
+ const val LOG_TAG = "MainActivity"
+
+ @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
+
+    @Inject
+    lateinit var simpleInt: SimpleInt
 
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -109,6 +118,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupStrictMode()
         super.onCreate(savedInstanceState)
 
+        simpleInt.foo()
         setActivityContext(this)
         initCache()
         setContentView(R.layout.activity_main)

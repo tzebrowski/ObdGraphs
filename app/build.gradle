@@ -4,12 +4,14 @@ plugins {
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
     id 'com.diffplug.spotless'
+    id 'com.google.dagger.hilt.android'
+    id 'com.google.devtools.ksp'
 }
 
 apply from: "$project.rootDir/spotless.gradle"
 
 android {
-    compileSdk rootProject.ext.compileSdkVersion
+    compileSdk 34
 
     packaging {
         resources {
@@ -18,6 +20,9 @@ android {
             it.excludes += '**/highlevel.jpg'
             it.excludes += '**/component.png'
             it.excludes += '**/model.png'
+
+            it.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+//            it.excludes += "/META-INF/gradle/incremental.annotation.processors"
         }
     }
 
@@ -70,7 +75,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 183
+            versionCode 184
         }
 
         giuliaPerformanceMonitor {
@@ -133,11 +138,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     lint {
         disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor', 'IconLauncherShape'
@@ -150,6 +155,7 @@ android {
 }
 
 dependencies {
+
     implementation project(':screen_renderer')
     implementation project(":datalogger")
     implementation project(":common")
@@ -159,6 +165,10 @@ dependencies {
     debugImplementation project(":automotive")
     releaseImplementation project(":automotive")
     implementation project(":dragracing")
+
+
+    implementation 'com.google.dagger:hilt-android:2.51.1'
+    ksp "com.google.dagger:hilt-compiler:2.51.1"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.2.1'
