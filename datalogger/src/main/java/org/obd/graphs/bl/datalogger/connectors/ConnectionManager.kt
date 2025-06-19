@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,7 +30,6 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.transport.AdapterConnection
 
 internal class ConnectionManager {
-
     fun obtain(): AdapterConnection? =
         when (dataLoggerPreferences.instance.connectionType) {
             "wifi" -> wifiConnection()
@@ -83,7 +82,7 @@ internal class ConnectionManager {
                 Log.w(
                     LOG_TAG,
                     "Preferences selected WIFI SSID ${preferences.wifiSSID} " +
-                            "is different than current connected ${network.currentSSID}",
+                        "is different than current connected ${network.currentSSID}",
                 )
                 sendBroadcastEvent(DATA_LOGGER_WIFI_INCORRECT)
                 return null
