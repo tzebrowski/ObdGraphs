@@ -33,7 +33,7 @@ import org.obd.graphs.renderer.*
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
 
- data class DragRaceDetails(
+ internal data class DragRaceDetails(
      var ambientTemp: Metric? = null,
      var atmPressure: Metric? = null,
      var intakePressure: Metric? = null,
