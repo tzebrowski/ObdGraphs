@@ -97,6 +97,18 @@ internal val baseMetrics = mutableMapOf(
             }
         }),
 
+
+    Pid.GAS_PID_ID.id to MetricGeneratorDefinition(
+        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.GAS_PID_ID.id),
+        data = mutableListOf<Number>().apply {
+            (0..100).forEach{ _ ->
+                add(50)
+            }
+            (50..100).forEach{
+                add(it)
+            }
+        }),
+
     Pid.VEHICLE_SPEED_PID_ID.id to MetricGeneratorDefinition(
         pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.VEHICLE_SPEED_PID_ID.id),
         data = mutableListOf<Number>().apply {
