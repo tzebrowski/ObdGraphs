@@ -31,7 +31,8 @@ import org.obd.metrics.codec.GeneratorPolicy
 import java.io.File
 
 internal class AdjustmentsStrategy {
-    fun getAdjustments(
+
+    fun findAdjustmentFor(
         strategy: QueryStrategyType,
         preferences: DataLoggerPreferences = dataLoggerPreferences.instance,
     ): Adjustments =
