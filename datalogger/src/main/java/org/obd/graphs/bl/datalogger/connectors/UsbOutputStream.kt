@@ -22,7 +22,8 @@ import java.io.IOException
 import java.io.OutputStream
 
 private const val LOGGER_TAG = "USB_CONNECTION"
-class UsbOutputStream(val port: UsbSerialPort) : OutputStream() {
+
+ internal class UsbOutputStream(val port: UsbSerialPort) : OutputStream() {
     override fun write(p0: Int) {
     }
 

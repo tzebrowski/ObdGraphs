@@ -22,9 +22,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.*
-import org.obd.graphs.bl.datalogger.connectors.BluetoothConnection
-import org.obd.graphs.bl.datalogger.connectors.UsbConnection
-import org.obd.graphs.bl.datalogger.connectors.WifiConnection
+import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
@@ -43,7 +41,6 @@ import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
-import org.obd.metrics.transport.AdapterConnection
 import java.util.*
 
 private const val JS_ENGINE_NAME = "rhino"
@@ -134,9 +131,9 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     private var status = WorkflowStatus.Disconnected
-
     private val metricsProcessorsRegistry = mutableSetOf<MetricsProcessor>()
     private val adjustmentsStrategy = AdjustmentsStrategy()
+    private val connectionManager = ConnectionManager()
 
     fun observe(metricsProcessor: MetricsProcessor) {
         if (metricsProcessorsRegistry.contains(metricsProcessor)){
@@ -188,7 +185,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
         Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
-        connection()?.run {
+        connectionManager.obtain()?.run {
             val status = workflow.start(
                 this, dataLoggerQuery, init(),
                 adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
@@ -200,7 +197,7 @@ internal class WorkflowOrchestrator internal constructor() {
     fun executeRoutine(query: Query) {
         currentQuery = query
 
-        connection()?.run {
+        connectionManager.obtain()?.run {
             val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
             Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
 
@@ -240,71 +237,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun connection(): AdapterConnection? =
-        when (dataLoggerPreferences.instance.connectionType) {
-            "wifi" -> wifiConnection()
-            "bluetooth" -> bluetoothConnection()
-            "usb" -> getContext()?.let { UsbConnection.of(context = it) }
-            else -> {
-                null
-            }
-        }
-
-    private fun bluetoothConnection(): AdapterConnection? = try {
-        val deviceName = dataLoggerPreferences.instance.adapterId
-        Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
-
-        if (deviceName.isEmpty()) {
-            sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
-            null
-        } else {
-            if (network.findBluetoothAdapterByName(deviceName) == null) {
-                Log.e(LOG_TAG, "Did not find Bluetooth Adapter: $deviceName")
-                sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
-                null
-            } else {
-                BluetoothConnection(deviceName)
-            }
-        }
-    } catch (e: Exception) {
-        Log.e(LOG_TAG, "Error occurred during establishing the connection $e")
-        sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
-        null
-    }
-
-    private fun wifiConnection(preferences: DataLoggerPreferences = dataLoggerPreferences.instance): WifiConnection? {
-        try {
-            Log.i(
-                LOG_TAG,
-                "Creating TCP connection to: ${preferences.tcpHost}:${preferences.tcpPort}."
-            )
-
-            Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${preferences.wifiSSID}")
-            Log.i(LOG_TAG, "Current connected WIFI SSID ${network.currentSSID}")
-
-            if (preferences.wifiSSID.isEmpty()) {
-                Log.d(LOG_TAG, "Target WIFI SSID is not specified in the prefs section. Connecting to the default one.")
-            } else if (network.currentSSID.isNullOrBlank()) {
-                sendBroadcastEvent(DATA_LOGGER_WIFI_NOT_CONNECTED)
-                return null
-            } else if (preferences.wifiSSID != network.currentSSID) {
-                Log.w(
-                    LOG_TAG,
-                    "Preferences selected WIFI SSID ${preferences.wifiSSID} " +
-                            "is different than current connected ${network.currentSSID}"
-                )
-                sendBroadcastEvent(DATA_LOGGER_WIFI_INCORRECT)
-                return null
-            }
-            return WifiConnection.of()
-
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Error occurred during establishing the connection $e")
-            sendBroadcastEvent(DATA_LOGGER_ERROR_CONNECT_EVENT)
-        }
-        return null
-    }
-
     private fun init(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Init.builder()
         .delayAfterInit(preferences.initDelay)
         .delayAfterReset(preferences.delayAfterReset)
@@ -313,8 +245,6 @@ internal class WorkflowOrchestrator internal constructor() {
         }.toMutableList())
         .protocol(Init.Protocol.valueOf(preferences.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
-
-
 
     private fun workflow() = Workflow.instance()
         .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build())

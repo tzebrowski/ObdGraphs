@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ private const val TERMINATOR_CHAR = '>'
 private const val MAX_READ_SIZE = 16 * 1024
 private const val LOGGER_TAG = "USB_CONNECTION"
 
-class UsbInputStream(val port: UsbSerialPort) : InputStream() {
+internal class UsbInputStream(val port: UsbSerialPort) : InputStream() {
 
     private val buffer =
         ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }
@@ -71,7 +71,7 @@ class UsbInputStream(val port: UsbSerialPort) : InputStream() {
         }
         bytesRead = nread
         ts = System.currentTimeMillis() - ts
-        Log.v(LOGGER_TAG,"Fill buffer time: ${ts}ms")
+        Log.v(LOGGER_TAG, "Fill buffer time: ${ts}ms")
 
         if (bytesRead == 0) {
             return -1

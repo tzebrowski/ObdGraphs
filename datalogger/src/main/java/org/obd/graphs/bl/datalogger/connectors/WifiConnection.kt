@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 
-class WifiConnection(private val inetSocketAddress: InetSocketAddress) : AdapterConnection {
+internal class WifiConnection(private val inetSocketAddress: InetSocketAddress) : AdapterConnection {
 
     private lateinit var socket: Socket
     private lateinit var inputStream: InputStream

@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -33,7 +33,7 @@ const val IO_TIMEOUT = 35
 
 data class SerialConnectionSettings(val baudRate: Int)
 
-class UsbConnection(
+internal class UsbConnection(
     val context: Context,
     private val serialConnectionSettings: SerialConnectionSettings
 ) : AdapterConnection {
@@ -49,7 +49,7 @@ class UsbConnection(
 
         if (availableDrivers.isEmpty()) {
             Log.e(LOGGER_TAG, "No USB devices connected.")
-            throw  IOException("No USB devices connected")
+            throw IOException("No USB devices connected")
         }
 
         try {

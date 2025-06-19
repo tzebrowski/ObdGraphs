@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 private const val LOGGER_TAG = "BluetoothConnection"
 private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-class BluetoothConnection(private val deviceName: String) : AdapterConnection {
+ internal class BluetoothConnection(private val deviceName: String) : AdapterConnection {
 
     private var input: InputStream? = null
     private var output: OutputStream? = null
