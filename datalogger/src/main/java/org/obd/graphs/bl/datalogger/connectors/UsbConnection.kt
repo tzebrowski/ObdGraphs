@@ -31,13 +31,14 @@ import java.io.OutputStream
 private const val LOGGER_TAG = "USB_CONNECTION"
 const val IO_TIMEOUT = 35
 
-data class SerialConnectionSettings(val baudRate: Int)
+data class SerialConnectionSettings(
+    val baudRate: Int,
+)
 
-class UsbConnection(
+internal class UsbConnection(
     val context: Context,
-    private val serialConnectionSettings: SerialConnectionSettings
+    private val serialConnectionSettings: SerialConnectionSettings,
 ) : AdapterConnection {
-
     private lateinit var port: UsbSerialPort
     private lateinit var inputStream: InputStream
     private lateinit var outputStream: OutputStream
@@ -49,16 +50,16 @@ class UsbConnection(
 
         if (availableDrivers.isEmpty()) {
             Log.e(LOGGER_TAG, "No USB devices connected.")
-            throw  IOException("No USB devices connected")
+            throw IOException("No USB devices connected")
         }
 
         try {
-
             val driver = availableDrivers[0]
             Log.i(LOGGER_TAG, "Getting access to the USB device")
 
-            val connection = manager!!.openDevice(driver.device)
-                ?: return
+            val connection =
+                manager!!.openDevice(driver.device)
+                    ?: return
 
             port = driver.ports[0]
             port.open(connection)
@@ -67,25 +68,24 @@ class UsbConnection(
                 serialConnectionSettings.baudRate,
                 UsbSerialPort.DATABITS_8,
                 UsbSerialPort.STOPBITS_1,
-                UsbSerialPort.PARITY_NONE
+                UsbSerialPort.PARITY_NONE,
             )
             val device = port.device
             Log.i(
                 LOGGER_TAG,
                 "Allowed to open USB device ${device.deviceId} ${device.deviceName} ${device.deviceProtocol} ${device.deviceClass} " +
-                        "${device.manufacturerName} ${device.productId} ${device.serialNumber} ${device.productName}"
+                    "${device.manufacturerName} ${device.productId} ${device.serialNumber} ${device.productName}",
             )
 
             Log.i(LOGGER_TAG, "USB device is opened ${port.isOpen}")
             Log.i(
                 LOGGER_TAG,
-                "Read Endpoint,attributes ${port.readEndpoint.attributes}"
+                "Read Endpoint,attributes ${port.readEndpoint.attributes}",
             )
             Log.i(
                 LOGGER_TAG,
-                "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}"
+                "Read Endpoint,maxPacketSize ${port.readEndpoint.maxPacketSize}",
             )
-
         } catch (e: SecurityException) {
             Log.e(LOGGER_TAG, "Failed to access device", e)
         }
@@ -101,13 +101,12 @@ class UsbConnection(
     }
 
     @Throws(IOException::class)
-    override fun openOutputStream(): UsbOutputStream? {
-        return if (::port.isInitialized) {
+    override fun openOutputStream(): UsbOutputStream? =
+        if (::port.isInitialized) {
             UsbOutputStream(port).also { outputStream = it }
         } else {
             null
         }
-    }
 
     override fun close() {
         if (::inputStream.isInitialized) {

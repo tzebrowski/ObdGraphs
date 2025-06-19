@@ -25,8 +25,9 @@ private const val TERMINATOR_CHAR = '>'
 private const val MAX_READ_SIZE = 16 * 1024
 private const val LOGGER_TAG = "USB_CONNECTION"
 
-class UsbInputStream(val port: UsbSerialPort) : InputStream() {
-
+internal class UsbInputStream(
+    val port: UsbSerialPort,
+) : InputStream() {
     private val buffer =
         ByteArray(MAX_READ_SIZE).apply { fill(0, 0, size) }
 
@@ -36,12 +37,10 @@ class UsbInputStream(val port: UsbSerialPort) : InputStream() {
     private var buffeReadPos = 0
     private var bytesRead = 0
 
-    override fun read(b: ByteArray): Int {
-        return port.read(b, IO_TIMEOUT)
-    }
+    override fun read(b: ByteArray): Int = port.read(b, IO_TIMEOUT)
 
-    override fun read(): Int {
-        return try {
+    override fun read(): Int =
+        try {
             if (buffeReadPos == 0) {
                 fillBuffer()
             } else {
@@ -51,7 +50,6 @@ class UsbInputStream(val port: UsbSerialPort) : InputStream() {
             Log.i(LOGGER_TAG, "Failed to read data ", e)
             -1
         }
-    }
 
     private fun fillBuffer(): Int {
         var ts = System.currentTimeMillis()
@@ -71,7 +69,7 @@ class UsbInputStream(val port: UsbSerialPort) : InputStream() {
         }
         bytesRead = nread
         ts = System.currentTimeMillis() - ts
-        Log.v(LOGGER_TAG,"Fill buffer time: ${ts}ms")
+        Log.v(LOGGER_TAG, "Fill buffer time: ${ts}ms")
 
         if (bytesRead == 0) {
             return -1
@@ -80,7 +78,9 @@ class UsbInputStream(val port: UsbSerialPort) : InputStream() {
     }
 
     private fun readFromBuffer(): Int =
-        if (buffeReadPos < bytesRead && buffer[buffeReadPos].toInt()
+        if (buffeReadPos < bytesRead &&
+            buffer[buffeReadPos]
+                .toInt()
                 .toChar() != TERMINATOR_CHAR
         ) {
             buffer[buffeReadPos++].toInt()
