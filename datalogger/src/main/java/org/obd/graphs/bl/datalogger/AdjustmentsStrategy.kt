@@ -30,7 +30,7 @@ import org.obd.metrics.api.model.STNxxExtensions
 import org.obd.metrics.codec.GeneratorPolicy
 import java.io.File
 
-class AdjustmentsStrategy {
+internal class AdjustmentsStrategy {
     fun getAdjustments(
         strategy: QueryStrategyType,
         preferences: DataLoggerPreferences = dataLoggerPreferences.instance,
