@@ -21,9 +21,7 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.getContext
@@ -129,25 +127,4 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
             )
             true
         }
-
-
-    private fun drawText(
-        canvas: Canvas,
-        text: String,
-        left: Float,
-        top: Float,
-        textSize: Float,
-        typeface: Typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL),
-        color: Int = Color.WHITE
-    ) {
-        titlePaint.textSize = textSize
-        titlePaint.typeface = typeface
-        titlePaint.color = color
-        canvas.drawText(
-            text.replace("\n", " "),
-            left,
-            top,
-            titlePaint
-        )
-    }
 }
