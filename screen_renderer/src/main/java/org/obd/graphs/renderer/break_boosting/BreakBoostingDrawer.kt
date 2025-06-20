@@ -73,7 +73,7 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
     ) {
         val marginLeft = 20f
         if (settings.isAA() || isLandscape()) {
-            val gaugeWidth = area.width() / 2.0f
+            val gaugeWidth = area.width() / 1.8f
 
             val marginTop = gaugeWidth / 8
 
@@ -83,7 +83,7 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
             )
 
             drawGauge(
-                torque, canvas, top + marginTop, (area.left + marginLeft + gaugeWidth),
+                torque, canvas, top + marginTop, (area.left + marginLeft + gaugeWidth * 0.8f),
                 gaugeWidth, labelCenterYPadding = 18f
             )
 
