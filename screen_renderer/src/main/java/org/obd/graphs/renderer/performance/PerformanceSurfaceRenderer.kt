@@ -23,7 +23,6 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.CoreSurfaceRenderer
@@ -31,8 +30,7 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.ViewSettings
-import org.obd.graphs.renderer.drag.BreakBoostingDrawer
-import org.obd.graphs.renderer.drag.DragRaceDetails
+import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 
 private const val LOG_TAG = "PerformanceSurfaceRenderer"
 
@@ -46,7 +44,6 @@ internal class PerformanceSurfaceRenderer(
     private val performanceInfoDetails = PerformanceInfoDetails()
     private val performanceDrawer = PerformanceDrawer(context, settings)
     private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)
-    private val dragRaceDetails = DragRaceDetails()
 
     override fun applyMetricsFilter(query: Query) {
         Log.d(LOG_TAG, "Query strategy ${query.getStrategy()}, selected id's: ${query.getIDs()}")
@@ -75,18 +72,17 @@ internal class PerformanceSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
-            if (dragRacingResultRegistry.getResult().readyToRace &&
-                breakBoostingDrawer.isBreakBoosting(dragRaceDetails.apply {
-                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
+            if (breakBoostingDrawer.isBreakBoosting(
+                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID),
                     torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                })) {
+                )) {
 
                 top -= 30f
 
-                breakBoostingDrawer.drawScreen(canvas, area, top, dragRaceDetails.apply {
-                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
+                breakBoostingDrawer.drawScreen(canvas, area, top,
+                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID),
                     torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                })
+                )
 
             } else {
                 performanceDrawer.drawScreen(

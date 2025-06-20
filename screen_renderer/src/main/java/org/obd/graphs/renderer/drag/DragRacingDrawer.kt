@@ -28,6 +28,7 @@ import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.round
@@ -87,9 +88,9 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         if (dragRacingResults.readyToRace){
             drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
 
-            if (breakBoostingDrawer.isBreakBoosting(dragRaceDetails)) {
+            if (breakBoostingDrawer.isBreakBoosting(gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)) {
                 top -= 30f
-                breakBoostingDrawer.drawScreen(canvas, area,  top, dragRaceDetails)
+                breakBoostingDrawer.drawScreen(canvas, area,  top, gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)
             } else {
                 top = drawGauges(top, dragRaceDetails, area, canvas, left)
 

@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer.drag
+package org.obd.graphs.renderer.break_boosting
 
 import android.content.Context
 import android.content.res.Configuration
@@ -25,6 +25,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -50,22 +51,25 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
         canvas: Canvas,
         area: Rect,
         pTop: Float,
-        dragRaceDetails: DragRaceDetails
+        gas: Metric?,
+        torque: Metric?
     ) {
-        drawGaugesBreakBoosting(area, dragRaceDetails, canvas, pTop - 30)
+        drawGaugesBreakBoosting(area, canvas, pTop - 30, gas = gas, torque = torque)
     }
 
-    fun isBreakBoosting(dragRaceDetails: DragRaceDetails) =
-        settings.getDragRacingScreenSettings().displayMetricsEnabled &&
+    fun isBreakBoosting(gas: Metric?,torque: Metric?) =
+        dragRacingResultRegistry.getResult().readyToRace &&
+                settings.getDragRacingScreenSettings().displayMetricsEnabled &&
                 settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled &&
-                dragRaceDetails.gas != null && dragRaceDetails.torque != null && (dragRaceDetails.gas!!.value as Number).toInt() > 0
+                gas != null && torque != null && (gas.value as Number).toInt() > 0
 
 
     private fun drawGaugesBreakBoosting(
         area: Rect,
-        dragRaceDetails: DragRaceDetails,
         canvas: Canvas,
-        top: Float
+        top: Float,
+        gas: Metric?,
+        torque: Metric?
     ) {
         val marginLeft = 20f
         if (settings.isAA() || isLandscape()) {
@@ -74,12 +78,12 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
             val marginTop = gaugeWidth / 8
 
             drawGauge(
-                dragRaceDetails.gas, canvas, top + marginTop, area.left.toFloat() + 2 * marginLeft,
+                gas, canvas, top + marginTop, area.left.toFloat() + 2 * marginLeft,
                 gaugeWidth, labelCenterYPadding = 18f
             )
 
             drawGauge(
-                dragRaceDetails.torque, canvas, top + marginTop, (area.left + marginLeft + gaugeWidth),
+                torque, canvas, top + marginTop, (area.left + marginLeft + gaugeWidth),
                 gaugeWidth, labelCenterYPadding = 18f
             )
 
@@ -87,12 +91,12 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
             val gaugeWidth = area.width().toFloat()
 
             drawGauge(
-                dragRaceDetails.gas, canvas, top, area.left.toFloat() + 2 * marginLeft,
+                gas, canvas, top, area.left.toFloat() + 2 * marginLeft,
                 gaugeWidth, labelCenterYPadding = 18f
             )
 
             drawGauge(
-                dragRaceDetails.torque, canvas, top + gaugeWidth, area.left.toFloat() + 2 * marginLeft,
+                torque, canvas, top + gaugeWidth, area.left.toFloat() + 2 * marginLeft,
                 gaugeWidth, labelCenterYPadding = 18f
             )
         }
