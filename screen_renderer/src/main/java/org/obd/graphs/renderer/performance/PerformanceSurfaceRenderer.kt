@@ -73,6 +73,7 @@ internal class PerformanceSurfaceRenderer(
             }
 
             if (breakBoostingDrawer.isBreakBoosting(
+                    breakBoostingSettings = settings.getPerformanceScreenSettings().breakBoostingSettings,
                     gas = metricsCollector.getMetric(Pid.GAS_PID_ID),
                     torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
                 )) {

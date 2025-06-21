@@ -79,7 +79,8 @@ data class DragRacingScreenSettings(
     var metricsFrequencyReadEnabled: Boolean = true,
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var displayMetricsExtendedEnabled: Boolean = false,
-    var fontSize: Int = 32
+    var fontSize: Int = 32,
+    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()
 )
 
 
@@ -88,9 +89,14 @@ data class TripInfoScreenSettings(
     var viewEnabled: Boolean = true
 )
 
+data class BreakBoostingSettings(
+    var viewEnabled: Boolean = true
+)
+
 data class PerformanceScreenSettings(
     var fontSize: Int = 24,
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
+    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()
 )
 
 data class RoutinesScreenSettings(

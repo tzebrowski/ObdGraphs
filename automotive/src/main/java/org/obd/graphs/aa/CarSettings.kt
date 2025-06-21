@@ -120,7 +120,9 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         shiftLightsRevThreshold = Prefs.getS("pref.aa.drag_race.shift_lights.rev_value", "5000").toInt()
         displayMetricsExtendedEnabled = dataLoggerPreferences.instance.gmeExtensionsEnabled
         fontSize = Prefs.getS("pref.aa.drag_race.font_size", "30").toInt()
+        breakBoostingSettings.viewEnabled = Prefs.getBoolean("pref.aa.drag_race.break_boosting.enabled", true)
     }
+
 
     override fun getRoutinesScreenSettings(): RoutinesScreenSettings  = routinesScreenSettings.apply {
         viewEnabled = Prefs.getBoolean("pref.aa.routines.enabled", true)
@@ -134,6 +136,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun getPerformanceScreenSettings(): PerformanceScreenSettings = performanceScreenSettings.apply {
         fontSize = Prefs.getS("pref.aa.performance.font_size", "24").toInt()
         viewEnabled = Prefs.getBoolean("pref.aa.performance.enabled", true)
+        breakBoostingSettings.viewEnabled = Prefs.getBoolean("pref.aa.performance.break_boosting.enabled", true)
     }
 
     override fun getColorTheme(): ColorTheme = colorTheme.apply {

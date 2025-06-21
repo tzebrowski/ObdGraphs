@@ -88,7 +88,8 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         if (dragRacingResults.readyToRace){
             drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
 
-            if (breakBoostingDrawer.isBreakBoosting(gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)) {
+            if (breakBoostingDrawer.isBreakBoosting( breakBoostingSettings = settings.getDragRacingScreenSettings().breakBoostingSettings,
+                    gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)) {
                 top -= 30f
                 breakBoostingDrawer.drawScreen(canvas, area,  top, gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)
             } else {

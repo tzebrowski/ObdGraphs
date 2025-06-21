@@ -215,6 +215,10 @@
 
 
     <string name="pref.aa.performance.category">Performance Screen</string>
+
+    <string name="pref.aa.performance.break_boosting.enabled">Enable Break-Boosting assistance</string>
+    <string name="pref.aa.performance.break_boosting.enabled_summary">When enabled, the brake boosting assistance feature displays full-screen gauges for gas pedal position and gearbox torque.</string>
+
     <string name="pref.aa.performance.enabled">Enable performance screen</string>
     <string name="pref.aa.performance.enabled_summary">Activates the Performance screen, which displays a predefined set of metrics tailored for 2.0 GME engines.</string>
     <string name="pref.aa.performance.select_pids">Select Performance OBD2 PIDs</string>
@@ -233,6 +237,10 @@
     <string name="pref.aa.performance_meter.display_frequency">Display OBD2 Data read frequency</string>
     <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Displays the vehicle speed corresponding to the recorded measurement.</string>
     <string name="pref.aa.performance_meter.shift_lights_enabled">Enable gear shift lights</string>
+
+    <string name="pref.aa.drag_race.break_boosting.enabled">Enable Break-Boosting assistance</string>
+    <string name="pref.aa.drag_race.break_boosting.enabled_summary">When enabled, the brake boosting assistance feature displays full-screen gauges for gas pedal position and gearbox torque.</string>
+
 
     <string name="pref.profile.2_0_GME_extension.enabled">Display additional Gauges with metrics</string>
     <string name="pref.profile.2_0_GME_extension.enabled_summary">For 2.0 GME engines, you can now gather additional metrics such as intake pressure, ambient temperature, and pressure during performance measurements. With STNxxx extensions, engine torque and gas pedal is also displayed, which is useful for brake boosting</string>

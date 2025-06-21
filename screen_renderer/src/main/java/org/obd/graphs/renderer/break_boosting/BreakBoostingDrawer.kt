@@ -26,6 +26,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.BreakBoostingSettings
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
@@ -55,7 +56,8 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
         drawGaugesBreakBoosting(area, canvas, pTop - 30, gas = gas, torque = torque)
     }
 
-    fun isBreakBoosting(gas: Metric?,torque: Metric?) =
+    fun isBreakBoosting(breakBoostingSettings: BreakBoostingSettings, gas: Metric?,torque: Metric?) =
+        breakBoostingSettings.viewEnabled &&
         dragRacingResultRegistry.getResult().readyToRace &&
                 settings.getDragRacingScreenSettings().displayMetricsEnabled &&
                 settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled &&

@@ -1608,6 +1608,13 @@
                         android:summary="@string/pref.aa.performance.enabled_summary"
                         app:singleLineTitle="false" />
 
+                    <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.performance.break_boosting.enabled"
+                        android:title="@string/pref.aa.performance.break_boosting.enabled"
+                        android:summary="@string/pref.aa.performance.break_boosting.enabled_summary"
+                        app:singleLineTitle="false" />
+
 
                     <PreferenceScreen
                         android:key="pref.performance.displayed_parameter_ids"
@@ -1669,6 +1676,12 @@
                         app:experimental="false"
                         app:singleLineTitle="false" />
 
+                    <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                        android:defaultValue="true"
+                        android:key="pref.aa.drag_race.break_boosting.enabled"
+                        android:title="@string/pref.aa.drag_race.break_boosting.enabled"
+                        android:summary="@string/pref.aa.drag_race.break_boosting.enabled_summary"
+                        app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                         android:defaultValue="true"
@@ -1692,6 +1705,7 @@
                         app:showSeekBarValue="true"
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
+
 
                     <org.obd.graphs.preferences.components.ExtendedSeekBar
                         android:defaultValue="10"
