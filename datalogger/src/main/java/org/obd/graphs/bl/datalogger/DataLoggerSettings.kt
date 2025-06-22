@@ -53,7 +53,7 @@ data class Adapter(
     var adaptiveConnectionEnabled: Boolean = false,
 )
 
-data class GeneralPreferences(
+data class DataLoggerSettings(
     var adapter: Adapter = Adapter(),
     var debugLogging: Boolean = false,
     var dragRacingCommandFrequency: Long = 10,
@@ -67,13 +67,13 @@ data class GeneralPreferences(
     var gmeExtensionsEnabled: Boolean = false,
 )
 
-interface PreferencesManager {
+interface SettingsManager {
     fun reload()
 
-    fun instance(): GeneralPreferences
+    fun instance(): DataLoggerSettings
 }
 
-internal class DefaultPreferencesManager : PreferencesManager {
+internal class DataLoggerSettingsManager : SettingsManager {
     private inner class SharedPreferenceChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
@@ -87,20 +87,20 @@ internal class DefaultPreferencesManager : PreferencesManager {
     }
 
     private var strongReference: SharedPreferenceChangeListener = SharedPreferenceChangeListener()
-    private var instance: GeneralPreferences = GeneralPreferences()
+    private var instance: DataLoggerSettings = DataLoggerSettings()
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
         instance = update()
     }
 
-    override fun instance(): GeneralPreferences = instance
+    override fun instance(): DataLoggerSettings = instance
 
     override fun reload() {
         instance = update()
     }
 
-    private fun update(): GeneralPreferences =
+    private fun update(): DataLoggerSettings =
         instance.apply {
             adapter.connectionType = Prefs.getS("pref.adapter.connection.type", "bluetooth")
             adapter.connectionTimeout =
@@ -166,4 +166,4 @@ internal class DefaultPreferencesManager : PreferencesManager {
         }
 }
 
-val dataLoggerSettings: PreferencesManager by lazy { DefaultPreferencesManager() }
+val dataLoggerSettings: SettingsManager by lazy { DataLoggerSettingsManager() }

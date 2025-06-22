@@ -21,7 +21,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_NOT_CONNECTED
-import org.obd.graphs.bl.datalogger.GeneralPreferences
+import org.obd.graphs.bl.datalogger.DataLoggerSettings
 import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
@@ -63,7 +63,7 @@ internal class ConnectionManager {
             null
         }
 
-    private fun wifiConnection(preferences: GeneralPreferences = dataLoggerSettings.instance()): WifiConnection? {
+    private fun wifiConnection(preferences: DataLoggerSettings = dataLoggerSettings.instance()): WifiConnection? {
         try {
             Log.i(
                 LOG_TAG,
