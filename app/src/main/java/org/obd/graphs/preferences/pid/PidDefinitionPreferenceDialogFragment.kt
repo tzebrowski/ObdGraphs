@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -56,7 +56,7 @@ import org.obd.metrics.pid.PidDefinition
 import java.util.Locale
 
 
- private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
+private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
@@ -109,8 +109,6 @@ open class PidDefinitionPreferenceDialogFragment(
         adjustRecyclerViewHeight(recyclerView, resources.configuration.orientation)
         return root
     }
-
-
 
     private fun adjustRecyclerViewHeight(
         recyclerView: RecyclerView,
