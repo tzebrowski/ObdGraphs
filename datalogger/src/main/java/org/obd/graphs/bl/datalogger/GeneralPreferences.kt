@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -64,20 +64,21 @@ data class GeneralPreferences(
     var fuelTankSize: Int = 58,
     var vehicleStatusPanelEnabled: Boolean = false,
     var vehicleStatusDisconnectWhenOff: Boolean = false,
-    var gmeExtensionsEnabled: Boolean = false
+    var gmeExtensionsEnabled: Boolean = false,
 )
-
 
 interface PreferencesManager {
     fun reload()
+
     fun instance(): GeneralPreferences
 }
 
 internal class DefaultPreferencesManager : PreferencesManager {
-
-    private inner class SharedPreferenceChangeListener :
-        SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    private inner class SharedPreferenceChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
+        override fun onSharedPreferenceChanged(
+            sharedPreferences: SharedPreferences?,
+            key: String?,
+        ) {
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
                 Log.v(LOG_TAG, "Key to update $key")
             }
@@ -93,73 +94,76 @@ internal class DefaultPreferencesManager : PreferencesManager {
         instance = update()
     }
 
-    override fun instance(): GeneralPreferences  = instance
+    override fun instance(): GeneralPreferences = instance
 
     override fun reload() {
         instance = update()
     }
 
-    private fun update(): GeneralPreferences = instance.apply {
-        adapter.connectionType = Prefs.getS("pref.adapter.connection.type", "bluetooth")
-        adapter.connectionTimeout = try {
-            Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
-        } catch (e: Exception) {
-            2000
+    private fun update(): GeneralPreferences =
+        instance.apply {
+            adapter.connectionType = Prefs.getS("pref.adapter.connection.type", "bluetooth")
+            adapter.connectionTimeout =
+                try {
+                    Prefs.getS("pref.adapter.connection.timeout", "2000").toInt()
+                } catch (e: Exception) {
+                    2000
+                }
+
+            adapter.stnExtensionsEnabled = Prefs.getBoolean("pref.adapter.stn.enabled", false)
+            adapter.individualQueryStrategyEnabled = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
+            adapter.tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
+
+            adapter.tcpPort =
+                try {
+                    Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
+                } catch (e: Exception) {
+                    35000
+                }
+
+            adapter.wifiSSID = Prefs.getS("pref.adapter.connection.tcp.ssid", "")
+            adapter.otherModesBatchSize = Prefs.getString("pref.adapter.batch.size", null)?.toInt()
+            adapter.mode01BatchSize = Prefs.getString("pref.adapter.batch_01.size", null)?.toInt()
+            adapter.batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
+            adapter.batchStricValidationEnabled = Prefs.getBoolean("pref.adapter.batch.strict_validation.enabled", false)
+            adapter.reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
+            adapter.adapterId = Prefs.getS("pref.adapter.id", "OBDII")
+            adapter.commandFrequency = Prefs.getS("pref.adapter.command.freq", "6").toLong()
+            adapter.initDelay = Prefs.getS("pref.adapter.init.delay", "500").toLong()
+            adapter.delayAfterReset = Prefs.getS("pref.adapter.init.delay_after_reset", "0").toLong()
+            adapter.resultsCacheEnabled = Prefs.isEnabled("pref.adapter.cache.result.enabled")
+            adapter.initProtocol = Prefs.getS("pref.adapter.init.protocol", "AUTO")
+
+            adapter.maxReconnectNum =
+                try {
+                    Prefs.getS("pref.adapter.reconnect.max_retry", "0").toInt()
+                } catch (e: Exception) {
+                    0
+                }
+
+            adapter.vehicleCapabilitiesReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchSupportedPids", true)
+            adapter.vehicleDTCReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchDTC", false)
+            adapter.vehicleDTCCleaningEnabled = Prefs.getBoolean("pref.adapter.init.cleanDTC", false)
+            adapter.responseLengthEnabled = Prefs.getBoolean("pref.adapter.responseLength.enabled", false)
+            adapter.vehicleMetadataReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchDeviceProperties", true)
+            adapter.gracefulStop = Prefs.getBoolean("pref.adapter.graceful_stop.enabled", true)
+            adapter.adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
+
+            debugLogging = Prefs.getBoolean("pref.debug.logging.enabled", false)
+            dragRacingCommandFrequency = Prefs.getS("pref.drag_race.vehicle_speed.freq", "10").toLong()
+            mode = Prefs.getS("pref.mode", "Generic mode")
+            generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
+            dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
+            resources = Prefs.getStringSet(PREF_MODULE_LIST, modules.getDefaultModules().keys)!!
+            fuelTankSize = Prefs.getS("pref.vehicle_settings.fuelTankSize", "58").toInt()
+            vehicleStatusPanelEnabled = Prefs.getBoolean("pref.vehicle_settings.vehicle_status_panel_enabled", false)
+            vehicleStatusDisconnectWhenOff = Prefs.getBoolean("pref.vehicle_settings.disconnect_when_off", false)
+            gmeExtensionsEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
+
+            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                Log.v(LOG_TAG, "Loaded data-logger preferences: $generalPreferences")
+            }
         }
-
-        adapter.stnExtensionsEnabled = Prefs.getBoolean("pref.adapter.stn.enabled", false)
-        adapter.individualQueryStrategyEnabled = Prefs.getBoolean("pref.adapter.query.individual.enabled", false)
-        adapter.tcpHost = Prefs.getS("pref.adapter.connection.tcp.host", "192.168.0.10")
-
-        adapter.tcpPort = try {
-            Prefs.getS("pref.adapter.connection.tcp.port", "35000").toInt()
-        } catch (e: Exception) {
-            35000
-        }
-
-        adapter.wifiSSID = Prefs.getS("pref.adapter.connection.tcp.ssid", "")
-        adapter.otherModesBatchSize = Prefs.getString("pref.adapter.batch.size", null)?.toInt()
-        adapter.mode01BatchSize = Prefs.getString("pref.adapter.batch_01.size", null)?.toInt()
-        adapter.batchEnabled = Prefs.getBoolean("pref.adapter.batch.enabled", true)
-        adapter.batchStricValidationEnabled = Prefs.getBoolean("pref.adapter.batch.strict_validation.enabled", false)
-        adapter.reconnectWhenError = Prefs.getBoolean("pref.adapter.reconnect", true)
-        adapter.adapterId = Prefs.getS("pref.adapter.id", "OBDII")
-        adapter.commandFrequency = Prefs.getS("pref.adapter.command.freq", "6").toLong()
-        adapter.initDelay = Prefs.getS("pref.adapter.init.delay", "500").toLong()
-        adapter.delayAfterReset = Prefs.getS("pref.adapter.init.delay_after_reset", "0").toLong()
-        adapter.resultsCacheEnabled = Prefs.isEnabled("pref.adapter.cache.result.enabled")
-        adapter.initProtocol = Prefs.getS("pref.adapter.init.protocol", "AUTO")
-
-        adapter.maxReconnectNum = try {
-            Prefs.getS("pref.adapter.reconnect.max_retry", "0").toInt()
-        } catch (e: Exception) {
-            0
-        }
-
-        adapter.vehicleCapabilitiesReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchSupportedPids", true)
-        adapter.vehicleDTCReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchDTC", false)
-        adapter.vehicleDTCCleaningEnabled = Prefs.getBoolean("pref.adapter.init.cleanDTC", false)
-        adapter.responseLengthEnabled = Prefs.getBoolean("pref.adapter.responseLength.enabled", false)
-        adapter.vehicleMetadataReadingEnabled = Prefs.getBoolean("pref.adapter.init.fetchDeviceProperties", true)
-        adapter.gracefulStop = Prefs.getBoolean("pref.adapter.graceful_stop.enabled", true)
-        adapter.adaptiveConnectionEnabled = Prefs.isEnabled("pref.adapter.adaptive.enabled")
-
-
-        debugLogging = Prefs.getBoolean("pref.debug.logging.enabled", false)
-        dragRacingCommandFrequency = Prefs.getS("pref.drag_race.vehicle_speed.freq", "10").toLong()
-        mode = Prefs.getS("pref.mode", "Generic mode")
-        generatorEnabled = Prefs.isEnabled("pref.debug.generator.enabled")
-        dumpRawConnectorResponse = Prefs.getBoolean("pref.debug.trip.save.connector_response", false)
-        resources = Prefs.getStringSet(PREF_MODULE_LIST, modules.getDefaultModules().keys)!!
-        fuelTankSize = Prefs.getS("pref.vehicle_settings.fuelTankSize", "58").toInt()
-        vehicleStatusPanelEnabled = Prefs.getBoolean("pref.vehicle_settings.vehicle_status_panel_enabled", false)
-        vehicleStatusDisconnectWhenOff = Prefs.getBoolean("pref.vehicle_settings.disconnect_when_off", false)
-        gmeExtensionsEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
-
-        if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-            Log.v(LOG_TAG, "Loaded data-logger preferences: $generalPreferences")
-        }
-    }
 }
 
 val generalPreferences: PreferencesManager by lazy { DefaultPreferencesManager() }
