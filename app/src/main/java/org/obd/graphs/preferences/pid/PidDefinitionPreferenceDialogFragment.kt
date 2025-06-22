@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -54,7 +54,6 @@ import org.obd.graphs.ui.common.getScreenHeight
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.Locale
-
 
 private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
