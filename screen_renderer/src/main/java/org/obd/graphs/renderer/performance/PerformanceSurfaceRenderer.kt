@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,7 +39,7 @@ internal class PerformanceSurfaceRenderer(
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-    viewSettings: ViewSettings
+    viewSettings: ViewSettings,
 ) : CoreSurfaceRenderer(viewSettings) {
     private val performanceInfoDetails = PerformanceInfoDetails()
     private val performanceDrawer = PerformanceDrawer(context, settings)
@@ -49,14 +49,15 @@ internal class PerformanceSurfaceRenderer(
         Log.d(LOG_TAG, "Query strategy ${query.getStrategy()}, selected id's: ${query.getIDs()}")
 
         metricsCollector.applyFilter(
-            enabled = query.getIDs()
+            enabled = query.getIDs(),
         )
     }
 
-    override fun onDraw(canvas: Canvas, drawArea: Rect?) {
-
+    override fun onDraw(
+        canvas: Canvas,
+        drawArea: Rect?,
+    ) {
         drawArea?.let {
-
             performanceDrawer.drawBackground(canvas, it)
 
             val area = getArea(it, canvas)
@@ -75,38 +76,41 @@ internal class PerformanceSurfaceRenderer(
             if (breakBoostingDrawer.isBreakBoosting(
                     breakBoostingSettings = settings.getPerformanceScreenSettings().breakBoostingSettings,
                     gas = metricsCollector.getMetric(Pid.GAS_PID_ID),
-                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                )) {
-
+                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID),
+                )
+            ) {
                 top -= 30f
 
-                breakBoostingDrawer.drawScreen(canvas, area, top,
+                breakBoostingDrawer.drawScreen(
+                    canvas,
+                    area,
+                    top,
                     gas = metricsCollector.getMetric(Pid.GAS_PID_ID),
-                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID),
                 )
-
             } else {
                 performanceDrawer.drawScreen(
                     canvas = canvas,
                     area = area,
                     left = left,
                     top = top,
-                    performanceInfoDetails = performanceInfoDetails.apply {
-                        gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
-                        postICAirTemp = metricsCollector.getMetric(Pid.POST_IC_AIR_TEMP_PID_ID)
-                        ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
-                        atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
-                        coolantTemp = metricsCollector.getMetric(Pid.COOLANT_TEMP_PID_ID)
-                        exhaustTemp = metricsCollector.getMetric(Pid.EXHAUST_TEMP_PID_ID)
-                        oilTemp = metricsCollector.getMetric(Pid.OIL_TEMP_PID_ID)
-                        gearboxOilTemp = metricsCollector.getMetric(Pid.GEARBOX_OIL_TEMP_PID_ID)
-                        torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                        intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                        preICAirTemp = metricsCollector.getMetric(Pid.PRE_IC_AIR_TEMP_PID_ID)
-                        wcacTemp = metricsCollector.getMetric(Pid.WCA_TEMP_PID_ID)
-                        vehicleSpeed = metricsCollector.getMetric(Pid.EXT_VEHICLE_SPEED_PID_ID)
-                        gearEngaged = metricsCollector.getMetric(Pid.GEAR_ENGAGED_PID_ID)
-                    }
+                    performanceInfoDetails =
+                        performanceInfoDetails.apply {
+                            gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
+                            postICAirTemp = metricsCollector.getMetric(Pid.POST_IC_AIR_TEMP_PID_ID)
+                            ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
+                            atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
+                            coolantTemp = metricsCollector.getMetric(Pid.COOLANT_TEMP_PID_ID)
+                            exhaustTemp = metricsCollector.getMetric(Pid.EXHAUST_TEMP_PID_ID)
+                            oilTemp = metricsCollector.getMetric(Pid.OIL_TEMP_PID_ID)
+                            gearboxOilTemp = metricsCollector.getMetric(Pid.GEARBOX_OIL_TEMP_PID_ID)
+                            torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+                            intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
+                            preICAirTemp = metricsCollector.getMetric(Pid.PRE_IC_AIR_TEMP_PID_ID)
+                            wcacTemp = metricsCollector.getMetric(Pid.WCA_TEMP_PID_ID)
+                            vehicleSpeed = metricsCollector.getMetric(Pid.EXT_VEHICLE_SPEED_PID_ID)
+                            gearEngaged = metricsCollector.getMetric(Pid.GEAR_ENGAGED_PID_ID)
+                        },
                 )
             }
         }
