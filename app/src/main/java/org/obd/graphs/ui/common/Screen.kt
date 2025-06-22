@@ -29,3 +29,8 @@ fun isTablet(): Boolean {
             Configuration.SCREENLAYOUT_SIZE_LARGE
     return xlarge || large
 }
+
+fun getScreenHeight(): Float {
+    val displayMetrics = getContext()!!.resources.displayMetrics
+    return displayMetrics.heightPixels / displayMetrics.density
+}

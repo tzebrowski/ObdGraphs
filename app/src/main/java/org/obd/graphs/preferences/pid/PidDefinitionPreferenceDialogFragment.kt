@@ -50,6 +50,7 @@ import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
+import org.obd.graphs.ui.common.getScreenHeight
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.Locale
@@ -115,15 +116,15 @@ open class PidDefinitionPreferenceDialogFragment(
         recyclerView.layoutParams.height =
             if (editableViewEnabled) {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.2f, resources.displayMetrics).toInt()
                 } else {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.6f, resources.displayMetrics).toInt()
                 }
             } else {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.65f, resources.displayMetrics).toInt()
                 } else {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.85f, resources.displayMetrics).toInt()
                 }
             }
     }
