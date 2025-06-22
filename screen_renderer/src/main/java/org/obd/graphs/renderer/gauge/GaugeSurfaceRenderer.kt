@@ -22,7 +22,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.generalPreferences
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.*
 import org.obd.graphs.renderer.CoreSurfaceRenderer
@@ -45,7 +45,7 @@ internal class GaugeSurfaceRenderer(
 
     override fun applyMetricsFilter(query: Query) {
         val gaugeSettings  = settings.getGaugeRendererSetting()
-        if (dataLoggerPreferences.instance.adapter.individualQueryStrategyEnabled) {
+        if (generalPreferences.instance.adapter.individualQueryStrategyEnabled) {
             metricsCollector.applyFilter(enabled = gaugeSettings.selectedPIDs, order = gaugeSettings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()

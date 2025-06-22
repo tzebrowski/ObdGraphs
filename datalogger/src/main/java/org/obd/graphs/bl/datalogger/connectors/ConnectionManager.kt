@@ -23,7 +23,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_NOT_CONNECTED
 import org.obd.graphs.bl.datalogger.GeneralPreferences
 import org.obd.graphs.bl.datalogger.LOG_TAG
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.generalPreferences
 import org.obd.graphs.getContext
 import org.obd.graphs.network
 import org.obd.graphs.sendBroadcastEvent
@@ -31,7 +31,7 @@ import org.obd.metrics.transport.AdapterConnection
 
 internal class ConnectionManager {
     fun obtain(): AdapterConnection? =
-        when (dataLoggerPreferences.instance.adapter.connectionType) {
+        when (generalPreferences.instance.adapter.connectionType) {
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
             "usb" -> getContext()?.let { UsbConnection.of(context = it) }
@@ -42,7 +42,7 @@ internal class ConnectionManager {
 
     private fun bluetoothConnection(): AdapterConnection? =
         try {
-            val deviceName = dataLoggerPreferences.instance.adapter.adapterId
+            val deviceName = generalPreferences.instance.adapter.adapterId
             Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
 
             if (deviceName.isEmpty()) {
@@ -63,7 +63,7 @@ internal class ConnectionManager {
             null
         }
 
-    private fun wifiConnection(preferences: GeneralPreferences = dataLoggerPreferences.instance): WifiConnection? {
+    private fun wifiConnection(preferences: GeneralPreferences = generalPreferences.instance): WifiConnection? {
         try {
             Log.i(
                 LOG_TAG,

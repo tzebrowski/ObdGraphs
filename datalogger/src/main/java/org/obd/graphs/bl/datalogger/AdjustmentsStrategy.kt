@@ -34,7 +34,7 @@ internal class AdjustmentsStrategy {
 
     fun findAdjustmentFor(
         strategy: QueryStrategyType,
-        preferences: GeneralPreferences = dataLoggerPreferences.instance,
+        preferences: GeneralPreferences = generalPreferences.instance,
     ): Adjustments =
         when (strategy) {
             QueryStrategyType.DRAG_RACING_QUERY -> getDragRacingAdjustments(preferences = preferences)
@@ -64,7 +64,7 @@ internal class AdjustmentsStrategy {
                 .stNxx(
                     STNxxExtensions
                         .builder()
-                        .enabled(dataLoggerPreferences.instance.adapter.stnExtensionsEnabled)
+                        .enabled(generalPreferences.instance.adapter.stnExtensionsEnabled)
                         .promoteSlowGroupsEnabled(false)
                         .promoteAllGroupsEnabled(false)
                         .build(),
@@ -101,7 +101,7 @@ internal class AdjustmentsStrategy {
                         .build(),
                 )
 
-        if (dataLoggerPreferences.instance.adapter.stnExtensionsEnabled) {
+        if (generalPreferences.instance.adapter.stnExtensionsEnabled) {
             val highPriorityOverridePolicy = PidDefinitionCustomization.builder().priority(0).build()
             builder =
                 builder

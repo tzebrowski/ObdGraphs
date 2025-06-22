@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.bl.datalogger.connectors
 
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.generalPreferences
 import org.obd.metrics.transport.AdapterConnection
 import java.io.IOException
 import java.io.InputStream
@@ -34,7 +34,7 @@ internal class WifiConnection(
     @Throws(IOException::class)
     override fun connect() {
         socket = Socket()
-        socket.connect(inetSocketAddress, dataLoggerPreferences.instance.adapter.connectionTimeout)
+        socket.connect(inetSocketAddress, generalPreferences.instance.adapter.connectionTimeout)
     }
 
     @Throws(IOException::class)
@@ -70,7 +70,7 @@ internal class WifiConnection(
 
     companion object {
         fun of(): WifiConnection =
-            WifiConnection(InetSocketAddress(dataLoggerPreferences.instance.adapter.tcpHost,
-                dataLoggerPreferences.instance.adapter.tcpPort))
+            WifiConnection(InetSocketAddress(generalPreferences.instance.adapter.tcpHost,
+                generalPreferences.instance.adapter.tcpPort))
     }
 }

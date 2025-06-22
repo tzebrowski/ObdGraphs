@@ -68,7 +68,7 @@ data class GeneralPreferences(
 )
 
 
-class DataLoggerPreferencesManager {
+class PreferencesManager {
 
     private inner class SharedPreferenceChangeListener :
         SharedPreferences.OnSharedPreferenceChangeListener {
@@ -150,9 +150,9 @@ class DataLoggerPreferencesManager {
         gmeExtensionsEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
 
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-            Log.v(LOG_TAG, "Loaded data-logger preferences: $dataLoggerPreferences")
+            Log.v(LOG_TAG, "Loaded data-logger preferences: $generalPreferences")
         }
     }
 }
 
-val dataLoggerPreferences by lazy { DataLoggerPreferencesManager() }
+val generalPreferences by lazy { PreferencesManager() }

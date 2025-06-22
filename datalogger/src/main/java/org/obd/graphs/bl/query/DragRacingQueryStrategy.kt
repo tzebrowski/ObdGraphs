@@ -18,13 +18,13 @@ package org.obd.graphs.bl.query
 
 import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.generalPreferences
 import org.obd.graphs.preferences.Prefs
 
  internal class DragRacingQueryStrategy : QueryStrategy() {
     override fun getPIDs(): MutableSet<Long> =
         (
-            if (dataLoggerPreferences.instance.gmeExtensionsEnabled) {
+            if (generalPreferences.instance.gmeExtensionsEnabled) {
                 val pids =
                     mutableSetOf(
                         Pid.EXT_VEHICLE_SPEED_PID_ID,
@@ -33,7 +33,7 @@ import org.obd.graphs.preferences.Prefs
                         Pid.ATM_PRESSURE_PID_ID,
                         Pid.AMBIENT_TEMP_PID_ID,
                     )
-                if (dataLoggerPreferences.instance.adapter.stnExtensionsEnabled) {
+                if (generalPreferences.instance.adapter.stnExtensionsEnabled) {
                     pids.add(Pid.ENGINE_TORQUE_PID_ID)
                     pids.add(Pid.GAS_PID_ID)
                 }

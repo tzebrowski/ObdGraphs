@@ -31,7 +31,7 @@ import org.obd.graphs.aa.*
 import org.obd.graphs.aa.screen.*
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.generalPreferences
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
@@ -143,7 +143,7 @@ internal class SurfaceRendererScreen(
 
                 metricsCollector.applyFilter(enabled = getSelectedPIDs())
 
-                if (dataLoggerPreferences.instance.adapter.individualQueryStrategyEnabled) {
+                if (generalPreferences.instance.adapter.individualQueryStrategyEnabled) {
                     query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                     query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
                 } else {
@@ -185,7 +185,7 @@ internal class SurfaceRendererScreen(
         Log.e(LOG_TAG, "1 Action start data logging for $screenId")
         when (screenId) {
             SurfaceRendererType.GIULIA , SurfaceRendererType.GAUGE -> {
-                if (dataLoggerPreferences.instance.adapter.individualQueryStrategyEnabled) {
+                if (generalPreferences.instance.adapter.individualQueryStrategyEnabled) {
                     query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                     query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
                 } else {
@@ -317,7 +317,7 @@ internal class SurfaceRendererScreen(
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
                 dataLogger.updateQuery(query)
 
-            } else if (dataLoggerPreferences.instance.adapter.individualQueryStrategyEnabled) {
+            } else if (generalPreferences.instance.adapter.individualQueryStrategyEnabled) {
                 Log.i(LOG_TAG, "Updating query for  individualQueryStrategyEnabled")
 
                 metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder())

@@ -18,7 +18,7 @@ package org.obd.graphs.bl.extra
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.generalPreferences
 import org.obd.graphs.bl.datalogger.isVehicleStatus
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
@@ -44,8 +44,8 @@ internal class VehicleStatusMetricsProcessor : MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
 
-        if ((dataLoggerPreferences.instance.vehicleStatusPanelEnabled ||
-                    dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff)
+        if ((generalPreferences.instance.vehicleStatusPanelEnabled ||
+                    generalPreferences.instance.vehicleStatusDisconnectWhenOff)
             && obdMetric.isVehicleStatus()) {
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
