@@ -28,8 +28,8 @@ fun ObdMetric.isDynamicSelector(): Boolean = command.pid.id == Pid.DYNAMIC_SELEC
 
 fun ObdMetric.isVehicleSpeed(): Boolean =
     command.pid.id ==
-        (if (generalPreferences.instance().gmeExtensionsEnabled) Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID).id
+        (if (dataLoggerSettings.instance().gmeExtensionsEnabled) Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID).id
 
 fun ObdMetric.isEngineRpm(): Boolean =
     command.pid.id ==
-        (if (generalPreferences.instance().gmeExtensionsEnabled) Pid.EXT_ENGINE_SPEED_PID_ID else Pid.ENGINE_SPEED_PID_ID).id
+        (if (dataLoggerSettings.instance().gmeExtensionsEnabled) Pid.EXT_ENGINE_SPEED_PID_ID else Pid.ENGINE_SPEED_PID_ID).id

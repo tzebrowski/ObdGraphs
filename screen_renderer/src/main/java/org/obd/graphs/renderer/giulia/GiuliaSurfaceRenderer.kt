@@ -24,7 +24,7 @@ import android.util.Log
 import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.generalPreferences
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.*
 import kotlin.math.max
@@ -54,7 +54,7 @@ internal class GiuliaSurfaceRenderer(
 
     override fun applyMetricsFilter(query: Query) {
         val giuliaSettings =  settings.getGiuliaRendererSetting()
-        if (generalPreferences.instance().adapter.individualQueryStrategyEnabled) {
+        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             metricsCollector.applyFilter(enabled = giuliaSettings.selectedPIDs, order = giuliaSettings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()

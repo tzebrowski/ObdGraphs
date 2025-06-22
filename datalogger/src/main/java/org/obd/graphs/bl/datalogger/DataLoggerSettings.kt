@@ -161,9 +161,9 @@ internal class DefaultPreferencesManager : PreferencesManager {
             gmeExtensionsEnabled = Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                Log.v(LOG_TAG, "Loaded data-logger preferences: $generalPreferences")
+                Log.v(LOG_TAG, "Loaded data-logger preferences: $dataLoggerSettings")
             }
         }
 }
 
-val generalPreferences: PreferencesManager by lazy { DefaultPreferencesManager() }
+val dataLoggerSettings: PreferencesManager by lazy { DefaultPreferencesManager() }

@@ -237,7 +237,7 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
             updateVehicleStatus("Key off")
-            if (generalPreferences.instance().vehicleStatusDisconnectWhenOff){
+            if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff){
                 Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
                 dataLogger.stop()
             }

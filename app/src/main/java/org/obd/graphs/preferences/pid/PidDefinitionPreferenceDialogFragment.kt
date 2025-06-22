@@ -36,7 +36,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.generalPreferences
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.bl.query.Query
@@ -318,7 +318,7 @@ open class PidDefinitionPreferenceDialogFragment(
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()
-        val individualQuery = generalPreferences.instance().adapter.individualQueryStrategyEnabled
+        val individualQuery = dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled
 
         val sourceList: List<PidDefinitionDetails> =
             if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO) {
