@@ -68,7 +68,12 @@ data class GeneralPreferences(
 )
 
 
-class PreferencesManager {
+interface PreferencesManager {
+    fun reload()
+    fun instance(): GeneralPreferences
+}
+
+internal class DefaultPreferencesManager : PreferencesManager {
 
     private inner class SharedPreferenceChangeListener :
         SharedPreferences.OnSharedPreferenceChangeListener {
@@ -81,14 +86,16 @@ class PreferencesManager {
     }
 
     private var strongReference: SharedPreferenceChangeListener = SharedPreferenceChangeListener()
-    var instance: GeneralPreferences = GeneralPreferences()
+    private var instance: GeneralPreferences = GeneralPreferences()
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
         instance = update()
     }
 
-    fun reload() {
+    override fun instance(): GeneralPreferences  = instance
+
+    override fun reload() {
         instance = update()
     }
 
@@ -155,4 +162,4 @@ class PreferencesManager {
     }
 }
 
-val generalPreferences by lazy { PreferencesManager() }
+val generalPreferences: PreferencesManager by lazy { DefaultPreferencesManager() }

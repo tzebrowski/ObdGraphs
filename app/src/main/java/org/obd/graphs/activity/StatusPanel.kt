@@ -37,7 +37,7 @@ internal fun MainActivity.updateVehicleStatus(status: String) {
         COLOR_CARDINAL,
         1.0f
     ){
-        it.isGone = !generalPreferences.instance.vehicleStatusPanelEnabled
+        it.isGone = !generalPreferences.instance().vehicleStatusPanelEnabled
     }
 }
 
@@ -45,7 +45,7 @@ internal fun MainActivity.updateAdapterConnectionType() {
     updateTextField(
         R.id.connection_status,
         resources.getString(R.string.status_panel_adapter_connection_type),
-        generalPreferences.instance.adapter.connectionType,
+        generalPreferences.instance().adapter.connectionType,
         COLOR_PHILIPPINE_GREEN,
         1.0f
     )

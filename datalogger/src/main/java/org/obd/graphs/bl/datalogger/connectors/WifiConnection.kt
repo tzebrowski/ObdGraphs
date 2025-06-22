@@ -34,7 +34,7 @@ internal class WifiConnection(
     @Throws(IOException::class)
     override fun connect() {
         socket = Socket()
-        socket.connect(inetSocketAddress, generalPreferences.instance.adapter.connectionTimeout)
+        socket.connect(inetSocketAddress, generalPreferences.instance().adapter.connectionTimeout)
     }
 
     @Throws(IOException::class)
@@ -70,7 +70,7 @@ internal class WifiConnection(
 
     companion object {
         fun of(): WifiConnection =
-            WifiConnection(InetSocketAddress(generalPreferences.instance.adapter.tcpHost,
-                generalPreferences.instance.adapter.tcpPort))
+            WifiConnection(InetSocketAddress(generalPreferences.instance().adapter.tcpHost,
+                generalPreferences.instance().adapter.tcpPort))
     }
 }

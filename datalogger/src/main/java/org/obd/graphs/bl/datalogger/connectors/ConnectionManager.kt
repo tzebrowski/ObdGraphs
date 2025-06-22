@@ -31,7 +31,7 @@ import org.obd.metrics.transport.AdapterConnection
 
 internal class ConnectionManager {
     fun obtain(): AdapterConnection? =
-        when (generalPreferences.instance.adapter.connectionType) {
+        when (generalPreferences.instance().adapter.connectionType) {
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
             "usb" -> getContext()?.let { UsbConnection.of(context = it) }
@@ -42,7 +42,7 @@ internal class ConnectionManager {
 
     private fun bluetoothConnection(): AdapterConnection? =
         try {
-            val deviceName = generalPreferences.instance.adapter.adapterId
+            val deviceName = generalPreferences.instance().adapter.adapterId
             Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
 
             if (deviceName.isEmpty()) {
@@ -63,7 +63,7 @@ internal class ConnectionManager {
             null
         }
 
-    private fun wifiConnection(preferences: GeneralPreferences = generalPreferences.instance): WifiConnection? {
+    private fun wifiConnection(preferences: GeneralPreferences = generalPreferences.instance()): WifiConnection? {
         try {
             Log.i(
                 LOG_TAG,

@@ -183,7 +183,7 @@ internal class NavTemplateCarScreen(
                 }
 
                 EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
-                    if (generalPreferences.instance.vehicleStatusDisconnectWhenOff){
+                    if (generalPreferences.instance().vehicleStatusDisconnectWhenOff){
                         Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
                         dataLogger.stop()
                     }

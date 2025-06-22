@@ -24,7 +24,7 @@ import org.obd.graphs.preferences.Prefs
  internal class DragRacingQueryStrategy : QueryStrategy() {
     override fun getPIDs(): MutableSet<Long> =
         (
-            if (generalPreferences.instance.gmeExtensionsEnabled) {
+            if (generalPreferences.instance().gmeExtensionsEnabled) {
                 val pids =
                     mutableSetOf(
                         Pid.EXT_VEHICLE_SPEED_PID_ID,
@@ -33,7 +33,7 @@ import org.obd.graphs.preferences.Prefs
                         Pid.ATM_PRESSURE_PID_ID,
                         Pid.AMBIENT_TEMP_PID_ID,
                     )
-                if (generalPreferences.instance.adapter.stnExtensionsEnabled) {
+                if (generalPreferences.instance().adapter.stnExtensionsEnabled) {
                     pids.add(Pid.ENGINE_TORQUE_PID_ID)
                     pids.add(Pid.GAS_PID_ID)
                 }

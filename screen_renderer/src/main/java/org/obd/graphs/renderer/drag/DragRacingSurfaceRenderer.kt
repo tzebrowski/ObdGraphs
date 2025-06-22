@@ -95,7 +95,7 @@ internal class DragRacingSurfaceRenderer(
                     atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
                     torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
                     intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                    vehicleSpeed = metricsCollector.getMetric(if (generalPreferences.instance.gmeExtensionsEnabled)
+                    vehicleSpeed = metricsCollector.getMetric(if (generalPreferences.instance().gmeExtensionsEnabled)
                         Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID)
                 })
         }

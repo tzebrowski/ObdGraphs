@@ -118,7 +118,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         displayMetricsEnabled = Prefs.getBoolean("pref.aa.drag_race.vehicle_speed.enabled", true)
         shiftLightsEnabled = Prefs.getBoolean("pref.aa.drag_race.shift_lights.enabled", false)
         shiftLightsRevThreshold = Prefs.getS("pref.aa.drag_race.shift_lights.rev_value", "5000").toInt()
-        displayMetricsExtendedEnabled = generalPreferences.instance.gmeExtensionsEnabled
+        displayMetricsExtendedEnabled = generalPreferences.instance().gmeExtensionsEnabled
         fontSize = Prefs.getS("pref.aa.drag_race.font_size", "30").toInt()
         breakBoostingSettings.viewEnabled = Prefs.getBoolean("pref.aa.drag_race.break_boosting.enabled", true)
     }

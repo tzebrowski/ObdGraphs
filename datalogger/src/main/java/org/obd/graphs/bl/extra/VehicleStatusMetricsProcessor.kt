@@ -44,8 +44,8 @@ internal class VehicleStatusMetricsProcessor : MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
 
-        if ((generalPreferences.instance.vehicleStatusPanelEnabled ||
-                    generalPreferences.instance.vehicleStatusDisconnectWhenOff)
+        if ((generalPreferences.instance().vehicleStatusPanelEnabled ||
+                    generalPreferences.instance().vehicleStatusDisconnectWhenOff)
             && obdMetric.isVehicleStatus()) {
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {

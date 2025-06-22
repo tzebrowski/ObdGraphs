@@ -45,7 +45,7 @@ internal class GaugeSurfaceRenderer(
 
     override fun applyMetricsFilter(query: Query) {
         val gaugeSettings  = settings.getGaugeRendererSetting()
-        if (generalPreferences.instance.adapter.individualQueryStrategyEnabled) {
+        if (generalPreferences.instance().adapter.individualQueryStrategyEnabled) {
             metricsCollector.applyFilter(enabled = gaugeSettings.selectedPIDs, order = gaugeSettings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()

@@ -318,7 +318,7 @@ open class PidDefinitionPreferenceDialogFragment(
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()
-        val individualQuery = generalPreferences.instance.adapter.individualQueryStrategyEnabled
+        val individualQuery = generalPreferences.instance().adapter.individualQueryStrategyEnabled
 
         val sourceList: List<PidDefinitionDetails> =
             if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO) {

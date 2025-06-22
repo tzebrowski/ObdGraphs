@@ -170,10 +170,10 @@ internal class WorkflowOrchestrator internal constructor() {
 
         Log.i(
             LOG_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
-                    "${generalPreferences.instance.adapter.gracefulStop}"
+                    "${generalPreferences.instance().adapter.gracefulStop}"
         )
         try {
-            workflow.stop(generalPreferences.instance.adapter.gracefulStop)
+            workflow.stop(generalPreferences.instance().adapter.gracefulStop)
             Log.i(LOG_TAG, "After send the STOP. Workflow is running ${workflow.isRunning}")
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Failed to stop the workflow", e)
@@ -237,7 +237,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun init(preferences: GeneralPreferences = generalPreferences.instance) = Init.builder()
+    private fun init(preferences: GeneralPreferences = generalPreferences.instance()) = Init.builder()
         .delayAfterInit(preferences.adapter.initDelay)
         .delayAfterReset(preferences.adapter.delayAfterReset)
         .headers(diagnosticRequestIDMapper.getMapping().map { entry ->
@@ -270,7 +270,7 @@ internal class WorkflowOrchestrator internal constructor() {
         }
     }
 
-    private fun pids(): Pids? = Pids.builder().resources(generalPreferences.instance.resources.map {
+    private fun pids(): Pids? = Pids.builder().resources(generalPreferences.instance().resources.map {
         if (modules.isExternalStorageModule(it)) {
             modules.externalModuleToURL(it)
         } else {

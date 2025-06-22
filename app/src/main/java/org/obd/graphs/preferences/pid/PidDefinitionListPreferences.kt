@@ -32,7 +32,7 @@ class PidDefinitionListPreferences(
     val source = getAttribute("source")
 
     override fun isEnabled(): Boolean =
-        !(generalPreferences.instance.adapter.individualQueryStrategyEnabled && (source == "high" || source == "low"))
+        !(generalPreferences.instance().adapter.individualQueryStrategyEnabled && (source == "high" || source == "low"))
 
     override fun getSummary(): CharSequence? =
         if (isEnabled) {

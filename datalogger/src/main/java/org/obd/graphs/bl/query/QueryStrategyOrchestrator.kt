@@ -44,8 +44,8 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
     override fun getIDs(): MutableSet<Long>  {
         val pids = strategies[strategy]?.getPIDs() ?: mutableSetOf()
         //decorate with Vehicle Status PID
-        if (generalPreferences.instance.vehicleStatusPanelEnabled ||
-            generalPreferences.instance.vehicleStatusDisconnectWhenOff){
+        if (generalPreferences.instance().vehicleStatusPanelEnabled ||
+            generalPreferences.instance().vehicleStatusDisconnectWhenOff){
             pids.add(Pid.VEHICLE_STATUS_PID_ID.id)
         }
         return pids
@@ -95,5 +95,5 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
             setStrategy(QueryStrategyType.SHARED_QUERY)
         }
 
-    private fun isIndividualQuerySelected() = generalPreferences.instance.adapter.individualQueryStrategyEnabled
+    private fun isIndividualQuerySelected() = generalPreferences.instance().adapter.individualQueryStrategyEnabled
 }
