@@ -45,7 +45,7 @@ internal fun MainActivity.updateAdapterConnectionType() {
     updateTextField(
         R.id.connection_status,
         resources.getString(R.string.status_panel_adapter_connection_type),
-        dataLoggerPreferences.instance.connectionType,
+        dataLoggerPreferences.instance.adapter.connectionType,
         COLOR_PHILIPPINE_GREEN,
         1.0f
     )

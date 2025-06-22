@@ -170,10 +170,10 @@ internal class WorkflowOrchestrator internal constructor() {
 
         Log.i(
             LOG_TAG, "Sending STOP to the workflow with 'graceful.stop' parameter set to " +
-                    "${dataLoggerPreferences.instance.gracefulStop}"
+                    "${dataLoggerPreferences.instance.adapter.gracefulStop}"
         )
         try {
-            workflow.stop(dataLoggerPreferences.instance.gracefulStop)
+            workflow.stop(dataLoggerPreferences.instance.adapter.gracefulStop)
             Log.i(LOG_TAG, "After send the STOP. Workflow is running ${workflow.isRunning}")
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Failed to stop the workflow", e)
@@ -238,12 +238,12 @@ internal class WorkflowOrchestrator internal constructor() {
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
     private fun init(preferences: GeneralPreferences = dataLoggerPreferences.instance) = Init.builder()
-        .delayAfterInit(preferences.initDelay)
-        .delayAfterReset(preferences.delayAfterReset)
+        .delayAfterInit(preferences.adapter.initDelay)
+        .delayAfterReset(preferences.adapter.delayAfterReset)
         .headers(diagnosticRequestIDMapper.getMapping().map { entry ->
             Init.Header.builder().mode(entry.key).header(entry.value).build()
         }.toMutableList())
-        .protocol(Init.Protocol.valueOf(preferences.initProtocol))
+        .protocol(Init.Protocol.valueOf(preferences.adapter.initProtocol))
         .sequence(DefaultCommandGroup.INIT).build()
 
     private fun workflow() = Workflow.instance()

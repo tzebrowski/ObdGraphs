@@ -54,7 +54,7 @@ internal class GiuliaSurfaceRenderer(
 
     override fun applyMetricsFilter(query: Query) {
         val giuliaSettings =  settings.getGiuliaRendererSetting()
-        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+        if (dataLoggerPreferences.instance.adapter.individualQueryStrategyEnabled) {
             metricsCollector.applyFilter(enabled = giuliaSettings.selectedPIDs, order = giuliaSettings.getPIDsSortOrder())
         } else {
             val ids = query.getIDs()

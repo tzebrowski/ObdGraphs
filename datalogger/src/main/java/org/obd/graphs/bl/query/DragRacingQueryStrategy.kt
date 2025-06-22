@@ -33,7 +33,7 @@ import org.obd.graphs.preferences.Prefs
                         Pid.ATM_PRESSURE_PID_ID,
                         Pid.AMBIENT_TEMP_PID_ID,
                     )
-                if (dataLoggerPreferences.instance.stnExtensionsEnabled) {
+                if (dataLoggerPreferences.instance.adapter.stnExtensionsEnabled) {
                     pids.add(Pid.ENGINE_TORQUE_PID_ID)
                     pids.add(Pid.GAS_PID_ID)
                 }

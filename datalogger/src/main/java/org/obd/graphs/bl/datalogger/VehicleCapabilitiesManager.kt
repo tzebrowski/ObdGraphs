@@ -45,9 +45,9 @@ class VehicleCapabilitiesManager {
             Log.i(
                 LOG_TAG,
                 "Property `vehicleCapabilitiesReadingEnabled` is " +
-                        "`${dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled}`"
+                        "`${dataLoggerPreferences.instance.adapter.vehicleCapabilitiesReadingEnabled}`"
             )
-            if (dataLoggerPreferences.instance.vehicleCapabilitiesReadingEnabled) {
+            if (dataLoggerPreferences.instance.adapter.vehicleCapabilitiesReadingEnabled) {
                 if (vehicleCapabilities.capabilities.isEmpty()) {
                     Log.i(LOG_TAG, "Did not receive Vehicle Capabilities. Do not update preferences.")
                 } else {
