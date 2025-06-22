@@ -34,14 +34,14 @@ internal class AdjustmentsStrategy {
 
     fun findAdjustmentFor(
         strategy: QueryStrategyType,
-        preferences: DataLoggerPreferences = dataLoggerPreferences.instance,
+        preferences: GeneralPreferences = dataLoggerPreferences.instance,
     ): Adjustments =
         when (strategy) {
             QueryStrategyType.DRAG_RACING_QUERY -> getDragRacingAdjustments(preferences = preferences)
             else -> getDefaultAdjustments(preferences = preferences)
         }
 
-    private fun getDragRacingAdjustments(preferences: DataLoggerPreferences): Adjustments {
+    private fun getDragRacingAdjustments(preferences: GeneralPreferences): Adjustments {
         var builder =
             Adjustments
                 .builder()
@@ -114,7 +114,7 @@ internal class AdjustmentsStrategy {
         return builder.build()
     }
 
-    private fun getDefaultAdjustments(preferences: DataLoggerPreferences) =
+    private fun getDefaultAdjustments(preferences: GeneralPreferences) =
         Adjustments
             .builder()
             .debugEnabled(preferences.debugLogging)

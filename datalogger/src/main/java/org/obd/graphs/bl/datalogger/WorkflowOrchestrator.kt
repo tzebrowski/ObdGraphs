@@ -237,7 +237,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun init(preferences: DataLoggerPreferences = dataLoggerPreferences.instance) = Init.builder()
+    private fun init(preferences: GeneralPreferences = dataLoggerPreferences.instance) = Init.builder()
         .delayAfterInit(preferences.initDelay)
         .delayAfterReset(preferences.delayAfterReset)
         .headers(diagnosticRequestIDMapper.getMapping().map { entry ->

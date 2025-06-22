@@ -28,7 +28,7 @@ import org.obd.graphs.preferences.isEnabled
 private const val GENERIC_MODE = "Generic mode"
 private const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 
-data class DataLoggerPreferences(
+data class GeneralPreferences(
     var individualQueryStrategyEnabled: Boolean = false,
     var debugLogging: Boolean = false,
     var connectionType: String = "bluetooth",
@@ -81,7 +81,7 @@ class DataLoggerPreferencesManager {
     }
 
     private var strongReference: SharedPreferenceChangeListener = SharedPreferenceChangeListener()
-    var instance: DataLoggerPreferences = DataLoggerPreferences()
+    var instance: GeneralPreferences = GeneralPreferences()
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
@@ -92,7 +92,7 @@ class DataLoggerPreferencesManager {
         instance = update()
     }
 
-    private fun update(): DataLoggerPreferences = instance.apply{
+    private fun update(): GeneralPreferences = instance.apply{
         connectionType = Prefs.getS(PREFERENCE_CONNECTION_TYPE, "bluetooth")
 
         connectionTimeout = try {
