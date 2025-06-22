@@ -28,6 +28,7 @@ import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.round
@@ -55,6 +56,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             gaugeProgressBarType = GaugeProgressBarType.LONG, startAngle = 180f, sweepAngle = 120f)
     )
 
+    private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
 
@@ -86,11 +88,10 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         if (dragRacingResults.readyToRace){
             drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
 
-            if (isBreakBoosting(dragRaceDetails)) {
+            if (breakBoostingDrawer.isBreakBoosting( breakBoostingSettings = settings.getDragRacingScreenSettings().breakBoostingSettings,
+                    gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)) {
                 top -= 30f
-
-                drawGaugesBreakBoosting(area, dragRaceDetails, canvas, top)
-
+                breakBoostingDrawer.drawScreen(canvas, area,  top, gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)
             } else {
                 top = drawGauges(top, dragRaceDetails, area, canvas, left)
 
@@ -113,11 +114,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
             )
         }
     }
-
-    private fun isBreakBoosting(dragRaceDetails: DragRaceDetails) =
-        settings.getDragRacingScreenSettings().displayMetricsEnabled &&
-                settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled &&
-                dragRaceDetails.gas != null && dragRaceDetails.torque != null && (dragRaceDetails.gas!!.value as Number).toInt() > 0
 
     private fun drawGauges(
         top: Float,
@@ -217,43 +213,6 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
                 top1 + area.width().toFloat() / 2f,
                 area.left.toFloat() + area.width() / 5,
                 area.width().toFloat() / 1.5f
-            )
-        }
-    }
-
-    private fun  drawGaugesBreakBoosting(
-        area: Rect,
-        dragRaceDetails: DragRaceDetails,
-        canvas: Canvas,
-        top: Float
-    ) {
-        val marginLeft = 20f
-        if (settings.isAA() || isLandscape()) {
-            val gaugeWidth = area.width() / 2.0f
-
-            val marginTop = gaugeWidth / 8
-
-            drawGauge(
-                dragRaceDetails.gas, canvas, top + marginTop, area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth , labelCenterYPadding = 18f
-            )
-
-            drawGauge(
-                dragRaceDetails.torque, canvas, top + marginTop, (area.left  + marginLeft +  gaugeWidth),
-                gaugeWidth, labelCenterYPadding = 18f
-            )
-
-        } else {
-            val gaugeWidth = area.width().toFloat()
-
-            drawGauge(
-                dragRaceDetails.gas, canvas, top , area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth, labelCenterYPadding = 18f
-            )
-
-            drawGauge(
-                dragRaceDetails.torque, canvas, top + gaugeWidth, area.left.toFloat() + 2 * marginLeft ,
-                gaugeWidth, labelCenterYPadding = 18f
             )
         }
     }
