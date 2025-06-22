@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,6 +26,12 @@ fun isTablet(): Boolean {
         context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == 4
     val large =
         context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK ==
-            Configuration.SCREENLAYOUT_SIZE_LARGE
+                Configuration.SCREENLAYOUT_SIZE_LARGE
     return xlarge || large
+}
+
+
+fun getScreenHeight(): Float {
+    val displayMetrics = getContext()!!.resources.displayMetrics
+    return displayMetrics.heightPixels / displayMetrics.density
 }

@@ -50,11 +50,13 @@ import org.obd.graphs.preferences.updateStringSet
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
+import org.obd.graphs.ui.common.getScreenHeight
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 import java.util.Locale
 
-private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
+
+ private const val FILTER_BY_ECU_SUPPORTED_PIDS_PREF = "pref.pids.registry.filter_pids_ecu_supported"
 private const val FILTER_BY_STABLE_PIDS_PREF = "pref.pids.registry.filter_pids_stable"
 private const val HIGH_PRIO_PID_PREF = "pref.pids.generic.high"
 private const val LOW_PRIO_PID_PREF = "pref.pids.generic.low"
@@ -108,6 +110,8 @@ open class PidDefinitionPreferenceDialogFragment(
         return root
     }
 
+
+
     private fun adjustRecyclerViewHeight(
         recyclerView: RecyclerView,
         orientation: Int,
@@ -115,15 +119,15 @@ open class PidDefinitionPreferenceDialogFragment(
         recyclerView.layoutParams.height =
             if (editableViewEnabled) {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.2f, resources.displayMetrics).toInt()
                 } else {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.6f, resources.displayMetrics).toInt()
                 }
             } else {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.65f, resources.displayMetrics).toInt()
                 } else {
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550f, resources.displayMetrics).toInt()
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getScreenHeight() * 0.85f, resources.displayMetrics).toInt()
                 }
             }
     }
