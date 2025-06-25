@@ -130,7 +130,7 @@ internal class AdjustmentsStrategy {
                 BatchPolicy
                     .builder()
                     .enabled(preferences.adapter.batchEnabled)
-                    .strictValidationEnabled(preferences.adapter.batchStricValidationEnabled)
+                    .strictValidationEnabled(preferences.adapter.batchStrictValidationEnabled)
                     .responseLengthEnabled(preferences.adapter.responseLengthEnabled)
                     .mode01BatchSize(preferences.adapter.mode01BatchSize)
                     .otherModesBatchSize(preferences.adapter.otherModesBatchSize)

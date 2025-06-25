@@ -18,52 +18,132 @@ package org.obd.graphs.bl.datalogger
 
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import org.obd.graphs.PREF_MODULE_LIST
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getS
-import org.obd.graphs.preferences.isEnabled
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.javaField
+
+private const val TAG = "DataLoggerSettings"
+
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Preference(val key: String, val defaultValue: String, val type: KClass<*>)
 
 data class Adapter(
-    var connectionType: String = "bluetooth",
-    var connectionTimeout: Int = 2000,
-    var stnExtensionsEnabled: Boolean = false,
-    var individualQueryStrategyEnabled: Boolean = false,
-    var tcpPort: Int = 35000,
-    var wifiSSID: String = "",
-    var otherModesBatchSize: Int? = null,
-    var mode01BatchSize: Int? = null,
-    var batchEnabled: Boolean = true,
-    var batchStricValidationEnabled: Boolean = false,
-    var tcpHost: String = "192.168.0.10",
-    var reconnectWhenError: Boolean = true,
+    @Preference("pref.adapter.id", "OBDII", String::class)
     var adapterId: String = "OBDII",
+
+    @Preference("pref.adapter.connection.type", "bluetooth", String::class)
+    var connectionType: String = "bluetooth",
+
+    @Preference("pref.adapter.connection.timeout", "2000", Int::class)
+    var connectionTimeout: Int = 2000,
+
+    @Preference("pref.adapter.stn.enabled", "false", Boolean::class)
+    var stnExtensionsEnabled: Boolean = false,
+
+    @Preference("pref.adapter.query.individual.enabled", "false", Boolean::class)
+    var individualQueryStrategyEnabled: Boolean = false,
+
+    @Preference("pref.adapter.connection.tcp.port", "35000", Int::class)
+    var tcpPort: Int = 35000,
+
+    @Preference("pref.adapter.connection.tcp.ssid", "", String::class)
+    var wifiSSID: String = "",
+
+    @Preference("pref.adapter.batch.size", "", Int::class)
+    var otherModesBatchSize: Int? = null,
+
+    @Preference("pref.adapter.batch_01.size", "", Int::class)
+    var mode01BatchSize: Int? = null,
+
+    @Preference("pref.adapter.batch.enabled", "true", Boolean::class)
+    var batchEnabled: Boolean = true,
+
+    @Preference("pref.adapter.batch.strict_validation.enabled", "false", Boolean::class)
+    var batchStrictValidationEnabled: Boolean = false,
+
+    @Preference("pref.adapter.connection.tcp.host", "192.168.0.10", String::class)
+    var tcpHost: String = "192.168.0.10",
+
+    @Preference("pref.adapter.reconnect", "true", Boolean::class)
+    var reconnectWhenError: Boolean = true,
+
+    @Preference("pref.adapter.command.freq", "6", Long::class)
     var commandFrequency: Long = 6,
+
+    @Preference("pref.adapter.init.delay", "500", Long::class)
     var initDelay: Long = 500,
+
+    @Preference("pref.adapter.init.delay_after_reset", "0", Long::class)
     var delayAfterReset: Long = 0,
+
+    @Preference("pref.adapter.cache.result.enabled", "false", Boolean::class)
     var resultsCacheEnabled: Boolean = false,
+
+    @Preference("pref.adapter.init.protocol", "AUTO", String::class)
     var initProtocol: String = "AUTO",
+
+    @Preference("pref.adapter.reconnect.max_retry", "0", Int::class)
     var maxReconnectNum: Int = 0,
+
+    @Preference("pref.adapter.init.fetchDeviceProperties", "true", Boolean::class)
     var vehicleMetadataReadingEnabled: Boolean = true,
+
+    @Preference("pref.adapter.init.fetchSupportedPids", "true", Boolean::class)
     var vehicleCapabilitiesReadingEnabled: Boolean = true,
+
+    @Preference("pref.adapter.init.fetchDTC", "false", Boolean::class)
     var vehicleDTCReadingEnabled: Boolean = false,
+
+    @Preference("pref.adapter.init.cleanDTC", "false", Boolean::class)
     var vehicleDTCCleaningEnabled: Boolean = false,
+
+    @Preference("pref.adapter.responseLength.enabled", "false", Boolean::class)
     var responseLengthEnabled: Boolean = false,
+
+    @Preference("pref.adapter.graceful_stop.enabled", "true", Boolean::class)
     var gracefulStop: Boolean = true,
+
+    @Preference("pref.adapter.adaptive.enabled", "false", Boolean::class)
     var adaptiveConnectionEnabled: Boolean = false,
 )
 
 data class DataLoggerSettings(
     var adapter: Adapter = Adapter(),
+
+    @Preference("pref.debug.logging.enabled", "false", Boolean::class)
     var debugLogging: Boolean = false,
+
+    @Preference("pref.drag_race.vehicle_speed.freq", "10", Long::class)
     var dragRacingCommandFrequency: Long = 10,
+
+    @Preference("pref.mode", "Generic mode", String::class)
     var mode: String = "Generic mode",
+
+    @Preference("pref.debug.generator.enabled", "false", Boolean::class)
     var generatorEnabled: Boolean = false,
+
+    @Preference("pref.pids.registry.list", "", Set::class)
     var resources: Set<String> = modules.getDefaultModules().keys,
+
+    @Preference("pref.debug.trip.save.connector_response", "false", Boolean::class)
     var dumpRawConnectorResponse: Boolean = false,
+
+    @Preference("pref.vehicle_settings.fuelTankSize", "58", Int::class)
     var fuelTankSize: Int = 58,
+
+    @Preference("pref.vehicle_settings.vehicle_status_panel_enabled", "false", Boolean::class)
     var vehicleStatusPanelEnabled: Boolean = false,
+
+    @Preference("pref.vehicle_settings.disconnect_when_off", "false", Boolean::class)
     var vehicleStatusDisconnectWhenOff: Boolean = false,
+
+    @Preference("pref.profile.2_0_GME_extension.enabled", "false", Boolean::class)
     var gmeExtensionsEnabled: Boolean = false,
 )
 
@@ -79,10 +159,11 @@ internal class DataLoggerSettingsManager : SettingsManager {
             sharedPreferences: SharedPreferences?,
             key: String?,
         ) {
-            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                Log.v(LOG_TAG, "Key to update $key")
+            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                Log.v(TAG, "Key to update $key")
             }
-            instance = update(key)
+
+            update(key, sharedPreferences)
         }
     }
 
@@ -97,113 +178,145 @@ internal class DataLoggerSettingsManager : SettingsManager {
     override fun instance(): DataLoggerSettings = instance
 
     override fun reload() {
-        update("pref.adapter.connection.type")
-        update("pref.adapter.connection.timeout")
-        update("pref.adapter.stn.enabled")
-        update("pref.adapter.query.individual.enabled")
-        update("pref.adapter.connection.tcp.host")
-        update("pref.adapter.connection.tcp.port")
-        update("pref.adapter.connection.tcp.ssid")
-        update("pref.adapter.batch.size")
-        update("pref.adapter.batch_01.size")
-        update("pref.adapter.batch.enabled")
-        update("pref.adapter.batch.strict_validation.enabled")
-        update("pref.adapter.reconnect")
-        update("pref.adapter.id")
-        update("pref.adapter.command.freq")
-        update("pref.adapter.init.delay")
-        update("pref.adapter.init.delay_after_reset")
-        update("pref.adapter.cache.result.enabled")
-        update("pref.adapter.init.protocol")
-        update("pref.adapter.reconnect.max_retry")
-        update("pref.adapter.init.fetchSupportedPids")
-        update("pref.adapter.init.fetchDTC")
-        update("pref.adapter.init.cleanDTC")
-        update("pref.adapter.responseLength.enabled")
-        update("pref.adapter.init.fetchDeviceProperties")
-        update("pref.adapter.graceful_stop.enabled")
-        update("pref.adapter.adaptive.enabled")
-        update("pref.debug.logging.enabled")
-        update("pref.drag_race.vehicle_speed.freq")
-        update("pref.mode")
-        update("pref.debug.generator.enabled")
-        update("pref.debug.trip.save.connector_response")
-        update(PREF_MODULE_LIST)
-        update("pref.vehicle_settings.fuelTankSize")
-        update("pref.vehicle_settings.vehicle_status_panel_enabled")
-        update("pref.vehicle_settings.disconnect_when_off")
-        update("pref.profile.2_0_GME_extension.enabled")
+        update("pref.adapter.connection.type", Prefs)
+        update("pref.adapter.connection.timeout", Prefs)
+        update("pref.adapter.stn.enabled", Prefs)
+        update("pref.adapter.query.individual.enabled", Prefs)
+        update("pref.adapter.connection.tcp.host", Prefs)
+        update("pref.adapter.connection.tcp.port", Prefs)
+        update("pref.adapter.connection.tcp.ssid", Prefs)
+        update("pref.adapter.batch.size", Prefs)
+        update("pref.adapter.batch_01.size", Prefs)
+        update("pref.adapter.batch.enabled", Prefs)
+        update("pref.adapter.batch.strict_validation.enabled", Prefs)
+        update("pref.adapter.reconnect", Prefs)
+        update("pref.adapter.id", Prefs)
+        update("pref.adapter.command.freq", Prefs)
+        update("pref.adapter.init.delay", Prefs)
+        update("pref.adapter.init.delay_after_reset", Prefs)
+        update("pref.adapter.cache.result.enabled", Prefs)
+        update("pref.adapter.init.protocol", Prefs)
+        update("pref.adapter.reconnect.max_retry", Prefs)
+        update("pref.adapter.init.fetchSupportedPids", Prefs)
+        update("pref.adapter.init.fetchDTC", Prefs)
+        update("pref.adapter.init.cleanDTC", Prefs)
+        update("pref.adapter.responseLength.enabled", Prefs)
+        update("pref.adapter.init.fetchDeviceProperties", Prefs)
+        update("pref.adapter.graceful_stop.enabled", Prefs)
+        update("pref.adapter.adaptive.enabled", Prefs)
+        update("pref.debug.logging.enabled", Prefs)
+        update("pref.drag_race.vehicle_speed.freq", Prefs)
+        update("pref.mode", Prefs)
+        update("pref.debug.generator.enabled", Prefs)
+        update("pref.debug.trip.save.connector_response", Prefs)
+        update(PREF_MODULE_LIST, Prefs)
+        update("pref.vehicle_settings.fuelTankSize", Prefs)
+        update("pref.vehicle_settings.vehicle_status_panel_enabled", Prefs)
+        update("pref.vehicle_settings.disconnect_when_off", Prefs)
+        update("pref.profile.2_0_GME_extension.enabled", Prefs)
     }
 
-    private fun update(key: String?): DataLoggerSettings =
-        instance.apply {
-            Log.i(LOG_TAG,"Updating preference: $key")
-            when (key) {
-                "pref.adapter.connection.type" -> adapter.connectionType = Prefs.getS(key, "bluetooth")
-                "pref.adapter.connection.timeout" -> {
-                    adapter.connectionTimeout =
-                        try {
-                            Prefs.getS(key, "2000").toInt()
-                        } catch (e: Exception) {
-                            2000
-                        }
+    private fun update(key: String?, sharedPreferences: SharedPreferences?) {
+        var obj: Any = instance
+        var field: KProperty1<*, *>? = instance::class.declaredMemberProperties.find {
+            (it.javaField?.annotations?.find { an -> an is Preference } as Preference?)?.key.equals(key)
+        }
+        if (field == null) {
+            field = instance.adapter::class.declaredMemberProperties.find {
+                (it.javaField?.annotations?.find { an -> an is Preference } as Preference?)?.key.equals(key)
+            }
+            obj = instance.adapter
+        }
+        if (field == null) {
+            if (Log.isLoggable(TAG,Log.DEBUG)) {
+                Log.d(TAG, "Did not find mapping for $key")
+            }
+        } else {
+            val preference = field.javaField?.getAnnotation(Preference::class.java)
+            if (preference == null) {
+                if (Log.isLoggable(TAG,Log.DEBUG)) {
+                   Log.d(TAG, " Did not find Preference annotation for $key")
+                }
+            } else {
+                field.javaField?.isAccessible = true
+
+                val default: Any? = if (preference.type == String::class) {
+                    preference.defaultValue
+                } else if (preference.type == Int::class) {
+                    if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
+                        preference.defaultValue.toInt()
+                    } else {
+                        preference.defaultValue
+                    }
+                } else if (preference.type == Boolean::class) {
+                    preference.defaultValue.toBoolean()
+                } else if (preference.type == Long::class) {
+                    if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
+                        preference.defaultValue.toLong()
+                    } else {
+                        preference.defaultValue
+                    }
+                } else if (preference.type == Set::class) {
+                    null
+                } else if (field.returnType.isMarkedNullable) {
+                    null
+                } else {
+                    null
                 }
 
-                "pref.adapter.stn.enabled" -> adapter.stnExtensionsEnabled = Prefs.getBoolean(key, false)
-                "pref.adapter.query.individual.enabled" -> adapter.individualQueryStrategyEnabled = Prefs.getBoolean(key, false)
-                "pref.adapter.connection.tcp.host" -> adapter.tcpHost = Prefs.getS(key, "192.168.0.10")
-                "pref.adapter.connection.tcp.port" ->
-                    adapter.tcpPort =
-                        try {
-                            Prefs.getS(key, "35000").toInt()
-                        } catch (e: Exception) {
-                            35000
-                        }
+                try {
+                    var newValue = sharedPreferences!!.all[key] ?: default
 
-                "pref.adapter.connection.tcp.ssid" -> adapter.wifiSSID = Prefs.getS(key, "")
-                "pref.adapter.batch.size" -> adapter.otherModesBatchSize = Prefs.getString(key, null)?.toInt()
-                "pref.adapter.batch_01.size" -> adapter.mode01BatchSize = Prefs.getString(key, null)?.toInt()
-                "pref.adapter.batch.enabled" -> adapter.batchEnabled = Prefs.getBoolean(key, true)
-                "pref.adapter.batch.strict_validation.enabled" -> adapter.batchStricValidationEnabled = Prefs.getBoolean(key, false)
-                "pref.adapter.reconnect" -> adapter.reconnectWhenError = Prefs.getBoolean(key, true)
-                "pref.adapter.id" -> adapter.adapterId = Prefs.getS(key, "OBDII")
-                "pref.adapter.command.freq" -> adapter.commandFrequency = Prefs.getS(key, "6").toLong()
-                "pref.adapter.init.delay" -> adapter.initDelay = Prefs.getS(key, "500").toLong()
-                "pref.adapter.init.delay_after_reset" -> adapter.delayAfterReset = Prefs.getS(key, "0").toLong()
-                "pref.adapter.cache.result.enabled" -> adapter.resultsCacheEnabled = Prefs.isEnabled(key)
-                "pref.adapter.init.protocol" -> adapter.initProtocol = Prefs.getS(key, "AUTO")
-                "pref.adapter.reconnect.max_retry" ->
-                    adapter.maxReconnectNum =
-                        try {
-                            Prefs.getS(key, "0").toInt()
-                        } catch (e: Exception) {
-                            0
-                        }
+                    if (!field.returnType.isMarkedNullable && newValue == null) {
+                        Log.e(TAG, "Field is not marked nullable however, new one is null for $key ")
+                    } else {
+                        if (newValue != null && newValue::class != preference.type) {
+                            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                                Log.d(TAG, "Types for $key differs ${newValue::class} != ${preference.type}")
+                            }
 
-                "pref.adapter.init.fetchSupportedPids" -> adapter.vehicleCapabilitiesReadingEnabled = Prefs.getBoolean(key, true)
-                "pref.adapter.init.fetchDTC" -> adapter.vehicleDTCReadingEnabled = Prefs.getBoolean(key, false)
-                "pref.adapter.init.cleanDTC" -> adapter.vehicleDTCCleaningEnabled = Prefs.getBoolean(key, false)
-                "pref.adapter.responseLength.enabled" -> adapter.responseLengthEnabled =  Prefs.getBoolean(key, false)
-                "pref.adapter.init.fetchDeviceProperties" -> adapter.vehicleMetadataReadingEnabled = Prefs.getBoolean(key, true)
-                "pref.adapter.graceful_stop.enabled" -> adapter.gracefulStop = Prefs.getBoolean(key, true)
-                "pref.adapter.adaptive.enabled" -> adapter.adaptiveConnectionEnabled = Prefs.isEnabled(key)
-                "pref.debug.logging.enabled" -> debugLogging = Prefs.getBoolean(key, false)
-                "pref.drag_race.vehicle_speed.freq" -> dragRacingCommandFrequency = Prefs.getS(key, "10").toLong()
-                "pref.mode" -> mode = Prefs.getS(key, "Generic mode")
-                "pref.debug.generator.enabled" -> generatorEnabled = Prefs.isEnabled(key)
-                "pref.debug.trip.save.connector_response" -> dumpRawConnectorResponse = Prefs.getBoolean(key, false)
-                "pref.pids.registry.list" -> resources = Prefs.getStringSet(key, modules.getDefaultModules().keys)!!
-                "pref.vehicle_settings.fuelTankSize" -> fuelTankSize = Prefs.getS(key, "58").toInt()
-                "pref.vehicle_settings.vehicle_status_panel_enabled" -> vehicleStatusPanelEnabled = Prefs.getBoolean(key, false)
-                "pref.vehicle_settings.disconnect_when_off" -> vehicleStatusDisconnectWhenOff = Prefs.getBoolean(key, false)
-                "pref.profile.2_0_GME_extension.enabled" -> gmeExtensionsEnabled = Prefs.getBoolean(key, false)
-                else -> {
-                    Log.w(LOG_TAG, "Received unknown preference: $key")
+                            newValue = when (preference.type) {
+                                Int::class -> {
+                                    if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
+                                        newValue.toString().toInt()
+                                    } else {
+                                        null
+                                    }
+                                }
+
+                                Long::class -> {
+                                    if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
+                                        newValue.toString().toLong()
+                                    } else {
+                                        null
+                                    }
+                                }
+
+                                Boolean::class -> {
+                                    newValue.toString().toBoolean()
+                                }
+
+                                else -> {
+                                    newValue
+                                }
+                            }
+                            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                                if (newValue != null) {
+                                    Log.d(TAG, "New type for $key is set to ${newValue::class}")
+                                }
+                            }
+                        }
+                        field.javaField?.set(obj, newValue)
+                        if (Log.isLoggable(TAG, Log.INFO)){
+                            Log.i(TAG, "Preference $key is updated with new value=$newValue")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to update property $key", e)
                 }
             }
         }
-
-
+    }
 }
 
 val dataLoggerSettings: SettingsManager by lazy { DataLoggerSettingsManager() }
