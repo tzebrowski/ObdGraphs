@@ -23,6 +23,7 @@ import org.obd.graphs.PREF_MODULE_LIST
 import org.obd.graphs.preferences.Prefs
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
 private const val TAG = "DataLoggerSettings"
@@ -58,42 +59,19 @@ internal class DataLoggerSettingsManager : SettingsManager {
     override fun instance(): DataLoggerSettings = instance
 
     override fun reload() {
-        update("pref.adapter.connection.type", Prefs)
-        update("pref.adapter.connection.timeout", Prefs)
-        update("pref.adapter.stn.enabled", Prefs)
-        update("pref.adapter.query.individual.enabled", Prefs)
-        update("pref.adapter.connection.tcp.host", Prefs)
-        update("pref.adapter.connection.tcp.port", Prefs)
-        update("pref.adapter.connection.tcp.ssid", Prefs)
-        update("pref.adapter.batch.size", Prefs)
-        update("pref.adapter.batch_01.size", Prefs)
-        update("pref.adapter.batch.enabled", Prefs)
-        update("pref.adapter.batch.strict_validation.enabled", Prefs)
-        update("pref.adapter.reconnect", Prefs)
-        update("pref.adapter.id", Prefs)
-        update("pref.adapter.command.freq", Prefs)
-        update("pref.adapter.init.delay", Prefs)
-        update("pref.adapter.init.delay_after_reset", Prefs)
-        update("pref.adapter.cache.result.enabled", Prefs)
-        update("pref.adapter.init.protocol", Prefs)
-        update("pref.adapter.reconnect.max_retry", Prefs)
-        update("pref.adapter.init.fetchSupportedPids", Prefs)
-        update("pref.adapter.init.fetchDTC", Prefs)
-        update("pref.adapter.init.cleanDTC", Prefs)
-        update("pref.adapter.responseLength.enabled", Prefs)
-        update("pref.adapter.init.fetchDeviceProperties", Prefs)
-        update("pref.adapter.graceful_stop.enabled", Prefs)
-        update("pref.adapter.adaptive.enabled", Prefs)
-        update("pref.debug.logging.enabled", Prefs)
-        update("pref.drag_race.vehicle_speed.freq", Prefs)
-        update("pref.mode", Prefs)
-        update("pref.debug.generator.enabled", Prefs)
-        update("pref.debug.trip.save.connector_response", Prefs)
-        update(PREF_MODULE_LIST, Prefs)
-        update("pref.vehicle_settings.fuelTankSize", Prefs)
-        update("pref.vehicle_settings.vehicle_status_panel_enabled", Prefs)
-        update("pref.vehicle_settings.disconnect_when_off", Prefs)
-        update("pref.profile.2_0_GME_extension.enabled", Prefs)
+        instance::class.declaredMemberProperties.forEach {
+            val preference = it.javaField?.annotations?.find { an -> an is Preference } as Preference?
+            preference?.let {
+                update(preference.key, Prefs)
+            }
+        }
+
+        instance.adapter::class.declaredMemberProperties.forEach {
+            val preference = it.javaField?.annotations?.find { an -> an is Preference } as Preference?
+            preference?.let {
+                update(preference.key, Prefs)
+            }
+        }
     }
 
     private fun update(
