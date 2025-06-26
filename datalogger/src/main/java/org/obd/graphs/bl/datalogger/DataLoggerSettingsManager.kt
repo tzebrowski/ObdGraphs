@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -48,6 +48,7 @@ internal class DataLoggerSettingsManager : SettingsManager {
 
     private var strongReference: SharedPreferenceChangeListener = SharedPreferenceChangeListener()
     private var instance: DataLoggerSettings = DataLoggerSettings()
+    private val cache = mutableMapOf<String, Triple<Preference, KProperty1<*, *>, Any>>()
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
@@ -56,17 +57,20 @@ internal class DataLoggerSettingsManager : SettingsManager {
 
     override fun instance(): DataLoggerSettings = instance
 
+
     override fun reload() {
-        instance::class.declaredMemberProperties.forEach {
-            val preference = it.javaField?.annotations?.find { an -> an is Preference } as Preference?
+        instance::class.declaredMemberProperties.forEach { field ->
+            val preference = field.javaField?.annotations?.find { an -> an is Preference } as Preference?
             preference?.let {
+                cache[preference.key] = Triple(preference, field, instance)
                 update(preference.key, Prefs)
             }
         }
 
-        instance.adapter::class.declaredMemberProperties.forEach {
-            val preference = it.javaField?.annotations?.find { an -> an is Preference } as Preference?
+        instance.adapter::class.declaredMemberProperties.forEach { field ->
+            val preference = field.javaField?.annotations?.find { an -> an is Preference } as Preference?
             preference?.let {
+                cache[preference.key] = Triple(preference, field, instance.adapter)
                 update(preference.key, Prefs)
             }
         }
@@ -76,110 +80,95 @@ internal class DataLoggerSettingsManager : SettingsManager {
         key: String?,
         sharedPreferences: SharedPreferences?,
     ) {
-        var obj: Any = instance
-        var field: KProperty1<*, *>? =
-            instance::class.declaredMemberProperties.find {
-                (it.javaField?.annotations?.find { an -> an is Preference } as Preference?)?.key.equals(key)
-            }
-        if (field == null) {
-            field =
-                instance.adapter::class.declaredMemberProperties.find {
-                    (it.javaField?.annotations?.find { an -> an is Preference } as Preference?)?.key.equals(key)
+
+        if (cache.containsKey(key)) {
+            val (preference, field, obj) = cache[key]!!
+
+            field.javaField?.isAccessible = true
+
+            val default: Any? =
+                if (preference.type == String::class) {
+                    preference.defaultValue
+                } else if (preference.type == Int::class) {
+                    if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
+                        preference.defaultValue.toInt()
+                    } else {
+                        preference.defaultValue
+                    }
+                } else if (preference.type == Boolean::class) {
+                    preference.defaultValue.toBoolean()
+                } else if (preference.type == Long::class) {
+                    if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
+                        preference.defaultValue.toLong()
+                    } else {
+                        preference.defaultValue
+                    }
+                } else if (preference.type == Set::class) {
+                    null
+                } else if (field.returnType.isMarkedNullable) {
+                    null
+                } else {
+                    null
                 }
-            obj = instance.adapter
-        }
-        if (field == null) {
+
+            try {
+                var newValue = sharedPreferences!!.all[key] ?: default
+
+                if (!field.returnType.isMarkedNullable && newValue == null) {
+                    Log.e(TAG, "Field is not marked nullable however, new one is null for $key ")
+                } else {
+                    if (newValue != null && newValue::class != preference.type) {
+                        if (Log.isLoggable(TAG, Log.DEBUG)) {
+                            Log.d(TAG, "Types for $key differs ${newValue::class} != ${preference.type}")
+                        }
+
+                        newValue =
+                            when (preference.type) {
+                                Int::class -> {
+                                    if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
+                                        newValue.toString().toInt()
+                                    } else {
+                                        null
+                                    }
+                                }
+
+                                Long::class -> {
+                                    if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
+                                        newValue.toString().toLong()
+                                    } else {
+                                        null
+                                    }
+                                }
+
+                                Boolean::class -> {
+                                    newValue.toString().toBoolean()
+                                }
+
+                                else -> {
+                                    newValue
+                                }
+                            }
+                        if (Log.isLoggable(TAG, Log.DEBUG)) {
+                            if (newValue != null) {
+                                Log.d(TAG, "New type for $key is set to ${newValue::class}")
+                            }
+                        }
+                    }
+                    field.javaField?.set(obj, newValue)
+                    if (Log.isLoggable(TAG, Log.INFO)) {
+                        Log.i(TAG, "Preference $key is updated with new value=$newValue")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to update property $key", e)
+            }
+        } else {
             if (Log.isLoggable(TAG, Log.DEBUG)) {
                 Log.d(TAG, "Did not find mapping for $key")
             }
-        } else {
-            val preference = field.javaField?.getAnnotation(Preference::class.java)
-            if (preference == null) {
-                if (Log.isLoggable(TAG, Log.DEBUG)) {
-                    Log.d(TAG, " Did not find Preference annotation for $key")
-                }
-            } else {
-                field.javaField?.isAccessible = true
-
-                val default: Any? =
-                    if (preference.type == String::class) {
-                        preference.defaultValue
-                    } else if (preference.type == Int::class) {
-                        if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
-                            preference.defaultValue.toInt()
-                        } else {
-                            preference.defaultValue
-                        }
-                    } else if (preference.type == Boolean::class) {
-                        preference.defaultValue.toBoolean()
-                    } else if (preference.type == Long::class) {
-                        if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
-                            preference.defaultValue.toLong()
-                        } else {
-                            preference.defaultValue
-                        }
-                    } else if (preference.type == Set::class) {
-                        null
-                    } else if (field.returnType.isMarkedNullable) {
-                        null
-                    } else {
-                        null
-                    }
-
-                try {
-                    var newValue = sharedPreferences!!.all[key] ?: default
-
-                    if (!field.returnType.isMarkedNullable && newValue == null) {
-                        Log.e(TAG, "Field is not marked nullable however, new one is null for $key ")
-                    } else {
-                        if (newValue != null && newValue::class != preference.type) {
-                            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                                Log.d(TAG, "Types for $key differs ${newValue::class} != ${preference.type}")
-                            }
-
-                            newValue =
-                                when (preference.type) {
-                                    Int::class -> {
-                                        if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
-                                            newValue.toString().toInt()
-                                        } else {
-                                            null
-                                        }
-                                    }
-
-                                    Long::class -> {
-                                        if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
-                                            newValue.toString().toLong()
-                                        } else {
-                                            null
-                                        }
-                                    }
-
-                                    Boolean::class -> {
-                                        newValue.toString().toBoolean()
-                                    }
-
-                                    else -> {
-                                        newValue
-                                    }
-                                }
-                            if (Log.isLoggable(TAG, Log.DEBUG)) {
-                                if (newValue != null) {
-                                    Log.d(TAG, "New type for $key is set to ${newValue::class}")
-                                }
-                            }
-                        }
-                        field.javaField?.set(obj, newValue)
-                        if (Log.isLoggable(TAG, Log.INFO)) {
-                            Log.i(TAG, "Preference $key is updated with new value=$newValue")
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to update property $key", e)
-                }
-            }
         }
     }
+
 }
 
 val dataLoggerSettings: SettingsManager by lazy { DataLoggerSettingsManager() }
