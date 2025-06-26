@@ -19,11 +19,9 @@ package org.obd.graphs.bl.datalogger
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.text.isDigitsOnly
-import org.obd.graphs.PREF_MODULE_LIST
 import org.obd.graphs.preferences.Prefs
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
 private const val TAG = "DataLoggerSettings"
