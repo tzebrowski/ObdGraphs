@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -57,7 +57,6 @@ internal class DataLoggerSettingsManager : SettingsManager {
 
     override fun instance(): DataLoggerSettings = instance
 
-
     override fun reload() {
         instance::class.declaredMemberProperties.forEach { field ->
             val preference = field.javaField?.annotations?.find { an -> an is Preference } as Preference?
@@ -80,7 +79,6 @@ internal class DataLoggerSettingsManager : SettingsManager {
         key: String?,
         sharedPreferences: SharedPreferences?,
     ) {
-
         if (cache.containsKey(key)) {
             val (preference, field, obj) = cache[key]!!
 
@@ -168,7 +166,6 @@ internal class DataLoggerSettingsManager : SettingsManager {
             }
         }
     }
-
 }
 
 val dataLoggerSettings: SettingsManager by lazy { DataLoggerSettingsManager() }
