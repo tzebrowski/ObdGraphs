@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,7 +24,7 @@ import kotlin.reflect.jvm.javaField
 
 private const val TAG = "AbstractPrefs"
 
-data class CacheValue(val preference: XmlPreference, val field: KProperty1<*, *>,val obj: Any)
+data class CacheValue(val preference: XmlPreference, val field: KProperty1<*, *>, val obj: Any, val defaultValue: Any?)
 
 interface PreferencesManager<T> {
     fun reload()
@@ -62,33 +62,8 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
 
             cacheValue.field.javaField?.isAccessible = true
 
-            val default: Any? =
-                if (cacheValue.preference.type == String::class) {
-                    cacheValue.preference.defaultValue
-                } else if (cacheValue.preference.type == Int::class) {
-                    if (cacheValue.preference.defaultValue.isNotEmpty() && cacheValue.preference.defaultValue.isDigitsOnly()) {
-                        cacheValue.preference.defaultValue.toInt()
-                    } else {
-                        cacheValue.preference.defaultValue
-                    }
-                } else if (cacheValue.preference.type == Boolean::class) {
-                    cacheValue.preference.defaultValue.toBoolean()
-                } else if (cacheValue.preference.type == Long::class) {
-                    if (cacheValue.preference.defaultValue.isNotEmpty() && cacheValue.preference.defaultValue.isDigitsOnly()) {
-                        cacheValue.preference.defaultValue.toLong()
-                    } else {
-                        cacheValue.preference.defaultValue
-                    }
-                } else if (cacheValue.preference.type == Set::class) {
-                    null
-                } else if (cacheValue.field.returnType.isMarkedNullable) {
-                    null
-                } else {
-                    null
-                }
-
             try {
-                var newValue = sharedPreferences!!.all[key] ?: default
+                var newValue = sharedPreferences!!.all[key] ?: cacheValue.defaultValue
 
                 if (!cacheValue.field.returnType.isMarkedNullable && newValue == null) {
                     Log.e(TAG, "Field is not marked nullable however, new one is null for $key ")
@@ -145,4 +120,29 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
             }
         }
     }
+
+    protected fun calculateDefaultValue(preference: XmlPreference, field: KProperty1<*, *>): Any? =
+        if (preference.type == String::class) {
+            preference.defaultValue
+        } else if (preference.type == Int::class) {
+            if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
+                preference.defaultValue.toInt()
+            } else {
+                preference.defaultValue
+            }
+        } else if (preference.type == Boolean::class) {
+            preference.defaultValue.toBoolean()
+        } else if (preference.type == Long::class) {
+            if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
+                preference.defaultValue.toLong()
+            } else {
+                preference.defaultValue
+            }
+        } else if (preference.type == Set::class) {
+            null
+        } else if (field.returnType.isMarkedNullable) {
+            null
+        } else {
+            null
+        }
 }

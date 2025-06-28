@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -18,9 +18,9 @@ package org.obd.graphs.bl.datalogger
 
 import org.obd.graphs.preferences.AbstractPreferencesManager
 import org.obd.graphs.preferences.CacheValue
-import org.obd.graphs.preferences.XmlPreference
 import org.obd.graphs.preferences.PreferencesManager
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.XmlPreference
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
@@ -37,7 +37,7 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
         instance::class.declaredMemberProperties.forEach { field ->
             val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
-                cache[preference.key] = CacheValue(preference, field, instance)
+                cache[preference.key] = CacheValue(preference, field, instance, calculateDefaultValue(preference, field))
                 update(preference.key, Prefs)
             }
         }
@@ -45,7 +45,7 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
         instance.adapter::class.declaredMemberProperties.forEach { field ->
             val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
-                cache[preference.key] = CacheValue(preference, field, instance.adapter)
+                cache[preference.key] = CacheValue(preference, field, instance.adapter, calculateDefaultValue(preference, field))
                 update(preference.key, Prefs)
             }
         }
