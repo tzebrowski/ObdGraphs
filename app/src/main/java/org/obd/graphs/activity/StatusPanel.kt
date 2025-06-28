@@ -22,7 +22,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.*
@@ -37,7 +37,7 @@ internal fun MainActivity.updateVehicleStatus(status: String) {
         COLOR_CARDINAL,
         1.0f
     ){
-        it.isGone = !dataLoggerPreferences.instance.vehicleStatusPanelEnabled
+        it.isGone = !dataLoggerSettings.instance().vehicleStatusPanelEnabled
     }
 }
 
@@ -45,7 +45,7 @@ internal fun MainActivity.updateAdapterConnectionType() {
     updateTextField(
         R.id.connection_status,
         resources.getString(R.string.status_panel_adapter_connection_type),
-        dataLoggerPreferences.instance.connectionType,
+        dataLoggerSettings.instance().adapter.connectionType,
         COLOR_PHILIPPINE_GREEN,
         1.0f
     )

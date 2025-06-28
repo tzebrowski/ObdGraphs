@@ -21,9 +21,9 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_NOT_CONNECTED
-import org.obd.graphs.bl.datalogger.DataLoggerPreferences
+import org.obd.graphs.bl.datalogger.DataLoggerSettings
 import org.obd.graphs.bl.datalogger.LOG_TAG
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
 import org.obd.graphs.network
 import org.obd.graphs.sendBroadcastEvent
@@ -31,7 +31,7 @@ import org.obd.metrics.transport.AdapterConnection
 
 internal class ConnectionManager {
     fun obtain(): AdapterConnection? =
-        when (dataLoggerPreferences.instance.connectionType) {
+        when (dataLoggerSettings.instance().adapter.connectionType) {
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
             "usb" -> getContext()?.let { UsbConnection.of(context = it) }
@@ -42,7 +42,7 @@ internal class ConnectionManager {
 
     private fun bluetoothConnection(): AdapterConnection? =
         try {
-            val deviceName = dataLoggerPreferences.instance.adapterId
+            val deviceName = dataLoggerSettings.instance().adapter.adapterId
             Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
 
             if (deviceName.isEmpty()) {
@@ -63,25 +63,25 @@ internal class ConnectionManager {
             null
         }
 
-    private fun wifiConnection(preferences: DataLoggerPreferences = dataLoggerPreferences.instance): WifiConnection? {
+    private fun wifiConnection(preferences: DataLoggerSettings = dataLoggerSettings.instance()): WifiConnection? {
         try {
             Log.i(
                 LOG_TAG,
-                "Creating TCP connection to: ${preferences.tcpHost}:${preferences.tcpPort}.",
+                "Creating TCP connection to: ${preferences.adapter.tcpHost}:${preferences.adapter.tcpPort}.",
             )
 
-            Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${preferences.wifiSSID}")
+            Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${preferences.adapter.wifiSSID}")
             Log.i(LOG_TAG, "Current connected WIFI SSID ${network.currentSSID}")
 
-            if (preferences.wifiSSID.isEmpty()) {
+            if (preferences.adapter.wifiSSID.isEmpty()) {
                 Log.d(LOG_TAG, "Target WIFI SSID is not specified in the prefs section. Connecting to the default one.")
             } else if (network.currentSSID.isNullOrBlank()) {
                 sendBroadcastEvent(DATA_LOGGER_WIFI_NOT_CONNECTED)
                 return null
-            } else if (preferences.wifiSSID != network.currentSSID) {
+            } else if (preferences.adapter.wifiSSID != network.currentSSID) {
                 Log.w(
                     LOG_TAG,
-                    "Preferences selected WIFI SSID ${preferences.wifiSSID} " +
+                    "Preferences selected WIFI SSID ${preferences.adapter.wifiSSID} " +
                         "is different than current connected ${network.currentSSID}",
                 )
                 sendBroadcastEvent(DATA_LOGGER_WIFI_INCORRECT)

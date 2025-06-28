@@ -176,7 +176,7 @@ internal class IotTemplateCarScreen(
     }
 
     override fun actionStartDataLogging() {
-        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
         } else {
@@ -246,7 +246,7 @@ internal class IotTemplateCarScreen(
     private fun applyMetricsFilter() {
         metricsCollector.applyFilter(settings.getGiuliaRendererSetting().selectedPIDs)
 
-        if (dataLoggerPreferences.instance.individualQueryStrategyEnabled) {
+        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
             dataLogger.updateQuery(query)
         }

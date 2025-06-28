@@ -23,7 +23,7 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.query.Query
@@ -95,7 +95,7 @@ internal class DragRacingSurfaceRenderer(
                     atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
                     torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
                     intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                    vehicleSpeed = metricsCollector.getMetric(if (dataLoggerPreferences.instance.gmeExtensionsEnabled)
+                    vehicleSpeed = metricsCollector.getMetric(if (dataLoggerSettings.instance().gmeExtensionsEnabled)
                         Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID)
                 })
         }

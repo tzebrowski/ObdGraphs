@@ -21,7 +21,7 @@ import androidx.test.core.app.launchActivity
 import org.junit.Assert
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateString
@@ -56,7 +56,7 @@ fun tcpTestRunner(
         Prefs.updateString("pref.adapter.connection.type", CONNECTION_TYPE)
         Prefs.updateString("pref.adapter.connection.tcp.host", MOCK_SERVER_PORT)
         Prefs.updateString("pref.adapter.connection.tcp.port", "$mockServerPort")
-        dataLoggerPreferences.reload()
+        dataLoggerSettings.reload()
 
         val mockServer = MockServer(port = mockServerPort, requestResponse = mockServerRequestResponse)
 
@@ -66,7 +66,7 @@ fun tcpTestRunner(
             Log.e(LOG_TAG, "Failed to execute 'arrange' test section", e)
         }
 
-        dataLoggerPreferences.reload()
+        dataLoggerSettings.reload()
 
         try {
             runAsync {

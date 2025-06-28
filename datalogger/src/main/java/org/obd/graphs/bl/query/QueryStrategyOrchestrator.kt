@@ -18,7 +18,7 @@ package org.obd.graphs.bl.query
 
 import android.util.Log
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.datalogger.dataLoggerPreferences
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.runAsync
@@ -44,8 +44,8 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
     override fun getIDs(): MutableSet<Long>  {
         val pids = strategies[strategy]?.getPIDs() ?: mutableSetOf()
         //decorate with Vehicle Status PID
-        if (dataLoggerPreferences.instance.vehicleStatusPanelEnabled ||
-            dataLoggerPreferences.instance.vehicleStatusDisconnectWhenOff){
+        if (dataLoggerSettings.instance().vehicleStatusPanelEnabled ||
+            dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff){
             pids.add(Pid.VEHICLE_STATUS_PID_ID.id)
         }
         return pids
@@ -95,5 +95,5 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
             setStrategy(QueryStrategyType.SHARED_QUERY)
         }
 
-    private fun isIndividualQuerySelected() = dataLoggerPreferences.instance.individualQueryStrategyEnabled
+    private fun isIndividualQuerySelected() = dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled
 }

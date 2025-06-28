@@ -34,14 +34,14 @@ internal class AdjustmentsStrategy {
 
     fun findAdjustmentFor(
         strategy: QueryStrategyType,
-        preferences: DataLoggerPreferences = dataLoggerPreferences.instance,
+        preferences: DataLoggerSettings = dataLoggerSettings.instance(),
     ): Adjustments =
         when (strategy) {
             QueryStrategyType.DRAG_RACING_QUERY -> getDragRacingAdjustments(preferences = preferences)
             else -> getDefaultAdjustments(preferences = preferences)
         }
 
-    private fun getDragRacingAdjustments(preferences: DataLoggerPreferences): Adjustments {
+    private fun getDragRacingAdjustments(preferences: DataLoggerSettings): Adjustments {
         var builder =
             Adjustments
                 .builder()
@@ -49,22 +49,22 @@ internal class AdjustmentsStrategy {
                 .errorsPolicy(
                     ErrorsPolicy
                         .builder()
-                        .numberOfRetries(preferences.maxReconnectNum)
-                        .reconnectEnabled(preferences.reconnectWhenError)
+                        .numberOfRetries(preferences.adapter.maxReconnectNum)
+                        .reconnectEnabled(preferences.adapter.reconnectWhenError)
                         .build(),
                 ).batchPolicy(
                     BatchPolicy
                         .builder()
-                        .enabled(preferences.batchEnabled)
-                        .responseLengthEnabled(preferences.responseLengthEnabled)
-                        .mode01BatchSize(preferences.mode01BatchSize)
-                        .otherModesBatchSize(preferences.otherModesBatchSize)
+                        .enabled(preferences.adapter.batchEnabled)
+                        .responseLengthEnabled(preferences.adapter.responseLengthEnabled)
+                        .mode01BatchSize(preferences.adapter.mode01BatchSize)
+                        .otherModesBatchSize(preferences.adapter.otherModesBatchSize)
                         .build(),
                 ).collectRawConnectorResponseEnabled(false)
                 .stNxx(
                     STNxxExtensions
                         .builder()
-                        .enabled(dataLoggerPreferences.instance.stnExtensionsEnabled)
+                        .enabled(dataLoggerSettings.instance().adapter.stnExtensionsEnabled)
                         .promoteSlowGroupsEnabled(false)
                         .promoteAllGroupsEnabled(false)
                         .build(),
@@ -94,14 +94,14 @@ internal class AdjustmentsStrategy {
                 ).adaptiveTimeoutPolicy(
                     AdaptiveTimeoutPolicy
                         .builder()
-                        .enabled(preferences.adaptiveConnectionEnabled)
+                        .enabled(preferences.adapter.adaptiveConnectionEnabled)
                         .checkInterval(5000)
                         .commandFrequency(preferences.dragRacingCommandFrequency)
                         .minimumTimeout(10)
                         .build(),
                 )
 
-        if (dataLoggerPreferences.instance.stnExtensionsEnabled) {
+        if (dataLoggerSettings.instance().adapter.stnExtensionsEnabled) {
             val highPriorityOverridePolicy = PidDefinitionCustomization.builder().priority(0).build()
             builder =
                 builder
@@ -114,7 +114,7 @@ internal class AdjustmentsStrategy {
         return builder.build()
     }
 
-    private fun getDefaultAdjustments(preferences: DataLoggerPreferences) =
+    private fun getDefaultAdjustments(preferences: DataLoggerSettings) =
         Adjustments
             .builder()
             .debugEnabled(preferences.debugLogging)
@@ -123,40 +123,40 @@ internal class AdjustmentsStrategy {
             .errorsPolicy(
                 ErrorsPolicy
                     .builder()
-                    .numberOfRetries(preferences.maxReconnectNum)
-                    .reconnectEnabled(preferences.reconnectWhenError)
+                    .numberOfRetries(preferences.adapter.maxReconnectNum)
+                    .reconnectEnabled(preferences.adapter.reconnectWhenError)
                     .build(),
             ).batchPolicy(
                 BatchPolicy
                     .builder()
-                    .enabled(preferences.batchEnabled)
-                    .strictValidationEnabled(preferences.batchStricValidationEnabled)
-                    .responseLengthEnabled(preferences.responseLengthEnabled)
-                    .mode01BatchSize(preferences.mode01BatchSize)
-                    .otherModesBatchSize(preferences.otherModesBatchSize)
+                    .enabled(preferences.adapter.batchEnabled)
+                    .strictValidationEnabled(preferences.adapter.batchStrictValidationEnabled)
+                    .responseLengthEnabled(preferences.adapter.responseLengthEnabled)
+                    .mode01BatchSize(preferences.adapter.mode01BatchSize)
+                    .otherModesBatchSize(preferences.adapter.otherModesBatchSize)
                     .build(),
             ).collectRawConnectorResponseEnabled(preferences.dumpRawConnectorResponse)
             .stNxx(
                 STNxxExtensions
                     .builder()
-                    .promoteSlowGroupsEnabled(preferences.stnExtensionsEnabled)
-                    .promoteAllGroupsEnabled(preferences.stnExtensionsEnabled)
-                    .enabled(preferences.stnExtensionsEnabled)
+                    .promoteSlowGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
+                    .promoteAllGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
+                    .enabled(preferences.adapter.stnExtensionsEnabled)
                     .build(),
-            ).vehicleMetadataReadingEnabled(preferences.vehicleMetadataReadingEnabled)
-            .vehicleCapabilitiesReadingEnabled(preferences.vehicleCapabilitiesReadingEnabled)
-            .vehicleDtcReadingEnabled(preferences.vehicleDTCReadingEnabled)
-            .vehicleDtcCleaningEnabled(preferences.vehicleDTCCleaningEnabled)
+            ).vehicleMetadataReadingEnabled(preferences.adapter.vehicleMetadataReadingEnabled)
+            .vehicleCapabilitiesReadingEnabled(preferences.adapter.vehicleCapabilitiesReadingEnabled)
+            .vehicleDtcReadingEnabled(preferences.adapter.vehicleDTCReadingEnabled)
+            .vehicleDtcCleaningEnabled(preferences.adapter.vehicleDTCCleaningEnabled)
             .cachePolicy(
                 CachePolicy
                     .builder()
                     .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
-                    .resultCacheEnabled(preferences.resultsCacheEnabled)
+                    .resultCacheEnabled(preferences.adapter.resultsCacheEnabled)
                     .build(),
             ).producerPolicy(
                 ProducerPolicy
                     .builder()
-                    .conditionalSleepEnabled(preferences.adaptiveConnectionEnabled)
+                    .conditionalSleepEnabled(preferences.adapter.adaptiveConnectionEnabled)
                     .conditionalSleepSliceSize(10)
                     .build(),
             ).generatorPolicy(
@@ -168,9 +168,9 @@ internal class AdjustmentsStrategy {
             ).adaptiveTimeoutPolicy(
                 AdaptiveTimeoutPolicy
                     .builder()
-                    .enabled(preferences.adaptiveConnectionEnabled)
+                    .enabled(preferences.adapter.adaptiveConnectionEnabled)
                     .checkInterval(5000)
-                    .commandFrequency(preferences.commandFrequency)
+                    .commandFrequency(preferences.adapter.commandFrequency)
                     .minimumTimeout(10)
                     .build(),
             ).build()
