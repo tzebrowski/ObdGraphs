@@ -17,6 +17,7 @@
 package org.obd.graphs.bl.datalogger
 
 import org.obd.graphs.preferences.AbstractPreferencesManager
+import org.obd.graphs.preferences.CacheValue
 import org.obd.graphs.preferences.XmlPreference
 import org.obd.graphs.preferences.PreferencesManager
 import org.obd.graphs.preferences.Prefs
@@ -36,7 +37,7 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
         instance::class.declaredMemberProperties.forEach { field ->
             val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
-                cache[preference.key] = Triple(preference, field, instance)
+                cache[preference.key] = CacheValue(preference, field, instance)
                 update(preference.key, Prefs)
             }
         }
@@ -44,7 +45,7 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
         instance.adapter::class.declaredMemberProperties.forEach { field ->
             val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
-                cache[preference.key] = Triple(preference, field, instance.adapter)
+                cache[preference.key] = CacheValue(preference, field, instance.adapter)
                 update(preference.key, Prefs)
             }
         }

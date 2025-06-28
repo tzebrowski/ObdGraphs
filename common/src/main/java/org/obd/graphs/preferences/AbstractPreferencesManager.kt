@@ -24,6 +24,8 @@ import kotlin.reflect.jvm.javaField
 
 private const val TAG = "AbstractPrefs"
 
+data class CacheValue(val preference: XmlPreference, val field: KProperty1<*, *>,val obj: Any)
+
 interface PreferencesManager<T> {
     fun reload()
 
@@ -45,7 +47,7 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
     }
 
     private var strongReference: SharedPreferenceChangeListener = SharedPreferenceChangeListener()
-    protected val cache = mutableMapOf<String, Triple<XmlPreference, KProperty1<*, *>, Any>>()
+    protected val cache = mutableMapOf<String, CacheValue>()
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
@@ -56,30 +58,30 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
         sharedPreferences: SharedPreferences?,
     ) {
         if (cache.containsKey(key)) {
-            val (preference, field, obj) = cache[key]!!
+            val cacheValue = cache[key]!!
 
-            field.javaField?.isAccessible = true
+            cacheValue.field.javaField?.isAccessible = true
 
             val default: Any? =
-                if (preference.type == String::class) {
-                    preference.defaultValue
-                } else if (preference.type == Int::class) {
-                    if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
-                        preference.defaultValue.toInt()
+                if (cacheValue.preference.type == String::class) {
+                    cacheValue.preference.defaultValue
+                } else if (cacheValue.preference.type == Int::class) {
+                    if (cacheValue.preference.defaultValue.isNotEmpty() && cacheValue.preference.defaultValue.isDigitsOnly()) {
+                        cacheValue.preference.defaultValue.toInt()
                     } else {
-                        preference.defaultValue
+                        cacheValue.preference.defaultValue
                     }
-                } else if (preference.type == Boolean::class) {
-                    preference.defaultValue.toBoolean()
-                } else if (preference.type == Long::class) {
-                    if (preference.defaultValue.isNotEmpty() && preference.defaultValue.isDigitsOnly()) {
-                        preference.defaultValue.toLong()
+                } else if (cacheValue.preference.type == Boolean::class) {
+                    cacheValue.preference.defaultValue.toBoolean()
+                } else if (cacheValue.preference.type == Long::class) {
+                    if (cacheValue.preference.defaultValue.isNotEmpty() && cacheValue.preference.defaultValue.isDigitsOnly()) {
+                        cacheValue.preference.defaultValue.toLong()
                     } else {
-                        preference.defaultValue
+                        cacheValue.preference.defaultValue
                     }
-                } else if (preference.type == Set::class) {
+                } else if (cacheValue.preference.type == Set::class) {
                     null
-                } else if (field.returnType.isMarkedNullable) {
+                } else if (cacheValue.field.returnType.isMarkedNullable) {
                     null
                 } else {
                     null
@@ -88,16 +90,16 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
             try {
                 var newValue = sharedPreferences!!.all[key] ?: default
 
-                if (!field.returnType.isMarkedNullable && newValue == null) {
+                if (!cacheValue.field.returnType.isMarkedNullable && newValue == null) {
                     Log.e(TAG, "Field is not marked nullable however, new one is null for $key ")
                 } else {
-                    if (newValue != null && newValue::class != preference.type) {
+                    if (newValue != null && newValue::class != cacheValue.preference.type) {
                         if (Log.isLoggable(TAG, Log.DEBUG)) {
-                            Log.d(TAG, "Types for $key differs ${newValue::class} != ${preference.type}")
+                            Log.d(TAG, "Types for $key differs ${newValue::class} != ${cacheValue.preference.type}")
                         }
 
                         newValue =
-                            when (preference.type) {
+                            when (cacheValue.preference.type) {
                                 Int::class -> {
                                     if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
                                         newValue.toString().toInt()
@@ -128,7 +130,8 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
                             }
                         }
                     }
-                    field.javaField?.set(obj, newValue)
+
+                    cacheValue.field.javaField?.set(cacheValue.obj, newValue)
                     if (Log.isLoggable(TAG, Log.INFO)) {
                         Log.i(TAG, "Preference $key is updated with new value=$newValue")
                     }
