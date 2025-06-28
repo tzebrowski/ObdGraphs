@@ -16,18 +16,10 @@
  */
 package org.obd.graphs.bl.datalogger
 
+import org.obd.graphs.bl.preferences.Preference
 import org.obd.graphs.modules
-import kotlin.reflect.KClass
 
-@Target(AnnotationTarget.FIELD)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Preference(
-    val key: String,
-    val defaultValue: String,
-    val type: KClass<*>,
-)
-
-data class Adapter(
+ data class Adapter(
     @Preference("pref.adapter.id", "OBDII", String::class)
     var adapterId: String = "OBDII",
     @Preference("pref.adapter.connection.type", "bluetooth", String::class)

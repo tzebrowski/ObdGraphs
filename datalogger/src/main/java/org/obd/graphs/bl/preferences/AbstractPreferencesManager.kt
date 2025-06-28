@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -14,25 +14,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.bl.datalogger
+package org.obd.graphs.bl.preferences
 
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.text.isDigitsOnly
 import org.obd.graphs.preferences.Prefs
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
-private const val TAG = "DataLoggerSettings"
+private const val TAG = "AbstractPrefs"
 
-interface SettingsManager {
+interface PreferencesManager<T> {
     fun reload()
-
-    fun instance(): DataLoggerSettings
+    fun instance(): T
 }
 
-internal class DataLoggerSettingsManager : SettingsManager {
+internal abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
     private inner class SharedPreferenceChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
@@ -47,35 +45,13 @@ internal class DataLoggerSettingsManager : SettingsManager {
     }
 
     private var strongReference: SharedPreferenceChangeListener = SharedPreferenceChangeListener()
-    private var instance: DataLoggerSettings = DataLoggerSettings()
-    private val cache = mutableMapOf<String, Triple<Preference, KProperty1<*, *>, Any>>()
+    protected val cache = mutableMapOf<String, Triple<Preference, KProperty1<*, *>, Any>>()
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)
-        reload()
     }
 
-    override fun instance(): DataLoggerSettings = instance
-
-    override fun reload() {
-        instance::class.declaredMemberProperties.forEach { field ->
-            val preference = field.javaField?.annotations?.find { an -> an is Preference } as Preference?
-            preference?.let {
-                cache[preference.key] = Triple(preference, field, instance)
-                update(preference.key, Prefs)
-            }
-        }
-
-        instance.adapter::class.declaredMemberProperties.forEach { field ->
-            val preference = field.javaField?.annotations?.find { an -> an is Preference } as Preference?
-            preference?.let {
-                cache[preference.key] = Triple(preference, field, instance.adapter)
-                update(preference.key, Prefs)
-            }
-        }
-    }
-
-    private fun update(
+    protected fun update(
         key: String?,
         sharedPreferences: SharedPreferences?,
     ) {
@@ -167,5 +143,3 @@ internal class DataLoggerSettingsManager : SettingsManager {
         }
     }
 }
-
-val dataLoggerSettings: SettingsManager by lazy { DataLoggerSettingsManager() }
