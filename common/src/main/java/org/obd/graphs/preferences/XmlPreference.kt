@@ -14,13 +14,13 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.bl.preferences
+package org.obd.graphs.preferences
 
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Preference(
+annotation class XmlPreference(
     val key: String,
     val defaultValue: String,
     val type: KClass<*>,

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -14,12 +14,11 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.bl.preferences
+package org.obd.graphs.preferences
 
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.text.isDigitsOnly
-import org.obd.graphs.preferences.Prefs
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
@@ -27,10 +26,11 @@ private const val TAG = "AbstractPrefs"
 
 interface PreferencesManager<T> {
     fun reload()
+
     fun instance(): T
 }
 
-internal abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
+abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
     private inner class SharedPreferenceChangeListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
@@ -45,7 +45,7 @@ internal abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
     }
 
     private var strongReference: SharedPreferenceChangeListener = SharedPreferenceChangeListener()
-    protected val cache = mutableMapOf<String, Triple<Preference, KProperty1<*, *>, Any>>()
+    protected val cache = mutableMapOf<String, Triple<XmlPreference, KProperty1<*, *>, Any>>()
 
     init {
         Prefs.registerOnSharedPreferenceChangeListener(strongReference)

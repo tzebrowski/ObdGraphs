@@ -16,9 +16,9 @@
  */
 package org.obd.graphs.bl.datalogger
 
-import org.obd.graphs.bl.preferences.AbstractPreferencesManager
-import org.obd.graphs.bl.preferences.Preference
-import org.obd.graphs.bl.preferences.PreferencesManager
+import org.obd.graphs.preferences.AbstractPreferencesManager
+import org.obd.graphs.preferences.XmlPreference
+import org.obd.graphs.preferences.PreferencesManager
 import org.obd.graphs.preferences.Prefs
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
@@ -34,7 +34,7 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
 
     override fun reload() {
         instance::class.declaredMemberProperties.forEach { field ->
-            val preference = field.javaField?.annotations?.find { an -> an is Preference } as Preference?
+            val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
                 cache[preference.key] = Triple(preference, field, instance)
                 update(preference.key, Prefs)
@@ -42,7 +42,7 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
         }
 
         instance.adapter::class.declaredMemberProperties.forEach { field ->
-            val preference = field.javaField?.annotations?.find { an -> an is Preference } as Preference?
+            val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
                 cache[preference.key] = Triple(preference, field, instance.adapter)
                 update(preference.key, Prefs)
