@@ -155,5 +155,4 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
         }
         return newValue
     }
-
 }
