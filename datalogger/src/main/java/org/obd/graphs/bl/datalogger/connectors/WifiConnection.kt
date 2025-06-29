@@ -70,7 +70,8 @@ internal class WifiConnection(
 
     companion object {
         fun of(): WifiConnection =
-            WifiConnection(InetSocketAddress(dataLoggerSettings.instance().adapter.tcpHost,
+            WifiConnection(InetSocketAddress(
+                dataLoggerSettings.instance().adapter.tcpHost,
                 dataLoggerSettings.instance().adapter.tcpPort))
     }
 }

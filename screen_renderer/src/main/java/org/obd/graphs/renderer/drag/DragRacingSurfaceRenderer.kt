@@ -23,9 +23,9 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.*
