@@ -24,7 +24,7 @@ import org.obd.graphs.preferences.XmlPreference
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
-internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLoggerSettings>() {
+private class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLoggerSettings>() {
     private val instance: DataLoggerSettings = DataLoggerSettings()
 
     init {
@@ -34,11 +34,15 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
     override fun instance(): DataLoggerSettings = instance
 
     override fun reload() {
+        fillCaches()
+        cache.keys.forEach { update(it, Prefs)}
+    }
+
+    private fun fillCaches() {
         instance::class.declaredMemberProperties.forEach { field ->
             val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
                 cache[preference.key] = CacheValue(preference, field, instance, calculateDefaultValue(preference, field))
-                update(preference.key, Prefs)
             }
         }
 
@@ -46,7 +50,6 @@ internal class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLog
             val preference = field.javaField?.annotations?.find { an -> an is XmlPreference } as XmlPreference?
             preference?.let {
                 cache[preference.key] = CacheValue(preference, field, instance.adapter, calculateDefaultValue(preference, field))
-                update(preference.key, Prefs)
             }
         }
     }
