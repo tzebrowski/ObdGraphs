@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,12 @@ import kotlin.reflect.jvm.javaField
 
 private const val TAG = "AbstractPrefs"
 
-data class CacheValue(val preference: XmlPreference, val field: KProperty1<*, *>, val obj: Any, val defaultValue: Any?)
+data class CacheValue(
+    val preference: XmlPreference,
+    val field: KProperty1<*, *>,
+    val obj: Any,
+    val defaultValue: Any?,
+)
 
 interface PreferencesManager<T> {
     fun reload()
@@ -69,7 +74,6 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
                 if (!cacheValue.field.returnType.isMarkedNullable && newValue == null) {
                     Log.e(TAG, "Field is not marked nullable however, new one is null for $key ")
                 } else {
-
                     newValue = normalizeNewValue(newValue, cacheValue.preference.type, key)
 
                     cacheValue.field.javaField?.set(cacheValue.obj, newValue)
@@ -88,7 +92,10 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
         }
     }
 
-    protected fun calculateDefaultValue(preference: XmlPreference, field: KProperty1<*, *>): Any? =
+    protected fun calculateDefaultValue(
+        preference: XmlPreference,
+        field: KProperty1<*, *>,
+    ): Any? =
         if (preference.type == String::class) {
             preference.defaultValue
         } else if (preference.type == Int::class) {
@@ -113,7 +120,11 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
             null
         }
 
-    private inline fun normalizeNewValue(value: Any?, type: KClass<*>, key: String?): Any? {
+    private inline fun normalizeNewValue(
+        value: Any?,
+        type: KClass<*>,
+        key: String?,
+    ): Any? {
         var newValue = value
 
         if (newValue != null && newValue::class != type) {
