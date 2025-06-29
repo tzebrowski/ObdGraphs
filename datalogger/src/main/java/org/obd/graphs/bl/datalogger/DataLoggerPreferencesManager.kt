@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -35,7 +35,7 @@ private class DataLoggerPreferencesManager : AbstractPreferencesManager<DataLogg
 
     override fun reload() {
         fillCaches()
-        cache.keys.forEach { update(it, Prefs)}
+        cache.keys.forEach { update(it, Prefs) }
     }
 
     private fun fillCaches() {
