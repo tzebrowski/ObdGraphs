@@ -19,6 +19,7 @@ package org.obd.graphs.preferences
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.text.isDigitsOnly
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.javaField
 
@@ -68,45 +69,11 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
                 if (!cacheValue.field.returnType.isMarkedNullable && newValue == null) {
                     Log.e(TAG, "Field is not marked nullable however, new one is null for $key ")
                 } else {
-                    if (newValue != null && newValue::class != cacheValue.preference.type) {
-                        if (Log.isLoggable(TAG, Log.DEBUG)) {
-                            Log.d(TAG, "Types for $key differs ${newValue::class} != ${cacheValue.preference.type}")
-                        }
 
-                        newValue =
-                            when (cacheValue.preference.type) {
-                                Int::class -> {
-                                    if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
-                                        newValue.toString().toInt()
-                                    } else {
-                                        null
-                                    }
-                                }
-
-                                Long::class -> {
-                                    if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
-                                        newValue.toString().toLong()
-                                    } else {
-                                        null
-                                    }
-                                }
-
-                                Boolean::class -> {
-                                    newValue.toString().toBoolean()
-                                }
-
-                                else -> {
-                                    newValue
-                                }
-                            }
-                        if (Log.isLoggable(TAG, Log.DEBUG)) {
-                            if (newValue != null) {
-                                Log.d(TAG, "New type for $key is set to ${newValue::class}")
-                            }
-                        }
-                    }
+                    newValue = normalizeNewValue(newValue, cacheValue.preference.type, key)
 
                     cacheValue.field.javaField?.set(cacheValue.obj, newValue)
+
                     if (Log.isLoggable(TAG, Log.INFO)) {
                         Log.i(TAG, "Preference $key is updated with new value=$newValue")
                     }
@@ -145,4 +112,48 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
         } else {
             null
         }
+
+    private inline fun normalizeNewValue(value: Any?, type: KClass<*>, key: String?): Any? {
+        var newValue = value
+
+        if (newValue != null && newValue::class != type) {
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                Log.d(TAG, "Types for $key differs ${newValue::class} != $type")
+            }
+
+            newValue =
+                when (type) {
+                    Int::class -> {
+                        if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
+                            newValue.toString().toInt()
+                        } else {
+                            null
+                        }
+                    }
+
+                    Long::class -> {
+                        if (newValue.toString().isNotEmpty() && newValue.toString().isDigitsOnly()) {
+                            newValue.toString().toLong()
+                        } else {
+                            null
+                        }
+                    }
+
+                    Boolean::class -> {
+                        newValue.toString().toBoolean()
+                    }
+
+                    else -> {
+                        newValue
+                    }
+                }
+            if (Log.isLoggable(TAG, Log.DEBUG)) {
+                if (newValue != null) {
+                    Log.d(TAG, "New type for $key is set to ${newValue::class}")
+                }
+            }
+        }
+        return newValue
+    }
+
 }
