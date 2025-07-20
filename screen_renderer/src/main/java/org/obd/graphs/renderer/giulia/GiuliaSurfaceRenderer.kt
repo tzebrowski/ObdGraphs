@@ -174,7 +174,7 @@ internal class GiuliaSurfaceRenderer(
         valueTextSize: Float,
         left: Float,
         top: Float,
-        initialLeft: Float
+        valueLeft: Float
     ) = giuliaDrawer.drawMetric(
         canvas = canvas,
         area = area,
@@ -183,6 +183,6 @@ internal class GiuliaSurfaceRenderer(
         valueTextSize = valueTextSize,
         left = left,
         top = top,
-        valueLeft = initialLeft
+        valueLeft = valueLeft
     )
 }

@@ -139,7 +139,7 @@ open class GiuliaFragment : Fragment() {
                     metricsCollector = metricsCollector,
                     fps = fps,
                     surfaceRendererType = SurfaceRendererType.GIULIA,
-                    viewSettings = ViewSettings(marginTop = 0),
+                    viewSettings = ViewSettings(marginTop = 16),
                 ),
             )
         surfaceView.holder.addCallback(surfaceController)

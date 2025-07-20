@@ -236,14 +236,14 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         textSize: Float
     ): Float {
         valuePaint.color = valueColorScheme(metric)
-
-        val left1 = left - 4
+      
+        val left1 = left - getTextWidth(metric.source.command.pid.units, valuePaint)
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
 
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
-        val text = metric.source.valueToString()
-        canvas.drawText(text, left1, top, valuePaint)
+        val value = metric.source.valueToString()
+        canvas.drawText(value, left1, top, valuePaint)
 
         metric.source.command.pid.units?.let {
             valuePaint.color = Color.LTGRAY
@@ -252,7 +252,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
             canvas.drawText(it, (left1 + 2), top, valuePaint)
         }
 
-        return getTextHeight(text, valuePaint) - 1f
+        return getTextHeight(value, valuePaint) - 1f
     }
 
     fun drawTitle(
