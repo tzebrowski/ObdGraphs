@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -31,13 +31,15 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 import java.util.LinkedList
 
-private class Device(val address: String, val label: Spanned)
+private class Device(
+    val address: String,
+    val label: Spanned,
+)
 
 class BluetoothAdaptersListPreferences(
     context: Context,
-    attrs: AttributeSet?
-) :
-    ListPreference(context, attrs) {
+    attrs: AttributeSet?,
+) : ListPreference(context, attrs) {
     init {
         setOnPreferenceChangeListener { _, _ ->
             navigateToPreferencesScreen("pref.adapter.connection")
@@ -60,9 +62,7 @@ class BluetoothAdaptersListPreferences(
         }
     }
 
-    override fun getSummary(): CharSequence {
-        return super.getSummary().toString().colorize(COLOR_PHILIPPINE_GREEN, Typeface.BOLD, 1.0f)
-    }
+    override fun getSummary(): CharSequence = super.getSummary().toString().colorize(COLOR_PHILIPPINE_GREEN, Typeface.BOLD, 1.0f)
 
     override fun getEntryValues(): Array<CharSequence> {
         val entriesValues: MutableList<CharSequence> =
@@ -77,7 +77,6 @@ class BluetoothAdaptersListPreferences(
     }
 
     override fun getEntries(): Array<CharSequence> {
-
         val entries: MutableList<CharSequence> =
             LinkedList()
 
@@ -90,7 +89,6 @@ class BluetoothAdaptersListPreferences(
     }
 
     private fun getDeviceList(handler: (device: Device) -> Unit) {
-
         try {
             network.bluetoothAdapter()?.run {
                 bondedDevices
@@ -112,15 +110,17 @@ class BluetoothAdaptersListPreferences(
                 val endIndexOf = text.indexOf(")") + 1
                 val startIndexOf = text.indexOf("(")
                 setSpan(
-                    RelativeSizeSpan(0.5f), startIndexOf, endIndexOf,
-                    0
+                    RelativeSizeSpan(0.5f),
+                    startIndexOf,
+                    endIndexOf,
+                    0,
                 )
 
                 setSpan(
                     ForegroundColorSpan(COLOR_PHILIPPINE_GREEN),
                     startIndexOf,
                     endIndexOf,
-                    0
+                    0,
                 )
             }
         } catch (e: Throwable) {
