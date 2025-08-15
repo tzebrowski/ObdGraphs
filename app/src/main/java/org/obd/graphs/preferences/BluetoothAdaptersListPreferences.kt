@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,7 +29,7 @@ import org.obd.graphs.network
 import org.obd.graphs.runAsync
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
-import java.util.*
+import java.util.LinkedList
 
 private class Device(val address: String, val label: Spanned)
 
@@ -39,7 +39,7 @@ class BluetoothAdaptersListPreferences(
 ) :
     ListPreference(context, attrs) {
     init {
-        setOnPreferenceChangeListener{ _,_ ->
+        setOnPreferenceChangeListener { _, _ ->
             navigateToPreferencesScreen("pref.adapter.connection")
             true
         }
@@ -104,21 +104,27 @@ class BluetoothAdaptersListPreferences(
             network.requestBluetoothPermissions()
         }
     }
-    private fun format(text: String): Spanned {
-        return SpannableString(text).apply {
-            val endIndexOf = text.indexOf(")") + 1
-            val startIndexOf = text.indexOf("(")
-            setSpan(
-                RelativeSizeSpan(0.5f), startIndexOf, endIndexOf,
-                0
-            )
 
-            setSpan(
-                ForegroundColorSpan(COLOR_PHILIPPINE_GREEN),
-                startIndexOf,
-                endIndexOf,
-                0
-            )
+    private fun format(text: String): Spanned {
+        val spanned = SpannableString(text)
+        return try {
+            spanned.apply {
+                val endIndexOf = text.indexOf(")") + 1
+                val startIndexOf = text.indexOf("(")
+                setSpan(
+                    RelativeSizeSpan(0.5f), startIndexOf, endIndexOf,
+                    0
+                )
+
+                setSpan(
+                    ForegroundColorSpan(COLOR_PHILIPPINE_GREEN),
+                    startIndexOf,
+                    endIndexOf,
+                    0
+                )
+            }
+        } catch (e: Throwable) {
+            spanned
         }
     }
 }
