@@ -88,20 +88,18 @@ class BluetoothAdaptersListPreferences(
         return super.getEntries()
     }
 
-    private fun getDeviceList(handler: (device: Device) -> Unit) {
+    private fun getDeviceList(handler: (device: Device) -> Unit)  =
         try {
             network.bluetoothAdapter()?.run {
                 bondedDevices
                     .sortedBy { currentDevice -> currentDevice.name }
                     .forEach { currentDevice ->
-
                         handler(Device(address = currentDevice.address, label = format("${currentDevice.name} (${currentDevice.address})")))
                     }
             }
         } catch (e: SecurityException) {
             network.requestBluetoothPermissions()
         }
-    }
 
     private fun format(text: String): Spanned {
         val spanned = SpannableString(text)

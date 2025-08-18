@@ -181,23 +181,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
         val colorTheme = settings.getColorTheme()
         text = dataLogger.status().name.lowercase()
 
-        color = when (dataLogger.status()) {
-            WorkflowStatus.Disconnected -> {
-                colorTheme.statusDisconnectedColor
-            }
-
-            WorkflowStatus.Stopping -> {
-                colorTheme.statusDisconnectedColor
-            }
-
-            WorkflowStatus.Connecting -> {
-                colorTheme.statusConnectingColor
-            }
-
-            WorkflowStatus.Connected -> {
-                colorTheme.statusConnectedColor
-            }
-        }
+        color = mapColor(colorTheme)
 
         drawText(
             canvas,
@@ -314,6 +298,24 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
                     )
                 }
             }
+        }
+    }
+
+    private fun mapColor(colorTheme: ColorTheme) = when (dataLogger.status()) {
+        WorkflowStatus.Disconnected -> {
+            colorTheme.statusDisconnectedColor
+        }
+
+        WorkflowStatus.Stopping -> {
+            colorTheme.statusDisconnectedColor
+        }
+
+        WorkflowStatus.Connecting -> {
+            colorTheme.statusConnectingColor
+        }
+
+        WorkflowStatus.Connected -> {
+            colorTheme.statusConnectedColor
         }
     }
 
