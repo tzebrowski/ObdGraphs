@@ -97,21 +97,22 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         }
     }
 
-    override fun exportBackup() {
-        runAsync {
-            try {
-                Log.i(LOG_TAG, "Start exporting backup file")
-                val data = createExportBackupData()
-                val backupFile = getBackupFile()
-                data.store(FileOutputStream(backupFile), "Backup file")
-                Log.i(LOG_TAG, "Exporting backup file completed")
+    override fun exportBackup() : File? {
+        try {
 
-            } catch (e: Throwable) {
-                Log.e(LOG_TAG, "Failed to store backup file", e)
-            } finally {
-                bulkActionEnabled = false
-            }
+            Log.i(LOG_TAG, "Start exporting backup file")
+            val backupFile = getBackupFile()
+            val data = createExportBackupData()
+
+            data.store(FileOutputStream(backupFile), "Backup file")
+            Log.i(LOG_TAG, "Exporting backup file completed")
+            return backupFile
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to store backup file", e)
+        } finally {
+            bulkActionEnabled = false
         }
+        return null
     }
 
     override fun reset() {

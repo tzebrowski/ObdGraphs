@@ -16,6 +16,8 @@
  */
 package org.obd.graphs.profile
 
+ import java.io.File
+
 
 const val PROFILE_CHANGED_EVENT = "data.logger.profile.changed.event"
 const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
@@ -31,7 +33,7 @@ interface Profile {
     fun getCurrentProfile(): String
     fun getCurrentProfileName(): String
     fun restoreBackup()
-    fun exportBackup()
+    fun exportBackup(): File?
     fun reset()
     fun init(versionCode: Int, defaultProfile: String, versionName: String)
     fun setupProfiles(forceOverrideRecommendation: Boolean = true)

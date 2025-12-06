@@ -19,16 +19,17 @@ package org.obd.graphs.preferences.profile
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.Preference
-import org.obd.graphs.profile.profile
+import org.obd.graphs.activity.BACKUP_START
+import org.obd.graphs.sendBroadcastEvent
 
-class ProfileExportAction(
+ class ProfileExportAction(
     context: Context,
     attrs: AttributeSet?,
 ) : Preference(context, attrs) {
     init {
         setOnPreferenceClickListener {
-            profile.exportBackup()
+            sendBroadcastEvent(BACKUP_START)
             true
         }
     }
-}
+ }

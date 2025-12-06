@@ -18,6 +18,16 @@ android {
             it.excludes += '**/highlevel.jpg'
             it.excludes += '**/component.png'
             it.excludes += '**/model.png'
+
+            it.excludes += "META-INF/DEPENDENCIES"
+            it.excludes += "META-INF/LICENSE"
+            it.excludes += "META-INF/LICENSE.txt"
+            it.excludes += "META-INF/license.txt"
+            it.excludes += "META-INF/NOTICE"
+            it.excludes += "META-INF/NOTICE.txt"
+            it.excludes += "META-INF/notice.txt"
+            it.excludes += "META-INF/ASL2.0"
+            it.excludes += "META-INF/*.kotlin_module"
         }
     }
 
@@ -70,7 +80,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 187
+            versionCode 188
         }
 
         giuliaPerformanceMonitor {
@@ -98,6 +108,7 @@ android {
             zipAlignEnabled true
             signingConfig signingConfigs.release
 
+            resValue "string", "ANDROID_WEB_CLIENT_ID", System.getenv("ANDROID_WEB_CLIENT_ID") ?: "no_key"
             resValue "bool", "MODULE_ANDROID_AUTO_ENABLED", "true"
             resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "false"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "false"
@@ -115,6 +126,7 @@ android {
             zipAlignEnabled true
             signingConfig signingConfigs.release
 
+            resValue "string", "ANDROID_WEB_CLIENT_ID", System.getenv("ANDROID_WEB_CLIENT_ID") ?: "no_key"
             resValue "bool", "MODULE_ANDROID_AUTO_ENABLED", "false"
             resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "false"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "false"
@@ -124,6 +136,8 @@ android {
         }
 
         debug {
+
+            resValue "string", "ANDROID_WEB_CLIENT_ID", System.getenv("ANDROID_WEB_CLIENT_ID") ?: "no_key"
             resValue "bool", "MODULE_ANDROID_AUTO_ENABLED", "true"
             resValue "bool", "FF_READ_RESOURCE_EXTERNAL_STORAGE_ENABLED", "true"
             resValue "bool", "FF_RESULT_CACHE_ENABLED", "true"
@@ -160,16 +174,37 @@ dependencies {
     releaseImplementation project(":automotive")
     implementation project(":dragracing")
 
+    // This specific library provides lifecycleScope
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
+    // (Optional) If you are using it in a ViewModel, you might also need:
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+
+    // Credential Manager (Sign In)
+    implementation "androidx.credentials:credentials:1.3.0"
+    implementation "androidx.credentials:credentials-play-services-auth:1.3.0"
+    implementation "com.google.android.libraries.identity.googleid:googleid:1.1.1"
+
+    // Authorization (Permissions)
+    implementation "com.google.android.gms:play-services-auth:21.2.0"
+
+    // Drive API
+    implementation "com.google.api-client:google-api-client-android:2.6.0"
+    implementation "com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0"
+    implementation 'com.google.http-client:google-http-client-android:1.44.1'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
+
+    implementation("androidx.activity:activity-ktx:1.9.3")
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
 
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:2.0.0'

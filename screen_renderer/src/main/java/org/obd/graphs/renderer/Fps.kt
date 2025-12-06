@@ -45,7 +45,7 @@ class Fps {
         val lastTime = System.nanoTime()
         val difference = (lastTime - times.first) / NANOS
 
-        times.addLast(lastTime)
+        times.add(lastTime)
 
         val size = times.size
         if (size > MAX_SIZE) {

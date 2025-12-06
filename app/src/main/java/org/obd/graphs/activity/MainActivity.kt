@@ -48,16 +48,17 @@ import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
-
 const val LOG_TAG = "MainActivity"
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
+    lateinit var GDriveBackupManager: GDriveBackupManager
 
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             receive(intent)
         }
     }
+
     private val cache: MutableMap<String, Any> = mutableMapOf()
 
     override fun onRequestPermissionsResult(
@@ -133,6 +134,28 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         supportActionBar?.hide()
         setupMetricsProcessors()
         setupBatteryOptimization()
+
+        GDriveBackupManager = GDriveBackupManager(this)
+
+        try {
+            val info = packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.GET_SIGNATURES)
+            for (signature in info.signatures!!) {
+                val md = java.security.MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+                val digest = md.digest()
+                val hexString = StringBuilder()
+                for (b in digest) {
+                    hexString.append(String.format("%02X:", b))
+                }
+                // LOOK FOR THIS LOG IN LOGCAT
+                android.util.Log.e("MY_SHA1", "!!!!!!!!!!!!!!!!!!!!!!!!!! ACTUAL APP SIGNATURE: ${hexString.toString().dropLast(1)}")
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MY_SHA1", "Error getting signature", e)
+        }
+
+
+
     }
 
 
