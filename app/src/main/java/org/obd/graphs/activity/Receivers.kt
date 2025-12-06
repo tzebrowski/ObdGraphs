@@ -66,7 +66,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         BACKUP_START -> {
             lifecycleScope.launch {
                 profile.exportBackup()?.let { file ->
-                    GDriveBackupManager.signInAndBackup(file)
+                    driveBackupManager.exportBackup(file)
                 }
             }
         }

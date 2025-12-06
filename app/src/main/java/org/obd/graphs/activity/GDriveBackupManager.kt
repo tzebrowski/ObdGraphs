@@ -17,7 +17,6 @@
 package org.obd.graphs.activity
 
 import android.app.Activity
-import android.content.Intent
 import android.content.IntentSender
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -33,9 +32,9 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Scope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.http.FileContent
 import com.google.api.client.http.HttpRequestInitializer
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
@@ -43,11 +42,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.obd.graphs.R
 import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
 private const val TAG = "DriveBackup"
+
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
+private const val APP_NAME = "MyGiuliaBackup"
 
 class GDriveBackupManager(private val activity: Activity) {
+
+    private var pendingUploadFile: File? = null
 
     private val authorizationLauncher = (activity as? ComponentActivity)?.registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -58,16 +63,57 @@ class GDriveBackupManager(private val activity: Activity) {
                 .accessToken
 
             token?.let {
-                val file: String?  = result.data?.getStringExtra("FILE_REF")
-                Log.e(TAG, "Uploading file ref $file")
-                file?.let {
-                    uploadToDrive(token, File(file))
+                pendingUploadFile?.let {
+                    uploadToDrive(token, it)
+                    pendingUploadFile = null
                 }
             }
         }
     }
 
-    suspend fun signInAndBackup(fileToUpload: File) {
+    suspend fun exportBackup(backupFile: File) {
+        signInAndExecuteAction { token ->
+            uploadToDrive(token, backupFile)
+        }
+    }
+
+    suspend fun restoreBackup() {
+        signInAndExecuteAction { accessToken ->
+            try {
+                val credential = HttpRequestInitializer { request ->
+                    request.headers.authorization = "Bearer $accessToken"
+                }
+
+                val driveService = Drive.Builder(
+                    NetHttpTransport.Builder().build(),
+                    GsonFactory(),
+                    credential
+                ).setApplicationName(APP_NAME).build()
+
+                val fileList = driveService.files().list()
+                    .setSpaces("root")
+                    .setQ("name = '$BACKUP_FILE'")
+                    .setFields("files(id)")
+                    .execute()
+
+                if (fileList.files.isNotEmpty()) {
+                    val fileId = fileList.files[0].id
+                    Log.e(TAG, "Found file with id: $fileId on GDrive")
+                    val target = File(activity.filesDir, "restored_backup.json")
+
+                    val outputStream: OutputStream = FileOutputStream(target)
+                    Log.e(TAG,"Start writing into $target")
+                    driveService.files().get(fileId)
+                        .executeMediaAndDownloadTo(outputStream)
+                    Log.e(TAG,"Writing into $target finished")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Restore backup failed", e)
+            }
+        }
+    }
+
+    private suspend fun signInAndExecuteAction(func: (p: String ) -> Unit) {
         try {
             val credentialManager = CredentialManager.create(activity)
             val webClientId = activity.getString(R.string.ANDROID_WEB_CLIENT_ID)
@@ -85,7 +131,7 @@ class GDriveBackupManager(private val activity: Activity) {
             val credential = result.credential
 
             if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                checkPermissionsAndUpload(fileToUpload)
+                checkPermissionsAndUpload(func)
             } else {
                 Log.i(TAG, "Unexpected credential type")
             }
@@ -94,7 +140,7 @@ class GDriveBackupManager(private val activity: Activity) {
         }
     }
 
-    private fun checkPermissionsAndUpload(configFile: File) {
+    private fun checkPermissionsAndUpload(func: (token: String) -> Unit) {
         Log.i(TAG, "Checking permissions and uploading file")
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
@@ -107,14 +153,8 @@ class GDriveBackupManager(private val activity: Activity) {
                 if (authorizationResult.hasResolution()) {
                     try {
                         Log.i(TAG, "User must confirm consent screen")
-
-                        val extras = Intent().apply {
-                            putExtra("FILE_REF", configFile.absolutePath)
-                        }
-
                         val intentSenderRequest = IntentSenderRequest
                             .Builder(authorizationResult.pendingIntent!!)
-                            .setFillInIntent(extras)
                             .build()
                         authorizationLauncher?.launch(intentSenderRequest)
 
@@ -124,7 +164,7 @@ class GDriveBackupManager(private val activity: Activity) {
                 } else {
                     Log.i(TAG, "We already received token, lets upload the file ${authorizationResult.accessToken}")
                     authorizationResult.accessToken?.let {
-                        uploadToDrive(it, configFile)
+                        func(it)
                     }
                 }
             }
@@ -151,16 +191,16 @@ class GDriveBackupManager(private val activity: Activity) {
     private fun uploadToDrive(accessToken: String, configFile: File) {
         kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.i(TAG, "Upload to drive $accessToken")
+                Log.i(TAG, "Uploading file to the drive $${configFile.absoluteFile}")
                 val credential = HttpRequestInitializer { request ->
                     request.headers.authorization = "Bearer $accessToken"
                 }
 
                 val driveService = Drive.Builder(
-                    AndroidHttp.newCompatibleTransport(),
+                    NetHttpTransport.Builder().build(),
                     GsonFactory(),
                     credential
-                ).setApplicationName("MyGiuliaBackup").build()
+                ).setApplicationName(APP_NAME).build()
 
                 val metadata = com.google.api.services.drive.model.File().apply {
                     name = BACKUP_FILE
@@ -172,7 +212,7 @@ class GDriveBackupManager(private val activity: Activity) {
                     .setFields("id")
                     .execute()
 
-                Log.d(TAG, "Success! File ID: ${uploadedFile.id}")
+                Log.d(TAG, "File was uploaded, id: ${uploadedFile.id}")
             } catch (e: Exception) {
                 Log.e(TAG, "Upload failed", e)
             }

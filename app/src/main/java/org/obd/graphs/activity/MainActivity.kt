@@ -51,7 +51,7 @@ import pub.devrel.easypermissions.EasyPermissions
 const val LOG_TAG = "MainActivity"
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
-    lateinit var GDriveBackupManager: GDriveBackupManager
+    lateinit var driveBackupManager: GDriveBackupManager
 
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupMetricsProcessors()
         setupBatteryOptimization()
 
-        GDriveBackupManager = GDriveBackupManager(this)
+        driveBackupManager = GDriveBackupManager(this)
 
         try {
             val info = packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.GET_SIGNATURES)
