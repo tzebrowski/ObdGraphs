@@ -46,7 +46,6 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 
 private const val TAG = "DriveBackup"
-
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
 private const val APP_NAME = "MyGiuliaBackup"
 
@@ -71,49 +70,19 @@ class GDriveBackupManager(private val activity: Activity) {
         }
     }
 
-    suspend fun exportBackup(backupFile: File) {
+    suspend fun exportBackup(file: File) {
         signInAndExecuteAction { token ->
-            uploadToDrive(token, backupFile)
+            uploadToDrive(token, file)
         }
     }
 
-    suspend fun restoreBackup() {
+    suspend fun restoreBackup(func: (f: File) -> Unit) {
         signInAndExecuteAction { accessToken ->
-            try {
-                val credential = HttpRequestInitializer { request ->
-                    request.headers.authorization = "Bearer $accessToken"
-                }
-
-                val driveService = Drive.Builder(
-                    NetHttpTransport.Builder().build(),
-                    GsonFactory(),
-                    credential
-                ).setApplicationName(APP_NAME).build()
-
-                val fileList = driveService.files().list()
-                    .setSpaces("root")
-                    .setQ("name = '$BACKUP_FILE'")
-                    .setFields("files(id)")
-                    .execute()
-
-                if (fileList.files.isNotEmpty()) {
-                    val fileId = fileList.files[0].id
-                    Log.e(TAG, "Found file with id: $fileId on GDrive")
-                    val target = File(activity.filesDir, "restored_backup.json")
-
-                    val outputStream: OutputStream = FileOutputStream(target)
-                    Log.e(TAG,"Start writing into $target")
-                    driveService.files().get(fileId)
-                        .executeMediaAndDownloadTo(outputStream)
-                    Log.e(TAG,"Writing into $target finished")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Restore backup failed", e)
-            }
+            downloadFromDrive(accessToken, func)
         }
     }
 
-    private suspend fun signInAndExecuteAction(func: (p: String ) -> Unit) {
+    private suspend fun signInAndExecuteAction(func: (p: String) -> Unit) {
         try {
             val credentialManager = CredentialManager.create(activity)
             val webClientId = activity.getString(R.string.ANDROID_WEB_CLIENT_ID)
@@ -140,6 +109,7 @@ class GDriveBackupManager(private val activity: Activity) {
         }
     }
 
+
     private fun checkPermissionsAndUpload(func: (token: String) -> Unit) {
         Log.i(TAG, "Checking permissions and uploading file")
 
@@ -162,7 +132,7 @@ class GDriveBackupManager(private val activity: Activity) {
                         Log.e(TAG, "Failed to launch consent screen", sendEx)
                     }
                 } else {
-                    Log.i(TAG, "We already received token, lets upload the file ${authorizationResult.accessToken}")
+                    Log.i(TAG, "We already received token, lets execute the action ${authorizationResult.accessToken}")
                     authorizationResult.accessToken?.let {
                         func(it)
                     }
@@ -186,6 +156,42 @@ class GDriveBackupManager(private val activity: Activity) {
                     Log.e(TAG, "Authorization failed", e)
                 }
             }
+    }
+
+    private fun downloadFromDrive(accessToken: String, func: (f: File) -> Unit) {
+        try {
+
+            val credential = HttpRequestInitializer { request ->
+                request.headers.authorization = "Bearer $accessToken"
+            }
+
+            val driveService = Drive.Builder(
+                NetHttpTransport.Builder().build(),
+                GsonFactory(),
+                credential
+            ).setApplicationName(APP_NAME).build()
+
+            val fileList = driveService.files().list()
+                .setSpaces("drive")
+                .setQ("name = '$BACKUP_FILE'")
+                .setFields("files(id)")
+                .execute()
+
+            if (fileList.files.isNotEmpty()) {
+                val fileId = fileList.files[0].id
+                Log.d(TAG, "Found file with id: $fileId on GDrive")
+                val target = File(activity.filesDir, "restored_backup.json")
+
+                val outputStream: OutputStream = FileOutputStream(target)
+                Log.d(TAG, "Start writing into $target")
+                driveService.files().get(fileId)
+                    .executeMediaAndDownloadTo(outputStream)
+                Log.d(TAG, "Writing into $target finished")
+                func(target)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Restore backup failed", e)
+        }
     }
 
     private fun uploadToDrive(accessToken: String, configFile: File) {

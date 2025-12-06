@@ -32,7 +32,7 @@ interface Profile {
     fun getAvailableProfiles(): Map<String, String?>
     fun getCurrentProfile(): String
     fun getCurrentProfileName(): String
-    fun restoreBackup()
+    fun restoreBackup(file: File)
     fun exportBackup(): File?
     fun reset()
     fun init(versionCode: Int, defaultProfile: String, versionName: String)

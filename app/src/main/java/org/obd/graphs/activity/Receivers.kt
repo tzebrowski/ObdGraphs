@@ -56,12 +56,21 @@ const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
 const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 
 const val BACKUP_START = "backup.start"
+const val BACKUP_RESTORE = "backup.restore"
 
 private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
+
+        BACKUP_RESTORE -> {
+            lifecycleScope.launch {
+               driveBackupManager.restoreBackup { file ->
+                   profile.restoreBackup(file)
+               }
+            }
+        }
 
         BACKUP_START -> {
             lifecycleScope.launch {
@@ -343,6 +352,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(EVENT_VEHICLE_STATUS_IGNITION_ON)
         it.addAction(EVENT_VEHICLE_STATUS_CHANGED)
         it.addAction(BACKUP_START)
+        it.addAction(BACKUP_RESTORE)
     }
 
     registerReceiver(this, powerReceiver){

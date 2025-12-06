@@ -67,17 +67,14 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
 
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
-
-    override fun restoreBackup() {
+    override fun restoreBackup(file: File) {
         runAsync {
             try {
-
-                Log.i(LOG_TAG, "Start restoring backup file")
-                val backupFile = getBackupFile()
+                Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
                 loadProfileFilesIntoPreferences(
                     forceOverride = true,
-                    files = mutableListOf(backupFile.absolutePath),
+                    files = mutableListOf(file.absolutePath),
                     installationKey = getInstallationVersion()
                 ) {
                     val prop = Properties()
