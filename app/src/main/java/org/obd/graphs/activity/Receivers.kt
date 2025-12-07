@@ -74,21 +74,19 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_successful)
         }
 
-        BACKUP_RESTORE -> {
+        BACKUP_RESTORE ->
             lifecycleScope.launch {
                driveBackupManager.restoreBackup { file ->
                    profile.restoreBackup(file)
                }
             }
-        }
 
-        BACKUP_START -> {
+        BACKUP_START ->
             lifecycleScope.launch {
                 profile.exportBackup()?.let { file ->
                     driveBackupManager.exportBackup(file)
                 }
             }
-        }
 
         REQUEST_LOCATION_PERMISSIONS ->{
             permissions.requestLocationPermissions(this)

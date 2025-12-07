@@ -45,16 +45,17 @@ import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.integrations.gdrive.GDriveBackupManager
+import org.obd.graphs.integrations.authorization.AuthorizationManager
+import org.obd.graphs.integrations.gdrive.DriveBackupManager
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.security.MessageDigest
 
- const val LOG_TAG = "MainActivity"
+const val LOG_TAG = "MainActivity"
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
-    lateinit var driveBackupManager: GDriveBackupManager
+    lateinit var driveBackupManager: DriveBackupManager
 
     internal var activityBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -138,7 +139,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         setupMetricsProcessors()
         setupBatteryOptimization()
 
-        driveBackupManager = GDriveBackupManager(this)
+        driveBackupManager = DriveBackupManager(this)
 
         if (BuildConfig.DEBUG) {
             displayAppSignature()
