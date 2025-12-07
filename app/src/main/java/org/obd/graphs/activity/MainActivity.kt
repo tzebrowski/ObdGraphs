@@ -20,6 +20,7 @@ package org.obd.graphs.activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -48,8 +49,9 @@ import org.obd.graphs.integrations.gdrive.GDriveBackupManager
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import java.security.MessageDigest
 
-const val LOG_TAG = "MainActivity"
+ const val LOG_TAG = "MainActivity"
 class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
     lateinit var driveBackupManager: GDriveBackupManager
@@ -138,28 +140,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         driveBackupManager = GDriveBackupManager(this)
 
-        try {
-            val info = packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures!!) {
-                val md = java.security.MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                val digest = md.digest()
-                val hexString = StringBuilder()
-                for (b in digest) {
-                    hexString.append(String.format("%02X:", b))
-                }
-                // LOOK FOR THIS LOG IN LOGCAT
-                android.util.Log.e("MY_SHA1", "!!!!!!!!!!!!!!!!!!!!!!!!!! ACTUAL APP SIGNATURE: ${hexString.toString().dropLast(1)}")
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("MY_SHA1", "Error getting signature", e)
+        if (BuildConfig.DEBUG) {
+            displayAppSignature()
         }
-
-
-
     }
-
-
 
     override fun onResume() {
         super.onResume()
@@ -268,6 +252,25 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                     data = Uri.parse("package:$packageName")
                 })
             }
+        }
+    }
+
+    private fun displayAppSignature() {
+        try {
+            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+            for (signature in info.signatures!!) {
+                val md = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+                val digest = md.digest()
+                val hexString = StringBuilder()
+                for (b in digest) {
+                    hexString.append(String.format("%02X:", b))
+                }
+
+                Log.e(LOG_TAG, "ACTUAL APP SIGNATURE: ${hexString.toString().dropLast(1)}")
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Error getting signature", e)
         }
     }
 }
