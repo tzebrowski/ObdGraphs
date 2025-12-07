@@ -25,6 +25,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.common.api.ApiException
@@ -32,6 +33,7 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Scope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.FileContent
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -41,9 +43,13 @@ import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.obd.graphs.R
+import org.obd.graphs.activity.BACKUP_FAILED
+import org.obd.graphs.activity.BACKUP_SUCCESSFUL
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+
 
 private const val TAG = "DriveBackup"
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
@@ -72,7 +78,7 @@ class GDriveBackupManager(
 
                 token?.let {
                     currentAction?.let { action ->
-                        Log.i(TAG,"User accepted the consent. Execution the action: ${action.getName()}")
+                        Log.i(TAG, "User accepted the consent. Executing the action: ${action.getName()}")
                         action.execute(token)
                         currentAction = null
                     }
@@ -135,7 +141,7 @@ class GDriveBackupManager(
     }
 
     private fun checkPermissionsAndExecuteAction(action: Action) {
-        Log.i(TAG, "Checking permissions and executing action")
+        Log.i(TAG, "Checking permissions and executing action: ${action.getName()}")
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
         val request =
@@ -162,7 +168,8 @@ class GDriveBackupManager(
                         Log.e(TAG, "Failed to launch consent screen", sendEx)
                     }
                 } else {
-                    Log.i(TAG, "We already received token, lets execute the action ${authorizationResult.accessToken}")
+                    Log.i(TAG, "We already received token, executing the action ${authorizationResult.accessToken}")
+                    Log.i(TAG, "Granted scopes: ${authorizationResult.grantedScopes}")
                     authorizationResult.accessToken?.let {
                         action.execute(it)
                     }
@@ -224,6 +231,7 @@ class GDriveBackupManager(
 
                 Log.d(TAG, "Writing into $target finished")
                 func(target)
+                sendBroadcastEvent(BACKUP_SUCCESSFUL)
             } else {
                 Log.d(TAG, "Found 0 files with name '${BACKUP_FILE}' on GDrive. Won't restore the backup.")
             }
@@ -238,7 +246,7 @@ class GDriveBackupManager(
     ) {
         kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.i(TAG, "Uploading file to the drive $${configFile.absoluteFile}")
+                Log.i(TAG, "Uploading file ${configFile.absoluteFile} to the drive")
                 val driveService = driveService(accessToken)
 
                 val backupFolderId = getOrCreateFolder(driveService)
@@ -257,7 +265,18 @@ class GDriveBackupManager(
                         .setFields("id")
                         .execute()
 
-                Log.d(TAG, "File was uploaded, id: ${uploadedFile.id}")
+                Log.i(TAG, "Operation completed. File was uploaded. id: ${uploadedFile.id}")
+                sendBroadcastEvent(BACKUP_SUCCESSFUL)
+            } catch (e: GoogleJsonResponseException) {
+                if (401 == e.statusCode) {
+                    Log.e(TAG, "Token is invalid. Invalidating now...")
+                    try {
+                        GoogleAuthUtil.invalidateToken(activity, accessToken)
+                    } catch (e1: java.lang.Exception) {
+                        Log.e(TAG, "Failed to invalidate the token", e)
+                    }
+                    sendBroadcastEvent(BACKUP_FAILED)
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Upload failed", e)
             }
@@ -265,8 +284,7 @@ class GDriveBackupManager(
     }
 
     private fun driveService(accessToken: String): Drive =
-        Drive
-            .Builder(
+        Drive.Builder(
                 NetHttpTransport.Builder().build(),
                 GsonFactory(),
                 credentials(accessToken),
