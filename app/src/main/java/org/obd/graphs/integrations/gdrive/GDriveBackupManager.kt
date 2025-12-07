@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -49,26 +49,30 @@ private const val TAG = "DriveBackup"
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
 private const val APP_NAME = "MyGiuliaBackup"
 
-class GDriveBackupManager(private val activity: Activity) {
-
+class GDriveBackupManager(
+    private val activity: Activity,
+) {
     private var pendingUploadFile: File? = null
 
-    private val authorizationLauncher = (activity as? ComponentActivity)?.registerForActivityResult(
-        ActivityResultContracts.StartIntentSenderForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val token = Identity.getAuthorizationClient(activity)
-                .getAuthorizationResultFromIntent(result.data)
-                .accessToken
+    private val authorizationLauncher =
+        (activity as? ComponentActivity)?.registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult(),
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val token =
+                    Identity
+                        .getAuthorizationClient(activity)
+                        .getAuthorizationResultFromIntent(result.data)
+                        .accessToken
 
-            token?.let {
-                pendingUploadFile?.let {
-                    uploadToDrive(token, it)
-                    pendingUploadFile = null
+                token?.let {
+                    pendingUploadFile?.let {
+                        uploadToDrive(token, it)
+                        pendingUploadFile = null
+                    }
                 }
             }
         }
-    }
 
     suspend fun exportBackup(file: File) {
         signInAndExecuteAction { token ->
@@ -87,15 +91,19 @@ class GDriveBackupManager(private val activity: Activity) {
             val credentialManager = CredentialManager.create(activity)
             val webClientId = activity.getString(R.string.ANDROID_WEB_CLIENT_ID)
 
-            val googleIdOption = GetGoogleIdOption.Builder()
-                .setServerClientId(webClientId)
-                .setAutoSelectEnabled(false)
-                .setFilterByAuthorizedAccounts(false)
-                .build()
+            val googleIdOption =
+                GetGoogleIdOption
+                    .Builder()
+                    .setServerClientId(webClientId)
+                    .setAutoSelectEnabled(false)
+                    .setFilterByAuthorizedAccounts(false)
+                    .build()
 
-            val request = GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
-                .build()
+            val request =
+                GetCredentialRequest
+                    .Builder()
+                    .addCredentialOption(googleIdOption)
+                    .build()
             val result = credentialManager.getCredential(activity, request)
             val credential = result.credential
 
@@ -113,20 +121,23 @@ class GDriveBackupManager(private val activity: Activity) {
         Log.i(TAG, "Checking permissions and uploading file")
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
-        val request = AuthorizationRequest.Builder()
-            .setRequestedScopes(listOf(Scope(DriveScopes.DRIVE_FILE), Scope(DriveScopes.DRIVE_APPDATA)))
-            .build()
+        val request =
+            AuthorizationRequest
+                .Builder()
+                .setRequestedScopes(listOf(Scope(DriveScopes.DRIVE_FILE), Scope(DriveScopes.DRIVE_APPDATA)))
+                .build()
 
-        authorizationClient.authorize(request)
+        authorizationClient
+            .authorize(request)
             .addOnSuccessListener { authorizationResult ->
                 if (authorizationResult.hasResolution()) {
                     try {
                         Log.i(TAG, "User must confirm consent screen")
-                        val intentSenderRequest = IntentSenderRequest
-                            .Builder(authorizationResult.pendingIntent!!)
-                            .build()
+                        val intentSenderRequest =
+                            IntentSenderRequest
+                                .Builder(authorizationResult.pendingIntent!!)
+                                .build()
                         authorizationLauncher?.launch(intentSenderRequest)
-
                     } catch (sendEx: IntentSender.SendIntentException) {
                         Log.e(TAG, "Failed to launch consent screen", sendEx)
                     }
@@ -136,18 +147,18 @@ class GDriveBackupManager(private val activity: Activity) {
                         func(it)
                     }
                 }
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 if (e is ApiException && e.statusCode == CommonStatusCodes.RESOLUTION_REQUIRED) {
                     try {
                         Log.i(TAG, "Resolution is required")
                         val pendingIntent = e.status.resolution?.intentSender
 
-                        val intentSenderRequest = IntentSenderRequest.Builder(pendingIntent!!)
-                            .build()
+                        val intentSenderRequest =
+                            IntentSenderRequest
+                                .Builder(pendingIntent!!)
+                                .build()
 
                         authorizationLauncher?.launch(intentSenderRequest)
-
                     } catch (sendEx: IntentSender.SendIntentException) {
                         Log.e(TAG, "Failed to launch consent screen", sendEx)
                     }
@@ -157,20 +168,24 @@ class GDriveBackupManager(private val activity: Activity) {
             }
     }
 
-    private fun downloadFromDrive(accessToken: String, func: (f: File) -> Unit) {
+    private fun downloadFromDrive(
+        accessToken: String,
+        func: (f: File) -> Unit,
+    ) {
         try {
-
             val driveService = driveService(accessToken)
 
-            val fileList = driveService.files().list()
-                .setSpaces("drive")
-                .setQ("name = '$BACKUP_FILE'")
-                .setOrderBy("createdTime desc")
-                .setFields("files(id, createdTime)")
-                .execute()
+            val fileList =
+                driveService
+                    .files()
+                    .list()
+                    .setSpaces("drive")
+                    .setQ("name = '$BACKUP_FILE'")
+                    .setOrderBy("createdTime desc")
+                    .setFields("files(id, createdTime)")
+                    .execute()
 
             if (fileList.files.isNotEmpty()) {
-
                 Log.d(TAG, "Found (${fileList.files.size}) files with name '${BACKUP_FILE}' on GDrive. Taking the newest one")
 
                 val file = fileList.files[0]
@@ -180,7 +195,9 @@ class GDriveBackupManager(private val activity: Activity) {
                 val outputStream: OutputStream = FileOutputStream(target)
                 Log.d(TAG, "Start writing into $target")
 
-                driveService.files().get(file.id)
+                driveService
+                    .files()
+                    .get(file.id)
                     .executeMediaAndDownloadTo(outputStream)
 
                 Log.d(TAG, "Writing into $target finished")
@@ -193,24 +210,30 @@ class GDriveBackupManager(private val activity: Activity) {
         }
     }
 
-    private fun uploadToDrive(accessToken: String, configFile: File) {
+    private fun uploadToDrive(
+        accessToken: String,
+        configFile: File,
+    ) {
         kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 Log.i(TAG, "Uploading file to the drive $${configFile.absoluteFile}")
                 val driveService = driveService(accessToken)
 
                 val backupFolderId = getOrCreateFolder(driveService)
 
-                val metadata = com.google.api.services.drive.model.File().apply {
-                    name = BACKUP_FILE
-                    parents = listOf(backupFolderId)
-                }
+                val metadata =
+                    com.google.api.services.drive.model.File().apply {
+                        name = BACKUP_FILE
+                        parents = listOf(backupFolderId)
+                    }
 
                 val mediaContent = FileContent("text/plain", configFile)
-                val uploadedFile = driveService.files().create(metadata, mediaContent)
-                    .setFields("id")
-                    .execute()
+                val uploadedFile =
+                    driveService
+                        .files()
+                        .create(metadata, mediaContent)
+                        .setFields("id")
+                        .execute()
 
                 Log.d(TAG, "File was uploaded, id: ${uploadedFile.id}")
             } catch (e: Exception) {
@@ -220,38 +243,48 @@ class GDriveBackupManager(private val activity: Activity) {
     }
 
     private fun driveService(accessToken: String): Drive =
-        Drive.Builder(
-            NetHttpTransport.Builder().build(),
-            GsonFactory(),
-            credentials(accessToken)
-        ).setApplicationName(APP_NAME).build()
+        Drive
+            .Builder(
+                NetHttpTransport.Builder().build(),
+                GsonFactory(),
+                credentials(accessToken),
+            ).setApplicationName(APP_NAME)
+            .build()
 
     private fun credentials(accessToken: String): HttpRequestInitializer =
         HttpRequestInitializer { request ->
             request.headers.authorization = "Bearer $accessToken"
         }
 
-
-    private fun getOrCreateFolder(driveService: Drive, folderName: String = "mygiulia"): String {
+    private fun getOrCreateFolder(
+        driveService: Drive,
+        folderName: String = "mygiulia",
+    ): String {
         val query = "mimeType = 'application/vnd.google-apps.folder' and name = '$folderName' and trashed = false"
-        val result = driveService.files().list()
-            .setQ(query)
-            .setSpaces("drive")
-            .setFields("files(id, name)")
-            .execute()
+        val result =
+            driveService
+                .files()
+                .list()
+                .setQ(query)
+                .setSpaces("drive")
+                .setFields("files(id, name)")
+                .execute()
 
         if (result.files.isNotEmpty()) {
             return result.files[0].id
         } else {
-            val folderMetadata = com.google.api.services.drive.model.File().apply {
-                name = folderName
-                mimeType = "application/vnd.google-apps.folder"
-                parents = listOf("root")
-            }
-            return driveService.files().create(folderMetadata)
+            val folderMetadata =
+                com.google.api.services.drive.model.File().apply {
+                    name = folderName
+                    mimeType = "application/vnd.google-apps.folder"
+                    parents = listOf("root")
+                }
+            return driveService
+                .files()
+                .create(folderMetadata)
                 .setFields("id")
-                .execute().id
+                .execute()
+                .id
         }
     }
-
 }
