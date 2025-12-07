@@ -235,6 +235,16 @@ class GDriveBackupManager(
             } else {
                 Log.d(TAG, "Found 0 files with name '${BACKUP_FILE}' on GDrive. Won't restore the backup.")
             }
+        } catch (e: GoogleJsonResponseException) {
+            if (401 == e.statusCode) {
+                Log.e(TAG, "Token is invalid. Invalidating now...")
+                try {
+                    GoogleAuthUtil.invalidateToken(activity, accessToken)
+                } catch (e1: java.lang.Exception) {
+                    Log.e(TAG, "Failed to invalidate the token", e)
+                }
+                sendBroadcastEvent(BACKUP_FAILED)
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Restore backup failed", e)
         }
