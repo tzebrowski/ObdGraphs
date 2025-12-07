@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -49,10 +49,15 @@ private const val TAG = "DriveBackup"
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
 private const val APP_NAME = "MyGiuliaBackup"
 
+interface Action {
+    fun getName(): String
+    fun execute(token: String)
+}
+
 class GDriveBackupManager(
     private val activity: Activity,
 ) {
-    private var pendingUploadFile: File? = null
+    private var currentAction: Action? = null
 
     private val authorizationLauncher =
         (activity as? ComponentActivity)?.registerForActivityResult(
@@ -66,28 +71,37 @@ class GDriveBackupManager(
                         .accessToken
 
                 token?.let {
-                    pendingUploadFile?.let {
-                        uploadToDrive(token, it)
-                        pendingUploadFile = null
+                    currentAction?.let { action ->
+                        Log.i(TAG,"User accepted the consent. Execution the action: ${action.getName()}")
+                        action.execute(token)
+                        currentAction = null
                     }
                 }
             }
         }
 
     suspend fun exportBackup(file: File) {
-        signInAndExecuteAction { token ->
-            uploadToDrive(token, file)
+        val action: Action = object : Action {
+            override fun execute(token: String) = uploadToDrive(token, file)
+            override fun getName() = "exportBackupAction"
         }
+        signInAndExecuteAction(action)
     }
 
     suspend fun restoreBackup(func: (f: File) -> Unit) {
-        signInAndExecuteAction { accessToken ->
-            downloadFromDrive(accessToken, func)
+        val action: Action = object : Action {
+            override fun execute(token: String) = downloadFromDrive(token, func)
+            override fun getName() = "restoreBackupAction"
         }
+        signInAndExecuteAction(action)
     }
 
-    private suspend fun signInAndExecuteAction(func: (p: String) -> Unit) {
+    private suspend fun signInAndExecuteAction(action: Action) {
+
         try {
+
+            Log.i(TAG, "Start executing action: ${action.getName()}")
+
             val credentialManager = CredentialManager.create(activity)
             val webClientId = activity.getString(R.string.ANDROID_WEB_CLIENT_ID)
 
@@ -108,17 +122,20 @@ class GDriveBackupManager(
             val credential = result.credential
 
             if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                checkPermissionsAndUpload(func)
+                checkPermissionsAndExecuteAction(action)
             } else {
                 Log.i(TAG, "Unexpected credential type")
             }
+
+            Log.i(TAG, "Finished executing action: ${action.getName()}")
+
         } catch (e: Exception) {
-            Log.e(TAG, "Sign In Failed", e)
+            Log.i(TAG, "Failed executing action: ${action.getName()}", e)
         }
     }
 
-    private fun checkPermissionsAndUpload(func: (token: String) -> Unit) {
-        Log.i(TAG, "Checking permissions and uploading file")
+    private fun checkPermissionsAndExecuteAction(action: Action) {
+        Log.i(TAG, "Checking permissions and executing action")
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
         val request =
@@ -137,6 +154,9 @@ class GDriveBackupManager(
                             IntentSenderRequest
                                 .Builder(authorizationResult.pendingIntent!!)
                                 .build()
+
+                        currentAction = action
+
                         authorizationLauncher?.launch(intentSenderRequest)
                     } catch (sendEx: IntentSender.SendIntentException) {
                         Log.e(TAG, "Failed to launch consent screen", sendEx)
@@ -144,7 +164,7 @@ class GDriveBackupManager(
                 } else {
                     Log.i(TAG, "We already received token, lets execute the action ${authorizationResult.accessToken}")
                     authorizationResult.accessToken?.let {
-                        func(it)
+                        action.execute(it)
                     }
                 }
             }.addOnFailureListener { e ->
@@ -157,6 +177,8 @@ class GDriveBackupManager(
                             IntentSenderRequest
                                 .Builder(pendingIntent!!)
                                 .build()
+
+                        currentAction = action
 
                         authorizationLauncher?.launch(intentSenderRequest)
                     } catch (sendEx: IntentSender.SendIntentException) {
