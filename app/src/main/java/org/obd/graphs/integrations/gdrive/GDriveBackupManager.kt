@@ -239,7 +239,7 @@ class GDriveBackupManager(
             if (401 == e.statusCode) {
                 Log.e(TAG, "Token is invalid. Invalidating now...")
                 try {
-                    GoogleAuthUtil.invalidateToken(activity, accessToken)
+                    GoogleAuthUtil.clearToken(activity, accessToken)
                 } catch (e1: java.lang.Exception) {
                     Log.e(TAG, "Failed to invalidate the token", e)
                 }
@@ -281,7 +281,7 @@ class GDriveBackupManager(
                 if (401 == e.statusCode) {
                     Log.e(TAG, "Token is invalid. Invalidating now...")
                     try {
-                        GoogleAuthUtil.invalidateToken(activity, accessToken)
+                        GoogleAuthUtil.clearToken(activity, accessToken)
                     } catch (e1: java.lang.Exception) {
                         Log.e(TAG, "Failed to invalidate the token", e)
                     }
