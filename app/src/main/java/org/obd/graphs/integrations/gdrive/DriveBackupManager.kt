@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,7 +43,6 @@ private const val TAG = "DriveBackup"
 class DriveBackupManager(
     private val activity: Activity,
 ) : AuthorizationManager(activity) {
-
     suspend fun exportBackup(file: File) =
         signInAndExecuteAction(
             object : Action {
@@ -185,12 +184,13 @@ class DriveBackupManager(
         } else {
             driveService
                 .files()
-                .create(com.google.api.services.drive.model.File().apply {
-                    name = folderName
-                    mimeType = "application/vnd.google-apps.folder"
-                    parents = listOf("root")
-                })
-                .setFields("id")
+                .create(
+                    com.google.api.services.drive.model.File().apply {
+                        name = folderName
+                        mimeType = "application/vnd.google-apps.folder"
+                        parents = listOf("root")
+                    },
+                ).setFields("id")
                 .execute()
                 .id
         }
