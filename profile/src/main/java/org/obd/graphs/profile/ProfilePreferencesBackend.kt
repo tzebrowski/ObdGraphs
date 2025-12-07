@@ -67,17 +67,14 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
 
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
-
-    override fun restoreBackup() {
+    override fun restoreBackup(file: File) {
         runAsync {
             try {
-
-                Log.i(LOG_TAG, "Start restoring backup file")
-                val backupFile = getBackupFile()
+                Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
                 loadProfileFilesIntoPreferences(
                     forceOverride = true,
-                    files = mutableListOf(backupFile.absolutePath),
+                    files = mutableListOf(file.absolutePath),
                     installationKey = getInstallationVersion()
                 ) {
                     val prop = Properties()
@@ -97,21 +94,22 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         }
     }
 
-    override fun exportBackup() {
-        runAsync {
-            try {
-                Log.i(LOG_TAG, "Start exporting backup file")
-                val data = createExportBackupData()
-                val backupFile = getBackupFile()
-                data.store(FileOutputStream(backupFile), "Backup file")
-                Log.i(LOG_TAG, "Exporting backup file completed")
+    override fun exportBackup() : File? {
+        try {
 
-            } catch (e: Throwable) {
-                Log.e(LOG_TAG, "Failed to store backup file", e)
-            } finally {
-                bulkActionEnabled = false
-            }
+            Log.i(LOG_TAG, "Start exporting backup file")
+            val backupFile = getBackupFile()
+            val data = createExportBackupData()
+
+            data.store(FileOutputStream(backupFile), "Backup file")
+            Log.i(LOG_TAG, "Exporting backup file completed")
+            return backupFile
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to store backup file", e)
+        } finally {
+            bulkActionEnabled = false
         }
+        return null
     }
 
     override fun reset() {

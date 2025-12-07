@@ -11,6 +11,8 @@
     <string name="main_activity.toast.adapter_is_not_selected">Adapter is not selected. Please select Adapter and try again.</string>
     <string name="main_activity.toast.connection.wifi.incorrect_ssid">Please update WIFI settings.</string>
     <string name="main_activity.toast.connection.wifi.not_connected">Please connect to WIFI network.</string>
+    <string name="main_activity.toast.backup.failed">Backup operation failed. Please repeat the operation</string>
+    <string name="main_activity.toast.backup.successful">Backup operation completed.</string>
 
     <string name="status_bar.status">status: </string>
     <string name="status_bar.profile">profile: </string>

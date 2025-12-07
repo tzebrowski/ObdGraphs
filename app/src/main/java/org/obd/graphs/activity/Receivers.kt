@@ -27,7 +27,9 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.extra.*
@@ -35,6 +37,7 @@ import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
+import org.obd.graphs.profile.profile
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
@@ -52,11 +55,41 @@ const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
 const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 
+const val BACKUP_START = "backup.start"
+const val BACKUP_RESTORE = "backup.restore"
+const val BACKUP_FAILED = "backup.failed"
+const val BACKUP_SUCCESSFUL = "backup.successful"
+
 private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
+
+        BACKUP_FAILED -> {
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_failed)
+        }
+
+        BACKUP_SUCCESSFUL -> {
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_successful)
+        }
+
+        BACKUP_RESTORE -> {
+            lifecycleScope.launch {
+               driveBackupManager.restoreBackup { file ->
+                   profile.restoreBackup(file)
+               }
+            }
+        }
+
+        BACKUP_START -> {
+            lifecycleScope.launch {
+                profile.exportBackup()?.let { file ->
+                    driveBackupManager.exportBackup(file)
+                }
+            }
+        }
+
         REQUEST_LOCATION_PERMISSIONS ->{
             permissions.requestLocationPermissions(this)
         }
@@ -328,6 +361,10 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING)
         it.addAction(EVENT_VEHICLE_STATUS_IGNITION_ON)
         it.addAction(EVENT_VEHICLE_STATUS_CHANGED)
+        it.addAction(BACKUP_START)
+        it.addAction(BACKUP_RESTORE)
+        it.addAction(BACKUP_FAILED)
+        it.addAction(BACKUP_SUCCESSFUL)
     }
 
     registerReceiver(this, powerReceiver){
