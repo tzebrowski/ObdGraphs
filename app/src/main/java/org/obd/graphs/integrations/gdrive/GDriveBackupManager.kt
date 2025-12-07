@@ -165,20 +165,28 @@ class GDriveBackupManager(private val activity: Activity) {
             val fileList = driveService.files().list()
                 .setSpaces("drive")
                 .setQ("name = '$BACKUP_FILE'")
-                .setFields("files(id)")
+                .setOrderBy("createdTime desc")
+                .setFields("files(id, createdTime)")
                 .execute()
 
             if (fileList.files.isNotEmpty()) {
-                val fileId = fileList.files[0].id
-                Log.d(TAG, "Found file with id: $fileId on GDrive")
+
+                Log.d(TAG, "Found (${fileList.files.size}) files with name '${BACKUP_FILE}' on GDrive. Taking the newest one")
+
+                val file = fileList.files[0]
+                Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
                 val target = File(activity.filesDir, "restored_backup.json")
 
                 val outputStream: OutputStream = FileOutputStream(target)
                 Log.d(TAG, "Start writing into $target")
-                driveService.files().get(fileId)
+
+                driveService.files().get(file.id)
                     .executeMediaAndDownloadTo(outputStream)
+
                 Log.d(TAG, "Writing into $target finished")
                 func(target)
+            } else {
+                Log.d(TAG, "Found 0 files with name '${BACKUP_FILE}' on GDrive. Won't restore the backup.")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Restore backup failed", e)
@@ -190,14 +198,17 @@ class GDriveBackupManager(private val activity: Activity) {
             try {
 
                 Log.i(TAG, "Uploading file to the drive $${configFile.absoluteFile}")
+                val driveService = driveService(accessToken)
+
+                val backupFolderId = getOrCreateFolder(driveService)
 
                 val metadata = com.google.api.services.drive.model.File().apply {
                     name = BACKUP_FILE
-                    parents = listOf("root")
+                    parents = listOf(backupFolderId)
                 }
 
                 val mediaContent = FileContent("text/plain", configFile)
-                val uploadedFile =  driveService(accessToken).files().create(metadata, mediaContent)
+                val uploadedFile = driveService.files().create(metadata, mediaContent)
                     .setFields("id")
                     .execute()
 
@@ -219,4 +230,28 @@ class GDriveBackupManager(private val activity: Activity) {
         HttpRequestInitializer { request ->
             request.headers.authorization = "Bearer $accessToken"
         }
+
+
+    private fun getOrCreateFolder(driveService: Drive, folderName: String = "mygiulia"): String {
+        val query = "mimeType = 'application/vnd.google-apps.folder' and name = '$folderName' and trashed = false"
+        val result = driveService.files().list()
+            .setQ(query)
+            .setSpaces("drive")
+            .setFields("files(id, name)")
+            .execute()
+
+        if (result.files.isNotEmpty()) {
+            return result.files[0].id
+        } else {
+            val folderMetadata = com.google.api.services.drive.model.File().apply {
+                name = folderName
+                mimeType = "application/vnd.google-apps.folder"
+                parents = listOf("root")
+            }
+            return driveService.files().create(folderMetadata)
+                .setFields("id")
+                .execute().id
+        }
+    }
+
 }
