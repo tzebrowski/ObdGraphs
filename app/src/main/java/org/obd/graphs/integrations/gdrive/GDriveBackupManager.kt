@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -50,13 +50,13 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-
 private const val TAG = "DriveBackup"
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
 private const val APP_NAME = "MyGiuliaBackup"
 
 interface Action {
     fun getName(): String
+
     fun execute(token: String)
 }
 
@@ -87,25 +87,27 @@ class GDriveBackupManager(
         }
 
     suspend fun exportBackup(file: File) {
-        val action: Action = object : Action {
-            override fun execute(token: String) = uploadToDrive(token, file)
-            override fun getName() = "exportBackupAction"
-        }
+        val action: Action =
+            object : Action {
+                override fun execute(token: String) = uploadToDrive(token, file)
+
+                override fun getName() = "exportBackupAction"
+            }
         signInAndExecuteAction(action)
     }
 
     suspend fun restoreBackup(func: (f: File) -> Unit) {
-        val action: Action = object : Action {
-            override fun execute(token: String) = downloadFromDrive(token, func)
-            override fun getName() = "restoreBackupAction"
-        }
+        val action: Action =
+            object : Action {
+                override fun execute(token: String) = downloadFromDrive(token, func)
+
+                override fun getName() = "restoreBackupAction"
+            }
         signInAndExecuteAction(action)
     }
 
     private suspend fun signInAndExecuteAction(action: Action) {
-
         try {
-
             Log.i(TAG, "Start executing action: ${action.getName()}")
 
             val credentialManager = CredentialManager.create(activity)
@@ -134,7 +136,6 @@ class GDriveBackupManager(
             }
 
             Log.i(TAG, "Finished executing action: ${action.getName()}")
-
         } catch (e: Exception) {
             Log.i(TAG, "Failed executing action: ${action.getName()}", e)
         }
@@ -294,7 +295,8 @@ class GDriveBackupManager(
     }
 
     private fun driveService(accessToken: String): Drive =
-        Drive.Builder(
+        Drive
+            .Builder(
                 NetHttpTransport.Builder().build(),
                 GsonFactory(),
                 credentials(accessToken),
