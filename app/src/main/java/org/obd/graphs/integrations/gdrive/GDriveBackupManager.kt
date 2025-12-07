@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.activity
+package org.obd.graphs.integrations.gdrive
 
 import android.app.Activity
 import android.content.IntentSender
@@ -109,7 +109,6 @@ class GDriveBackupManager(private val activity: Activity) {
         }
     }
 
-
     private fun checkPermissionsAndUpload(func: (token: String) -> Unit) {
         Log.i(TAG, "Checking permissions and uploading file")
 
@@ -161,15 +160,7 @@ class GDriveBackupManager(private val activity: Activity) {
     private fun downloadFromDrive(accessToken: String, func: (f: File) -> Unit) {
         try {
 
-            val credential = HttpRequestInitializer { request ->
-                request.headers.authorization = "Bearer $accessToken"
-            }
-
-            val driveService = Drive.Builder(
-                NetHttpTransport.Builder().build(),
-                GsonFactory(),
-                credential
-            ).setApplicationName(APP_NAME).build()
+            val driveService = driveService(accessToken)
 
             val fileList = driveService.files().list()
                 .setSpaces("drive")
@@ -197,24 +188,16 @@ class GDriveBackupManager(private val activity: Activity) {
     private fun uploadToDrive(accessToken: String, configFile: File) {
         kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.i(TAG, "Uploading file to the drive $${configFile.absoluteFile}")
-                val credential = HttpRequestInitializer { request ->
-                    request.headers.authorization = "Bearer $accessToken"
-                }
 
-                val driveService = Drive.Builder(
-                    NetHttpTransport.Builder().build(),
-                    GsonFactory(),
-                    credential
-                ).setApplicationName(APP_NAME).build()
+                Log.i(TAG, "Uploading file to the drive $${configFile.absoluteFile}")
 
                 val metadata = com.google.api.services.drive.model.File().apply {
                     name = BACKUP_FILE
-                    parents = listOf("root") // Hidden folder
+                    parents = listOf("root")
                 }
 
                 val mediaContent = FileContent("text/plain", configFile)
-                val uploadedFile = driveService.files().create(metadata, mediaContent)
+                val uploadedFile =  driveService(accessToken).files().create(metadata, mediaContent)
                     .setFields("id")
                     .execute()
 
@@ -224,4 +207,16 @@ class GDriveBackupManager(private val activity: Activity) {
             }
         }
     }
+
+    private fun driveService(accessToken: String): Drive =
+        Drive.Builder(
+            NetHttpTransport.Builder().build(),
+            GsonFactory(),
+            credentials(accessToken)
+        ).setApplicationName(APP_NAME).build()
+
+    private fun credentials(accessToken: String): HttpRequestInitializer =
+        HttpRequestInitializer { request ->
+            request.headers.authorization = "Bearer $accessToken"
+        }
 }

@@ -44,6 +44,7 @@ import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.integrations.gdrive.GDriveBackupManager
 import org.obd.graphs.profile.profile
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions

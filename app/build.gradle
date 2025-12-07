@@ -105,7 +105,6 @@ android {
             debuggable false
             jniDebuggable false
             renderscriptDebuggable false
-            zipAlignEnabled true
             signingConfig signingConfigs.release
 
             resValue "string", "ANDROID_WEB_CLIENT_ID", System.getenv("ANDROID_WEB_CLIENT_ID") ?: "no_key"
@@ -123,7 +122,6 @@ android {
             debuggable false
             jniDebuggable false
             renderscriptDebuggable false
-            zipAlignEnabled true
             signingConfig signingConfigs.release
 
             resValue "string", "ANDROID_WEB_CLIENT_ID", System.getenv("ANDROID_WEB_CLIENT_ID") ?: "no_key"
