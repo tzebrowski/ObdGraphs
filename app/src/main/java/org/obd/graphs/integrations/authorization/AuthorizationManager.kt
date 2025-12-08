@@ -34,8 +34,10 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.api.services.drive.DriveScopes
 import org.obd.graphs.R
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
+import org.obd.graphs.sendBroadcastEvent
 
-private const val TAG = "AuthorizationManager"
+ private const val TAG = "AuthorizationManager"
 
 interface Action {
     fun getName(): String
@@ -62,7 +64,8 @@ abstract class AuthorizationManager(
                 token?.let {
                     currentAction?.let { action ->
                         Log.i(TAG, "User accepted the consent. Executing the action: ${action.getName()}")
-                        action.execute(token)
+                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                         action.execute(token)
                         currentAction = null
                     }
                 }
@@ -131,6 +134,7 @@ abstract class AuthorizationManager(
                     Log.i(TAG, "We already received token, executing the action ${authorizationResult.accessToken}")
                     Log.i(TAG, "Granted scopes: ${authorizationResult.grantedScopes}")
                     authorizationResult.accessToken?.let {
+                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
                         action.execute(it)
                     }
                 }

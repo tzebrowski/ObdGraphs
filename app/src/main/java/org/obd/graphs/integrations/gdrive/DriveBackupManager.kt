@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,11 +27,11 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.BACKUP_FAILED
 import org.obd.graphs.activity.BACKUP_SUCCESSFUL
 import org.obd.graphs.integrations.authorization.Action
 import org.obd.graphs.integrations.authorization.AuthorizationManager
-import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
@@ -67,39 +67,44 @@ class DriveBackupManager(
         func: (f: File) -> Unit,
     ) {
         try {
-            val driveService = driveService(accessToken)
-            runAsync {
-                val fileList =
-                    driveService
-                        .files()
-                        .list()
-                        .setSpaces("drive")
-                        .setQ("name = '$BACKUP_FILE'")
-                        .setOrderBy("createdTime desc")
-                        .setFields("files(id, createdTime)")
-                        .execute()
+            kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val driveService = driveService(accessToken)
 
-                if (fileList.files.isNotEmpty()) {
-                    Log.d(TAG, "Found (${fileList.files.size}) files with name '$BACKUP_FILE' on GDrive. Taking the newest one")
+                    val fileList =
+                        driveService
+                            .files()
+                            .list()
+                            .setSpaces("drive")
+                            .setQ("name = '$BACKUP_FILE'")
+                            .setOrderBy("createdTime desc")
+                            .setFields("files(id, createdTime)")
+                            .execute()
 
-                    val file = fileList.files[0]
-                    Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
-                    val target = File(activity.filesDir, "restored_backup.json")
+                    if (fileList.files.isNotEmpty()) {
+                        Log.d(TAG, "Found (${fileList.files.size}) files with name '$BACKUP_FILE' on GDrive. Taking the newest one")
 
-                    val outputStream: OutputStream = FileOutputStream(target)
-                    Log.d(TAG, "Start writing into $target")
+                        val file = fileList.files[0]
+                        Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
+                        val target = File(activity.filesDir, "restored_backup.json")
 
-                    driveService
-                        .files()
-                        .get(file.id)
-                        .executeMediaAndDownloadTo(outputStream)
+                        val outputStream: OutputStream = FileOutputStream(target)
+                        Log.d(TAG, "Copying remote file ${file.id} into $target")
 
-                    Log.d(TAG, "Writing into $target finished")
-                    func(target)
-                    sendBroadcastEvent(BACKUP_SUCCESSFUL)
+                        driveService
+                            .files()
+                            .get(file.id)
+                            .executeMediaAndDownloadTo(outputStream)
 
-                } else {
-                    Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                        Log.d(TAG, "Writing into $target finished")
+                        func(target)
+                        sendBroadcastEvent(BACKUP_SUCCESSFUL)
+
+                    } else {
+                        Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                    }
+                } finally {
+                    sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                 }
             }
         } catch (e: GoogleJsonResponseException) {
@@ -157,6 +162,8 @@ class DriveBackupManager(
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Upload failed", e)
+            } finally {
+                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
         }
     }
