@@ -31,6 +31,7 @@ import org.obd.graphs.activity.BACKUP_FAILED
 import org.obd.graphs.activity.BACKUP_SUCCESSFUL
 import org.obd.graphs.integrations.authorization.Action
 import org.obd.graphs.integrations.authorization.AuthorizationManager
+import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
@@ -67,37 +68,39 @@ class DriveBackupManager(
     ) {
         try {
             val driveService = driveService(accessToken)
+            runAsync {
+                val fileList =
+                    driveService
+                        .files()
+                        .list()
+                        .setSpaces("drive")
+                        .setQ("name = '$BACKUP_FILE'")
+                        .setOrderBy("createdTime desc")
+                        .setFields("files(id, createdTime)")
+                        .execute()
 
-            val fileList =
-                driveService
-                    .files()
-                    .list()
-                    .setSpaces("drive")
-                    .setQ("name = '$BACKUP_FILE'")
-                    .setOrderBy("createdTime desc")
-                    .setFields("files(id, createdTime)")
-                    .execute()
+                if (fileList.files.isNotEmpty()) {
+                    Log.d(TAG, "Found (${fileList.files.size}) files with name '$BACKUP_FILE' on GDrive. Taking the newest one")
 
-            if (fileList.files.isNotEmpty()) {
-                Log.d(TAG, "Found (${fileList.files.size}) files with name '$BACKUP_FILE' on GDrive. Taking the newest one")
+                    val file = fileList.files[0]
+                    Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
+                    val target = File(activity.filesDir, "restored_backup.json")
 
-                val file = fileList.files[0]
-                Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
-                val target = File(activity.filesDir, "restored_backup.json")
+                    val outputStream: OutputStream = FileOutputStream(target)
+                    Log.d(TAG, "Start writing into $target")
 
-                val outputStream: OutputStream = FileOutputStream(target)
-                Log.d(TAG, "Start writing into $target")
+                    driveService
+                        .files()
+                        .get(file.id)
+                        .executeMediaAndDownloadTo(outputStream)
 
-                driveService
-                    .files()
-                    .get(file.id)
-                    .executeMediaAndDownloadTo(outputStream)
+                    Log.d(TAG, "Writing into $target finished")
+                    func(target)
+                    sendBroadcastEvent(BACKUP_SUCCESSFUL)
 
-                Log.d(TAG, "Writing into $target finished")
-                func(target)
-                sendBroadcastEvent(BACKUP_SUCCESSFUL)
-            } else {
-                Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                } else {
+                    Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                }
             }
         } catch (e: GoogleJsonResponseException) {
             if (401 == e.statusCode) {
@@ -111,6 +114,7 @@ class DriveBackupManager(
             }
         } catch (e: Exception) {
             Log.e(TAG, "Restore backup failed", e)
+            sendBroadcastEvent(BACKUP_FAILED)
         }
     }
 

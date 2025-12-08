@@ -68,7 +68,7 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
     override fun restoreBackup(file: File) {
-        runAsync {
+
             try {
                 Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
@@ -91,7 +91,7 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
             } finally {
                 bulkActionEnabled = false
             }
-        }
+
     }
 
     override fun exportBackup() : File? {

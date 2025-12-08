@@ -76,9 +76,9 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         BACKUP_RESTORE ->
             lifecycleScope.launch {
-               driveBackupManager.restoreBackup { file ->
-                   profile.restoreBackup(file)
-               }
+                driveBackupManager.restoreBackup { file ->
+                    profile.restoreBackup(file)
+                }
             }
 
         BACKUP_START ->

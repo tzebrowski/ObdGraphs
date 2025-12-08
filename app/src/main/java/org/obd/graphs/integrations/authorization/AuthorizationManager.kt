@@ -119,14 +119,11 @@ abstract class AuthorizationManager(
                 if (authorizationResult.hasResolution()) {
                     try {
                         Log.i(TAG, "User must confirm consent screen")
-                        val intentSenderRequest =
-                            IntentSenderRequest
-                                .Builder(authorizationResult.pendingIntent!!)
-                                .build()
-
                         currentAction = action
 
-                        authorizationLauncher?.launch(intentSenderRequest)
+                        authorizationLauncher?.launch( IntentSenderRequest
+                            .Builder(authorizationResult.pendingIntent!!)
+                            .build())
                     } catch (sendEx: IntentSender.SendIntentException) {
                         Log.e(TAG, "Failed to launch consent screen", sendEx)
                     }
