@@ -16,11 +16,9 @@
  */
 package org.obd.graphs.activity
 
-
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -39,44 +37,64 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.obd.graphs.*
+import org.obd.graphs.BuildConfig
+import org.obd.graphs.ExceptionHandler
+import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
+import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.cacheManager
 import org.obd.graphs.integrations.gdrive.DriveBackupManager
+import org.obd.graphs.network
 import org.obd.graphs.profile.profile
+import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.setActivityContext
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
-import java.security.MessageDigest
 
 const val LOG_TAG = "MainActivity"
-class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
+
+class MainActivity :
+    AppCompatActivity(),
+    EasyPermissions.PermissionCallbacks {
     lateinit var lockScreenDialog: AlertDialog
     lateinit var driveBackupManager: DriveBackupManager
 
-    internal var activityBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            receive(intent)
+    internal var activityBroadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                receive(intent)
+            }
         }
-    }
 
     private val cache: MutableMap<String, Any> = mutableMapOf()
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+    override fun onPermissionsGranted(
+        requestCode: Int,
+        perms: MutableList<String>,
+    ) {
     }
 
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+    override fun onPermissionsDenied(
+        requestCode: Int,
+        perms: MutableList<String>,
+    ) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             AppSettingsDialog.Builder(this).build().show()
         }
@@ -137,24 +155,20 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         supportActionBar?.hide()
         setupMetricsProcessors()
         setupBatteryOptimization()
-
         driveBackupManager = DriveBackupManager(this)
-
-        if (BuildConfig.DEBUG) {
-            displayAppSignature()
-        }
+        displayAppSignature(this)
     }
 
     override fun onResume() {
         super.onResume()
         screen.setupWindowManager(this)
-        screen.changeScreenBrightness(this,1f)
+        screen.changeScreenBrightness(this, 1f)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            screen. hideSystemUI(this)
+            screen.hideSystemUI(this)
         }
     }
 
@@ -172,7 +186,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         bottomNavigationView: BottomNavigationView,
         bottomAppBar: BottomAppBar,
         floatingActionButton: FloatingActionButton,
-        hide: Boolean
+        hide: Boolean,
     ) {
         val bottomNavigationViewHeight: Float = if (hide) bottomNavigationView.height.toFloat() else 0f
         val bottomAppBarHeight: Float = if (hide) bottomAppBar.height.toFloat() else 0f
@@ -206,17 +220,21 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private fun setupStrictMode() {
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(
-                ThreadPolicy.Builder()
+                ThreadPolicy
+                    .Builder()
                     .detectAll()
                     .penaltyLog()
                     .penaltyFlashScreen()
-                    .build()
+                    .build(),
             )
 
-            StrictMode.setVmPolicy(VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build())
+            StrictMode.setVmPolicy(
+                VmPolicy
+                    .Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build(),
+            )
         }
     }
 
@@ -224,12 +242,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         profile.init(
             versionCode = BuildConfig.VERSION_CODE,
             defaultProfile = resources.getString(R.string.DEFAULT_PROFILE),
-            versionName = BuildConfig.VERSION_NAME
+            versionName = BuildConfig.VERSION_NAME,
         )
 
         profile.setupProfiles(forceOverrideRecommendation = false)
     }
-
 
     private fun setupMetricsProcessors() {
         dataLogger
@@ -237,40 +254,27 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
 
-        if (BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
         }
     }
+
     private fun setupBatteryOptimization() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val registered = (getSystemService(POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(packageName)
-            Log.i(LOG_TAG,"Checking permissions related to battery optimization. Ignoring Battery Optimization for package=$packageName, " +
-                    "registered=$registered")
+            Log.i(
+                LOG_TAG,
+                "Checking permissions related to battery optimization. Ignoring Battery Optimization for package=$packageName, " +
+                    "registered=$registered",
+            )
             if (!registered) {
-                startActivity(Intent().apply {
-                    action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                    data = Uri.parse("package:$packageName")
-                })
+                startActivity(
+                    Intent().apply {
+                        action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                        data = Uri.parse("package:$packageName")
+                    },
+                )
             }
-        }
-    }
-
-    private fun displayAppSignature() {
-        try {
-            val info = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-            for (signature in info.signatures!!) {
-                val md = MessageDigest.getInstance("SHA")
-                md.update(signature.toByteArray())
-                val digest = md.digest()
-                val hexString = StringBuilder()
-                for (b in digest) {
-                    hexString.append(String.format("%02X:", b))
-                }
-
-                Log.e(LOG_TAG, "ACTUAL APP SIGNATURE: ${hexString.toString().dropLast(1)}")
-            }
-        } catch (e: Exception) {
-            Log.e(LOG_TAG, "Error getting signature", e)
         }
     }
 }
