@@ -37,7 +37,7 @@ import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
- private const val TAG = "AuthorizationManager"
+private const val TAG = "AuthorizationManager"
 
 interface Action {
     fun getName(): String

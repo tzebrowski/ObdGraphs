@@ -12,7 +12,10 @@
     <string name="main_activity.toast.connection.wifi.incorrect_ssid">Please update WIFI settings.</string>
     <string name="main_activity.toast.connection.wifi.not_connected">Please connect to WIFI network.</string>
     <string name="main_activity.toast.backup.failed">Backup operation failed. Please repeat the operation</string>
-    <string name="main_activity.toast.backup.successful">Backup operation completed.</string>
+    <string name="main_activity.toast.backup.successful">Backup operation completed successfully.</string>
+    <string name="main_activity.toast.backup.restore.no_files">Restore operation did not completed. There is no backup files available.</string>
+    <string name="main_activity.toast.backup.restore.failed">Restore operation failed. Please repeat the operation.</string>
+    <string name="main_activity.toast.backup.restore.successful">Restore operation completed successfully.</string>
 
     <string name="status_bar.status">status: </string>
     <string name="status_bar.profile">profile: </string>

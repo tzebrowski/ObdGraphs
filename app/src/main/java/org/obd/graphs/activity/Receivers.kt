@@ -56,9 +56,14 @@ const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
 const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 
 const val BACKUP_START = "backup.start"
+
 const val BACKUP_RESTORE = "backup.restore"
 const val BACKUP_FAILED = "backup.failed"
 const val BACKUP_SUCCESSFUL = "backup.successful"
+
+const val BACKUP_RESTORE_FAILED = "backup.restore.failed"
+const val BACKUP_RESTORE_SUCCESSFUL = "backup.restore.successful"
+const val BACKUP_RESTORE_NO_FILES = "backup.restore.no_files"
 
 private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
@@ -66,13 +71,11 @@ internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
 
-        BACKUP_FAILED -> {
-            toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_failed)
-        }
-
-        BACKUP_SUCCESSFUL -> {
-            toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_successful)
-        }
+        BACKUP_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_failed)
+        BACKUP_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_successful)
+        BACKUP_RESTORE_NO_FILES -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_restore_no_files)
+        BACKUP_RESTORE_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_restore_failed)
+        BACKUP_RESTORE_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_restore_successful)
 
         BACKUP_RESTORE ->
             lifecycleScope.launch {
@@ -363,6 +366,10 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(BACKUP_RESTORE)
         it.addAction(BACKUP_FAILED)
         it.addAction(BACKUP_SUCCESSFUL)
+
+        it.addAction(BACKUP_RESTORE_NO_FILES)
+        it.addAction(BACKUP_RESTORE_SUCCESSFUL)
+        it.addAction(BACKUP_RESTORE_FAILED)
     }
 
     registerReceiver(this, powerReceiver){

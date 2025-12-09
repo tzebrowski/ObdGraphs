@@ -29,6 +29,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.BACKUP_FAILED
+import org.obd.graphs.activity.BACKUP_RESTORE_FAILED
+import org.obd.graphs.activity.BACKUP_RESTORE_NO_FILES
+import org.obd.graphs.activity.BACKUP_RESTORE_SUCCESSFUL
 import org.obd.graphs.activity.BACKUP_SUCCESSFUL
 import org.obd.graphs.integrations.authorization.Action
 import org.obd.graphs.integrations.authorization.AuthorizationManager
@@ -44,10 +47,11 @@ private const val TAG = "DriveBackup"
 class DriveBackupManager(
     private val activity: Activity,
 ) : AuthorizationManager(activity) {
+
     suspend fun exportBackup(file: File) =
         signInAndExecuteAction(
             object : Action {
-                override fun execute(token: String) = uploadToDrive(token, file)
+                override fun execute(token: String) = uploadBackupToDrive(token, file)
 
                 override fun getName() = "exportBackupAction"
             },
@@ -56,13 +60,13 @@ class DriveBackupManager(
     suspend fun restoreBackup(func: (f: File) -> Unit) =
         signInAndExecuteAction(
             object : Action {
-                override fun execute(token: String) = downloadFromDrive(token, func)
+                override fun execute(token: String) = downloadBackupFromDrive(token, func)
 
                 override fun getName() = "restoreBackupAction"
             },
         )
 
-    private fun downloadFromDrive(
+    private fun downloadBackupFromDrive(
         accessToken: String,
         func: (f: File) -> Unit,
     ) {
@@ -88,18 +92,19 @@ class DriveBackupManager(
                     val target = File(activity.filesDir, "restored_backup.json")
 
                     val outputStream: OutputStream = FileOutputStream(target)
-                    Log.d(TAG, "Copying remote file ${file.id} into $target")
+                    Log.d(TAG, "Copying remote file ${file.id} into local $target")
 
                     driveService
                         .files()
                         .get(file.id)
                         .executeMediaAndDownloadTo(outputStream)
 
-                    Log.d(TAG, "Writing into $target finished")
+                    Log.d(TAG, "Writing into local $target file finished")
                     func(target)
-                    sendBroadcastEvent(BACKUP_SUCCESSFUL)
+                    sendBroadcastEvent(BACKUP_RESTORE_SUCCESSFUL)
                 } else {
                     Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                    sendBroadcastEvent(BACKUP_RESTORE_NO_FILES)
                 }
             } catch (e: GoogleJsonResponseException) {
                 if (401 == e.statusCode) {
@@ -109,18 +114,18 @@ class DriveBackupManager(
                     } catch (e1: java.lang.Exception) {
                         Log.e(TAG, "Failed to invalidate the token", e)
                     }
-                    sendBroadcastEvent(BACKUP_FAILED)
+                    sendBroadcastEvent(BACKUP_RESTORE_FAILED)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Restore backup failed", e)
-                sendBroadcastEvent(BACKUP_FAILED)
+                sendBroadcastEvent(BACKUP_RESTORE_FAILED)
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
         }
     }
 
-    private fun uploadToDrive(
+    private fun uploadBackupToDrive(
         accessToken: String,
         configFile: File,
     ) {
@@ -137,16 +142,17 @@ class DriveBackupManager(
                         parents = listOf(backupFolderId)
                     }
 
-                val mediaContent = FileContent("text/plain", configFile)
                 val uploadedFile =
                     driveService
                         .files()
-                        .create(metadata, mediaContent)
+                        .create(metadata, FileContent("text/plain", configFile))
                         .setFields("id")
                         .execute()
 
-                Log.i(TAG, "Operation completed. File was uploaded. id: ${uploadedFile.id}")
+                Log.i(TAG, "Backup operation completed successfully. File was uploaded. id: ${uploadedFile.id}")
+
                 sendBroadcastEvent(BACKUP_SUCCESSFUL)
+
             } catch (e: GoogleJsonResponseException) {
                 if (401 == e.statusCode) {
                     Log.e(TAG, "Token is invalid. Invalidating now...")
@@ -156,9 +162,13 @@ class DriveBackupManager(
                         Log.e(TAG, "Failed to invalidate the token", e)
                     }
                     sendBroadcastEvent(BACKUP_FAILED)
+                } else {
+                    Log.e(TAG, "Upload failed ${e.statusCode}", e)
+                    sendBroadcastEvent(BACKUP_FAILED)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Upload failed", e)
+                sendBroadcastEvent(BACKUP_FAILED)
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
