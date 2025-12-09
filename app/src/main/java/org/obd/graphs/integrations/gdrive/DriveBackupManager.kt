@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -66,60 +66,57 @@ class DriveBackupManager(
         accessToken: String,
         func: (f: File) -> Unit,
     ) {
-        try {
-            kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val driveService = driveService(accessToken)
+        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val driveService = driveService(accessToken)
 
-                    val fileList =
-                        driveService
-                            .files()
-                            .list()
-                            .setSpaces("drive")
-                            .setQ("name = '$BACKUP_FILE'")
-                            .setOrderBy("createdTime desc")
-                            .setFields("files(id, createdTime)")
-                            .execute()
+                val fileList =
+                    driveService
+                        .files()
+                        .list()
+                        .setSpaces("drive")
+                        .setQ("name = '$BACKUP_FILE'")
+                        .setOrderBy("createdTime desc")
+                        .setFields("files(id, createdTime)")
+                        .execute()
 
-                    if (fileList.files.isNotEmpty()) {
-                        Log.d(TAG, "Found (${fileList.files.size}) files with name '$BACKUP_FILE' on GDrive. Taking the newest one")
+                if (fileList.files.isNotEmpty()) {
+                    Log.d(TAG, "Found (${fileList.files.size}) files with name '$BACKUP_FILE' on GDrive. Taking the newest one")
 
-                        val file = fileList.files[0]
-                        Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
-                        val target = File(activity.filesDir, "restored_backup.json")
+                    val file = fileList.files[0]
+                    Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
+                    val target = File(activity.filesDir, "restored_backup.json")
 
-                        val outputStream: OutputStream = FileOutputStream(target)
-                        Log.d(TAG, "Copying remote file ${file.id} into $target")
+                    val outputStream: OutputStream = FileOutputStream(target)
+                    Log.d(TAG, "Copying remote file ${file.id} into $target")
 
-                        driveService
-                            .files()
-                            .get(file.id)
-                            .executeMediaAndDownloadTo(outputStream)
+                    driveService
+                        .files()
+                        .get(file.id)
+                        .executeMediaAndDownloadTo(outputStream)
 
-                        Log.d(TAG, "Writing into $target finished")
-                        func(target)
-                        sendBroadcastEvent(BACKUP_SUCCESSFUL)
-
-                    } else {
-                        Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                    Log.d(TAG, "Writing into $target finished")
+                    func(target)
+                    sendBroadcastEvent(BACKUP_SUCCESSFUL)
+                } else {
+                    Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                }
+            } catch (e: GoogleJsonResponseException) {
+                if (401 == e.statusCode) {
+                    Log.e(TAG, "Token is invalid. Invalidating now...")
+                    try {
+                        GoogleAuthUtil.clearToken(activity, accessToken)
+                    } catch (e1: java.lang.Exception) {
+                        Log.e(TAG, "Failed to invalidate the token", e)
                     }
-                } finally {
-                    sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+                    sendBroadcastEvent(BACKUP_FAILED)
                 }
-            }
-        } catch (e: GoogleJsonResponseException) {
-            if (401 == e.statusCode) {
-                Log.e(TAG, "Token is invalid. Invalidating now...")
-                try {
-                    GoogleAuthUtil.clearToken(activity, accessToken)
-                } catch (e1: java.lang.Exception) {
-                    Log.e(TAG, "Failed to invalidate the token", e)
-                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Restore backup failed", e)
                 sendBroadcastEvent(BACKUP_FAILED)
+            } finally {
+                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Restore backup failed", e)
-            sendBroadcastEvent(BACKUP_FAILED)
         }
     }
 
