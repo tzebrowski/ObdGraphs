@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -50,7 +50,7 @@ interface Action {
 
 abstract class AuthorizationManager(
     private val activity: Activity,
-    fragment: Fragment? = null
+    fragment: Fragment? = null,
 ) {
     private var currentAction: Action? = null
 
@@ -65,7 +65,6 @@ abstract class AuthorizationManager(
             ) { result ->
                 handleActivityResult(result)
             }
-
 
     protected fun credentials(accessToken: String): HttpRequestInitializer =
         HttpRequestInitializer { request ->
@@ -127,7 +126,7 @@ abstract class AuthorizationManager(
                         authorizationLauncher?.launch(
                             IntentSenderRequest
                                 .Builder(authorizationResult.pendingIntent!!)
-                                .build()
+                                .build(),
                         )
                     } catch (sendEx: IntentSender.SendIntentException) {
                         Log.e(TAG, "Failed to launch consent screen", sendEx)
@@ -181,5 +180,4 @@ abstract class AuthorizationManager(
             }
         }
     }
-
 }
