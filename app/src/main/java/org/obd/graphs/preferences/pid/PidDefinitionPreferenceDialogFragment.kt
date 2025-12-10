@@ -185,7 +185,7 @@ open class PidDefinitionPreferenceDialogFragment(
             }
         }
 
-        root.findViewById<Button>(R.id.action_close_window).apply {
+        root.findViewById<Button>(R.id.trip_action_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
                 onDialogCloseListener.invoke()

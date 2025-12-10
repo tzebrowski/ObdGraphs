@@ -18,6 +18,7 @@ package org.obd.graphs.preferences.trips
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,10 +28,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToScreen
+import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.preferences.CoreDialogFragment
 
-class TripsPreferenceDialogFragment : CoreDialogFragment() {
+ data class TripFileDescDetails(
+     val source: TripFileDesc,
+     var checked: Boolean = false,
+ )
+
+ class TripsPreferenceDialogFragment : CoreDialogFragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -42,7 +49,7 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_trip, container, false)
-        val adapter = TripViewAdapter(context, tripManager.findAllTripsBy())
+        val adapter = TripViewAdapter(context, tripManager.findAllTripsBy().map { TripFileDescDetails(source=it)}.toMutableList())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -51,7 +58,7 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
             navigateToScreen(R.id.navigation_graph)
         }
 
-        root.findViewById<Button>(R.id.trip_delete_all).apply {
+        root.findViewById<Button>(R.id.trip_action_delete_all).apply {
             setOnClickListener {
                 val builder = AlertDialog.Builder(context)
                 val title = context.getString(R.string.trip_delete_dialog_ask_question)
@@ -65,7 +72,7 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
 
                             sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
                             adapter.data.forEach {
-                                tripManager.deleteTrip(it)
+                                tripManager.deleteTrip(it.source)
                             }
                             adapter.data.clear()
                             adapter.notifyDataSetChanged()
@@ -81,6 +88,33 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
                 alert.show()
             }
         }
+
+        root.findViewById<Button>(R.id.trip_action_send_to_cloud).apply {
+            setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                val title = context.getString(R.string.trip_send_to_cloud_dialog_ask_question)
+                val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
+                val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
+
+                builder.setMessage(title)
+                    .setCancelable(false)
+                    .setPositiveButton(yes) { _, _ ->
+
+                        adapter.data.forEach {
+                            if (it.checked){
+                                Log.e("TripsPreferenceDialogFragment","Selected trip=${it.source.fileName}")
+                            }
+                        }
+                    }
+                    .setNegativeButton(no) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                val alert = builder.create()
+                alert.show()
+            }
+        }
+
+
         return root
     }
 }

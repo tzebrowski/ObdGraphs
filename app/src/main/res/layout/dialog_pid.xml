@@ -283,7 +283,7 @@
             tools:ignore="SmallSp" />
 
         <Button
-            android:id="@+id/action_close_window"
+            android:id="@+id/trip_action_close_window"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="70dp"
             android:layout_height="wrap_content"

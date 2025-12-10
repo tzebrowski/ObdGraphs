@@ -41,7 +41,7 @@ private const val LOGGER_KEY = "TripsViewAdapter"
 
 class TripViewAdapter internal constructor(
     context: Context?,
-    var data: MutableCollection<TripFileDesc>
+    var data: MutableCollection<TripFileDescDetails>
 ) : RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -71,21 +71,28 @@ class TripViewAdapter internal constructor(
 
         data.elementAt(position).run {
             holder.vehicleProfile.setText(
-                profileLabel,
-                profileColors[profileId]!!,
+                source.profileLabel,
+                profileColors[source.profileId]!!,
                 Typeface.NORMAL,
                 0.6f
             )
-            var startTs = startTime
-            startTime.toLongOrNull()?.let {
+            var startTs = source.startTime
+            source.startTime.toLongOrNull()?.let {
                 startTs = dateFormat.format(Date(it))
             }
 
             holder.tripStartDate.setText(startTs, Color.GRAY, Typeface.NORMAL, 0.9f)
 
+            holder.selected.isChecked = checked
+            holder.selected.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (buttonView.isShown) {
+                    checked = isChecked
+                }
+            }
+
             holder.tripTime.let {
-                val seconds: Int = tripTimeSec.toInt() % 60
-                var hours: Int = tripTimeSec.toInt() / 60
+                val seconds: Int = source.tripTimeSec.toInt() % 60
+                var hours: Int = source.tripTimeSec.toInt() / 60
                 val minutes = hours % 60
                 hours /= 60
                 val text = "${hours.toString().padStart(2, '0')}:${
@@ -113,7 +120,7 @@ class TripViewAdapter internal constructor(
         init {
 
             loadTrip.setOnClickListener {
-                tripManager.loadTripAsync( data.elementAt(adapterPosition).fileName)
+                tripManager.loadTripAsync( data.elementAt(adapterPosition).source.fileName)
             }
 
             deleteTrip.setOnClickListener {
@@ -128,7 +135,7 @@ class TripViewAdapter internal constructor(
                         val trip = data.elementAt(adapterPosition)
                         Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
                         data.remove(trip)
-                        tripManager.deleteTrip(trip)
+                        tripManager.deleteTrip(trip.source)
                         notifyDataSetChanged()
                     }
                     .setNegativeButton(no) { dialog, _ ->
