@@ -117,26 +117,27 @@ internal fun MainActivity.setupNavigationBar() {
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        findViewById<BottomNavigationView>(R.id.bottom_nav_view).let {
+
+        bottomNavigationView {
             it.setPadding(0, 0, 0, 20)
             it.setOnApplyWindowInsetsListener(null)
             it.setupWithNavController(navController)
             it.selectedItemId = R.id.navigation_gauge
-        }
 
-        val mainActivityPreferences = getMainActivityPreferences()
-        findViewById<BottomNavigationView>(R.id.bottom_nav_view).menu.run {
-            findItem(R.id.navigation_giulia).isVisible =
-                mainActivityPreferences.showGiuliaView
+            it.menu.run {
+                val mainActivityPreferences = getMainActivityPreferences()
+                findItem(R.id.navigation_giulia).isVisible =
+                    mainActivityPreferences.showGiuliaView
 
-            findItem(R.id.navigation_gauge).isVisible =
-                mainActivityPreferences.showGaugeView
+                findItem(R.id.navigation_gauge).isVisible =
+                    mainActivityPreferences.showGaugeView
 
-            findItem(R.id.navigation_dashboard).isVisible =
-                mainActivityPreferences.showDashView
+                findItem(R.id.navigation_dashboard).isVisible =
+                    mainActivityPreferences.showDashView
 
-            findItem(R.id.navigation_graph).isVisible =
-                mainActivityPreferences.showGraphView
+                findItem(R.id.navigation_graph).isVisible =
+                    mainActivityPreferences.showGraphView
+            }
         }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -191,6 +192,7 @@ internal fun MainActivity.setupNavigationBar() {
 
 internal fun MainActivity.setupNavigationBarButtons() {
     bottomAppBar {
+
         it.setOnMenuItemClickListener { item ->
             when (item.itemId) {
 

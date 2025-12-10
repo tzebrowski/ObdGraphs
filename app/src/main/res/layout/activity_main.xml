@@ -127,9 +127,9 @@
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="110dp"
                 android:layout_gravity="bottom"
-                android:backgroundTint="@color/gray"
+                app:backgroundTint="#CCFFFFFF"
                 app:contentInsetStart="0dp"
                 app:fabAlignmentMode="center"
                 app:hideOnScroll="true"
@@ -138,15 +138,15 @@
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_nav_view"
                 android:layout_width="match_parent"
-                android:layout_height="90dp"
+                android:layout_height="60dp"
                 android:layout_gravity="bottom"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="50dp"
-                android:background="@color/gray"
-                app:itemIconSize="24dp"
+                app:elevation="0dp"
+                app:backgroundTint="#CCFFFFFF"
                 app:labelVisibilityMode="labeled"
-                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-                app:menu="@menu/bottom_nav_menu" />
+                app:itemIconSize="22dp"
+                app:itemPaddingTop="6dp"
+                app:itemPaddingBottom="6dp"
+               app:menu="@menu/bottom_nav_menu" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/connect_btn"
