@@ -18,19 +18,22 @@ package org.obd.graphs.preferences.trips
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.integrations.gdrive.TripsDriveManager
 import org.obd.graphs.preferences.CoreDialogFragment
+import java.io.File
 
  data class TripFileDescDetails(
      val source: TripFileDesc,
@@ -38,6 +41,13 @@ import org.obd.graphs.preferences.CoreDialogFragment
  )
 
  class TripsPreferenceDialogFragment : CoreDialogFragment() {
+
+    private lateinit var tripsDriveManager: TripsDriveManager
+
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         tripsDriveManager = TripsDriveManager(requireActivity(), this)
+     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -69,7 +79,6 @@ import org.obd.graphs.preferences.CoreDialogFragment
                     .setCancelable(false)
                     .setPositiveButton(yes) { _, _ ->
                         try {
-
                             sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
                             adapter.data.forEach {
                                 tripManager.deleteTrip(it.source)
@@ -95,15 +104,13 @@ import org.obd.graphs.preferences.CoreDialogFragment
                 val title = context.getString(R.string.trip_send_to_cloud_dialog_ask_question)
                 val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
                 val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
-
                 builder.setMessage(title)
                     .setCancelable(false)
                     .setPositiveButton(yes) { _, _ ->
-
-                        adapter.data.forEach {
-                            if (it.checked){
-                                Log.e("TripsPreferenceDialogFragment","Selected trip=${it.source.fileName}")
-                            }
+                        val directory = tripManager.getTripsDirectory(context)
+                        val files = adapter.data.filter { it.checked }.map {File(directory, it.source.fileName)}
+                        lifecycleScope.launch {
+                            tripsDriveManager.exportTrips(files)
                         }
                     }
                     .setNegativeButton(no) { dialog, _ ->
@@ -113,7 +120,6 @@ import org.obd.graphs.preferences.CoreDialogFragment
                 alert.show()
             }
         }
-
 
         return root
     }

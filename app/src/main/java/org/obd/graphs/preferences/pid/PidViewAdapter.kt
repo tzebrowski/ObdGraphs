@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -46,7 +46,6 @@ class PidViewAdapter internal constructor(
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
 ) : RecyclerView.Adapter<PidViewAdapter.ViewHolder>() {
-
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var lastSelectedPosition = -1
     var currentSelectedPosition = -1
@@ -191,7 +190,6 @@ class PidViewAdapter internal constructor(
         val selected: CheckBox = binding.findViewById(R.id.pid_selected)
         val layout: TableLayout = binding.findViewById(R.id.tablelayout)
         val formula: TextView = binding.findViewById(R.id.pid_formula)
-
 
         init {
             selected.visibility = if (editModeEnabled) View.GONE else View.VISIBLE

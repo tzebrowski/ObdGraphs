@@ -50,6 +50,11 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
     private val tripModelSerializer = TripModelSerializer()
     private val tripCache = TripCache()
 
+
+    override fun getTripsDirectory(context: Context) =
+        "${context.getExternalFilesDir(TRIP_DIRECTORY)?.absolutePath}"
+
+
     override fun postValue(obdMetric: ObdMetric) {
         try {
 
@@ -261,8 +266,6 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
     private fun getTripFile(context: Context, fileName: String): File =
         File(getTripsDirectory(context), fileName)
 
-    private fun getTripsDirectory(context: Context) =
-        "${context.getExternalFilesDir(TRIP_DIRECTORY)?.absolutePath}"
 
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs, entries = mutableMapOf())

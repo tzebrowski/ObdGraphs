@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.trip
 
+import android.content.Context
 import android.util.Log
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.MetricsProcessor
@@ -28,6 +29,7 @@ interface TripManager : MetricsProcessor {
     fun getCurrentTrip(): Trip
     fun startNewTrip(newTs: Long)
     fun saveCurrentTrip(f: () -> Unit)
+    fun getTripsDirectory(context: Context): String
 
     fun saveCurrentTripAsync(){
 
