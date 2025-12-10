@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.preferences.trips
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ import org.obd.graphs.preferences.CoreDialogFragment
 
 class TripsPreferenceDialogFragment : CoreDialogFragment() {
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,8 +41,8 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
 
         requestWindowFeatures()
 
-        val root = inflater.inflate(R.layout.dialog_trips, container, false)
-        val adapter = TripsViewAdapter(context, tripManager.findAllTripsBy())
+        val root = inflater.inflate(R.layout.dialog_trip, container, false)
+        val adapter = TripViewAdapter(context, tripManager.findAllTripsBy())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter

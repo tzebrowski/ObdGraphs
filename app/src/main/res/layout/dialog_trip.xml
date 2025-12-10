@@ -19,6 +19,16 @@
 
             <TextView
                 android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"
                 android:paddingStart="4dp"

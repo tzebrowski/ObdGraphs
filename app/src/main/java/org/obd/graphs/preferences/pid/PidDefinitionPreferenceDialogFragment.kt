@@ -91,11 +91,11 @@ open class PidDefinitionPreferenceDialogFragment(
     ): View {
         requestWindowFeatures()
 
-        root = inflater.inflate(R.layout.dialog_pid_detail, container, false)
+        root = inflater.inflate(R.layout.dialog_pid, container, false)
 
         listOfItems = sourceList()
 
-        val adapter = PidDefinitionAdapter(root, context, listOfItems, editableViewEnabled)
+        val adapter = PidViewAdapter(root, context, listOfItems, editableViewEnabled)
         recyclerView = getRecyclerView(root)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -196,7 +196,7 @@ open class PidDefinitionPreferenceDialogFragment(
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
 
             setOnClickListener {
-                val adapter: PidDefinitionAdapter = getAdapter()
+                val adapter: PidViewAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = true
@@ -208,7 +208,7 @@ open class PidDefinitionPreferenceDialogFragment(
         root.findViewById<Button>(R.id.pid_list_deselect_all).apply {
             visibility = if (editableViewEnabled) View.GONE else View.VISIBLE
             setOnClickListener {
-                val adapter: PidDefinitionAdapter = getAdapter()
+                val adapter: PidViewAdapter = getAdapter()
 
                 adapter.data.forEach {
                     it.checked = false
@@ -314,7 +314,7 @@ open class PidDefinitionPreferenceDialogFragment(
         }
     }
 
-    private fun getAdapter() = (getRecyclerView(root).adapter as PidDefinitionAdapter)
+    private fun getAdapter() = (getRecyclerView(root).adapter as PidViewAdapter)
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
         val all = dataLogger.getPidDefinitionRegistry().findAll()

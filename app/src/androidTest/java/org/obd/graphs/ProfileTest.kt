@@ -104,7 +104,7 @@ class ProfileTest {
 
             val txt =  if (it.value!!.startsWith("Profile"))  it.value!! else "Profile ${it.value}"
 
-            val vehicleProfile = Espresso.onView(ViewMatchers.withId(R.id.vehicle_profile))
+            val vehicleProfile = Espresso.onView(ViewMatchers.withId(R.id.trip_profile))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isEnabled()))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(txt)))

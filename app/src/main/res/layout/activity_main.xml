@@ -37,7 +37,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/vehicle_profile"
+                android:id="@+id/trip_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -53,7 +53,7 @@
                 android:id="@+id/vehicle_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/vehicle_profile"
+                android:layout_toEndOf="@id/trip_profile"
                 android:layout_toStartOf="@id/timer"
                 android:paddingStart="3sp"
                 android:paddingEnd="0sp"
@@ -127,23 +127,24 @@
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottom_app_bar"
                 android:layout_width="match_parent"
-                android:layout_height="110dp"
+                android:layout_height="100dp"
                 android:layout_gravity="bottom"
                 app:backgroundTint="#CCFFFFFF"
                 app:contentInsetStart="0dp"
                 app:fabAlignmentMode="center"
                 app:hideOnScroll="true"
+
                 app:menu="@menu/context_menu" />
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_nav_view"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="50dp"
                 android:layout_gravity="bottom"
                 app:elevation="0dp"
                 app:backgroundTint="#CCFFFFFF"
                 app:labelVisibilityMode="labeled"
-                app:itemIconSize="22dp"
+                app:itemIconSize="18dp"
                 app:itemPaddingTop="6dp"
                 app:itemPaddingBottom="6dp"
                app:menu="@menu/bottom_nav_menu" />

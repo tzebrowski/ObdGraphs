@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -40,12 +40,13 @@ import java.util.Collections
 
 private const val TAG = "PID_VIEW"
 
-class PidDefinitionAdapter internal constructor(
+class PidViewAdapter internal constructor(
     private val root: View,
     context: Context?,
     var data: List<PidDefinitionDetails>,
     private val editModeEnabled: Boolean,
-) : RecyclerView.Adapter<PidDefinitionAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PidViewAdapter.ViewHolder>() {
+
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var lastSelectedPosition = -1
     var currentSelectedPosition = -1
@@ -60,14 +61,16 @@ class PidDefinitionAdapter internal constructor(
             p1: Int,
             p2: Int,
             p3: Int,
-        ) {}
+        ) {
+        }
 
         override fun onTextChanged(
             p0: CharSequence?,
             p1: Int,
             p2: Int,
             p3: Int,
-        ) {}
+        ) {
+        }
 
         override fun afterTextChanged(editable: Editable?) {
             pid?.let {
@@ -117,7 +120,7 @@ class PidDefinitionAdapter internal constructor(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): ViewHolder = ViewHolder(inflater.inflate(R.layout.item_pids, parent, false))
+    ): ViewHolder = ViewHolder(inflater.inflate(R.layout.item_pid, parent, false))
 
     override fun onBindViewHolder(
         holder: ViewHolder,

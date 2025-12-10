@@ -30,7 +30,6 @@
                 android:gravity="start"
                 android:paddingStart="4dp"
                 android:paddingEnd="0dp"
-                android:text="@string/pids_selection"
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
