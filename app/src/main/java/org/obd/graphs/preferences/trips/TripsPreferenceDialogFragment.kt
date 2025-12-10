@@ -31,7 +31,7 @@ import org.obd.graphs.*
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.integrations.gdrive.TripsDriveManager
+import org.obd.graphs.integrations.gcp.gdrive.TripsDriveManager
 import org.obd.graphs.preferences.CoreDialogFragment
 import java.io.File
 

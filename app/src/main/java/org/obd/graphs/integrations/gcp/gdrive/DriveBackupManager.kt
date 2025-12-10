@@ -14,14 +14,13 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.integrations.gdrive
+package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import android.util.Log
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.FileContent
-import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
@@ -33,8 +32,8 @@ import org.obd.graphs.activity.BACKUP_RESTORE_FAILED
 import org.obd.graphs.activity.BACKUP_RESTORE_NO_FILES
 import org.obd.graphs.activity.BACKUP_RESTORE_SUCCESSFUL
 import org.obd.graphs.activity.BACKUP_SUCCESSFUL
-import org.obd.graphs.integrations.authorization.Action
-import org.obd.graphs.integrations.authorization.AuthorizationManager
+import org.obd.graphs.integrations.gcp.authorization.Action
+import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream

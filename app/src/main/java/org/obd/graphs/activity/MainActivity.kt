@@ -48,7 +48,7 @@ import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
-import org.obd.graphs.integrations.gdrive.DriveBackupManager
+import org.obd.graphs.integrations.gcp.gdrive.DriveBackupManager
 import org.obd.graphs.network
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent

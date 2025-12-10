@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.integrations.authorization
+package org.obd.graphs.integrations.gcp.authorization
 
 import android.app.Activity
 import android.content.IntentSender

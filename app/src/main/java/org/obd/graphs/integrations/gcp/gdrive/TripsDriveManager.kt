@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.integrations.gdrive
+package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import android.util.Log
@@ -31,8 +31,8 @@ import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.activity.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.activity.TRIPS_UPLOAD_SUCCESSFUL
-import org.obd.graphs.integrations.authorization.Action
-import org.obd.graphs.integrations.authorization.AuthorizationManager
+import org.obd.graphs.integrations.gcp.authorization.Action
+import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
