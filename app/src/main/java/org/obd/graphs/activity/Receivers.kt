@@ -64,11 +64,18 @@ const val BACKUP_RESTORE_FAILED = "backup.restore.failed"
 const val BACKUP_RESTORE_SUCCESSFUL = "backup.restore.successful"
 const val BACKUP_RESTORE_NO_FILES = "backup.restore.no_files"
 
+const val TRIPS_UPLOAD_FAILED = "trips.upload.failed"
+const val TRIPS_UPLOAD_SUCCESSFUL = "trips.upload.successful"
+const val TRIPS_UPLOAD_NO_FILES_SELECTED= "trips.upload.no_files"
+
 private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
 
     when (intent?.action) {
+        TRIPS_UPLOAD_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_failed)
+        TRIPS_UPLOAD_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_successful)
+        TRIPS_UPLOAD_NO_FILES_SELECTED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_no_files_selected)
 
         BACKUP_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_failed)
         BACKUP_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_backup_successful)
@@ -103,6 +110,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
             toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_wifi_incorrect_ssid)
         }
+
         SCREEN_LOCK_PROGRESS_EVENT -> {
             lockScreenDialogShow { dialogTitle ->
                 var msg = intent.getExtraParam()
@@ -371,6 +379,9 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(BACKUP_RESTORE_NO_FILES)
         it.addAction(BACKUP_RESTORE_SUCCESSFUL)
         it.addAction(BACKUP_RESTORE_FAILED)
+        it.addAction(TRIPS_UPLOAD_FAILED)
+        it.addAction(TRIPS_UPLOAD_SUCCESSFUL)
+        it.addAction(TRIPS_UPLOAD_NO_FILES_SELECTED)
     }
 
     registerReceiver(this, powerReceiver){

@@ -28,8 +28,9 @@ import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
-import org.obd.graphs.activity.BACKUP_FAILED
-import org.obd.graphs.activity.BACKUP_SUCCESSFUL
+import org.obd.graphs.activity.TRIPS_UPLOAD_FAILED
+import org.obd.graphs.activity.TRIPS_UPLOAD_NO_FILES_SELECTED
+import org.obd.graphs.activity.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.integrations.authorization.Action
 import org.obd.graphs.integrations.authorization.AuthorizationManager
 import org.obd.graphs.sendBroadcastEvent
@@ -58,27 +59,31 @@ class TripsDriveManager(
     ) {
         kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
             try {
-                val driveService = driveService(accessToken)
-                val backupFolderId = getOrCreateFolder(driveService)
+                if (files.isEmpty()){
+                    sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
+                }else {
+                    val driveService = driveService(accessToken)
+                    val finalFolderId = getOrCreateFolderStructure(driveService, "mygiulia/trips")
 
-                files.forEach { file ->
-                    Log.i(TAG, "Uploading file ${file.absoluteFile} to the drive")
-                    val metadata =
-                        com.google.api.services.drive.model.File().apply {
-                            name = file.name
-                            parents = listOf(backupFolderId)
-                        }
+                    files.forEach { file ->
+                        Log.i(TAG, "Uploading file ${file.absoluteFile} to the drive")
+                        val metadata =
+                            com.google.api.services.drive.model.File().apply {
+                                name = file.name
+                                parents = listOf(finalFolderId)
+                            }
 
-                    val uploadedFile =
-                        driveService
-                            .files()
-                            .create(metadata, FileContent("text/plain", file))
-                            .setFields("id")
-                            .execute()
+                        val uploadedFile =
+                            driveService
+                                .files()
+                                .create(metadata, FileContent("text/plain", file))
+                                .setFields("id")
+                                .execute()
 
-                    Log.i(TAG, "File ${file.name} was uploaded to the drive. id: ${uploadedFile.id}")
+                        Log.i(TAG, "File ${file.name} was uploaded to the drive. id: ${uploadedFile.id}")
+                    }
+                    sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)
                 }
-                sendBroadcastEvent(BACKUP_SUCCESSFUL)
             } catch (e: GoogleJsonResponseException) {
                 if (401 == e.statusCode) {
                     Log.e(TAG, "Token is invalid. Invalidating now...")
@@ -87,14 +92,14 @@ class TripsDriveManager(
                     } catch (e1: java.lang.Exception) {
                         Log.e(TAG, "Failed to invalidate the token", e)
                     }
-                    sendBroadcastEvent(BACKUP_FAILED)
+                    sendBroadcastEvent(TRIPS_UPLOAD_FAILED)
                 } else {
-                    Log.e(TAG, "Upload failed ${e.statusCode}", e)
-                    sendBroadcastEvent(BACKUP_FAILED)
+                    Log.e(TAG, "Files upload failed ${e.statusCode}", e)
+                    sendBroadcastEvent(TRIPS_UPLOAD_FAILED)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Upload failed", e)
-                sendBroadcastEvent(BACKUP_FAILED)
+                Log.e(TAG, "Files upload failed", e)
+                sendBroadcastEvent(TRIPS_UPLOAD_FAILED)
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
@@ -110,31 +115,48 @@ class TripsDriveManager(
             ).setApplicationName(APP_NAME)
             .build()
 
-    private fun getOrCreateFolder(
+
+    private fun getOrCreateFolderStructure(
         driveService: Drive,
-        folderName: String = "mygiulia",
+        folderPath: String
     ): String {
-        val result =
-            driveService
-                .files()
-                .list()
-                .setQ("mimeType = 'application/vnd.google-apps.folder' and name = '$folderName' and trashed = false")
-                .setSpaces("drive")
-                .setFields("files(id, name)")
-                .execute()
+        val folderNames = folderPath.split("/").filter { it.isNotEmpty() }
+        var currentParentId = "root"
+        for (folderName in folderNames) {
+            currentParentId = findOrCreateSingleFolder(driveService, folderName, currentParentId)
+        }
+        return currentParentId
+    }
+
+    private fun findOrCreateSingleFolder(
+        driveService: Drive,
+        folderName: String,
+        parentId: String
+    ): String {
+        val query = "mimeType = 'application/vnd.google-apps.folder' " +
+                "and name = '$folderName' " +
+                "and '$parentId' in parents " +
+                "and trashed = false"
+
+        val result = driveService.files()
+            .list()
+            .setQ(query)
+            .setSpaces("drive")
+            .setFields("files(id, name)")
+            .execute()
 
         return if (result.files.isNotEmpty()) {
             result.files[0].id
         } else {
-            driveService
-                .files()
-                .create(
-                    com.google.api.services.drive.model.File().apply {
-                        name = folderName
-                        mimeType = "application/vnd.google-apps.folder"
-                        parents = listOf("root")
-                    },
-                ).setFields("id")
+            val fileMetadata = com.google.api.services.drive.model.File().apply {
+                name = folderName
+                mimeType = "application/vnd.google-apps.folder"
+                parents = listOf(parentId)
+            }
+
+            driveService.files()
+                .create(fileMetadata)
+                .setFields("id")
                 .execute()
                 .id
         }
