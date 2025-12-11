@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -49,18 +49,19 @@ private const val DEFAULT_MAX_PROFILES = 20
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPreferenceChangeListener {
-
+internal class ProfilePreferencesBackend :
+    Profile,
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
     private lateinit var versionName: String
-
 
     @Volatile
     private var bulkActionEnabled = false
 
     override fun updateCurrentProfileName(newName: String) {
-        Prefs.edit()
+        Prefs
+            .edit()
             .putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newName)
             .apply()
     }
@@ -68,10 +69,11 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
     override fun getAvailableProfiles() =
         (1..DEFAULT_MAX_PROFILES)
             .associate {
-                "profile_$it" to Prefs.getString(
-                    "$PROFILE_NAME_PREFIX.profile_$it",
-                    "Profile $it"
-                )
+                "profile_$it" to
+                    Prefs.getString(
+                        "$PROFILE_NAME_PREFIX.profile_$it",
+                        "Profile $it",
+                    )
             }
 
     override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF, defaultProfile ?: DEFAULT_PROFILE)
@@ -83,14 +85,13 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
     }
 
     override fun restoreBackup(file: File) {
-
         try {
             Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
             loadProfileFilesIntoPreferences(
                 forceOverride = true,
                 files = mutableListOf(file.absolutePath),
-                installationKey = getInstallationVersion()
+                installationKey = getInstallationVersion(),
             ) {
                 val prop = Properties()
                 prop.load(FileInputStream(it))
@@ -100,7 +101,6 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
             Log.i(LOG_TAG, "Restoring backup file completed")
 
             sendBroadcastEvent(PROFILE_CHANGED_EVENT)
-
         } catch (e: Throwable) {
             Log.e(LOG_TAG, "Failed to restore backup file", e)
         } finally {
@@ -137,7 +137,10 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         }
     }
 
-    override fun onSharedPreferenceChanged(ss: SharedPreferences?, pref: String?) {
+    override fun onSharedPreferenceChanged(
+        ss: SharedPreferences?,
+        pref: String?,
+    ) {
         if (!bulkActionEnabled) {
             pref?.let {
                 Log.d(PROFILE_AUTO_SAVER_LOG_TAG, "Receive preference change: $pref")
@@ -155,7 +158,11 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         }
     }
 
-    override fun init(versionCode: Int, defaultProfile: String, versionName: String) {
+    override fun init(
+        versionCode: Int,
+        defaultProfile: String,
+        versionName: String,
+    ) {
         Log.i(LOG_TAG, "Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName")
         this.versionCode = versionCode
         this.defaultProfile = defaultProfile
@@ -166,11 +173,14 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
     }
 
     override fun setupProfiles(forceOverrideRecommendation: Boolean) {
-
         try {
             var forceOverride = forceOverrideRecommendation
 
-            val installationKeys = Prefs.all.filterKeys { it.startsWith("prefs.installed.profiles") }.keys.toList()
+            val installationKeys =
+                Prefs.all
+                    .filterKeys { it.startsWith("prefs.installed.profiles") }
+                    .keys
+                    .toList()
             Log.i(LOG_TAG, "Found installation keys:  $installationKeys ")
 
             if (installationKeys.isEmpty()) {
@@ -183,9 +193,10 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
             val installationVersionAvailable = Prefs.getBoolean(installationVersion, false)
 
             Log.i(
-                LOG_TAG, "Setup profiles. Installation version='$installationVersion', " +
-                        "installationKeyAvailable='$installationVersionAvailable', " +
-                        "forceOverride=$forceOverride"
+                LOG_TAG,
+                "Setup profiles. Installation version='$installationVersion', " +
+                    "installationKeyAvailable='$installationVersionAvailable', " +
+                    "forceOverride=$forceOverride",
             )
 
             if (!installationVersionAvailable) {
@@ -206,16 +217,13 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
             updateBuildSettings()
             allProps().let {
                 runAsync {
-
                     distributePreferences(it)
                 }
             }
-
         } finally {
             bulkActionEnabled = false
         }
     }
-
 
     override fun saveCurrentProfile() {
         try {
@@ -270,7 +278,6 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
     }
 
     private fun resetCurrentProfile() {
-
         diagnosticRequestIDMapper.reset()
 
         Prefs.edit().let {
@@ -283,7 +290,6 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
                 .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                 .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
                 .filter { (pref, _) -> !pref.startsWith(PREF_DRAG_RACE_KEY_PREFIX) }
-
                 .forEach { (pref, _) ->
                     it.remove(pref)
                 }
@@ -291,7 +297,7 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         }
     }
 
-    private fun getInstallationVersion() = "${PROFILE_INSTALLATION_KEY}.${versionCode}"
+    private fun getInstallationVersion() = "${PROFILE_INSTALLATION_KEY}.$versionCode"
 
     private fun updateCurrentProfileValue(profileName: String) {
         val prefName =
@@ -300,13 +306,14 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         Prefs.edit().putString(PROFILE_CURRENT_NAME_PREF, prefName).apply()
     }
 
-    private fun stringToStringSet(value: String): MutableSet<String> = value
-        .replace("[", "")
-        .replace("]", "")
-        .split(",")
-        .map { it.trim() }
-        .filter { it.isNotEmpty() }
-        .toMutableSet()
+    private fun stringToStringSet(value: String): MutableSet<String> =
+        value
+            .replace("[", "")
+            .replace("]", "")
+            .split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .toMutableSet()
 
     private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
 
@@ -328,7 +335,6 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         val entries = mutableMapOf<String, Any?>()
 
         try {
-
             findProfileFiles()?.forEach {
                 val file = loadFile(it)
                 for (name in file.stringPropertyNames()) {
@@ -349,7 +355,7 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         forceOverride: Boolean,
         files: List<String>?,
         installationKey: String,
-        func: (p: String) -> Properties
+        func: (p: String) -> Properties,
     ) {
         val allPrefs = Prefs.all
 
@@ -410,9 +416,7 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
 
     private fun allowedToOverride() = setOf(diagnosticRequestIDMapper.getValuePreferenceName(), PREF_MODULE_LIST)
 
-    private fun getBackupFile(): File =
-        File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)
-
+    private fun getBackupFile(): File = File(getContext()!!.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), BACKUP_FILE_NAME)
 
     private fun createExportBackupData(): Properties {
         val data = Properties()
