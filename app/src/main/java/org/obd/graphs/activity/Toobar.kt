@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,7 +32,6 @@ fun toolbarHide(
     floatingActionButton: FloatingActionButton,
     hide: Boolean,
 ) {
-
     // Define the action to run after layout is confirmed
     fun runAnim() {
         val duration = 200L
@@ -52,25 +51,25 @@ fun toolbarHide(
         // Animate BottomNavigation
         val navTargetY = if (hide) navHeight else 0f
         bottomNavigationView.clearAnimation()
-        bottomNavigationView.animate()
+        bottomNavigationView
+            .animate()
             .translationY(navTargetY)
             .setDuration(duration)
             .withEndAction {
                 // If hiding, set GONE only after animation finishes
                 if (hide) bottomNavigationView.isVisible = false
-            }
-            .start()
+            }.start()
 
         // Animate BottomAppBar
         val barTargetY = if (hide) barHeight else 0f
         bottomAppBar.clearAnimation()
-        bottomAppBar.animate()
+        bottomAppBar
+            .animate()
             .translationY(barTargetY)
             .setDuration(duration)
             .withEndAction {
                 if (hide) bottomAppBar.isVisible = false
-            }
-            .start()
+            }.start()
 
         // Ideally, use the FAB's built-in show/hide for a scale animation which is cleaner
         if (hide) {
@@ -88,7 +87,7 @@ fun toolbarHide(
                     bottomNavigationView.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     runAnim()
                 }
-            }
+            },
         )
     } else {
         runAnim()

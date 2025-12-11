@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,8 +30,9 @@ import org.obd.graphs.preferences.getString
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 
-internal class BackupManager(activity: MainActivity) {
-
+internal class BackupManager(
+    activity: MainActivity,
+) {
     private val driveBackupManager: DriveBackupManager =
         DriveBackupManager.instance(activity.getString(R.string.ANDROID_WEB_CLIENT_ID), activity)
 
