@@ -36,39 +36,41 @@ internal class BackupManager(activity: MainActivity) {
         DriveBackupManager.instance(activity.getString(R.string.ANDROID_WEB_CLIENT_ID), activity)
 
     suspend fun backup() =
-        withContext(Dispatchers.Main) {
-            if (isCloudBackup()) {
+        if (isCloudBackup()) {
+            withContext(Dispatchers.Main) {
                 profile.exportBackup()?.let { file ->
                     driveBackupManager.exportBackup(file)
                 }
-            } else {
-                withContext(Dispatchers.IO) {
-                    try {
-                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                        profile.exportBackup()
-                        sendBroadcastEvent(BACKUP_SUCCESSFUL)
-                    } finally {
-                        sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
-                    }
+            }
+        } else {
+            withContext(Dispatchers.IO) {
+                try {
+                    sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                    profile.exportBackup()
+                    sendBroadcastEvent(BACKUP_SUCCESSFUL)
+                } finally {
+                    sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                 }
             }
         }
 
     suspend fun restore() =
-        withContext(Dispatchers.Main) {
-            if (isCloudBackup()) {
+        if (isCloudBackup()) {
+            withContext(Dispatchers.Main) {
                 driveBackupManager.restoreBackup { file ->
+                    profile.reset()
                     profile.restoreBackup(file)
                 }
-            } else {
-                withContext(Dispatchers.IO) {
-                    try {
-                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                        profile.restoreBackup()
-                        sendBroadcastEvent(BACKUP_RESTORE_SUCCESSFUL)
-                    } finally {
-                        sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
-                    }
+            }
+        } else {
+            withContext(Dispatchers.IO) {
+                try {
+                    sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                    profile.reset()
+                    profile.restoreBackup()
+                    sendBroadcastEvent(BACKUP_RESTORE_SUCCESSFUL)
+                } finally {
+                    sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                 }
             }
         }
