@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -46,14 +46,13 @@ class DriveBackupManager(
     webClientId: String,
     activity: Activity,
 ) : AuthorizationManager(webClientId, activity) {
-
     suspend fun exportBackup(file: File) =
         signInAndExecuteAction(
             object : Action {
                 override fun execute(token: String) = uploadBackupToDrive(token, file)
 
                 override fun getName() = "exportBackupAction"
-            }
+            },
         )
 
     suspend fun restoreBackup(func: (f: File) -> Unit) =
@@ -62,7 +61,7 @@ class DriveBackupManager(
                 override fun execute(token: String) = downloadBackupFromDrive(token, func)
 
                 override fun getName() = "restoreBackupAction"
-            }
+            },
         )
 
     private fun downloadBackupFromDrive(
@@ -151,7 +150,6 @@ class DriveBackupManager(
                 Log.i(TAG, "Backup operation completed successfully. File was uploaded. id: ${uploadedFile.id}")
 
                 sendBroadcastEvent(BACKUP_SUCCESSFUL)
-
             } catch (e: GoogleJsonResponseException) {
                 if (401 == e.statusCode) {
                     Log.e(TAG, "Token is invalid. Invalidating now...")

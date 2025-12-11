@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -44,21 +44,19 @@ data class TripFileDescDetails(
 )
 
 class TripsPreferenceDialogFragment : CoreDialogFragment() {
-
     private lateinit var tripsDriveManager: TripsDriveManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tripsDriveManager = TripsDriveManager(getString(R.string.ANDROID_WEB_CLIENT_ID), requireActivity(), this)
+        tripsDriveManager = TripsDriveManager.instance(getString(R.string.ANDROID_WEB_CLIENT_ID), requireActivity(), this)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_trip, container, false)
@@ -78,7 +76,8 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
                 val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
                 val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
 
-                builder.setMessage(title)
+                builder
+                    .setMessage(title)
                     .setCancelable(false)
                     .setPositiveButton(yes) { _, _ ->
                         try {
@@ -88,12 +87,10 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
                             }
                             adapter.data.clear()
                             adapter.notifyDataSetChanged()
-
                         } finally {
                             sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                         }
-                    }
-                    .setNegativeButton(no) { dialog, _ ->
+                    }.setNegativeButton(no) { dialog, _ ->
                         dialog.dismiss()
                     }
                 val alert = builder.create()
@@ -107,7 +104,8 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
                 val title = context.getString(R.string.trip_send_to_cloud_dialog_ask_question)
                 val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
                 val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
-                builder.setMessage(title)
+                builder
+                    .setMessage(title)
                     .setCancelable(false)
                     .setPositiveButton(yes) { _, _ ->
                         val directory = tripManager.getTripsDirectory(context)
@@ -115,8 +113,7 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
                         lifecycleScope.launch {
                             tripsDriveManager.exportTrips(files)
                         }
-                    }
-                    .setNegativeButton(no) { dialog, _ ->
+                    }.setNegativeButton(no) { dialog, _ ->
                         dialog.dismiss()
                     }
                 val alert = builder.create()

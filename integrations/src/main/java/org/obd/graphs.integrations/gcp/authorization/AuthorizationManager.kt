@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -40,12 +40,6 @@ import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
 private const val TAG = "AuthorizationManager"
-
-interface Action {
-    fun getName(): String
-
-    fun execute(token: String)
-}
 
 abstract class AuthorizationManager(
     private val webClientId: String,

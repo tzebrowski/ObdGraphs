@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -14,20 +14,10 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.integrations.gcp.gdrive
+package org.obd.graphs.integrations.gcp.authorization
 
-import android.app.Activity
-import androidx.fragment.app.Fragment
-import java.io.File
+interface Action {
+    fun getName(): String
 
-interface TripsDriveManager {
-    suspend fun exportTrips(file: List<File>)
-
-    companion object {
-        fun instance(
-            webClientId: String,
-            activity: Activity,
-            fragment: Fragment?
-        ): TripsDriveManager = DefaultTripsDriveManager(webClientId, activity, fragment)
-    }
+    fun execute(token: String)
 }

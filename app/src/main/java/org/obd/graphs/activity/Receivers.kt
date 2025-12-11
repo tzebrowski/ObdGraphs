@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -80,7 +80,6 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.toast
 
-
 internal val powerReceiver = PowerBroadcastReceiver()
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"
 const val NOTIFICATION_DASH_VIEW_TOGGLE = "view.dash.toggle"
@@ -95,7 +94,6 @@ const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
-
     when (intent?.action) {
         TRIPS_UPLOAD_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_failed)
         TRIPS_UPLOAD_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_successful)
@@ -235,10 +233,11 @@ internal fun MainActivity.receive(intent: Intent?) {
 
             progressBar {
                 it.visibility = View.VISIBLE
-                it.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                    COLOR_CARDINAL,
-                    PorterDuff.Mode.SRC_IN
-                )
+                it.indeterminateDrawable.colorFilter =
+                    PorterDuffColorFilter(
+                        COLOR_CARDINAL,
+                        PorterDuff.Mode.SRC_IN,
+                    )
             }
 
             floatingActionButton {
@@ -265,10 +264,11 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_established)
 
             progressBar {
-                it.indeterminateDrawable.colorFilter = PorterDuffColorFilter(
-                    COLOR_PHILIPPINE_GREEN,
-                    PorterDuff.Mode.SRC_IN
-                )
+                it.indeterminateDrawable.colorFilter =
+                    PorterDuffColorFilter(
+                        COLOR_PHILIPPINE_GREEN,
+                        PorterDuff.Mode.SRC_IN,
+                    )
             }
 
             timer {
@@ -323,7 +323,6 @@ internal fun MainActivity.receive(intent: Intent?) {
 }
 
 private fun MainActivity.handleStop() {
-
     progressBar {
         it.visibility = View.GONE
     }
@@ -346,7 +345,10 @@ private fun MainActivity.handleStop() {
     }
 }
 
-internal fun MainActivity.toggleNavigationItem(prefKey: String, id: Int) {
+internal fun MainActivity.toggleNavigationItem(
+    prefKey: String,
+    id: Int,
+) {
     bottomNavigationView {
         it.menu.findItem(id)?.run {
             this.isVisible = Prefs.getBoolean(prefKey, true)
@@ -361,7 +363,6 @@ internal fun MainActivity.unregisterReceiver() {
 }
 
 internal fun MainActivity.registerReceiver() {
-
     registerReceiver(this, activityBroadcastReceiver) {
         it.addAction(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
         it.addAction(DATA_LOGGER_CONNECTING_EVENT)
