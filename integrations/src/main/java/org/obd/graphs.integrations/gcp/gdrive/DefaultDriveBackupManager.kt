@@ -21,9 +21,6 @@ import android.util.Log
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.FileContent
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.obd.graphs.BACKUP_FAILED
@@ -33,19 +30,17 @@ import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
 import org.obd.graphs.BACKUP_SUCCESSFUL
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.integrations.gcp.authorization.Action
-import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
 
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
-private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "DriveBackup"
 
 internal class DefaultDriveBackupManager(
     webClientId: String,
     activity: Activity,
-) : AuthorizationManager(webClientId, activity), DriveBackupManager {
+) : AbstractDriveManager(webClientId, activity, null), DriveBackupManager {
     override suspend fun exportBackup(file: File) =
         signInAndExecuteAction(
             object : Action {
@@ -131,8 +126,7 @@ internal class DefaultDriveBackupManager(
             try {
                 Log.i(TAG, "Uploading file ${configFile.absoluteFile} to the drive")
                 val driveService = driveService(accessToken)
-
-                val backupFolderId = getOrCreateFolder(driveService)
+                val backupFolderId = getOrCreateFolderStructure(driveService, "mygiulia")
 
                 val metadata =
                     com.google.api.services.drive.model.File().apply {
@@ -169,45 +163,6 @@ internal class DefaultDriveBackupManager(
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
-        }
-    }
-
-    private fun driveService(accessToken: String): Drive =
-        Drive
-            .Builder(
-                NetHttpTransport.Builder().build(),
-                GsonFactory(),
-                credentials(accessToken),
-            ).setApplicationName(APP_NAME)
-            .build()
-
-    private fun getOrCreateFolder(
-        driveService: Drive,
-        folderName: String = "mygiulia",
-    ): String {
-        val result =
-            driveService
-                .files()
-                .list()
-                .setQ("mimeType = 'application/vnd.google-apps.folder' and name = '$folderName' and trashed = false")
-                .setSpaces("drive")
-                .setFields("files(id, name)")
-                .execute()
-
-        return if (result.files.isNotEmpty()) {
-            result.files[0].id
-        } else {
-            driveService
-                .files()
-                .create(
-                    com.google.api.services.drive.model.File().apply {
-                        name = folderName
-                        mimeType = "application/vnd.google-apps.folder"
-                        parents = listOf("root")
-                    },
-                ).setFields("id")
-                .execute()
-                .id
         }
     }
 }

@@ -22,9 +22,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.FileContent
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
@@ -32,18 +29,17 @@ import org.obd.graphs.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.integrations.gcp.authorization.Action
-import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
-private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "TripsDriveManager"
 
 internal class DefaultTripsDriveManager(
     webClientId: String,
     activity: Activity,
     fragment: Fragment?,
-) : AuthorizationManager(webClientId, activity, fragment), TripsDriveManager {
+) : AbstractDriveManager(webClientId, activity, fragment), TripsDriveManager {
+
     override suspend fun exportTrips(file: List<File>) =
         signInAndExecuteAction(
             object : Action {
@@ -103,66 +99,6 @@ internal class DefaultTripsDriveManager(
             } finally {
                 sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
-        }
-    }
-
-    private fun driveService(accessToken: String): Drive =
-        Drive
-            .Builder(
-                NetHttpTransport.Builder().build(),
-                GsonFactory(),
-                credentials(accessToken),
-            ).setApplicationName(APP_NAME)
-            .build()
-
-    private fun getOrCreateFolderStructure(
-        driveService: Drive,
-        folderPath: String,
-    ): String {
-        val folderNames = folderPath.split("/").filter { it.isNotEmpty() }
-        var currentParentId = "root"
-        for (folderName in folderNames) {
-            currentParentId = findOrCreateSingleFolder(driveService, folderName, currentParentId)
-        }
-        return currentParentId
-    }
-
-    private fun findOrCreateSingleFolder(
-        driveService: Drive,
-        folderName: String,
-        parentId: String,
-    ): String {
-        val query =
-            "mimeType = 'application/vnd.google-apps.folder' " +
-                "and name = '$folderName' " +
-                "and '$parentId' in parents " +
-                "and trashed = false"
-
-        val result =
-            driveService
-                .files()
-                .list()
-                .setQ(query)
-                .setSpaces("drive")
-                .setFields("files(id, name)")
-                .execute()
-
-        return if (result.files.isNotEmpty()) {
-            result.files[0].id
-        } else {
-            val fileMetadata =
-                com.google.api.services.drive.model.File().apply {
-                    name = folderName
-                    mimeType = "application/vnd.google-apps.folder"
-                    parents = listOf(parentId)
-                }
-
-            driveService
-                .files()
-                .create(fileMetadata)
-                .setFields("id")
-                .execute()
-                .id
         }
     }
 }

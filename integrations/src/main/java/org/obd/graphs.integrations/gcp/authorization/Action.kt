@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.integrations.gcp.authorization
 
-interface Action {
+internal interface Action {
     fun getName(): String
 
     fun execute(token: String)
