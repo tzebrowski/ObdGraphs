@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -18,6 +18,7 @@ package org.obd.graphs.preferences.trips
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
+import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
@@ -43,7 +45,7 @@ data class TripFileDescDetails(
     var checked: Boolean = false,
 )
 
-class TripsPreferenceDialogFragment : CoreDialogFragment() {
+class TripsListDialogFragment : CoreDialogFragment() {
     private lateinit var tripsDriveManager: TripsDriveManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,8 +112,13 @@ class TripsPreferenceDialogFragment : CoreDialogFragment() {
                     .setPositiveButton(yes) { _, _ ->
                         val directory = tripManager.getTripsDirectory(context)
                         val files = adapter.data.filter { it.checked }.map { File(directory, it.source.fileName) }
-                        lifecycleScope.launch {
-                            tripsDriveManager.exportTrips(files)
+                        if (files.isEmpty()) {
+                            Log.w("TripsListDialogFragment", "User selected no tripe")
+                            sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
+                        } else {
+                            lifecycleScope.launch {
+                                tripsDriveManager.exportTrips(files)
+                            }
                         }
                     }.setNegativeButton(no) { dialog, _ ->
                         dialog.dismiss()
