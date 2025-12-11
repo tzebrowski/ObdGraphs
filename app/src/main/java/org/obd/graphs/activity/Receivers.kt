@@ -28,7 +28,9 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.BACKUP_FAILED
 import org.obd.graphs.BACKUP_RESTORE
@@ -73,7 +75,6 @@ import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
-import org.obd.graphs.profile.profile
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -107,16 +108,12 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         BACKUP_RESTORE ->
             lifecycleScope.launch {
-                driveBackupManager.restoreBackup { file ->
-                    profile.restoreBackup(file)
-                }
+                backupManager.restore()
             }
 
         BACKUP_START ->
             lifecycleScope.launch {
-                profile.exportBackup()?.let { file ->
-                    driveBackupManager.exportBackup(file)
-                }
+                backupManager.backup()
             }
 
         REQUEST_LOCATION_PERMISSIONS -> {

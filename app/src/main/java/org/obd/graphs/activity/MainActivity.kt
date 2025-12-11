@@ -48,11 +48,11 @@ import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
-import org.obd.graphs.integrations.gcp.gdrive.DriveBackupManager
 import org.obd.graphs.network
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
+import org.obd.graphs.ui.BackupManager
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -61,8 +61,9 @@ const val LOG_TAG = "MainActivity"
 class MainActivity :
     AppCompatActivity(),
     EasyPermissions.PermissionCallbacks {
+
     lateinit var lockScreenDialog: AlertDialog
-    lateinit var driveBackupManager: DriveBackupManager
+    internal lateinit var backupManager: BackupManager
 
     internal var activityBroadcastReceiver =
         object : BroadcastReceiver() {
@@ -155,7 +156,7 @@ class MainActivity :
         supportActionBar?.hide()
         setupMetricsProcessors()
         setupBatteryOptimization()
-        driveBackupManager = DriveBackupManager.instance(getString(R.string.ANDROID_WEB_CLIENT_ID),this)
+        backupManager = BackupManager(this)
         displayAppSignature(this)
     }
 

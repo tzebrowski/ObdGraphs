@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,13 +21,24 @@ import android.content.SharedPreferences
 import android.os.Environment
 import android.util.Log
 import androidx.core.content.edit
-import org.obd.graphs.*
-import org.obd.graphs.preferences.*
+import org.obd.graphs.PREF_DRAG_RACE_KEY_PREFIX
+import org.obd.graphs.PREF_MODULE_LIST
+import org.obd.graphs.diagnosticRequestIDMapper
+import org.obd.graphs.getContext
+import org.obd.graphs.modules
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.updateBoolean
+import org.obd.graphs.preferences.updatePreference
+import org.obd.graphs.preferences.updateString
+import org.obd.graphs.runAsync
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+import java.util.Properties
 
 private const val LOG_TAG = "VehicleProfile"
 private const val PROFILE_AUTO_SAVER_LOG_TAG = "VehicleProfileAutoSaver"
@@ -38,7 +49,7 @@ private const val DEFAULT_MAX_PROFILES = 20
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPreferenceChangeListener  {
+internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private var versionCode: Int = 0
     private var defaultProfile: String? = null
@@ -67,40 +78,42 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
 
     override fun getCurrentProfileName(): String = Prefs.getS("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
+    override fun restoreBackup() {
+        restoreBackup(getBackupFile())
+    }
+
     override fun restoreBackup(file: File) {
 
-            try {
-                Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
+        try {
+            Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
-                loadProfileFilesIntoPreferences(
-                    forceOverride = true,
-                    files = mutableListOf(file.absolutePath),
-                    installationKey = getInstallationVersion()
-                ) {
-                    val prop = Properties()
-                    prop.load(FileInputStream(it))
-                    prop
-                }
-
-                Log.i(LOG_TAG, "Restoring backup file completed")
-
-                sendBroadcastEvent(PROFILE_CHANGED_EVENT)
-
-            } catch (e: Throwable) {
-                Log.e(LOG_TAG, "Failed to restore backup file", e)
-            } finally {
-                bulkActionEnabled = false
+            loadProfileFilesIntoPreferences(
+                forceOverride = true,
+                files = mutableListOf(file.absolutePath),
+                installationKey = getInstallationVersion()
+            ) {
+                val prop = Properties()
+                prop.load(FileInputStream(it))
+                prop
             }
+
+            Log.i(LOG_TAG, "Restoring backup file completed")
+
+            sendBroadcastEvent(PROFILE_CHANGED_EVENT)
+
+        } catch (e: Throwable) {
+            Log.e(LOG_TAG, "Failed to restore backup file", e)
+        } finally {
+            bulkActionEnabled = false
+        }
 
     }
 
-    override fun exportBackup() : File? {
+    override fun exportBackup(): File? {
         try {
-
             Log.i(LOG_TAG, "Start exporting backup file")
             val backupFile = getBackupFile()
             val data = createExportBackupData()
-
             data.store(FileOutputStream(backupFile), "Backup file")
             Log.i(LOG_TAG, "Exporting backup file completed")
             return backupFile
@@ -361,17 +374,20 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
                             value.isBoolean() -> {
                                 editor.putBoolean(key, value.toBoolean())
                             }
+
                             value.isArray() -> {
-                                if (key.startsWith(getCurrentProfile())){
-                                    val currentProfilePropName = key.substring(getCurrentProfile().length  + 1, key.length)
-                                    Log.i(LOG_TAG,"Updating current profile value $currentProfilePropName=$value")
+                                if (key.startsWith(getCurrentProfile())) {
+                                    val currentProfilePropName = key.substring(getCurrentProfile().length + 1, key.length)
+                                    Log.i(LOG_TAG, "Updating current profile value $currentProfilePropName=$value")
                                     editor.putStringSet(currentProfilePropName, stringToStringSet(value))
                                 }
                                 editor.putStringSet(key, stringToStringSet(value))
                             }
+
                             value.isNumeric() -> {
                                 editor.putInt(key, value.toInt())
                             }
+
                             else -> {
                                 editor.putString(key, value.replace("\"", "").replace("\"", ""))
                             }
@@ -408,15 +424,19 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
                 is String -> {
                     mm[it.key] = "\"${it.value}\""
                 }
+
                 is Boolean -> {
                     mm[it.key] = it.value.toString()
                 }
+
                 is Int -> {
                     mm[it.key] = it.value.toString()
                 }
+
                 is Set<*> -> {
                     mm[it.key] = (it.value as Set<*>).toString()
                 }
+
                 else -> {
                     Log.e(LOG_TAG, "Unknown type for key ${it.key}, skipping")
                 }

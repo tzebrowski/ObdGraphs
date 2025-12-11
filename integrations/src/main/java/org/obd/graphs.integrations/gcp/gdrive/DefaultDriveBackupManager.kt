@@ -45,7 +45,6 @@ internal class DefaultDriveBackupManager(
         signInAndExecuteAction(
             object : Action {
                 override fun execute(token: String) = uploadBackupToDrive(token, file)
-
                 override fun getName() = "exportBackupAction"
             },
         )
@@ -54,7 +53,6 @@ internal class DefaultDriveBackupManager(
         signInAndExecuteAction(
             object : Action {
                 override fun execute(token: String) = downloadBackupFromDrive(token, func)
-
                 override fun getName() = "restoreBackupAction"
             },
         )

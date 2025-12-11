@@ -465,14 +465,24 @@
                     app:useSimpleSummaryProvider="true" />
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/pref.profile.backup.category">
+
+                <ListPreference
+                    android:defaultValue="Local"
+                    android:entries="@array/pref.backup.type"
+                    android:entryValues="@array/pref.backup.type"
+                    android:key="pref.backup.type"
+                    android:title="@string/pref.profile.backup.type"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
+
                 <org.obd.graphs.preferences.profile.ProfileExportAction
-                    android:key="pref.profile.export"
+                    android:key="pref.backup.export"
                     android:summary="@string/pref.profile.export_summary"
                     android:title="@string/pref.profile.export"
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.profile.ProfileRestoreAction
-                    android:key="pref.profile.import"
+                    android:key="pref.backup.import"
                     android:summary="@string/pref.profile.restore_summary"
                     android:title="@string/pref.profile.restore"
                     app:singleLineTitle="false" />

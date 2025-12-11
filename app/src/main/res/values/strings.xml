@@ -405,6 +405,7 @@
     <string name="pref.profile.category">Vehicle Profiles</string>
     <string name="pref.profile.backup.category">Backup</string>
 
+    <string name="pref.profile.backup.type">Backup type</string>
 
     <string name="pref.profile.available_list">Available vehicle profiles</string>
 
@@ -606,6 +607,12 @@
         <item name="Gauge">Gauge</item>
         <item name="AA">AA</item>
    </string-array>
+
+
+    <string-array name="pref.backup.type">
+        <item name="Local">Local</item>
+        <item name="Cloud">Cloud</item>
+    </string-array>
 
     <string-array name="pref.numbers_20_74">
         <item name="20">20</item>
