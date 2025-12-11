@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,26 +26,26 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.obd.graphs.BACKUP_FAILED
+import org.obd.graphs.BACKUP_RESTORE_FAILED
+import org.obd.graphs.BACKUP_RESTORE_NO_FILES
+import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
+import org.obd.graphs.BACKUP_SUCCESSFUL
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
-import org.obd.graphs.activity.BACKUP_FAILED
-import org.obd.graphs.activity.BACKUP_RESTORE_FAILED
-import org.obd.graphs.activity.BACKUP_RESTORE_NO_FILES
-import org.obd.graphs.activity.BACKUP_RESTORE_SUCCESSFUL
-import org.obd.graphs.activity.BACKUP_SUCCESSFUL
 import org.obd.graphs.integrations.gcp.authorization.Action
 import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
 private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "DriveBackup"
 
 class DriveBackupManager(
-    private val activity: Activity,
-) : AuthorizationManager(activity) {
+    webClientId: String,
+    activity: Activity,
+) : AuthorizationManager(webClientId, activity) {
 
     suspend fun exportBackup(file: File) =
         signInAndExecuteAction(
@@ -53,7 +53,7 @@ class DriveBackupManager(
                 override fun execute(token: String) = uploadBackupToDrive(token, file)
 
                 override fun getName() = "exportBackupAction"
-            },
+            }
         )
 
     suspend fun restoreBackup(func: (f: File) -> Unit) =
@@ -62,7 +62,7 @@ class DriveBackupManager(
                 override fun execute(token: String) = downloadBackupFromDrive(token, func)
 
                 override fun getName() = "restoreBackupAction"
-            },
+            }
         )
 
     private fun downloadBackupFromDrive(
@@ -90,13 +90,13 @@ class DriveBackupManager(
                     Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
                     val target = File(activity.filesDir, "restored_backup.json")
 
-                    val outputStream: OutputStream = FileOutputStream(target)
-                    Log.d(TAG, "Copying remote file ${file.id} into local $target")
-
-                    driveService
-                        .files()
-                        .get(file.id)
-                        .executeMediaAndDownloadTo(outputStream)
+                    FileOutputStream(target).use {
+                        Log.d(TAG, "Copying remote file ${file.id} into local $target")
+                        driveService
+                            .files()
+                            .get(file.id)
+                            .executeMediaAndDownloadTo(it)
+                    }
 
                     Log.d(TAG, "Writing into local $target file finished")
                     func(target)

@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,27 +27,30 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
-import org.obd.graphs.*
+import org.obd.graphs.R
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.integrations.gcp.gdrive.TripsDriveManager
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
- data class TripFileDescDetails(
-     val source: TripFileDesc,
-     var checked: Boolean = false,
- )
+data class TripFileDescDetails(
+    val source: TripFileDesc,
+    var checked: Boolean = false,
+)
 
- class TripsPreferenceDialogFragment : CoreDialogFragment() {
+class TripsPreferenceDialogFragment : CoreDialogFragment() {
 
     private lateinit var tripsDriveManager: TripsDriveManager
 
-     override fun onCreate(savedInstanceState: Bundle?) {
-         super.onCreate(savedInstanceState)
-         tripsDriveManager = TripsDriveManager(requireActivity(), this)
-     }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        tripsDriveManager = TripsDriveManager(getString(R.string.ANDROID_WEB_CLIENT_ID), requireActivity(), this)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
@@ -59,12 +62,12 @@ import java.io.File
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_trip, container, false)
-        val adapter = TripViewAdapter(context, tripManager.findAllTripsBy().map { TripFileDescDetails(source=it)}.toMutableList())
+        val adapter = TripViewAdapter(context, tripManager.findAllTripsBy().map { TripFileDescDetails(source = it) }.toMutableList())
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
-        attachCloseButton(root){
+        attachCloseButton(root) {
             navigateToScreen(R.id.navigation_graph)
         }
 
@@ -108,7 +111,7 @@ import java.io.File
                     .setCancelable(false)
                     .setPositiveButton(yes) { _, _ ->
                         val directory = tripManager.getTripsDirectory(context)
-                        val files = adapter.data.filter { it.checked }.map {File(directory, it.source.fileName)}
+                        val files = adapter.data.filter { it.checked }.map { File(directory, it.source.fileName) }
                         lifecycleScope.launch {
                             tripsDriveManager.exportTrips(files)
                         }

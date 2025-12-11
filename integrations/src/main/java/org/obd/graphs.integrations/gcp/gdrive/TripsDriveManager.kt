@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,9 +28,9 @@ import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
-import org.obd.graphs.activity.TRIPS_UPLOAD_FAILED
-import org.obd.graphs.activity.TRIPS_UPLOAD_NO_FILES_SELECTED
-import org.obd.graphs.activity.TRIPS_UPLOAD_SUCCESSFUL
+import org.obd.graphs.TRIPS_UPLOAD_FAILED
+import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
+import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.integrations.gcp.authorization.Action
 import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
 import org.obd.graphs.sendBroadcastEvent
@@ -40,9 +40,10 @@ private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "TripsDriveManager"
 
 class TripsDriveManager(
-    private val activity: Activity,
+    webClientId: String,
+    activity: Activity,
     fragment: Fragment?
-) : AuthorizationManager(activity, fragment) {
+) : AuthorizationManager(webClientId, activity, fragment) {
 
     suspend fun exportTrips(file: List<File>) =
         signInAndExecuteAction(
@@ -50,7 +51,7 @@ class TripsDriveManager(
                 override fun execute(token: String) = uploadTripsToDrive(token, file)
 
                 override fun getName() = "exportTripsAction"
-            },
+            }
         )
 
     private fun uploadTripsToDrive(
@@ -59,9 +60,9 @@ class TripsDriveManager(
     ) {
         kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
             try {
-                if (files.isEmpty()){
+                if (files.isEmpty()) {
                     sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
-                }else {
+                } else {
                     val driveService = driveService(accessToken)
                     val finalFolderId = getOrCreateFolderStructure(driveService, "mygiulia/trips")
 

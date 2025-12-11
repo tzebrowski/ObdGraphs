@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -36,7 +36,6 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.services.drive.DriveScopes
-import org.obd.graphs.R
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
@@ -49,7 +48,8 @@ interface Action {
 }
 
 abstract class AuthorizationManager(
-    private val activity: Activity,
+    private val webClientId: String,
+    protected val activity: Activity,
     fragment: Fragment? = null,
 ) {
     private var currentAction: Action? = null
@@ -73,7 +73,6 @@ abstract class AuthorizationManager(
 
     protected suspend fun signInAndExecuteAction(action: Action) {
         try {
-            val webClientId = activity.getString(R.string.ANDROID_WEB_CLIENT_ID)
             Log.i(TAG, "Start executing action: ${action.getName()} for client.id=$webClientId")
             val credentialManager = CredentialManager.create(activity)
 

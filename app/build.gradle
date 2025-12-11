@@ -167,6 +167,7 @@ dependencies {
     implementation project(":common")
     implementation project(':profile')
     implementation project(':ext')
+    implementation project(':integrations')
 
     debugImplementation project(":automotive")
     releaseImplementation project(":automotive")
