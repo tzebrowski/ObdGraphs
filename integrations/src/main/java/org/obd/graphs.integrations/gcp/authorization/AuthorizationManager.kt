@@ -41,7 +41,7 @@ import org.obd.graphs.sendBroadcastEvent
 
 private const val TAG = "AuthorizationManager"
 
-abstract class AuthorizationManager(
+internal abstract class AuthorizationManager(
     private val webClientId: String,
     protected val activity: Activity,
     fragment: Fragment? = null,

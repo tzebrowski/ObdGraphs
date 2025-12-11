@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,7 @@ interface TripsDriveManager {
         fun instance(
             webClientId: String,
             activity: Activity,
-            fragment: Fragment?
+            fragment: Fragment?,
         ): TripsDriveManager = DefaultTripsDriveManager(webClientId, activity, fragment)
     }
 }

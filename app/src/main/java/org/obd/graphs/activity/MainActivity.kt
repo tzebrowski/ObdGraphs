@@ -155,7 +155,7 @@ class MainActivity :
         supportActionBar?.hide()
         setupMetricsProcessors()
         setupBatteryOptimization()
-        driveBackupManager = DriveBackupManager(getString(R.string.ANDROID_WEB_CLIENT_ID),this)
+        driveBackupManager = DriveBackupManager.instance(getString(R.string.ANDROID_WEB_CLIENT_ID),this)
         displayAppSignature(this)
     }
 
