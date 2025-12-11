@@ -14,22 +14,20 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.preferences.profile
+package org.obd.graphs.integrations.gcp.gdrive
 
-import android.content.Context
-import android.util.AttributeSet
-import androidx.preference.Preference
-import org.obd.graphs.BACKUP_START
-import org.obd.graphs.sendBroadcastEvent
+import android.app.Activity
+import androidx.fragment.app.Fragment
+import java.io.File
 
- class ProfileExportAction(
-    context: Context,
-    attrs: AttributeSet?,
-) : Preference(context, attrs) {
-    init {
-        setOnPreferenceClickListener {
-            sendBroadcastEvent(BACKUP_START)
-            true
-        }
+interface TripsDriveManager {
+    suspend fun exportTrips(file: List<File>)
+
+    companion object {
+        fun instance(
+            webClientId: String,
+            activity: Activity,
+            fragment: Fragment?,
+        ): TripsDriveManager = DefaultTripsDriveManager(webClientId, activity, fragment)
     }
- }
+}

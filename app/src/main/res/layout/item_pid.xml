@@ -30,7 +30,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-
             <TextView
                 android:id="@+id/pid_module"
                 android:layout_width="0dp"

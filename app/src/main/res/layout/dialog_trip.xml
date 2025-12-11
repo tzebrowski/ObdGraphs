@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -16,6 +17,16 @@
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="start"
+                android:paddingStart="4dp"
+                android:paddingEnd="0dp"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="0dp"
@@ -84,31 +95,41 @@
 
     <LinearLayout
         android:id="@+id/status_panel"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="end"
-        android:orientation="horizontal">
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal"
+        android:padding="4dp">
 
         <Button
-            android:id="@+id/action_close_window"
+            android:id="@+id/trip_action_close_window"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginEnd="4dp"
             android:backgroundTint="@color/rainbow_indigo"
             android:text="@string/dialog_close_window_action"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:ignore="ButtonStyle" />
 
         <Button
-            android:id="@+id/trip_delete_all"
+            android:id="@+id/trip_action_send_to_cloud"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="6dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginEnd="4dp"
+            android:backgroundTint="@color/rainbow_indigo"
+            android:text="@string/trip_dialog_send_to_cloud_selected"
+            android:textSize="12sp"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/trip_action_delete_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="@color/cardinal"
             android:text="@string/trip_dialog_delete_all_trips"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:ignore="ButtonStyle" />
     </LinearLayout>
 
 </RelativeLayout>

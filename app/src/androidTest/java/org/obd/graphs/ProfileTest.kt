@@ -22,7 +22,6 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import org.hamcrest.Matchers.*
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -104,7 +103,7 @@ class ProfileTest {
 
             val txt =  if (it.value!!.startsWith("Profile"))  it.value!! else "Profile ${it.value}"
 
-            val vehicleProfile = Espresso.onView(ViewMatchers.withId(R.id.vehicle_profile))
+            val vehicleProfile = Espresso.onView(ViewMatchers.withId(R.id.trip_profile))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.isEnabled()))
             vehicleProfile.check(ViewAssertions.matches(ViewMatchers.withText(txt)))

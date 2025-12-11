@@ -62,7 +62,7 @@ internal fun MainActivity.setupStatusPanel() {
         }
     }
 
-    (findViewById<TextView>(R.id.vehicle_profile)).let {
+    (findViewById<TextView>(R.id.trip_profile)).let {
         it.setOnClickListener {
             navigateToPreferencesScreen("pref.profiles")
         }
@@ -70,14 +70,14 @@ internal fun MainActivity.setupStatusPanel() {
 
     (findViewById<ImageView>(R.id.toggle_fullscreen)).let {
         it.setOnClickListener {
-           sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
+           sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
         }
     }
 }
 
 internal fun MainActivity.updateVehicleProfile() {
     updateTextField(
-        R.id.vehicle_profile,
+        R.id.trip_profile,
         resources.getString(R.string.status_panel_vehicle_profile),
         profile.getCurrentProfileName(),
         COLOR_RAINBOW_INDIGO,

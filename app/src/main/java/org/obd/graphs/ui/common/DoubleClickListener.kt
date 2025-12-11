@@ -21,13 +21,13 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.sendBroadcastEvent
 
-const val TOGGLE_TOOLBAR_ACTION: String = "toolbar.toggle.event"
 
 private class DoubleClickGestureListener : GestureDetector.SimpleOnGestureListener() {
     override fun onDoubleTap(e: MotionEvent): Boolean {
-        sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
+        sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
         return true
     }
 }
@@ -49,7 +49,7 @@ open class ToggleToolbarDoubleClickListener(
     ): Boolean {
         val childView = view.findChildViewUnder(e.x, e.y)
         if (childView != null && gestureDetector.onTouchEvent(e)) {
-            sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
+            sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
         }
         return false
     }

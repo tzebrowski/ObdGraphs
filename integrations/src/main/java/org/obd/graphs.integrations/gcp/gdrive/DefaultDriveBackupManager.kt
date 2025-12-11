@@ -14,54 +14,45 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.integrations.gdrive
+package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import android.util.Log
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.client.http.FileContent
-import com.google.api.client.http.HttpRequestInitializer
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.gson.GsonFactory
-import com.google.api.services.drive.Drive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.obd.graphs.BACKUP_FAILED
+import org.obd.graphs.BACKUP_RESTORE_FAILED
+import org.obd.graphs.BACKUP_RESTORE_NO_FILES
+import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
+import org.obd.graphs.BACKUP_SUCCESSFUL
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
-import org.obd.graphs.activity.BACKUP_FAILED
-import org.obd.graphs.activity.BACKUP_RESTORE_FAILED
-import org.obd.graphs.activity.BACKUP_RESTORE_NO_FILES
-import org.obd.graphs.activity.BACKUP_RESTORE_SUCCESSFUL
-import org.obd.graphs.activity.BACKUP_SUCCESSFUL
-import org.obd.graphs.integrations.authorization.Action
-import org.obd.graphs.integrations.authorization.AuthorizationManager
+import org.obd.graphs.integrations.gcp.authorization.Action
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
-import java.io.OutputStream
 
 private const val BACKUP_FILE = "mygiulia_config_backup.properties"
-private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "DriveBackup"
 
-class DriveBackupManager(
-    private val activity: Activity,
-) : AuthorizationManager(activity) {
-
-    suspend fun exportBackup(file: File) =
+internal class DefaultDriveBackupManager(
+    webClientId: String,
+    activity: Activity,
+) : AbstractDriveManager(webClientId, activity, null), DriveBackupManager {
+    override suspend fun exportBackup(file: File) =
         signInAndExecuteAction(
             object : Action {
                 override fun execute(token: String) = uploadBackupToDrive(token, file)
-
                 override fun getName() = "exportBackupAction"
             },
         )
 
-    suspend fun restoreBackup(func: (f: File) -> Unit) =
+    override suspend fun restoreBackup(func: (f: File) -> Unit) =
         signInAndExecuteAction(
             object : Action {
                 override fun execute(token: String) = downloadBackupFromDrive(token, func)
-
                 override fun getName() = "restoreBackupAction"
             },
         )
@@ -91,13 +82,13 @@ class DriveBackupManager(
                     Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
                     val target = File(activity.filesDir, "restored_backup.json")
 
-                    val outputStream: OutputStream = FileOutputStream(target)
-                    Log.d(TAG, "Copying remote file ${file.id} into local $target")
-
-                    driveService
-                        .files()
-                        .get(file.id)
-                        .executeMediaAndDownloadTo(outputStream)
+                    FileOutputStream(target).use {
+                        Log.d(TAG, "Copying remote file ${file.id} into local $target")
+                        driveService
+                            .files()
+                            .get(file.id)
+                            .executeMediaAndDownloadTo(it)
+                    }
 
                     Log.d(TAG, "Writing into local $target file finished")
                     func(target)
@@ -133,8 +124,7 @@ class DriveBackupManager(
             try {
                 Log.i(TAG, "Uploading file ${configFile.absoluteFile} to the drive")
                 val driveService = driveService(accessToken)
-
-                val backupFolderId = getOrCreateFolder(driveService)
+                val backupFolderId = getOrCreateFolderStructure(driveService, "mygiulia")
 
                 val metadata =
                     com.google.api.services.drive.model.File().apply {
@@ -152,7 +142,6 @@ class DriveBackupManager(
                 Log.i(TAG, "Backup operation completed successfully. File was uploaded. id: ${uploadedFile.id}")
 
                 sendBroadcastEvent(BACKUP_SUCCESSFUL)
-
             } catch (e: GoogleJsonResponseException) {
                 if (401 == e.statusCode) {
                     Log.e(TAG, "Token is invalid. Invalidating now...")
@@ -174,48 +163,4 @@ class DriveBackupManager(
             }
         }
     }
-
-    private fun driveService(accessToken: String): Drive =
-        Drive
-            .Builder(
-                NetHttpTransport.Builder().build(),
-                GsonFactory(),
-                credentials(accessToken),
-            ).setApplicationName(APP_NAME)
-            .build()
-
-    private fun getOrCreateFolder(
-        driveService: Drive,
-        folderName: String = "mygiulia",
-    ): String {
-        val result =
-            driveService
-                .files()
-                .list()
-                .setQ("mimeType = 'application/vnd.google-apps.folder' and name = '$folderName' and trashed = false")
-                .setSpaces("drive")
-                .setFields("files(id, name)")
-                .execute()
-
-        return if (result.files.isNotEmpty()) {
-            result.files[0].id
-        } else {
-            driveService
-                .files()
-                .create(
-                    com.google.api.services.drive.model.File().apply {
-                        name = folderName
-                        mimeType = "application/vnd.google-apps.folder"
-                        parents = listOf("root")
-                    },
-                ).setFields("id")
-                .execute()
-                .id
-        }
-    }
-
-    private fun credentials(accessToken: String): HttpRequestInitializer =
-        HttpRequestInitializer { request ->
-            request.headers.authorization = "Bearer $accessToken"
-        }
 }

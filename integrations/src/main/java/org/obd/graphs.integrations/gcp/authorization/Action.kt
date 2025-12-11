@@ -14,22 +14,10 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.preferences.profile
+package org.obd.graphs.integrations.gcp.authorization
 
-import android.content.Context
-import android.util.AttributeSet
-import androidx.preference.Preference
-import org.obd.graphs.BACKUP_START
-import org.obd.graphs.sendBroadcastEvent
+internal interface Action {
+    fun getName(): String
 
- class ProfileExportAction(
-    context: Context,
-    attrs: AttributeSet?,
-) : Preference(context, attrs) {
-    init {
-        setOnPreferenceClickListener {
-            sendBroadcastEvent(BACKUP_START)
-            true
-        }
-    }
- }
+    fun execute(token: String)
+}

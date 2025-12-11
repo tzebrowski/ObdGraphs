@@ -19,7 +19,7 @@ package org.obd.graphs.preferences.profile
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.Preference
-import org.obd.graphs.activity.BACKUP_RESTORE
+import org.obd.graphs.BACKUP_RESTORE
 import org.obd.graphs.sendBroadcastEvent
 
  class ProfileRestoreAction(

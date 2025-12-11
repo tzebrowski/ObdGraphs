@@ -32,6 +32,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
+import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
@@ -100,7 +101,7 @@ class GaugeFragment : RefreshableFragment() {
                     attachToFloatingButton(activity, query())
                 }
 
-                TOGGLE_TOOLBAR_ACTION -> {
+                TOOLBAR_TOGGLE_ACTION -> {
                     virtualScreensPanel {
                         it.isVisible = !it.isVisible
                     }
@@ -148,7 +149,7 @@ class GaugeFragment : RefreshableFragment() {
             it.addAction(DATA_LOGGER_CONNECTING_EVENT)
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
-            it.addAction(TOGGLE_TOOLBAR_ACTION)
+            it.addAction(TOOLBAR_TOGGLE_ACTION)
             it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
         }
     }

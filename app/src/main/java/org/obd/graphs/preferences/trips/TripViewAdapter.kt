@@ -24,11 +24,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.*
-import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.profile
 import org.obd.graphs.ui.common.Colors
@@ -38,10 +38,10 @@ import java.util.*
 
 private const val LOGGER_KEY = "TripsViewAdapter"
 
-class TripsViewAdapter internal constructor(
+class TripViewAdapter internal constructor(
     context: Context?,
-    var data: MutableCollection<TripFileDesc>
-) : RecyclerView.Adapter<TripsViewAdapter.ViewHolder>() {
+    var data: MutableCollection<TripFileDescDetails>
+) : RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val dateFormat: SimpleDateFormat =
@@ -70,21 +70,28 @@ class TripsViewAdapter internal constructor(
 
         data.elementAt(position).run {
             holder.vehicleProfile.setText(
-                profileLabel,
-                profileColors[profileId]!!,
+                source.profileLabel,
+                profileColors[source.profileId]!!,
                 Typeface.NORMAL,
                 0.6f
             )
-            var startTs = startTime
-            startTime.toLongOrNull()?.let {
+            var startTs = source.startTime
+            source.startTime.toLongOrNull()?.let {
                 startTs = dateFormat.format(Date(it))
             }
 
             holder.tripStartDate.setText(startTs, Color.GRAY, Typeface.NORMAL, 0.9f)
 
+            holder.selected.isChecked = checked
+            holder.selected.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (buttonView.isShown) {
+                    checked = isChecked
+                }
+            }
+
             holder.tripTime.let {
-                val seconds: Int = tripTimeSec.toInt() % 60
-                var hours: Int = tripTimeSec.toInt() / 60
+                val seconds: Int = source.tripTimeSec.toInt() % 60
+                var hours: Int = source.tripTimeSec.toInt() / 60
                 val minutes = hours % 60
                 hours /= 60
                 val text = "${hours.toString().padStart(2, '0')}:${
@@ -100,25 +107,26 @@ class TripsViewAdapter internal constructor(
         return data.size
     }
 
-    inner class ViewHolder internal constructor(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-        var vehicleProfile: TextView = itemView.findViewById(R.id.vehicle_profile)
-        var tripStartDate: TextView = itemView.findViewById(R.id.trip_start_date)
-        var tripTime: TextView = itemView.findViewById(R.id.trip_length)
-        private var loadTrip: Button = itemView.findViewById(R.id.trip_load)
-        private var deleteTrip: Button = itemView.findViewById(R.id.trip_delete)
+    inner class ViewHolder internal constructor(binding: View) :
+        RecyclerView.ViewHolder(binding) {
+        val selected: CheckBox = binding.findViewById(R.id.trip_selected)
+        val vehicleProfile: TextView = binding.findViewById(R.id.trip_profile)
+        val tripStartDate: TextView = binding.findViewById(R.id.trip_start_date)
+        val tripTime: TextView = binding.findViewById(R.id.trip_length)
+        private val loadTrip: Button = binding.findViewById(R.id.trip_load)
+        private val deleteTrip: Button = binding.findViewById(R.id.trip_delete)
 
         init {
 
             loadTrip.setOnClickListener {
-                tripManager.loadTripAsync( data.elementAt(adapterPosition).fileName)
+                tripManager.loadTripAsync( data.elementAt(adapterPosition).source.fileName)
             }
 
             deleteTrip.setOnClickListener {
-                val builder = AlertDialog.Builder(itemView.context)
-                val title = itemView.context.getString(R.string.trip_delete_dialog_ask_question)
-                val yes = itemView.context.getString(R.string.trip_delete_dialog_ask_question_yes)
-                val no = itemView.context.getString(R.string.trip_delete_dialog_ask_question_no)
+                val builder = AlertDialog.Builder(binding.context)
+                val title = binding.context.getString(R.string.trip_delete_dialog_ask_question)
+                val yes = binding.context.getString(R.string.trip_delete_dialog_ask_question_yes)
+                val no = binding.context.getString(R.string.trip_delete_dialog_ask_question_no)
 
                 builder.setMessage(title)
                     .setCancelable(false)
@@ -126,7 +134,7 @@ class TripsViewAdapter internal constructor(
                         val trip = data.elementAt(adapterPosition)
                         Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
                         data.remove(trip)
-                        tripManager.deleteTrip(trip)
+                        tripManager.deleteTrip(trip.source)
                         notifyDataSetChanged()
                     }
                     .setNegativeButton(no) { dialog, _ ->

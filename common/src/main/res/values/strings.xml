@@ -17,6 +17,10 @@
     <string name="main_activity.toast.backup.restore.failed">Restore operation failed. Please repeat the operation.</string>
     <string name="main_activity.toast.backup.restore.successful">Restore operation completed successfully.</string>
 
+    <string name="main_activity.toast.trips.upload.failed">Trips upload operation failed. </string>
+    <string name="main_activity.toast.trips.upload.successful">Trips upload operation completed successfully.</string>
+    <string name="main_activity.toast.trips.upload.no_files_selected">There is no files selected. Nothing was uploaded.</string>
+
     <string name="status_bar.status">status: </string>
     <string name="status_bar.profile">profile: </string>
     <string name="status_bar.fps">fps: </string>

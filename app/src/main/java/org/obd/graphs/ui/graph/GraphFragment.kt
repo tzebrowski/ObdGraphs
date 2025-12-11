@@ -46,6 +46,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
 import org.obd.graphs.*
+import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -104,7 +105,7 @@ class GraphFragment : Fragment() {
                     }
                 }
 
-                TOGGLE_TOOLBAR_ACTION -> {
+                TOOLBAR_TOGGLE_ACTION -> {
                     virtualScreensPanel {
                         it.isVisible = !it.isVisible
                     }
@@ -321,7 +322,7 @@ class GraphFragment : Fragment() {
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_CONNECTING_EVENT)
-            it.addAction(TOGGLE_TOOLBAR_ACTION)
+            it.addAction(TOOLBAR_TOGGLE_ACTION)
             it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
         }
     }

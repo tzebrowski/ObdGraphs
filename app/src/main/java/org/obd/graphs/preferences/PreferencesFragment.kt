@@ -35,7 +35,7 @@ import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragme
 import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
 import org.obd.graphs.preferences.trips.TripsListPreferences
-import org.obd.graphs.preferences.trips.TripsPreferenceDialogFragment
+import org.obd.graphs.preferences.trips.TripsListDialogFragment
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
@@ -74,7 +74,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         when (preference) {
 
             is TripsListPreferences -> {
-                TripsPreferenceDialogFragment().show(parentFragmentManager, null)
+                TripsListDialogFragment().show(parentFragmentManager, null)
             }
 
             is VehicleMetadataListPreferences -> {
@@ -132,7 +132,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen) {
-        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
+        sendBroadcastEvent(TOOLBAR_SHOW)
         // add to navigation chain
         navigateToPreferencesScreen(preferenceScreen.key)
     }
@@ -172,7 +172,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
+        sendBroadcastEvent(TOOLBAR_SHOW)
         val root = super.onCreateView(inflater, container, savedInstanceState)
         registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)
@@ -260,7 +260,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPreferenceDialogFor(preferenceKey: String) {
 
         when (preferenceKey) {
-            PREF_GAUGE_RECORDINGS -> TripsPreferenceDialogFragment().show(parentFragmentManager, null)
+            PREF_GAUGE_RECORDINGS -> TripsListDialogFragment().show(parentFragmentManager, null)
 
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
                 openPIDsDialog("pref.aa.trip_info.pids.selected", PREFERENCE_SCREEN_SOURCE_TRIP_INFO)
