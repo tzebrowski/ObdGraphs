@@ -133,7 +133,6 @@
                 app:contentInsetStart="0dp"
                 app:fabAlignmentMode="center"
                 app:hideOnScroll="true"
-
                 app:menu="@menu/context_menu" />
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -147,7 +146,8 @@
                 app:itemIconSize="18dp"
                 app:itemPaddingTop="6dp"
                 app:itemPaddingBottom="6dp"
-               app:menu="@menu/bottom_nav_menu" />
+                app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+                app:menu="@menu/bottom_nav_menu" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/connect_btn"

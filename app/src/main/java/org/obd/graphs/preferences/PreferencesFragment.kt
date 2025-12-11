@@ -132,7 +132,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     override fun onNavigateToScreen(preferenceScreen: PreferenceScreen) {
-        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
+        sendBroadcastEvent(TOOLBAR_SHOW)
         // add to navigation chain
         navigateToPreferencesScreen(preferenceScreen.key)
     }
@@ -172,7 +172,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        sendBroadcastEvent(RESET_TOOLBAR_ANIMATION)
+        sendBroadcastEvent(TOOLBAR_SHOW)
         val root = super.onCreateView(inflater, container, savedInstanceState)
         registerListeners()
         listView.setBackgroundColor(Color.LTGRAY)

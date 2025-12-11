@@ -34,9 +34,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
@@ -103,12 +100,9 @@ class MainActivity :
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-
-        toolbar { a, b, c ->
-            if (getMainActivityPreferences().hideToolbarLandscape) {
-                val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-                toolbarAnimate(a, b, c, hide)
-            }
+        if (getMainActivityPreferences().hideToolbarLandscape) {
+            val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+            toolbarHide(hide)
         }
     }
 
@@ -183,26 +177,7 @@ class MainActivity :
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
 
-    fun toolbarAnimate(
-        bottomNavigationView: BottomNavigationView,
-        bottomAppBar: BottomAppBar,
-        floatingActionButton: FloatingActionButton,
-        hide: Boolean,
-    ) {
-        val bottomNavigationViewHeight: Float = if (hide) bottomNavigationView.height.toFloat() else 0f
-        val bottomAppBarHeight: Float = if (hide) bottomAppBar.height.toFloat() else 0f
-        val floatingActionButtonHeight: Float = if (hide) 2 * bottomAppBar.height.toFloat() else 0f
 
-        val duration = 200L
-        bottomAppBar.clearAnimation()
-        bottomAppBar.animate().translationY(bottomAppBarHeight).duration = duration
-
-        bottomNavigationView.clearAnimation()
-        bottomNavigationView.animate().translationY(bottomNavigationViewHeight).duration = duration
-
-        floatingActionButton.clearAnimation()
-        floatingActionButton.animate().translationY(floatingActionButtonHeight).duration = duration
-    }
 
     private fun initCache() {
         cacheManager.initCache(cache)

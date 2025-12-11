@@ -70,7 +70,7 @@ internal fun MainActivity.setupStatusPanel() {
 
     (findViewById<ImageView>(R.id.toggle_fullscreen)).let {
         it.setOnClickListener {
-           sendBroadcastEvent(TOGGLE_TOOLBAR_ACTION)
+           sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
         }
     }
 }

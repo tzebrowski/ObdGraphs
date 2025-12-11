@@ -26,11 +26,8 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.BACKUP_FAILED
 import org.obd.graphs.BACKUP_RESTORE
@@ -78,7 +75,6 @@ import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
-import org.obd.graphs.ui.common.TOGGLE_TOOLBAR_ACTION
 import org.obd.graphs.ui.common.toast
 
 internal val powerReceiver = PowerBroadcastReceiver()
@@ -90,7 +86,6 @@ const val GRAPH_VIEW_ID = "pref.graph.view.enabled"
 const val GAUGE_VIEW_ID = "pref.gauge.view.enabled"
 const val DASH_VIEW_ID = "pref.dash.view.enabled"
 const val GIULIA_VIEW_ID = "pref.giulia.view.enabled"
-const val RESET_TOOLBAR_ANIMATION: String = "toolbar.reset.animation"
 
 private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
@@ -169,16 +164,12 @@ internal fun MainActivity.receive(intent: Intent?) {
             permissions.requestBluetoothPermissions(this)
         }
 
-        RESET_TOOLBAR_ANIMATION -> {
-            toolbar { a, b, c ->
-                toolbarAnimate(a, b, c, false)
-            }
+        TOOLBAR_SHOW -> {
+            toolbarHide(false)
         }
 
-        TOGGLE_TOOLBAR_ACTION -> {
-            toolbar { a, b, c ->
-                toolbarAnimate(a, b, c, a.isUp())
-            }
+        TOOLBAR_TOGGLE_ACTION -> {
+            toolbarToggle()
         }
 
         PROFILE_CHANGED_EVENT -> {
@@ -274,12 +265,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.start()
             }
 
-            toolbar { a, b, c ->
-                if (getMainActivityPreferences().hideToolbarConnected) {
-                    toolbarAnimate(a, b, c, true)
-                }
-            }
-
+            toolbarHide(true)
             updateAdapterConnectionType()
         }
 
@@ -329,13 +315,7 @@ private fun MainActivity.handleStop() {
             ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.philippine_green)
     }
 
-    toolbar { a, b, c ->
-        if (getMainActivityPreferences().hideToolbarConnected) {
-            a.isVisible = true
-            b.isVisible = true
-            c.isVisible = true
-        }
-    }
+    toolbarHide(false)
 
     timer {
         it.stop()
@@ -374,7 +354,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(NOTIFICATION_GAUGE_VIEW_TOGGLE)
         it.addAction(NOTIFICATION_DASH_VIEW_TOGGLE)
         it.addAction(NOTIFICATION_GIULIA_VIEW_TOGGLE)
-        it.addAction(TOGGLE_TOOLBAR_ACTION)
+        it.addAction(TOOLBAR_TOGGLE_ACTION)
         it.addAction(SCREEN_OFF_EVENT)
         it.addAction(SCREEN_ON_EVENT)
         it.addAction(PROFILE_CHANGED_EVENT)
@@ -388,7 +368,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(DATA_LOGGER_WIFI_INCORRECT)
         it.addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
         it.addAction(REQUEST_LOCATION_PERMISSIONS)
-        it.addAction(RESET_TOOLBAR_ANIMATION)
+        it.addAction(TOOLBAR_SHOW)
 
         it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_RUNNING)
         it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_IDLING)
