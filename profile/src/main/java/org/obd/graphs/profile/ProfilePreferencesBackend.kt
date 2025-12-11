@@ -106,7 +106,6 @@ internal class ProfilePreferencesBackend : Profile, SharedPreferences.OnSharedPr
         } finally {
             bulkActionEnabled = false
         }
-
     }
 
     override fun exportBackup(): File? {

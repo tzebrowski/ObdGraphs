@@ -18,12 +18,17 @@ package org.obd.graphs.ui
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
+import org.obd.graphs.BACKUP_SUCCESSFUL
 import org.obd.graphs.R
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.integrations.gcp.gdrive.DriveBackupManager
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getString
 import org.obd.graphs.profile.profile
+import org.obd.graphs.sendBroadcastEvent
 
 internal class BackupManager(activity: MainActivity) {
 
@@ -38,7 +43,13 @@ internal class BackupManager(activity: MainActivity) {
                 }
             } else {
                 withContext(Dispatchers.IO) {
-                    profile.exportBackup()
+                    try {
+                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                        profile.exportBackup()
+                        sendBroadcastEvent(BACKUP_SUCCESSFUL)
+                    } finally {
+                        sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+                    }
                 }
             }
         }
@@ -51,7 +62,13 @@ internal class BackupManager(activity: MainActivity) {
                 }
             } else {
                 withContext(Dispatchers.IO) {
-                    profile.restoreBackup()
+                    try {
+                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                        profile.restoreBackup()
+                        sendBroadcastEvent(BACKUP_RESTORE_SUCCESSFUL)
+                    } finally {
+                        sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+                    }
                 }
             }
         }
