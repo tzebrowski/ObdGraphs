@@ -35,12 +35,8 @@ class DragRacingMetricsProcessorTest {
 
     @Before
     fun setup() {
-        // Mock the extension functions used in the processor
-//        mockkStatic("org.obd.graphs.bl.datalogger.MetricsProcessorKt")
-        // Note: You might need to adjust the package path above to where 'isVehicleSpeed' is actually defined
-        // If it's in the same file as the interface, try mocking the file class or the package.
-        // For this example, we assume standard Mockk static mocking works for the imports provided.
-        mockkStatic("org.obd.graphs.bl.datalogger.ObdMetricExtKt") // Mock toInt() location
+
+        mockkStatic("org.obd.graphs.bl.datalogger.ObdMetricExtKt")
 
         mockkStatic(Log::class)
         every { Log.isLoggable(any(), any()) } returns true // Allow logging blocks to execute
@@ -50,18 +46,13 @@ class DragRacingMetricsProcessorTest {
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
 
-        // 1. Mock the Environment class
         mockkStatic(Environment::class)
 
-        // 2. Stub the state to simulate "mounted" (ready) storage
         every { Environment.getExternalStorageState() } returns Environment.MEDIA_MOUNTED
         every { Environment.getExternalStorageState(any()) } returns Environment.MEDIA_MOUNTED
 
-        // 3. (Optional) If your code calls getExternalStorageDirectory(), stub that too:
         every { Environment.getExternalStorageDirectory() } returns java.io.File("/tmp/mock_storage")
 
-
-        // Default behavior for metric
         every { metric.isNumber() } returns true
         every { metric.isEngineRpm() } returns false
         every { metric.isVehicleSpeed() } returns false
@@ -76,6 +67,20 @@ class DragRacingMetricsProcessorTest {
     }
 
     @Test
+    fun `readyToRace is not triggered`() {
+        // Arrange
+        every { metric.isVehicleSpeed() } returns true
+        every { metric.toInt() } returns 10
+        every { metric.timestamp } returns 1000L
+
+        // Act
+        processor.postValue(metric)
+
+        // Assert
+        verify { registry.readyToRace(false) }
+    }
+
+    @Test
     fun `readyToRace is triggered when speed is 0`() {
         // Arrange
         every { metric.isVehicleSpeed() } returns true
@@ -87,6 +92,29 @@ class DragRacingMetricsProcessorTest {
 
         // Assert
         verify { registry.readyToRace(true) }
+    }
+
+    @Test
+    fun `0-60 race completes successfully`() {
+        // Arrange
+        every { metric.isVehicleSpeed() } returns true
+
+        // 1. Stop (0 km/h) - Reset state
+        every { metric.toInt() } returns 0
+        every { metric.timestamp } returns 1000L
+        processor.postValue(metric)
+
+        // 2. Start (1 km/h) - Trigger start timestamp
+        every { metric.toInt() } returns 1
+        every { metric.timestamp } returns 2000L // Start time
+        processor.postValue(metric)
+
+        // 3. Accelerate (60 km/h) - Intermediate update
+        every { metric.toInt() } returns 60
+        every { metric.timestamp } returns 6000L
+        processor.postValue(metric)
+        // Verify 0-60 finished (3000ms)
+        verify { registry.update060(match { it.time == 5000L && it.speed == 60 }) }
     }
 
     @Test
@@ -122,6 +150,42 @@ class DragRacingMetricsProcessorTest {
     }
 
     @Test
+    fun `0-160 race completes successfully`() {
+        // Arrange
+        every { metric.isVehicleSpeed() } returns true
+
+        // 1. Stop (0 km/h) - Reset state
+        every { metric.toInt() } returns 0
+        every { metric.timestamp } returns 1000L
+        processor.postValue(metric)
+
+        // 2. Start (1 km/h) - Trigger start timestamp
+        every { metric.toInt() } returns 1
+        every { metric.timestamp } returns 2000L // Start time
+        processor.postValue(metric)
+
+        // 3. Accelerate (60 km/h) - Intermediate update
+        every { metric.toInt() } returns 60
+        every { metric.timestamp } returns 5000L
+        processor.postValue(metric)
+        // Verify 0-60 finished (3000ms)
+        verify { registry.update060(match { it.time == 4000L && it.speed == 60 }) }
+
+        // 4.
+        every { metric.toInt() } returns 100
+        every { metric.timestamp } returns 8000L
+        processor.postValue(metric)
+
+        // 5. Finish (160 km/h)
+        every { metric.toInt() } returns 160
+        every { metric.timestamp } returns 12000L
+        processor.postValue(metric)
+
+        // Assert
+        verify { registry.update0160(match { it.time == 11000L && it.speed == 160 }) }
+    }
+
+    @Test
     fun `Flying start 60-140 logic works`() {
         // Arrange
         every { metric.isVehicleSpeed() } returns true
@@ -144,6 +208,31 @@ class DragRacingMetricsProcessorTest {
         // Assert
         verify { registry.update60140(match { it.time == 4000L }) }
     }
+
+    @Test
+    fun `Flying start 100-200 logic works`() {
+        // Arrange
+        every { metric.isVehicleSpeed() } returns true
+
+        // 1. Cruising below start speed (50 km/h)
+        every { metric.toInt() } returns 100
+        every { metric.timestamp } returns 1000L
+        processor.postValue(metric)
+
+        // 2. Hit start speed (60 km/h)
+        every { metric.toInt() } returns 160
+        every { metric.timestamp } returns 4000L
+        processor.postValue(metric)
+
+        // 3. Hit end speed (140 km/h)
+        every { metric.toInt() } returns 200
+        every { metric.timestamp } returns 12000L
+        processor.postValue(metric)
+
+        // Assert
+        verify { registry.update100200(match { it.time == 11000L }) }
+    }
+
 
     @Test
     fun `Race resets if speed drops below threshold (Flying Start)`() {
