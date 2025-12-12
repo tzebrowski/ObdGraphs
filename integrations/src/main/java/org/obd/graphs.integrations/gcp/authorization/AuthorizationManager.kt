@@ -35,7 +35,6 @@ import com.google.android.gms.common.api.Scope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.api.client.http.HttpRequestInitializer
-import com.google.api.services.drive.DriveScopes
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
@@ -47,6 +46,8 @@ internal abstract class AuthorizationManager(
     fragment: Fragment? = null,
 ) {
     private var currentAction: Action? = null
+
+    abstract fun getScopes(): List<Scope>
 
     private val authorizationLauncher =
         fragment?.registerForActivityResult(
@@ -99,13 +100,15 @@ internal abstract class AuthorizationManager(
     }
 
     private fun checkPermissionsAndExecuteAction(action: Action) {
-        Log.i(TAG, "Checking permissions and executing action: ${action.getName()}")
+        val scopes = getScopes()
+
+        Log.i(TAG, "Checking permissions for scopes: $scopes and executing action: ${action.getName()}")
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
         val request =
             AuthorizationRequest
                 .Builder()
-                .setRequestedScopes(listOf(Scope(DriveScopes.DRIVE_FILE), Scope(DriveScopes.DRIVE_APPDATA)))
+                .setRequestedScopes(scopes)
                 .build()
 
         authorizationClient
@@ -171,6 +174,8 @@ internal abstract class AuthorizationManager(
                     currentAction = null
                 }
             }
+        } else {
+            Log.w(TAG, "Something went wrong, result: ${result.resultCode}")
         }
     }
 }

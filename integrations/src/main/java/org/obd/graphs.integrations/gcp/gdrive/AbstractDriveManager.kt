@@ -18,9 +18,11 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
+import com.google.android.gms.common.api.Scope
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
 import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
 
 private const val APP_NAME = "MyGiuliaBackup"
@@ -30,9 +32,11 @@ internal abstract class AbstractDriveManager(
     activity: Activity,
     fragment: Fragment?,
 ) : AuthorizationManager(webClientId, activity, fragment) {
+
+    override fun getScopes(): List<Scope> = listOf(Scope(DriveScopes.DRIVE_FILE), Scope(DriveScopes.DRIVE_APPDATA))
+
     protected fun driveService(accessToken: String): Drive =
-        Drive
-            .Builder(
+        Drive.Builder(
                 NetHttpTransport.Builder().build(),
                 GsonFactory(),
                 credentials(accessToken),
