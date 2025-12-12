@@ -26,7 +26,7 @@ private const val BACKUP_FILE_NAME = "mygiulia_config_backup.properties"
 private const val BACKUP_FOLDER = "mygiulia"
 private const val TAG = "DriveBackup"
 
-internal open class DefaultDriveBackupManager(
+internal class DefaultDriveBackupManager(
     webClientId: String,
     activity: Activity,
 ) : AbstractDriveManager(webClientId, activity, null), DriveBackupManager {

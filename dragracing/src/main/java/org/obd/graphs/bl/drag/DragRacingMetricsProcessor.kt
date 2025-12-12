@@ -102,7 +102,6 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
             registry.readyToRace(false)
         }
 
-
         if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H - 5) && valueToInt < SPEED_60_KM_H) {
             Log.i(LOG_KEY, "Reset 60-140 measurement at speed: $valueToInt")
             result60_140 = null
