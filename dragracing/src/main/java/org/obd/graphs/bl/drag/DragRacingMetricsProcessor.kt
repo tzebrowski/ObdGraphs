@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,7 +17,11 @@
 package org.obd.graphs.bl.drag
 
 import android.util.Log
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.datalogger.MetricsProcessor
+import org.obd.graphs.bl.datalogger.isAmbientTemp
+import org.obd.graphs.bl.datalogger.isAtmPressure
+import org.obd.graphs.bl.datalogger.isEngineRpm
+import org.obd.graphs.bl.datalogger.isVehicleSpeed
 import org.obd.graphs.isNumber
 import org.obd.graphs.toInt
 import org.obd.metrics.api.model.ObdMetric
@@ -36,7 +40,8 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
     private data class RaceDefinition(
         val startSpeed: Int,
         val endSpeed: Int,
-        val updateRegistry: (DragRacingMetric) -> Unit
+        var enabled: Boolean = true,
+        val updateRegistry: (DragRacingMetric) -> Unit,
     )
 
     // Configuration of all supported races
@@ -104,7 +109,7 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
         // 2. Track Starts (Flying starts like 60-140 or 100-200)
         // If we drop slightly below a start threshold (e.g. 55 for a 60 start), reset that start time.
         // If we cross the start threshold, record the time.
-        raceConfiguration.map { it.startSpeed }.distinct().filter { it > 0 }.forEach { startSpeed ->
+        raceConfiguration.filter { it.enabled }.map { it.startSpeed }.distinct().filter { it > 0 }.forEach { startSpeed ->
             if (speed >= startSpeed && !startTimestamps.containsKey(startSpeed)) {
                 startTimestamps[startSpeed] = metric.timestamp
                 Log.i(LOG_KEY, "Recorded start timestamp for speed $startSpeed")
@@ -121,7 +126,7 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
         }
 
         // 3. Check Finishes
-        raceConfiguration.forEach { race ->
+        raceConfiguration.filter { it.enabled }.forEach { race ->
             if (completedRaces.contains(race)) return@forEach
 
             val startTime = startTimestamps[race.startSpeed] ?: return@forEach

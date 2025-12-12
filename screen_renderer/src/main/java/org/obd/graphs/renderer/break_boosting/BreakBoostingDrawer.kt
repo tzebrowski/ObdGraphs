@@ -23,7 +23,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
+import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.BreakBoostingSettings
@@ -58,7 +58,7 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
 
     fun isBreakBoosting(breakBoostingSettings: BreakBoostingSettings, gas: Metric?,torque: Metric?) =
         breakBoostingSettings.viewEnabled &&
-        dragRacingResultRegistry.getResult().readyToRace &&
+        DragRacingService.registry.getResult().readyToRace &&
                 settings.getDragRacingScreenSettings().displayMetricsEnabled &&
                 settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled &&
                 gas != null && torque != null && (gas.value as Number).toInt() > 0

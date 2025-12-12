@@ -22,8 +22,8 @@ import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
+import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -76,7 +76,7 @@ internal class DragRacingDrawer(context: Context, settings: ScreenSettings) : Ab
         val dragRacingSettings = settings.getDragRacingScreenSettings()
 
         if (dragRacingSettings.shiftLightsEnabled) {
-            dragRacingResultRegistry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
+            DragRacingService.registry.setShiftLightsRevThreshold(dragRacingSettings.shiftLightsRevThreshold)
             // permanent white boxes
             drawShiftLights(canvas, area, blinking = false)
         }
