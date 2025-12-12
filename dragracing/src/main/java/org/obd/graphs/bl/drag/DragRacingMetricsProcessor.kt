@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,8 +34,9 @@ val dragRacingMetricsProcessor: MetricsProcessor by lazy {
     DragRacingMetricsProcessor(DragRacingService.registry)
 }
 
-internal class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry) : MetricsProcessor {
-
+internal class DragRacingMetricsProcessor(
+    private val registry: DragRacingResultRegistry,
+) : MetricsProcessor {
     // Definition of a specific race segment (e.g. 0-100)
     private data class RaceDefinition(
         val startSpeed: Int,
@@ -45,13 +46,14 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
     )
 
     // Configuration of all supported races
-    private val raceConfiguration = listOf(
-        RaceDefinition(0, 60) { registry.update060(it) },
-        RaceDefinition(0, 100) { registry.update0100(it) },
-        RaceDefinition(0, 160) { registry.update0160(it) },
-        RaceDefinition(60, 140) { registry.update60140(it) },
-        RaceDefinition(100, 200) { registry.update100200(it) }
-    )
+    private val raceConfiguration =
+        listOf(
+            RaceDefinition(0, 60) { registry.update060(it) },
+            RaceDefinition(0, 100) { registry.update0100(it) },
+            RaceDefinition(0, 160) { registry.update0160(it) },
+            RaceDefinition(60, 140) { registry.update60140(it) },
+            RaceDefinition(100, 200) { registry.update100200(it) },
+        )
 
     // Dynamic state
     private val startTimestamps = mutableMapOf<Int, Long>()
@@ -92,7 +94,10 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
         }
     }
 
-    private fun handleSpeed(metric: ObdMetric, speed: Int) {
+    private fun handleSpeed(
+        metric: ObdMetric,
+        speed: Int,
+    ) {
         // 1. Reset logic: If stopped, reset everything.
         if (speed == 0) {
             resetState()
@@ -133,12 +138,13 @@ internal class DragRacingMetricsProcessor(private val registry: DragRacingResult
 
             if (speed >= race.endSpeed) {
                 val duration = metric.timestamp - startTime
-                val resultMetric = DragRacingMetric(
-                    time = duration,
-                    speed = speed,
-                    ambientTemp = ambientTemperature,
-                    atmPressure = atmosphericPressure
-                )
+                val resultMetric =
+                    DragRacingMetric(
+                        time = duration,
+                        speed = speed,
+                        ambientTemp = ambientTemperature,
+                        atmPressure = atmosphericPressure,
+                    )
 
                 race.updateRegistry(resultMetric)
                 completedRaces.add(race)
