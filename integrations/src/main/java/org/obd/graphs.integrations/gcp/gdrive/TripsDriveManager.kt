@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment
 import java.io.File
 
 interface TripsDriveManager {
-    suspend fun exportTrips(file: List<File>)
+    suspend fun exportTrips(files: List<File>)
 
     companion object {
         fun instance(

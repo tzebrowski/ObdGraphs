@@ -22,7 +22,7 @@ import java.io.File
 interface DriveBackupManager {
     suspend fun exportBackup(file: File)
 
-    suspend fun restoreBackup(func: (f: File) -> Unit)
+    suspend fun restoreBackup(onRestore: (f: File) -> Unit)
 
     companion object {
         fun instance(

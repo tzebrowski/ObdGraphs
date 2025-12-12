@@ -27,6 +27,8 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.common.api.ApiException
@@ -34,41 +36,41 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Scope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.api.client.http.HttpRequestInitializer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
 private const val TAG = "AuthorizationManager"
 
+internal typealias AuthenticatedAction = suspend (accessToken: String) -> Unit
+
 internal abstract class AuthorizationManager(
     private val webClientId: String,
     protected val activity: Activity,
-    fragment: Fragment? = null,
+    private val fragment: Fragment? = null,
 ) {
-    private var currentAction: Action? = null
+    private var pendingAction: AuthenticatedAction? = null
+    private var pendingActionName: String = ""
 
     abstract fun getScopes(): List<Scope>
 
+    private val lifecycleScope: CoroutineScope?
+        get() = fragment?.lifecycleScope ?: (activity as? LifecycleOwner)?.lifecycleScope
+
     private val authorizationLauncher =
-        fragment?.registerForActivityResult(
+        (fragment ?: (activity as? ComponentActivity))?.registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult(),
         ) { result ->
             handleActivityResult(result)
         }
-            ?: (activity as? ComponentActivity)?.registerForActivityResult(
-                ActivityResultContracts.StartIntentSenderForResult(),
-            ) { result ->
-                handleActivityResult(result)
-            }
 
-    protected fun credentials(accessToken: String): HttpRequestInitializer =
-        HttpRequestInitializer { request ->
-            request.headers.authorization = "Bearer $accessToken"
-        }
-
-    protected suspend fun signInAndExecuteAction(action: Action) {
+    protected suspend fun signInAndExecute(
+        authenticatedActionName: String,
+        authenticatedAction: AuthenticatedAction,
+    ) {
         try {
-            Log.i(TAG, "Start executing action: ${action.getName()} for client.id=$webClientId")
+            Log.i(TAG, "Start executing action: $authenticatedActionName for client.id=$webClientId")
             val credentialManager = CredentialManager.create(activity)
 
             val googleIdOption =
@@ -84,25 +86,26 @@ internal abstract class AuthorizationManager(
                     .Builder()
                     .addCredentialOption(googleIdOption)
                     .build()
+
             val result = credentialManager.getCredential(activity, request)
             val credential = result.credential
 
             if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                checkPermissionsAndExecuteAction(action)
+                checkPermissionsAndExecuteAction(authenticatedActionName, authenticatedAction)
             } else {
-                Log.i(TAG, "Unexpected credential type")
+                Log.w(TAG, "Unexpected credential type: ${credential.type}")
             }
-
-            Log.i(TAG, "Finished executing action: ${action.getName()}")
         } catch (e: Exception) {
-            Log.i(TAG, "Failed executing action: ${action.getName()}", e)
+            Log.e(TAG, "Failed executing action: $authenticatedActionName", e)
         }
     }
 
-    private fun checkPermissionsAndExecuteAction(action: Action) {
+    private fun checkPermissionsAndExecuteAction(
+        authenticatedActionName: String,
+        authenticatedAction: AuthenticatedAction,
+    ) {
         val scopes = getScopes()
-
-        Log.i(TAG, "Checking permissions for scopes: $scopes and executing action: ${action.getName()}")
+        Log.i(TAG, "Checking permissions for scopes: $scopes and executing action: $authenticatedActionName")
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
         val request =
@@ -113,49 +116,43 @@ internal abstract class AuthorizationManager(
 
         authorizationClient
             .authorize(request)
-            .addOnSuccessListener { authorizationResult ->
-                if (authorizationResult.hasResolution()) {
-                    try {
-                        Log.i(TAG, "User must confirm consent screen")
-                        currentAction = action
-
-                        authorizationLauncher?.launch(
-                            IntentSenderRequest
-                                .Builder(authorizationResult.pendingIntent!!)
-                                .build(),
-                        )
-                    } catch (sendEx: IntentSender.SendIntentException) {
-                        Log.e(TAG, "Failed to launch consent screen", sendEx)
-                    }
+            .addOnSuccessListener { result ->
+                if (result.hasResolution()) {
+                    launchConsentScreen(result.pendingIntent?.intentSender, authenticatedActionName, authenticatedAction)
                 } else {
-                    Log.i(TAG, "We already received token, executing the action ${authorizationResult.accessToken}")
-                    Log.i(TAG, "Granted scopes: ${authorizationResult.grantedScopes}")
-                    authorizationResult.accessToken?.let {
-                        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                        action.execute(it)
+                    val token = result.accessToken
+                    if (token != null) {
+                        Log.i(TAG, "Token received, executing action: $authenticatedActionName")
+                        executeActionSafely(token, authenticatedAction)
                     }
                 }
             }.addOnFailureListener { e ->
                 if (e is ApiException && e.statusCode == CommonStatusCodes.RESOLUTION_REQUIRED) {
-                    try {
-                        Log.i(TAG, "Resolution is required")
-                        val pendingIntent = e.status.resolution?.intentSender
-
-                        val intentSenderRequest =
-                            IntentSenderRequest
-                                .Builder(pendingIntent!!)
-                                .build()
-
-                        currentAction = action
-
-                        authorizationLauncher?.launch(intentSenderRequest)
-                    } catch (sendEx: IntentSender.SendIntentException) {
-                        Log.e(TAG, "Failed to launch consent screen", sendEx)
-                    }
+                    launchConsentScreen(e.status.resolution?.intentSender, authenticatedActionName, authenticatedAction)
                 } else {
                     Log.e(TAG, "Authorization failed", e)
                 }
             }
+    }
+
+    private fun launchConsentScreen(
+        intentSender: IntentSender?,
+        authenticatedActionName: String,
+        authenticatedAction: AuthenticatedAction,
+    ) {
+        try {
+            Log.i(TAG, "Launching consent screen for $authenticatedActionName")
+            if (intentSender == null) return
+
+            pendingAction = authenticatedAction
+            pendingActionName = authenticatedActionName
+
+            authorizationLauncher?.launch(
+                IntentSenderRequest.Builder(intentSender).build(),
+            )
+        } catch (e: IntentSender.SendIntentException) {
+            Log.e(TAG, "Failed to launch consent screen", e)
+        }
     }
 
     private fun handleActivityResult(result: ActivityResult) {
@@ -166,16 +163,29 @@ internal abstract class AuthorizationManager(
                     .getAuthorizationResultFromIntent(result.data)
                     .accessToken
 
-            token?.let {
-                currentAction?.let { action ->
-                    Log.i(TAG, "User accepted the consent. Executing the action: ${action.getName()}")
-                    sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                    action.execute(token)
-                    currentAction = null
-                }
+            if (token != null && pendingAction != null) {
+                Log.i(TAG, "Consent granted. Executing pending action: $pendingActionName")
+                executeActionSafely(token, pendingAction!!)
             }
+            pendingAction = null
+            pendingActionName = ""
         } else {
-            Log.w(TAG, "Something went wrong, result: ${result.resultCode}")
+            Log.w(TAG, "Authorization result not OK: ${result.resultCode}")
+        }
+    }
+
+    private fun executeActionSafely(
+        token: String,
+        authenticatedAction: AuthenticatedAction,
+    ) {
+        sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+        val scope = lifecycleScope
+        if (scope == null) {
+            Log.e(TAG, "Cannot execute action: Host is not a LifecycleOwner")
+        } else {
+            scope.launch {
+                authenticatedAction(token)
+            }
         }
     }
 }

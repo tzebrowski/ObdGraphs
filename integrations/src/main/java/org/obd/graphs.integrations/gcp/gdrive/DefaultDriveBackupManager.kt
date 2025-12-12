@@ -18,149 +18,62 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import android.util.Log
-import com.google.android.gms.auth.GoogleAuthUtil
-import com.google.api.client.googleapis.json.GoogleJsonResponseException
-import com.google.api.client.http.FileContent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.obd.graphs.BACKUP_FAILED
-import org.obd.graphs.BACKUP_RESTORE_FAILED
-import org.obd.graphs.BACKUP_RESTORE_NO_FILES
-import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
-import org.obd.graphs.BACKUP_SUCCESSFUL
-import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
-import org.obd.graphs.integrations.gcp.authorization.Action
-import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.*
 import java.io.File
 import java.io.FileOutputStream
 
-private const val BACKUP_FILE = "mygiulia_config_backup.properties"
+private const val BACKUP_FILE_NAME = "mygiulia_config_backup.properties"
+private const val BACKUP_FOLDER = "mygiulia"
 private const val TAG = "DriveBackup"
 
-internal class DefaultDriveBackupManager(
+internal open class DefaultDriveBackupManager(
     webClientId: String,
     activity: Activity,
 ) : AbstractDriveManager(webClientId, activity, null), DriveBackupManager {
+
     override suspend fun exportBackup(file: File) =
-        signInAndExecuteAction(
-            object : Action {
-                override fun execute(token: String) = uploadBackupToDrive(token, file)
-                override fun getName() = "exportBackupAction"
-            },
-        )
+        signInAndExecute("exportBackup") { token ->
+            executeDriveOperation(
+                accessToken = token,
+                onFailure = { sendBroadcastEvent(BACKUP_FAILED) },
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+            ) { drive ->
+                val folderId = drive.findFolderIdRecursive(BACKUP_FOLDER)
+                drive.uploadFile(file, folderId)
+                sendBroadcastEvent(BACKUP_SUCCESSFUL)
+            }
+        }
 
-    override suspend fun restoreBackup(func: (f: File) -> Unit) =
-        signInAndExecuteAction(
-            object : Action {
-                override fun execute(token: String) = downloadBackupFromDrive(token, func)
-                override fun getName() = "restoreBackupAction"
-            },
-        )
+    override suspend fun restoreBackup(onRestore: (File) -> Unit) =
+        signInAndExecute("restoreBackup") { token ->
+            executeDriveOperation(
+                accessToken = token,
+                onFailure = { sendBroadcastEvent(BACKUP_RESTORE_FAILED) },
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+            ) { drive ->
+                val fileList = drive.files().list()
+                    .setSpaces("drive")
+                    .setQ("name = '$BACKUP_FILE_NAME' and trashed = false")
+                    .setOrderBy("createdTime desc")
+                    .setFields("files(id, createdTime)")
+                    .execute()
 
-    private fun downloadBackupFromDrive(
-        accessToken: String,
-        func: (f: File) -> Unit,
-    ) {
-        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val driveService = driveService(accessToken)
+                val remoteFile = fileList.files.firstOrNull()
 
-                val fileList =
-                    driveService
-                        .files()
-                        .list()
-                        .setSpaces("drive")
-                        .setQ("name = '$BACKUP_FILE'")
-                        .setOrderBy("createdTime desc")
-                        .setFields("files(id, createdTime)")
-                        .execute()
-
-                if (fileList.files.isNotEmpty()) {
-                    Log.d(TAG, "Found (${fileList.files.size}) files with name '$BACKUP_FILE' on GDrive. Taking the newest one")
-
-                    val file = fileList.files[0]
-                    Log.d(TAG, "Found file with id: ${file.id} on GDrive. Modification time: ${file.createdTime}")
+                if (remoteFile != null) {
+                    Log.d(TAG, "Found backup file: ${remoteFile.id}")
                     val target = File(activity.filesDir, "restored_backup.json")
 
-                    FileOutputStream(target).use {
-                        Log.d(TAG, "Copying remote file ${file.id} into local $target")
-                        driveService
-                            .files()
-                            .get(file.id)
-                            .executeMediaAndDownloadTo(it)
+                    FileOutputStream(target).use { output ->
+                        drive.files().get(remoteFile.id).executeMediaAndDownloadTo(output)
                     }
 
-                    Log.d(TAG, "Writing into local $target file finished")
-                    func(target)
+                    onRestore(target)
                     sendBroadcastEvent(BACKUP_RESTORE_SUCCESSFUL)
                 } else {
-                    Log.d(TAG, "Found 0 files with name '$BACKUP_FILE' on GDrive. Won't restore the backup.")
+                    Log.d(TAG, "No backup file found.")
                     sendBroadcastEvent(BACKUP_RESTORE_NO_FILES)
                 }
-            } catch (e: GoogleJsonResponseException) {
-                if (401 == e.statusCode) {
-                    Log.e(TAG, "Token is invalid. Invalidating now...")
-                    try {
-                        GoogleAuthUtil.clearToken(activity, accessToken)
-                    } catch (e1: java.lang.Exception) {
-                        Log.e(TAG, "Failed to invalidate the token", e)
-                    }
-                    sendBroadcastEvent(BACKUP_RESTORE_FAILED)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Restore backup failed", e)
-                sendBroadcastEvent(BACKUP_RESTORE_FAILED)
-            } finally {
-                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             }
         }
-    }
-
-    private fun uploadBackupToDrive(
-        accessToken: String,
-        configFile: File,
-    ) {
-        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
-            try {
-                Log.i(TAG, "Uploading file ${configFile.absoluteFile} to the drive")
-                val driveService = driveService(accessToken)
-                val backupFolderId = getOrCreateFolderStructure(driveService, "mygiulia")
-
-                val metadata =
-                    com.google.api.services.drive.model.File().apply {
-                        name = BACKUP_FILE
-                        parents = listOf(backupFolderId)
-                    }
-
-                val uploadedFile =
-                    driveService
-                        .files()
-                        .create(metadata, FileContent("text/plain", configFile))
-                        .setFields("id")
-                        .execute()
-
-                Log.i(TAG, "Backup operation completed successfully. File was uploaded. id: ${uploadedFile.id}")
-
-                sendBroadcastEvent(BACKUP_SUCCESSFUL)
-            } catch (e: GoogleJsonResponseException) {
-                if (401 == e.statusCode) {
-                    Log.e(TAG, "Token is invalid. Invalidating now...")
-                    try {
-                        GoogleAuthUtil.clearToken(activity, accessToken)
-                    } catch (e1: java.lang.Exception) {
-                        Log.e(TAG, "Failed to invalidate the token", e)
-                    }
-                    sendBroadcastEvent(BACKUP_FAILED)
-                } else {
-                    Log.e(TAG, "Upload failed ${e.statusCode}", e)
-                    sendBroadcastEvent(BACKUP_FAILED)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Upload failed", e)
-                sendBroadcastEvent(BACKUP_FAILED)
-            } finally {
-                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
-            }
-        }
-    }
 }

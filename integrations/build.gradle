@@ -26,12 +26,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     lint {
         disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor', 'IconLauncherShape'
@@ -41,6 +41,12 @@ android {
 
 dependencies {
     implementation project(":common")
+
+    //test
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "io.mockk:mockk:1.13.8"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
 
     // This specific library provides lifecycleScope
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
@@ -75,4 +81,6 @@ dependencies {
     implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
     implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+
 }
