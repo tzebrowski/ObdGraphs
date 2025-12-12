@@ -47,10 +47,8 @@ class DragRacingMetricsProcessorTest {
         every { Log.e(any(), any()) } returns 0
 
         mockkStatic(Environment::class)
-
         every { Environment.getExternalStorageState() } returns Environment.MEDIA_MOUNTED
         every { Environment.getExternalStorageState(any()) } returns Environment.MEDIA_MOUNTED
-
         every { Environment.getExternalStorageDirectory() } returns java.io.File("/tmp/mock_storage")
 
         every { metric.isNumber() } returns true
