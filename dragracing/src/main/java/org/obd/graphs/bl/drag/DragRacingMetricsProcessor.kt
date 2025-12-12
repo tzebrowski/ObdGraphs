@@ -17,214 +17,134 @@
 package org.obd.graphs.bl.drag
 
 import android.util.Log
-import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.bl.datalogger.isAmbientTemp
-import org.obd.graphs.bl.datalogger.isAtmPressure
-import org.obd.graphs.bl.datalogger.isEngineRpm
-import org.obd.graphs.bl.datalogger.isVehicleSpeed
+import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.isNumber
 import org.obd.graphs.toInt
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.VehicleCapabilities
-import kotlin.math.min
-
-private const val SPEED_0_KM_H = 0
-private const val SPEED_60_KM_H = 60
-private const val SPEED_100_KM_H = 100
-private const val SPEED_140_KM_H = 140
-private const val SPEED_160_KM_H = 160
-private const val SPEED_200_KM_H = 200
 
 private const val LOG_KEY = "DragRaceResult"
 
-
-val dragRacingMetricsProcessor: MetricsProcessor = DragRacingMetricsProcessor(dragRacingResultRegistry)
+// Allows simple instantiation if needed, or Dependency Injection
+val dragRacingMetricsProcessor: MetricsProcessor by lazy {
+    DragRacingMetricsProcessor(DragRacingService.registry)
+}
 
 internal class DragRacingMetricsProcessor(private val registry: DragRacingResultRegistry) : MetricsProcessor {
 
-    private var _0ts: Long? = null
-    private var _100ts: Long? = null
-    private var _60ts: Long? = null
-    private var result0_60: Long? = null
-    private var result0_100: Long? = null
-    private var result60_140: Long? = null
-    private var result0_160: Long? = null
-    private var result100_200: Long? = null
-    private var ambientTemperature: Int?  = null
-    private var atmosphericPressure: Int?  = null
+    // Definition of a specific race segment (e.g. 0-100)
+    private data class RaceDefinition(
+        val startSpeed: Int,
+        val endSpeed: Int,
+        val updateRegistry: (DragRacingMetric) -> Unit
+    )
 
-    private val dragRacingMetric = DragRacingMetric(0,0)
+    // Configuration of all supported races
+    private val raceConfiguration = listOf(
+        RaceDefinition(0, 60) { registry.update060(it) },
+        RaceDefinition(0, 100) { registry.update0100(it) },
+        RaceDefinition(0, 160) { registry.update0160(it) },
+        RaceDefinition(60, 140) { registry.update60140(it) },
+        RaceDefinition(100, 200) { registry.update100200(it) }
+    )
+
+    // Dynamic state
+    private val startTimestamps = mutableMapOf<Int, Long>()
+    private val completedRaces = mutableSetOf<RaceDefinition>()
+
+    // Environment state
+    private var ambientTemperature: Int? = null
+    private var atmosphericPressure: Int? = null
 
     override fun onStopped() {
         registry.readyToRace(false)
         registry.enableShiftLights(false)
+        resetState()
     }
 
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
-        reset0()
+        resetState()
     }
 
     override fun postValue(obdMetric: ObdMetric) {
-        if (obdMetric.isNumber()) {
-            val intValue = obdMetric.toInt()
-            if (obdMetric.isEngineRpm()) {
-                if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                    Log.v(
-                        LOG_KEY, "Current revLimit='${registry.getShiftLightsRevThreshold()}', " +
-                                "current rev: $intValue, rising: ${intValue > registry.getShiftLightsRevThreshold()}"
-                    )
-                }
-                registry.enableShiftLights(intValue > registry.getShiftLightsRevThreshold())
-            } else if (obdMetric.isAtmPressure()) {
-                atmosphericPressure = intValue
-            } else if (obdMetric.isAmbientTemp()) {
-                ambientTemperature = intValue
-            } else if (obdMetric.isVehicleSpeed()) {
-               processVehicleSpeedData(obdMetric)
-            }
+        if (!obdMetric.isNumber()) return
+
+        val intValue = obdMetric.toInt()
+
+        when {
+            obdMetric.isEngineRpm() -> handleRpm(intValue)
+            obdMetric.isAtmPressure() -> atmosphericPressure = intValue
+            obdMetric.isAmbientTemp() -> ambientTemperature = intValue
+            obdMetric.isVehicleSpeed() -> handleSpeed(obdMetric, intValue)
         }
     }
 
-    private fun processVehicleSpeedData(obdMetric: ObdMetric) {
-        val valueToInt = obdMetric.toInt()
+    private fun handleRpm(rpm: Int) {
+        val threshold = registry.getShiftLightsRevThreshold()
+        registry.enableShiftLights(rpm > threshold)
+        if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+            Log.v(LOG_KEY, "RPM: $rpm, Threshold: $threshold")
+        }
+    }
 
-        if (valueToInt == SPEED_0_KM_H) {
-            reset0()
-
-            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                Log.v(LOG_KEY, "Ready to measure, current speed: $valueToInt")
-            }
-
+    private fun handleSpeed(metric: ObdMetric, speed: Int) {
+        // 1. Reset logic: If stopped, reset everything.
+        if (speed == 0) {
+            resetState()
+            startTimestamps[0] = metric.timestamp
             registry.readyToRace(true)
-            _0ts = obdMetric.timestamp
-
+            if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
+                Log.v(LOG_KEY, "Speed 0 detected, ready to race.")
+            }
+            return
         } else {
             registry.readyToRace(false)
         }
 
-        if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H - 5) && valueToInt < SPEED_60_KM_H) {
-            Log.i(LOG_KEY, "Reset 60-140 measurement at speed: $valueToInt")
-            result60_140 = null
-            _60ts = null
-        }
-
-        if (isGivenSpeedReached(obdMetric, SPEED_60_KM_H)) {
-            if (_60ts == null) {
-                _60ts = obdMetric.timestamp
-                Log.i(LOG_KEY, "Setting 60km/h ts: ${obdMetric.timestamp}")
+        // 2. Track Starts (Flying starts like 60-140 or 100-200)
+        // If we drop slightly below a start threshold (e.g. 55 for a 60 start), reset that start time.
+        // If we cross the start threshold, record the time.
+        raceConfiguration.map { it.startSpeed }.distinct().filter { it > 0 }.forEach { startSpeed ->
+            if (speed >= startSpeed && !startTimestamps.containsKey(startSpeed)) {
+                startTimestamps[startSpeed] = metric.timestamp
+                Log.i(LOG_KEY, "Recorded start timestamp for speed $startSpeed")
             }
 
-            if (result0_60 == null) {
-
-                _0ts?.let { _0_ts ->
-                    result0_60 = obdMetric.timestamp - _0_ts
-                    registry.update060(
-                        dragRacingMetric.apply {
-                            time = result0_60!!
-                            speed = valueToInt
-                            ambientTemp = ambientTemperature
-                            atmPressure = atmosphericPressure
-                        }
-
-                    )
-                    Log.i(LOG_KEY, "Current speed: $valueToInt. Result: 0-60 ${result0_60}ms")
+            // Hysteresis reset: if we drop 5km/h below start speed, cancel that start
+            if (speed < (startSpeed - 5)) {
+                if (startTimestamps.remove(startSpeed) != null) {
+                    Log.i(LOG_KEY, "Speed dropped below ${startSpeed - 5}, resetting start time for $startSpeed")
+                    // Clear completions dependent on this start speed
+                    completedRaces.removeAll { it.startSpeed == startSpeed }
                 }
             }
         }
 
-        if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H - 5) && valueToInt < SPEED_100_KM_H) {
-            Log.i(LOG_KEY, "Reset 100-200 measurement at speed: $valueToInt")
-            result100_200 = null
-            _100ts = null
-        }
+        // 3. Check Finishes
+        raceConfiguration.forEach { race ->
+            if (completedRaces.contains(race)) return@forEach
 
-        if (isGivenSpeedReached(obdMetric, SPEED_100_KM_H)) {
-            if (_100ts == null) {
-                _100ts = obdMetric.timestamp
-                Log.i(LOG_KEY, "Setting 100km/h ts: ${obdMetric.timestamp}")
-            }
+            val startTime = startTimestamps[race.startSpeed] ?: return@forEach
 
-            if (result0_100 == null) {
-
-                _0ts?.let { _0_ts ->
-                    result0_100 = obdMetric.timestamp - _0_ts
-                    registry.update0100(
-                        dragRacingMetric.apply {
-                            time = result0_100!!
-                            speed = valueToInt
-                            ambientTemp = ambientTemperature
-                            atmPressure = atmosphericPressure
-                        }
-
-                    )
-
-                    if (Log.isLoggable(LOG_KEY, Log.VERBOSE)) {
-                        Log.v(LOG_KEY, "Current speed: $valueToInt. Result: 0-100 ${result0_100}ms")
-                    }
-                }
-            }
-        }
-
-        if (result0_160 == null && isGivenSpeedReached(obdMetric, SPEED_160_KM_H)) {
-            _0ts?.let { _0_ts ->
-                result0_160 = obdMetric.timestamp - _0_ts
-                registry.update0160(
-                    dragRacingMetric.apply {
-                        time = result0_160!!
-                        speed = valueToInt
-                        ambientTemp = ambientTemperature
-                        atmPressure = atmosphericPressure
-                    }
-
+            if (speed >= race.endSpeed) {
+                val duration = metric.timestamp - startTime
+                val resultMetric = DragRacingMetric(
+                    time = duration,
+                    speed = speed,
+                    ambientTemp = ambientTemperature,
+                    atmPressure = atmosphericPressure
                 )
-                Log.i(LOG_KEY, "Current speed: $valueToInt. Result: 0-160 ${result0_160}ms")
-            }
-        }
 
-        if (result100_200 == null && _100ts != null && isGivenSpeedReached(obdMetric, SPEED_200_KM_H)) {
-            _100ts?.let { _100_ts ->
-                result100_200 = obdMetric.timestamp - _100_ts
-                registry.update100200(
-                    dragRacingMetric.apply {
-                        time = result100_200!!
-                        speed = valueToInt
-                        ambientTemp = ambientTemperature
-                        atmPressure = atmosphericPressure
-                    }
-                )
-                Log.i(LOG_KEY, "Current speed: $valueToInt. Result: 100-200 ${result100_200}ms")
-            }
-        }
+                race.updateRegistry(resultMetric)
+                completedRaces.add(race)
 
-        if (result60_140 == null && _60ts != null && isGivenSpeedReached(obdMetric, SPEED_140_KM_H)) {
-            _60ts?.let { _60_ts ->
-                result60_140 = obdMetric.timestamp - _60_ts
-                registry.update60140(
-                    dragRacingMetric.apply {
-                        time = result60_140!!
-                        speed = valueToInt
-                        ambientTemp = ambientTemperature
-                        atmPressure = atmosphericPressure
-                    }
-                )
-                Log.i(
-                    LOG_KEY,
-                    "Current speed: $valueToInt, _60ts=${_60ts}, _140ts=${obdMetric.timestamp},  Result: 60-140 ${result60_140}ms"
-                )
+                Log.i(LOG_KEY, "Race Finished: ${race.startSpeed}-${race.endSpeed} in ${duration}ms")
             }
         }
     }
 
-    private fun isGivenSpeedReached(obdMetric: ObdMetric, givenSpeed: Int): Boolean = min(obdMetric.toInt(), givenSpeed) == givenSpeed
-
-    private fun reset0() {
-        _0ts = null
-        _100ts = null
-        _60ts = null
-        result0_60 = null
-        result0_100 = null
-        result0_160 = null
-        result60_140 = null
-        result100_200 = null
+    private fun resetState() {
+        startTimestamps.clear()
+        completedRaces.clear()
     }
 }

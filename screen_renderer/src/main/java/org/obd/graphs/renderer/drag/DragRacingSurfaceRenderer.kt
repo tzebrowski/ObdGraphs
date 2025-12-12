@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,24 +23,28 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.drag.dragRacingResultRegistry
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
+import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.renderer.*
+import org.obd.graphs.renderer.CoreSurfaceRenderer
+import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.MARGIN_TOP
+import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.ViewSettings
 
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
 
- internal data class DragRaceDetails(
-     var ambientTemp: Metric? = null,
-     var atmPressure: Metric? = null,
-     var intakePressure: Metric? = null,
-     var torque: Metric? = null,
-     var gas: Metric? = null,
-     var vehicleSpeed: Metric? = null,
- )
+internal data class DragRaceDetails(
+    var ambientTemp: Metric? = null,
+    var atmPressure: Metric? = null,
+    var intakePressure: Metric? = null,
+    var torque: Metric? = null,
+    var gas: Metric? = null,
+    var vehicleSpeed: Metric? = null,
+)
 
 internal class DragRacingSurfaceRenderer(
     context: Context,
@@ -55,14 +59,14 @@ internal class DragRacingSurfaceRenderer(
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
             enabled = query.getIDs()
-       )
+        )
     }
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let {
 
-            val dragRaceResults = dragRacingResultRegistry.getResult()
+            val dragRaceResults = DragRacingService.registry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
             val margin = if (settings.getDragRacingScreenSettings().shiftLightsEnabled || dragRaceResults.readyToRace)
@@ -74,8 +78,10 @@ internal class DragRacingSurfaceRenderer(
             left += 5
 
             if (settings.isStatusPanelEnabled()) {
-                dragRacingDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector,
-                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled)
+                dragRacingDrawer.drawStatusPanel(
+                    canvas, top, left, fps, metricsCollector,
+                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled
+                )
 
                 top += MARGIN_TOP
                 dragRacingDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
@@ -89,14 +95,16 @@ internal class DragRacingSurfaceRenderer(
                 area = area,
                 left = left,
                 pTop = top,
-                dragRacingResults = dragRaceResults,dragRaceDetails = dragRaceDetails.apply {
+                dragRacingResults = dragRaceResults, dragRaceDetails = dragRaceDetails.apply {
                     gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
                     ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
                     atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
                     torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
                     intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                    vehicleSpeed = metricsCollector.getMetric(if (dataLoggerSettings.instance().gmeExtensionsEnabled)
-                        Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID)
+                    vehicleSpeed = metricsCollector.getMetric(
+                        if (dataLoggerSettings.instance().gmeExtensionsEnabled)
+                            Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID
+                    )
                 })
         }
     }
@@ -107,7 +115,7 @@ internal class DragRacingSurfaceRenderer(
     }
 
     init {
-        Log.i(LOG_TAG,"Init Drag Racing Surface Renderer")
+        Log.i(LOG_TAG, "Init Drag Racing Surface Renderer")
         applyMetricsFilter(Query.instance(QueryStrategyType.DRAG_RACING_QUERY))
     }
 }

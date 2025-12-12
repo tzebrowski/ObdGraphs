@@ -16,19 +16,32 @@
  */
 package org.obd.graphs.bl.drag
 
-
-val dragRacingResultRegistry: DragRacingResultRegistry by lazy { InMemoryDragRacingRegistry() }
+// Accessor for the singleton instance
+object DragRacingService {
+    val registry: DragRacingResultRegistry by lazy { InMemoryDragRacingRegistry() }
+}
 
 interface DragRacingResultRegistry {
     fun getResult(): DragRacingResults
+
+    // Updates
     fun update0100(metric: DragRacingMetric)
+
     fun update0160(metric: DragRacingMetric)
+
     fun update060(metric: DragRacingMetric)
+
     fun update100200(metric: DragRacingMetric)
+
     fun update60140(metric: DragRacingMetric)
+
+    // State
     fun readyToRace(value: Boolean)
+
     fun enableShiftLights(value: Boolean)
 
+    // Configuration
     fun getShiftLightsRevThreshold(): Int
+
     fun setShiftLightsRevThreshold(newThresholdValue: Int)
 }

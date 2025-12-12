@@ -214,17 +214,14 @@ class DragRacingMetricsProcessorTest {
         // Arrange
         every { metric.isVehicleSpeed() } returns true
 
-        // 1. Cruising below start speed (50 km/h)
         every { metric.toInt() } returns 100
         every { metric.timestamp } returns 1000L
         processor.postValue(metric)
 
-        // 2. Hit start speed (60 km/h)
         every { metric.toInt() } returns 160
         every { metric.timestamp } returns 4000L
         processor.postValue(metric)
 
-        // 3. Hit end speed (140 km/h)
         every { metric.toInt() } returns 200
         every { metric.timestamp } returns 12000L
         processor.postValue(metric)
@@ -263,11 +260,11 @@ class DragRacingMetricsProcessorTest {
         // The result should be 8000 - 3000 = 5000ms (New Run).
         // If the reset FAILED, it would be 8000 - 1000 = 7000ms (Old Run).
 
-//        // 1. Verify the NEW correct time was recorded
-        verify { registry.update100200(match { it.time == 7000L }) }
+        // 1. Verify the NEW correct time was recorded
+        verify { registry.update100200(match { it.time == 5000L }) }
 
         // 2. Verify the OLD time was NOT used (proving the reset worked)
-//        verify(exactly = 0) { registry.update100200(match { it.time == 7000L }) }
+        verify(exactly = 0) { registry.update100200(match { it.time == 7000L }) }
     }
 
     @Test
