@@ -83,7 +83,6 @@ class ProfileServiceTest {
         }
 
         mockkStatic("org.obd.graphs.ContextKt")
-
         val field = Class.forName("org.obd.graphs.ContextKt")
             .getDeclaredField("activityContext")
         field.isAccessible = true
