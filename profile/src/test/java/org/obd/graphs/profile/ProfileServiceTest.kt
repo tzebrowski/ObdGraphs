@@ -36,12 +36,12 @@ import java.util.Date
 import java.util.Locale
 import java.util.Properties
 
-class ProfilePreferencesBackendTest {
+class ProfileServiceTest {
 
     private val mockContext = mockk<android.content.ContextWrapper>(relaxed = true)
     private val sharedPrefs = mockk<SharedPreferences>(relaxed = true)
     private val editor = mockk<SharedPreferences.Editor>(relaxed = true)
-    private lateinit var profileBackend: ProfilePreferencesBackend
+    private lateinit var profileBackend: ProfileService
 
     @Before
     fun setup() {
@@ -94,8 +94,7 @@ class ProfilePreferencesBackendTest {
         // Stub other methods if needed
         every { anyConstructed<android.content.Intent>().putExtra(any<String>(), any<String>()) } returns mockk()
 
-        every { any<SharedPreferences.Editor>().updatePreference(any(), any()) } just Runs
-        profileBackend = ProfilePreferencesBackend()
+        profileBackend = ProfileService()
     }
 
     @After
@@ -166,9 +165,6 @@ class ProfilePreferencesBackendTest {
         // Assert
         verify {
             editor.updatePreference("profile_1.user_setting_1", "value1")
-        }
-
-        verify {
             editor.updatePreference("profile_1.pref.about.build", "value2")
         }
 

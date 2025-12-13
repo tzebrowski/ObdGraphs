@@ -24,17 +24,20 @@ const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
 const val PROFILES_PREF = "pref.profiles"
 const val PROFILE_ID_PREF = "pref.profile.id"
 
-val profile: Profile = ProfilePreferencesBackend()
+val profile: Profile = ProfileService()
 
 interface Profile {
+
+    fun restoreBackup()
+    fun restoreBackup(file: File)
+    fun exportBackup(): File?
+
+
 
     fun updateCurrentProfileName(newName: String)
     fun getAvailableProfiles(): Map<String, String?>
     fun getCurrentProfile(): String
     fun getCurrentProfileName(): String
-    fun restoreBackup()
-    fun restoreBackup(file: File)
-    fun exportBackup(): File?
     fun reset()
     fun init(versionCode: Int, defaultProfile: String, versionName: String)
     fun setupProfiles(forceOverrideRecommendation: Boolean = true)
