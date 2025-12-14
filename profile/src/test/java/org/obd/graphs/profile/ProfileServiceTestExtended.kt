@@ -16,99 +16,28 @@
  */
 package org.obd.graphs.profile
 
-import android.content.SharedPreferences
-import android.content.res.AssetManager
-import android.util.Log
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
-import io.mockk.mockk
-import io.mockk.mockkConstructor
 import io.mockk.mockkObject
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
 import io.mockk.verify
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updatePreference
-import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.ByteArrayInputStream
-import java.lang.ref.WeakReference
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class ProfileServiceTestExtended {
-    private lateinit var profileBackend: ProfileService
-    private val mockContext = mockk<android.content.ContextWrapper>(relaxed = true)
-
-    private val editor = mockk<SharedPreferences.Editor>(relaxed = true)
-    private val assetsMock = mockk<AssetManager>()
-
-    private val alfaProfileContent =
-        """
-        profile_3.pref.adapter.connection.type=bluetooth
-        profile_3.pref.adapter.power.switch_network_on_off=false
-        profile_3.pref.gauge_display_scale=true
-        profile_3.pref.gauge.fps="4"
-        profile_3.pref.adapter.id=
-        profile_3.pref.graph.view.enabled=true
-        profile_3.pref.pids.generic.high=[22, 7002, 13, 15]
-        profile_3.pref.adapter.init.protocol=CAN_29
-        profile_3.pref.dash.background_color_1=-6697984
-        pref.profile.names.profile_3=Alfa 2.0 GME (BT)
-        profile_3.pref.adapter.init.mode.header_value.mode_2=DA10F1
-        profile_3.pref.adapter.init.mode.id_value.mode_2="22"
-        profile_3.pref.aa.pids.selected=[7002, 7003, 7014, 7025]
-        """.trimIndent()
+internal class ProfileServiceTestExtended : TestSetup() {
 
     @Before
-    fun setup() {
-        // 1. Mock Android Log
-        mockkStatic(Log::class)
-        every { Log.v(any(), any()) } returns 0
-        every { Log.d(any(), any()) } returns 0
-        every { Log.i(any(), any()) } returns 0
-        every { Log.e(any(), any(), any()) } returns 0
-        every { Log.e(any(), any()) } returns 0
+    override fun setup() {
+        super.setup()
 
-        mockkStatic("org.obd.graphs.ContextKt")
-        val field = Class.forName("org.obd.graphs.ContextKt").getDeclaredField("activityContext")
-        field.isAccessible = true
-        field.set(null, WeakReference(mockContext))
-
-        every { mockContext.assets } returns assetsMock
-
-        // 2. Mock external dependencies used during restore
-        mockkStatic("org.obd.graphs.BroadcastKt") // For sendBroadcastEvent
-        every { sendBroadcastEvent(any()) } just Runs
-
-        mockkStatic("org.obd.graphs.AsyncKt")
-
-        every {
-            runAsync<Any?>(any(), any())
-        } answers {
-            // Retrieve the arguments passed to the function
-            val wait = arg<Boolean>(0)
-            val handler = arg<() -> Any?>(1)
-
-            // Execute the handler immediately on the TEST thread
-            val result = handler.invoke()
-
-            // Mimic the original logic:
-            // If wait=true, return the result. If wait=false, return null.
-            if (wait) {
-                result
-            } else {
-                null
-            }
-        }
-
-        // 3. Mock Prefs singleton
         mockkObject(Prefs)
         every { Prefs.edit() } returns editor
         every { Prefs.all } returns emptyMap()
@@ -125,17 +54,8 @@ class ProfileServiceTestExtended {
         every { editor.commit() } returns true
         every { editor.apply() } just Runs
 
-        mockkConstructor(android.content.Intent::class)
-        every { anyConstructed<android.content.Intent>().setAction(any()) } returns mockk()
-        // Stub other methods if needed
-        every { anyConstructed<android.content.Intent>().putExtra(any<String>(), any<String>()) } returns mockk()
-
         profileBackend = ProfileService()
-    }
 
-    @After
-    fun tearDown() {
-        unmockkAll()
     }
 
     @Test
@@ -146,8 +66,8 @@ class ProfileServiceTestExtended {
         every { assetsMock.open("alfa_2_0_gme.properties") } returns
             ByteArrayInputStream(alfaProfileContent.toByteArray(StandardCharsets.UTF_8))
 
-        val version = SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).format(Date())
-        profileBackend.init(1, "profile_2", version)
+        profileBackend.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
+            Locale.getDefault()).format(Date()))
 
         // Act
         profileBackend.setupProfiles(forceOverrideRecommendation = true)

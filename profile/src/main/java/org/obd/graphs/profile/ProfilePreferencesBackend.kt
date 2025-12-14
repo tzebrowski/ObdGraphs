@@ -365,7 +365,7 @@ internal class ProfilePreferencesBackend :
                 // clear all preferences
                 editor.clear()
             }
-            System.out.print("Files: " + files)
+
             files?.forEach { profileFile ->
                 Log.i(LOG_TAG, "Loading profile file='$profileFile'")
 
