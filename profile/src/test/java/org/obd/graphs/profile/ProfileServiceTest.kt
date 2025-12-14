@@ -211,7 +211,7 @@ internal class ProfileServiceTest :TestSetup() {
 
         // Assert
         // 1. Verify preferences were cleared first
-        verify(ordering = Ordering.ORDERED) {
+        verify {
             editor.clear()
             editor.putBoolean("restored.key.bool",true) // logic removes quotes
             editor.putString("restored.key.string", "restored_value") // logic removes quotes
