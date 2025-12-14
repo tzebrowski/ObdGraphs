@@ -377,9 +377,7 @@ internal class ProfilePreferencesBackend :
                         Log.i(LOG_TAG, "Updating profile.key=`$key=$value`")
 
                         when {
-                            value.isBoolean() -> {
-                                editor.putBoolean(key, value.toBoolean())
-                            }
+
 
                             value.isArray() -> {
                                 if (key.startsWith(getCurrentProfile())) {
@@ -390,13 +388,10 @@ internal class ProfilePreferencesBackend :
                                 editor.putStringSet(key, stringToStringSet(value))
                             }
 
-                            value.isNumeric() -> {
-                                editor.putInt(key, value.toInt())
-                            }
+                            value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
+                            value.isNumeric() -> editor.putInt(key, value.toInt())
+                            else ->  editor.putString(key, value.replace("\"", "").replace("\"", ""))
 
-                            else -> {
-                                editor.putString(key, value.replace("\"", "").replace("\"", ""))
-                            }
                         }
                     } else {
                         Log.i(LOG_TAG, "Skipping profile.key=`$key=$value`")
