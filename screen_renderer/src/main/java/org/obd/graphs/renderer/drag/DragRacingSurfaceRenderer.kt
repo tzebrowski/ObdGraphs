@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -36,7 +36,6 @@ import org.obd.graphs.renderer.ViewSettings
 
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
-
 internal data class DragRaceDetails(
     var ambientTemp: Metric? = null,
     var atmPressure: Metric? = null,
@@ -51,26 +50,31 @@ internal class DragRacingSurfaceRenderer(
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-    viewSettings: ViewSettings
+    viewSettings: ViewSettings,
 ) : CoreSurfaceRenderer(viewSettings) {
-
     private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
+
     override fun applyMetricsFilter(query: Query) {
         metricsCollector.applyFilter(
-            enabled = query.getIDs()
+            enabled = query.getIDs(),
         )
     }
 
-    override fun onDraw(canvas: Canvas, drawArea: Rect?) {
-
+    override fun onDraw(
+        canvas: Canvas,
+        drawArea: Rect?,
+    ) {
         drawArea?.let {
-
             val dragRaceResults = DragRacingService.registry.getResult()
             dragRacingDrawer.drawBackground(canvas, it)
 
-            val margin = if (settings.getDragRacingScreenSettings().shiftLightsEnabled || dragRaceResults.readyToRace)
-                SHIFT_LIGHTS_WIDTH else 0
+            val margin =
+                if (settings.getDragRacingScreenSettings().shiftLightsEnabled || dragRaceResults.readyToRace) {
+                    SHIFT_LIGHTS_WIDTH
+                } else {
+                    0
+                }
             val area = getArea(it, canvas, margin)
             var top = getTop(area)
             var left = dragRacingDrawer.getMarginLeft(area.left.toFloat())
@@ -79,8 +83,12 @@ internal class DragRacingSurfaceRenderer(
 
             if (settings.isStatusPanelEnabled()) {
                 dragRacingDrawer.drawStatusPanel(
-                    canvas, top, left, fps, metricsCollector,
-                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled
+                    canvas,
+                    top,
+                    left,
+                    fps,
+                    metricsCollector,
+                    drawContextInfo = settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled,
                 )
 
                 top += MARGIN_TOP
@@ -95,20 +103,26 @@ internal class DragRacingSurfaceRenderer(
                 area = area,
                 left = left,
                 pTop = top,
-                dragRacingResults = dragRaceResults, dragRaceDetails = dragRaceDetails.apply {
-                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
-                    ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
-                    atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
-                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                    intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                    vehicleSpeed = metricsCollector.getMetric(
-                        if (dataLoggerSettings.instance().gmeExtensionsEnabled)
-                            Pid.EXT_VEHICLE_SPEED_PID_ID else Pid.VEHICLE_SPEED_PID_ID
-                    )
-                })
+                dragRacingResults = dragRaceResults,
+                dragRaceDetails =
+                    dragRaceDetails.apply {
+                        gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
+                        ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
+                        atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
+                        torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+                        intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
+                        vehicleSpeed =
+                            metricsCollector.getMetric(
+                                if (dataLoggerSettings.instance().gmeExtensionsEnabled) {
+                                    Pid.EXT_VEHICLE_SPEED_PID_ID
+                                } else {
+                                    Pid.VEHICLE_SPEED_PID_ID
+                                },
+                            )
+                    },
+            )
         }
     }
-
 
     override fun recycle() {
         dragRacingDrawer.recycle()
