@@ -53,7 +53,7 @@ internal class ProfileServiceTest :TestSetup() {
         every { sharedPrefs.getString("pref.profile.names.profile_1", any()) } returns "User Profile 1"
 
         // Act
-        val profiles = profileBackend.getAvailableProfiles()
+        val profiles = profileService.getAvailableProfiles()
 
         // Assert
         assertEquals(20, profiles.size)
@@ -67,7 +67,7 @@ internal class ProfileServiceTest :TestSetup() {
         every { sharedPrefs.getString("pref.profile.id", "profile_1") } returns "profile_1"
 
         // Act
-        val current = profileBackend.getCurrentProfile()
+        val current = profileService.getCurrentProfile()
 
         // Assert
         assertEquals("profile_1", current)
@@ -80,7 +80,7 @@ internal class ProfileServiceTest :TestSetup() {
         every { sharedPrefs.getString("pref.profile.id", any()) } returns "profile_1"
 
         // Act
-        profileBackend.updateCurrentProfileName(newName)
+        profileService.updateCurrentProfileName(newName)
 
         // Assert
         verify {
@@ -104,7 +104,7 @@ internal class ProfileServiceTest :TestSetup() {
         every { sharedPrefs.all } returns mockMap
 
         // Act
-        profileBackend.saveCurrentProfile()
+        profileService.saveCurrentProfile()
 
         // Assert
         verify {
@@ -132,7 +132,7 @@ internal class ProfileServiceTest :TestSetup() {
         every { sharedPrefs.all } returns mockMap
 
         // Act
-        profileBackend.loadProfile(targetProfile)
+        profileService.loadProfile(targetProfile)
 
         // Assert
         verify { editor.remove("generic_setting") }
@@ -153,11 +153,11 @@ internal class ProfileServiceTest :TestSetup() {
         // Note: Check if your 'getContext' is in 'Context.kt' or similar.
         // If the test fails with "not mocked", check the file name where getContext is defined.
         mockkStatic("org.obd.graphs.ContextKt")
-        every { org.obd.graphs.getContext() } returns mockContext
+        every { org.obd.graphs.getContext() } returns context
 
         // 2. Setup a real temporary directory for the test
         val tempDir = java.nio.file.Files.createTempDirectory("backup_test").toFile()
-        every { mockContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) } returns tempDir
+        every { context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) } returns tempDir
 
         // 3. Stub the Preferences data to be exported
         val prefsData = mapOf(
@@ -168,7 +168,7 @@ internal class ProfileServiceTest :TestSetup() {
         every { sharedPrefs.all } returns prefsData
 
         // Act
-        val resultFile = profileBackend.exportBackup()
+        val resultFile = profileService.exportBackup()
 
         // Assert
         assertEquals("obd_graphs.backup", resultFile?.name)
@@ -207,7 +207,7 @@ internal class ProfileServiceTest :TestSetup() {
         // Mock string extension functions used for parsing (isBoolean, isNumeric, etc.)
         mockkStatic("org.obd.graphs.profile.StringExtKt")
         // Act
-        profileBackend.restoreBackup(tempFile)
+        profileService.restoreBackup(tempFile)
 
         // Assert
         // 1. Verify preferences were cleared first
@@ -230,15 +230,15 @@ internal class ProfileServiceTest :TestSetup() {
         // Arrange
         // Init needed for versionName used in reset->updateBuildSettings
         val version = SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).format(Date())
-        profileBackend.init(1, "profile_1", version)
+        profileService.init(1, "profile_1", version)
 
         // Mock AssetManager to return empty list so setupProfiles finishes quickly
         val assets = mockk<AssetManager>()
-        every { mockContext.assets } returns assets
+        every { context.assets } returns assets
         every { assets.list("") } returns emptyArray()
 
         // Act
-        profileBackend.reset()
+        profileService.reset()
 
         // Assert
         // 1. Verify installation key reset

@@ -54,7 +54,7 @@ internal class ProfileServiceTestExtended : TestSetup() {
         every { editor.commit() } returns true
         every { editor.apply() } just Runs
 
-        profileBackend = ProfileService()
+        profileService = ProfileService()
 
     }
 
@@ -62,15 +62,15 @@ internal class ProfileServiceTestExtended : TestSetup() {
     fun `test setupProfiles loads Alfa Romeo properties file correctly`() {
         // Arrange: Mock the file system to return the Alfa profile
 
-        every { assetsMock.list("") } returns arrayOf("alfa_2_0_gme.properties")
-        every { assetsMock.open("alfa_2_0_gme.properties") } returns
+        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties")
+        every { assets.open("alfa_2_0_gme.properties") } returns
             ByteArrayInputStream(alfaProfileContent.toByteArray(StandardCharsets.UTF_8))
 
-        profileBackend.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
+        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
 
         // Act
-        profileBackend.setupProfiles(forceOverrideRecommendation = true)
+        profileService.setupProfiles(forceOverrideRecommendation = true)
 
         // Assert: Verify specific keys from the file were saved
 
@@ -106,7 +106,7 @@ internal class ProfileServiceTestExtended : TestSetup() {
         every { Prefs.all } returns storedPrefs
 
         // Act
-        profileBackend.loadProfile(profileName)
+        profileService.loadProfile(profileName)
 
         // Assert: The specific keys should be copied to the root (stripping "profile_3.")
 
@@ -138,7 +138,7 @@ internal class ProfileServiceTestExtended : TestSetup() {
         every { Prefs.all } returns currentRootPrefs
 
         // Act
-        profileBackend.saveCurrentProfile()
+        profileService.saveCurrentProfile()
 
         // Assert
         // Verify the user's change was written back to "profile_3.pref.adapter.init.protocol"

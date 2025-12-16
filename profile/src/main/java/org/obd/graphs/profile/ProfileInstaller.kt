@@ -106,7 +106,7 @@ internal class ProfileInstaller(
 
     private fun parseValue(value: String): Any =
         when {
-            value.isBoolean() -> value.toBooleanStrict()
+            value.isBoolean() -> value.toBoolean()
             value.isNumeric() -> value.toInt()
             value.isArray() ->
                 value

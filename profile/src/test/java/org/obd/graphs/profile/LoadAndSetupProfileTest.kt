@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-internal class ProfileFilesIntegrationTest : TestSetup() {
+internal class LoadAndSetupProfileTest : TestSetup() {
 
     private val ALFA_2_0_GME_CONTENT = """
         profile_3.pref.adapter.connection.type=bluetooth
@@ -50,9 +50,8 @@ internal class ProfileFilesIntegrationTest : TestSetup() {
     @Before
     override fun setup() {
         super.setup()
-       // mockkObject(Prefs)
-        mockkStatic("org.obd.graphs.preferences.PreferencesKt")
 
+        mockkStatic("org.obd.graphs.preferences.PreferencesKt")
         every { Prefs } returns sharedPrefs
         every { Prefs.all } returns emptyMap()
         every { Prefs.edit() } returns editor
@@ -77,23 +76,23 @@ internal class ProfileFilesIntegrationTest : TestSetup() {
 
 
         // Mock AssetManager to return our file names and content
-        every { assetsMock.list("") } returns arrayOf("alfa_2_0_gme.properties", "alfa_175_tbi.properties")
+        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties", "alfa_175_tbi.properties")
 
-        every { assetsMock.open("alfa_2_0_gme.properties") } answers {
+        every { assets.open("alfa_2_0_gme.properties") } answers {
             ByteArrayInputStream(ALFA_2_0_GME_CONTENT.toByteArray())
         }
-        every { assetsMock.open("alfa_175_tbi.properties") } answers {
+        every { assets.open("alfa_175_tbi.properties") } answers {
             ByteArrayInputStream(ALFA_175_TBI_CONTENT.toByteArray())
         }
     }
 
     @Test
     fun `setupProfiles parses 'Alfa 2_0 GME' properties and loads them into preferences`() {
-        profileBackend.init(1, "profile_3", SimpleDateFormat("yyyyMMdd.HHmm",
+        profileService.init(1, "profile_3", SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
 
         // When
-        profileBackend.setupProfiles(forceOverrideRecommendation = true)
+        profileService.setupProfiles(forceOverrideRecommendation = true)
 
         // Then
         verify {
@@ -118,11 +117,11 @@ internal class ProfileFilesIntegrationTest : TestSetup() {
 
     @Test
     fun `setupProfiles parses 'Alfa 175 TBI' properties correctly`() {
-        profileBackend.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
+        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
 
         // When
-        profileBackend.setupProfiles(forceOverrideRecommendation = true)
+        profileService.setupProfiles(forceOverrideRecommendation = true)
 
         // Then
         // Verify key specific to file 2: profile_2.pref.adapter.batch.size="8"
@@ -146,7 +145,7 @@ internal class ProfileFilesIntegrationTest : TestSetup() {
         every { Prefs.all } returns simulatedPrefs
 
         // When
-        profileBackend.loadProfile(targetProfile)
+        profileService.loadProfile(targetProfile)
 
         // Then
         // 1. Verify connection type is promoted to root preference
@@ -176,7 +175,7 @@ internal class ProfileFilesIntegrationTest : TestSetup() {
         every { Prefs.all } returns simulatedPrefs
 
         // When
-        profileBackend.loadProfile(targetProfile)
+        profileService.loadProfile(targetProfile)
 
         // Then
         // Verify we loaded the WIFI setting from profile 2

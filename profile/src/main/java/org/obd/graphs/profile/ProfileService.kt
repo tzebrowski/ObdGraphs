@@ -73,16 +73,24 @@ internal class ProfileService : Profile, SharedPreferences.OnSharedPreferenceCha
     override fun getCurrentProfileName(): String =
         repository.getString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", "")
 
-    override fun setupProfiles(forceOverrideRecommendation: Boolean)  =
+    override fun setupProfiles(forceOverrideRecommendation: Boolean) {
         try {
             isBulkAction = true
             val installationKey = "$INSTALLATION_KEY_PREFIX.$versionCode"
             installer.install(forceOverrideRecommendation, installationKey, defaultProfile)
+            updateCurrentProfileNameCache(defaultProfile)
             updateBuildSettings()
+
+            if (forceOverrideRecommendation) {
+                val defaultProfile = getCurrentProfile()
+                Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
+                loadProfile((getCurrentProfile()))
+            }
+
         } finally {
             isBulkAction = false
         }
-
+    }
 
     override fun saveCurrentProfile() {
         try {
@@ -98,6 +106,8 @@ internal class ProfileService : Profile, SharedPreferences.OnSharedPreferenceCha
 
             repository.updateBatch(updates)
             Log.i(LOG_TAG, "Saved profile: $currentProfile")
+
+
         } finally {
             isBulkAction = false
         }

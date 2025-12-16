@@ -36,11 +36,11 @@ import java.io.File
 import java.lang.ref.WeakReference
 
 internal abstract class TestSetup {
-    protected lateinit var profileBackend: ProfileService
-    protected val mockContext = mockk<android.content.ContextWrapper>(relaxed = true)
+    protected lateinit var profileService: Profile
+    protected val context = mockk<android.content.ContextWrapper>(relaxed = true)
     protected val sharedPrefs = mockk<SharedPreferences>(relaxed = true)
     protected val editor = mockk<SharedPreferences.Editor>(relaxed = true)
-    protected val assetsMock = mockk<AssetManager>()
+    protected val assets = mockk<AssetManager>()
 
     protected val alfaProfileContent =
         """
@@ -64,11 +64,11 @@ internal abstract class TestSetup {
         mockLog()
         mockAsync()
         mockContext()
-        every { mockContext.assets } returns assetsMock
+        every { context.assets } returns assets
         mockFunction()
         mockIntent()
         mockEnvironment()
-        profileBackend = ProfileService()
+        profileService = ProfileService()
     }
 
     private fun mockIntent() {
@@ -97,7 +97,7 @@ internal abstract class TestSetup {
                 .forName("org.obd.graphs.ContextKt")
                 .getDeclaredField("activityContext")
         field.isAccessible = true
-        field.set(null, WeakReference(mockContext))
+        field.set(null, WeakReference(context))
     }
 
     private fun mockLog() {
@@ -131,70 +131,6 @@ internal abstract class TestSetup {
             }
         }
     }
-
-//    @Before
-//    fun setup() {
-//
-//        mockkStatic("org.obd.graphs.preferences.PreferencesKt")
-//        every { Prefs } returns sharedPrefs
-//
-//        every { Prefs.edit() } returns editor
-//        every { Prefs.all } returns emptyMap()
-//        every { Prefs.getString(any(), any()) } answers { secondArg() as String }
-// //        every { Prefs.getBoolean(any(), any()) } returns false // Default to false for installation check
-// //        every { Prefs.registerOnSharedPreferenceChangeListener(any()) } just Runs
-//
-//        // 1. Mock Android Log
-//        mockkStatic(Log::class)
-//        every { Log.v(any(), any()) } returns 0
-//        every { Log.d(any(), any()) } returns 0
-//        every { Log.i(any(), any()) } returns 0
-//        every { Log.e(any(), any(), any()) } returns 0
-//        every { Log.e(any(), any()) } returns 0
-//
-//        mockkStatic("org.obd.graphs.ContextKt")
-//        val field = Class.forName("org.obd.graphs.ContextKt").getDeclaredField("activityContext")
-//        field.isAccessible = true
-//        field.set(null, WeakReference(mockContext))
-//        every { mockContext.assets } returns assetsMock
-//
-//        // 2. Mock external dependencies used during restore
-//        mockkStatic("org.obd.graphs.BroadcastKt") // For sendBroadcastEvent
-//        every { sendBroadcastEvent(any()) } just Runs
-//
-//        mockkStatic("org.obd.graphs.AsyncKt")
-//
-//        every {
-//            runAsync<Any?>(any(), any())
-//        } answers {
-//            // Retrieve the arguments passed to the function
-//            val wait = arg<Boolean>(0)
-//            val handler = arg<() -> Any?>(1)
-//
-//            // Execute the handler immediately on the TEST thread
-//            val result = handler.invoke()
-//
-//            // Mimic the original logic:
-//            // If wait=true, return the result. If wait=false, return null.
-//            if (wait) {
-//                result
-//            } else {
-//                null
-//            }
-//        }
-//
-//        mockkConstructor(android.content.Intent::class)
-//        every { anyConstructed<android.content.Intent>().setAction(any()) } returns mockk()
-//        // Stub other methods if needed
-//        every { anyConstructed<android.content.Intent>().putExtra(any<String>(), any<String>()) } returns mockk()
-//
-// //        mockkStatic(Environment::class)
-// //        every { Environment.getExternalStorageState() } returns Environment.MEDIA_MOUNTED
-// //        every { Environment.getExternalStorageState(any()) } returns Environment.MEDIA_MOUNTED
-// //        every { Environment.getExternalStorageDirectory() } returns java.io.File("/tmp/mock_storage")
-//
-//        profileBackend = ProfileService()
-//    }
 
     @After
     fun tearDown() {
