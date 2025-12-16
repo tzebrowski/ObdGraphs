@@ -27,31 +27,8 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updatePreference
 import org.obd.graphs.sendBroadcastEvent
 import java.io.ByteArrayInputStream
-import java.nio.charset.StandardCharsets
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-internal class ProfileServiceTestExtended : TestSetup() {
-
-    private val ALFA_2_0_GME_CONTENT = """
-        profile_3.pref.adapter.connection.type=bluetooth
-        profile_3.pref.adapter.power.switch_network_on_off=false
-        profile_3.pref.pids.generic.high=[22, 7002, 13, 15]
-        profile_3.pref.adapter.init.delay="500"
-        profile_3.pref.profile.id=profile_3
-        pref.profile.names.profile_3=Alfa 2.0 GME (BT)
-        profile_3.pref.profile.about=This profile contains Alfa Romeo 2.0 GME ECU specific settings.
-    """.trimIndent()
-
-    private val ALFA_175_TBI_CONTENT = """
-        profile_2.pref.adapter.connection.type=wifi
-        profile_2.pref.adapter.batch.size="8"
-        profile_2.pref.gauge.pids.selected=[22, 6075, 6011]
-        profile_2.pref.profile.id=profile_2
-        pref.profile.names.profile_2=Alfa 1.75 TBI (BT)
-        profile_2.pref.adapter.power.connect_adapter=true
-    """.trimIndent()
+internal class LoadProfilesTest : TestSetup() {
 
     @Before
     override fun setup() {
@@ -141,83 +118,7 @@ internal class ProfileServiceTestExtended : TestSetup() {
         verify(exactly = 0) { editor.updatePreference("pref.adapter.connection.type", "bluetooth") }
     }
 
-    @Test
-    fun `setupProfiles parses 'Alfa 175 TBI' properties correctly`() {
-        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
 
-        // When
-        profileService.setupProfiles(forceOverrideRecommendation = true)
-
-        // Then
-        // Verify key specific to file 2: profile_2.pref.adapter.batch.size="8"
-        verify { editor.putString("profile_2.pref.adapter.batch.size", "8") }
-//
-        // Verify boolean: profile_2.pref.adapter.power.connect_adapter=true
-        verify { editor.putBoolean("profile_2.pref.adapter.power.connect_adapter", true) }
-    }
-
-    @Test
-    fun `setupProfiles parses 'Alfa 2_0 GME' properties and loads them into preferences`() {
-        profileService.init(1, "profile_3", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
-
-        // When
-        profileService.setupProfiles(forceOverrideRecommendation = true)
-
-        // Then
-        verify {
-            // 1. Verify standard string property
-            editor.putString("profile_3.pref.adapter.connection.type", "bluetooth")
-
-            // 2. Verify numeric property (parsed as Int)
-            // profile_3.pref.adapter.init.delay="500"
-            editor.putString("profile_3.pref.adapter.init.delay", "500")
-
-            // 3. Verify boolean property
-            // profile_3.pref.adapter.power.switch_network_on_off=false
-            editor.putBoolean("profile_3.pref.adapter.power.switch_network_on_off", false)
-
-
-
-            // 5. Verify Profile Name registration
-            // pref.profile.names.profile_3=Alfa 2.0 GME (BT)
-//            editor.updatePreference("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)")
-        }
-    }
-
-    @Test
-    fun `test setupProfiles loads Alfa Romeo properties file correctly`() {
-        // Arrange: Mock the file system to return the Alfa profile
-
-        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties")
-        every { assets.open("alfa_2_0_gme.properties") } returns
-            ByteArrayInputStream(alfaProfileContent.toByteArray(StandardCharsets.UTF_8))
-
-        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
-            Locale.getDefault()).format(Date()))
-
-        // Act
-        profileService.setupProfiles(forceOverrideRecommendation = true)
-
-        // Assert: Verify specific keys from the file were saved
-
-        // 1. Verify boolean parsing
-        verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
-
-        // 2. Verify string parsing (removing quotes)
-        verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
-
-        // 3. Verify standard string
-        verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
-
-        // 4. Verify Array parsing (converting [x, y, z] to Set)
-        val expectedSet = setOf("22", "7002", "13", "15")
-        verify { editor.putStringSet("profile_3.pref.pids.generic.high", expectedSet) }
-
-        // 5. Verify the profile name was set
-        verify { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
-    }
 
     @Test
     fun `test loadProfile('profile_3') switches to Alfa settings`() {
@@ -249,28 +150,5 @@ internal class ProfileServiceTestExtended : TestSetup() {
 
         // 4. Verify broadcast
         verify { sendBroadcastEvent(PROFILE_CHANGED_EVENT) }
-    }
-
-    @Test
-    fun `test saveCurrentProfile saves root changes back to profile_3`() {
-        // Arrange: We are currently in profile_3
-        every { Prefs.getString("pref.profile.id", any()) } returns "profile_3"
-
-        // Simulating the root preferences (what the app is currently using)
-        val currentRootPrefs =
-            mapOf(
-                "pref.adapter.init.protocol" to "CAN_11_MODIFIED", // User changed this
-                "pref.gauge.fps" to "10",
-                "profile_3.pref.original" to "original", // Should be ignored
-            )
-        every { Prefs.all } returns currentRootPrefs
-
-        // Act
-        profileService.saveCurrentProfile()
-
-        // Assert
-        // Verify the user's change was written back to "profile_3.pref.adapter.init.protocol"
-        verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_11_MODIFIED") }
-        verify { editor.updatePreference("profile_3.pref.gauge.fps", "10") }
     }
 }

@@ -16,23 +16,29 @@
  */
 package org.obd.graphs.profile
 
- import android.content.res.AssetManager
-import io.mockk.*
-import org.junit.Assert.assertEquals
-import org.junit.Test
-import org.obd.graphs.preferences.updatePreference
+import android.content.res.AssetManager
 import android.os.Environment
- import org.junit.Before
- import org.obd.graphs.preferences.Prefs
- import java.io.File
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
+import io.mockk.verify
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.updatePreference
+import java.io.ByteArrayInputStream
+import java.io.File
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Properties
 
-internal class ProfileServiceTest :TestSetup() {
-
+internal class ProfileServiceTest : TestSetup() {
     @Before
     override fun setup() {
         super.setup()
@@ -95,12 +101,13 @@ internal class ProfileServiceTest :TestSetup() {
         every { sharedPrefs.getString("pref.profile.id", any()) } returns currentProfile
 
         // Simulate existing preferences
-        val mockMap = mapOf(
-            "user_setting_1" to "value1",
-            "profile_2.setting" to "ignore_me",
-            "pref.profile.names.p1" to "ignore_me",
-            "pref.about.build" to "value2"
-        )
+        val mockMap =
+            mapOf(
+                "user_setting_1" to "value1",
+                "profile_2.setting" to "ignore_me",
+                "pref.profile.names.p1" to "ignore_me",
+                "pref.about.build" to "value2",
+            )
         every { sharedPrefs.all } returns mockMap
 
         // Act
@@ -123,12 +130,13 @@ internal class ProfileServiceTest :TestSetup() {
         // Arrange
         val targetProfile = "profile_2"
 
-        val mockMap = mapOf(
-            "profile_2.engine_type" to "V8",
-            "profile_2.color" to "Red",
-            "profile_1.engine_type" to "V6",
-            "generic_setting" to "default"
-        )
+        val mockMap =
+            mapOf(
+                "profile_2.engine_type" to "V8",
+                "profile_2.color" to "Red",
+                "profile_1.engine_type" to "V6",
+                "generic_setting" to "default",
+            )
         every { sharedPrefs.all } returns mockMap
 
         // Act
@@ -156,15 +164,19 @@ internal class ProfileServiceTest :TestSetup() {
         every { org.obd.graphs.getContext() } returns context
 
         // 2. Setup a real temporary directory for the test
-        val tempDir = java.nio.file.Files.createTempDirectory("backup_test").toFile()
+        val tempDir =
+            java.nio.file.Files
+                .createTempDirectory("backup_test")
+                .toFile()
         every { context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) } returns tempDir
 
         // 3. Stub the Preferences data to be exported
-        val prefsData = mapOf(
-            "user.pref.1" to "some_value",
-            "user.pref.int" to 123,
-            "user.pref.bool" to true
-        )
+        val prefsData =
+            mapOf(
+                "user.pref.1" to "some_value",
+                "user.pref.int" to 123,
+                "user.pref.bool" to true,
+            )
         every { sharedPrefs.all } returns prefsData
 
         // Act
@@ -189,11 +201,12 @@ internal class ProfileServiceTest :TestSetup() {
         // Arrange
         // 1. Create a real temporary backup file
         val tempFile = File.createTempFile("test_backup", ".properties")
-        val backupProps = Properties().apply {
-            setProperty("restored.key.string", "\"restored_value\"") // Strings are quoted in backup
-            setProperty("restored.key.int", "999")
-            setProperty("restored.key.bool", "true")
-        }
+        val backupProps =
+            Properties().apply {
+                setProperty("restored.key.string", "\"restored_value\"") // Strings are quoted in backup
+                setProperty("restored.key.int", "999")
+                setProperty("restored.key.bool", "true")
+            }
         java.io.FileOutputStream(tempFile).use { backupProps.store(it, null) }
 
         // 2. Mock external dependencies used during restore
@@ -202,7 +215,10 @@ internal class ProfileServiceTest :TestSetup() {
 
         // Mock the diagnosticRequestIDMapper object used in 'allowedToOverride()'
         mockkObject(org.obd.graphs.diagnosticRequestIDMapper)
-        every { org.obd.graphs.diagnosticRequestIDMapper.getValuePreferenceName() } returns "mock_mapper_pref"
+        every {
+            org.obd.graphs.diagnosticRequestIDMapper
+                .getValuePreferenceName()
+        } returns "mock_mapper_pref"
 
         // Mock string extension functions used for parsing (isBoolean, isNumeric, etc.)
         mockkStatic("org.obd.graphs.profile.StringExtKt")
@@ -213,7 +229,7 @@ internal class ProfileServiceTest :TestSetup() {
         // 1. Verify preferences were cleared first
         verify {
             editor.clear()
-            editor.putBoolean("restored.key.bool",true) // logic removes quotes
+            editor.putBoolean("restored.key.bool", true) // logic removes quotes
             editor.putString("restored.key.string", "restored_value") // logic removes quotes
             editor.putInt("restored.key.int", 999)
             editor.putString("pref.profile.id", "profile_1")
@@ -225,7 +241,58 @@ internal class ProfileServiceTest :TestSetup() {
         verify { org.obd.graphs.sendBroadcastEvent("data.logger.profile.changed.event") }
     }
 
-//    @Test
+    @Test
+    fun `test saveCurrentProfile saves root changes back to profile_3`() {
+        mockkObject(Prefs)
+        every { Prefs.edit() } returns editor
+        every { Prefs.all } returns emptyMap()
+        every { Prefs.getString(any(), any()) } answers { secondArg() as String }
+        every { Prefs.getBoolean(any(), any()) } returns false // Default to false for installation check
+        every { Prefs.registerOnSharedPreferenceChangeListener(any()) } just Runs
+
+        // Mock Editor
+        every { editor.putString(any(), any()) } returns editor
+        every { editor.putBoolean(any(), any()) } returns editor
+        every { editor.putInt(any(), any()) } returns editor
+        every { editor.putStringSet(any(), any()) } returns editor
+        every { editor.remove(any()) } returns editor
+        every { editor.commit() } returns true
+        every { editor.apply() } just Runs
+
+        // Mock AssetManager to return our file names and content
+        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties", "alfa_175_tbi.properties")
+
+        every { assets.open("alfa_2_0_gme.properties") } answers {
+            ByteArrayInputStream(ALFA_2_0_GME_CONTENT.toByteArray())
+        }
+        every { assets.open("alfa_175_tbi.properties") } answers {
+            ByteArrayInputStream(ALFA_175_TBI_CONTENT.toByteArray())
+        }
+
+        profileService = ProfileService()
+
+        // Arrange: We are currently in profile_3
+        every { Prefs.getString("pref.profile.id", any()) } returns "profile_3"
+
+        // Simulating the root preferences (what the app is currently using)
+        val currentRootPrefs =
+            mapOf(
+                "pref.adapter.init.protocol" to "CAN_11_MODIFIED", // User changed this
+                "pref.gauge.fps" to "10",
+                "profile_3.pref.original" to "original", // Should be ignored
+            )
+        every { Prefs.all } returns currentRootPrefs
+
+        // Act
+        profileService.saveCurrentProfile()
+
+        // Assert
+        // Verify the user's change was written back to "profile_3.pref.adapter.init.protocol"
+        verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_11_MODIFIED") }
+        verify { editor.updatePreference("profile_3.pref.gauge.fps", "10") }
+    }
+
+    //    @Test
     fun `reset clears state, resets profile, and broadcasts event`() {
         // Arrange
         // Init needed for versionName used in reset->updateBuildSettings

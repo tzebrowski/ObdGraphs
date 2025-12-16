@@ -59,6 +59,25 @@ internal abstract class TestSetup {
         profile_3.pref.aa.pids.selected=[7002, 7003, 7014, 7025]
         """.trimIndent()
 
+    protected val ALFA_2_0_GME_CONTENT = """
+        profile_3.pref.adapter.connection.type=bluetooth
+        profile_3.pref.adapter.power.switch_network_on_off=false
+        profile_3.pref.pids.generic.high=[22, 7002, 13, 15]
+        profile_3.pref.adapter.init.delay="500"
+        profile_3.pref.profile.id=profile_3
+        pref.profile.names.profile_3=Alfa 2.0 GME (BT)
+        profile_3.pref.profile.about=This profile contains Alfa Romeo 2.0 GME ECU specific settings.
+    """.trimIndent()
+
+    protected val ALFA_175_TBI_CONTENT = """
+        profile_2.pref.adapter.connection.type=wifi
+        profile_2.pref.adapter.batch.size="8"
+        profile_2.pref.gauge.pids.selected=[22, 6075, 6011]
+        profile_2.pref.profile.id=profile_2
+        pref.profile.names.profile_2=Alfa 1.75 TBI (BT)
+        profile_2.pref.adapter.power.connect_adapter=true
+    """.trimIndent()
+
     @Before
     open fun setup() {
         mockLog()
