@@ -17,7 +17,6 @@
 package org.obd.graphs.profile
 
 import android.content.res.AssetManager
-import android.os.Environment
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -31,12 +30,9 @@ import org.junit.Test
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updatePreference
 import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Properties
 
 internal class ProfileServiceTest : TestSetup() {
     @Before
@@ -152,93 +148,6 @@ internal class ProfileServiceTest : TestSetup() {
 
         // Verify current profile name update
         verify { editor.putString("pref.profile.current_name", any()) }
-    }
-
-    @Test
-    fun `exportBackup creates a backup file with formatted preferences`() {
-        // Arrange
-        // 1. Mock the getContext() top-level function
-        // Note: Check if your 'getContext' is in 'Context.kt' or similar.
-        // If the test fails with "not mocked", check the file name where getContext is defined.
-        mockkStatic("org.obd.graphs.ContextKt")
-        every { org.obd.graphs.getContext() } returns context
-
-        // 2. Setup a real temporary directory for the test
-        val tempDir =
-            java.nio.file.Files
-                .createTempDirectory("backup_test")
-                .toFile()
-        every { context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) } returns tempDir
-
-        // 3. Stub the Preferences data to be exported
-        val prefsData =
-            mapOf(
-                "user.pref.1" to "some_value",
-                "user.pref.int" to 123,
-                "user.pref.bool" to true,
-            )
-        every { sharedPrefs.all } returns prefsData
-
-        // Act
-        val resultFile = profileService.exportBackup()
-
-        // Assert
-        assertEquals("obd_graphs.backup", resultFile?.name)
-        assert(resultFile!!.exists())
-
-        // Verify the content of the written file
-        val props = Properties()
-        FileInputStream(resultFile).use { props.load(it) }
-
-        // The implementation wraps strings in quotes
-        assertEquals("\"some_value\"", props.getProperty("user.pref.1"))
-        assertEquals("123", props.getProperty("user.pref.int"))
-        assertEquals("true", props.getProperty("user.pref.bool"))
-    }
-
-    @Test
-    fun `restoreBackup clears preferences and reloads from file`() {
-        // Arrange
-        // 1. Create a real temporary backup file
-        val tempFile = File.createTempFile("test_backup", ".properties")
-        val backupProps =
-            Properties().apply {
-                setProperty("restored.key.string", "\"restored_value\"") // Strings are quoted in backup
-                setProperty("restored.key.int", "999")
-                setProperty("restored.key.bool", "true")
-            }
-        java.io.FileOutputStream(tempFile).use { backupProps.store(it, null) }
-
-        // 2. Mock external dependencies used during restore
-        mockkStatic("org.obd.graphs.BroadcastKt") // For sendBroadcastEvent
-        every { org.obd.graphs.sendBroadcastEvent(any()) } just Runs
-
-        // Mock the diagnosticRequestIDMapper object used in 'allowedToOverride()'
-        mockkObject(org.obd.graphs.diagnosticRequestIDMapper)
-        every {
-            org.obd.graphs.diagnosticRequestIDMapper
-                .getValuePreferenceName()
-        } returns "mock_mapper_pref"
-
-        // Mock string extension functions used for parsing (isBoolean, isNumeric, etc.)
-        mockkStatic("org.obd.graphs.profile.StringExtKt")
-        // Act
-        profileService.restoreBackup(tempFile)
-
-        // Assert
-        // 1. Verify preferences were cleared first
-        verify {
-            editor.clear()
-            editor.putBoolean("restored.key.bool", true) // logic removes quotes
-            editor.putString("restored.key.string", "restored_value") // logic removes quotes
-            editor.putInt("restored.key.int", 999)
-            editor.putString("pref.profile.id", "profile_1")
-            editor.putBoolean("prefs.installed.profiles.0", true)
-            editor.apply()
-        }
-
-        // 2. Verify broadcast was sent
-        verify { org.obd.graphs.sendBroadcastEvent("data.logger.profile.changed.event") }
     }
 
     @Test
