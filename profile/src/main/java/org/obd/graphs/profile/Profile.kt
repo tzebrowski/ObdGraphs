@@ -32,8 +32,6 @@ interface Profile {
     fun restoreBackup(file: File)
     fun exportBackup(): File?
 
-
-
     fun updateCurrentProfileName(newName: String)
     fun getAvailableProfiles(): Map<String, String?>
     fun getCurrentProfile(): String

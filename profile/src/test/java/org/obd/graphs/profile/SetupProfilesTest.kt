@@ -63,9 +63,6 @@ internal class SetupProfilesTest : TestSetup() {
         every { assets.open("alfa_175_tbi.properties") } answers {
             ByteArrayInputStream(ALFA_175_TBI_CONTENT.toByteArray())
         }
-
-        profileService = ProfileService()
-
     }
 
 
@@ -131,6 +128,9 @@ internal class SetupProfilesTest : TestSetup() {
     @Test
     fun `setupProfiles should force reload if forceOverride is true`() {
         // GIVEN
+        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
+            Locale.getDefault()).format(Date()))
+
         val testProfileFile = "profile_1.properties"
         val profileContent = "pref.some.key=value"
         val installationKey = "prefs.installed.profiles.1"
@@ -199,18 +199,17 @@ internal class SetupProfilesTest : TestSetup() {
     }
 
     @Test
-    fun `test setupProfiles loads Alfa Romeo properties file correctly`() {
-        // Arrange: Mock the file system to return the Alfa profile
+    fun `test setupProfiles empty installation key and forceOverrideRecommendation is false`() {
+        //GIVEN
+        mockInstallationKey(false)
 
-        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties")
-        every { assets.open("alfa_2_0_gme.properties") } returns
-            ByteArrayInputStream(alfaProfileContent.toByteArray(StandardCharsets.UTF_8))
+        mockPropertiesFiles()
 
         profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
 
         // Act
-        profileService.setupProfiles(forceOverrideRecommendation = true)
+        profileService.setupProfiles(forceOverrideRecommendation = false)
 
         // Assert: Verify specific keys from the file were saved
 
@@ -230,4 +229,43 @@ internal class SetupProfilesTest : TestSetup() {
         // 5. Verify the profile name was set
         verify { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
     }
+
+    @Test
+    fun `test setupProfiles installation key present and forceOverrideRecommendation is disabled`() {
+        //GIVEN
+        mockInstallationKey(true)
+        mockPropertiesFiles()
+
+        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
+            Locale.getDefault()).format(Date()))
+
+        // Act
+        profileService.setupProfiles(forceOverrideRecommendation = false)
+
+        // 1. Verify boolean parsing
+        verify(atLeast = 0) { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
+
+        // 2. Verify string parsing (removing quotes)
+        verify(atLeast = 0) { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
+
+        // 3. Verify standard string
+        verify(atLeast = 0) { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
+
+        // 4. Verify Array parsing (converting [x, y, z] to Set)
+        val expectedSet = setOf("22", "7002", "13", "15")
+        verify(atLeast = 0) { editor.putStringSet("profile_3.pref.pids.generic.high", expectedSet) }
+
+        // 5. Verify the profile name was set
+        verify(atLeast = 0) { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
+    }
+
+    private fun mockPropertiesFiles() {
+        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties")
+        every { assets.open("alfa_2_0_gme.properties") } returns
+                ByteArrayInputStream(alfaProfileContent.toByteArray(StandardCharsets.UTF_8))
+    }
+
+    private fun mockInstallationKey(keyPresent: Boolean = false) =
+        every { Prefs.getBoolean("prefs.installed.profiles.1", false) } returns keyPresent
+
 }
