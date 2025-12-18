@@ -375,10 +375,7 @@ internal class ProfilePreferencesBackend :
 
                     if (forceOverride || !allPrefs.keys.contains(key) || allowedToOverride().any { key.contains(it) }) {
                         Log.i(LOG_TAG, "Updating profile.key=`$key=$value`")
-
                         when {
-
-
                             value.isArray() -> {
                                 if (key.startsWith(getCurrentProfile())) {
                                     val currentProfilePropName = key.substring(getCurrentProfile().length + 1, key.length)

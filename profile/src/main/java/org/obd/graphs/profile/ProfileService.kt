@@ -56,6 +56,7 @@ internal class ProfileService : Profile, SharedPreferences.OnSharedPreferenceCha
 
     override fun updateCurrentProfileName(newName: String) {
         val key = "$PROFILE_NAME_PREFIX.${getCurrentProfile()}"
+        System.out.println(key + "   " + newName)
         repository.update(key, newName)
         updateCurrentProfileNameCache(newName)
     }
@@ -84,7 +85,7 @@ internal class ProfileService : Profile, SharedPreferences.OnSharedPreferenceCha
             if (forceOverrideRecommendation) {
                 val defaultProfile = getCurrentProfile()
                 Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
-                loadProfile((getCurrentProfile()))
+                loadProfile(getCurrentProfile())
             }
 
         } finally {

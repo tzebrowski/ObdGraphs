@@ -30,6 +30,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Before
+import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
@@ -88,7 +89,17 @@ internal abstract class TestSetup {
         mockIntent()
         mockEnvironment()
         profileService = ProfileService()
+//        profileService = ProfilePreferencesBackend()
     }
+
+
+    protected fun mockPrefsAll() =
+        every { Prefs.all } returns mapOf(
+            "pref.adapter.connection.type" to "bluetooth",
+            "pref.adapter.init.delay" to "500", // stored as string in map usually
+            "pref.pids.generic.high" to "[22, 7002, 13, 15]",
+            "pref.profile.names.profile_3" to "Alfa 2.0 GME (BT)"
+        )
 
     private fun mockIntent() {
         mockkConstructor(Intent::class)
@@ -127,6 +138,7 @@ internal abstract class TestSetup {
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
     }
+
 
     private fun mockAsync() {
         mockkStatic("org.obd.graphs.AsyncKt")

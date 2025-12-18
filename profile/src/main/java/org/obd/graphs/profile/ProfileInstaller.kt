@@ -26,11 +26,16 @@ internal class ProfileInstaller(
     private val repository: ProfileRepository,
 ) {
     fun install(
-        forceOverride: Boolean,
+        forceOverrideRecommendation: Boolean,
         installationKey: String,
         defaultProfile: String,
     ) {
         val isInstalled = repository.getAll().containsKey(installationKey)
+        var forceOverride = forceOverrideRecommendation
+
+        if (!isInstalled){
+            forceOverride = true
+        }
 
         if (!isInstalled || forceOverride) {
             Log.i(LOG_TAG, "Starting profile installation. Force=$forceOverride")
@@ -93,6 +98,7 @@ internal class ProfileInstaller(
         updates: MutableMap<String, Any?>,
         forceOverride: Boolean,
     ) {
+
         source.forEach { (k, v) ->
             val key = k.toString()
             val value = v.toString()

@@ -65,7 +65,6 @@ internal class SetupProfilesTest : TestSetup() {
         }
     }
 
-
     @Test
     fun `setupProfiles should load assets and update preferences when fresh install`() {
         // GIVEN
@@ -202,8 +201,8 @@ internal class SetupProfilesTest : TestSetup() {
     fun `test setupProfiles empty installation key and forceOverrideRecommendation is false`() {
         //GIVEN
         mockInstallationKey(false)
-
         mockPropertiesFiles()
+        mockPrefsAll()
 
         profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
@@ -211,8 +210,15 @@ internal class SetupProfilesTest : TestSetup() {
         // Act
         profileService.setupProfiles(forceOverrideRecommendation = false)
 
-        // Assert: Verify specific keys from the file were saved
+        // Assert
+        // reset profile not called
+        verify (atLeast = 0) { editor.remove( "pref.adapter.connection.type") }
+        verify (atLeast = 0) { editor.remove( "pref.adapter.init.delay") }
+        verify (atLeast = 0) { editor.remove( "pref.pids.generic.high") }
+        verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
 
+
+        // Assert: Verify specific keys from the file were saved
         // 1. Verify boolean parsing
         verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
 
@@ -223,8 +229,7 @@ internal class SetupProfilesTest : TestSetup() {
         verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
 
         // 4. Verify Array parsing (converting [x, y, z] to Set)
-        val expectedSet = setOf("22", "7002", "13", "15")
-        verify { editor.putStringSet("profile_3.pref.pids.generic.high", expectedSet) }
+        verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf("22", "7002", "13", "15")) }
 
         // 5. Verify the profile name was set
         verify { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
@@ -235,12 +240,21 @@ internal class SetupProfilesTest : TestSetup() {
         //GIVEN
         mockInstallationKey(true)
         mockPropertiesFiles()
+        mockPrefsAll()
 
         profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
 
         // Act
         profileService.setupProfiles(forceOverrideRecommendation = false)
+
+
+        // Assert
+        // reset profile not called
+        verify (atLeast = 0) { editor.remove( "pref.adapter.connection.type") }
+        verify (atLeast = 0) { editor.remove( "pref.adapter.init.delay") }
+        verify (atLeast = 0) { editor.remove( "pref.pids.generic.high") }
+        verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
 
         // 1. Verify boolean parsing
         verify(atLeast = 0) { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
@@ -258,6 +272,44 @@ internal class SetupProfilesTest : TestSetup() {
         // 5. Verify the profile name was set
         verify(atLeast = 0) { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
     }
+
+    @Test
+    fun `test setupProfiles empty installation key and forceOverrideRecommendation is true`() {
+        //GIVEN
+        mockInstallationKey(false)
+        mockPropertiesFiles()
+
+        mockPrefsAll()
+
+        profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
+            Locale.getDefault()).format(Date()))
+
+        // Act
+        profileService.setupProfiles(forceOverrideRecommendation = true)
+
+        // Assert
+        // reset profile
+        verify { editor.remove( "pref.adapter.connection.type") }
+        verify { editor.remove( "pref.adapter.init.delay") }
+        verify { editor.remove( "pref.pids.generic.high") }
+        verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
+
+        // 1. Verify boolean parsing
+        verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
+
+        // 2. Verify string parsing (removing quotes)
+        verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
+
+        // 3. Verify standard string
+        verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
+
+        // 4. Verify Array parsing (converting [x, y, z] to Set)
+        verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf("22", "7002", "13", "15")) }
+
+        // 5. Verify the profile name was set
+        verify { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
+    }
+
 
     private fun mockPropertiesFiles() {
         every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties")
