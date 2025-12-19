@@ -26,13 +26,11 @@ const val PROFILE_ID_PREF = "pref.profile.id"
 
 val profile: Profile = ProfileService()
 
-
 interface Profile {
 
     fun restoreBackup()
     fun restoreBackup(file: File)
     fun exportBackup(): File?
-
     fun updateCurrentProfileName(newName: String)
     fun getAvailableProfiles(): Map<String, String?>
     fun getCurrentProfile(): String

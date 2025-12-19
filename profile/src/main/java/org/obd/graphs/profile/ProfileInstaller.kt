@@ -49,18 +49,11 @@ internal class ProfileInstaller(
                 collectProperties(props, updates, forceOverride)
             }
 
-            // 2. Apply Default Profile ID
-            if (forceOverride) {
-                updates[PROFILE_ID_PREF] = defaultProfile
-            }
+             updates[PROFILE_ID_PREF] = defaultProfile
 
             // 3. Mark as installed
             updates[installationKey] = true
-
-            // 4. Commit
-            if (forceOverride) {
-                repository.clear()
-            }
+            repository.clear()
             repository.updateBatch(updates)
             Log.i(LOG_TAG, "Profile installation finished.")
         }

@@ -210,6 +210,7 @@ internal class ProfilePreferencesBackend :
                 if (forceOverride) {
                     val defaultProfile = getDefaultProfile()
                     Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
+                    System.out.println("loadProfile=" + getDefaultProfile())
                     loadProfile(getDefaultProfile())
                 }
             }
@@ -262,6 +263,7 @@ internal class ProfilePreferencesBackend :
                     .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
                     .filter { (pref, _) -> !pref.startsWith(PREF_DRAG_RACE_KEY_PREFIX) }
                     .forEach { (pref, value) ->
+
                         pref.substring(profileName.length + 1).run {
                             Log.d(LOG_TAG, "Loading user preference $this = $value")
                             it.updatePreference(this, value)
@@ -368,13 +370,13 @@ internal class ProfilePreferencesBackend :
 
             files?.forEach { profileFile ->
                 Log.i(LOG_TAG, "Loading profile file='$profileFile'")
-
                 func(profileFile).forEach { t, u ->
                     val value = u.toString()
                     val key = t.toString()
 
                     if (forceOverride || !allPrefs.keys.contains(key) || allowedToOverride().any { key.contains(it) }) {
                         Log.i(LOG_TAG, "Updating profile.key=`$key=$value`")
+
                         when {
                             value.isArray() -> {
                                 if (key.startsWith(getCurrentProfile())) {

@@ -52,11 +52,8 @@ internal class ProfileService : Profile, SharedPreferences.OnSharedPreferenceCha
         Log.i(LOG_TAG, "Profile service initialized. Version=$versionCode")
     }
 
-    // ... [Other methods: updateCurrentProfileName, getAvailableProfiles, etc. unchanged] ...
-
     override fun updateCurrentProfileName(newName: String) {
         val key = "$PROFILE_NAME_PREFIX.${getCurrentProfile()}"
-        System.out.println(key + "   " + newName)
         repository.update(key, newName)
         updateCurrentProfileNameCache(newName)
     }
