@@ -210,7 +210,6 @@ internal class ProfilePreferencesBackend :
                 if (forceOverride) {
                     val defaultProfile = getDefaultProfile()
                     Log.i(LOG_TAG, "Setting default profile to: $defaultProfile")
-                    System.out.println("loadProfile=" + getDefaultProfile())
                     loadProfile(getDefaultProfile())
                 }
             }

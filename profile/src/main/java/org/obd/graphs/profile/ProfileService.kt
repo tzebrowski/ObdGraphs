@@ -112,29 +112,29 @@ internal class ProfileService : Profile, SharedPreferences.OnSharedPreferenceCha
     }
 
     override fun loadProfile(profileName: String)  = try {
-            isBulkAction = true
-            Log.i(LOG_TAG, "Loading profile: $profileName")
+        isBulkAction = true
+        Log.i(LOG_TAG, "Loading profile: $profileName")
 
-            val updates = mutableMapOf<String, Any?>()
-            val allPrefs = repository.getAll()
+        val updates = mutableMapOf<String, Any?>()
+        val allPrefs = repository.getAll()
 
-            allPrefs.keys
-                .filter { !isProfileSpecific(it) }
-                .forEach { repository.remove(it) }
+        allPrefs.keys
+            .filter { !isProfileSpecific(it) }
+            .forEach { repository.remove(it) }
 
-            allPrefs.forEach { (key, value) ->
-                if (key.startsWith("$profileName.")) {
-                    val realKey = key.removePrefix("$profileName.")
-                    updates[realKey] = value
-                }
+        allPrefs.forEach { (key, value) ->
+            if (key.startsWith("$profileName.")) {
+                val realKey = key.removePrefix("$profileName.")
+                updates[realKey] = value
             }
-
-            repository.updateBatch(updates)
-            updateCurrentProfileNameCache(profileName)
-            sendBroadcastEvent(PROFILE_CHANGED_EVENT)
-        } finally {
-            isBulkAction = false
         }
+
+        repository.updateBatch(updates)
+        updateCurrentProfileNameCache(profileName)
+        sendBroadcastEvent(PROFILE_CHANGED_EVENT)
+    } finally {
+        isBulkAction = false
+    }
 
 
     override fun reset()  = try {

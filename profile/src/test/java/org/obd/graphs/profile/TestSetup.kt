@@ -90,7 +90,7 @@ internal abstract class TestSetup {
         mockEnvironment()
         profileService = ProfileService()
 //        profileService = ProfilePreferencesBackend()
-    }
+  }
 
 
     protected fun mockPrefsAll() =

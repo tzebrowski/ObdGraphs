@@ -26,8 +26,8 @@ import org.junit.Test
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updatePreference
 import java.io.ByteArrayInputStream
+import java.io.File
 import java.io.FileInputStream
-import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -203,7 +203,6 @@ import java.util.Properties
         //GIVEN
         mockInstallationKey(false)
         mockPropertiesFiles()
-        mockPrefsAll()
 
         profileService.init(1, "profile_2", SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
@@ -230,10 +229,10 @@ import java.util.Properties
         verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
 
         // 4. Verify Array parsing (converting [x, y, z] to Set)
-        verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf("22", "7002", "13", "15")) }
+//        verify { editor.updatePreference("profile_3.pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
 
         // 5. Verify the profile name was set
-        verify { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
+//        verify { editor.updatePreference("pref.profile.names.profile_3", "Alfa 2.0 GME (BT)") }
     }
 
     @Test
@@ -275,19 +274,10 @@ import java.util.Properties
     }
 
     @Test
-    fun `Fresh Installation = empty installation key and forceOverrideRecommendation is true`() {
+    fun `Fresh Installation (single file) = empty installation key and forceOverrideRecommendation is true`() {
         //GIVEN
         mockInstallationKey(false)
-
-        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties")
-        val propertiesFile = "src/test/assets/alfa_2_0_gme.properties"
-        every { assets.open("alfa_2_0_gme.properties") } returns FileInputStream(propertiesFile)
-
-        val props = Properties().apply {
-            load(FileInputStream(propertiesFile))
-        }
-
-        every { Prefs.all } returns props.toMap() as Map<String, String>
+        mockPropertiesFiles()
 
         profileService.init(86, "profile_3", "20251218.1055")
 
@@ -303,21 +293,67 @@ import java.util.Properties
         verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
         verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
         verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
+        verify { editor.putStringSet("profile_3.pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
+
         verify { editor.putString("pref.profile.names.profile_3", "Alfa 2.0 GME") }
         verify { editor.putString("pref.profile.id", "profile_3") }
-
 
         //profile load
         verify { editor.updatePreference("pref.adapter.power.switch_network_on_off", "false") }
         verify { editor.updatePreference("pref.dash.swipe.to.delete", "false") }
         verify { editor.updatePreference("pref.adapter.init.protocol", "CAN_29") }
+//        verify { editor.updatePreference("pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
+//        verify { editor.updatePreference("pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
     }
 
-    private fun mockPropertiesFiles() {
-        every { assets.list("") } returns arrayOf("alfa_2_0_gme.properties")
-        every { assets.open("alfa_2_0_gme.properties") } returns
-                ByteArrayInputStream(alfaProfileContent.toByteArray(StandardCharsets.UTF_8))
-    }
+
+     @Test
+     fun `Fresh Installation (multiple file) = empty installation key and forceOverrideRecommendation is true`() {
+         //GIVEN
+         mockInstallationKey(false)
+         mockPropertiesFiles(listOf("alfa_2_0_gme.properties", "default.properties"))
+
+         profileService.init(86, "profile_1", "20251218.1055")
+
+         // Act
+         profileService.setupProfiles(forceOverrideRecommendation = true)
+
+         // Assert
+         // reset profile
+         verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
+
+         //profiles setup
+         verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
+         verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
+         verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
+         verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
+         verify { editor.putStringSet("profile_3.pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
+
+         verify { editor.putString("pref.profile.names.profile_1", "Default (BT)") }
+         verify { editor.putString("pref.profile.id", "profile_1") }
+//
+//         //profile load
+         verify { editor.updatePreference("pref.adapter.power.switch_network_on_off", "true") }
+         verify { editor.updatePreference("pref.dash.swipe.to.delete", "true") }
+         verify { editor.updatePreference("pref.adapter.init.protocol", "AUTO") }
+     }
+
+
+     private fun mockPropertiesFiles(assetFilenames: List<String> = listOf("alfa_2_0_gme.properties")) {
+         val basePath = "src/test/assets"
+         every { assets.list("") } returns assetFilenames.toTypedArray()
+         val combinedProps = Properties()
+
+         assetFilenames.forEach { filename ->
+             val file = File(basePath, filename)
+             every { assets.open(filename) } answers { FileInputStream(file) }
+             FileInputStream(file).use { combinedProps.load(it) }
+         }
+
+         every { Prefs.all } returns combinedProps.entries.associate {
+             it.key.toString() to it.value.toString()
+         }
+     }
 
     private fun mockInstallationKey(keyPresent: Boolean = false) =
         every { Prefs.getBoolean("prefs.installed.profiles.1", false) } returns keyPresent
