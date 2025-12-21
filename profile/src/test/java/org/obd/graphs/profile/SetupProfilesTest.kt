@@ -75,7 +75,7 @@ internal class SetupProfilesTest : TestSetup() {
         """.trimIndent()
 
         // Initialize the class
-        profileService = ProfilePreferencesBackend()
+        profileService = DedualtProfileService()
         profileService.init(1, "profile_1",  SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
 
@@ -299,8 +299,9 @@ internal class SetupProfilesTest : TestSetup() {
         verify { editor.updatePreference("pref.adapter.power.switch_network_on_off", "false") }
         verify { editor.updatePreference("pref.dash.swipe.to.delete", "false") }
         verify { editor.updatePreference("pref.adapter.init.protocol", "CAN_29") }
-//        verify { editor.updatePreference("pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
-//        verify { editor.updatePreference("pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
+        verify { editor.updatePreference("pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
+        verify { editor.putStringSet("pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
+
     }
 
 

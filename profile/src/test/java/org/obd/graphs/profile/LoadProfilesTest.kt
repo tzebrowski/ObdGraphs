@@ -59,9 +59,6 @@ internal class LoadProfilesTest : TestSetup() {
         every { assets.open("alfa_175_tbi.properties") } answers {
             ByteArrayInputStream(ALFA_175_TBI_CONTENT.toByteArray())
         }
-
-        profileService = ProfileService()
-
     }
 
     @Test

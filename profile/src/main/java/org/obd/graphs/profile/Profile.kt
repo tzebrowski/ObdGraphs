@@ -23,7 +23,7 @@ const val PROFILE_RESET_EVENT = "data.logger.profile.reset.event"
 const val PROFILES_PREF = "pref.profiles"
 const val PROFILE_ID_PREF = "pref.profile.id"
 
-val profile: Profile = ProfileService()
+val profile: Profile = DedualtProfileService()
 
 interface Profile {
     fun restoreBackup()

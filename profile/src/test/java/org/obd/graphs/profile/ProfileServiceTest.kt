@@ -178,8 +178,6 @@ internal class ProfileServiceTest : TestSetup() {
             ByteArrayInputStream(ALFA_175_TBI_CONTENT.toByteArray())
         }
 
-        profileService = ProfileService()
-
         // Arrange: We are currently in profile_3
         every { Prefs.getString("pref.profile.id", any()) } returns "profile_3"
 

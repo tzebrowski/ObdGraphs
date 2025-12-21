@@ -73,8 +73,7 @@ import java.util.Properties
         mockFunction()
         mockIntent()
         mockEnvironment()
-        profileService = ProfileService()
-//        profileService = ProfilePreferencesBackend()
+        profileService = DedualtProfileService()
   }
 
     protected fun mockPropertiesFiles(assetFilenames: List<String> = listOf("alfa_2_0_gme.properties")) {
