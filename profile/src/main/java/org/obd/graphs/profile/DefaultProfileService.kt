@@ -49,7 +49,7 @@ private const val DEFAULT_MAX_PROFILES = 20
 private const val BACKUP_FILE_NAME = "obd_graphs.backup"
 private const val DEFAULT_PROFILE = "profile_1"
 
-internal class ProfilePreferencesBackend :
+internal class DefaultProfileService :
     Profile,
     SharedPreferences.OnSharedPreferenceChangeListener {
     private var versionCode: Int = 0
@@ -262,6 +262,7 @@ internal class ProfilePreferencesBackend :
                     .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
                     .filter { (pref, _) -> !pref.startsWith(PREF_DRAG_RACE_KEY_PREFIX) }
                     .forEach { (pref, value) ->
+
                         pref.substring(profileName.length + 1).run {
                             Log.d(LOG_TAG, "Loading user preference $this = $value")
                             it.updatePreference(this, value)
@@ -315,7 +316,7 @@ internal class ProfilePreferencesBackend :
             .filter { it.isNotEmpty() }
             .toMutableSet()
 
-    private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
+    private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?. filter { it.endsWith("properties") }
 
     private fun loadFile(fileName: String): Properties {
         val prop = Properties()
@@ -365,9 +366,9 @@ internal class ProfilePreferencesBackend :
                 // clear all preferences
                 editor.clear()
             }
+
             files?.forEach { profileFile ->
                 Log.i(LOG_TAG, "Loading profile file='$profileFile'")
-
                 func(profileFile).forEach { t, u ->
                     val value = u.toString()
                     val key = t.toString()
@@ -376,10 +377,6 @@ internal class ProfilePreferencesBackend :
                         Log.i(LOG_TAG, "Updating profile.key=`$key=$value`")
 
                         when {
-                            value.isBoolean() -> {
-                                editor.putBoolean(key, value.toBoolean())
-                            }
-
                             value.isArray() -> {
                                 if (key.startsWith(getCurrentProfile())) {
                                     val currentProfilePropName = key.substring(getCurrentProfile().length + 1, key.length)
@@ -389,13 +386,10 @@ internal class ProfilePreferencesBackend :
                                 editor.putStringSet(key, stringToStringSet(value))
                             }
 
-                            value.isNumeric() -> {
-                                editor.putInt(key, value.toInt())
-                            }
+                            value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
+                            value.isNumeric() -> editor.putInt(key, value.toInt())
+                            else ->  editor.putString(key, value.replace("\"", "").replace("\"", ""))
 
-                            else -> {
-                                editor.putString(key, value.replace("\"", "").replace("\"", ""))
-                            }
                         }
                     } else {
                         Log.i(LOG_TAG, "Skipping profile.key=`$key=$value`")

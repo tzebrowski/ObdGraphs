@@ -31,6 +31,7 @@ fun SharedPreferences.Editor.updatePreference(
     prefName: String,
     value: Any?
 ) {
+
     when (value) {
         is String -> {
             putString(prefName, value)
