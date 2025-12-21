@@ -75,7 +75,6 @@ internal class SetupProfilesTest : TestSetup() {
         """.trimIndent()
 
         // Initialize the class
-        profileService = DedualtProfileService()
         profileService.init(1, "profile_1",  SimpleDateFormat("yyyyMMdd.HHmm",
             Locale.getDefault()).format(Date()))
 

@@ -198,30 +198,4 @@ internal class ProfileServiceTest : TestSetup() {
         verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_11_MODIFIED") }
         verify { editor.updatePreference("profile_3.pref.gauge.fps", "10") }
     }
-
-    //    @Test
-    fun `reset clears state, resets profile, and broadcasts event`() {
-        // Arrange
-        // Init needed for versionName used in reset->updateBuildSettings
-        val version = SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).format(Date())
-        profileService.init(1, "profile_1", version)
-
-        // Mock AssetManager to return empty list so setupProfiles finishes quickly
-        val assets = mockk<AssetManager>()
-        every { context.assets } returns assets
-        every { assets.list("") } returns emptyArray()
-
-        // Act
-        profileService.reset()
-
-        // Assert
-        // 1. Verify installation key reset
-        verify { editor.putBoolean(match { it.startsWith("prefs.installed.profiles") }, false) }
-
-        // 2. Verify current profile reset (removal of keys)
-        verify { editor.remove(any()) }
-
-        // 3. Verify broadcast
-        verify { org.obd.graphs.sendBroadcastEvent("data.logger.profile.reset.event") }
-    }
 }
