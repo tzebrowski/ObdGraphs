@@ -34,31 +34,16 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
+import java.io.FileInputStream
 import java.lang.ref.WeakReference
+import java.util.Properties
 
-internal abstract class TestSetup {
+ internal abstract class TestSetup {
     protected lateinit var profileService: Profile
     protected val context = mockk<android.content.ContextWrapper>(relaxed = true)
     protected val sharedPrefs = mockk<SharedPreferences>(relaxed = true)
     protected val editor = mockk<SharedPreferences.Editor>(relaxed = true)
     protected val assets = mockk<AssetManager>()
-
-    protected val alfaProfileContent =
-        """
-        profile_3.pref.adapter.connection.type=bluetooth
-        profile_3.pref.adapter.power.switch_network_on_off=false
-        profile_3.pref.gauge_display_scale=true
-        profile_3.pref.gauge.fps="4"
-        profile_3.pref.adapter.id=
-        profile_3.pref.graph.view.enabled=true
-        profile_3.pref.pids.generic.high=[22, 7002, 13, 15]
-        profile_3.pref.adapter.init.protocol=CAN_29
-        profile_3.pref.dash.background_color_1=-6697984
-        pref.profile.names.profile_3=Alfa 2.0 GME (BT)
-        profile_3.pref.adapter.init.mode.header_value.mode_2=DA10F1
-        profile_3.pref.adapter.init.mode.id_value.mode_2="22"
-        profile_3.pref.aa.pids.selected=[7002, 7003, 7014, 7025]
-        """.trimIndent()
 
     protected val ALFA_2_0_GME_CONTENT = """
         profile_3.pref.adapter.connection.type=bluetooth
@@ -91,6 +76,22 @@ internal abstract class TestSetup {
         profileService = ProfileService()
 //        profileService = ProfilePreferencesBackend()
   }
+
+    protected fun mockPropertiesFiles(assetFilenames: List<String> = listOf("alfa_2_0_gme.properties")) {
+        val basePath = "src/test/assets"
+        every { assets.list("") } returns assetFilenames.toTypedArray()
+        val combinedProps = Properties()
+
+        assetFilenames.forEach { filename ->
+            val file = File(basePath, filename)
+            every { assets.open(filename) } answers { FileInputStream(file) }
+            FileInputStream(file).use { combinedProps.load(it) }
+        }
+
+        every { Prefs.all } returns combinedProps.entries.associate {
+            it.key.toString() to it.value.toString()
+        }
+    }
 
 
     protected fun mockPrefsAll() =

@@ -26,14 +26,11 @@ import org.junit.Test
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updatePreference
 import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Properties
 
- internal class SetupProfilesTest : TestSetup() {
+internal class SetupProfilesTest : TestSetup() {
 
     @Before
     override fun setup() {
@@ -274,7 +271,7 @@ import java.util.Properties
     }
 
     @Test
-    fun `Fresh Installation (single file) = empty installation key and forceOverrideRecommendation is true`() {
+    fun `Fresh Installation (single profile) = empty installation key and forceOverrideRecommendation is true`() {
         //GIVEN
         mockInstallationKey(false)
         mockPropertiesFiles()
@@ -308,7 +305,7 @@ import java.util.Properties
 
 
      @Test
-     fun `Fresh Installation (multiple file) = empty installation key and forceOverrideRecommendation is true`() {
+     fun `Fresh Installation (multiple profiles) = empty installation key and forceOverrideRecommendation is true`() {
          //GIVEN
          mockInstallationKey(false)
          mockPropertiesFiles(listOf("alfa_2_0_gme.properties", "default.properties"))
@@ -322,38 +319,32 @@ import java.util.Properties
          // reset profile
          verify (atLeast = 0) { editor.remove( "pref.profile.names.profile_3") }
 
-         //profiles setup
+         //profiles setup profile_1
+         verify { editor.updatePreference("profile_1.pref.adapter.power.switch_network_on_off", true) }
+         verify { editor.updatePreference("profile_1.pref.dash.swipe.to.delete", true) }
+         verify { editor.updatePreference("profile_1.pref.adapter.init.protocol", "AUTO") }
+         verify { editor.updatePreference("profile_1.pref.pids.registry.list", setOf( "mode01_2.json","extra.json", "mode01.json"))}
+
+         //profiles setup profile_3
          verify { editor.updatePreference("profile_3.pref.adapter.power.switch_network_on_off", false) }
          verify { editor.updatePreference("profile_3.pref.gauge.fps", "4") }
          verify { editor.updatePreference("profile_3.pref.adapter.init.protocol", "CAN_29") }
-         verify { editor.putStringSet("profile_3.pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
-         verify { editor.putStringSet("profile_3.pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
+         verify { editor.updatePreference("profile_3.pref.pids.generic.high", setOf( "22", "7002", "13", "15", "7003", "7006", "6", "7005", "7018", "7029", "7007")) }
+         verify { editor.updatePreference("profile_3.pref.giulia.pids.selected", setOf( "7002", "7003", "6", "7005", "7016","7018"))}
+         verify { editor.updatePreference("profile_3.pref.pids.registry.list", setOf( "mode01_2.json", "mode01.json", "giulia_2.0_gme.json", "rfhub_module.json", "abs_module.json","dtcm_module.json", "2.0_gme_ext.json"))}
 
-         verify { editor.putString("pref.profile.names.profile_1", "Default (BT)") }
-         verify { editor.putString("pref.profile.id", "profile_1") }
-//
-//         //profile load
+         //profile load
          verify { editor.updatePreference("pref.adapter.power.switch_network_on_off", "true") }
          verify { editor.updatePreference("pref.dash.swipe.to.delete", "true") }
          verify { editor.updatePreference("pref.adapter.init.protocol", "AUTO") }
+
+         verify { editor.updatePreference("pref.profile.names.profile_1", "Default (BT)") }
+         verify { editor.updatePreference("pref.profile.id", "profile_1") }
+//         verify { editor.updatePreference("pref.profile.current_name", "profile_1") }
+         verify { editor.updatePreference("pref.about.build_version", "86") }
      }
 
 
-     private fun mockPropertiesFiles(assetFilenames: List<String> = listOf("alfa_2_0_gme.properties")) {
-         val basePath = "src/test/assets"
-         every { assets.list("") } returns assetFilenames.toTypedArray()
-         val combinedProps = Properties()
-
-         assetFilenames.forEach { filename ->
-             val file = File(basePath, filename)
-             every { assets.open(filename) } answers { FileInputStream(file) }
-             FileInputStream(file).use { combinedProps.load(it) }
-         }
-
-         every { Prefs.all } returns combinedProps.entries.associate {
-             it.key.toString() to it.value.toString()
-         }
-     }
 
     private fun mockInstallationKey(keyPresent: Boolean = false) =
         every { Prefs.getBoolean("prefs.installed.profiles.1", false) } returns keyPresent
