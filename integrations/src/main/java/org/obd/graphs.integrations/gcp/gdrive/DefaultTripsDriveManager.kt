@@ -39,6 +39,7 @@ internal open class DefaultTripsDriveManager(
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
                     files.forEach { file ->
+
                         drive.uploadFile(file, folderId)
                     }
                     sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)
