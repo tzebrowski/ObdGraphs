@@ -69,20 +69,20 @@ data class OutputMetric(
     val t: Long,
 )
 
-internal interface TripProfileOptimizer {
-    fun optimize(jsonInput: String): String
+internal interface VehicleLogTransformer {
+    fun transform(log: String): String
 }
 
-internal class DefaultTripOptimizer(
+internal class DefaultTransformer(
     private val jsonConfig: Json =
         Json {
             ignoreUnknownKeys = true
             encodeDefaults = true
         },
-) : TripProfileOptimizer {
-    override fun optimize(jsonInput: String): String {
+) : VehicleLogTransformer {
+    override fun transform(log: String): String {
         try {
-            val inputRoot = jsonConfig.decodeFromString<InputRoot>(jsonInput)
+            val inputRoot = jsonConfig.decodeFromString<InputRoot>(log)
 
             val outputEntries =
                 inputRoot.entries.mapValues { (_, entryGroup) ->

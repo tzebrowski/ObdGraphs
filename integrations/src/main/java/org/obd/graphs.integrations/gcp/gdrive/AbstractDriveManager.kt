@@ -101,8 +101,7 @@ internal abstract class AbstractDriveManager(
         val content = FileContent(mimeType, localFile)
 
         val uploaded =
-            this
-                .files()
+            this.files()
                 .create(metadata, content)
                 .setFields("id")
                 .execute()

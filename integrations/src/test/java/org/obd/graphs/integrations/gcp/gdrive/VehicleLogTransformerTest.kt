@@ -26,19 +26,19 @@ import kotlin.test.assertTrue
 fun main() {
     try {
         val rawJson = File("integrations/src/test/assets/", "trip-profile_1-1765481895809-22.json").readText()
-        val optimizer: TripProfileOptimizer = DefaultTripOptimizer()
-        val optimizedJson = optimizer.optimize(rawJson)
+        val transformer: VehicleLogTransformer = DefaultTransformer()
+        val json = transformer.transform(rawJson)
         println("Optimization successful!")
-        println(optimizedJson)
+        println(json)
     } catch (e: Exception) {
         println("Error: ${e.message}")
     }
 }
 
 
-class TripProfileOptimizerTest {
+class VehicleLogTransformerTest {
 
-    private val optimizer: TripProfileOptimizer = DefaultTripOptimizer()
+    private val transformer: VehicleLogTransformer = DefaultTransformer()
 
     @Test
     fun `optimize should convert complex json to optimized flat format`() {
@@ -68,7 +68,7 @@ class TripProfileOptimizerTest {
             }
         """.trimIndent()
 
-        val result = optimizer.optimize(rawJson)
+        val result = transformer.transform(rawJson)
 
         val expectedJson =
             """{"startTs":123456789,"entries":{"10":{"metrics":[{"v":50.5,"t":1000},{"v":60.5,"t":2000}],"min":1.5,"max":3.0,"mean":2.25}}}"""
@@ -92,7 +92,7 @@ class TripProfileOptimizerTest {
             }
         """
 
-        val result = optimizer.optimize(rawJson)
+        val result = transformer.transform(rawJson)
         assertFalse (result.contains("\"id\"") )
         assertFalse(result.contains("\"x\""))
         assertFalse(result.contains("\"data\""))
@@ -112,7 +112,7 @@ class TripProfileOptimizerTest {
             }
         """
 
-        val result = optimizer.optimize(rawJson)
+        val result = transformer.transform(rawJson)
 
         val expected = """{"startTs":100,"entries":{}}"""
         assertEquals(expected, result)
