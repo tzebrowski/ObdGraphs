@@ -83,8 +83,9 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
 
     //test
-    testImplementation "junit:junit:4.13.2"
     testImplementation "io.mockk:mockk:1.13.8"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3"
     testImplementation "androidx.arch.core:core-testing:2.2.0"
+    testImplementation "org.assertj:assertj-core:3.24.2"
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
 }

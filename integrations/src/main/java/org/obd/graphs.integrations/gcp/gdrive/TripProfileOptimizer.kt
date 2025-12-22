@@ -69,11 +69,11 @@ data class OutputMetric(
     val t: Long,
 )
 
-interface TripProfileOptimizer {
+internal interface TripProfileOptimizer {
     fun optimize(jsonInput: String): String
 }
 
-class DefaultTripOptimizer(
+internal class DefaultTripOptimizer(
     private val jsonConfig: Json =
         Json {
             ignoreUnknownKeys = true
@@ -82,17 +82,14 @@ class DefaultTripOptimizer(
 ) : TripProfileOptimizer {
     override fun optimize(jsonInput: String): String {
         try {
-            // 1. Decode
             val inputRoot = jsonConfig.decodeFromString<InputRoot>(jsonInput)
 
-            // 2. Transform / Map
             val outputEntries =
                 inputRoot.entries.mapValues { (_, entryGroup) ->
                     OutputEntryGroup(
                         min = entryGroup.min,
                         max = entryGroup.max,
                         mean = entryGroup.mean,
-                        // Flattening logic: Extract 'y' from nested 'entry' object
                         metrics =
                             entryGroup.metrics.map { inputMetric ->
                                 OutputMetric(
@@ -109,7 +106,6 @@ class DefaultTripOptimizer(
                     entries = outputEntries,
                 )
 
-            // 3. Encode (Minified by default)
             return jsonConfig.encodeToString(outputRoot)
         } catch (e: Exception) {
             // Handle parsing errors gracefully or rethrow a custom exception
