@@ -16,7 +16,28 @@
  */
 package org.obd.graphs.bl.datalogger
 
+import org.obd.graphs.NEW_RANGE_MAX_VAL
+import org.obd.graphs.NEW_RANGE_MIN_VAL
+import org.obd.graphs.mapRange
+import org.obd.graphs.toFloat
 import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.pid.PidDefinition
+
+fun PidDefinition.scaleToRange(value: Float): Float =
+    value.mapRange(
+        NEW_RANGE_MIN_VAL,
+        NEW_RANGE_MAX_VAL,
+        min.toFloat(),
+        max.toFloat(),
+    )
+
+fun ObdMetric.scaleToRange(): Float =
+    toFloat().mapRange(
+        command.pid.min.toFloat(),
+        command.pid.max.toFloat(),
+        NEW_RANGE_MIN_VAL,
+        NEW_RANGE_MAX_VAL,
+    )
 
 fun ObdMetric.isAtmPressure(): Boolean = command.pid.id == Pid.ATM_PRESSURE_PID_ID.id
 

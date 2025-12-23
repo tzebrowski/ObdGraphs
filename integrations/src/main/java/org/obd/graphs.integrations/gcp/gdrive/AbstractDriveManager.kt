@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.common.api.Scope
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
+import com.google.api.client.http.AbstractInputStreamContent
 import com.google.api.client.http.FileContent
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -31,11 +32,32 @@ import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.InputStream
 import com.google.api.services.drive.model.File as DriveFile
 
 private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "AbstractDriveManager"
+
+internal class MemoryContent(
+    type: String?,
+    private val content: String,
+    val fileName: String,
+) : AbstractInputStreamContent(type) {
+    override fun getLength(): Long = content.length.toLong()
+
+    override fun retrySupported(): Boolean = true
+
+    @Throws(FileNotFoundException::class)
+    override fun getInputStream(): InputStream = ByteArrayInputStream(content.toByteArray(Charsets.UTF_8))
+
+    override fun setType(type: String): MemoryContent = super.setType(type) as MemoryContent
+
+    override fun setCloseInputStream(closeInputStream: Boolean): MemoryContent =
+        super.setCloseInputStream(closeInputStream) as MemoryContent
+}
 
 internal abstract class AbstractDriveManager(
     webClientId: String,
@@ -85,6 +107,28 @@ internal abstract class AbstractDriveManager(
                 onFinally()
             }
         }
+    }
+
+    fun Drive.uploadFile(
+        content: MemoryContent,
+        parentFolderId: String,
+    ): DriveFile {
+        Log.i(TAG, "Uploading file ${content.fileName}")
+        val metadata =
+            DriveFile().apply {
+                name = content.fileName
+                parents = listOf(parentFolderId)
+            }
+
+        val uploaded =
+            this
+                .files()
+                .create(metadata, content)
+                .setFields("id")
+                .execute()
+
+        Log.i(TAG, "Uploaded ${content.fileName}, ID: ${uploaded.id}")
+        return uploaded
     }
 
     fun Drive.uploadFile(

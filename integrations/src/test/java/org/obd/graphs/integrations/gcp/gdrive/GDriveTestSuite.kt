@@ -14,10 +14,15 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs
+package org.obd.graphs.integrations.gcp.gdrive
 
-fun Double.round(decimals: Int): Double {
-    var multiplier = 1.0
-    repeat(decimals) { multiplier *= 10 }
-    return kotlin.math.round(this * multiplier) / multiplier
-}
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
+
+@RunWith(Suite::class)
+@SuiteClasses(
+    VehicleLogTransformerTest::class,
+    TripsDriveManagerTest::class
+)
+class GDriveTestSuite

@@ -31,16 +31,18 @@ import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.PREF_ALERTING_ENABLED
-import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.R
-import org.obd.graphs.ValueConverter
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.format
-import org.obd.graphs.toFloat
+import org.obd.graphs.mapRange
 import org.obd.graphs.modules
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.round
-import org.obd.graphs.ui.common.*
+import org.obd.graphs.toFloat
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.highLightText
+import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.diagnostic.RateType
@@ -50,13 +52,11 @@ class GaugeAdapter(
     context: Context,
     data: MutableList<Metric>,
     resourceId: Int,
-    height: Int? = null
-) :
-    RecyclerViewAdapter<GaugeAdapter.ViewHolder>(context, data, resourceId, height) {
-
-    inner class ViewHolder internal constructor(itemView: View):
-        RecyclerView.ViewHolder(itemView) {
-
+    height: Int? = null,
+) : RecyclerViewAdapter<GaugeAdapter.ViewHolder>(context, data, resourceId, height) {
+    inner class ViewHolder internal constructor(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView) {
         val label: TextView = itemView.findViewById(R.id.label)
         val value: TextView = itemView.findViewById(R.id.value)
         val avgValue: TextView? = itemView.findViewById(R.id.avg_value)
@@ -82,17 +82,19 @@ class GaugeAdapter(
                 rescaleTextSize(this, calculateScaleMultiplier(itemView))
             } else {
                 var multiplier = calculateScaleMultiplier(itemView) * 0.29f
-                multiplier *= if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1f else {
-                    when (data.size) {
-                        1 -> 0.9f
-                        3 -> 1.4f
-                        2 -> 1.4f
-                        else -> 1f
+                multiplier *=
+                    if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        1f
+                    } else {
+                        when (data.size) {
+                            1 -> 0.9f
+                            3 -> 1.4f
+                            2 -> 1.4f
+                            else -> 1f
+                        }
                     }
-                }
                 rescaleTextSize(this, multiplier)
             }
-
         }
 
         private fun updateDrawable() {
@@ -100,7 +102,7 @@ class GaugeAdapter(
                 val filter: ColorFilter =
                     PorterDuffColorFilter(
                         Prefs.getInt("pref.gauge_background_color", -1),
-                        PorterDuff.Mode.SRC_IN
+                        PorterDuff.Mode.SRC_IN,
                     )
                 drawable.colorFilter = filter
             }
@@ -110,15 +112,14 @@ class GaugeAdapter(
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private lateinit var view: View
     private val preferences: GaugePreferences by lazy { getGaugePreferences() }
-    private val valueConverter = ValueConverter()
 
-    override fun getItemId(position: Int): Long {
-        return data[position].source.command.pid.id
-    }
+    override fun getItemId(position: Int): Long =
+        data[position]
+            .source.command.pid.id
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): ViewHolder {
         view = inflater.inflate(resourceId, parent, false)
         updateHeight(parent)
@@ -127,7 +128,7 @@ class GaugeAdapter(
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int
+        position: Int,
     ) {
         val metric = data.elementAt(position)
         val pid = metric.pid()
@@ -135,12 +136,14 @@ class GaugeAdapter(
         if (!holder.init) {
             holder.label.text = pid.longDescription ?: pid.description
             holder.resourceFile?.run {
-                val resourceFile = modules.getDefaultModules()[pid.resourceFile]
-                    ?: pid.resourceFile
+                val resourceFile =
+                    modules.getDefaultModules()[pid.resourceFile]
+                        ?: pid.resourceFile
                 text = resourceFile
                 highLightText(
-                    resourceFile, 0.5f,
-                    Color.WHITE
+                    resourceFile,
+                    0.5f,
+                    Color.WHITE,
                 )
             }
 
@@ -151,20 +154,22 @@ class GaugeAdapter(
         }
 
         holder.value.run {
-            val units = (metric.source.command as ObdCommand).pid.units?:""
+            val units = (metric.source.command as ObdCommand).pid.units ?: ""
             val txt = "${metric.source.format(castToInt = false)} $units"
             text = txt
-            setTextColor(if (inAlertState(metric)) {
-                Color.RED
-            } else {
-                Color.WHITE
-            })
-
-            highLightText(
-                units, 0.3f,
-                COLOR_PHILIPPINE_GREEN
+            setTextColor(
+                if (inAlertState(metric)) {
+                    Color.RED
+                } else {
+                    Color.WHITE
+                },
             )
 
+            highLightText(
+                units,
+                0.3f,
+                COLOR_PHILIPPINE_GREEN,
+            )
         }
 
         if (pid.historgam.isMinEnabled) {
@@ -172,20 +177,21 @@ class GaugeAdapter(
                 val txt = "min\n ${metric.min.format(pid)}"
                 text = txt
                 highLightText(
-                    "min", 0.5f,
-                    COLOR_PHILIPPINE_GREEN
+                    "min",
+                    0.5f,
+                    COLOR_PHILIPPINE_GREEN,
                 )
             }
         }
-
 
         if (pid.historgam.isMaxEnabled) {
             holder.maxValue.run {
                 val txt = "max\n  ${metric.max.format(pid)}"
                 text = txt
                 highLightText(
-                    "max", 0.5f,
-                    COLOR_PHILIPPINE_GREEN
+                    "max",
+                    0.5f,
+                    COLOR_PHILIPPINE_GREEN,
                 )
             }
         }
@@ -195,8 +201,9 @@ class GaugeAdapter(
                 val txt = "avg\n ${metric.mean.format(pid)}"
                 text = txt
                 highLightText(
-                    "avg", 0.5f,
-                    COLOR_PHILIPPINE_GREEN
+                    "avg",
+                    0.5f,
+                    COLOR_PHILIPPINE_GREEN,
                 )
             }
         }
@@ -204,13 +211,17 @@ class GaugeAdapter(
         holder.commandRate?.run {
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
-                val rate = dataLogger.getDiagnostics().rate()
-                    .findBy(RateType.MEAN, pid)
+                val rate =
+                    dataLogger
+                        .getDiagnostics()
+                        .rate()
+                        .findBy(RateType.MEAN, pid)
                 val txt = "rate ${rate.get().value.round(2)}"
                 text = txt
                 highLightText(
-                    "rate", 0.4f,
-                    COLOR_PHILIPPINE_GREEN
+                    "rate",
+                    0.4f,
+                    COLOR_PHILIPPINE_GREEN,
                 )
             } else {
                 this.visibility = View.INVISIBLE
@@ -235,32 +246,37 @@ class GaugeAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount(): Int = data.size
 
     private fun calculateScaleMultiplier(itemView: View): Float {
         itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-        val widthDivider = when (data.size) {
-            1 -> 1
-            2 -> 2
-            else -> {
-                (data.size / 2f).roundToInt()
+        val widthDivider =
+            when (data.size) {
+                1 -> 1
+                2 -> 2
+                else -> {
+                    (data.size / 2f).roundToInt()
+                }
             }
-        }
 
         val width = Resources.getSystem().displayMetrics.widthPixels / widthDivider
         val height = itemView.measuredHeight.toFloat()
 
         val targetSize =
-            Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat()
-        val currentSize = width * height
+            Resources.getSystem().displayMetrics.widthPixels *
+                Resources
+                    .getSystem()
+                    .displayMetrics.heightPixels
+                    .toFloat()
 
-        return valueConverter.scaleToNewRange(currentSize, 0.0f, targetSize, 1f, 3f)
+        return (width * height).mapRange(0.0f, targetSize, 1f, 3f)
     }
 
-    private fun rescaleTextSize(holder: ViewHolder, multiplier: Float) {
+    private fun rescaleTextSize(
+        holder: ViewHolder,
+        multiplier: Float,
+    ) {
         holder.label.textSize *= multiplier * 0.60f
         holder.value.textSize *= multiplier * 0.60f
         holder.maxValue.textSize *= multiplier * 0.45f
@@ -277,7 +293,9 @@ class GaugeAdapter(
                     Resources.getSystem().displayMetrics.heightPixels / if (data.size > 2) 2 else 1
             } else {
                 val x =
-                    if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else {
+                    if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        1
+                    } else {
                         when (data.size) {
                             1 -> 1
                             2 -> 2
@@ -292,6 +310,7 @@ class GaugeAdapter(
         }
     }
 
-    private fun inAlertState(metric: Metric) =  Prefs.getBoolean(PREF_ALERTING_ENABLED, false) &&
+    private fun inAlertState(metric: Metric) =
+        Prefs.getBoolean(PREF_ALERTING_ENABLED, false) &&
             (metric.source.isUpperAlert || metric.source.isLowerAlert)
 }

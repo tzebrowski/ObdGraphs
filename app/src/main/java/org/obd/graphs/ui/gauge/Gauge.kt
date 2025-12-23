@@ -18,13 +18,17 @@ package org.obd.graphs.ui.gauge
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import org.obd.graphs.R
-import org.obd.graphs.ValueConverter
+import org.obd.graphs.mapRange
 import org.obd.graphs.ui.common.isTablet
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
@@ -32,12 +36,14 @@ import kotlin.math.cos
 import kotlin.math.round
 import kotlin.math.sin
 
-
 private const val DEFAULT_LONG_POINTER_SIZE = 1
 private const val SCALE_STEP = 2
 
 // This class is an extension of https://github.com/pkleczko/CustomGauge
-class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+class Gauge(
+    context: Context,
+    attrs: AttributeSet?,
+) : View(context, attrs) {
     private lateinit var paint: Paint
     private var strokeColor = 0
     private lateinit var progressRect: RectF
@@ -62,7 +68,6 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     var gaugeDrawScale = false
     private val numbersPaint = Paint()
     private val initialized = AtomicBoolean(false)
-    private val valueConverter = ValueConverter()
 
     private var strokeCap: String = Paint.Cap.BUTT.name
         set(newValue) {
@@ -87,25 +92,28 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     init {
         val styledAttributes = context.obtainStyledAttributes(attrs, R.styleable.Gauge, 0, 0)
         strokeWidth = styledAttributes.getDimension(R.styleable.Gauge_gaugeStrokeWidth, 10f)
-        strokeColor = styledAttributes.getColor(
-            R.styleable.Gauge_gaugeStrokeColor,
-            Color.parseColor("#0D000000")
-        )
+        strokeColor =
+            styledAttributes.getColor(
+                R.styleable.Gauge_gaugeStrokeColor,
+                Color.parseColor("#0D000000"),
+            )
         strokeCap = styledAttributes.getString(R.styleable.Gauge_gaugeStrokeCap)!!
         startAngle = styledAttributes.getInt(R.styleable.Gauge_gaugeStartAngle, 0)
         sweepAngle = styledAttributes.getInt(R.styleable.Gauge_gaugeSweepAngle, 360)
         startValue = styledAttributes.getInt(R.styleable.Gauge_gaugeStartValue, 0).toFloat()
         endValue = styledAttributes.getInt(R.styleable.Gauge_gaugeEndValue, 1000).toFloat()
         pointSize = styledAttributes.getInt(R.styleable.Gauge_gaugePointSize, 0)
-        pointColor = styledAttributes.getColor(
-            R.styleable.Gauge_gaugePointColor,
-            ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white)
-        )
+        pointColor =
+            styledAttributes.getColor(
+                R.styleable.Gauge_gaugePointColor,
+                ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white),
+            )
         val dividerSize = styledAttributes.getInt(R.styleable.Gauge_gaugeDividerSize, 0)
-        dividerColor = styledAttributes.getColor(
-            R.styleable.Gauge_gaugeDividerColor,
-            ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white)
-        )
+        dividerColor =
+            styledAttributes.getColor(
+                R.styleable.Gauge_gaugeDividerColor,
+                ContextCompat.getColor(context, org.obd.graphs.commons.R.color.white),
+            )
         val dividerStep = styledAttributes.getInt(R.styleable.Gauge_gaugeDividerStep, 0)
         isDividerDrawFirst =
             styledAttributes.getBoolean(R.styleable.Gauge_gaugeDividerDrawFirst, true)
@@ -120,11 +128,9 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         gaugeDrawScale = styledAttributes.getBoolean(R.styleable.Gauge_gaugeDrawScale, false)
         styledAttributes.recycle()
-
     }
 
     internal fun init() {
-
         val rescaleValue = calculateRescaleValue()
         val decorLineOffset = if (isTablet()) 12 * rescaleValue else 20 * rescaleValue
 
@@ -141,7 +147,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         paint.style = Paint.Style.STROKE
 
-        numbersPaint.color = resources.getColor(org.obd.graphs.commons.R.color.white ,null)
+        numbersPaint.color = resources.getColor(org.obd.graphs.commons.R.color.white, null)
 
         strokeWidth *= rescaleValue
         numbersPaint.textSize = strokeWidth * 0.8f
@@ -167,9 +173,11 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         progressRect[rectLeft, rectTop, rectRight] = rectBottom
 
         decorRect = RectF()
-        decorRect[progressRect.left - decorLineOffset,
-                progressRect.top - decorLineOffset,
-                progressRect.right + decorLineOffset] =
+        decorRect[
+            progressRect.left - decorLineOffset,
+            progressRect.top - decorLineOffset,
+            progressRect.right + decorLineOffset,
+        ] =
             progressRect.bottom + decorLineOffset
     }
 
@@ -191,11 +199,13 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         paint.strokeWidth = strokeWidth
         paint.color = pointColor
         if (pointSize > 0) {
-
             if (point > startAngle + pointSize / 2) {
                 canvas.drawArc(
-                    progressRect, (point - pointSize / 2).toFloat(), pointSize.toFloat(), false,
-                    paint
+                    progressRect,
+                    (point - pointSize / 2).toFloat(),
+                    pointSize.toFloat(),
+                    false,
+                    paint,
                 )
             } else {
                 canvas.drawArc(progressRect, point.toFloat(), pointSize.toFloat(), false, paint)
@@ -203,13 +213,19 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         } else {
             if (value == startValue) {
                 canvas.drawArc(
-                    progressRect, startAngle.toFloat(), DEFAULT_LONG_POINTER_SIZE.toFloat(), false,
-                    paint
+                    progressRect,
+                    startAngle.toFloat(),
+                    DEFAULT_LONG_POINTER_SIZE.toFloat(),
+                    false,
+                    paint,
                 )
             } else {
                 canvas.drawArc(
-                    progressRect, startAngle.toFloat(), (point - startAngle).toFloat(), false,
-                    paint
+                    progressRect,
+                    startAngle.toFloat(),
+                    (point - startAngle).toFloat(),
+                    false,
+                    paint,
                 )
             }
         }
@@ -233,7 +249,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                 (startAngle + j * dividerStepAngle).toFloat(),
                 dividerSize,
                 false,
-                paint
+                paint,
             )
         }
     }
@@ -252,7 +268,7 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             numbersPaint.getTextBounds(text, 0, text.length, rect)
             val angle = Math.PI / numberOfItems * (i - numberOfItems).toFloat()
             val x = (width / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
-            var y =  (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
+            var y = (calculatedHeight / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
             if (calculatedWidth > height) {
                 y *= radiusFactor
@@ -262,15 +278,22 @@ class Gauge(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
-    private fun calculateRescaleValue(): Float = (valueConverter.scaleToNewRange(
-        measuredWidth.toFloat() * measuredHeight.toFloat(),
-        0.0f,
-        Resources.getSystem().displayMetrics.widthPixels * Resources.getSystem().displayMetrics.heightPixels.toFloat(),
-        1f,
-        3f
-    ).apply {
-        if (!isTablet()) {
-            return this * 0.85f
-        }
-    })
+    private fun calculateRescaleValue(): Float =
+        (
+            (measuredWidth * measuredHeight)
+                .mapRange(
+                    0.0f,
+                    Resources.getSystem().displayMetrics.widthPixels *
+                        Resources
+                            .getSystem()
+                            .displayMetrics.heightPixels
+                            .toFloat(),
+                    1f,
+                    3f,
+                ).apply {
+                    if (!isTablet()) {
+                        return this * 0.85f
+                    }
+                }
+        )
 }

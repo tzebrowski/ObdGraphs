@@ -18,28 +18,42 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import androidx.fragment.app.Fragment
-import org.obd.graphs.*
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
+import org.obd.graphs.TRIPS_UPLOAD_FAILED
+import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
+import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
+import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.scaleToRange
+import org.obd.graphs.integrations.log.OutputType
+import org.obd.graphs.integrations.log.VehicleLog
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
 internal open class DefaultTripsDriveManager(
     webClientId: String,
     activity: Activity,
     fragment: Fragment?,
-) : AbstractDriveManager(webClientId, activity, fragment), TripsDriveManager {
-
+) : AbstractDriveManager(webClientId, activity, fragment),
+    TripsDriveManager {
     override suspend fun exportTrips(files: List<File>) =
         signInAndExecute("exportTrips") { token ->
             executeDriveOperation(
                 accessToken = token,
                 onFailure = { sendBroadcastEvent(TRIPS_UPLOAD_FAILED) },
-                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) },
             ) { drive ->
                 if (files.isEmpty()) {
                     sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
+                    val signalsMapper = dataLogger.getPidDefinitionRegistry().findAll().associate { it.id.toInt() to it.description }
+                    val pidMap = dataLogger.getPidDefinitionRegistry().findAll().associateBy { it.id.toInt() }
+                    val transformer =
+                        VehicleLog.transformer(OutputType.JSON, signalsMapper) { s, v -> (pidMap[s]?.scaleToRange(v.toFloat())) ?: v }
+
                     files.forEach { file ->
-                        drive.uploadFile(file, folderId)
+                        val content = transformer.transform(file)
+                        drive.uploadFile(MemoryContent("text/plain", content, file.name), folderId)
                     }
                     sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)
                 }

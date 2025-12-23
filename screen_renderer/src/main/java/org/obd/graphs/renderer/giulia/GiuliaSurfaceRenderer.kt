@@ -21,16 +21,19 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
-import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.renderer.*
+import org.obd.graphs.mapRange
+import org.obd.graphs.renderer.CoreSurfaceRenderer
+import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.MARGIN_TOP
+import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.ViewSettings
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
-
 
 private const val LOG_TAG = "GiuliaScreenRenderer"
 private const val CURRENT_MIN = 22f
@@ -39,21 +42,18 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 private const val AREA_MAX_WIDTH = 500
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaSurfaceRenderer(
     context: Context,
-    private val  settings: ScreenSettings,
-    private val  metricsCollector: MetricsCollector,
+    private val settings: ScreenSettings,
+    private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-    viewSettings: ViewSettings
+    viewSettings: ViewSettings,
 ) : CoreSurfaceRenderer(viewSettings) {
-
-    private val valueConverter = ValueConverter()
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
-        val giuliaSettings =  settings.getGiuliaRendererSetting()
+        val giuliaSettings = settings.getGiuliaRendererSetting()
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             metricsCollector.applyFilter(enabled = giuliaSettings.selectedPIDs, order = giuliaSettings.getPIDsSortOrder())
         } else {
@@ -63,8 +63,10 @@ internal class GiuliaSurfaceRenderer(
         }
     }
 
-    override fun onDraw(canvas: Canvas, drawArea: Rect?) {
-
+    override fun onDraw(
+        canvas: Canvas,
+        drawArea: Rect?,
+    ) {
         drawArea?.let { area ->
 
             if (area.isEmpty) {
@@ -89,27 +91,30 @@ internal class GiuliaSurfaceRenderer(
 
             val topCpy = top
             var initialLeft = initialLeft(area)
-            val metricsCount = min(settings.getMaxItems(),metricsCollector.getMetrics().size)
-            val pageSize = max(min( metricsCount,  round(metricsCount / settings.getMaxColumns().toFloat()).toInt()),1)
+            val metricsCount = min(settings.getMaxItems(), metricsCollector.getMetrics().size)
+            val pageSize = max(min(metricsCount, round(metricsCount / settings.getMaxColumns().toFloat()).toInt()), 1)
 
-            if (Log.isLoggable(LOG_TAG,Log.VERBOSE)) {
-                Log.v(LOG_TAG, "metricsCount=${metricsCollector.getMetrics().size}," +
-                        "metricsLimit=$${ settings.getMaxItems()}  pageSize=$pageSize")
+            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                Log.v(
+                    LOG_TAG,
+                    "metricsCount=${metricsCollector.getMetrics().size}," +
+                        "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize",
+                )
             }
 
             val metrics = metricsCollector.getMetrics()
-            if (pageSize > 0 && metrics.isNotEmpty()){
-                for (i in 0 until pageSize){
+            if (pageSize > 0 && metrics.isNotEmpty()) {
+                for (i in 0 until pageSize) {
                     top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
                 }
 
-                if (settings.getMaxColumns() > 1 && metricsCount > pageSize){
+                if (settings.getMaxColumns() > 1 && metricsCount > pageSize) {
                     initialLeft += area.width() / 2 - 18
                     left += calculateLeftMargin(area)
                     top = calculateTop(textSizeBase, top, topCpy)
 
-                    for (i in pageSize until metricsCount){
-                        top = draw(canvas, area, metrics[i],  textSizeBase, valueTextSize, left, top, initialLeft)
+                    for (i in pageSize until metricsCount) {
+                        top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
                     }
                 }
             }
@@ -120,18 +125,17 @@ internal class GiuliaSurfaceRenderer(
         giuliaDrawer.recycle()
     }
 
-    private inline fun calculateFontSize(
-        area: Rect
-    ): Pair<Float, Float> {
+    private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
+        val scaleRatio = settings.getGiuliaRendererSetting().getFontSize().mapRange(CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
-        val scaleRatio = valueConverter.scaleToNewRange(settings.getGiuliaRendererSetting().getFontSize().toFloat(), CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
-
-        val areaWidth = min(
-            when (settings.getMaxColumns()) {
-                1 -> area.width()
-                else -> area.width() / 2
-            }, AREA_MAX_WIDTH
-        )
+        val areaWidth =
+            min(
+                when (settings.getMaxColumns()) {
+                    1 -> area.width()
+                    else -> area.width() / 2
+                },
+                AREA_MAX_WIDTH,
+            )
 
         val valueTextSize = (areaWidth / 10f) * scaleRatio
         val textSizeBase = (areaWidth / 16f) * scaleRatio
@@ -139,7 +143,7 @@ internal class GiuliaSurfaceRenderer(
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
             Log.v(
                 LOG_TAG,
-                "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio"
+                "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio",
             )
         }
         return Pair(valueTextSize, textSizeBase)
@@ -148,11 +152,12 @@ internal class GiuliaSurfaceRenderer(
     private inline fun calculateTop(
         textHeight: Float,
         top: Float,
-        topCpy: Float
-    ): Float = when (settings.getMaxColumns()) {
-        1 -> top + (textHeight / 3) - 10
-        else -> topCpy
-    }
+        topCpy: Float,
+    ): Float =
+        when (settings.getMaxColumns()) {
+            1 -> top + (textHeight / 3) - 10
+            else -> topCpy
+        }
 
     private inline fun calculateLeftMargin(area: Rect): Int =
         when (settings.getMaxColumns()) {
@@ -174,7 +179,7 @@ internal class GiuliaSurfaceRenderer(
         valueTextSize: Float,
         left: Float,
         top: Float,
-        valueLeft: Float
+        valueLeft: Float,
     ) = giuliaDrawer.drawMetric(
         canvas = canvas,
         area = area,
@@ -183,6 +188,6 @@ internal class GiuliaSurfaceRenderer(
         valueTextSize = valueTextSize,
         left = left,
         top = top,
-        valueLeft = valueLeft
+        valueLeft = valueLeft,
     )
 }

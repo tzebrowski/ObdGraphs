@@ -19,8 +19,8 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.ValueConverter
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.getContext
 import org.obd.graphs.isNumber
 import org.obd.graphs.preferences.Prefs
@@ -42,8 +42,6 @@ private const val TRIP_FILE_PREFIX = "trip"
 
 internal class DefaultTripManager : TripManager, MetricsProcessor {
 
-    private val valueConverter = ValueConverter()
-
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
 
@@ -62,7 +60,7 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                 tripCache.getTrip { trip ->
                     val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
                     val key = obdMetric.command.pid.id
-                    val newRecord = Entry(ts, valueConverter.scaleToNewRange(obdMetric), key)
+                    val newRecord = Entry(ts, obdMetric.scaleToRange(), key)
 
                     if (trip.entries.containsKey(key)) {
                         val tripEntry = trip.entries[key]!!
