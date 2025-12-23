@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,9 +23,9 @@ import java.io.InputStreamReader
 import java.io.StringReader
 import java.io.StringWriter
 
-
 internal interface VehicleLogTransformer {
     fun transform(log: String): String
+
     fun transform(file: File): String
 }
 
@@ -36,19 +36,21 @@ object VehicleLog {
     internal fun transformer(
         outputType: OutputType = OutputType.JSON,
         signalMapper: Map<Int, String> = mapOf(),
-        valueMapper: (signal: Int, value: Number) -> Number
+        valueMapper: (signal: Int, value: Number) -> Number,
     ): VehicleLogTransformer =
         when (outputType) {
             else -> DefaultJSONOutput(signalMapper, valueMapper)
         }
 }
 
-private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = mapOf(), private val valueMapper: (signal: Int, value: Number) -> Number) :
-    VehicleLogTransformer {
-
-    override fun transform(file: File): String = file.inputStream().use { input ->
-        process(JsonReader(InputStreamReader(input)))
-    }
+private class DefaultJSONOutput(
+    private val signalMapper: Map<Int, String> = mapOf(),
+    private val valueMapper: (signal: Int, value: Number) -> Number,
+) : VehicleLogTransformer {
+    override fun transform(file: File): String =
+        file.inputStream().use { input ->
+            process(JsonReader(InputStreamReader(input)))
+        }
 
     override fun transform(log: String): String = process(JsonReader(StringReader(log)))
 
@@ -61,8 +63,7 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = map
             reader.isLenient = true
             writer.beginArray() // [
             parseRoot(reader, writer)
-            writer.endArray()   // ]
-
+            writer.endArray() // ]
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -80,8 +81,10 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = map
         return outputBuffer.toString()
     }
 
-
-    private fun parseRoot(reader: JsonReader, writer: JsonWriter) {
+    private fun parseRoot(
+        reader: JsonReader,
+        writer: JsonWriter,
+    ) {
         reader.beginObject() // {
         while (reader.hasNext()) {
             if (reader.nextName() == "entries") {
@@ -93,7 +96,10 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = map
         reader.endObject()
     }
 
-    private fun parseEntries(reader: JsonReader, writer: JsonWriter) {
+    private fun parseEntries(
+        reader: JsonReader,
+        writer: JsonWriter,
+    ) {
         reader.beginObject() // Start "entries" map
         while (reader.hasNext()) {
             reader.nextName() // Skip the dynamic key ("12", "99")
@@ -102,7 +108,10 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = map
         reader.endObject()
     }
 
-    private fun parseEntryGroup(reader: JsonReader, writer: JsonWriter) {
+    private fun parseEntryGroup(
+        reader: JsonReader,
+        writer: JsonWriter,
+    ) {
         reader.beginObject() // Inside "12": {
         while (reader.hasNext()) {
             if (reader.nextName() == "metrics") {
@@ -114,7 +123,10 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = map
         reader.endObject()
     }
 
-    private fun parseMetricsArray(reader: JsonReader, writer: JsonWriter) {
+    private fun parseMetricsArray(
+        reader: JsonReader,
+        writer: JsonWriter,
+    ) {
         reader.beginArray() // [
         while (reader.hasNext()) {
             parseSingleMetric(reader, writer)
@@ -122,7 +134,10 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = map
         reader.endArray()
     }
 
-    private fun parseSingleMetric(reader: JsonReader, writer: JsonWriter) {
+    private fun parseSingleMetric(
+        reader: JsonReader,
+        writer: JsonWriter,
+    ) {
         var ts: Long = 0
         var signal = 0
         var value = 0.0

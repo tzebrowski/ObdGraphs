@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,8 +20,10 @@ const val NEW_RANGE_MIN_VAL = 0f
 const val NEW_RANGE_MAX_VAL = 3500f
 
 fun Number.mapRange(
-    inMin: Float, inMax: Float,
-    outMin: Float, outMax: Float
+    inMin: Float,
+    inMax: Float,
+    outMin: Float,
+    outMax: Float,
 ): Float {
     // Safety check: prevent division by zero if min == max
     if (inMin == inMax) return outMin

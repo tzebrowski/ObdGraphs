@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -265,10 +265,10 @@ class GaugeAdapter(
 
         val targetSize =
             Resources.getSystem().displayMetrics.widthPixels *
-                    Resources
-                        .getSystem()
-                        .displayMetrics.heightPixels
-                        .toFloat()
+                Resources
+                    .getSystem()
+                    .displayMetrics.heightPixels
+                    .toFloat()
 
         return (width * height).mapRange(0.0f, targetSize, 1f, 3f)
     }
@@ -312,5 +312,5 @@ class GaugeAdapter(
 
     private fun inAlertState(metric: Metric) =
         Prefs.getBoolean(PREF_ALERTING_ENABLED, false) &&
-                (metric.source.isUpperAlert || metric.source.isLowerAlert)
+            (metric.source.isUpperAlert || metric.source.isLowerAlert)
 }
