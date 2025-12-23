@@ -23,6 +23,7 @@ import org.obd.graphs.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.VehicleLog
 import org.obd.graphs.sendBroadcastEvent
@@ -46,7 +47,9 @@ internal open class DefaultTripsDriveManager(
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
                     val signalsMapper = dataLogger.getPidDefinitionRegistry().findAll().associate { it.id.toInt() to it.description }
-                    val transformer = VehicleLog.transformer(OutputType.JSON, signalsMapper)
+                    val pidMap = dataLogger.getPidDefinitionRegistry().findAll().associateBy { it.id.toInt() }
+                    val transformer =
+                        VehicleLog.transformer(OutputType.JSON, signalsMapper) { s, v -> (pidMap[s]?.scaleToRange(v.toFloat())) ?: v }
 
                     files.forEach { file ->
                         val content = transformer.transform(file)

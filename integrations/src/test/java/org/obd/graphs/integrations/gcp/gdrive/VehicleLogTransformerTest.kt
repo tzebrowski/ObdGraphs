@@ -25,13 +25,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class VehicleTransformerTest {
+class VehicleLogTransformerTest {
 
     @Test
     fun `read file test`() {
 
         val file = File("src/test/assets/", "trip-profile_1-1765481895809-22.json")
-        val transformer: VehicleLogTransformer = VehicleLog.transformer()
+        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
         val result = transformer.transform(file)
 
         Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896267,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896463,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896666,\"s\":\"12\"")
@@ -66,15 +66,14 @@ class VehicleTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: VehicleLogTransformer = VehicleLog.transformer(signalMapper=signalMapper)
+        val transformer: VehicleLogTransformer = VehicleLog.transformer(signalMapper=signalMapper) { s,v -> v.toFloat() * 2 }
         val result = transformer.transform(rawJson)
 
         val expectedJson =
-            """[{"t":1000,"s":"Boost","v":50.5},{"t":2000,"s":"13","v":60.5}]"""
+            """[{"t":1000,"s":"Boost","v":101.0},{"t":2000,"s":"13","v":121.0}]"""
 
         Assertions.assertThat(expectedJson).isEqualTo(result)
     }
-
 
     @Test
     fun `optimize should convert complex json to optimized flat format`() {
@@ -105,7 +104,7 @@ class VehicleTransformerTest {
             }
             """.trimIndent()
 
-        val transformer: VehicleLogTransformer = VehicleLog.transformer()
+        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
         val result = transformer.transform(rawJson)
 
         val expectedJson =
@@ -130,7 +129,7 @@ class VehicleTransformerTest {
             }
         """
 
-        val transformer: VehicleLogTransformer = VehicleLog.transformer()
+        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
         val result = transformer.transform(rawJson)
         assertFalse(result.contains("\"id\""))
         assertFalse(result.contains("\"x\""))
@@ -152,7 +151,7 @@ class VehicleTransformerTest {
             }
         """
 
-        val transformer: VehicleLogTransformer = VehicleLog.transformer()
+        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
         val result = transformer.transform(rawJson)
 
         val expected = """[]"""

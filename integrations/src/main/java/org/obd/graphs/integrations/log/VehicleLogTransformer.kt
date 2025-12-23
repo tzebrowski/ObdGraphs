@@ -33,13 +33,18 @@ internal enum class OutputType { JSON }
 
 object VehicleLog {
     @Suppress("UNUSED_EXPRESSION")
-    internal fun transformer(outputType: OutputType = OutputType.JSON, signalMapper: Map<Int,String> = mapOf()): VehicleLogTransformer =
+    internal fun transformer(
+        outputType: OutputType = OutputType.JSON,
+        signalMapper: Map<Int, String> = mapOf(),
+        valueMapper: (signal: Int, value: Number) -> Number
+    ): VehicleLogTransformer =
         when (outputType) {
-            else -> DefaultJSONOutput(signalMapper)
+            else -> DefaultJSONOutput(signalMapper, valueMapper)
         }
 }
 
-private class DefaultJSONOutput(private val signalMapper: Map<Int,String> = mapOf()) : VehicleLogTransformer {
+private class DefaultJSONOutput(private val signalMapper: Map<Int, String> = mapOf(), private val valueMapper: (signal: Int, value: Number) -> Number) :
+    VehicleLogTransformer {
 
     override fun transform(file: File): String = file.inputStream().use { input ->
         process(JsonReader(InputStreamReader(input)))
@@ -119,8 +124,8 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int,String> = mapO
 
     private fun parseSingleMetric(reader: JsonReader, writer: JsonWriter) {
         var ts: Long = 0
-        var data = 0
-        var y = 0.0
+        var signal = 0
+        var value = 0.0
 
         reader.beginObject() // Metric object {
         while (reader.hasNext()) {
@@ -130,8 +135,8 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int,String> = mapO
                     reader.beginObject() // Nested "entry": {
                     while (reader.hasNext()) {
                         when (reader.nextName()) {
-                            "data" -> data = reader.nextInt()
-                            "y" -> y = reader.nextDouble()
+                            "data" -> signal = reader.nextInt()
+                            "y" -> value = reader.nextDouble()
                             else -> reader.skipValue() // Skip "x"
                         }
                     }
@@ -146,8 +151,8 @@ private class DefaultJSONOutput(private val signalMapper: Map<Int,String> = mapO
         // Write directly to output (No intermediate object creation)
         writer.beginObject()
         writer.name("t").value(ts)
-        writer.name("s").value((signalMapper[data] ?: data).toString())
-        writer.name("v").value(y)
+        writer.name("s").value((signalMapper[signal] ?: signal).toString())
+        writer.name("v").value(valueMapper(signal, value))
         writer.endObject()
     }
 }
