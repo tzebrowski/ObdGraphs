@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,7 +39,10 @@ private const val NEW_MIN = 0.6f
 const val MAX_ITEM_IN_THE_ROW = 6
 
 @Suppress("NOTHING_TO_INLINE")
-internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+internal class TripInfoDrawer(
+    context: Context,
+    settings: ScreenSettings,
+) : AbstractDrawer(context, settings) {
     private val metricBuilder = MetricsBuilder()
 
     inline fun drawScreen(
@@ -47,9 +50,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         area: Rect,
         left: Float,
         top: Float,
-        tripInfo: TripInfoDetails
+        tripInfo: TripInfoDetails,
     ) {
-
         val (textSizeBase) = calculateFontSize(area)
         val x = maxItemWidth(area) + 4
 
@@ -64,7 +66,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 textSizeBase,
                 statsEnabled = true,
                 area = area,
-                castToInt = true
+                castToInt = true,
             )
         }
         tripInfo.coolantTemp?.let {
@@ -76,7 +78,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 textSizeBase,
                 statsEnabled = true,
                 area = area,
-                castToInt = true
+                castToInt = true,
             )
         }
         tripInfo.oilTemp?.let {
@@ -88,7 +90,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 textSizeBase,
                 statsEnabled = true,
                 area = area,
-                castToInt = true
+                castToInt = true,
             )
         }
         tripInfo.exhaustTemp?.let {
@@ -100,7 +102,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 textSizeBase,
                 statsEnabled = true,
                 area = area,
-                castToInt = true
+                castToInt = true,
             )
         }
         tripInfo.gearboxOilTemp?.let {
@@ -112,7 +114,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 textSizeBase,
                 statsEnabled = true,
                 area = area,
-                castToInt = true
+                castToInt = true,
             )
         }
         tripInfo.distance?.let {
@@ -122,11 +124,11 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 left + (leftAlignment++) * x,
                 canvas,
                 textSizeBase,
-                area = area
+                area = area,
             )
         }
 
-        //second row
+        // second row
         leftAlignment = 0
         rowTop = top + (textSizeBase) + 52f
         tripInfo.fuellevel?.let {
@@ -139,7 +141,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 statsEnabled = true,
                 area = area,
                 statsDoublePrecision = 1,
-                valueDoublePrecision = 1
+                valueDoublePrecision = 1,
             )
         }
         tripInfo.fuelConsumption?.let {
@@ -152,7 +154,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 statsEnabled = true,
                 unitEnabled = false,
                 area = area,
-                statsDoublePrecision = 1
+                statsDoublePrecision = 1,
             )
         }
         tripInfo.batteryVoltage?.let {
@@ -163,7 +165,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 canvas,
                 textSizeBase,
                 statsEnabled = true,
-                area = area
+                area = area,
             )
         }
         tripInfo.ibs?.let {
@@ -175,7 +177,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 textSizeBase,
                 area = area,
                 castToInt = true,
-                statsEnabled = true
+                statsEnabled = true,
             )
         }
         tripInfo.oilLevel?.let {
@@ -186,7 +188,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 canvas,
                 textSizeBase,
                 statsEnabled = true,
-                area = area
+                area = area,
             )
         }
         tripInfo.totalMisfires?.let {
@@ -198,7 +200,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 textSizeBase,
                 unitEnabled = false,
                 area = area,
-                castToInt = true
+                castToInt = true,
             )
         }
 
@@ -211,14 +213,14 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                     canvas,
                     textSizeBase,
                     unitEnabled = false,
-                    area = area
+                    area = area,
                 )
             }
         }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
 
-        //metrics
+        // metrics
         rowTop += 2.2f * textSizeBase
         leftAlignment = 0
 
@@ -243,15 +245,12 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 metric,
                 left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5),
                 rowTop,
-                bottomMetrics.size
+                bottomMetrics.size,
             )
         }
     }
 
-    private inline fun calculateFontSize(
-        area: Rect
-    ): Pair<Float, Float> {
-
+    private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
         val scaleRatio = getScaleRatio()
 
         val areaWidth = area.width()
@@ -266,9 +265,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         metric: Metric,
         left: Float,
         top: Float,
-        items: Int
+        items: Int,
     ): Float {
-
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
         var top1 = top
@@ -279,7 +277,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             metric,
             left1,
             top1,
-            textSizeBase * 0.75f
+            textSizeBase * 0.75f,
         )
 
         val areaWidth = getAreaWidth(area, items = items)
@@ -288,45 +286,48 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             metric,
             top1 + textSizeBase,
             valueTextSize * 0.9f,
-            left = left + areaWidth - valueTextSize
+            left = left + areaWidth - valueTextSize,
         )
         val scaleRatio = getScaleRatio()
 
-        //space between title and  statistic values
+        // space between title and  statistic values
         top1 += (area.width() / 11f) * scaleRatio
 
         if (settings.isStatisticsEnabled()) {
             val tt = textSizeBase * 0.6f
             if (metric.source.command.pid.historgam.isMinEnabled) {
-                left1 = drawText(
-                    canvas,
-                    "min",
-                    left,
-                    top1,
-                    Color.LTGRAY,
-                    tt * 0.8f,
-                    valuePaint
-                )
-                left1 = drawText(
-                    canvas,
-                    metric.min.format(pid = metric.pid()),
-                    left1,
-                    top1,
-                    minValueColorScheme(metric),
-                    tt,
-                    valuePaint
-                )
+                left1 =
+                    drawText(
+                        canvas,
+                        "min",
+                        left,
+                        top1,
+                        Color.LTGRAY,
+                        tt * 0.8f,
+                        valuePaint,
+                    )
+                left1 =
+                    drawText(
+                        canvas,
+                        metric.min.format(pid = metric.pid()),
+                        left1,
+                        top1,
+                        minValueColorScheme(metric),
+                        tt,
+                        valuePaint,
+                    )
             }
             if (metric.source.command.pid.historgam.isMaxEnabled) {
-                left1 = drawText(
-                    canvas,
-                    "max",
-                    left1,
-                    top1,
-                    Color.LTGRAY,
-                    tt * 0.8f,
-                    valuePaint
-                )
+                left1 =
+                    drawText(
+                        canvas,
+                        "max",
+                        left1,
+                        top1,
+                        Color.LTGRAY,
+                        tt * 0.8f,
+                        valuePaint,
+                    )
                 drawText(
                     canvas,
                     metric.max.format(metric.pid()),
@@ -334,7 +335,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                     top1,
                     maxValueColorScheme(metric),
                     tt,
-                    valuePaint
+                    valuePaint,
                 )
             }
 
@@ -346,31 +347,40 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         drawProgressBar(
             canvas,
             left,
-            areaWidth, top1, metric,
-            color = settings.getColorTheme().progressColor
+            areaWidth,
+            top1,
+            metric,
+            color = settings.getColorTheme().progressColor,
         )
 
         top1 += calculateDividerSpacing()
 
         drawDivider(
             canvas,
-            left, areaWidth, top1,
-            color = settings.getColorTheme().dividerColor
+            left,
+            areaWidth,
+            top1,
+            color = settings.getColorTheme().dividerColor,
         )
 
         top1 += 10f + (textSizeBase).toInt()
         return top1
     }
 
-    private inline fun getScaleRatio() = settings.getTripInfoScreenSettings().fontSize.toFloat().mapRange(
-        CURRENT_MIN,
-        CURRENT_MAX,
-        NEW_MIN,
-        NEW_MAX
-    )
+    private inline fun getScaleRatio() =
+        settings.getTripInfoScreenSettings().fontSize.toFloat().mapRange(
+            CURRENT_MIN,
+            CURRENT_MAX,
+            NEW_MIN,
+            NEW_MAX,
+        )
 
     private inline fun calculateDividerSpacing(): Int = 14
-    private inline fun getAreaWidth(area: Rect, items: Int = 3): Float = area.width().toFloat() / items
+
+    private inline fun getAreaWidth(
+        area: Rect,
+        items: Int = 3,
+    ): Float = area.width().toFloat() / items
 
     private fun drawProgressBar(
         canvas: Canvas,
@@ -378,20 +388,26 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         width: Float,
         top: Float,
         it: Metric,
-        color: Int
+        color: Int,
     ) {
         paint.color = color
 
-        val progress = it.source.toFloat().mapRange(
-            it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
-        )
+        val progress =
+            it.source.toFloat().mapRange(
+                it.source.command.pid.min
+                    .toFloat(),
+                it.source.command.pid.max
+                    .toFloat(),
+                left,
+                left + width - MARGIN_END,
+            )
 
         canvas.drawRect(
             left - MAX_ITEM_IN_THE_ROW,
             top + 4,
             progress,
             top + calculateProgressBarHeight(),
-            paint
+            paint,
         )
     }
 
@@ -402,7 +418,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         textSize: Float,
         left: Float,
     ) {
-
         valuePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
         valuePaint.color = Color.WHITE
 
@@ -432,9 +447,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         area: Rect,
         valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2,
-        castToInt: Boolean = false
+        castToInt: Boolean = false,
     ) {
-
         valuePaint.typeface = typeface
         valuePaint.color = valueColorScheme(metric)
 
@@ -459,7 +473,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             val pid = metric.pid()
             val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
             if (itemWidth <= maxItemWidth(area)) {
-
                 val min = metric.min.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
                 valuePaint.color = minValueColorScheme(metric)
                 canvas.drawText(min, (left + textWidth), top, valuePaint)
@@ -467,7 +480,9 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 valuePaint.color = maxValueColorScheme(metric)
                 canvas.drawText(
                     metric.max.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt),
-                    (left + textWidth), top - (getTextHeight(min, valuePaint) * 1.1f), valuePaint
+                    (left + textWidth),
+                    top - (getTextHeight(min, valuePaint) * 1.1f),
+                    valuePaint,
                 )
             }
         }
@@ -488,9 +503,8 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         area: Rect,
         valueDoublePrecision: Int = 2,
         statsDoublePrecision: Int = 2,
-        castToInt: Boolean = false
+        castToInt: Boolean = false,
     ) {
-
         drawValue(
             canvas,
             metric,
@@ -503,7 +517,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             area = area,
             valueDoublePrecision = valueDoublePrecision,
             statsDoublePrecision = statsDoublePrecision,
-            castToInt = castToInt
+            castToInt = castToInt,
         )
 
         drawTitle(canvas, metric, left, top + (textSizeBase * 0.40f), textSizeBase * 0.35F)

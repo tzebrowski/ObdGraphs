@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -35,7 +35,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 
-
 private const val LOG_TAG = "GiuliaScreenRenderer"
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
@@ -43,16 +42,14 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 private const val AREA_MAX_WIDTH = 500
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-    viewSettings: ViewSettings
+    viewSettings: ViewSettings,
 ) : CoreSurfaceRenderer(viewSettings) {
-
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {
@@ -66,8 +63,10 @@ internal class GiuliaSurfaceRenderer(
         }
     }
 
-    override fun onDraw(canvas: Canvas, drawArea: Rect?) {
-
+    override fun onDraw(
+        canvas: Canvas,
+        drawArea: Rect?,
+    ) {
         drawArea?.let { area ->
 
             if (area.isEmpty) {
@@ -97,8 +96,9 @@ internal class GiuliaSurfaceRenderer(
 
             if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
                 Log.v(
-                    LOG_TAG, "metricsCount=${metricsCollector.getMetrics().size}," +
-                            "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize"
+                    LOG_TAG,
+                    "metricsCount=${metricsCollector.getMetrics().size}," +
+                        "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize",
                 )
             }
 
@@ -125,18 +125,17 @@ internal class GiuliaSurfaceRenderer(
         giuliaDrawer.recycle()
     }
 
-    private inline fun calculateFontSize(
-        area: Rect
-    ): Pair<Float, Float> {
-
+    private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
         val scaleRatio = settings.getGiuliaRendererSetting().getFontSize().mapRange(CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
 
-        val areaWidth = min(
-            when (settings.getMaxColumns()) {
-                1 -> area.width()
-                else -> area.width() / 2
-            }, AREA_MAX_WIDTH
-        )
+        val areaWidth =
+            min(
+                when (settings.getMaxColumns()) {
+                    1 -> area.width()
+                    else -> area.width() / 2
+                },
+                AREA_MAX_WIDTH,
+            )
 
         val valueTextSize = (areaWidth / 10f) * scaleRatio
         val textSizeBase = (areaWidth / 16f) * scaleRatio
@@ -144,7 +143,7 @@ internal class GiuliaSurfaceRenderer(
         if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
             Log.v(
                 LOG_TAG,
-                "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio"
+                "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio",
             )
         }
         return Pair(valueTextSize, textSizeBase)
@@ -153,11 +152,12 @@ internal class GiuliaSurfaceRenderer(
     private inline fun calculateTop(
         textHeight: Float,
         top: Float,
-        topCpy: Float
-    ): Float = when (settings.getMaxColumns()) {
-        1 -> top + (textHeight / 3) - 10
-        else -> topCpy
-    }
+        topCpy: Float,
+    ): Float =
+        when (settings.getMaxColumns()) {
+            1 -> top + (textHeight / 3) - 10
+            else -> topCpy
+        }
 
     private inline fun calculateLeftMargin(area: Rect): Int =
         when (settings.getMaxColumns()) {
@@ -179,7 +179,7 @@ internal class GiuliaSurfaceRenderer(
         valueTextSize: Float,
         left: Float,
         top: Float,
-        valueLeft: Float
+        valueLeft: Float,
     ) = giuliaDrawer.drawMetric(
         canvas = canvas,
         area = area,
@@ -188,6 +188,6 @@ internal class GiuliaSurfaceRenderer(
         valueTextSize = valueTextSize,
         left = left,
         top = top,
-        valueLeft = valueLeft
+        valueLeft = valueLeft,
     )
 }
