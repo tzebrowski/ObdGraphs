@@ -46,8 +46,9 @@ internal open class DefaultTripsDriveManager(
                     sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
-                    val signalsMapper = dataLogger.getPidDefinitionRegistry().findAll().associate { it.id.toInt() to it.description }
-                    val pidMap = dataLogger.getPidDefinitionRegistry().findAll().associateBy { it.id.toInt() }
+                    val definitions = dataLogger.getPidDefinitionRegistry().findAll()
+                    val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n"," ") }
+                    val pidMap = definitions.associateBy { it.id.toInt() }
                     val transformer =
                         VehicleLog.transformer(OutputType.JSON, signalsMapper) { s, v -> (pidMap[s]?.scaleToRange(v.toFloat())) ?: v }
 
