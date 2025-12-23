@@ -33,13 +33,13 @@ internal enum class OutputType { JSON }
 
 object VehicleLog {
     @Suppress("UNUSED_EXPRESSION")
-    internal fun transformer(outputType: OutputType = OutputType.JSON): VehicleLogTransformer =
+    internal fun transformer(outputType: OutputType = OutputType.JSON, signalMapper: Map<Int,String> = mapOf()): VehicleLogTransformer =
         when (outputType) {
-            else -> DefaultJSONOutput()
+            else -> DefaultJSONOutput(signalMapper)
         }
 }
 
-private class DefaultJSONOutput : VehicleLogTransformer {
+private class DefaultJSONOutput(private val signalMapper: Map<Int,String> = mapOf()) : VehicleLogTransformer {
 
     override fun transform(file: File): String = file.inputStream().use { input ->
         process(JsonReader(InputStreamReader(input)))
@@ -146,7 +146,7 @@ private class DefaultJSONOutput : VehicleLogTransformer {
         // Write directly to output (No intermediate object creation)
         writer.beginObject()
         writer.name("t").value(ts)
-        writer.name("s").value(data)
+        writer.name("s").value((signalMapper[data] ?: data).toString())
         writer.name("v").value(y)
         writer.endObject()
     }

@@ -26,7 +26,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class VehicleTransformerTest {
-    private val transformer: VehicleLogTransformer = VehicleLog.transformer()
 
     @Test
     fun `read file test`() {
@@ -35,7 +34,45 @@ class VehicleTransformerTest {
         val transformer: VehicleLogTransformer = VehicleLog.transformer()
         val result = transformer.transform(file)
 
-        Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":12,\"v\":3298.0767},{\"t\":1765481896267,\"s\":12,\"v\":3298.0767},{\"t\":1765481896463,\"s\":12,\"v\":3298.0767},{\"t\":1765481896666,\"s\":12")
+        Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896267,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896463,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896666,\"s\":\"12\"")
+    }
+
+    @Test
+    fun `signal transformation test`() {
+        val rawJson =
+            """
+            {
+              "startTs": 123456789,
+              "entries": {
+                "10": {
+                  "id": 999,
+                  "min": 1.5,
+                  "max": 3.0,
+                  "mean": 2.25,
+                  "metrics": [
+                    {
+                      "entry": { "x": 100.0, "y": 50.5, "data": 12 },
+                      "ts": 1000,
+                      "rawAnswer": "ignore me"
+                    },
+                    {
+                      "entry": { "x": 101.0, "y": 60.5, "data": 13 },
+                      "ts": 2000,
+                      "rawAnswer": ""
+                    }
+                  ]
+                }
+              }
+            }
+            """.trimIndent()
+        val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
+        val transformer: VehicleLogTransformer = VehicleLog.transformer(signalMapper=signalMapper)
+        val result = transformer.transform(rawJson)
+
+        val expectedJson =
+            """[{"t":1000,"s":"Boost","v":50.5},{"t":2000,"s":"13","v":60.5}]"""
+
+        Assertions.assertThat(expectedJson).isEqualTo(result)
     }
 
 
@@ -68,10 +105,11 @@ class VehicleTransformerTest {
             }
             """.trimIndent()
 
+        val transformer: VehicleLogTransformer = VehicleLog.transformer()
         val result = transformer.transform(rawJson)
 
         val expectedJson =
-            """[{"t":1000,"s":12,"v":50.5},{"t":2000,"s":12,"v":60.5}]"""
+            """[{"t":1000,"s":"12","v":50.5},{"t":2000,"s":"12","v":60.5}]"""
 
         Assertions.assertThat(expectedJson).isEqualTo(result)
     }
@@ -92,6 +130,7 @@ class VehicleTransformerTest {
             }
         """
 
+        val transformer: VehicleLogTransformer = VehicleLog.transformer()
         val result = transformer.transform(rawJson)
         assertFalse(result.contains("\"id\""))
         assertFalse(result.contains("\"x\""))
@@ -113,6 +152,7 @@ class VehicleTransformerTest {
             }
         """
 
+        val transformer: VehicleLogTransformer = VehicleLog.transformer()
         val result = transformer.transform(rawJson)
 
         val expected = """[]"""

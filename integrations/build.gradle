@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation project(":common")
+    implementation project(":datalogger")
 
     implementation("com.google.code.gson:gson:2.10.1")
 
