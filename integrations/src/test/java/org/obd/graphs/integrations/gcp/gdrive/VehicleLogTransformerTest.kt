@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -35,14 +35,13 @@ fun main() {
     }
 }
 
-
 class VehicleLogTransformerTest {
-
     private val transformer: VehicleLogTransformer = DefaultTransformer()
 
     @Test
     fun `optimize should convert complex json to optimized flat format`() {
-        val rawJson = """
+        val rawJson =
+            """
             {
               "startTs": 123456789,
               "entries": {
@@ -66,14 +65,14 @@ class VehicleLogTransformerTest {
                 }
               }
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val result = transformer.transform(rawJson)
 
         val expectedJson =
             """{"startTs":123456789,"entries":{"10":{"metrics":[{"v":50.5,"t":1000},{"v":60.5,"t":2000}],"min":1.5,"max":3.0,"mean":2.25}}}"""
 
-       Assertions.assertThat(expectedJson).isEqualTo(result)
+        Assertions.assertThat(expectedJson).isEqualTo(result)
     }
 
     @Test
@@ -93,7 +92,7 @@ class VehicleLogTransformerTest {
         """
 
         val result = transformer.transform(rawJson)
-        assertFalse (result.contains("\"id\"") )
+        assertFalse(result.contains("\"id\""))
         assertFalse(result.contains("\"x\""))
         assertFalse(result.contains("\"data\""))
         assertFalse(result.contains("\"rawAnswer\""))
