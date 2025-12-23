@@ -18,6 +18,8 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import org.obd.graphs.integrations.log.VehicleLogTransformer
+import org.obd.graphs.integrations.log.logTransformer
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -26,7 +28,7 @@ import kotlin.test.assertTrue
 fun main() {
     try {
         val rawJson = File("integrations/src/test/assets/", "trip-profile_1-1765481895809-22.json").readText()
-        val transformer: VehicleLogTransformer = DefaultTransformer()
+        val transformer: VehicleLogTransformer = logTransformer()
         val json = transformer.transform(rawJson)
         println("Optimization successful!")
         println(json)
@@ -36,7 +38,7 @@ fun main() {
 }
 
 class VehicleLogTransformerTest {
-    private val transformer: VehicleLogTransformer = DefaultTransformer()
+    private val transformer: VehicleLogTransformer = logTransformer()
 
     @Test
     fun `optimize should convert complex json to optimized flat format`() {
@@ -70,7 +72,7 @@ class VehicleLogTransformerTest {
         val result = transformer.transform(rawJson)
 
         val expectedJson =
-            """{"startTs":123456789,"entries":{"10":{"metrics":[{"v":50.5,"t":1000},{"v":60.5,"t":2000}],"min":1.5,"max":3.0,"mean":2.25}}}"""
+            """[{"t":1000,"s":12,"v":50.5},{"t":2000,"s":12,"v":60.5}]"""
 
         Assertions.assertThat(expectedJson).isEqualTo(result)
     }
@@ -94,10 +96,11 @@ class VehicleLogTransformerTest {
         val result = transformer.transform(rawJson)
         assertFalse(result.contains("\"id\""))
         assertFalse(result.contains("\"x\""))
-        assertFalse(result.contains("\"data\""))
         assertFalse(result.contains("\"rawAnswer\""))
         assertFalse(result.contains("\"entry\""))
 
+        assertTrue(result.contains("\"s\""))
+        assertTrue(result.contains("\"t\""))
         assertTrue(result.contains("\"v\":2.0"))
     }
 
@@ -113,7 +116,7 @@ class VehicleLogTransformerTest {
 
         val result = transformer.transform(rawJson)
 
-        val expected = """{"startTs":100,"entries":{}}"""
+        val expected = """[]"""
         assertEquals(expected, result)
     }
 }

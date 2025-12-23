@@ -22,6 +22,8 @@ import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
+import org.obd.graphs.integrations.log.OutputType
+import org.obd.graphs.integrations.log.logTransformer
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
@@ -42,7 +44,7 @@ internal open class DefaultTripsDriveManager(
                     sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
-                    val logTransformer = DefaultTransformer()
+                    val logTransformer = logTransformer(OutputType.JSON)
 
                     files.forEach { file ->
                         val raw = file.readText(Charsets.UTF_8)

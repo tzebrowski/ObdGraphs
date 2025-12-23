@@ -127,7 +127,6 @@ class TripsListDialogFragment : CoreDialogFragment() {
                 alert.show()
             }
         }
-
         return root
     }
 }

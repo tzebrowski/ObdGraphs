@@ -44,9 +44,7 @@ android {
 dependencies {
     implementation project(":common")
 
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0"
-
-
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // This specific library provides lifecycleScope
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
