@@ -18,21 +18,21 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import org.obd.graphs.integrations.log.VehicleLog
 import org.obd.graphs.integrations.log.VehicleLogTransformer
-import org.obd.graphs.integrations.log.logTransformer
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class VehicleLogTransformerTest {
-    private val transformer: VehicleLogTransformer = logTransformer()
+class VehicleTransformerTest {
+    private val transformer: VehicleLogTransformer = VehicleLog.transformer()
 
     @Test
     fun `read file test`() {
 
         val file = File("src/test/assets/", "trip-profile_1-1765481895809-22.json")
-        val transformer: VehicleLogTransformer = logTransformer()
+        val transformer: VehicleLogTransformer = VehicleLog.transformer()
         val result = transformer.transform(file)
 
         Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":12,\"v\":3298.0767},{\"t\":1765481896267,\"s\":12,\"v\":3298.0767},{\"t\":1765481896463,\"s\":12,\"v\":3298.0767},{\"t\":1765481896666,\"s\":12")

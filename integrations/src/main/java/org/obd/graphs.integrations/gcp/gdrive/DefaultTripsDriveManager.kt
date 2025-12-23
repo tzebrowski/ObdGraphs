@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,7 +23,7 @@ import org.obd.graphs.TRIPS_UPLOAD_FAILED
 import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.integrations.log.OutputType
-import org.obd.graphs.integrations.log.logTransformer
+import org.obd.graphs.integrations.log.VehicleLog
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
@@ -44,10 +44,9 @@ internal open class DefaultTripsDriveManager(
                     sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
-                    val logTransformer = logTransformer(OutputType.JSON)
-
+                    val transformer = VehicleLog.transformer(OutputType.JSON)
                     files.forEach { file ->
-                        val content = logTransformer.transform(file)
+                        val content = transformer.transform(file)
                         drive.uploadFile(MemoryContent("text/plain", content, file.name), folderId)
                     }
                     sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)

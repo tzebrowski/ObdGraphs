@@ -31,11 +31,13 @@ internal interface VehicleLogTransformer {
 
 internal enum class OutputType { JSON }
 
-@Suppress("UNUSED_EXPRESSION")
-internal fun logTransformer(outputType: OutputType = OutputType.JSON): VehicleLogTransformer =
-    when (outputType) {
-        else -> DefaultJSONOutput()
-    }
+object VehicleLog {
+    @Suppress("UNUSED_EXPRESSION")
+    internal fun transformer(outputType: OutputType = OutputType.JSON): VehicleLogTransformer =
+        when (outputType) {
+            else -> DefaultJSONOutput()
+        }
+}
 
 private class DefaultJSONOutput : VehicleLogTransformer {
 
