@@ -47,8 +47,7 @@ internal open class DefaultTripsDriveManager(
                     val logTransformer = logTransformer(OutputType.JSON)
 
                     files.forEach { file ->
-                        val raw = file.readText(Charsets.UTF_8)
-                        val content = logTransformer.transform(raw)
+                        val content = logTransformer.transform(file)
                         drive.uploadFile(MemoryContent("text/plain", content, file.name), folderId)
                     }
                     sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)

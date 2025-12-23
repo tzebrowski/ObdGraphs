@@ -25,20 +25,19 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-fun main() {
-    try {
-        val rawJson = File("integrations/src/test/assets/", "trip-profile_1-1765481895809-22.json").readText()
-        val transformer: VehicleLogTransformer = logTransformer()
-        val json = transformer.transform(rawJson)
-        println("Optimization successful!")
-        println(json)
-    } catch (e: Exception) {
-        println("Error: ${e.message}")
-    }
-}
-
 class VehicleLogTransformerTest {
     private val transformer: VehicleLogTransformer = logTransformer()
+
+    @Test
+    fun `read file test`() {
+
+        val file = File("src/test/assets/", "trip-profile_1-1765481895809-22.json")
+        val transformer: VehicleLogTransformer = logTransformer()
+        val result = transformer.transform(file)
+
+        Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":12,\"v\":3298.0767},{\"t\":1765481896267,\"s\":12,\"v\":3298.0767},{\"t\":1765481896463,\"s\":12,\"v\":3298.0767},{\"t\":1765481896666,\"s\":12")
+    }
+
 
     @Test
     fun `optimize should convert complex json to optimized flat format`() {

@@ -18,12 +18,15 @@ package org.obd.graphs.integrations.log
 
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import java.io.File
+import java.io.InputStreamReader
 import java.io.StringReader
 import java.io.StringWriter
 
 
 internal interface VehicleLogTransformer {
     fun transform(log: String): String
+    fun transform(file: File): String
 }
 
 internal enum class OutputType { JSON }
@@ -35,10 +38,14 @@ internal fun logTransformer(outputType: OutputType = OutputType.JSON): VehicleLo
     }
 
 private class DefaultJSONOutput : VehicleLogTransformer {
-    override fun transform(log: String): String {
-        // Use StringReader for the input string (or InputStreamReader for files)
-        val reader = JsonReader(StringReader(log))
 
+    override fun transform(file: File): String = file.inputStream().use { input ->
+        process(JsonReader(InputStreamReader(input)))
+    }
+
+    override fun transform(log: String): String = process(JsonReader(StringReader(log)))
+
+    private fun process(reader: JsonReader): String {
         // Output buffer
         val outputBuffer = StringWriter()
         val writer = JsonWriter(outputBuffer)
@@ -65,6 +72,7 @@ private class DefaultJSONOutput : VehicleLogTransformer {
 
         return outputBuffer.toString()
     }
+
 
     private fun parseRoot(reader: JsonReader, writer: JsonWriter) {
         reader.beginObject() // {
