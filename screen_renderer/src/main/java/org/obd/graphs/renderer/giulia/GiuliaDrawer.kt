@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,19 +17,23 @@
 package org.obd.graphs.renderer.giulia
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.format
 import org.obd.graphs.isNumber
+import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.toFloat
 
- private const val FOOTER_SIZE_RATIO = 1.3f
+private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
-internal class GiuliaDrawer(context: Context, settings: ScreenSettings): AbstractDrawer(context, settings) {
+internal class GiuliaDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     inline fun drawMetric(
         canvas: Canvas,
@@ -59,7 +63,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
             canvas = canvas,
             metric = metric,
             left = valueLeft,
-            top = t2?:t1,
+            top = t2 ?: t1,
             textSize = valueTextSize
         )
 
@@ -172,10 +176,9 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         it: Metric,
         color: Int
     ) {
-        if (it.source.isNumber()){
+        if (it.source.isNumber()) {
             paint.color = color
-            val progress =  valueConverter.scaleToNewRange(
-                it.source.toFloat(),
+            val progress = it.source.toFloat().mapRange(
                 it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
             )
 
@@ -261,7 +264,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
         left: Float,
         top: Float,
         textSize: Float
-    ) : Pair<Float,Float?> {
+    ): Pair<Float, Float?> {
         val topMargin = 12
         var top1 = top
         titlePaint.textSize = textSize
@@ -282,7 +285,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                     top,
                     titlePaint
                 )
-                return Pair(top1 + topMargin,null)
+                return Pair(top1 + topMargin, null)
             } else {
                 titlePaint.textSize = textSize
                 var vPos = top
@@ -308,7 +311,7 @@ internal class GiuliaDrawer(context: Context, settings: ScreenSettings): Abstrac
                 top,
                 titlePaint
             )
-            return Pair(top1 + topMargin,null)
+            return Pair(top1 + topMargin, null)
         }
     }
 

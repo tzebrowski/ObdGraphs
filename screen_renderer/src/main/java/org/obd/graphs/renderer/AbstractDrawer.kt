@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,15 +17,21 @@
 package org.obd.graphs.renderer
 
 import android.content.Context
-import android.graphics.*
-import org.obd.graphs.ValueConverter
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.datalogger.dataLogger
-import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.format
 import org.obd.graphs.commons.R
+import org.obd.graphs.format
+import org.obd.graphs.mapRange
 import org.obd.graphs.profile.profile
 
 private const val STATUS_KEY_FONT_SIZE = 12f
@@ -40,7 +46,6 @@ const val MARGIN_END = 30
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractDrawer(context: Context, protected val settings: ScreenSettings) {
 
-    protected val valueConverter: ValueConverter = ValueConverter()
     private val statusPaint = Paint()
 
     protected val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -96,7 +101,8 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
     }
 
     fun valueColorScheme(metric: Metric) = if (settings.isAlertingEnabled() &&
-            (metric.source.isUpperAlert || metric.source.isLowerAlert)) {
+        (metric.source.isUpperAlert || metric.source.isLowerAlert)
+    ) {
         settings.getColorTheme().valueInAlertColor
     } else {
         settings.getColorTheme().valueColor
@@ -121,8 +127,7 @@ internal abstract class AbstractDrawer(context: Context, protected val settings:
 
 
     inline fun calculateFontSize(multiplier: Float, fontSize: Int): Float =
-        multiplier * valueConverter.scaleToNewRange(
-            fontSize.toFloat(),
+        multiplier * fontSize.mapRange(
             CURRENT_MIN,
             CURRENT_MAX,
             NEW_MIN,

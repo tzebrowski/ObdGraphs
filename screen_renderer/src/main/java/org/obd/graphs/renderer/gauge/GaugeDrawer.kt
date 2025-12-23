@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,15 +17,29 @@
 package org.obd.graphs.renderer.gauge
 
 import android.content.Context
-import android.graphics.*
-import org.obd.graphs.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.SweepGradient
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
+import org.obd.graphs.format
+import org.obd.graphs.isNumber
+import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
 import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.ui.common.*
-import kotlin.math.*
+import org.obd.graphs.round
+import org.obd.graphs.toFloat
+import org.obd.graphs.ui.common.COLOR_WHITE
+import org.obd.graphs.ui.common.color
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.sin
 
 private const val MIN_TEXT_VALUE_HEIGHT = 30
 private const val NUMERALS_RADIUS_SCALE_FACTOR = 0.75f
@@ -467,12 +481,11 @@ internal class GaugeDrawer(
         scaleRationBasedOnScreenSize(area = area, targetMin = 0.7f, targetMax = 2.4f)
 
     private fun scaleRationBasedOnScreenSize(area: RectF, targetMin: Float = 0.7f, targetMax: Float = 2.4f): Float =
-        valueConverter.scaleToNewRange(
-            currentValue = area.width() * area.height(),
-            currentMin = 8875f,
-            currentMax = (settings.getHeightPixels() * settings.getWidthPixels()) * 0.9f,
-            targetMin = targetMin,
-            targetMax = targetMax
+        (area.width() * area.height()).mapRange(
+            8875f,
+            (settings.getHeightPixels() * settings.getWidthPixels()) * 0.9f,
+            targetMin,
+            targetMax
         )
 
     private fun calculateRadius(width: Float): Float {

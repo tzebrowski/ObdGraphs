@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,16 +17,21 @@
 package org.obd.graphs.renderer.trip
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.format
+import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.MARGIN_END
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.toFloat
 
- private const val CURRENT_MIN = 22f
+private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
@@ -50,25 +55,165 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         var rowTop = top + 12f
         var leftAlignment = 0
-        tripInfo.airTemp?.let { drawMetric(it, top = rowTop, left = left + leftAlignment++, canvas, textSizeBase, statsEnabled = true, area=area,  castToInt = true) }
-        tripInfo.coolantTemp?.let {  drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
-        tripInfo.oilTemp?.let{drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true,area=area, castToInt = true) }
-        tripInfo.exhaustTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, castToInt = true) }
-        tripInfo.gearboxOilTemp?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area, castToInt = true) }
-        tripInfo.distance?.let { drawMetric(metricBuilder.buildDiff(it), rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area) }
+        tripInfo.airTemp?.let {
+            drawMetric(
+                it,
+                top = rowTop,
+                left = left + leftAlignment++,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area,
+                castToInt = true
+            )
+        }
+        tripInfo.coolantTemp?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area,
+                castToInt = true
+            )
+        }
+        tripInfo.oilTemp?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area,
+                castToInt = true
+            )
+        }
+        tripInfo.exhaustTemp?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area,
+                castToInt = true
+            )
+        }
+        tripInfo.gearboxOilTemp?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area,
+                castToInt = true
+            )
+        }
+        tripInfo.distance?.let {
+            drawMetric(
+                metricBuilder.buildDiff(it),
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                area = area
+            )
+        }
 
         //second row
         leftAlignment = 0
         rowTop = top + (textSizeBase) + 52f
-        tripInfo.fuellevel?.let { drawMetric(it, rowTop, left + leftAlignment++, canvas, textSizeBase, statsEnabled = true, area=area, statsDoublePrecision = 1, valueDoublePrecision = 1)}
-        tripInfo.fuelConsumption?.let {drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, unitEnabled = false, area=area, statsDoublePrecision = 1)}
-        tripInfo.batteryVoltage?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area=area) }
-        tripInfo.ibs?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, area=area, castToInt = true, statsEnabled = true)}
-        tripInfo.oilLevel?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, statsEnabled = true, area = area) }
-        tripInfo.totalMisfires?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area, castToInt = true) }
+        tripInfo.fuellevel?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + leftAlignment++,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area,
+                statsDoublePrecision = 1,
+                valueDoublePrecision = 1
+            )
+        }
+        tripInfo.fuelConsumption?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                unitEnabled = false,
+                area = area,
+                statsDoublePrecision = 1
+            )
+        }
+        tripInfo.batteryVoltage?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area
+            )
+        }
+        tripInfo.ibs?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                area = area,
+                castToInt = true,
+                statsEnabled = true
+            )
+        }
+        tripInfo.oilLevel?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                statsEnabled = true,
+                area = area
+            )
+        }
+        tripInfo.totalMisfires?.let {
+            drawMetric(
+                it,
+                rowTop,
+                left + (leftAlignment++) * x,
+                canvas,
+                textSizeBase,
+                unitEnabled = false,
+                area = area,
+                castToInt = true
+            )
+        }
 
-        if (leftAlignment < MAX_ITEM_IN_THE_ROW){
-            tripInfo.oilDegradation?.let { drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSizeBase, unitEnabled = false, area = area) }
+        if (leftAlignment < MAX_ITEM_IN_THE_ROW) {
+            tripInfo.oilDegradation?.let {
+                drawMetric(
+                    it,
+                    rowTop,
+                    left + (leftAlignment++) * x,
+                    canvas,
+                    textSizeBase,
+                    unitEnabled = false,
+                    area = area
+                )
+            }
         }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
@@ -148,7 +293,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         val scaleRatio = getScaleRatio()
 
         //space between title and  statistic values
-        top1 +=  ( area.width() / 11f) * scaleRatio
+        top1 += (area.width() / 11f) * scaleRatio
 
         if (settings.isStatisticsEnabled()) {
             val tt = textSizeBase * 0.6f
@@ -217,8 +362,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
         return top1
     }
 
-    private inline fun getScaleRatio() = valueConverter.scaleToNewRange(
-        settings.getTripInfoScreenSettings().fontSize.toFloat(),
+    private inline fun getScaleRatio() = settings.getTripInfoScreenSettings().fontSize.toFloat().mapRange(
         CURRENT_MIN,
         CURRENT_MAX,
         NEW_MIN,
@@ -238,8 +382,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
     ) {
         paint.color = color
 
-        val progress = valueConverter.scaleToNewRange(
-            it.source.toFloat(),
+        val progress = it.source.toFloat().mapRange(
             it.source.command.pid.min.toFloat(), it.source.command.pid.max.toFloat(), left, left + width - MARGIN_END
         )
 
@@ -297,7 +440,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
         valuePaint.textSize = textSize
-        val text =  metric.source.format(castToInt = castToInt, precision = valueDoublePrecision)
+        val text = metric.source.format(castToInt = castToInt, precision = valueDoublePrecision)
 
         canvas.drawText(text, left, top, valuePaint)
         var textWidth = getTextWidth(text, valuePaint) + 2
@@ -313,7 +456,7 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
 
         if (settings.isStatisticsEnabled() && statsEnabled) {
             valuePaint.textSize = (textSize * 0.60).toFloat()
-            val pid =  metric.pid()
+            val pid = metric.pid()
             val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
             if (itemWidth <= maxItemWidth(area)) {
 
@@ -322,8 +465,10 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
                 canvas.drawText(min, (left + textWidth), top, valuePaint)
 
                 valuePaint.color = maxValueColorScheme(metric)
-                canvas.drawText(metric.max.format( pid = pid, precision = statsDoublePrecision, castToInt = castToInt),
-                    (left + textWidth), top - (getTextHeight(min,valuePaint) * 1.1f), valuePaint)
+                canvas.drawText(
+                    metric.max.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt),
+                    (left + textWidth), top - (getTextHeight(min, valuePaint) * 1.1f), valuePaint
+                )
             }
         }
     }
@@ -361,6 +506,6 @@ internal class TripInfoDrawer(context: Context, settings: ScreenSettings) : Abst
             castToInt = castToInt
         )
 
-        drawTitle(canvas, metric, left, top + (textSizeBase * 0.40f) , textSizeBase * 0.35F)
+        drawTitle(canvas, metric, left, top + (textSizeBase * 0.40f), textSizeBase * 0.35F)
     }
 }

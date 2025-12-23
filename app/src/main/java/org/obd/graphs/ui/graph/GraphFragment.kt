@@ -45,114 +45,134 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
-import org.obd.graphs.*
+import org.obd.graphs.R
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
+import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.ui.common.*
+import org.obd.graphs.registerReceiver
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_TRANSPARENT
+import org.obd.graphs.ui.common.Colors
+import org.obd.graphs.ui.common.attachToFloatingButton
+import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import java.text.SimpleDateFormat
-import java.util.*
-
-fun ValueConverter.scaleToPidRange(
-    pid: PidDefinition,
-    value: Float
-): Float {
-    return scaleToNewRange(
-        value,
-        NEW_RANGE_MIN_VAL,
-        NEW_RANGE_MAX_VAL,
-        pid.min.toFloat(),
-        pid.max.toFloat()
-    )
-}
+import java.util.Date
+import java.util.Locale
 
 private const val LOG_TAG = "Graph"
+
 class GraphFragment : Fragment() {
-
-    private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-
-                DATA_LOGGER_SCHEDULED_START_EVENT -> {
-                    if (isAdded && isVisible) {
-                        Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                        dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
-                    }
-                }
-
-                DATA_LOGGER_CONNECTING_EVENT -> {
-                    initializeChart(root)
-                }
-
-                DATA_LOGGER_STOPPED_EVENT -> {
-                    virtualScreensPanel {
-                        it.isVisible = true
+    private var broadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                when (intent?.action) {
+                    DATA_LOGGER_SCHEDULED_START_EVENT -> {
+                        if (isAdded && isVisible) {
+                            Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
+                            dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                        }
                     }
 
-                    attachToFloatingButton(activity, query())
-                }
-                DATA_LOGGER_CONNECTED_EVENT  -> {
-                    virtualScreensPanel {
-                        it.isVisible = false
+                    DATA_LOGGER_CONNECTING_EVENT -> {
+                        initializeChart(root)
                     }
-                }
 
-                TOOLBAR_TOGGLE_ACTION -> {
-                    virtualScreensPanel {
-                        it.isVisible = !it.isVisible
+                    DATA_LOGGER_STOPPED_EVENT -> {
+                        virtualScreensPanel {
+                            it.isVisible = true
+                        }
+
+                        attachToFloatingButton(activity, query())
+                    }
+
+                    DATA_LOGGER_CONNECTED_EVENT -> {
+                        virtualScreensPanel {
+                            it.isVisible = false
+                        }
+                    }
+
+                    TOOLBAR_TOGGLE_ACTION -> {
+                        virtualScreensPanel {
+                            it.isVisible = !it.isVisible
+                        }
                     }
                 }
             }
         }
+
+    private class ReverseValueFormatter(
+        val pid: PidDefinition,
+    ) : ValueFormatter() {
+        override fun getFormattedValue(value: Float): String = pid.scaleToRange(value).toString()
     }
 
-    private class ReverseValueFormatter(val pid: PidDefinition, val valueConverter: ValueConverter) :
-        ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                return valueConverter.scaleToPidRange(pid, value).toString()
+    private val xAxisFormatter =
+        object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String = simpleDateFormat.format(Date(tripStartTs + value.toLong()))
+        }
+
+    private val onGestureListener =
+        object : OnChartGestureListener {
+            override fun onChartGestureStart(
+                me: MotionEvent,
+                lastPerformedGesture: ChartGesture,
+            ) {}
+
+            override fun onChartGestureEnd(
+                me: MotionEvent,
+                lastPerformedGesture: ChartGesture,
+            ) {
+                if (lastPerformedGesture != ChartGesture.SINGLE_TAP) {
+                    chart.highlightValues(null)
+                }
             }
-        }
 
-    private val xAxisFormatter = object : ValueFormatter() {
-        override fun getFormattedValue(value: Float): String {
-            return simpleDateFormat.format(Date(tripStartTs + value.toLong()))
-        }
-    }
+            override fun onChartLongPressed(me: MotionEvent) {}
 
-    private val onGestureListener = object : OnChartGestureListener {
-        override fun onChartGestureStart(me: MotionEvent, lastPerformedGesture: ChartGesture) {}
-        override fun onChartGestureEnd(me: MotionEvent, lastPerformedGesture: ChartGesture) {
-            if (lastPerformedGesture != ChartGesture.SINGLE_TAP) {
-                chart.highlightValues(null)
+            override fun onChartDoubleTapped(me: MotionEvent) {}
+
+            override fun onChartSingleTapped(me: MotionEvent) {}
+
+            override fun onChartFling(
+                me1: MotionEvent,
+                me2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float,
+            ) {
             }
-        }
 
-        override fun onChartLongPressed(me: MotionEvent) {}
-        override fun onChartDoubleTapped(me: MotionEvent) {}
-        override fun onChartSingleTapped(me: MotionEvent) {}
-        override fun onChartFling(
-            me1: MotionEvent,
-            me2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
-        ) {
-        }
+            override fun onChartScale(
+                me: MotionEvent,
+                scaleX: Float,
+                scaleY: Float,
+            ) {}
 
-        override fun onChartScale(me: MotionEvent, scaleX: Float, scaleY: Float) {}
-        override fun onChartTranslate(me: MotionEvent, dX: Float, dY: Float) {}
-    }
+            override fun onChartTranslate(
+                me: MotionEvent,
+                dX: Float,
+                dY: Float,
+            ) {}
+        }
 
     private val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     private lateinit var chart: LineChart
-    private val valueConverter = ValueConverter()
     private var tripStartTs: Long = System.currentTimeMillis()
     private lateinit var preferences: GraphPreferences
     private lateinit var root: View
@@ -162,13 +182,11 @@ class GraphFragment : Fragment() {
         requireContext().unregisterReceiver(broadcastReceiver)
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         super.onCreateView(inflater, container, savedInstanceState)
         root = inflater.inflate(R.layout.fragment_graph, container, false)
         preferences = graphPreferencesReader.read()
@@ -191,7 +209,11 @@ class GraphFragment : Fragment() {
         configureRecyclerView(R.id.recycler_view, displayInfoPanel, 1.3f)
     }
 
-    private fun configureRecyclerView(id: Int, visible: Boolean, weight: Float) {
+    private fun configureRecyclerView(
+        id: Int,
+        visible: Boolean,
+        weight: Float,
+    ) {
         val view: View = root.findViewById(id)
         view.visibility = if (visible) View.VISIBLE else View.GONE
         (view.layoutParams as LinearLayout.LayoutParams).run {
@@ -205,7 +227,7 @@ class GraphFragment : Fragment() {
             if (preferences.metrics.contains(it.command.pid.id)) {
                 addEntry(it)
             }
-       }
+        }
     }
 
     private fun initializeTripDetails() {
@@ -217,12 +239,15 @@ class GraphFragment : Fragment() {
         recyclerView.adapter = adapter
 
         dataLogger.observe(viewLifecycleOwner) {
-            dataLogger.findHistogramFor(it).let{ hist ->
-                val sensorData = SensorData(id = it.command.pid.id,
-                    metrics = mutableListOf(),
-                    min = hist.min,
-                    max = hist.max,
-                    mean = hist.mean)
+            dataLogger.findHistogramFor(it).let { hist ->
+                val sensorData =
+                    SensorData(
+                        id = it.command.pid.id,
+                        metrics = mutableListOf(),
+                        min = hist.min,
+                        max = hist.max,
+                        mean = hist.mean,
+                    )
                 val indexOf = data.indexOf(sensorData)
                 if (indexOf == -1) {
                     data.add(sensorData)
@@ -237,32 +262,38 @@ class GraphFragment : Fragment() {
 
     private fun initializeChart(root: View) {
         val colors = Colors().get()
-        chart = buildChart(root).apply {
+        chart =
+            buildChart(root).apply {
+                val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
+                val metrics =
+                    preferences.metrics
+                        .mapNotNull {
+                            pidRegistry.findBy(it)
+                        }.toMutableList()
 
-            val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
-            val metrics = preferences.metrics.mapNotNull {
-                pidRegistry.findBy(it)
-            }.toMutableList()
+                Log.i(LOG_TAG, "Initializing chart with following PIDs: ${preferences.metrics}")
 
-            Log.i(LOG_TAG, "Initializing chart with following PIDs: ${preferences.metrics}")
+                val dataSets =
+                    LineData(
+                        metrics
+                            .mapNotNull {
+                                try {
+                                    val dataSet = createDataSetFor(it, colors.nextInt())
+                                    Log.d(LOG_TAG, "Created chart data-set for PID: ${it.id}")
+                                    dataSet
+                                } catch (e: Throwable) {
+                                    Log.v(LOG_TAG, "Failed to create chart  data-set ${e.message} for PID: ${it.id}", e)
+                                    null
+                                }
+                            }.toList(),
+                    )
 
-            val dataSets = LineData(metrics.mapNotNull {
-                try {
-                    val dataSet = createDataSetFor(it, colors.nextInt())
-                    Log.d(LOG_TAG, "Created chart data-set for PID: ${it.id}")
-                    dataSet
-                }catch (e: Throwable){
-                    Log.v(LOG_TAG,"Failed to create chart  data-set ${e.message} for PID: ${it.id}",e)
-                    null
-                }
-            }.toList())
-
-            Log.i(LOG_TAG,"Created data-set size: ${dataSets.dataSetCount}")
-            data = dataSets
-            setOnTouchListener(onDoubleClickListener(requireContext()))
-            invalidate()
-            onChartGestureListener = onGestureListener
-        }
+                Log.i(LOG_TAG, "Created data-set size: ${dataSets.dataSetCount}")
+                data = dataSets
+                setOnTouchListener(onDoubleClickListener(requireContext()))
+                invalidate()
+                onChartGestureListener = onGestureListener
+            }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -305,20 +336,20 @@ class GraphFragment : Fragment() {
     }
 
     private fun getEntries(entry: SensorData): MutableList<Entry> =
-            mutableListOf<Entry>().apply {
-                entry.metrics.forEach { add(Entry(it.entry.x, it.entry.y, it.entry.data))}
-                sortBy { entry -> entry.x }
-            }
+        mutableListOf<Entry>().apply {
+            entry.metrics.forEach { add(Entry(it.entry.x, it.entry.y, it.entry.data)) }
+            sortBy { entry -> entry.x }
+        }
 
     private fun LineChart.debug(label: String) {
         Log.i(
             LOG_TAG,
-            "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=${visibleXRange}"
+            "$label: axisMinimum=${xAxis.axisMinimum},axisMaximum=${xAxis.axisMaximum}, visibleXRange=$visibleXRange",
         )
     }
 
     private fun registerReceivers() {
-        registerReceiver(requireContext(), broadcastReceiver){
+        registerReceiver(requireContext(), broadcastReceiver) {
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_CONNECTING_EVENT)
@@ -332,7 +363,7 @@ class GraphFragment : Fragment() {
             data.getDataSetByLabel(obdMetric.command.pid.description, true)?.let {
                 val ts = (System.currentTimeMillis() - tripStartTs).toFloat()
                 val entry =
-                    Entry(ts, valueConverter.scaleToNewRange(obdMetric), obdMetric.command.pid.id)
+                    Entry(ts, obdMetric.scaleToRange(), obdMetric.command.pid.id)
 
                 it.addEntry(entry)
                 data.notifyDataChanged()
@@ -346,8 +377,8 @@ class GraphFragment : Fragment() {
         }
     }
 
-    private fun buildChart(root: View): LineChart {
-        return (root.findViewById(R.id.graph_view_chart) as LineChart).apply {
+    private fun buildChart(root: View): LineChart =
+        (root.findViewById<LineChart>(R.id.graph_view_chart)!!).apply {
             description.isEnabled = false
             setTouchEnabled(true)
             dragDecelerationFrictionCoef = 0.9f
@@ -402,9 +433,11 @@ class GraphFragment : Fragment() {
                 isEnabled = false
             }
         }
-    }
 
-    private fun createDataSetFor(pid: PidDefinition, col: Int): LineDataSet {
+    private fun createDataSetFor(
+        pid: PidDefinition,
+        col: Int,
+    ): LineDataSet {
         val values = mutableListOf<Entry>()
         val lineDataSet = LineDataSet(values, pid.description)
         lineDataSet.run {
@@ -419,7 +452,7 @@ class GraphFragment : Fragment() {
             setDrawValues(true)
             setDrawFilled(true)
             fillColor = col
-            valueFormatter = ReverseValueFormatter(pid, valueConverter)
+            valueFormatter = ReverseValueFormatter(pid)
             fillAlpha = 35
             fillColor = col
             highLightColor = Color.rgb(244, 117, 117)
@@ -430,7 +463,11 @@ class GraphFragment : Fragment() {
         return lineDataSet
     }
 
-    private fun setVirtualViewBtn(btnId: Int, selection: String, viewId: String) {
+    private fun setVirtualViewBtn(
+        btnId: Int,
+        selection: String,
+        viewId: String,
+    ) {
         (root.findViewById<Button>(btnId)).let {
             if (selection == viewId) {
                 it.setBackgroundColor(COLOR_PHILIPPINE_GREEN)
@@ -458,7 +495,6 @@ class GraphFragment : Fragment() {
         setVirtualViewBtn(R.id.virtual_view_4, currentVirtualScreen, "4")
         setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
         setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
-
     }
 
     private fun virtualScreensPanel(func: (p: LinearLayout) -> Unit) {
@@ -468,5 +504,4 @@ class GraphFragment : Fragment() {
     }
 
     private fun query() = Query.instance(QueryStrategyType.SHARED_QUERY).apply(preferences.metrics)
-
 }
