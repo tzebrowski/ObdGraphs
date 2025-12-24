@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,12 +21,11 @@ import com.google.gson.stream.JsonWriter
 import java.io.File
 import java.io.InputStreamReader
 import java.io.StringReader
-import java.io.StringWriter
 
 internal interface TripLogTransformer {
-    fun transform(log: String): String
+    fun transform(log: String): File
 
-    fun transform(file: File): String
+    fun transform(file: File): File
 }
 
 internal enum class OutputType { JSON }
@@ -47,39 +46,41 @@ private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
     private val valueMapper: (signal: Int, value: Number) -> Number,
 ) : TripLogTransformer {
-    override fun transform(file: File): String =
+    override fun transform(file: File): File =
         file.inputStream().use { input ->
             process(JsonReader(InputStreamReader(input)))
         }
 
-    override fun transform(log: String): String = process(JsonReader(StringReader(log)))
+    override fun transform(log: String): File = process(JsonReader(StringReader(log)))
 
-    private fun process(reader: JsonReader): String {
-        // Output buffer
-        val outputBuffer = StringWriter()
-        val writer = JsonWriter(outputBuffer)
-
-        try {
-            reader.isLenient = true
-            writer.beginArray() // [
-            parseRoot(reader, writer)
-            writer.endArray() // ]
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            // Always close streams
-            try {
-                reader.close()
-            } catch (e: Exception) {
-            }
-            try {
-                writer.close()
-            } catch (e: Exception) {
-            }
+    private fun process(reader: JsonReader): File {
+        val tempFile = File.createTempFile("json_buffer_", ".tmp").apply {
+            // Ensures the file is cleaned up if the JVM shuts down
+            deleteOnExit()
         }
 
-        return outputBuffer.toString()
+        try {
+            // Nested .use calls ensure all streams are closed even if an exception occurs
+            tempFile.outputStream().bufferedWriter().use { fileWriter ->
+                JsonWriter(fileWriter).use { writer ->
+                    reader.isLenient = true
+                    writer.beginArray()
+                    parseRoot(reader, writer)
+                    writer.endArray()
+                }
+            }
+            return tempFile
+        } catch (e: Exception) {
+            tempFile.delete()
+            throw e
+        } finally {
+            try {
+                reader.close()
+            } catch (ignored: Exception) {
+            }
+        }
     }
+
 
     private fun parseRoot(
         reader: JsonReader,

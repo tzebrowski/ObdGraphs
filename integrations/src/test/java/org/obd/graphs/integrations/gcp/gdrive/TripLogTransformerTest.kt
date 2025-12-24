@@ -31,8 +31,8 @@ class TripLogTransformerTest {
     fun `read file test`() {
 
         val file = File("src/test/assets/", "trip-profile_1-1765481895809-22.json")
-        val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
-        val result = transformer.transform(file)
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(file).readText()
 
         Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896267,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896463,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896666,\"s\":\"12\"")
     }
@@ -67,7 +67,7 @@ class TripLogTransformerTest {
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
         val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> v.toFloat() * 2 }
-        val result = transformer.transform(rawJson)
+        val result = transformer.transform(rawJson).readText()
 
         val expectedJson =
             """[{"t":1000,"s":"Boost","v":101.0},{"t":2000,"s":"13","v":121.0}]"""
@@ -104,8 +104,8 @@ class TripLogTransformerTest {
             }
             """.trimIndent()
 
-        val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
-        val result = transformer.transform(rawJson)
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJson).readText()
 
         val expectedJson =
             """[{"t":1000,"s":"12","v":50.5},{"t":2000,"s":"12","v":60.5}]"""
@@ -130,7 +130,8 @@ class TripLogTransformerTest {
         """
 
         val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
-        val result = transformer.transform(rawJson)
+        val result = transformer.transform(rawJson).bufferedReader().use { it.readText() }
+
         assertFalse(result.contains("\"id\""))
         assertFalse(result.contains("\"x\""))
         assertFalse(result.contains("\"rawAnswer\""))
@@ -151,8 +152,8 @@ class TripLogTransformerTest {
             }
         """
 
-        val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
-        val result = transformer.transform(rawJson)
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJson).readText()
 
         val expected = """[]"""
         assertEquals(expected, result)

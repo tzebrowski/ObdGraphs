@@ -32,7 +32,6 @@ import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.obd.graphs.integrations.gcp.authorization.AuthorizationManager
-import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
@@ -43,15 +42,15 @@ private const val TAG = "AbstractDriveManager"
 
 internal class MemoryContent(
     type: String?,
-    private val content: String,
+    private val content: InputStream,
     val fileName: String,
 ) : AbstractInputStreamContent(type) {
-    override fun getLength(): Long = content.length.toLong()
+    override fun getLength(): Long = content.available().toLong()
 
     override fun retrySupported(): Boolean = true
 
     @Throws(FileNotFoundException::class)
-    override fun getInputStream(): InputStream = ByteArrayInputStream(content.toByteArray(Charsets.UTF_8))
+    override fun getInputStream(): InputStream = content
 
     override fun setType(type: String): MemoryContent = super.setType(type) as MemoryContent
 
