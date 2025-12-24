@@ -17,7 +17,6 @@
 package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
-import android.provider.Settings
 import androidx.fragment.app.Fragment
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.TRIPS_UPLOAD_FAILED
@@ -48,14 +47,22 @@ internal open class DefaultTripsDriveManager(
                 } else {
                     val folderId = drive.findFolderIdRecursive("mygiulia/trips")
                     val definitions = dataLogger.getPidDefinitionRegistry().findAll()
-                    val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n"," ") }
+                    val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n", " ") }
                     val pidMap = definitions.associateBy { it.id.toInt() }
                     val transformer =
                         TripLog.transformer(OutputType.JSON, signalsMapper) { s, v -> (pidMap[s]?.scaleToRange(v.toFloat())) ?: v }
 
+                    val deviceId = Device.id()
                     files.forEach { inFile ->
-                       transformer.transform(inFile).inputStream().use { outFile ->
-                            drive.uploadFile(MemoryContent("text/plain", outFile, inFile.name), folderId)
+                        transformer.transform(inFile).inputStream().use { outFile ->
+                            drive.uploadFile(
+                                MemoryContent(
+                                    "text/plain",
+                                    outFile,
+                                    "$deviceId-${inFile.name.removePrefix("trip-profile_")}",
+                                ),
+                                folderId,
+                            )
                         }
                     }
                     sendBroadcastEvent(TRIPS_UPLOAD_SUCCESSFUL)

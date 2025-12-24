@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -54,10 +54,11 @@ private class DefaultJSONOutput(
     override fun transform(log: String): File = process(JsonReader(StringReader(log)))
 
     private fun process(reader: JsonReader): File {
-        val tempFile = File.createTempFile("json_buffer_", ".tmp").apply {
-            // Ensures the file is cleaned up if the JVM shuts down
-            deleteOnExit()
-        }
+        val tempFile =
+            File.createTempFile("json_buffer_", ".tmp").apply {
+                // Ensures the file is cleaned up if the JVM shuts down
+                deleteOnExit()
+            }
 
         try {
             // Nested .use calls ensure all streams are closed even if an exception occurs
@@ -80,7 +81,6 @@ private class DefaultJSONOutput(
             }
         }
     }
-
 
     private fun parseRoot(
         reader: JsonReader,
