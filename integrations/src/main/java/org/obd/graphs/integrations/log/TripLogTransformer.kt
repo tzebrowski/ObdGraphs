@@ -23,7 +23,7 @@ import java.io.InputStreamReader
 import java.io.StringReader
 import java.io.StringWriter
 
-internal interface VehicleLogTransformer {
+internal interface TripLogTransformer {
     fun transform(log: String): String
 
     fun transform(file: File): String
@@ -31,13 +31,13 @@ internal interface VehicleLogTransformer {
 
 internal enum class OutputType { JSON }
 
-object VehicleLog {
+object TripLog {
     @Suppress("UNUSED_EXPRESSION")
     internal fun transformer(
         outputType: OutputType = OutputType.JSON,
         signalMapper: Map<Int, String> = mapOf(),
         valueMapper: (signal: Int, value: Number) -> Number,
-    ): VehicleLogTransformer =
+    ): TripLogTransformer =
         when (outputType) {
             else -> DefaultJSONOutput(signalMapper, valueMapper)
         }
@@ -46,7 +46,7 @@ object VehicleLog {
 private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
     private val valueMapper: (signal: Int, value: Number) -> Number,
-) : VehicleLogTransformer {
+) : TripLogTransformer {
     override fun transform(file: File): String =
         file.inputStream().use { input ->
             process(JsonReader(InputStreamReader(input)))

@@ -25,7 +25,7 @@ import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.integrations.log.OutputType
-import org.obd.graphs.integrations.log.VehicleLog
+import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
@@ -50,7 +50,7 @@ internal open class DefaultTripsDriveManager(
                     val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n"," ") }
                     val pidMap = definitions.associateBy { it.id.toInt() }
                     val transformer =
-                        VehicleLog.transformer(OutputType.JSON, signalsMapper) { s, v -> (pidMap[s]?.scaleToRange(v.toFloat())) ?: v }
+                        TripLog.transformer(OutputType.JSON, signalsMapper) { s, v -> (pidMap[s]?.scaleToRange(v.toFloat())) ?: v }
 
                     files.forEach { file ->
                         val content = transformer.transform(file)

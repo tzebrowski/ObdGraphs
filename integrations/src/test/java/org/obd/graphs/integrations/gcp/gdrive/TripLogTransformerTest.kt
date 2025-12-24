@@ -18,20 +18,20 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import org.assertj.core.api.Assertions
 import org.junit.Test
-import org.obd.graphs.integrations.log.VehicleLog
-import org.obd.graphs.integrations.log.VehicleLogTransformer
+import org.obd.graphs.integrations.log.TripLog
+import org.obd.graphs.integrations.log.TripLogTransformer
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class VehicleLogTransformerTest {
+class TripLogTransformerTest {
 
     @Test
     fun `read file test`() {
 
         val file = File("src/test/assets/", "trip-profile_1-1765481895809-22.json")
-        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
+        val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
         val result = transformer.transform(file)
 
         Assertions.assertThat(result).startsWith("[{\"t\":1765481896083,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896267,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896463,\"s\":\"12\",\"v\":3298.0767},{\"t\":1765481896666,\"s\":\"12\"")
@@ -66,7 +66,7 @@ class VehicleLogTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: VehicleLogTransformer = VehicleLog.transformer(signalMapper=signalMapper) { s,v -> v.toFloat() * 2 }
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> v.toFloat() * 2 }
         val result = transformer.transform(rawJson)
 
         val expectedJson =
@@ -104,7 +104,7 @@ class VehicleLogTransformerTest {
             }
             """.trimIndent()
 
-        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
+        val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
         val result = transformer.transform(rawJson)
 
         val expectedJson =
@@ -129,7 +129,7 @@ class VehicleLogTransformerTest {
             }
         """
 
-        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
+        val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
         val result = transformer.transform(rawJson)
         assertFalse(result.contains("\"id\""))
         assertFalse(result.contains("\"x\""))
@@ -151,7 +151,7 @@ class VehicleLogTransformerTest {
             }
         """
 
-        val transformer: VehicleLogTransformer = VehicleLog.transformer() { s,v -> v }
+        val transformer: TripLogTransformer = TripLog.transformer() { s, v -> v }
         val result = transformer.transform(rawJson)
 
         val expected = """[]"""
