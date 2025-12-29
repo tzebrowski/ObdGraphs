@@ -34,7 +34,6 @@ import org.obd.graphs.preferences.updateString
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -86,19 +85,23 @@ internal class DefaultProfileService :
 
     override fun restoreBackup(file: File) {
         try {
-
             Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
             val prop = Properties()
-            prop.load(FileInputStream(file))
+            file.inputStream().use { stream ->
+                prop.load(stream)
+            }
 
             Prefs.edit().let { editor ->
                 editor.clear()
-                prop.forEach { t, u ->
+                prop.forEach { keyObject, valueObject ->
 
-                    val value = u.toString()
-                    val key = t.toString()
-                    Log.i(LOG_TAG, "Restoring profile.key=`$key=$value`")
+                    val value = valueObject.toString()
+                    val key = keyObject.toString()
+
+                    if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                        Log.d(LOG_TAG, "Restoring profile.key=`$key=$value`")
+                    }
 
                     when {
                         value.isArray() -> editor.putStringSet(key, stringToStringSet(value))
@@ -269,7 +272,7 @@ internal class DefaultProfileService :
 
             Prefs.edit().let {
                 Prefs.all
-                    .filter { (pref, _) -> pref.startsWith("${profileName}.") }
+                    .filter { (pref, _) -> pref.startsWith("$profileName.") }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                     .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
@@ -331,7 +334,7 @@ internal class DefaultProfileService :
             .filter { it.isNotEmpty() }
             .toMutableSet()
 
-    private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?. filter { it.endsWith("properties") }
+    private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
 
     private fun loadFile(fileName: String): Properties {
         val prop = Properties()
@@ -403,8 +406,7 @@ internal class DefaultProfileService :
 
                             value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
                             value.isNumeric() -> editor.putInt(key, value.toInt())
-                            else ->  editor.putString(key, value.replace("\"", "").replace("\"", ""))
-
+                            else -> editor.putString(key, value.replace("\"", "").replace("\"", ""))
                         }
                     } else {
                         Log.i(LOG_TAG, "Skipping profile.key=`$key=$value`")
@@ -432,8 +434,8 @@ internal class DefaultProfileService :
         val mm = mutableMapOf<String, String>()
 
         Prefs.all.forEach {
-            if (it.key.contains("..") || it.key.startsWith(".")){
-                Log.e(LOG_TAG,"Skipping invalid key ${it.key}")
+            if (it.key.contains("..") || it.key.startsWith(".")) {
+                Log.e(LOG_TAG, "Skipping invalid key ${it.key}")
                 return@forEach
             }
             when (it.value) {
