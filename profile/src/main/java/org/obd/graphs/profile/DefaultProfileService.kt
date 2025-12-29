@@ -104,7 +104,7 @@ internal class DefaultProfileService :
                     }
 
                     when {
-                        value.isArray() -> editor.putStringSet(key, stringToStringSet(value))
+                        value.isArray() -> editor.putStringSet(key, value.toStringSet())
                         value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
                         value.isNumeric() -> editor.putInt(key, value.toInt())
                         else -> editor.putString(key, value.replace("\"", "").replace("\"", ""))
@@ -325,14 +325,6 @@ internal class DefaultProfileService :
         Prefs.edit().putString(PROFILE_CURRENT_NAME_PREF, prefName).apply()
     }
 
-    private fun stringToStringSet(value: String): MutableSet<String> =
-        value
-            .replace("[", "")
-            .replace("]", "")
-            .split(",")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
-            .toMutableSet()
 
     private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
 
@@ -399,9 +391,9 @@ internal class DefaultProfileService :
                                 if (key.startsWith(getCurrentProfile())) {
                                     val currentProfilePropName = key.substring(getCurrentProfile().length + 1, key.length)
                                     Log.i(LOG_TAG, "Updating current profile value $currentProfilePropName=$value")
-                                    editor.putStringSet(currentProfilePropName, stringToStringSet(value))
+                                    editor.putStringSet(currentProfilePropName, value.toStringSet())
                                 }
-                                editor.putStringSet(key, stringToStringSet(value))
+                                editor.putStringSet(key, value.toStringSet())
                             }
 
                             value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
