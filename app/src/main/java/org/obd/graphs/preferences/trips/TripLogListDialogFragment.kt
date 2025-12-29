@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -107,6 +108,7 @@ class TripLogListDialogFragment(private val enableDeleteButtons: Boolean = true,
             }
         } else {
             root.findViewById<Button>(R.id.trip_action_delete_all).visibility = View.GONE
+            root.findViewById<TextView>(R.id.action_column).visibility = View.GONE
         }
         val uploadToCloud = root.findViewById<Button>(R.id.trip_action_upload_to_cloud)
         if (enableUploadCloudButton) {

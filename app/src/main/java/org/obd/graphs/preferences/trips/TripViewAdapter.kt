@@ -25,6 +25,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
@@ -117,6 +118,7 @@ class TripViewAdapter internal constructor(
         val tripTime: TextView = binding.findViewById(R.id.trip_length)
         private val loadTrip: Button = binding.findViewById(R.id.trip_load)
         private val deleteTrip: Button = binding.findViewById(R.id.trip_delete)
+        private val actionsContainer: LinearLayout = binding.findViewById(R.id.actions_container)
 
         init {
             if (showDeleteButton) {
@@ -147,6 +149,7 @@ class TripViewAdapter internal constructor(
             } else {
                 loadTrip.visibility = View.GONE
                 deleteTrip.visibility = View.GONE
+                actionsContainer.visibility = View.GONE
             }
         }
     }
