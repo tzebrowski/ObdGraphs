@@ -18,17 +18,34 @@ package org.obd.graphs.preferences.profile
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import org.obd.graphs.BACKUP_RESTORE
+import org.obd.graphs.R
 import org.obd.graphs.sendBroadcastEvent
 
- class ProfileRestoreAction(
+class ProfileRestoreAction(
     context: Context,
     attrs: AttributeSet?,
 ) : Preference(context, attrs) {
     init {
         setOnPreferenceClickListener {
-            sendBroadcastEvent(BACKUP_RESTORE)
+
+            val builder = AlertDialog.Builder(context)
+            val title = context.getString(R.string.pref_profile_restore_confirmation_dialog)
+            val yes = context.getString(R.string.dialog_ask_question_yes)
+            val no = context.getString(R.string.dialog_ask_question_no)
+
+            builder
+                .setMessage(title)
+                .setCancelable(false)
+                .setPositiveButton(yes) { _, _ ->
+                    sendBroadcastEvent(BACKUP_RESTORE)
+                }.setNegativeButton(no) { dialog, _ ->
+                    dialog.dismiss()
+                }
+            val alert = builder.create()
+            alert.show()
             true
         }
     }

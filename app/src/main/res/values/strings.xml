@@ -424,7 +424,8 @@
         <font color='#34A853'>locally on your device</font>
     </string>
 
-    <string name="pref.profile.reset_confirmation_dialog">Executing this will restore all custom settings to their factory defaults. Do you want to continue?</string>
+    <string name="pref.profile.restore_confirmation_dialog">Ready to restore your saved settings? Keep in mind this will replace your current preferences.</string>
+    <string name="pref.profile.reset_confirmation_dialog">Reset all custom settings to default? This action cannot be undone.</string>
     <string name="pref.profile.reset">Reset to factory settings</string>
     <string name="pref.profile.reset_summary">This operation resets profile preferences to the factory settings. Note: you will loose all your custom preferences</string>
     <string name="pref.profile.save_user_settings">Save current vehicle profile preferences</string>
@@ -448,8 +449,8 @@
     <string name="trip_delete_dialog_ask_question">Are you sure you want to Delete?</string>
     <string name="trip_send_to_cloud_dialog_ask_question">Are you sure you want to upload the selected files to the giulia/trips directory in your Google Drive?</string>
 
-    <string name="trip_delete_dialog_ask_question_yes">Yes</string>
-    <string name="trip_delete_dialog_ask_question_no">no</string>
+    <string name="dialog_ask_question_yes">Yes</string>
+    <string name="dialog_ask_question_no">no</string>
 
     <string name="trip_action_load">Load</string>
     <string name="status_panel.adapter_connection_type">Adapter</string>
