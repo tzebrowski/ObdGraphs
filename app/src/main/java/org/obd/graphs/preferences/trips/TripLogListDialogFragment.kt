@@ -84,8 +84,8 @@ class TripLogListDialogFragment(
                 setOnClickListener {
                     val builder = AlertDialog.Builder(context)
                     val title = context.getString(R.string.trip_delete_dialog_ask_question)
-                    val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
-                    val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
+                    val yes = context.getString(R.string.dialog_ask_question_yes)
+                    val no = context.getString(R.string.dialog_ask_question_no)
 
                     builder
                         .setMessage(title)
@@ -118,8 +118,8 @@ class TripLogListDialogFragment(
                 setOnClickListener {
                     val builder = AlertDialog.Builder(context)
                     val title = context.getString(R.string.trip_send_to_cloud_dialog_ask_question)
-                    val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
-                    val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
+                    val yes = context.getString(R.string.dialog_ask_question_yes)
+                    val no = context.getString(R.string.dialog_ask_question_no)
                     builder
                         .setMessage(title)
                         .setCancelable(false)

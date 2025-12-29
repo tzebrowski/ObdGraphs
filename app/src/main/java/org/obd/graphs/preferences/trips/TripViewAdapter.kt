@@ -125,8 +125,8 @@ class TripViewAdapter internal constructor(
                 deleteTrip.setOnClickListener {
                     val builder = AlertDialog.Builder(binding.context)
                     val title = binding.context.getString(R.string.trip_delete_dialog_ask_question)
-                    val yes = binding.context.getString(R.string.trip_delete_dialog_ask_question_yes)
-                    val no = binding.context.getString(R.string.trip_delete_dialog_ask_question_no)
+                    val yes = binding.context.getString(R.string.dialog_ask_question_yes)
+                    val no = binding.context.getString(R.string.dialog_ask_question_no)
 
                     builder
                         .setMessage(title)
