@@ -27,13 +27,13 @@ import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TripsDriveManagerTest {
+class TripLogDriveManagerTest {
 
     private val activity = mockk<Activity>()
     private val driveService = mockk<Drive>(relaxed = true)
 
     // Subclass to expose logic wrapped in the executeDriveOperation block
-    private inner class TestableTripsManager : DefaultTripsDriveManager("client", activity, null) {
+    private inner class TestableTripLogManager : DefaultTripLogDriveManager("client", activity, null) {
         fun testUploadLogic(files: List<File>) {
             if (files.isEmpty()) {
                 sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
@@ -51,7 +51,7 @@ class TripsDriveManagerTest {
     @Test
     fun `exportTrips broadcasts NO_FILES_SELECTED when list is empty`() = runTest {
         // Arrange
-        val manager = TestableTripsManager()
+        val manager = TestableTripLogManager()
         mockkStatic("org.obd.graphs.BroadcastKt")
         every { sendBroadcastEvent(any()) } just Runs
 
@@ -66,7 +66,7 @@ class TripsDriveManagerTest {
     @Test
     fun `exportTrips broadcasts SUCCESSFUL when files exist`() = runTest {
         // Arrange
-        val manager = TestableTripsManager()
+        val manager = TestableTripLogManager()
         val file = File("trip.csv")
         mockkStatic("org.obd.graphs.BroadcastKt")
         every { sendBroadcastEvent(any()) } just Runs

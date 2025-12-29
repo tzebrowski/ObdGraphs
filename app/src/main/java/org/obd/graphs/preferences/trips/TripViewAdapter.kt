@@ -41,7 +41,7 @@ private const val LOGGER_KEY = "TripsViewAdapter"
 
 class TripViewAdapter internal constructor(
     context: Context?,
-    var data: MutableCollection<TripFileDescDetails>,
+    var data: MutableCollection<TripLogDetails>,
     private val showDeleteButton: Boolean = true
 ) : RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
 

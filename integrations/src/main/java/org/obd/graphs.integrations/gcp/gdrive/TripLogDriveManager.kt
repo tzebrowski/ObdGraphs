@@ -20,7 +20,7 @@ import android.app.Activity
 import androidx.fragment.app.Fragment
 import java.io.File
 
-interface TripsDriveManager {
+interface TripLogDriveManager {
     suspend fun exportTrips(files: List<File>)
 
     companion object {
@@ -28,6 +28,6 @@ interface TripsDriveManager {
             webClientId: String,
             activity: Activity,
             fragment: Fragment?,
-        ): TripsDriveManager = DefaultTripsDriveManager(webClientId, activity, fragment)
+        ): TripLogDriveManager = DefaultTripLogDriveManager(webClientId, activity, fragment)
     }
 }

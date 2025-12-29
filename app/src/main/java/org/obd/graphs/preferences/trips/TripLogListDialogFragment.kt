@@ -35,24 +35,24 @@ import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.trip.TripFileDesc
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.integrations.gcp.gdrive.TripsDriveManager
+import org.obd.graphs.integrations.gcp.gdrive.TripLogDriveManager
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
-data class TripFileDescDetails(
+data class TripLogDetails(
     val source: TripFileDesc,
     var checked: Boolean = false,
 )
 
-class TripsListDialogFragment(private val enableDeleteButtons: Boolean = true,
-                              private val enableUploadCloudButton: Boolean = true) :
+class TripLogListDialogFragment(private val enableDeleteButtons: Boolean = true,
+                                private val enableUploadCloudButton: Boolean = true) :
     CoreDialogFragment() {
-    private lateinit var tripsDriveManager: TripsDriveManager
+    private lateinit var tripLogDriveManager: TripLogDriveManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tripsDriveManager = TripsDriveManager.instance(getString(R.string.ANDROID_WEB_CLIENT_ID), requireActivity(), this)
+        tripLogDriveManager = TripLogDriveManager.instance(getString(R.string.ANDROID_WEB_CLIENT_ID), requireActivity(), this)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -65,7 +65,7 @@ class TripsListDialogFragment(private val enableDeleteButtons: Boolean = true,
 
         val root = inflater.inflate(R.layout.dialog_trip, container, false)
         val adapter = TripViewAdapter(
-            context, tripManager.findAllTripsBy().map { TripFileDescDetails(source = it) }.toMutableList(),
+            context, tripManager.findAllTripsBy().map { TripLogDetails(source = it) }.toMutableList(),
             enableDeleteButtons
         )
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
@@ -127,7 +127,7 @@ class TripsListDialogFragment(private val enableDeleteButtons: Boolean = true,
                                 sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
                             } else {
                                 lifecycleScope.launch {
-                                    tripsDriveManager.exportTrips(files)
+                                    tripLogDriveManager.exportTrips(files)
                                 }
                             }
                         }.setNegativeButton(no) { dialog, _ ->

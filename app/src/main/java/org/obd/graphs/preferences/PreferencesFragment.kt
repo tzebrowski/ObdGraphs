@@ -35,7 +35,7 @@ import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragme
 import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
 import org.obd.graphs.preferences.trips.TripsListPreferences
-import org.obd.graphs.preferences.trips.TripsListDialogFragment
+import org.obd.graphs.preferences.trips.TripLogListDialogFragment
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
@@ -76,7 +76,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         when (preference) {
 
             is TripsListPreferences -> {
-                TripsListDialogFragment().show(parentFragmentManager, null)
+                TripLogListDialogFragment().show(parentFragmentManager, null)
             }
 
             is VehicleMetadataListPreferences -> {
@@ -262,8 +262,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPreferenceDialogFor(preferenceKey: String) {
 
         when (preferenceKey) {
-            PREF_GAUGE_TRIPS -> TripsListDialogFragment(enableUploadCloudButton = false).show(parentFragmentManager, null)
-            PREF_LOGS -> TripsListDialogFragment(enableDeleteButtons = false).show(parentFragmentManager, null)
+            PREF_GAUGE_TRIPS -> TripLogListDialogFragment(enableUploadCloudButton = false).show(parentFragmentManager, null)
+            PREF_LOGS -> TripLogListDialogFragment(enableDeleteButtons = false).show(parentFragmentManager, null)
 
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
                 openPIDsDialog("pref.aa.trip_info.pids.selected", PREFERENCE_SCREEN_SOURCE_TRIP_INFO)

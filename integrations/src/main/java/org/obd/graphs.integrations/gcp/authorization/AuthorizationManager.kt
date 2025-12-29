@@ -26,6 +26,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -77,7 +78,6 @@ internal abstract class AuthorizationManager(
                 GetGoogleIdOption
                     .Builder()
                     .setServerClientId(webClientId)
-                    .setAutoSelectEnabled(false)
                     .setFilterByAuthorizedAccounts(false)
                     .build()
 
@@ -95,6 +95,8 @@ internal abstract class AuthorizationManager(
             } else {
                 Log.w(TAG, "Unexpected credential type: ${credential.type}")
             }
+        } catch (e: NoCredentialException) {
+            Log.e(TAG, "User has no credentials saved. Redirecting to login...")
         } catch (e: Exception) {
             Log.e(TAG, "Failed executing action: $authenticatedActionName", e)
         }
