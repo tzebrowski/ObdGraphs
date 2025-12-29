@@ -86,20 +86,33 @@ internal class DefaultProfileService :
 
     override fun restoreBackup(file: File) {
         try {
+
             Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
-            loadProfileFilesIntoPreferences(
-                forceOverride = true,
-                files = mutableListOf(file.absolutePath),
-                installationKey = getInstallationVersion(),
-            ) {
-                val prop = Properties()
-                prop.load(FileInputStream(it))
-                prop
+            val prop = Properties()
+            prop.load(FileInputStream(file))
+
+            Prefs.edit().let { editor ->
+                editor.clear()
+                prop.forEach { t, u ->
+
+                    val value = u.toString()
+                    val key = t.toString()
+                    Log.i(LOG_TAG, "Restoring profile.key=`$key=$value`")
+
+                    when {
+                        value.isArray() -> editor.putStringSet(key, stringToStringSet(value))
+                        value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
+                        value.isNumeric() -> editor.putInt(key, value.toInt())
+                        else -> editor.putString(key, value.replace("\"", "").replace("\"", ""))
+                    }
+                }
+
+                editor.putBoolean(getInstallationVersion(), true)
+                editor.apply()
             }
 
             Log.i(LOG_TAG, "Restoring backup file completed")
-
             sendBroadcastEvent(PROFILE_CHANGED_EVENT)
         } catch (e: Throwable) {
             Log.e(LOG_TAG, "Failed to restore backup file", e)

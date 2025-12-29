@@ -123,7 +123,7 @@ internal class BackupTest : TestSetup() {
             editor.putBoolean("restored.key.bool", true) // logic removes quotes
             editor.putString("restored.key.string", "restored_value") // logic removes quotes
             editor.putInt("restored.key.int", 999)
-            editor.putString("pref.profile.id", "profile_1")
+//            editor.putString("pref.profile.id", "profile_1")
             editor.putBoolean("prefs.installed.profiles.0", true)
             editor.apply()
         }

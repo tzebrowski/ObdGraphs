@@ -137,6 +137,8 @@ import java.util.Properties
         every { Log.i(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
+        every { Log.isLoggable(any(), any()) } returns false
+
     }
 
 
