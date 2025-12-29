@@ -61,6 +61,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/action_column"
                 android:layout_width="0dp"
                 android:layout_weight="1.3"
                 android:gravity="center"
@@ -113,11 +114,11 @@
             tools:ignore="ButtonStyle" />
 
         <Button
-            android:id="@+id/trip_action_send_to_cloud"
+            android:id="@+id/trip_action_upload_to_cloud"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:backgroundTint="@color/rainbow_indigo"
+            android:backgroundTint="@color/philippine_green"
             android:text="@string/trip_dialog_send_to_cloud_selected"
             android:textSize="12sp"
             tools:ignore="ButtonStyle" />

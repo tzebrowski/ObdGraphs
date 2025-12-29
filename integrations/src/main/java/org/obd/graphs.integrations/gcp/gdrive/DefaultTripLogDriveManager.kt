@@ -29,12 +29,12 @@ import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 
-internal open class DefaultTripsDriveManager(
+internal open class DefaultTripLogDriveManager(
     webClientId: String,
     activity: Activity,
     fragment: Fragment?,
 ) : AbstractDriveManager(webClientId, activity, fragment),
-    TripsDriveManager {
+    TripLogDriveManager {
     override suspend fun exportTrips(files: List<File>) =
         signInAndExecute("exportTrips") { token ->
             executeDriveOperation(
@@ -56,7 +56,7 @@ internal open class DefaultTripsDriveManager(
                     files.forEach { inFile ->
                         transformer.transform(inFile).inputStream().use { outFile ->
                             drive.uploadFile(
-                                MemoryContent(
+                                InputStreamContent(
                                     "text/plain",
                                     outFile,
                                     "$deviceId-${inFile.name.removePrefix("trip-profile_")}",

@@ -35,7 +35,7 @@ import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragme
 import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
 import org.obd.graphs.preferences.trips.TripsListPreferences
-import org.obd.graphs.preferences.trips.TripsListDialogFragment
+import org.obd.graphs.preferences.trips.TripLogListDialogFragment
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
@@ -44,7 +44,9 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
 
-const val PREF_GAUGE_RECORDINGS = "pref.gauge.recordings"
+const val PREF_GAUGE_TRIPS = "pref.gauge.recordings"
+const val PREF_LOGS = "pref.trip_logs"
+
 const val PREFERENCE_CONNECTION_TYPE = "pref.adapter.connection.type"
 private const val LOG_KEY = "Prefs"
 
@@ -74,7 +76,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         when (preference) {
 
             is TripsListPreferences -> {
-                TripsListDialogFragment().show(parentFragmentManager, null)
+                TripLogListDialogFragment().show(parentFragmentManager, null)
             }
 
             is VehicleMetadataListPreferences -> {
@@ -260,7 +262,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private fun openPreferenceDialogFor(preferenceKey: String) {
 
         when (preferenceKey) {
-            PREF_GAUGE_RECORDINGS -> TripsListDialogFragment().show(parentFragmentManager, null)
+            PREF_GAUGE_TRIPS -> TripLogListDialogFragment(enableUploadCloudButton = false).show(parentFragmentManager, null)
+            PREF_LOGS -> TripLogListDialogFragment(enableDeleteButtons = false).show(parentFragmentManager, null)
 
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
                 openPIDsDialog("pref.aa.trip_info.pids.selected", PREFERENCE_SCREEN_SOURCE_TRIP_INFO)

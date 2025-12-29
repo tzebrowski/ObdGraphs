@@ -40,7 +40,7 @@ import com.google.api.services.drive.model.File as DriveFile
 private const val APP_NAME = "MyGiuliaBackup"
 private const val TAG = "AbstractDriveManager"
 
-internal class MemoryContent(
+internal class InputStreamContent(
     type: String?,
     private val content: InputStream,
     val fileName: String,
@@ -52,10 +52,10 @@ internal class MemoryContent(
     @Throws(FileNotFoundException::class)
     override fun getInputStream(): InputStream = content
 
-    override fun setType(type: String): MemoryContent = super.setType(type) as MemoryContent
+    override fun setType(type: String): InputStreamContent = super.setType(type) as InputStreamContent
 
-    override fun setCloseInputStream(closeInputStream: Boolean): MemoryContent =
-        super.setCloseInputStream(closeInputStream) as MemoryContent
+    override fun setCloseInputStream(closeInputStream: Boolean): InputStreamContent =
+        super.setCloseInputStream(closeInputStream) as InputStreamContent
 }
 
 internal abstract class AbstractDriveManager(
@@ -109,7 +109,7 @@ internal abstract class AbstractDriveManager(
     }
 
     fun Drive.uploadFile(
-        content: MemoryContent,
+        content: InputStreamContent,
         parentFolderId: String,
     ): DriveFile {
         Log.i(TAG, "Uploading file ${content.fileName}")

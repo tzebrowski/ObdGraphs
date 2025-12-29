@@ -67,6 +67,7 @@
                 android:textSize="15sp" />
 
             <LinearLayout
+                android:id="@+id/actions_container"
                 android:layout_width="0dp"
                 android:layout_weight="1.3"
                 android:gravity="center"

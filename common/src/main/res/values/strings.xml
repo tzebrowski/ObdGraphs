@@ -20,6 +20,7 @@
     <string name="main_activity.toast.trips.upload.failed">Trips upload operation failed. </string>
     <string name="main_activity.toast.trips.upload.successful">Trips upload operation completed successfully.</string>
     <string name="main_activity.toast.trips.upload.no_files_selected">There is no files selected. Nothing was uploaded.</string>
+    <string name="main_activity.toast.gdrive.auth.failed">Google Drive Authorization Failed. Please restart application.</string>
 
     <string name="status_bar.status">status: </string>
     <string name="status_bar.profile">profile: </string>
