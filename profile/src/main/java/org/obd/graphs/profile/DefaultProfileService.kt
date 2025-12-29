@@ -256,7 +256,7 @@ internal class DefaultProfileService :
 
             Prefs.edit().let {
                 Prefs.all
-                    .filter { (pref, _) -> pref.startsWith(profileName) }
+                    .filter { (pref, _) -> pref.startsWith("${profileName}.") }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                     .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
@@ -264,7 +264,9 @@ internal class DefaultProfileService :
                     .forEach { (pref, value) ->
 
                         pref.substring(profileName.length + 1).run {
-                            Log.d(LOG_TAG, "Loading user preference $this = $value")
+                            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                                Log.d(LOG_TAG, "Loading user preference for $profileName,  $pref =  $this = $value")
+                            }
                             it.updatePreference(this, value)
                         }
                     }
@@ -417,6 +419,10 @@ internal class DefaultProfileService :
         val mm = mutableMapOf<String, String>()
 
         Prefs.all.forEach {
+            if (it.key.contains("..") || it.key.startsWith(".")){
+                Log.e(LOG_TAG,"Skipping invalid key ${it.key}")
+                return@forEach
+            }
             when (it.value) {
                 is String -> {
                     mm[it.key] = "\"${it.value}\""
@@ -439,8 +445,8 @@ internal class DefaultProfileService :
                 }
             }
         }
-
         data.putAll(mm)
+
         return data
     }
 
