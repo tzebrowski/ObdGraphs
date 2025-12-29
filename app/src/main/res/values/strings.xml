@@ -316,6 +316,7 @@
     <string name="pref.trip_logs_upload">Upload Trip Logs to Cloud</string>
     <string name="pref.trip_logs_upload_details">Sync trip logs to  <font color='#01804F'>Google Drive</font>. Files are uploaded in the
         <font color='#1C3D72'>mygiulia/trips</font> folder.
+        View your logs at https://tzebrowski.github.io/ObdGraphsLogViewer/.
     </string>
 
     <string name="pref.adapter_category">OBD2 Adapter Settings</string>

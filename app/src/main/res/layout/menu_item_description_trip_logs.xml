@@ -39,7 +39,8 @@
             android:text="@string/pref.trip_logs_upload_details"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:textColor="?android:attr/textColorSecondary"
-            android:textSize="13sp" />
+            android:autoLink="web"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>
