@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,6 +26,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.NoCredentialException
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
@@ -96,6 +97,8 @@ internal abstract class AuthorizationManager(
             } else {
                 Log.w(TAG, "Unexpected credential type: ${credential.type}")
             }
+        } catch (e: GetCredentialCancellationException) {
+            Log.w(TAG, "User cancelled operation", e)
         } catch (e: NoCredentialException) {
             Log.e(TAG, "User has no credentials saved. Redirecting to login...")
             sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
