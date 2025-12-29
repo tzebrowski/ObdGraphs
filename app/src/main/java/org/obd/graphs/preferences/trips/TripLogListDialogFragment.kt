@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -46,9 +46,10 @@ data class TripLogDetails(
     var checked: Boolean = false,
 )
 
-class TripLogListDialogFragment(private val enableDeleteButtons: Boolean = true,
-                                private val enableUploadCloudButton: Boolean = true) :
-    CoreDialogFragment() {
+class TripLogListDialogFragment(
+    private val enableDeleteButtons: Boolean = true,
+    private val enableUploadCloudButton: Boolean = true,
+) : CoreDialogFragment() {
     private lateinit var tripLogDriveManager: TripLogDriveManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,10 +66,12 @@ class TripLogListDialogFragment(private val enableDeleteButtons: Boolean = true,
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_trip, container, false)
-        val adapter = TripViewAdapter(
-            context, tripManager.findAllTripsBy().map { TripLogDetails(source = it) }.toMutableList(),
-            enableDeleteButtons
-        )
+        val adapter =
+            TripViewAdapter(
+                context,
+                tripManager.findAllTripsBy().map { TripLogDetails(source = it) }.toMutableList(),
+                enableDeleteButtons,
+            )
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -77,7 +80,6 @@ class TripLogListDialogFragment(private val enableDeleteButtons: Boolean = true,
             navigateToScreen(R.id.navigation_graph)
         }
         if (enableDeleteButtons) {
-
             root.findViewById<Button>(R.id.trip_action_delete_all).apply {
                 setOnClickListener {
                     val builder = AlertDialog.Builder(context)

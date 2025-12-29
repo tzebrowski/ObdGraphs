@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,40 +43,37 @@ private const val LOGGER_KEY = "TripsViewAdapter"
 class TripViewAdapter internal constructor(
     context: Context?,
     var data: MutableCollection<TripLogDetails>,
-    private val showDeleteButton: Boolean = true
+    private val showDeleteButton: Boolean = true,
 ) : RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
-
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault())
 
-    private val profileColors = mutableMapOf<String, Int>().apply {
-        val colors = Colors().get()
-        profile.getAvailableProfiles().forEach { (s, _) ->
-            if (colors.hasNext()) {
-                put(s, colors.nextInt())
+    private val profileColors =
+        mutableMapOf<String, Int>().apply {
+            val colors = Colors().get()
+            profile.getAvailableProfiles().forEach { (s, _) ->
+                if (colors.hasNext()) {
+                    put(s, colors.nextInt())
+                }
             }
         }
-    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
-        return ViewHolder(mInflater.inflate(R.layout.item_trip, parent, false))
-    }
+        viewType: Int,
+    ): ViewHolder = ViewHolder(mInflater.inflate(R.layout.item_trip, parent, false))
 
     override fun onBindViewHolder(
         holder: ViewHolder,
-        position: Int
+        position: Int,
     ) {
-
         data.elementAt(position).run {
             holder.vehicleProfile.setText(
                 source.profileLabel,
                 profileColors[source.profileId]!!,
                 Typeface.NORMAL,
-                0.6f
+                0.6f,
             )
             var startTs = source.startTime
             source.startTime.toLongOrNull()?.let {
@@ -106,12 +103,11 @@ class TripViewAdapter internal constructor(
         }
     }
 
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount(): Int = data.size
 
-    inner class ViewHolder internal constructor(binding: View) :
-        RecyclerView.ViewHolder(binding) {
+    inner class ViewHolder internal constructor(
+        binding: View,
+    ) : RecyclerView.ViewHolder(binding) {
         val selected: CheckBox = binding.findViewById(R.id.trip_selected)
         val vehicleProfile: TextView = binding.findViewById(R.id.trip_profile)
         val tripStartDate: TextView = binding.findViewById(R.id.trip_start_date)
@@ -132,7 +128,8 @@ class TripViewAdapter internal constructor(
                     val yes = binding.context.getString(R.string.trip_delete_dialog_ask_question_yes)
                     val no = binding.context.getString(R.string.trip_delete_dialog_ask_question_no)
 
-                    builder.setMessage(title)
+                    builder
+                        .setMessage(title)
                         .setCancelable(false)
                         .setPositiveButton(yes) { _, _ ->
                             val trip = data.elementAt(adapterPosition)
@@ -140,8 +137,7 @@ class TripViewAdapter internal constructor(
                             data.remove(trip)
                             tripManager.deleteTrip(trip.source)
                             notifyDataSetChanged()
-                        }
-                        .setNegativeButton(no) { dialog, _ ->
+                        }.setNegativeButton(no) { dialog, _ ->
                             dialog.dismiss()
                         }
                     builder.create().show()
