@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -18,7 +18,13 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import android.util.Log
-import org.obd.graphs.*
+import org.obd.graphs.BACKUP_FAILED
+import org.obd.graphs.BACKUP_RESTORE_FAILED
+import org.obd.graphs.BACKUP_RESTORE_NO_FILES
+import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
+import org.obd.graphs.BACKUP_SUCCESSFUL
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
 
@@ -39,7 +45,7 @@ internal class DefaultDriveBackupManager(
                 onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
             ) { drive ->
                 val folderId = drive.findFolderIdRecursive(BACKUP_FOLDER)
-                drive.uploadFile(file, folderId)
+                drive.uploadFile(file, BACKUP_FILE_NAME, folderId)
                 sendBroadcastEvent(BACKUP_SUCCESSFUL)
             }
         }
