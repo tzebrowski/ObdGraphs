@@ -113,9 +113,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 backupManager.backup()
             }
 
-        REQUEST_LOCATION_PERMISSIONS -> {
-            permissions.requestLocationPermissions(this)
-        }
+        REQUEST_LOCATION_PERMISSIONS -> permissions.requestLocationPermissions(this)
 
         DATA_LOGGER_WIFI_NOT_CONNECTED -> {
             getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
@@ -137,9 +135,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
         }
 
-        AA_EDIT_PREF_SCREEN -> {
-            navigateToPreferencesScreen("pref.aa")
-        }
+        AA_EDIT_PREF_SCREEN -> navigateToPreferencesScreen("pref.aa")
 
         UsbManager.ACTION_USB_DEVICE_DETACHED -> {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
@@ -152,27 +148,16 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(R.string.pref_usb_device_attached, usbDevice.productName!!)
         }
 
-        SCREEN_UNLOCK_PROGRESS_EVENT -> {
-            lockScreenDialog.dismiss()
-        }
+        SCREEN_UNLOCK_PROGRESS_EVENT -> lockScreenDialog.dismiss()
 
-        DATA_LOGGER_DTC_AVAILABLE -> {
+        DATA_LOGGER_DTC_AVAILABLE ->
             if (Prefs.isEnabled("pref.dtc.show_notification")) {
                 toast(R.string.pref_pids_group_dtc_available_message)
             }
-        }
 
-        REQUEST_PERMISSIONS_BT -> {
-            permissions.requestBluetoothPermissions(this)
-        }
-
-        TOOLBAR_SHOW -> {
-            toolbarHide(false)
-        }
-
-        TOOLBAR_TOGGLE_ACTION -> {
-            toolbarToggle()
-        }
+        REQUEST_PERMISSIONS_BT -> permissions.requestBluetoothPermissions(this)
+        TOOLBAR_SHOW -> toolbarHide(false)
+        TOOLBAR_TOGGLE_ACTION -> toolbarToggle()
 
         PROFILE_CHANGED_EVENT -> {
             updateVehicleProfile()
@@ -184,39 +169,20 @@ internal fun MainActivity.receive(intent: Intent?) {
             toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
         }
 
-        SCREEN_OFF_EVENT -> {
-            screen.lockScreen(this)
-        }
+        SCREEN_OFF_EVENT -> screen.lockScreen(this)
+        SCREEN_ON_EVENT -> screen.changeScreenBrightness(this, 1f)
 
-        SCREEN_ON_EVENT -> {
-            Log.i(LOG_TAG, "Activating application.")
-            screen.changeScreenBrightness(this, 1f)
-        }
-
-        DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connect_error)
-        }
+        DATA_LOGGER_ERROR_CONNECT_EVENT -> toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connect_error)
 
         DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
             navigateToPreferencesScreen("pref.adapter.connection")
             toast(org.obd.graphs.commons.R.string.main_activity_toast_adapter_is_not_selected)
         }
 
-        NOTIFICATION_GIULIA_VIEW_TOGGLE -> {
-            toggleNavigationItem(GIULIA_VIEW_ID, R.id.navigation_giulia)
-        }
-
-        NOTIFICATION_GRAPH_VIEW_TOGGLE -> {
-            toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
-        }
-
-        NOTIFICATION_DASH_VIEW_TOGGLE -> {
-            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
-        }
-
-        NOTIFICATION_GAUGE_VIEW_TOGGLE -> {
-            toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
-        }
+        NOTIFICATION_GIULIA_VIEW_TOGGLE -> toggleNavigationItem(GIULIA_VIEW_ID, R.id.navigation_giulia)
+        NOTIFICATION_GRAPH_VIEW_TOGGLE -> toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
+        NOTIFICATION_DASH_VIEW_TOGGLE -> toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
+        NOTIFICATION_GAUGE_VIEW_TOGGLE -> toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
 
         DATA_LOGGER_CONNECTING_EVENT -> {
             toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connecting)
@@ -241,9 +207,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
         }
 
-        PREFS_CONNECTION_TYPE_CHANGED_EVENT -> {
-            updateAdapterConnectionType()
-        }
+        PREFS_CONNECTION_TYPE_CHANGED_EVENT -> updateAdapterConnectionType()
 
         DATA_LOGGER_NO_NETWORK_EVENT -> {
             toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_no_network)
@@ -281,13 +245,10 @@ internal fun MainActivity.receive(intent: Intent?) {
             handleStop()
         }
 
-        EVENT_VEHICLE_STATUS_VEHICLE_RUNNING -> {
-            updateVehicleStatus("Running")
-        }
-
-        EVENT_VEHICLE_STATUS_VEHICLE_IDLING -> {
-            updateVehicleStatus("Idling")
-        }
+        EVENT_VEHICLE_STATUS_VEHICLE_RUNNING -> updateVehicleStatus("Running")
+        EVENT_VEHICLE_STATUS_VEHICLE_IDLING -> updateVehicleStatus("Idling")
+        EVENT_VEHICLE_STATUS_IGNITION_ON -> updateVehicleStatus("Key on")
+        EVENT_VEHICLE_STATUS_CHANGED -> updateVehicleStatus("")
 
         EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
             updateVehicleStatus("Key off")
@@ -295,14 +256,6 @@ internal fun MainActivity.receive(intent: Intent?) {
                 Log.i(LOG_TAG, "Received vehicle status OFF event. Closing the session.")
                 dataLogger.stop()
             }
-        }
-
-        EVENT_VEHICLE_STATUS_IGNITION_ON -> {
-            updateVehicleStatus("Key on")
-        }
-
-        EVENT_VEHICLE_STATUS_CHANGED -> {
-            updateVehicleStatus("")
         }
     }
 }
@@ -391,7 +344,6 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(TRIPS_UPLOAD_SUCCESSFUL)
         it.addAction(TRIPS_UPLOAD_NO_FILES_SELECTED)
         it.addAction(GDRIVE_AUTHORIZATION_FAILED)
-
     }
 
     registerReceiver(this, powerReceiver) {
