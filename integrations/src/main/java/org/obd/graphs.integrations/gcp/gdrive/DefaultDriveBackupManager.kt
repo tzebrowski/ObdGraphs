@@ -18,7 +18,13 @@ package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
 import android.util.Log
-import org.obd.graphs.*
+import org.obd.graphs.BACKUP_FAILED
+import org.obd.graphs.BACKUP_RESTORE_FAILED
+import org.obd.graphs.BACKUP_RESTORE_NO_FILES
+import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
+import org.obd.graphs.BACKUP_SUCCESSFUL
+import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
+import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileOutputStream
 
@@ -29,17 +35,17 @@ private const val TAG = "DriveBackup"
 internal class DefaultDriveBackupManager(
     webClientId: String,
     activity: Activity,
-) : AbstractDriveManager(webClientId, activity, null), DriveBackupManager {
-
+) : AbstractDriveManager(webClientId, activity, null),
+    DriveBackupManager {
     override suspend fun exportBackup(file: File) =
         signInAndExecute("exportBackup") { token ->
             executeDriveOperation(
                 accessToken = token,
                 onFailure = { sendBroadcastEvent(BACKUP_FAILED) },
-                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) },
             ) { drive ->
                 val folderId = drive.findFolderIdRecursive(BACKUP_FOLDER)
-                drive.uploadFile(file, folderId)
+                drive.uploadFile(file, BACKUP_FILE_NAME, folderId)
                 sendBroadcastEvent(BACKUP_SUCCESSFUL)
             }
         }
@@ -49,14 +55,17 @@ internal class DefaultDriveBackupManager(
             executeDriveOperation(
                 accessToken = token,
                 onFailure = { sendBroadcastEvent(BACKUP_RESTORE_FAILED) },
-                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) }
+                onFinally = { sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT) },
             ) { drive ->
-                val fileList = drive.files().list()
-                    .setSpaces("drive")
-                    .setQ("name = '$BACKUP_FILE_NAME' and trashed = false")
-                    .setOrderBy("createdTime desc")
-                    .setFields("files(id, createdTime)")
-                    .execute()
+                val fileList =
+                    drive
+                        .files()
+                        .list()
+                        .setSpaces("drive")
+                        .setQ("name = '$BACKUP_FILE_NAME' and trashed = false")
+                        .setOrderBy("createdTime desc")
+                        .setFields("files(id, createdTime)")
+                        .execute()
 
                 val remoteFile = fileList.files.firstOrNull()
 

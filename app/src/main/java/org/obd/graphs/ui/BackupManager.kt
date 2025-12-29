@@ -67,7 +67,6 @@ internal class BackupManager(
             withContext(Dispatchers.IO) {
                 try {
                     sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                    profile.reset()
                     profile.restoreBackup()
                     sendBroadcastEvent(BACKUP_RESTORE_SUCCESSFUL)
                 } finally {

@@ -132,13 +132,14 @@ internal abstract class AbstractDriveManager(
 
     fun Drive.uploadFile(
         localFile: File,
+        fileName: String,
         parentFolderId: String,
         mimeType: String = "text/plain",
     ): DriveFile {
-        Log.i(TAG, "Uploading file ${localFile.absolutePath}")
+        Log.i(TAG, "Uploading file ${localFile.absolutePath} to $fileName")
         val metadata =
             DriveFile().apply {
-                name = localFile.name
+                name = fileName
                 parents = listOf(parentFolderId)
             }
         val content = FileContent(mimeType, localFile)
@@ -150,7 +151,7 @@ internal abstract class AbstractDriveManager(
                 .setFields("id")
                 .execute()
 
-        Log.i(TAG, "Uploaded ${localFile.name}, ID: ${uploaded.id}")
+        Log.i(TAG, "Uploaded ${localFile.name}, ID: ${uploaded.id} as $fileName")
         return uploaded
     }
 

@@ -34,7 +34,6 @@ import org.obd.graphs.preferences.updateString
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -88,18 +87,35 @@ internal class DefaultProfileService :
         try {
             Log.i(LOG_TAG, "Start restoring backup file: ${file.absoluteFile}")
 
-            loadProfileFilesIntoPreferences(
-                forceOverride = true,
-                files = mutableListOf(file.absolutePath),
-                installationKey = getInstallationVersion(),
-            ) {
-                val prop = Properties()
-                prop.load(FileInputStream(it))
-                prop
+            val prop = Properties()
+            file.inputStream().use { stream ->
+                prop.load(stream)
+            }
+
+            Prefs.edit().let { editor ->
+                editor.clear()
+                prop.forEach { keyObject, valueObject ->
+
+                    val value = valueObject.toString()
+                    val key = keyObject.toString()
+
+                    if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                        Log.d(LOG_TAG, "Restoring profile.key=`$key=$value`")
+                    }
+
+                    when {
+                        value.isArray() -> editor.putStringSet(key, stringToStringSet(value))
+                        value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
+                        value.isNumeric() -> editor.putInt(key, value.toInt())
+                        else -> editor.putString(key, value.replace("\"", "").replace("\"", ""))
+                    }
+                }
+
+                editor.putBoolean(getInstallationVersion(), true)
+                editor.apply()
             }
 
             Log.i(LOG_TAG, "Restoring backup file completed")
-
             sendBroadcastEvent(PROFILE_CHANGED_EVENT)
         } catch (e: Throwable) {
             Log.e(LOG_TAG, "Failed to restore backup file", e)
@@ -256,7 +272,7 @@ internal class DefaultProfileService :
 
             Prefs.edit().let {
                 Prefs.all
-                    .filter { (pref, _) -> pref.startsWith(profileName) }
+                    .filter { (pref, _) -> pref.startsWith("$profileName.") }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_NAME_PREFIX) }
                     .filter { (pref, _) -> !pref.startsWith(PROFILE_CURRENT_NAME_PREF) }
                     .filter { (pref, _) -> !pref.startsWith(getInstallationVersion()) }
@@ -264,7 +280,9 @@ internal class DefaultProfileService :
                     .forEach { (pref, value) ->
 
                         pref.substring(profileName.length + 1).run {
-                            Log.d(LOG_TAG, "Loading user preference $this = $value")
+                            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                                Log.d(LOG_TAG, "Loading user preference for $profileName,  $pref =  $this = $value")
+                            }
                             it.updatePreference(this, value)
                         }
                     }
@@ -316,7 +334,7 @@ internal class DefaultProfileService :
             .filter { it.isNotEmpty() }
             .toMutableSet()
 
-    private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?. filter { it.endsWith("properties") }
+    private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
 
     private fun loadFile(fileName: String): Properties {
         val prop = Properties()
@@ -388,8 +406,7 @@ internal class DefaultProfileService :
 
                             value.isBoolean() -> editor.putBoolean(key, value.toBoolean())
                             value.isNumeric() -> editor.putInt(key, value.toInt())
-                            else ->  editor.putString(key, value.replace("\"", "").replace("\"", ""))
-
+                            else -> editor.putString(key, value.replace("\"", "").replace("\"", ""))
                         }
                     } else {
                         Log.i(LOG_TAG, "Skipping profile.key=`$key=$value`")
@@ -417,6 +434,10 @@ internal class DefaultProfileService :
         val mm = mutableMapOf<String, String>()
 
         Prefs.all.forEach {
+            if (it.key.contains("..") || it.key.startsWith(".")) {
+                Log.e(LOG_TAG, "Skipping invalid key ${it.key}")
+                return@forEach
+            }
             when (it.value) {
                 is String -> {
                     mm[it.key] = "\"${it.value}\""
@@ -439,8 +460,8 @@ internal class DefaultProfileService :
                 }
             }
         }
-
         data.putAll(mm)
+
         return data
     }
 
