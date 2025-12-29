@@ -117,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:backgroundTint="@color/rainbow_indigo"
+            android:backgroundTint="@color/philippine_green"
             android:text="@string/trip_dialog_send_to_cloud_selected"
             android:textSize="12sp"
             tools:ignore="ButtonStyle" />
