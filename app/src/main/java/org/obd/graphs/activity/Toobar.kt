@@ -26,7 +26,7 @@ import org.obd.graphs.R
 const val TOOLBAR_TOGGLE_ACTION: String = "toolbar.toggle.event"
 const val TOOLBAR_SHOW: String = "toolbar.reset.animation"
 
-fun toolbarHide(
+private fun toolbarHide(
     bottomNavigationView: BottomNavigationView,
     bottomAppBar: BottomAppBar,
     floatingActionButton: FloatingActionButton,
