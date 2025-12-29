@@ -65,6 +65,7 @@ internal class Screen {
         activity: Activity,
         value: Float,
     ) {
+        Log.i(LOG_TAG, "Activating application.")
         if (getPowerPreferences().screenOnOff) {
             val pm = activity.getSystemService(AppCompatActivity.POWER_SERVICE) as PowerManager
             val wl =

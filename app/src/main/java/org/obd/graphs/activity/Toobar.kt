@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.activity
 
-import android.view.ViewTreeObserver
+import android.view.View
 import androidx.core.view.isVisible
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -26,72 +26,53 @@ import org.obd.graphs.R
 const val TOOLBAR_TOGGLE_ACTION: String = "toolbar.toggle.event"
 const val TOOLBAR_SHOW: String = "toolbar.reset.animation"
 
-fun toolbarHide(
+private fun toolbarHide(
     bottomNavigationView: BottomNavigationView,
     bottomAppBar: BottomAppBar,
     floatingActionButton: FloatingActionButton,
     hide: Boolean,
 ) {
-    // Define the action to run after layout is confirmed
     fun runAnim() {
-        val duration = 200L
+        val duration = 250L
 
-        // Calculate distinct heights
-        val navHeight = bottomNavigationView.height.toFloat()
-        val barHeight = bottomAppBar.height.toFloat()
+        val navHeight = bottomNavigationView.height.toFloat().takeIf { it > 0 } ?: 500f
+        val barHeight = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 500f
+        val fabHeight = barHeight + floatingActionButton.height.toFloat()
 
-        // Handle Visibility to prevent "Ghost Clicks"
-        // If showing, make visible IMMEDIATELY before animating in
         if (!hide) {
+            bottomNavigationView.translationY = navHeight
+            bottomAppBar.translationY = barHeight
+            floatingActionButton.translationY = fabHeight
+
             bottomNavigationView.isVisible = true
             bottomAppBar.isVisible = true
-            floatingActionButton.show() // FAB has its own built-in visibility method
+            floatingActionButton.visibility = View.VISIBLE
         }
 
-        // Animate BottomNavigation
-        val navTargetY = if (hide) navHeight else 0f
-        bottomNavigationView.clearAnimation()
         bottomNavigationView
             .animate()
-            .translationY(navTargetY)
+            .translationY(if (hide) navHeight else 0f)
             .setDuration(duration)
-            .withEndAction {
-                // If hiding, set GONE only after animation finishes
-                if (hide) bottomNavigationView.isVisible = false
-            }.start()
+            .withEndAction { if (hide) bottomNavigationView.isVisible = false }
+            .start()
 
-        // Animate BottomAppBar
-        val barTargetY = if (hide) barHeight else 0f
-        bottomAppBar.clearAnimation()
         bottomAppBar
             .animate()
-            .translationY(barTargetY)
+            .translationY(if (hide) barHeight else 0f)
+            .setDuration(duration)
+            .withEndAction { if (hide) bottomAppBar.isVisible = false }
+            .start()
+
+        floatingActionButton
+            .animate()
+            .translationY(if (hide) fabHeight else 0f)
             .setDuration(duration)
             .withEndAction {
-                if (hide) bottomAppBar.isVisible = false
+                if (hide) floatingActionButton.visibility = View.GONE
             }.start()
-
-        // Ideally, use the FAB's built-in show/hide for a scale animation which is cleaner
-        if (hide) {
-            floatingActionButton.hide()
-        } else {
-            floatingActionButton.show()
-        }
     }
 
-    // Fix "Zero Height" bug: Wait for layout if height is 0
-    if (bottomNavigationView.height == 0 && hide) {
-        bottomNavigationView.viewTreeObserver.addOnGlobalLayoutListener(
-            object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    bottomNavigationView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    runAnim()
-                }
-            },
-        )
-    } else {
-        runAnim()
-    }
+    bottomNavigationView.post { runAnim() }
 }
 
 fun MainActivity.toolbarToggle() =
