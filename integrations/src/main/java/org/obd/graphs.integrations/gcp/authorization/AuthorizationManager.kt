@@ -39,6 +39,7 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.obd.graphs.GDRIVE_AUTHORIZATION_FAILED
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
@@ -97,8 +98,10 @@ internal abstract class AuthorizationManager(
             }
         } catch (e: NoCredentialException) {
             Log.e(TAG, "User has no credentials saved. Redirecting to login...")
+            sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
         } catch (e: Exception) {
             Log.e(TAG, "Failed executing action: $authenticatedActionName", e)
+            sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
         }
     }
 
@@ -133,6 +136,7 @@ internal abstract class AuthorizationManager(
                     launchConsentScreen(e.status.resolution?.intentSender, authenticatedActionName, authenticatedAction)
                 } else {
                     Log.e(TAG, "Authorization failed", e)
+                    sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
                 }
             }
     }
