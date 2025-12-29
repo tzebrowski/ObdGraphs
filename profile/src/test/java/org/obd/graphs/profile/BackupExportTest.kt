@@ -20,18 +20,15 @@ import android.os.Environment
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
-import io.mockk.mockkObject
 import io.mockk.mockkStatic
-import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.obd.graphs.preferences.Prefs
-import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
-internal class BackupTest : TestSetup() {
+internal class BackupExportTest : TestSetup() {
     @Before
     override fun setup() {
         super.setup()
@@ -85,50 +82,5 @@ internal class BackupTest : TestSetup() {
         assertEquals("\"some_value\"", props.getProperty("user.pref.1"))
         assertEquals("123", props.getProperty("user.pref.int"))
         assertEquals("true", props.getProperty("user.pref.bool"))
-    }
-
-    @Test
-    fun `restoreBackup clears preferences and reloads from file`() {
-        // Arrange
-        // 1. Create a real temporary backup file
-        val tempFile = File.createTempFile("test_backup", ".properties")
-        val backupProps =
-            Properties().apply {
-                setProperty("restored.key.string", "\"restored_value\"") // Strings are quoted in backup
-                setProperty("restored.key.int", "999")
-                setProperty("restored.key.bool", "true")
-            }
-        java.io.FileOutputStream(tempFile).use { backupProps.store(it, null) }
-
-        // 2. Mock external dependencies used during restore
-        mockkStatic("org.obd.graphs.BroadcastKt") // For sendBroadcastEvent
-        every { org.obd.graphs.sendBroadcastEvent(any()) } just Runs
-
-        // Mock the diagnosticRequestIDMapper object used in 'allowedToOverride()'
-        mockkObject(org.obd.graphs.diagnosticRequestIDMapper)
-        every {
-            org.obd.graphs.diagnosticRequestIDMapper
-                .getValuePreferenceName()
-        } returns "mock_mapper_pref"
-
-        // Mock string extension functions used for parsing (isBoolean, isNumeric, etc.)
-        mockkStatic("org.obd.graphs.profile.StringExtKt")
-        // Act
-        profileService.restoreBackup(tempFile)
-
-        // Assert
-        // 1. Verify preferences were cleared first
-        verify {
-            editor.clear()
-            editor.putBoolean("restored.key.bool", true) // logic removes quotes
-            editor.putString("restored.key.string", "restored_value") // logic removes quotes
-            editor.putInt("restored.key.int", 999)
-//            editor.putString("pref.profile.id", "profile_1")
-            editor.putBoolean("prefs.installed.profiles.0", true)
-            editor.apply()
-        }
-
-        // 2. Verify broadcast was sent
-        verify { org.obd.graphs.sendBroadcastEvent("data.logger.profile.changed.event") }
     }
 }

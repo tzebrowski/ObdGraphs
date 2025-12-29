@@ -23,7 +23,8 @@ import org.junit.runners.Suite.SuiteClasses
 @RunWith(Suite::class)
 @SuiteClasses(
     LoadProfilesTest::class,
-    BackupTest::class,
+    BackupExportTest::class,
+    BackupRestoreTest::class,
     ProfileServiceTest::class,
     SetupProfilesTest::class,
 )
