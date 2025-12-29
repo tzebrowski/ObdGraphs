@@ -56,7 +56,7 @@ internal open class DefaultTripsDriveManager(
                     files.forEach { inFile ->
                         transformer.transform(inFile).inputStream().use { outFile ->
                             drive.uploadFile(
-                                MemoryContent(
+                                InputStreamContent(
                                     "text/plain",
                                     outFile,
                                     "$deviceId-${inFile.name.removePrefix("trip-profile_")}",

@@ -311,6 +311,9 @@
     <string name="pref.aa.category">Android Auto view configuration</string>
     <string name="pref.aa.category_summary">This page contains configuration settings specific to Android Auto.</string>
 
+    <string name="pref.trip_logs_category">Trip Logs</string>
+    <string name="pref.trip_logs_upload">Upload to Cloud</string>
+
     <string name="pref.adapter_category">OBD2 Adapter Settings</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
     <string name="pref.usb_category">USB</string>
@@ -434,7 +437,7 @@
     <string name="dialog_deselect_all_action">Deselect\nAll</string>
 
     <string name="dialog_close_window_action">Close\n </string>
-    <string name="trip_dialog_send_to_cloud_selected">Send to\ncloud</string>
+    <string name="trip_dialog_send_to_cloud_selected">Upload to\ncloud</string>
     <string name="trip_dialog_delete_all_trips">Delete\nall</string>
     <string name="trip_delete_dialog_ask_question">Are you sure you want to Delete?</string>
     <string name="trip_send_to_cloud_dialog_ask_question">Are you sure you want to Send selected to cloud?</string>

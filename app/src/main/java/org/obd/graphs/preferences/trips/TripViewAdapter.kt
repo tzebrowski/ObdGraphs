@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,19 +28,21 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.*
+import org.obd.graphs.R
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.profile
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.setText
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 private const val LOGGER_KEY = "TripsViewAdapter"
 
 class TripViewAdapter internal constructor(
     context: Context?,
-    var data: MutableCollection<TripFileDescDetails>
+    var data: MutableCollection<TripFileDescDetails>,
+    private val showDeleteButton: Boolean = true
 ) : RecyclerView.Adapter<TripViewAdapter.ViewHolder>() {
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
@@ -117,30 +119,34 @@ class TripViewAdapter internal constructor(
         private val deleteTrip: Button = binding.findViewById(R.id.trip_delete)
 
         init {
+            if (showDeleteButton) {
+                loadTrip.setOnClickListener {
+                    tripManager.loadTripAsync(data.elementAt(adapterPosition).source.fileName)
+                }
 
-            loadTrip.setOnClickListener {
-                tripManager.loadTripAsync( data.elementAt(adapterPosition).source.fileName)
-            }
+                deleteTrip.setOnClickListener {
+                    val builder = AlertDialog.Builder(binding.context)
+                    val title = binding.context.getString(R.string.trip_delete_dialog_ask_question)
+                    val yes = binding.context.getString(R.string.trip_delete_dialog_ask_question_yes)
+                    val no = binding.context.getString(R.string.trip_delete_dialog_ask_question_no)
 
-            deleteTrip.setOnClickListener {
-                val builder = AlertDialog.Builder(binding.context)
-                val title = binding.context.getString(R.string.trip_delete_dialog_ask_question)
-                val yes = binding.context.getString(R.string.trip_delete_dialog_ask_question_yes)
-                val no = binding.context.getString(R.string.trip_delete_dialog_ask_question_no)
-
-                builder.setMessage(title)
-                    .setCancelable(false)
-                    .setPositiveButton(yes) { _, _ ->
-                        val trip = data.elementAt(adapterPosition)
-                        Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
-                        data.remove(trip)
-                        tripManager.deleteTrip(trip.source)
-                        notifyDataSetChanged()
-                    }
-                    .setNegativeButton(no) { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    builder.setMessage(title)
+                        .setCancelable(false)
+                        .setPositiveButton(yes) { _, _ ->
+                            val trip = data.elementAt(adapterPosition)
+                            Log.i(LOGGER_KEY, "Trip selected to delete: $trip")
+                            data.remove(trip)
+                            tripManager.deleteTrip(trip.source)
+                            notifyDataSetChanged()
+                        }
+                        .setNegativeButton(no) { dialog, _ ->
+                            dialog.dismiss()
+                        }
                     builder.create().show()
+                }
+            } else {
+                loadTrip.visibility = View.GONE
+                deleteTrip.visibility = View.GONE
             }
         }
     }

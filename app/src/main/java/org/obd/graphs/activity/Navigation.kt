@@ -86,14 +86,13 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_giulia_number_of_columns -> navigateToPreferencesScreen("pref.aa.number_of_items_in_column.category")
 
                 R.id.navigation_dashboard_pids -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_DASH)
-                R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
+                R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_TRIPS)
                 R.id.ctx_menu_pids_to_query -> navigateToPreferencesScreen("pref.registry")
                 R.id.navigation_preferences -> navigateToPreferencesScreen("pref.root")
                 R.id.navigation_preferences_adapter -> navigateToPreferencesScreen("pref.adapter.connection")
-
-
                 R.id.navigation_adapter_dri -> navigateToPreferencesScreen("pref.init")
 
+                R.id.navigation_trip_logs -> navigateToPreferencesScreen(PREF_LOGS)
                 else -> navigateToScreen(item.itemId)
             }
 
@@ -218,7 +217,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 R.id.ctx_menu_view_custom_action_1 -> {
                     when (getCurrentScreenId()) {
                         R.id.navigation_graph -> {
-                            navigateToPreferencesScreen(PREF_GAUGE_RECORDINGS)
+                            navigateToPreferencesScreen(PREF_GAUGE_TRIPS)
                         }
                         R.id.navigation_giulia -> {
                             tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList())

@@ -56,6 +56,19 @@
         </menu>
     </item>
 
+    <item
+        android:title="@string/pref.trip_logs_category">
+        <menu>
+            <item
+                android:icon="@android:drawable/ic_menu_upload"
+                android:id="@+id/navigation_trip_logs"
+                android:checkable="true"
+                android:title="@string/pref.trip_logs_upload" />
+
+        </menu>
+    </item>
+
+
     <item android:title="@string/navigation.title_aa" android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED">
         <menu>
             <item

@@ -113,7 +113,7 @@
             tools:ignore="ButtonStyle" />
 
         <Button
-            android:id="@+id/trip_action_send_to_cloud"
+            android:id="@+id/trip_action_upload_to_cloud"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"

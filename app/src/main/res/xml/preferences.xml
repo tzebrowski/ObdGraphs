@@ -1821,6 +1821,23 @@
                         </PreferenceCategory>
                     </PreferenceScreen>
                 </PreferenceCategory>
+
+
+                <PreferenceCategory android:title="@string/pref.trip_logs_category">
+                    <PreferenceScreen
+                        android:summary="@string/pref.trip_logs_category"
+                        android:title="@string/pref.trip_logs_category"
+                        app:key="pref.trip_logs">
+                        <PreferenceCategory android:title="@string/pref.trip_logs_category">
+                            <org.obd.graphs.preferences.trips.TripsListPreferences
+                                android:defaultValue="@array/pref.empty_array"
+                                android:key="pref.graph.trips.selected"
+                                android:summary="@string/pref.graph.trips_selected_summary"
+                                android:title="@string/pref.graph.trips_selected" />
+                        </PreferenceCategory>
+                    </PreferenceScreen>
+                </PreferenceCategory>
+
                 <PreferenceCategory android:title="@string/pref.general_settings">
 
                     <ListPreference

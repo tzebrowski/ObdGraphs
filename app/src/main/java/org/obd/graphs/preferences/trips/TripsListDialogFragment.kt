@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2025, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -45,7 +45,9 @@ data class TripFileDescDetails(
     var checked: Boolean = false,
 )
 
-class TripsListDialogFragment : CoreDialogFragment() {
+class TripsListDialogFragment(private val enableDeleteButtons: Boolean = true,
+                              private val enableUploadCloudButton: Boolean = true) :
+    CoreDialogFragment() {
     private lateinit var tripsDriveManager: TripsDriveManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +64,10 @@ class TripsListDialogFragment : CoreDialogFragment() {
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_trip, container, false)
-        val adapter = TripViewAdapter(context, tripManager.findAllTripsBy().map { TripFileDescDetails(source = it) }.toMutableList())
+        val adapter = TripViewAdapter(
+            context, tripManager.findAllTripsBy().map { TripFileDescDetails(source = it) }.toMutableList(),
+            enableDeleteButtons
+        )
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
@@ -70,62 +75,70 @@ class TripsListDialogFragment : CoreDialogFragment() {
         attachCloseButton(root) {
             navigateToScreen(R.id.navigation_graph)
         }
+        if (enableDeleteButtons) {
 
-        root.findViewById<Button>(R.id.trip_action_delete_all).apply {
-            setOnClickListener {
-                val builder = AlertDialog.Builder(context)
-                val title = context.getString(R.string.trip_delete_dialog_ask_question)
-                val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
-                val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
+            root.findViewById<Button>(R.id.trip_action_delete_all).apply {
+                setOnClickListener {
+                    val builder = AlertDialog.Builder(context)
+                    val title = context.getString(R.string.trip_delete_dialog_ask_question)
+                    val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
+                    val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
 
-                builder
-                    .setMessage(title)
-                    .setCancelable(false)
-                    .setPositiveButton(yes) { _, _ ->
-                        try {
-                            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
-                            adapter.data.forEach {
-                                tripManager.deleteTrip(it.source)
+                    builder
+                        .setMessage(title)
+                        .setCancelable(false)
+                        .setPositiveButton(yes) { _, _ ->
+                            try {
+                                sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                                adapter.data.forEach {
+                                    tripManager.deleteTrip(it.source)
+                                }
+                                adapter.data.clear()
+                                adapter.notifyDataSetChanged()
+                            } finally {
+                                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                             }
-                            adapter.data.clear()
-                            adapter.notifyDataSetChanged()
-                        } finally {
-                            sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+                        }.setNegativeButton(no) { dialog, _ ->
+                            dialog.dismiss()
                         }
-                    }.setNegativeButton(no) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                val alert = builder.create()
-                alert.show()
+                    val alert = builder.create()
+                    alert.show()
+                }
             }
+        } else {
+            root.findViewById<Button>(R.id.trip_action_delete_all).visibility = View.GONE
         }
-
-        root.findViewById<Button>(R.id.trip_action_send_to_cloud).apply {
-            setOnClickListener {
-                val builder = AlertDialog.Builder(context)
-                val title = context.getString(R.string.trip_send_to_cloud_dialog_ask_question)
-                val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
-                val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
-                builder
-                    .setMessage(title)
-                    .setCancelable(false)
-                    .setPositiveButton(yes) { _, _ ->
-                        val directory = tripManager.getTripsDirectory(context)
-                        val files = adapter.data.filter { it.checked }.map { File(directory, it.source.fileName) }
-                        if (files.isEmpty()) {
-                            Log.w("TripsListDialogFragment", "User selected no tripe")
-                            sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
-                        } else {
-                            lifecycleScope.launch {
-                                tripsDriveManager.exportTrips(files)
+        val uploadToCloud = root.findViewById<Button>(R.id.trip_action_upload_to_cloud)
+        if (enableUploadCloudButton) {
+            uploadToCloud.apply {
+                setOnClickListener {
+                    val builder = AlertDialog.Builder(context)
+                    val title = context.getString(R.string.trip_send_to_cloud_dialog_ask_question)
+                    val yes = context.getString(R.string.trip_delete_dialog_ask_question_yes)
+                    val no = context.getString(R.string.trip_delete_dialog_ask_question_no)
+                    builder
+                        .setMessage(title)
+                        .setCancelable(false)
+                        .setPositiveButton(yes) { _, _ ->
+                            val directory = tripManager.getTripsDirectory(context)
+                            val files = adapter.data.filter { it.checked }.map { File(directory, it.source.fileName) }
+                            if (files.isEmpty()) {
+                                Log.w("TripsListDialogFragment", "User selected no tripe")
+                                sendBroadcastEvent(TRIPS_UPLOAD_NO_FILES_SELECTED)
+                            } else {
+                                lifecycleScope.launch {
+                                    tripsDriveManager.exportTrips(files)
+                                }
                             }
+                        }.setNegativeButton(no) { dialog, _ ->
+                            dialog.dismiss()
                         }
-                    }.setNegativeButton(no) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                val alert = builder.create()
-                alert.show()
+                    val alert = builder.create()
+                    alert.show()
+                }
             }
+        } else {
+            uploadToCloud.visibility = View.GONE
         }
         return root
     }
