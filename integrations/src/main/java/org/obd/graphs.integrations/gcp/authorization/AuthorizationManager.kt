@@ -41,7 +41,8 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.obd.graphs.GDRIVE_AUTHORIZATION_FAILED
+import org.obd.graphs.GOOGLE_SIGN_IN_GENERAL_FAILURE
+import org.obd.graphs.GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
@@ -105,7 +106,7 @@ internal abstract class AuthorizationManager(
                     return
                 } else {
                     Log.w(TAG, "Unexpected credential type: ${credential.type}")
-                    sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
+                    sendBroadcastEvent(GOOGLE_SIGN_IN_GENERAL_FAILURE)
                     return
                 }
             } catch (e: GetCredentialCancellationException) {
@@ -120,11 +121,11 @@ internal abstract class AuthorizationManager(
                     continue // RETRY
                 } else {
                     Log.e(TAG, "Final attempt failed: No credentials found.")
-                    sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
+                    sendBroadcastEvent(GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Non-recoverable error in $authenticatedActionName", e)
-                sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
+                sendBroadcastEvent(GOOGLE_SIGN_IN_GENERAL_FAILURE)
                 return
             }
         }
@@ -161,7 +162,7 @@ internal abstract class AuthorizationManager(
                     launchConsentScreen(e.status.resolution?.intentSender, authenticatedActionName, authenticatedAction)
                 } else {
                     Log.e(TAG, "Authorization failed", e)
-                    sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
+                    sendBroadcastEvent(GOOGLE_SIGN_IN_GENERAL_FAILURE)
                 }
             }
     }

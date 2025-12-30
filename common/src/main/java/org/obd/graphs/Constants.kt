@@ -46,4 +46,6 @@ const val PREF_ALERTING_ENABLED = "pref.alerting.enabled"
  const val TRIPS_UPLOAD_FAILED = "trips.upload.failed"
  const val TRIPS_UPLOAD_SUCCESSFUL = "trips.upload.successful"
  const val TRIPS_UPLOAD_NO_FILES_SELECTED= "trips.upload.no_files"
- const val GDRIVE_AUTHORIZATION_FAILED = "gdrive.authorization.failed"
+ const val GOOGLE_SIGN_IN_GENERAL_FAILURE = "gdrive.authorization.failed"
+ const val GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE = "gdrive.authorization.no_credentials.failed"
+
