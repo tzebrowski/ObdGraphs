@@ -36,7 +36,8 @@ import org.obd.graphs.BACKUP_RESTORE_NO_FILES
 import org.obd.graphs.BACKUP_RESTORE_SUCCESSFUL
 import org.obd.graphs.BACKUP_START
 import org.obd.graphs.BACKUP_SUCCESSFUL
-import org.obd.graphs.GDRIVE_AUTHORIZATION_FAILED
+import org.obd.graphs.GOOGLE_SIGN_IN_GENERAL_FAILURE
+import org.obd.graphs.GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE
 import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.PowerBroadcastReceiver
 import org.obd.graphs.R
@@ -92,7 +93,8 @@ private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
-        GDRIVE_AUTHORIZATION_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_gdrive_auth_failed)
+        GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed)
+        GOOGLE_SIGN_IN_GENERAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed_restart)
         TRIPS_UPLOAD_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_failed)
         TRIPS_UPLOAD_SUCCESSFUL -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_successful)
         TRIPS_UPLOAD_NO_FILES_SELECTED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_no_files_selected)
@@ -343,7 +345,9 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(TRIPS_UPLOAD_FAILED)
         it.addAction(TRIPS_UPLOAD_SUCCESSFUL)
         it.addAction(TRIPS_UPLOAD_NO_FILES_SELECTED)
-        it.addAction(GDRIVE_AUTHORIZATION_FAILED)
+        it.addAction(GOOGLE_SIGN_IN_GENERAL_FAILURE)
+        it.addAction(GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE)
+
     }
 
     registerReceiver(this, powerReceiver) {

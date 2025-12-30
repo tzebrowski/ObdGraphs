@@ -39,14 +39,18 @@ import com.google.android.gms.common.api.Scope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.obd.graphs.GDRIVE_AUTHORIZATION_FAILED
+import org.obd.graphs.GOOGLE_SIGN_IN_GENERAL_FAILURE
+import org.obd.graphs.GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
 private const val TAG = "AuthorizationManager"
 
 internal typealias AuthenticatedAction = suspend (accessToken: String) -> Unit
+
+private const val MAX_AUTHORIZE_ATTEMPTS = 4
 
 internal abstract class AuthorizationManager(
     private val webClientId: String,
@@ -72,39 +76,58 @@ internal abstract class AuthorizationManager(
         authenticatedActionName: String,
         authenticatedAction: AuthenticatedAction,
     ) {
-        try {
-            Log.i(TAG, "Start executing action: $authenticatedActionName for client.id=$webClientId")
-            val credentialManager = CredentialManager.create(activity)
+        Log.i(TAG, "Start executing action: $authenticatedActionName")
 
-            val googleIdOption =
-                GetGoogleIdOption
-                    .Builder()
-                    .setServerClientId(webClientId)
-                    .setFilterByAuthorizedAccounts(false)
-                    .build()
+        for (i in 0 until MAX_AUTHORIZE_ATTEMPTS) {
+            try {
+                Log.i(TAG, "Attempting to authorize. $i attempt")
 
-            val request =
-                GetCredentialRequest
-                    .Builder()
-                    .addCredentialOption(googleIdOption)
-                    .build()
+                val credentialManager = CredentialManager.create(activity)
 
-            val result = credentialManager.getCredential(activity, request)
-            val credential = result.credential
+                val googleIdOption =
+                    GetGoogleIdOption
+                        .Builder()
+                        .setServerClientId(webClientId)
+                        .setFilterByAuthorizedAccounts(false)
+                        .build()
 
-            if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                checkPermissionsAndExecuteAction(authenticatedActionName, authenticatedAction)
-            } else {
-                Log.w(TAG, "Unexpected credential type: ${credential.type}")
+                val request =
+                    GetCredentialRequest
+                        .Builder()
+                        .addCredentialOption(googleIdOption)
+                        .build()
+
+                val result = credentialManager.getCredential(activity, request)
+                val credential = result.credential
+
+                if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    checkPermissionsAndExecuteAction(authenticatedActionName, authenticatedAction)
+                    Log.i(TAG, "Successfully authorize user with  $i attempt.")
+                    return
+                } else {
+                    Log.w(TAG, "Unexpected credential type: ${credential.type}")
+                    sendBroadcastEvent(GOOGLE_SIGN_IN_GENERAL_FAILURE)
+                    return
+                }
+            } catch (e: GetCredentialCancellationException) {
+                Log.w(TAG, "User cancelled operation", e)
+                return
+            } catch (e: NoCredentialException) {
+                Log.w(TAG, "Transient NoCredentialException on attempt $i")
+
+                if (i < MAX_AUTHORIZE_ATTEMPTS - 1) {
+                    val delayTime = (i + 1) * 500L
+                    delay(delayTime)
+                    continue // RETRY
+                } else {
+                    Log.e(TAG, "Final attempt failed: No credentials found.")
+                    sendBroadcastEvent(GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Non-recoverable error in $authenticatedActionName", e)
+                sendBroadcastEvent(GOOGLE_SIGN_IN_GENERAL_FAILURE)
+                return
             }
-        } catch (e: GetCredentialCancellationException) {
-            Log.w(TAG, "User cancelled operation", e)
-        } catch (e: NoCredentialException) {
-            Log.e(TAG, "User has no credentials saved. Redirecting to login...")
-            sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed executing action: $authenticatedActionName", e)
-            sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
         }
     }
 
@@ -139,7 +162,7 @@ internal abstract class AuthorizationManager(
                     launchConsentScreen(e.status.resolution?.intentSender, authenticatedActionName, authenticatedAction)
                 } else {
                     Log.e(TAG, "Authorization failed", e)
-                    sendBroadcastEvent(GDRIVE_AUTHORIZATION_FAILED)
+                    sendBroadcastEvent(GOOGLE_SIGN_IN_GENERAL_FAILURE)
                 }
             }
     }
