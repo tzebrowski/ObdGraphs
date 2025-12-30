@@ -311,8 +311,13 @@
     <string name="pref.aa.category">Android Auto view configuration</string>
     <string name="pref.aa.category_summary">This page contains configuration settings specific to Android Auto.</string>
 
+    <string name="pref.trip_logs_upload.upload_icon">Upload Icon</string>
     <string name="pref.trip_logs_category">Trip Logs</string>
-    <string name="pref.trip_logs_upload">Upload to Cloud</string>
+    <string name="pref.trip_logs_upload">Upload Trip Logs to Cloud</string>
+    <string name="pref.trip_logs_upload_details">Sync trip logs to  <font color='#01804F'>Google Drive</font>. Files are uploaded in the
+        <font color='#1C3D72'>mygiulia/trips</font> folder.
+        View your logs at https://tzebrowski.github.io/ObdGraphsLogViewer/.
+    </string>
 
     <string name="pref.adapter_category">OBD2 Adapter Settings</string>
     <string name="pref.bluetooth_category">Bluetooth</string>
@@ -414,14 +419,14 @@
 
     <string name="pref.profile.restore">Restore Preferences</string>
     <string name="pref.profile.restore_summary">This process restores your preferences from a backup. Depending on the backup type, your data will be read from
-        <font color='#4285F4'>Google Drive</font> or
-        <font color='#34A853'>your device</font>.
+        <font color='#01804F'>Google Drive</font> or
+        <font color='#1C3D72'>your device</font>.
     </string>
 
     <string name="pref.profile.export">Back up your preferences</string>
     <string name="pref.profile.export_summary">This process backs up your preferences. Depending on the selected backup type, your data will be sent to
-        <font color='#4285F4'>Google Drive</font> or stored
-        <font color='#34A853'>locally on your device</font>
+        <font color='#01804F'>Google Drive</font> or stored
+        <font color='#1C3D72'>locally on your device</font>
     </string>
 
     <string name="pref.profile.restore_confirmation_dialog">Ready to restore your saved settings? Keep in mind this will replace your current preferences.</string>
@@ -514,7 +519,6 @@
     <string name="dialog_save_action">Save\n </string>
     <string name="pids_supported">Supported</string>
     <string name="pref_search_view_title">Search</string>
-
 
     <string-array name="pref.numbers_1_20">
         <item name="0">0</item>

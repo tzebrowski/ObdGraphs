@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
@@ -60,14 +62,13 @@
         android:title="@string/pref.trip_logs_category">
         <menu>
             <item
-                android:icon="@android:drawable/ic_menu_upload"
+                android:title=""
                 android:id="@+id/navigation_trip_logs"
                 android:checkable="true"
-                android:title="@string/pref.trip_logs_upload" />
-
+                app:actionLayout="@layout/menu_item_description_trip_logs"
+                app:showAsAction="always" />
         </menu>
     </item>
-
 
     <item android:title="@string/navigation.title_aa" android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED">
         <menu>
