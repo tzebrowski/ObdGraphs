@@ -2035,7 +2035,13 @@
 
     <PreferenceScreen app:key="pref.about">
         <PreferenceCategory android:title="@string/pref.about_category">
-            <Preference app:title="@string/pref.about_title" />
+            <Preference
+                app:title="@string/pref.about_title"
+                app:summary="@string/pref.about_summary">
+                <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="https://my-giulia.com" />
+            </Preference>
             <EditTextPreference
                 android:key="pref.about.build_time"
                 app:enabled="false"
