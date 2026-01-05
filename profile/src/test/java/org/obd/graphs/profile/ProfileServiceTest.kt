@@ -1,5 +1,5 @@
  /**
- * Copyright 2019-2025, Tomasz Żebrowski
+ * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for additional information regarding
@@ -16,11 +16,9 @@
  */
 package org.obd.graphs.profile
 
-import android.content.res.AssetManager
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
-import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.verify
@@ -30,9 +28,6 @@ import org.junit.Test
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updatePreference
 import java.io.ByteArrayInputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 internal class ProfileServiceTest : TestSetup() {
     @Before

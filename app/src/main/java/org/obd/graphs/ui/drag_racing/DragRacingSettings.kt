@@ -1,5 +1,5 @@
  /**
- * Copyright 2019-2025, Tomasz Żebrowski
+ * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for additional information regarding
@@ -16,7 +16,6 @@
  */
 package org.obd.graphs.ui.drag_racing
 
-import android.util.Log
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.DragRacingScreenSettings

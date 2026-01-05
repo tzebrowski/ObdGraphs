@@ -1,5 +1,5 @@
  /**
- * Copyright 2019-2025, Tomasz Żebrowski
+ * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for additional information regarding
@@ -21,8 +21,6 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import org.hamcrest.Matchers.*
-import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.activity.MainActivity
