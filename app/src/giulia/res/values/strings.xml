@@ -1,4 +1,8 @@
 <resources >
     <string name="app_name">My Giulia</string>
-    <string name="pref.about_title">My Giulia is an application designed to collect and display car telemetry using ELM327-compatible adapters. It offers native support for modern Alfa Romeo engines, including the 2.0 GME, 2.2 Multijet, and 2.9 QV, which are found in Alfa Romeo models such as the Giulia and Stelvio.</string>
+    <string name="pref.about_title">About My Giulia</string>
+    <string name="pref.about_summary">My Giulia is a dedicated Android application that tracks and visualizes real-time vehicle telemetry.
+        Purpose-built for modern Alfa Romeo models like the Giulia and Stelvio, it provides native support for the 2.0 GME, 2.2 Multijet, and 2.9 QV engines.
+        Tap to visit  <font color='#C22636'>my-giulia.com</font>
+    </string>
 </resources>

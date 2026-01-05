@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.preferences
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
@@ -177,10 +178,15 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         sendBroadcastEvent(TOOLBAR_SHOW)
         val root = super.onCreateView(inflater, container, savedInstanceState)
         registerListeners()
-        listView.setBackgroundColor(Color.LTGRAY)
-        listView.setOnTouchListener(onDoubleClickListener(requireContext()))
+        customizeListView()
         hidePreferences()
         return root
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun customizeListView() {
+        listView.setBackgroundColor(Color.LTGRAY)
+        listView.setOnTouchListener(onDoubleClickListener(requireContext()))
     }
 
     private fun hidePreferences() {
