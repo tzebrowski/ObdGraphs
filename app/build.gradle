@@ -94,7 +94,7 @@ android {
             dimension "version"
             resValue "string", "DEFAULT_PROFILE", "profile_3"
             applicationId "org.obd.graphs.my.giulia"
-            versionCode 70
+            versionCode 71
         }
     }
 
