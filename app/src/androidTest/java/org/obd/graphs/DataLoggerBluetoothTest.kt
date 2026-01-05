@@ -18,7 +18,6 @@ package org.obd.graphs
 
 import androidx.test.core.app.launchActivity
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import org.hamcrest.Matchers.*
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

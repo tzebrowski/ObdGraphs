@@ -16,7 +16,6 @@
  */
 package org.obd.graphs.ui.drag_racing
 
-import android.util.Log
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.DragRacingScreenSettings
