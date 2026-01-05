@@ -2036,8 +2036,8 @@
     <PreferenceScreen app:key="pref.about">
         <PreferenceCategory android:title="@string/pref.about_category">
             <Preference
-                app:title="@string/pref.about_title"
-                app:summary="@string/pref.about_summary">
+                app:layout="@layout/preference_about"
+                app:title="@string/pref.about_title">
                 <intent
                     android:action="android.intent.action.VIEW"
                     android:data="https://my-giulia.com" />
