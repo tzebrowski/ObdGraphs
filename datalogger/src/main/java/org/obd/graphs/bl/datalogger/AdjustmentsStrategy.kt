@@ -27,6 +27,7 @@ import org.obd.metrics.api.model.FormulaExternalParams
 import org.obd.metrics.api.model.PidDefinitionCustomization
 import org.obd.metrics.api.model.ProducerPolicy
 import org.obd.metrics.api.model.STNxxExtensions
+import org.obd.metrics.api.model.SniffingPolicy
 import org.obd.metrics.codec.GeneratorPolicy
 import java.io.File
 
@@ -45,6 +46,7 @@ internal class AdjustmentsStrategy {
         var builder =
             Adjustments
                 .builder()
+                .sniffing(SniffingPolicy.builder().enabled(false).build())
                 .debugEnabled(preferences.debugLogging)
                 .errorsPolicy(
                     ErrorsPolicy
@@ -117,6 +119,7 @@ internal class AdjustmentsStrategy {
     private fun getDefaultAdjustments(preferences: DataLoggerSettings) =
         Adjustments
             .builder()
+            .sniffing(SniffingPolicy.builder().enabled(false).build())
             .debugEnabled(preferences.debugLogging)
             .override(Pid.DISTANCE_PID_ID.id, PidDefinitionCustomization.builder().lastInTheQuery(true).build())
             .formulaExternalParams(FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize).build())
