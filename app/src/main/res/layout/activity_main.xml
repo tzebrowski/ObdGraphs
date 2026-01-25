@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -129,6 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_gravity="bottom"
+                android:theme="@style/ThemeOverlay.MaterialComponents.Light"
                 app:backgroundTint="#CCFFFFFF"
                 app:contentInsetStart="0dp"
                 app:fabAlignmentMode="center"
@@ -142,6 +142,8 @@
                 android:layout_gravity="bottom"
                 app:elevation="0dp"
                 app:backgroundTint="#CCFFFFFF"
+                app:itemIconTint="@android:color/black"
+                app:itemTextColor="@android:color/black"
                 app:labelVisibilityMode="labeled"
                 app:itemIconSize="18dp"
                 app:itemPaddingTop="6dp"
