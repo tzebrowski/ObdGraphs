@@ -48,7 +48,7 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
     private val tripModelSerializer = TripModelSerializer()
     private val tripCache = TripCache()
 
-
+    private val tripDescParser = TripDescParser()
     override fun getTripsDirectory(context: Context) =
         "${context.getExternalFilesDir(TRIP_DIRECTORY)?.absolutePath}"
 
@@ -169,7 +169,6 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
     override fun findAllTripsBy(filter: String): MutableCollection<TripFileDesc> {
         Log.i(LOGGER_TAG, "Finds all trips by filter: '$filter' and profile=${profile.getCurrentProfile()}")
 
-        val profiles = profile.getAvailableProfiles()
         val files = File(getTripsDirectory(getContext()!!)).list()
         if (files == null) {
             Log.i(LOGGER_TAG, "No files were found in the trips directory.")
@@ -182,24 +181,14 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                     it.contains("${profile.getCurrentProfile()}-") }
                 .filter {
                     try {
-                        decodeTripName(it).size > 3
+                        tripDescParser.decodeTripName(it).size > 3
                     }catch (e: Throwable){
                         false
                     }
                 }
                 .mapNotNull { fileName ->
                     Log.d(LOGGER_TAG,"Found trip which fits the conditions: $fileName")
-                    val p = decodeTripName(fileName)
-                    val profileId = p[1]
-                    val profileLabel = profiles[profileId]!!
-
-                    TripFileDesc(
-                        fileName = fileName,
-                        profileId = profileId,
-                        profileLabel = profileLabel,
-                        startTime = p[2],
-                        tripTimeSec = p[3]
-                    )
+                    tripDescParser.getTripDesc(fileName)
                 }
                 .sortedByDescending { it.startTime.toLongOrNull() }
                 .toMutableList()
@@ -208,7 +197,6 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
         }
     }
 
-    private fun decodeTripName(fileName: String) = fileName.substring(0, fileName.length - 5).split("-")
 
     override fun deleteTrip(trip: TripFileDesc) {
         Log.i(LOGGER_TAG, "Deleting '${trip.fileName}' from the storage.")

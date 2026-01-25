@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.integrations.log
 
+import android.util.Log
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import java.io.File
@@ -23,9 +24,8 @@ import java.io.InputStreamReader
 import java.io.StringReader
 
 internal interface TripLogTransformer {
-    fun transform(log: String): File
-
-    fun transform(file: File): File
+    fun transform(log: String, metadata: Map<String,String> = mapOf()): File
+    fun transform(file: File, metadata: Map<String,String> = mapOf()): File
 }
 
 internal enum class OutputType { JSON }
@@ -46,14 +46,16 @@ private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
     private val valueMapper: (signal: Int, value: Number) -> Number,
 ) : TripLogTransformer {
-    override fun transform(file: File): File =
+
+    override fun transform(file: File, metadata: Map<String,String>): File =
         file.inputStream().use { input ->
-            process(JsonReader(InputStreamReader(input)))
+            process(JsonReader(InputStreamReader(input)),metadata)
         }
 
-    override fun transform(log: String): File = process(JsonReader(StringReader(log)))
+    override fun transform(log: String, metadata: Map<String,String>): File = process(JsonReader(StringReader(log)), metadata)
 
-    private fun process(reader: JsonReader): File {
+    private fun process(reader: JsonReader, metadata: Map<String,String>): File {
+        Log.d("DefaultJSONOutput","Received $metadata")
         val tempFile =
             File.createTempFile("json_buffer_", ".tmp").apply {
                 // Ensures the file is cleaned up if the JVM shuts down
@@ -66,7 +68,7 @@ private class DefaultJSONOutput(
                 JsonWriter(fileWriter).use { writer ->
                     reader.isLenient = true
                     writer.beginArray()
-                    parseRoot(reader, writer)
+                    parseRoot(reader, writer, metadata)
                     writer.endArray()
                 }
             }
@@ -85,8 +87,20 @@ private class DefaultJSONOutput(
     private fun parseRoot(
         reader: JsonReader,
         writer: JsonWriter,
+        metadata: Map<String, String>,
     ) {
-        reader.beginObject() // {
+        if (metadata.isNotEmpty()) {
+            writer.beginObject()
+            writer.name("metadata")
+            writer.beginObject()
+            metadata.forEach { (key, value) ->
+                writer.name(key).value(value)
+            }
+            writer.endObject()
+            writer.endObject()
+        }
+
+        reader.beginObject()
         while (reader.hasNext()) {
             if (reader.nextName() == "entries") {
                 parseEntries(reader, writer)
