@@ -50,14 +50,14 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
             pids.add(Pid.VEHICLE_STATUS_PID_ID.id)
         }
 
-        Log.e(LOG_KEY,"Gets PIDs '$pids' for current strategy $strategy")
+        Log.d(LOG_KEY,"Gets PIDs '$pids' for current strategy $strategy")
         return pids
     }
 
     override fun getStrategy(): QueryStrategyType = strategy
 
     override fun setStrategy(queryStrategyType: QueryStrategyType): Query {
-        Log.e(LOG_KEY,"Sets new strategy $queryStrategyType")
+        Log.d(LOG_KEY,"Sets new strategy $queryStrategyType")
         this.strategy = queryStrategyType
         return this
     }
