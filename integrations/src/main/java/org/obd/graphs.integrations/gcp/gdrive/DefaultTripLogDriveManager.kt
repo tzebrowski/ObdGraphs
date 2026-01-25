@@ -24,6 +24,7 @@ import org.obd.graphs.TRIPS_UPLOAD_NO_FILES_SELECTED
 import org.obd.graphs.TRIPS_UPLOAD_SUCCESSFUL
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.scaleToRange
+import org.obd.graphs.bl.trip.TripDescParser
 import org.obd.graphs.integrations.log.OutputType
 import org.obd.graphs.integrations.log.TripLog
 import org.obd.graphs.sendBroadcastEvent
@@ -54,7 +55,16 @@ internal open class DefaultTripLogDriveManager(
 
                     val deviceId = Device.id()
                     files.forEach { inFile ->
-                        transformer.transform(inFile).inputStream().use { outFile ->
+
+                        val metadata = mutableMapOf<String,String>()
+                        val tripDesc = TripDescParser().getTripDesc(inFile.name)
+                        metadata["trip.duration"] = tripDesc.tripTimeSec
+                        metadata["trip.profileId"] = tripDesc.profileId
+                        metadata["trip.startTime"] = tripDesc.startTime
+                        metadata["trip.profileLabel"] = tripDesc.profileLabel
+                        metadata["trip.profileId"] = tripDesc.profileId
+
+                        transformer.transform(inFile,metadata).inputStream().use { outFile ->
                             drive.uploadFile(
                                 InputStreamContent(
                                     "text/plain",
