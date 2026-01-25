@@ -182,7 +182,6 @@ internal class SurfaceRendererScreen(
     }
 
     override fun actionStartDataLogging(){
-        Log.e(LOG_TAG, "1 Action start data logging for $screenId")
         when (screenId) {
             SurfaceRendererType.GIULIA , SurfaceRendererType.GAUGE -> {
                 if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {

@@ -54,6 +54,9 @@
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>
     <string name="pref.displayed_parameter_ids_summary">Pick the OBD2 sensors or PIDs you would like to view on the screen</string>
 
+
+    <string name="pref.aa.performance.displayed_parameter_ids">Customize collected and visible OBD2 PIDs</string>
+    <string name="pref.aa.performance.displayed_parameter_ids_summary">Select the OBD2 sensors or PIDs you want to see. <font color="#C22636">Note: Diagnostic PIDs (like RPM, Spark Advance, MFA) are logged for data collection only and will not be visible on the dashboard.</font></string>
     <string name="pref.pids.edit">Modify individual alert thresholds</string>
     <string name="pref.pids.edit_summary">Adjust the configuration of individual PIDs, including setting alert thresholds.</string>
 

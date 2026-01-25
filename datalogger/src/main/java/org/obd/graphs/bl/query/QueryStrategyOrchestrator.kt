@@ -23,7 +23,7 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.runAsync
 
-private const val LOG_KEY = "query"
+private const val LOG_KEY = "QueryStrategyOrchestrator"
 
 internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
 
@@ -43,17 +43,21 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
 
     override fun getIDs(): MutableSet<Long>  {
         val pids = strategies[strategy]?.getPIDs() ?: mutableSetOf()
+
         //decorate with Vehicle Status PID
         if (dataLoggerSettings.instance().vehicleStatusPanelEnabled ||
             dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff){
             pids.add(Pid.VEHICLE_STATUS_PID_ID.id)
         }
+
+        Log.d(LOG_KEY,"Gets PIDs '$pids' for current strategy $strategy")
         return pids
     }
 
     override fun getStrategy(): QueryStrategyType = strategy
 
     override fun setStrategy(queryStrategyType: QueryStrategyType): Query {
+        Log.d(LOG_KEY,"Sets new strategy $queryStrategyType")
         this.strategy = queryStrategyType
         return this
     }

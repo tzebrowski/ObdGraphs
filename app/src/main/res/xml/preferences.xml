@@ -1628,8 +1628,8 @@
 
                     <PreferenceScreen
                         android:key="pref.performance.displayed_parameter_ids"
-                        android:summary="@string/pref.displayed_parameter_ids_summary"
-                        android:title="@string/pref.displayed_parameter_ids">
+                        android:summary="@string/pref.aa.performance.displayed_parameter_ids_summary"
+                        android:title="@string/pref.aa.performance.displayed_parameter_ids">
                         <PreferenceCategory android:title="@string/pref.pids_category">
                             <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
                                 android:defaultValue="@array/pref.empty_array"
