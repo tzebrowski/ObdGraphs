@@ -40,6 +40,9 @@ internal class PerformanceQueryStrategy : QueryStrategy() {
             Pid.PRE_IC_AIR_TEMP_PID_ID,
             Pid.EXT_VEHICLE_SPEED_PID_ID,
             Pid.GEAR_ENGAGED_PID_ID,
+            Pid.SPARK_ADVANCE_PID_ID,
+            Pid.EXT_ENGINE_SPEED_PID_ID,
+            Pid.CALCULATED_MAF_PID_ID
         ).map { it.id }.toSet()
 
     override fun getDefaults() = defaults
