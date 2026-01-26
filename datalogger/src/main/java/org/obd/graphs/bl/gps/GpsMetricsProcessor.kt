@@ -22,6 +22,7 @@ import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.*
 import org.obd.graphs.bl.datalogger.MetricsProcessor
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
@@ -55,27 +56,35 @@ internal class GpsMetricsProcessor : MetricsProcessor {
 
     override fun init(replyObserver: ReplyObserver<Reply<*>>) {
         this.replyObserver = replyObserver
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext()!!)
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult.locations.forEach { location ->
-                    currentLocation = location
-                    if (Log.isLoggable(TAG, Log.INFO)) {
-                        Log.i(TAG, "GPS Update: ${location.latitude}, ${location.longitude}")
-                    }
-                    emitMetric(latPid, location.latitude)
-                    emitMetric(lonPid, location.longitude)
-                    emitMetric(altPid, location.altitude)
-                }
-            }
-        }
     }
 
     @SuppressLint("MissingPermission")
     override fun onRunning(vehicleCapabilities: org.obd.metrics.api.model.VehicleCapabilities?) {
-        Log.i(TAG, "Starting GPS updates")
+
         try {
+            if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled){
+                Log.i(TAG,"GPS collector won't be registered")
+                currentLocation = null
+                return
+            }
+
+            Log.i(TAG, "Starting GPS updates")
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext()!!)
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.locations.forEach { location ->
+                        currentLocation = location
+                        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                            Log.v(TAG, "GPS Update: ${location.latitude}, ${location.longitude}")
+                        }
+                        emitMetric(latPid, location.latitude)
+                        emitMetric(lonPid, location.longitude)
+                        emitMetric(altPid, location.altitude)
+                    }
+                }
+            }
+
             val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 500)
                 .setMinUpdateIntervalMillis(500)
                 .build()
@@ -103,14 +112,10 @@ internal class GpsMetricsProcessor : MetricsProcessor {
         emitMetric(altPid, loc.altitude)
     }
 
-    private fun emitMetric(command: ObdCommand, value: Number) {
-        Log.e(TAG, "Emitting: ${command.pid.pid}, $value")
-        val metric = ObdMetric.builder()
+    private fun emitMetric(command: ObdCommand, value: Number) =
+        replyObserver?.onNext(ObdMetric.builder()
             .command(command)
             .value(value)
             .raw(raw)
-            .build()
-
-        replyObserver?.onNext(metric)
-    }
+            .build())
 }
