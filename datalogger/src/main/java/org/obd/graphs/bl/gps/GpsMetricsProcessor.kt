@@ -22,14 +22,14 @@ import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.*
 import org.obd.graphs.bl.datalogger.MetricsProcessor
+import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
 import org.obd.metrics.command.obd.ObdCommand
-import org.obd.metrics.pid.PidDefinition
-import org.obd.metrics.pid.ValueType
 import org.obd.metrics.transport.message.ConnectorResponse
 
 private const val TAG = "GpsMetricsProcessor"
@@ -50,12 +50,15 @@ internal class GpsMetricsProcessor : MetricsProcessor {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
 
-    private val latPid = ObdCommand(PidDefinition(9977771L, 2,"","", "Lat", "deg", "GPS Latitude", -90, 90, ValueType.DOUBLE))
-    private val lonPid = ObdCommand(PidDefinition(9977772L, 2,"","", "Lon", "deg", "GPS Longitude", -180, 180, ValueType.DOUBLE))
-    private val altPid = ObdCommand(PidDefinition(9977773L, 2,"","", "Alt", "m", "GPS Altitude", -100, 10000, ValueType.DOUBLE))
+    private lateinit var latitudeCommand: ObdCommand
+    private lateinit var longitudeCommand: ObdCommand
+    private lateinit var altitudeCommand: ObdCommand
 
     override fun init(replyObserver: ReplyObserver<Reply<*>>) {
         this.replyObserver = replyObserver
+        latitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_LAT_PID_ID.id))
+        longitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_LON_PID_ID.id))
+        altitudeCommand =  ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_ALT_PID_ID.id))
     }
 
     @SuppressLint("MissingPermission")
@@ -78,9 +81,9 @@ internal class GpsMetricsProcessor : MetricsProcessor {
                         if (Log.isLoggable(TAG, Log.VERBOSE)) {
                             Log.v(TAG, "GPS Update: ${location.latitude}, ${location.longitude}")
                         }
-                        emitMetric(latPid, location.latitude)
-                        emitMetric(lonPid, location.longitude)
-                        emitMetric(altPid, location.altitude)
+                        emitMetric(latitudeCommand, location.latitude)
+                        emitMetric(longitudeCommand, location.longitude)
+                        emitMetric(altitudeCommand, location.altitude)
                     }
                 }
             }
@@ -107,9 +110,9 @@ internal class GpsMetricsProcessor : MetricsProcessor {
             return
         }
 
-        emitMetric(latPid, loc.latitude)
-        emitMetric(lonPid, loc.longitude)
-        emitMetric(altPid, loc.altitude)
+        emitMetric(latitudeCommand, loc.latitude)
+        emitMetric(longitudeCommand, loc.longitude)
+        emitMetric(altitudeCommand, loc.altitude)
     }
 
     private fun emitMetric(command: ObdCommand, value: Number) =

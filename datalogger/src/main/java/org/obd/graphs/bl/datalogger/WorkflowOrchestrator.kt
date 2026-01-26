@@ -39,8 +39,10 @@ import org.obd.metrics.diagnostic.Histogram
 import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PIDsGroup
+import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
+import org.obd.metrics.pid.ValueType
 import java.util.*
 
 private const val JS_ENGINE_NAME = "rhino"
@@ -128,6 +130,8 @@ internal class WorkflowOrchestrator internal constructor() {
                 p.alert.upperThreshold = it.alert.upperThreshold
             }
         }
+
+        registerGPSPids(this.pidRegistry)
     }
 
     private var status = WorkflowStatus.Disconnected
@@ -268,6 +272,16 @@ internal class WorkflowOrchestrator internal constructor() {
                 p.alert.upperThreshold = it.alert.upperThreshold
             }
         }
+
+       registerGPSPids(workflow.pidRegistry)
+    }
+
+    private fun registerGPSPids(pidRegistry: PidDefinitionRegistry) {
+        Log.d(LOG_TAG,"Registering GPS PIDs")
+
+        pidRegistry.register(PidDefinition(Pid.GPS_LAT_PID_ID.id, 2, "", "22", "Lat", "deg", "GPS Latitude", -90, 90, ValueType.DOUBLE))
+        pidRegistry.register(PidDefinition(Pid.GPS_LON_PID_ID.id, 2, "", "22", "Lon", "deg", "GPS Longitude", -180, 180, ValueType.DOUBLE))
+        pidRegistry.register(PidDefinition(Pid.GPS_ALT_PID_ID.id, 2, "", "22", "Alt", "m", "GPS Altitude", -100, 10000, ValueType.DOUBLE))
     }
 
     private fun pids(): Pids? = Pids.builder().resources(dataLoggerSettings.instance().resources.map {
