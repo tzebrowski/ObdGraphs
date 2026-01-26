@@ -63,7 +63,6 @@ internal class GpsMetricsProcessor : MetricsProcessor {
 
     @SuppressLint("MissingPermission")
     override fun onRunning(vehicleCapabilities: org.obd.metrics.api.model.VehicleCapabilities?) {
-
         try {
             if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled){
                 Log.i(TAG,"GPS collector won't be registered")

@@ -37,6 +37,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.*
+import org.obd.graphs.bl.gps.gpsMetricsProcessor
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
@@ -62,7 +63,9 @@ internal class NavTemplateCarScreen(
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
-            Log.i(LOG_TAG, "Received ${intent?.action} event")
+            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                Log.v(LOG_TAG, "Received ${intent?.action} event")
+            }
 
             when (intent?.action) {
                 CHANGE_SCREEN_EVENT -> {
@@ -318,6 +321,7 @@ internal class NavTemplateCarScreen(
             .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
+            .observe(gpsMetricsProcessor)
 
         submitRenderingTask()
 

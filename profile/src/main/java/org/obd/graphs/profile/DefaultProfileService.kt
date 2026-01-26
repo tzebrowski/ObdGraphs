@@ -159,14 +159,21 @@ internal class DefaultProfileService :
     ) {
         if (!bulkActionEnabled) {
             pref?.let {
-                Log.d(PROFILE_AUTO_SAVER_LOG_TAG, "Receive preference change: $pref")
+                if (Log.isLoggable(PROFILE_AUTO_SAVER_LOG_TAG, Log.DEBUG)) {
+                    Log.d(PROFILE_AUTO_SAVER_LOG_TAG, "Receive preference change: $pref")
+                }
+
                 if (pref.startsWith("profile_") || pref == getInstallationVersion()) {
                     Log.v(PROFILE_AUTO_SAVER_LOG_TAG, "Skipping: $pref")
                 } else {
                     val profileName = getCurrentProfile()
                     ss?.edit {
                         val value = ss.all[pref]
-                        Log.d(PROFILE_AUTO_SAVER_LOG_TAG, "Saving: '$profileName.$pref'=$value")
+
+                        if (Log.isLoggable(PROFILE_AUTO_SAVER_LOG_TAG, Log.VERBOSE)) {
+                            Log.v(PROFILE_AUTO_SAVER_LOG_TAG, "Saving: '$profileName.$pref'=$value")
+                        }
+
                         updatePreference("$profileName.$pref", value)
                     }
                 }
