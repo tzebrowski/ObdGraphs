@@ -21,6 +21,7 @@ import android.location.Location
 import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.*
+import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -33,8 +34,9 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.transport.message.ConnectorResponse
 
 private const val TAG = "GpsMetricsEmitter"
+private const val MIN_EMISSION_INTERVAL = 1000L // Limit updates to 10Hz max
 
-val gpsMetricsEmitter: MetricsProcessor =  GpsMetricsEmitter()
+val gpsMetricsEmitter: MetricsProcessor = GpsMetricsEmitter()
 
 internal class GpsMetricsEmitter : MetricsProcessor {
 
@@ -45,6 +47,8 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     }
 
     private var currentLocation: Location? = null
+    // Rate Limiter State
+    private var lastEmissionTime: Long = 0L
 
     private var replyObserver: ReplyObserver<Reply<*>>? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -58,7 +62,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         this.replyObserver = replyObserver
         latitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_LAT_PID_ID.id))
         longitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_LON_PID_ID.id))
-        altitudeCommand =  ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_ALT_PID_ID.id))
+        altitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_ALT_PID_ID.id))
     }
 
     @SuppressLint("MissingPermission")
@@ -72,6 +76,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
             Log.i(TAG, "Starting GPS updates")
 
+            // Initialize client here to ensure context is valid
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext()!!)
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
@@ -80,6 +85,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                         if (Log.isLoggable(TAG, Log.VERBOSE)) {
                             Log.v(TAG, "GPS Update: ${location.latitude}, ${location.longitude}")
                         }
+                        // Direct GPS updates (from hardware) are always emitted immediately
                         emitMetric(latitudeCommand, location.latitude)
                         emitMetric(longitudeCommand, location.longitude)
                         emitMetric(altitudeCommand, location.altitude)
@@ -99,16 +105,28 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     override fun onStopped() {
         Log.i(TAG, "Stopping GPS updates")
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        // Check if initialized to avoid crash if onRunning failed
+        if (::fusedLocationClient.isInitialized && ::locationCallback.isInitialized) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
     }
 
     override fun postValue(obdMetric: ObdMetric) {
-
         val loc = currentLocation ?: return
+
+        // Guard: Don't process our own GPS metrics (infinite loop prevention)
         if (obdMetric.command.pid.id in 9977771L..9977773L) {
             return
         }
 
+        // Rate Limiter: Only re-emit GPS data if enough time has passed
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastEmissionTime < MIN_EMISSION_INTERVAL) {
+            return
+        }
+        lastEmissionTime = currentTime
+
+        // Re-emit the last known location
         emitMetric(latitudeCommand, loc.latitude)
         emitMetric(longitudeCommand, loc.longitude)
         emitMetric(altitudeCommand, loc.altitude)
