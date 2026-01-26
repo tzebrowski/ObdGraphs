@@ -84,6 +84,12 @@
     <string name="pref.adapter.query.view_individual.enabled_summary">Fetch from ECU only PIDs shown on current screen to boost performance—recommended for slow adapters. Note: this disables high/low freq PIDs polling.</string>
     <string name="pref.adapter.query.view_individual.dialog_disabled_warning">This setting is disabled because individual query strategy is enabled.</string>
 
+    <string name="pref.adapter.collect.gps.enabled_summary">Collect and log GPS coordinates alongside vehicle data</string>
+    <string name="pref.adapter.collect.gps.enabled_title">Enable GPS Logging</string>
+
+    <string name="pref.adapter.collect.gps.enabled.dialog_title">Enable GPS Logging?</string>
+    <string name="pref.adapter.collect.gps.enabled.dialog_summary">Enabling GPS logging will consume significantly more battery. Are you sure you want to continue?</string>
+
     <string name="pref.connection.category">OBD2 Adapter Connection</string>
     <string name="pref.connection.category.summary">This section contains settings related to your adapter type. Here, you can configure the Wi-Fi or Bluetooth parameters of your adapter.</string>
 

@@ -20,7 +20,10 @@ import org.obd.graphs.preferences.XmlPreference
 import org.obd.graphs.modules
 
  data class Adapter(
-    @XmlPreference("pref.adapter.id", "OBDII", String::class)
+     @XmlPreference("pref.adapter.gps.collect.enabled", "false", Boolean::class)
+     var gpsCollecetingEnabled: Boolean = false,
+
+     @XmlPreference("pref.adapter.id", "OBDII", String::class)
     var adapterId: String = "OBDII",
     @XmlPreference("pref.adapter.connection.type", "bluetooth", String::class)
     var connectionType: String = "bluetooth",
