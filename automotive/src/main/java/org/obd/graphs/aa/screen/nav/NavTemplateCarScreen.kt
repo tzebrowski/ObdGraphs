@@ -37,7 +37,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.*
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.*
-import org.obd.graphs.bl.gps.gpsMetricsProcessor
+import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.renderer.DynamicSelectorMode
 import org.obd.graphs.renderer.Fps
@@ -321,7 +321,7 @@ internal class NavTemplateCarScreen(
             .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
-            .observe(gpsMetricsProcessor)
+            .observe(gpsMetricsEmitter)
 
         submitRenderingTask()
 

@@ -43,7 +43,7 @@ import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
-import org.obd.graphs.bl.gps.gpsMetricsProcessor
+import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
 import org.obd.graphs.network
@@ -230,7 +230,7 @@ class MainActivity :
             .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
-            .observe(gpsMetricsProcessor)
+            .observe(gpsMetricsEmitter)
 
         if (BuildConfig.DEBUG) {
             dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))

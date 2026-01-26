@@ -32,11 +32,11 @@ import org.obd.metrics.api.model.ReplyObserver
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.transport.message.ConnectorResponse
 
-private const val TAG = "GpsMetricsProcessor"
+private const val TAG = "GpsMetricsEmitter"
 
-val gpsMetricsProcessor: MetricsProcessor =  GpsMetricsProcessor()
+val gpsMetricsEmitter: MetricsProcessor =  GpsMetricsEmitter()
 
-internal class GpsMetricsProcessor : MetricsProcessor {
+internal class GpsMetricsEmitter : MetricsProcessor {
 
     private val raw = object : ConnectorResponse {
         override fun at(p0: Int): Byte = "".toByte()
