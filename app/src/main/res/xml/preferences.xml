@@ -34,7 +34,7 @@
                     app:singleLineTitle="false"
                     app:source="low" />
 
-                <org.obd.graphs.preferences.GPSEnablerCheckBoxPreference
+                <org.obd.graphs.preferences.GpsEnablerCheckBoxPreference
                     android:defaultValue="false"
                     android:key="pref.adapter.gps.collect.enabled"
                     android:summary="@string/pref.adapter.collect.gps.enabled_summary"

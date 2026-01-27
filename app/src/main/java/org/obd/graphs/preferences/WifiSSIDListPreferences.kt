@@ -19,20 +19,25 @@ package org.obd.graphs.preferences
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.util.Log
 import androidx.preference.ListPreference
 import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.network
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
-import java.util.*
+import java.util.LinkedList
 
-private class SSID(val name: String)
+private class SSID(
+    val name: String,
+)
+
+private const val TAG = "WifiSSIDListPreferences"
 
 class WifiSSIDListPreferences(
     context: Context,
-    attrs: AttributeSet?
-) :
-    ListPreference(context, attrs) {
+    attrs: AttributeSet?,
+) : ListPreference(context, attrs) {
     init {
         setOnPreferenceChangeListener { _, _ ->
             navigateToPreferencesScreen("pref.adapter.connection")
@@ -44,18 +49,20 @@ class WifiSSIDListPreferences(
         val entries: MutableList<CharSequence> =
             LinkedList()
 
-        getDeviceList {
-            entries.add(it.name)
-            entriesValues.add(it.name)
+        if (dataLoggerSettings.instance().adapter.connectionType == "wifi") {
+            Log.d(TAG, "Connection-type is wifi. Obtaining available connections")
+
+            getDeviceList {
+                entries.add(it.name)
+                entriesValues.add(it.name)
+            }
         }
 
         setEntries(entries.toTypedArray())
         entryValues = entriesValues.toTypedArray()
     }
 
-    override fun getSummary(): CharSequence {
-        return super.getSummary().toString().colorize(COLOR_PHILIPPINE_GREEN, Typeface.BOLD, 1.0f)
-    }
+    override fun getSummary(): CharSequence = super.getSummary().toString().colorize(COLOR_PHILIPPINE_GREEN, Typeface.BOLD, 1.0f)
 
     override fun getEntryValues(): Array<CharSequence> {
         val entriesValues: MutableList<CharSequence> =
@@ -70,7 +77,6 @@ class WifiSSIDListPreferences(
     }
 
     override fun getEntries(): Array<CharSequence> {
-
         val entries: MutableList<CharSequence> =
             LinkedList()
 
