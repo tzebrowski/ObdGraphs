@@ -54,7 +54,7 @@ object Permissions {
         Log.i(TAG, "Requesting missing location permissions.")
         EasyPermissions.requestPermissions(
             activity,
-            activity.getString(R.string.permissions_missing_bt_msg), // Note: Check if you have a specific message for Location
+            activity.getString(R.string.permissions_missing_location_msg),
             LOCATION_REQUEST_CODE,
             *perms,
         )

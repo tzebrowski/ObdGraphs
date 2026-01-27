@@ -26,9 +26,9 @@ import org.obd.graphs.R
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.sendBroadcastEvent
 
- private const val LOG_TAG = "GPSEnablerCheckBoxPreference"
+private const val LOG_TAG = "GPSEnablerCheckBoxPreference"
 
-class GPSEnablerCheckBoxPreference(
+class GpsEnablerCheckBoxPreference(
     context: Context,
     attrs: AttributeSet?,
 ) : CheckBoxPreference(context, attrs) {
@@ -36,11 +36,13 @@ class GPSEnablerCheckBoxPreference(
         setOnPreferenceChangeListener { _, newValue ->
             val isEnabling = newValue as Boolean
             if (isEnabling) {
-                AlertDialog.Builder(context)
+                AlertDialog
+                    .Builder(context)
                     .setTitle(context.getString(R.string.pref_adapter_collect_gps_enabled_dialog_title))
                     .setMessage(context.getString(R.string.pref_adapter_collect_gps_enabled_dialog_summary))
                     .setCancelable(false)
                     .setPositiveButton(context.getString(R.string.dialog_ask_question_yes)) { _, _ ->
+                        Log.e("AAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                         if (Permissions.hasLocationPermissions(context)) {
                             isChecked = true
                             Log.i(LOG_TAG, "Enabling collecting GPS data collection. All required permissions are granted.")
@@ -53,7 +55,7 @@ class GPSEnablerCheckBoxPreference(
                         dialog.dismiss()
                     }.show()
                 false
-            }else {
+            } else {
                 true
             }
         }

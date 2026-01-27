@@ -137,7 +137,6 @@ internal class WorkflowOrchestrator internal constructor() {
     private var status = WorkflowStatus.Disconnected
     private val metricsProcessorsRegistry = mutableSetOf<MetricsProcessor>()
     private val adjustmentsStrategy = AdjustmentsStrategy()
-    private val connectionManager = ConnectionManager()
 
     fun observe(metricsProcessor: MetricsProcessor) {
         if (metricsProcessorsRegistry.contains(metricsProcessor)){
@@ -189,7 +188,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
         val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
         Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
-        connectionManager.obtain()?.run {
+        ConnectionManager.obtain()?.run {
             val status = workflow.start(
                 this, dataLoggerQuery, init(),
                 adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
@@ -201,7 +200,7 @@ internal class WorkflowOrchestrator internal constructor() {
     fun executeRoutine(query: Query) {
         currentQuery = query
 
-        connectionManager.obtain()?.run {
+        ConnectionManager.obtain()?.run {
             val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
             Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
 

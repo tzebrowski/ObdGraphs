@@ -32,6 +32,7 @@
     <string name="status_bar.ambient_temp">ambient temp: </string>
     <string name="status_bar.atm_pressure">atm pressure: </string>
 
-    <string name="permissions.missing.bt_msg">Granting Bluetooth permissions is necessary to establish a connection with the BT adapter.</string>
+    <string name="permissions.missing.bt_msg">To communicate with your vehicle, please allow Bluetooth access.</string>
+    <string name="permissions.missing.location_msg">To access WIFI network, record your trip route and speed, please allow Location access.</string>
 
 </resources>

@@ -29,7 +29,8 @@ import org.obd.graphs.network
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.transport.AdapterConnection
 
-internal class ConnectionManager {
+internal object ConnectionManager {
+
     fun obtain(): AdapterConnection? =
         when (dataLoggerSettings.instance().adapter.connectionType) {
             "wifi" -> wifiConnection()

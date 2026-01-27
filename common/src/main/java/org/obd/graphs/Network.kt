@@ -66,12 +66,12 @@ class Network {
                 }
                 ll
             }catch (e: SecurityException){
-                Log.e(LOG_LEVEL,"Used does not has access to ACCESS_COARSE_LOCATION permission.")
+                Log.e(LOG_LEVEL,"User does not has access to ACCESS_COARSE_LOCATION permission.")
                 sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
                 emptyList()
             }
         } else {
-            Log.e(LOG_LEVEL,"Used does not has access to ACCESS_COARSE_LOCATION permission.")
+            Log.e(LOG_LEVEL,"User does not has access to ACCESS_COARSE_LOCATION permission.")
             sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
             emptyList()
         }
