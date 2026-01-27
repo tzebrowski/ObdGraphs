@@ -21,6 +21,7 @@ import android.location.Location
 import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.*
+import org.obd.graphs.Permissions
 import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
@@ -69,9 +70,13 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     override fun onRunning(vehicleCapabilities: org.obd.metrics.api.model.VehicleCapabilities?) {
         try {
             if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled){
-                Log.i(TAG,"GPS collector won't be registered")
+                Log.w(TAG,"GPS Collector won't be registered, 'pref.adapter.gps.collect.enabled' is set to false.")
                 currentLocation = null
                 return
+            }
+            if (!Permissions.hasLocationPermissions(getContext()!!)){
+                Log.w(TAG,"GPS Collector does not have Location Permissions. It won't start.")
+                currentLocation = null
             }
 
             Log.i(TAG, "Starting GPS updates")

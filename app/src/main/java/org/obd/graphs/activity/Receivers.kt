@@ -39,6 +39,7 @@ import org.obd.graphs.BACKUP_SUCCESSFUL
 import org.obd.graphs.GOOGLE_SIGN_IN_GENERAL_FAILURE
 import org.obd.graphs.GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE
 import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
+import org.obd.graphs.Permissions
 import org.obd.graphs.PowerBroadcastReceiver
 import org.obd.graphs.R
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
@@ -115,7 +116,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 backupManager.backup()
             }
 
-        REQUEST_LOCATION_PERMISSIONS -> permissions.requestLocationPermissions(this)
+        REQUEST_LOCATION_PERMISSIONS -> Permissions.requestLocationPermissions(this)
 
         DATA_LOGGER_WIFI_NOT_CONNECTED -> {
             getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
@@ -157,7 +158,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 toast(R.string.pref_pids_group_dtc_available_message)
             }
 
-        REQUEST_PERMISSIONS_BT -> permissions.requestBluetoothPermissions(this)
+        REQUEST_PERMISSIONS_BT -> Permissions.requestBluetoothPermissions(this)
         TOOLBAR_SHOW -> toolbarHide(false)
         TOOLBAR_TOGGLE_ACTION -> toolbarToggle()
 

@@ -23,6 +23,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
+import android.util.Log
 import androidx.preference.ListPreference
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.network
@@ -98,6 +99,7 @@ class BluetoothAdaptersListPreferences(
                     }
             }
         } catch (e: SecurityException) {
+            Log.e("BluetoothAdaptersListPreferences", "Failed to obtain BT Permissions", e)
             network.requestBluetoothPermissions()
         }
 

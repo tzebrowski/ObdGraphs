@@ -31,4 +31,7 @@
     <string name="status_bar.disconnected">disconnected</string>
     <string name="status_bar.ambient_temp">ambient temp: </string>
     <string name="status_bar.atm_pressure">atm pressure: </string>
+
+    <string name="permissions.missing.bt_msg">Granting Bluetooth permissions is necessary to establish a connection with the BT adapter.</string>
+
 </resources>
