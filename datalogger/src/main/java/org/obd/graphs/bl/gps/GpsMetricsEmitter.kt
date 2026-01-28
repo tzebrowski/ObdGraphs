@@ -1,19 +1,3 @@
- /**
- * Copyright 2019-2026, Tomasz Żebrowski
- *
- * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
- * agreements. See the NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License. You may obtain a
- * copy of the License at
- *
- * <p>http://www.apache.org/licenses/LICENSE-2.0
- *
- * <p>Unless required by applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.obd.graphs.bl.gps
 
 import android.annotation.SuppressLint
@@ -22,7 +6,6 @@ import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.*
 import org.obd.graphs.Permissions
-import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -35,7 +18,7 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.transport.message.ConnectorResponse
 
 private const val TAG = "GpsMetricsEmitter"
-private const val MIN_EMISSION_INTERVAL = 1000L // Limit updates to 10Hz max
+private const val UPDATE_INTERVAL_MS = 100L // 10Hz updates (100ms)
 
 val gpsMetricsEmitter: MetricsProcessor = GpsMetricsEmitter()
 
@@ -47,13 +30,9 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         override fun remaining(): Int = 0
     }
 
-    private var currentLocation: Location? = null
-    // Rate Limiter State
-    private var lastEmissionTime: Long = 0L
-
     private var replyObserver: ReplyObserver<Reply<*>>? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
+    private var fusedLocationClient: FusedLocationProviderClient? = null
+    private var locationCallback: LocationCallback? = null
 
     private lateinit var latitudeCommand: ObdCommand
     private lateinit var longitudeCommand: ObdCommand
@@ -61,86 +40,95 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     override fun init(replyObserver: ReplyObserver<Reply<*>>) {
         this.replyObserver = replyObserver
-        latitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_LAT_PID_ID.id))
-        longitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_LON_PID_ID.id))
-        altitudeCommand = ObdCommand(dataLogger.getPidDefinitionRegistry().findBy(Pid.GPS_ALT_PID_ID.id))
+
+        val registry = dataLogger.getPidDefinitionRegistry()
+        latitudeCommand = ObdCommand(registry.findBy(Pid.GPS_LAT_PID_ID.id))
+        longitudeCommand = ObdCommand(registry.findBy(Pid.GPS_LON_PID_ID.id))
+        altitudeCommand = ObdCommand(registry.findBy(Pid.GPS_ALT_PID_ID.id))
     }
 
     @SuppressLint("MissingPermission")
     override fun onRunning(vehicleCapabilities: org.obd.metrics.api.model.VehicleCapabilities?) {
+        val context = getContext()
+
+        if (context == null) {
+            Log.e(TAG, "Context is null, cannot start GPS collector")
+            return
+        }
+
+        if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) {
+            Log.i(TAG, "GPS collection disabled in settings.")
+            return
+        }
+
+        if (!Permissions.hasLocationPermissions(context)) {
+            Log.w(TAG, "Missing Location Permissions. GPS collector will not start.")
+            return
+        }
+
         try {
-            if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled){
-                Log.w(TAG,"GPS Collector won't be registered, 'pref.adapter.gps.collect.enabled' is set to false.")
-                currentLocation = null
-                return
-            }
-            if (!Permissions.hasLocationPermissions(getContext()!!)){
-                Log.w(TAG,"GPS Collector does not have Location Permissions. It won't start.")
-                currentLocation = null
+            Log.i(TAG, "Starting GPS updates with interval: ${UPDATE_INTERVAL_MS}ms (10Hz)")
+
+            if (fusedLocationClient == null) {
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
             }
 
-            Log.i(TAG, "Starting GPS updates")
+            if (locationCallback == null) {
+                locationCallback = object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult) {
+                        for (location in locationResult.locations) {
+                            val lat = location.latitude
+                            val lon = location.longitude
+                            val alt = location.altitude
 
-            // Initialize client here to ensure context is valid
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext()!!)
-            locationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    locationResult.locations.forEach { location ->
-                        currentLocation = location
-                        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                            Log.v(TAG, "GPS Update: ${location.latitude}, ${location.longitude}")
+                            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                                Log.v(TAG, "GPS Fix: $lat, $lon")
+                            }
+
+                            emitMetric(latitudeCommand, lat)
+                            emitMetric(longitudeCommand, lon)
+                            emitMetric(altitudeCommand, alt)
                         }
-                        // Direct GPS updates (from hardware) are always emitted immediately
-                        emitMetric(latitudeCommand, location.latitude)
-                        emitMetric(longitudeCommand, location.longitude)
-                        emitMetric(altitudeCommand, location.altitude)
                     }
                 }
             }
 
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 500)
-                .setMinUpdateIntervalMillis(500)
+            // High Accuracy + 100ms interval for 10Hz
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_MS)
+                .setMinUpdateIntervalMillis(UPDATE_INTERVAL_MS) // Enforce strict 100ms limit
                 .build()
 
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+            fusedLocationClient?.requestLocationUpdates(
+                locationRequest,
+                locationCallback!!,
+                Looper.getMainLooper()
+            )
+
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start GPS", e)
+            Log.e(TAG, "Failed to start GPS updates", e)
         }
     }
 
     override fun onStopped() {
         Log.i(TAG, "Stopping GPS updates")
-        // Check if initialized to avoid crash if onRunning failed
-        if (::fusedLocationClient.isInitialized && ::locationCallback.isInitialized) {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
+        try {
+            if (fusedLocationClient != null && locationCallback != null) {
+                fusedLocationClient?.removeLocationUpdates(locationCallback!!)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping GPS updates", e)
         }
     }
 
     override fun postValue(obdMetric: ObdMetric) {
-        val loc = currentLocation ?: return
-
-        // Guard: Don't process our own GPS metrics (infinite loop prevention)
-        if (obdMetric.command.pid.id in 9977771L..9977773L) {
-            return
-        }
-
-        // Rate Limiter: Only re-emit GPS data if enough time has passed
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - lastEmissionTime < MIN_EMISSION_INTERVAL) {
-            return
-        }
-        lastEmissionTime = currentTime
-
-        // Re-emit the last known location
-        emitMetric(latitudeCommand, loc.latitude)
-        emitMetric(longitudeCommand, loc.longitude)
-        emitMetric(altitudeCommand, loc.altitude)
+        // No-op to prevent duplicate logging
     }
 
-    private fun emitMetric(command: ObdCommand, value: Number) =
+    private fun emitMetric(command: ObdCommand, value: Number) {
         replyObserver?.onNext(ObdMetric.builder()
             .command(command)
             .value(value)
             .raw(raw)
             .build())
+    }
 }
