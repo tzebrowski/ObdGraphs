@@ -41,7 +41,6 @@ import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import java.lang.ref.WeakReference
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -66,17 +65,6 @@ class GpsMetricsEmitterTest {
     private lateinit var gpsEmitter: GpsMetricsEmitter
 
     private fun mockContext() {
-//        mockkStatic("org.obd.graphs.ContextKt")
-//        val field =
-//            Class
-//                .forName("org.obd.graphs.ContextKt")
-//                .getDeclaredField("activityContext")
-//        field.isAccessible = true
-//        field.set(null, WeakReference(context))
-//
-//
-
-
         context = ApplicationProvider.getApplicationContext()
         mockkStatic(::getContext)
         every { getContext()  } returns context
