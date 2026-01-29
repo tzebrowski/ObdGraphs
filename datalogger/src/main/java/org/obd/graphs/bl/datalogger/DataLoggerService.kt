@@ -27,6 +27,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.Permissions
@@ -34,6 +35,7 @@ import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
 import org.obd.graphs.getContext
+import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.model.ObdMetric
@@ -41,7 +43,7 @@ import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
 import org.obd.metrics.diagnostic.Rate
 import org.obd.metrics.pid.PidDefinitionRegistry
-import java.util.*
+import java.util.Optional
 
 
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
@@ -57,7 +59,21 @@ private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
 private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel"
 private const val NOTIFICATION_ID = 12345
 
-private val workflowOrchestrator: WorkflowOrchestrator  = WorkflowOrchestrator()
+private var _workflowOrchestrator: WorkflowOrchestrator? = null
+
+internal val workflowOrchestrator: WorkflowOrchestrator
+    get() {
+        if (_workflowOrchestrator == null) {
+            Log.e(LOG_TAG, "Asynchronously loading WorkflowOrchestrator")
+            _workflowOrchestrator = runAsync { WorkflowOrchestrator() }
+        }
+        return _workflowOrchestrator!!
+    }
+
+@VisibleForTesting
+internal fun setWorkflowOrchestrator(mock: WorkflowOrchestrator) {
+    _workflowOrchestrator = mock
+}
 
 val dataLogger: DataLogger = DataLoggerService()
 
@@ -134,13 +150,13 @@ internal class DataLoggerService : Service(), DataLogger {
 
 
     override fun updateQuery(query: Query) {
-        Log.i(LOG_TAG,"Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}")
+        Log.i(LOG_TAG, "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}")
         if (isRunning()) {
             enqueueWork(UPDATE_QUERY) {
                 it.putExtra(QUERY, query)
             }
         } else {
-            Log.w(LOG_TAG,"No workflow is currently running. Query won't be updated.")
+            Log.w(LOG_TAG, "No workflow is currently running. Query won't be updated.")
         }
     }
 
@@ -180,13 +196,13 @@ internal class DataLoggerService : Service(), DataLogger {
         workflowOrchestrator.observe(lifecycleOwner, observer)
     }
 
-    override fun observe(metricsProcessor: MetricsProcessor) : DataLogger {
+    override fun observe(metricsProcessor: MetricsProcessor): DataLogger {
         workflowOrchestrator.observe(metricsProcessor)
         return this
     }
 
     override fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
-    override fun findAlertFor(metric: ObdMetric): List<Alert>  =  workflowOrchestrator.findAlertFor(metric)
+    override fun findAlertFor(metric: ObdMetric): List<Alert> = workflowOrchestrator.findAlertFor(metric)
 
     override fun isRunning(): Boolean = workflowOrchestrator.isRunning()
 

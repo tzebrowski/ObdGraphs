@@ -24,7 +24,6 @@ import org.obd.graphs.bl.gps.GpsMetricsEmitterTest
 @RunWith(Suite::class)
 @SuiteClasses(
     DataLoggerServiceTest::class,
-    DataLoggerServiceActionStartTest::class,
     GpsMetricsEmitterTest::class,
 )
 class DataLoggerTestSuite

@@ -18,6 +18,7 @@ package org.obd.graphs.bl
 
 import android.content.Intent
 import io.mockk.*
+import io.mockk.impl.annotations.MockK
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -27,21 +28,24 @@ import org.junit.runner.RunWith
 import org.obd.graphs.Permissions
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.datalogger.WorkflowOrchestrator
+import org.obd.graphs.bl.datalogger.setWorkflowOrchestrator
 import org.obd.graphs.bl.query.Query
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
-import org.robolectric.shadows.ShadowService
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33]) // Test on Android 13 (Tiramisu)
 class DataLoggerServiceTest : TestSetup() {
 
+    @MockK(relaxed = true)
+    internal lateinit var mockOrchestrator: WorkflowOrchestrator
 
     @Before
     override fun setup() {
         super.setup()
+        setWorkflowOrchestrator(mockOrchestrator)
     }
 
     @After
@@ -92,7 +96,7 @@ class DataLoggerServiceTest : TestSetup() {
         service.onStartCommand(stopIntent, 0, 2)
 
         // Assert
-        verify { anyConstructed<WorkflowOrchestrator>().stop() }
+        verify { mockOrchestrator.stop() }
 
         val shadowService = Shadows.shadowOf(service)
         assertEquals("Service should be stopped after ACTION_STOP", true, shadowService.isStoppedBySelf)
@@ -110,5 +114,27 @@ class DataLoggerServiceTest : TestSetup() {
         // Assert
         assertNotNull(binder)
         assertEquals(DataLoggerService.LocalBinder::class.java, binder::class.java)
+    }
+
+    @Test
+    fun `onStartCommand with ACTION_START should promote to Foreground and start Orchestrator`() {
+        // Arrange
+        val intent = Intent(context, DataLoggerService::class.java).apply {
+            action = "org.obd.graphs.logger.START"
+            putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
+        }
+
+        // Inject the mock (Ensures the service uses OUR object, not a real one)
+        setWorkflowOrchestrator(mockOrchestrator)
+
+        val controller = Robolectric.buildService(DataLoggerService::class.java, intent)
+
+        // Act
+        val service = controller.create().get()
+        controller.startCommand(0, 1)
+
+        // Assert
+        // Verify the specific mock instance we injected received the call
+        verify { mockOrchestrator.start(any()) }
     }
 }

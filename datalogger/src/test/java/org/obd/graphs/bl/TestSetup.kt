@@ -25,11 +25,9 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkConstructor
 import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import org.obd.graphs.Permissions
-import org.obd.graphs.bl.datalogger.WorkflowOrchestrator
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.Prefs
 
@@ -74,10 +72,5 @@ open class TestSetup {
         mockkObject(Permissions)
         every { Permissions.hasNotificationPermissions(any()) } returns true
         every { Permissions.hasLocationPermissions(any()) } returns true
-
-        mockkConstructor(WorkflowOrchestrator::class)
-        every { anyConstructed<WorkflowOrchestrator>().start(any()) } just Runs
-        every { anyConstructed<WorkflowOrchestrator>().stop() } just Runs
-        every { anyConstructed<WorkflowOrchestrator>().isRunning() } returns false
     }
 }
