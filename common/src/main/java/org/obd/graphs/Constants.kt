@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,17 +34,19 @@ const val PREF_DRAG_RACE_KEY_PREFIX = "pref.drag_race"
 const val PREF_ALERT_LEGEND_ENABLED = "pref.alerting.legend.enabled"
 const val PREF_ALERTING_ENABLED = "pref.alerting.enabled"
 
- const val BACKUP_START = "backup.start"
- const val BACKUP_RESTORE = "backup.restore"
- const val BACKUP_FAILED = "backup.failed"
- const val BACKUP_SUCCESSFUL = "backup.successful"
+const val BACKUP_START = "backup.start"
+const val BACKUP_RESTORE = "backup.restore"
+const val BACKUP_FAILED = "backup.failed"
+const val BACKUP_SUCCESSFUL = "backup.successful"
 
- const val BACKUP_RESTORE_FAILED = "backup.restore.failed"
- const val BACKUP_RESTORE_SUCCESSFUL = "backup.restore.successful"
- const val BACKUP_RESTORE_NO_FILES = "backup.restore.no_files"
+const val BACKUP_RESTORE_FAILED = "backup.restore.failed"
+const val BACKUP_RESTORE_SUCCESSFUL = "backup.restore.successful"
+const val BACKUP_RESTORE_NO_FILES = "backup.restore.no_files"
 
- const val TRIPS_UPLOAD_FAILED = "trips.upload.failed"
- const val TRIPS_UPLOAD_SUCCESSFUL = "trips.upload.successful"
- const val TRIPS_UPLOAD_NO_FILES_SELECTED= "trips.upload.no_files"
- const val GOOGLE_SIGN_IN_GENERAL_FAILURE = "gdrive.authorization.failed"
- const val GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE = "gdrive.authorization.no_credentials.failed"
+const val TRIPS_UPLOAD_FAILED = "trips.upload.failed"
+const val TRIPS_UPLOAD_SUCCESSFUL = "trips.upload.successful"
+const val TRIPS_UPLOAD_NO_FILES_SELECTED = "trips.upload.no_files"
+const val GOOGLE_SIGN_IN_GENERAL_FAILURE = "gdrive.authorization.failed"
+const val GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE = "gdrive.authorization.no_credentials.failed"
+
+const val REQUEST_NOTIFICATION_PERMISSIONS = "org.obd.graphs.logger.permissions.request_notifications"

@@ -43,6 +43,7 @@ import org.obd.graphs.Permissions
 import org.obd.graphs.PowerBroadcastReceiver
 import org.obd.graphs.R
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
+import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_OFF_EVENT
@@ -116,6 +117,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 backupManager.backup()
             }
 
+        REQUEST_NOTIFICATION_PERMISSIONS -> Permissions.requestNotificationPermissions(this)
         REQUEST_LOCATION_PERMISSIONS -> Permissions.requestLocationPermissions(this)
 
         DATA_LOGGER_WIFI_NOT_CONNECTED -> {
@@ -349,6 +351,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(GOOGLE_SIGN_IN_GENERAL_FAILURE)
         it.addAction(GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE)
 
+        it.addAction(REQUEST_NOTIFICATION_PERMISSIONS)
     }
 
     registerReceiver(this, powerReceiver) {

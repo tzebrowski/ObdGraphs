@@ -17,7 +17,6 @@
 package org.obd.graphs.bl.gps
 
 import android.annotation.SuppressLint
-import android.location.Location
 import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.*
@@ -101,9 +100,16 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                                 Log.v(TAG, "GPS Fix: $lat, $lon")
                             }
 
-                            emitMetric(latitudeCommand, lat)
-                            emitMetric(longitudeCommand, lon)
-                            emitMetric(altitudeCommand, alt)
+                            if (lat == 0.0 && lon == 0.0) {
+                                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                                    Log.v(TAG, "Ignoring Invalid GPS Fix (0.0, 0.0)")
+                                }
+                                continue
+                            }
+
+                            if (::latitudeCommand.isInitialized) emitMetric(latitudeCommand, lat)
+                            if (::longitudeCommand.isInitialized) emitMetric(longitudeCommand, lon)
+                            if (::altitudeCommand.isInitialized) emitMetric(altitudeCommand, alt)
                         }
                     }
                 }

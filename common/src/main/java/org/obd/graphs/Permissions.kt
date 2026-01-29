@@ -27,6 +27,7 @@ import pub.devrel.easypermissions.EasyPermissions
 private const val TAG = "Permissions"
 private const val LOCATION_REQUEST_CODE = 1001
 private const val BLUETOOTH_REQUEST_CODE = 1002
+private const val NOTIFICATION_REQUEST_CODE = 1003
 
 object Permissions {
     /**
@@ -38,6 +39,37 @@ object Permissions {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
         )
+
+    /**
+     * returns TRUE if Notification permissions are granted (Android 13+)
+     */
+    fun hasNotificationPermissions(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            EasyPermissions.hasPermissions(context, Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            true // Not required below Android 13
+        }
+    }
+
+    fun requestNotificationPermissions(activity: Activity) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+
+        val perm = Manifest.permission.POST_NOTIFICATIONS
+        if (EasyPermissions.hasPermissions(activity, perm)) {
+            Log.v(TAG, "Notification permissions already granted.")
+            return
+        }
+
+        Log.i(TAG, "Requesting missing notification permissions.")
+        EasyPermissions.requestPermissions(
+            activity,
+            "Notification permission is required to run the data logger in the foreground.", // Replace with R.string if available
+            NOTIFICATION_REQUEST_CODE,
+            perm
+        )
+    }
 
     fun requestLocationPermissions(activity: Activity) {
         val perms =

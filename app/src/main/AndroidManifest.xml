@@ -20,7 +20,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <uses-permission
@@ -54,7 +53,7 @@
 
         <service
             android:name="org.obd.graphs.bl.datalogger.DataLoggerService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:foregroundServiceType="location|connectedDevice"
             android:exported="false" />
 
         <receiver
