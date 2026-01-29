@@ -24,7 +24,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.obd.graphs.Permissions
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.datalogger.WorkflowOrchestrator
 import org.obd.graphs.bl.query.Query
@@ -36,8 +35,7 @@ import org.robolectric.shadows.ShadowService
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33]) // Test on Android 13 (Tiramisu)
-class DataLoggerServiceTest : TestSetup() {
-
+class DataLoggerServiceActionStartTest : TestSetup() {
 
     @Before
     override fun setup() {
@@ -50,65 +48,27 @@ class DataLoggerServiceTest : TestSetup() {
     }
 
     @Test
-    fun `onStartCommand with missing permissions should stop service`() {
+    fun `onStartCommand with ACTION_START should promote to Foreground and start Orchestrator`() {
         // Arrange
-        // Simulate missing permissions
-        every { Permissions.hasNotificationPermissions(any()) } returns false
-
         val intent = Intent(context, DataLoggerService::class.java).apply {
-            action = "org.obd.graphs.logger.START"
+            action = "org.obd.graphs.logger.START" // Must match ACTION_START const
+            putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
         }
 
+        // Pass the intent to the builder so it's available to the service
         val controller = Robolectric.buildService(DataLoggerService::class.java, intent)
 
         // Act
         val service = controller.create().get()
+        // startCommand(0, 1) will use the intent provided in buildService
         controller.startCommand(0, 1)
 
-        // Assert
-        val shadowService = Shadows.shadowOf(service)
-        // Service should have stopped itself
-        assertEquals("Service should be stopped if permissions are missing", true, shadowService.isStoppedBySelf)
-    }
+        // Assert 1: Service is in foreground
+        val shadowService: ShadowService = Shadows.shadowOf(service)
+        assertEquals("Service should call startForeground", true, shadowService.isForegroundStopped.not())
+        assertNotNull("Notification should be posted", shadowService.lastForegroundNotification)
 
-    @Test
-    fun `onStartCommand with ACTION_STOP should stop Orchestrator and Service`() {
-        // Arrange
-        val controller = Robolectric.buildService(DataLoggerService::class.java)
-        val startIntent = Intent(context, DataLoggerService::class.java).apply {
-            action = "org.obd.graphs.logger.START"
-            putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
-        }
-        val stopIntent = Intent(context, DataLoggerService::class.java).apply {
-            action = "org.obd.graphs.logger.STOP"
-        }
-
-        val service = controller.create().get()
-
-        // Start first
-        service.onStartCommand(startIntent, 0, 1)
-
-        // Act: Stop
-        service.onStartCommand(stopIntent, 0, 2)
-
-        // Assert
-        verify { anyConstructed<WorkflowOrchestrator>().stop() }
-
-        val shadowService = Shadows.shadowOf(service)
-        assertEquals("Service should be stopped after ACTION_STOP", true, shadowService.isStoppedBySelf)
-    }
-
-    @Test
-    fun `onBind should return LocalBinder`() {
-        // Arrange
-        val service = Robolectric.setupService(DataLoggerService::class.java)
-        val intent = Intent(context, DataLoggerService::class.java)
-
-        // Act
-        val binder = service.onBind(intent)
-
-        // Assert
-        assertNotNull(binder)
-        assertEquals(DataLoggerService.LocalBinder::class.java, binder::class.java)
+        // Assert 2: Orchestrator start was called
+        verify { anyConstructed<WorkflowOrchestrator>().start(any()) }
     }
 }

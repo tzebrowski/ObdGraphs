@@ -57,10 +57,12 @@ private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
 private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel"
 private const val NOTIFICATION_ID = 12345
 
+private val workflowOrchestrator: WorkflowOrchestrator  = WorkflowOrchestrator()
+
 val dataLogger: DataLogger = DataLoggerService()
 
 internal class DataLoggerService : Service(), DataLogger {
-    private val workflowOrchestrator: WorkflowOrchestrator  = WorkflowOrchestrator()
+
     private val jobScheduler = DataLoggerJobScheduler()
 
     private val binder = LocalBinder()
@@ -78,7 +80,6 @@ internal class DataLoggerService : Service(), DataLogger {
         Log.i(LOG_TAG, "Destroying DataLoggerService")
         workflowOrchestrator.stop()
     }
-
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(LOG_TAG, "Starting DataLoggerService in Foreground Mode")
