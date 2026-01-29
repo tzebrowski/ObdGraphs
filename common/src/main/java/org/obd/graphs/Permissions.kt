@@ -19,8 +19,10 @@ package org.obd.graphs
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.location.LocationManager
 import android.os.Build
 import android.util.Log
+import androidx.core.location.LocationManagerCompat
 import org.obd.graphs.commons.R
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -50,6 +52,15 @@ object Permissions {
             true // Not required below Android 13
         }
     }
+
+    fun isLocationEnabled(context: Context): Boolean {
+
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+            ?: return false
+
+        return LocationManagerCompat.isLocationEnabled(locationManager)
+    }
+
 
     fun requestNotificationPermissions(activity: Activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {

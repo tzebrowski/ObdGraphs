@@ -81,6 +81,11 @@ internal class GpsMetricsEmitter : MetricsProcessor {
             return
         }
 
+        if (!Permissions.isLocationEnabled(context)) {
+            Log.w(TAG, "Location is DISABLED in system settings. GPS data will not be collected.")
+            return
+        }
+
         try {
             Log.i(TAG, "Starting GPS updates with interval: ${UPDATE_INTERVAL_MS}ms (10Hz)")
 
