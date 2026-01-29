@@ -34,7 +34,6 @@ import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
 import org.obd.graphs.getContext
-import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.model.ObdMetric
@@ -60,11 +59,8 @@ private const val NOTIFICATION_ID = 12345
 
 val dataLogger: DataLogger = DataLoggerService()
 
-private val workflowOrchestrator: WorkflowOrchestrator by lazy {
-    runAsync { WorkflowOrchestrator() }
-}
-
 internal class DataLoggerService : Service(), DataLogger {
+    private val workflowOrchestrator: WorkflowOrchestrator  = WorkflowOrchestrator()
     private val jobScheduler = DataLoggerJobScheduler()
 
     private val binder = LocalBinder()

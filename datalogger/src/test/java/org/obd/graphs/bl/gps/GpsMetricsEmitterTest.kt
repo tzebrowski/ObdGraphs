@@ -17,11 +17,7 @@
 package org.obd.graphs.bl.gps
 
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.SharedPreferences
 import android.location.Location
-import android.util.Log
-import androidx.test.core.app.ApplicationProvider
 import com.google.android.gms.location.*
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -30,10 +26,9 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.Permissions
+import org.obd.graphs.bl.TestSetup
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
-import org.obd.graphs.getContext
-import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
@@ -44,11 +39,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class GpsMetricsEmitterTest {
-
-    private lateinit var context: ContextWrapper
-    protected val sharedPrefs = mockk<SharedPreferences>(relaxed = true)
-    protected val editor = mockk<SharedPreferences.Editor>(relaxed = true)
+class GpsMetricsEmitterTest : TestSetup(){
 
     @MockK(relaxed = true)
     lateinit var mockReplyObserver: ReplyObserver<ObdMetric>
@@ -64,42 +55,11 @@ class GpsMetricsEmitterTest {
 
     private lateinit var gpsEmitter: GpsMetricsEmitter
 
-    private fun mockContext() {
-        context = ApplicationProvider.getApplicationContext()
-        mockkStatic(::getContext)
-        every { getContext()  } returns context
-    }
 
-    private fun mockLog() {
-        mockkStatic(Log::class)
-        every { Log.v(any(), any()) } returns 0
-        every { Log.d(any(), any()) } returns 0
-        every { Log.i(any(), any()) } returns 0
-        every { Log.e(any(), any(), any()) } returns 0
-        every { Log.e(any(), any()) } returns 0
-        every { Log.isLoggable(any(), any()) } returns false
-    }
-
-
-    private fun mockPrefs() {
-        mockkStatic("org.obd.graphs.preferences.PreferencesKt")
-        every { Prefs } returns sharedPrefs
-        every { sharedPrefs.edit() } returns editor
-        every { sharedPrefs.all } returns emptyMap()
-        every { sharedPrefs.getString(any(), any()) } answers { secondArg() }
-        every { sharedPrefs.getBoolean(any(), any()) } returns false // Default to false for installation check
-        every { sharedPrefs.registerOnSharedPreferenceChangeListener(any()) } just Runs
-    }
 
     @Before
-    fun setup() {
-        MockKAnnotations.init(this)
-
-        mockContext()
-        mockLog()
-        mockPrefs()
-
-        // 1. Mock Static Dependencies
+    override fun setup() {
+        super.setup()
         mockkObject(Permissions)
         mockkObject(dataLoggerSettings)
         mockkObject(dataLogger)
