@@ -39,7 +39,6 @@ object Permissions {
      * Also performs a diagnostic check to warn if the user has selected "Approximate" location.
      */
     fun hasLocationPermissions(context: Context): Boolean {
-        // Diagnostic Check: Detect if user selected "Approximate" (Coarse) but denied "Precise" (Fine)
         val finePermission =
             ContextCompat.checkSelfPermission(
                 context,
@@ -50,6 +49,11 @@ object Permissions {
                 context,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
             )
+
+        val hasFine = finePermission == PackageManager.PERMISSION_GRANTED
+        val hasCoarse = coarsePermission == PackageManager.PERMISSION_GRANTED
+
+        Log.i(TAG, "GPS Permissions Status -> Fine: $hasFine, Coarse: $hasCoarse")
 
         if (coarsePermission == PackageManager.PERMISSION_GRANTED &&
             finePermission != PackageManager.PERMISSION_GRANTED

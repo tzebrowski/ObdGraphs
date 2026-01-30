@@ -26,7 +26,6 @@ import android.os.HandlerThread
 import android.util.Log
 import org.obd.graphs.LOCATION_IS_DISABLED
 import org.obd.graphs.Permissions
-import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLogger
@@ -81,13 +80,12 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         if (!Permissions.hasLocationPermissions(context)) return
 
         if (!Permissions.isLocationEnabled(context)) {
-            Log.w(LOG_TAG, "Location is disabled. Skipping")
+            Log.w(TAG, "Location is disabled. Skipping")
             sendBroadcastEvent(LOCATION_IS_DISABLED)
             return
         }
 
         try {
-            Log.i(TAG, "Starting Raw GPS Provider.")
 
             if (locationManager == null) {
                 locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -126,7 +124,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                     LocationManager.NETWORK_PROVIDER
                 }
 
-            Log.i(TAG, "We will use following provider='$provider'")
+            Log.i(TAG, "Starting $provider GPS Provider.")
 
             locationManager?.requestLocationUpdates(
                 provider,
