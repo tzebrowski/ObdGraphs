@@ -1,21 +1,38 @@
+ /**
+ * Copyright 2019-2026, Tomasz Żebrowski
+ *
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.obd.graphs.bl.gps
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.HandlerThread
 import android.util.Log
-import androidx.core.content.ContextCompat
+import org.obd.graphs.LOCATION_IS_DISABLED
 import org.obd.graphs.Permissions
+import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
@@ -29,12 +46,14 @@ private const val MIN_DISTANCE_M = 0.1f
 val gpsMetricsEmitter: MetricsProcessor = GpsMetricsEmitter()
 
 internal class GpsMetricsEmitter : MetricsProcessor {
+    private val raw =
+        object : ConnectorResponse {
+            override fun at(p0: Int): Byte = "".toByte()
 
-    private val raw = object : ConnectorResponse {
-        override fun at(p0: Int): Byte = "".toByte()
-        override fun capacity(): Long = 0
-        override fun remaining(): Int = 0
-    }
+            override fun capacity(): Long = 0
+
+            override fun remaining(): Int = 0
+        }
 
     private var replyObserver: ReplyObserver<Reply<*>>? = null
     private var locationManager: LocationManager? = null
@@ -58,10 +77,17 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         val context = getContext() ?: return
 
         if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) return
+
         if (!Permissions.hasLocationPermissions(context)) return
 
+        if (!Permissions.isLocationEnabled(context)) {
+            Log.w(LOG_TAG, "Location is disabled. Skipping")
+            sendBroadcastEvent(LOCATION_IS_DISABLED)
+            return
+        }
+
         try {
-            Log.i(TAG, "Starting Raw GPS Provider (Bypassing Fused)")
+            Log.i(TAG, "Starting Raw GPS Provider.")
 
             if (locationManager == null) {
                 locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -71,45 +97,44 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                 handlerThread = HandlerThread("RawGpsThread").apply { start() }
             }
 
-            val hasFine = ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-            val hasCoarse = ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-            Log.i(TAG, "GPS Permissions Status -> Fine: $hasFine, Coarse: $hasCoarse")
-
-            if (hasCoarse && !hasFine) {
-                Log.w(TAG, "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid.")
-            }
-
             if (locationListener == null) {
-                locationListener = object : LocationListener {
-                    override fun onLocationChanged(location: Location) {
-                        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                            Log.v(TAG, "Fix: ${location.latitude},${location.longitude} Prov:${location.provider}")
+                locationListener =
+                    object : LocationListener {
+                        override fun onLocationChanged(location: Location) {
+                            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                                Log.v(TAG, "Fix: ${location.latitude},${location.longitude} Prov:${location.provider}")
+                            }
+                            processLocation(location)
                         }
-                        processLocation(location)
+
+                        override fun onStatusChanged(
+                            provider: String?,
+                            status: Int,
+                            extras: Bundle?,
+                        ) {}
+
+                        override fun onProviderEnabled(provider: String) {}
+
+                        override fun onProviderDisabled(provider: String) {}
                     }
-                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-                    override fun onProviderEnabled(provider: String) {}
-                    override fun onProviderDisabled(provider: String) {}
+            }
+
+            val provider =
+                if (locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    LocationManager.GPS_PROVIDER
+                } else {
+                    LocationManager.NETWORK_PROVIDER
                 }
-            }
 
-            val provider = if (locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                LocationManager.GPS_PROVIDER
-            } else {
-                LocationManager.NETWORK_PROVIDER
-            }
-
-            Log.i(TAG, "We will use following provider='${provider}'")
+            Log.i(TAG, "We will use following provider='$provider'")
 
             locationManager?.requestLocationUpdates(
                 provider,
                 MIN_TIME_MS,
                 MIN_DISTANCE_M,
                 locationListener!!,
-                handlerThread!!.looper
+                handlerThread!!.looper,
             )
-
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start Raw GPS updates", e)
         }
@@ -136,11 +161,17 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) { }
 
-    private fun emitMetric(command: ObdCommand, value: Number) {
-        replyObserver?.onNext(ObdMetric.builder()
-            .command(command)
-            .value(value)
-            .raw(raw)
-            .build())
+    private fun emitMetric(
+        command: ObdCommand,
+        value: Number,
+    ) {
+        replyObserver?.onNext(
+            ObdMetric
+                .builder()
+                .command(command)
+                .value(value)
+                .raw(raw)
+                .build(),
+        )
     }
 }

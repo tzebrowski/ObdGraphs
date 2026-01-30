@@ -19,9 +19,11 @@ package org.obd.graphs
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import org.obd.graphs.commons.R
 import pub.devrel.easypermissions.EasyPermissions
@@ -33,34 +35,53 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
 
 object Permissions {
     /**
-     * returns TRUE if all required location permissions are granted
+     * Returns TRUE if all required location permissions are granted.
+     * Also performs a diagnostic check to warn if the user has selected "Approximate" location.
      */
-    fun hasLocationPermissions(context: Context): Boolean =
-        EasyPermissions.hasPermissions(
+    fun hasLocationPermissions(context: Context): Boolean {
+        // Diagnostic Check: Detect if user selected "Approximate" (Coarse) but denied "Precise" (Fine)
+        val finePermission =
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            )
+        val coarsePermission =
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            )
+
+        if (coarsePermission == PackageManager.PERMISSION_GRANTED &&
+            finePermission != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.w(TAG, "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid.")
+        }
+
+        // Standard Strict Check: Returns true only if BOTH permissions are granted
+        return EasyPermissions.hasPermissions(
             context,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
         )
+    }
 
     /**
      * returns TRUE if Notification permissions are granted (Android 13+)
      */
-    fun hasNotificationPermissions(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    fun hasNotificationPermissions(context: Context): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             EasyPermissions.hasPermissions(context, Manifest.permission.POST_NOTIFICATIONS)
         } else {
-            true // Not required below Android 13
+            true
         }
-    }
 
     fun isLocationEnabled(context: Context): Boolean {
-
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
-            ?: return false
+        val locationManager =
+            context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+                ?: return false
 
         return LocationManagerCompat.isLocationEnabled(locationManager)
     }
-
 
     fun requestNotificationPermissions(activity: Activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -78,7 +99,7 @@ object Permissions {
             activity,
             "Notification permission is required to run the data logger in the foreground.", // Replace with R.string if available
             NOTIFICATION_REQUEST_CODE,
-            perm
+            perm,
         )
     }
 
