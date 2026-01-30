@@ -87,6 +87,14 @@
         </activity>
 
         <activity
+            android:name="org.obd.graphs.activity.GpsStatusActivity"
+            android:label="GPS Status"
+            android:exported="false"
+            android:parentActivityName="org.obd.graphs.activity.MainActivity"
+            android:theme="@style/Theme.DefaultTheme">
+        </activity>
+
+        <activity
             android:name="org.obd.graphs.activity.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">

@@ -2037,6 +2037,16 @@
                 android:key="pref.debug.generator.enabled"
                 android:title="@string/pref.debug_generator_enabled"
                 app:singleLineTitle="false" />
+
+            <Preference
+                android:key="pref.adapter.gps"
+                android:title="Open GPS screen"
+                android:summary="View raw satellite data and signal strength">
+                <intent
+                    android:targetPackage="@string/applicationId"
+                    android:targetClass="org.obd.graphs.activity.GpsStatusActivity" />
+            </Preference>
+
         </PreferenceScreen>
     </PreferenceCategory>
 

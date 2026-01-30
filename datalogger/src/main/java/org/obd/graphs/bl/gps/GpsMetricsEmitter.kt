@@ -62,6 +62,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     private lateinit var latitudeCommand: ObdCommand
     private lateinit var longitudeCommand: ObdCommand
     private lateinit var altitudeCommand: ObdCommand
+    private lateinit var locationCommand: ObdCommand
 
     override fun init(replyObserver: ReplyObserver<Reply<*>>) {
         this.replyObserver = replyObserver
@@ -144,6 +145,13 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         if (::latitudeCommand.isInitialized) emitMetric(latitudeCommand, location.latitude)
         if (::longitudeCommand.isInitialized) emitMetric(longitudeCommand, location.longitude)
         if (::altitudeCommand.isInitialized) emitMetric(altitudeCommand, location.altitude)
+        if (::locationCommand.isInitialized) emitMetric(locationCommand, mapOf(
+            "altitude" to location.altitude,
+            "accuracy" to location.accuracy,
+            "bearing" to location.bearing,
+            "latitude" to location.latitude,
+            "longitude" to location.longitude))
+
     }
 
     override fun onStopped() {
@@ -161,7 +169,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     private fun emitMetric(
         command: ObdCommand,
-        value: Number,
+        value: Any,
     ) {
         replyObserver?.onNext(
             ObdMetric

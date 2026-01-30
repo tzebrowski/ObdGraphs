@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GPS DIAGNOSTICS"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"
+            android:gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/txt_status_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/txt_provider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Waiting for fix..."
+            android:textColor="#03DAC5"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Accuracy (Error Radius)"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/txt_accuracy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="--"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Latitude"
+                    android:textColor="#AAAAAA"/>
+                <TextView
+                    android:id="@+id/txt_lat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0000"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Longitude"
+                    android:textColor="#AAAAAA"/>
+                <TextView
+                    android:id="@+id/txt_lon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0000"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#333333"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Satellites (Visible/Used)"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/txt_satellites"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0 / 0"
+            android:textColor="#FFB74D"
+            android:textSize="24sp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Debug Log"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/txt_logs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Initializing..."
+            android:textColor="#888888"
+            android:fontFamily="monospace"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+</ScrollView>
