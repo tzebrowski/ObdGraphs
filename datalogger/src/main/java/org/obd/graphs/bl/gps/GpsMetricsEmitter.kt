@@ -2,10 +2,14 @@ package org.obd.graphs.bl.gps
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Bundle
 import android.os.HandlerThread
 import android.util.Log
-import com.google.android.gms.location.*
+import androidx.core.content.ContextCompat
 import org.obd.graphs.Permissions
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
@@ -19,9 +23,8 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.transport.message.ConnectorResponse
 
 private const val TAG = "GpsMetricsEmitter"
-
-private const val UPDATE_INTERVAL_MS = 1000L
-private const val FASTEST_INTERVAL_MS = 500L
+private const val MIN_TIME_MS = 1000L
+private const val MIN_DISTANCE_M = 0.1f
 
 val gpsMetricsEmitter: MetricsProcessor = GpsMetricsEmitter()
 
@@ -34,9 +37,8 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     }
 
     private var replyObserver: ReplyObserver<Reply<*>>? = null
-    private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationCallback: LocationCallback? = null
-
+    private var locationManager: LocationManager? = null
+    private var locationListener: LocationListener? = null
     private var handlerThread: HandlerThread? = null
 
     private lateinit var latitudeCommand: ObdCommand
@@ -55,73 +57,76 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     override fun onRunning(vehicleCapabilities: org.obd.metrics.api.model.VehicleCapabilities?) {
         val context = getContext() ?: return
 
-        if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) {
-            Log.i(TAG, "GPS collection disabled in settings.")
-            return
-        }
+        if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) return
+        if (!Permissions.hasLocationPermissions(context)) return
 
-        if (!Permissions.hasLocationPermissions(context)) {
-            Log.w(TAG, "Missing Location Permissions.")
-            return
-        }
-
-        if (!Permissions.isLocationEnabled(context)) {
-            Log.w(TAG, "System Location is disabled.")
-            return
-        }
-
-        startLocationUpdates(context)
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun startLocationUpdates(context: Context) {
         try {
-            Log.i(TAG, "Starting GPS updates (Target: ${UPDATE_INTERVAL_MS}ms)")
+            Log.i(TAG, "Starting Raw GPS Provider (Bypassing Fused)")
 
-            if (fusedLocationClient == null) {
-                fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+            if (locationManager == null) {
+                locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             }
 
-            // Init Background Thread
             if (handlerThread == null) {
-                handlerThread = HandlerThread("GpsLocationThread").apply { start() }
+                handlerThread = HandlerThread("RawGpsThread").apply { start() }
             }
 
-            if (locationCallback == null) {
-                locationCallback = object : LocationCallback() {
-                    override fun onLocationResult(locationResult: LocationResult) {
-                        for (location in locationResult.locations) {
+            val hasFine = ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            val hasCoarse = ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-                            if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                                Log.v(TAG, "Fix: ${location.latitude},${location.longitude} Acc:${location.accuracy}m Prov:${location.provider}")
-                            }
+            Log.i(TAG, "GPS Permissions Status -> Fine: $hasFine, Coarse: $hasCoarse")
 
-                            processLocation(location)
+            if (hasCoarse && !hasFine) {
+                Log.w(TAG, "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid.")
+            }
+
+            if (locationListener == null) {
+                locationListener = object : LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                            Log.v(TAG, "Fix: ${location.latitude},${location.longitude} Prov:${location.provider}")
                         }
+                        processLocation(location)
                     }
+                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+                    override fun onProviderEnabled(provider: String) {}
+                    override fun onProviderDisabled(provider: String) {}
                 }
             }
 
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_MS)
-                .setMinUpdateIntervalMillis(FASTEST_INTERVAL_MS)
-                .setWaitForAccurateLocation(false)
-                .build()
+            val provider = if (locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                LocationManager.GPS_PROVIDER
+            } else {
+                LocationManager.NETWORK_PROVIDER
+            }
 
-            fusedLocationClient?.requestLocationUpdates(
-                locationRequest,
-                locationCallback!!,
+            Log.i(TAG, "We will use following provider='${provider}'")
+
+            locationManager?.requestLocationUpdates(
+                provider,
+                MIN_TIME_MS,
+                MIN_DISTANCE_M,
+                locationListener!!,
                 handlerThread!!.looper
             )
 
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start GPS updates", e)
+            Log.e(TAG, "Failed to start Raw GPS updates", e)
         }
+    }
+
+    private fun processLocation(location: Location) {
+        if (location.latitude == 0.0 && location.longitude == 0.0) return
+
+        if (::latitudeCommand.isInitialized) emitMetric(latitudeCommand, location.latitude)
+        if (::longitudeCommand.isInitialized) emitMetric(longitudeCommand, location.longitude)
+        if (::altitudeCommand.isInitialized) emitMetric(altitudeCommand, location.altitude)
     }
 
     override fun onStopped() {
         Log.i(TAG, "Stopping GPS updates")
         try {
-            fusedLocationClient?.removeLocationUpdates(locationCallback!!)
+            locationManager?.removeUpdates(locationListener!!)
             handlerThread?.quitSafely()
             handlerThread = null
         } catch (e: Exception) {
@@ -130,20 +135,6 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     }
 
     override fun postValue(obdMetric: ObdMetric) { }
-
-    private fun processLocation(location: Location) {
-        val lat = location.latitude
-        val lon = location.longitude
-        val alt = location.altitude
-
-        if (lat == 0.0 && lon == 0.0) return
-
-        if (::latitudeCommand.isInitialized) emitMetric(latitudeCommand, lat)
-        if (::longitudeCommand.isInitialized) emitMetric(longitudeCommand, lon)
-        if (::altitudeCommand.isInitialized) emitMetric(altitudeCommand, alt)
-    }
-
-
 
     private fun emitMetric(command: ObdCommand, value: Number) {
         replyObserver?.onNext(ObdMetric.builder()

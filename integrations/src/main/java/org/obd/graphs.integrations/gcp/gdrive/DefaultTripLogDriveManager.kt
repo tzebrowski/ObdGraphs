@@ -17,6 +17,7 @@
 package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
+import android.util.Log
 import androidx.fragment.app.Fragment
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.TRIPS_UPLOAD_FAILED
