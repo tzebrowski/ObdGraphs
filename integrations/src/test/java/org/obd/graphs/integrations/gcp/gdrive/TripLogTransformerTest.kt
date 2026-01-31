@@ -120,6 +120,42 @@ class TripLogTransformerTest {
     }
 
     @Test
+    fun `should support map type in value field`() {
+        val rawJson =
+            """
+            {
+              "startTs": 123456789,
+              "entries": {
+                "10": {
+                  "id": 999,
+                  "metrics": [
+                    {
+                      "entry": { 
+                          "x": 100.0, 
+                          "y": { 
+                            "GPS altitude": 57.10662841796875, 
+                            "GPS Location": { "altitude": 57.10662841796875, "accuracy": 46.843723 ,"latitude":54.16406183,"longitude":16.29066863} 
+                          }, 
+                          "data": 99 
+                      },
+                      "ts": 1500,
+                      "rawAnswer": "raw"
+                    }
+                  ]
+                }
+              }
+            }
+            """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJson).readText()
+
+        val expectedJson = """[{"t":1500,"s":"99","v":{"GPS altitude":57.10662841796875,"GPS Location":{"altitude":57.10662841796875,"accuracy":46.843723,"latitude":54.16406183,"longitude":16.29066863}}}]"""
+
+        Assertions.assertThat(result).isEqualTo(expectedJson)
+    }
+
+    @Test
     fun `signal transformation test`() {
         val rawJson =
             """
