@@ -19,10 +19,10 @@ package org.obd.graphs.bl
 import android.content.ContextWrapper
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.test.core.app.ApplicationProvider
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -35,12 +35,14 @@ open class TestSetup {
     protected val sharedPrefs = mockk<SharedPreferences>(relaxed = true)
     protected val editor = mockk<SharedPreferences.Editor>(relaxed = true)
 
+    @MockK
     protected lateinit var context: ContextWrapper
 
     protected fun mockContext() {
-        context = ApplicationProvider.getApplicationContext()
         mockkStatic(::getContext)
         every { getContext() } returns context
+
+        every { context.packageName } returns "org.obd.graphs"
     }
 
     protected fun mockLog() {

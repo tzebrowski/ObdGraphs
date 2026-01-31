@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -18,7 +18,9 @@ package org.obd.graphs.bl.gps
 
 import android.content.Context
 import android.location.Location
-import com.google.android.gms.location.*
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Looper
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import org.junit.After
@@ -39,23 +41,21 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class GpsMetricsEmitterTest : TestSetup(){
+class GpsMetricsEmitterTest : TestSetup() {
 
     @MockK(relaxed = true)
     lateinit var mockReplyObserver: ReplyObserver<ObdMetric>
 
     @MockK
-    lateinit var mockFusedLocationClient: FusedLocationProviderClient
+    lateinit var mockLocationManager: LocationManager
 
     @MockK
     lateinit var mockRegistry: PidDefinitionRegistry
 
-    // Capture the callback passed to Android Location Services
-    private val locationCallbackSlot = slot<LocationCallback>()
+    // Capture the listener passed to Android Location Manager
+    private val locationListenerSlot = slot<LocationListener>()
 
     private lateinit var gpsEmitter: GpsMetricsEmitter
-
-
 
     @Before
     override fun setup() {
@@ -64,27 +64,39 @@ class GpsMetricsEmitterTest : TestSetup(){
         mockkObject(dataLoggerSettings)
         mockkObject(dataLogger)
 
-        // Mock LocationServices static factory
-        mockkStatic(LocationServices::class)
-        every { LocationServices.getFusedLocationProviderClient(any<Context>()) } returns mockFusedLocationClient
 
-        // 2. Mock Registry & Settings
+        // Mock System Service retrieval
+        every { context.getSystemService(Context.LOCATION_SERVICE) } returns mockLocationManager
+
+        every { mockLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
+        every {
+            mockLocationManager.requestLocationUpdates(
+                any<String>(),
+                any<Long>(),
+                any<Float>(),
+                any<LocationListener>(),
+                any<Looper>()
+            )
+        } just Runs
+        every { mockLocationManager.removeUpdates(any<LocationListener>()) } just Runs
+
+        // Mock LocationManager behaviors
+        every { mockLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) } returns true
+        every { mockLocationManager.requestLocationUpdates(any<String>(), any<Long>(), any<Float>(), any<LocationListener>(), any<Looper>()) } just Runs
+        every { mockLocationManager.removeUpdates(any<LocationListener>()) } just Runs
+
+        // Mock Registry & Settings
         every { dataLogger.getPidDefinitionRegistry() } returns mockRegistry
         // Return dummy PID definition so the command initialization succeeds
         val dummyPid = mockk<PidDefinition>(relaxed = true) {
             every { id } returns 100L
             every { pid } returns "010C"
         }
-        // Use any<Long>() to match the ID type specifically
         every { mockRegistry.findBy(any<Long>()) } returns dummyPid
 
         every { dataLoggerSettings.instance().adapter.gpsCollecetingEnabled } returns true
         every { Permissions.hasLocationPermissions(any()) } returns true
-
-        mockkStatic(LocationServices::class)
-        every { LocationServices.getFusedLocationProviderClient(any<Context>()) } returns mockFusedLocationClient
-
-        every { mockFusedLocationClient.requestLocationUpdates(any(), any<LocationCallback>(), any()) } returns mockk()
+        every { Permissions.isLocationEnabled(any()) } returns true
 
         gpsEmitter = GpsMetricsEmitter()
         gpsEmitter.init(mockReplyObserver as ReplyObserver<Reply<*>>)
@@ -102,10 +114,12 @@ class GpsMetricsEmitterTest : TestSetup(){
 
         // Assert
         verify {
-            mockFusedLocationClient.requestLocationUpdates(
-                any(), // LocationRequest
-                capture(locationCallbackSlot),
-                any()  // Looper
+            mockLocationManager.requestLocationUpdates(
+                eq(LocationManager.GPS_PROVIDER),
+                any(),
+                any(),
+                capture(locationListenerSlot),
+                any() // Looper
             )
         }
     }
@@ -114,19 +128,15 @@ class GpsMetricsEmitterTest : TestSetup(){
     fun `should IGNORE invalid (0,0) coordinates`() {
         // Arrange
         gpsEmitter.onRunning(null)
-        // Ensure verify passed before proceeding
-        verify { mockFusedLocationClient.requestLocationUpdates(any(), capture(locationCallbackSlot), any()) }
+        verify { mockLocationManager.requestLocationUpdates(any<String>(), any(), any(), capture(locationListenerSlot), any()) }
 
-        val callback = locationCallbackSlot.captured
-
+        val listener = locationListenerSlot.captured
         val invalidLocation = mockk<Location>(relaxed = true)
         every { invalidLocation.latitude } returns 0.0
         every { invalidLocation.longitude } returns 0.0
 
-        val result = LocationResult.create(listOf(invalidLocation))
-
         // Act
-        callback.onLocationResult(result)
+        listener.onLocationChanged(invalidLocation)
 
         // Assert
         verify(exactly = 0) { mockReplyObserver.onNext(any()) }
@@ -136,45 +146,34 @@ class GpsMetricsEmitterTest : TestSetup(){
     fun `should EMIT metrics for valid coordinates`() {
         // Arrange
         gpsEmitter.onRunning(null)
+        verify { mockLocationManager.requestLocationUpdates(any<String>(), any(), any(), capture(locationListenerSlot), any()) }
 
-        // Ensure capture
-        verify { mockFusedLocationClient.requestLocationUpdates(any(), capture(locationCallbackSlot), any()) }
-        val callback = locationCallbackSlot.captured
-
-        // Act: Send Valid Location
+        val listener = locationListenerSlot.captured
         val validLocation = mockk<Location>(relaxed = true)
         every { validLocation.latitude } returns 52.2297
         every { validLocation.longitude } returns 21.0122
         every { validLocation.altitude } returns 100.0
-        val result = LocationResult.create(listOf(validLocation))
+        every { validLocation.bearing } returns 10f
+        every { validLocation.accuracy } returns 5f
 
-        callback.onLocationResult(result)
+        // Act
+        listener.onLocationChanged(validLocation)
 
-        // Assert: 3 metrics emitted
-        verify(exactly = 3) { mockReplyObserver.onNext(any()) }
+        // Assert: Expect 4 metrics (Latitude, Longitude, Altitude, Location composite)
+        verify(exactly = 4) { mockReplyObserver.onNext(any()) }
     }
 
     @Test
     fun `should stop location updates onStopped`() {
         // Arrange
         gpsEmitter.onRunning(null)
-
-        // Verify start happened FIRST to ensure the slot is filled
-        verify {
-            mockFusedLocationClient.requestLocationUpdates(
-                any(),
-                capture(locationCallbackSlot),
-                any()
-            )
-        }
-
-        // Now it is safe to access .captured
-        val callback = locationCallbackSlot.captured
+        verify { mockLocationManager.requestLocationUpdates(any<String>(), any(), any(), capture(locationListenerSlot), any()) }
+        val listener = locationListenerSlot.captured
 
         // Act
         gpsEmitter.onStopped()
 
         // Assert
-        verify { mockFusedLocationClient.removeLocationUpdates(callback) }
+        verify { mockLocationManager.removeUpdates(listener) }
     }
 }

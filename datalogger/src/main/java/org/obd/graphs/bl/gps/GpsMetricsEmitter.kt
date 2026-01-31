@@ -176,7 +176,6 @@ internal class GpsMetricsEmitter : MetricsProcessor {
             "bearing" to location.bearing,
             "latitude" to location.latitude,
             "longitude" to location.longitude))
-
     }
 
     override fun onStopped() {

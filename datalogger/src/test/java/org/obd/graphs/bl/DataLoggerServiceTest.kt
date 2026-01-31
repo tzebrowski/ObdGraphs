@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -16,9 +16,15 @@
  */
 package org.obd.graphs.bl
 
+import android.content.ComponentName
 import android.content.Intent
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.unmockkAll
+import io.mockk.verify
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -56,8 +62,9 @@ class DataLoggerServiceTest : TestSetup() {
     @Test
     fun `onStartCommand with missing permissions should stop service`() {
         // Arrange
-        // Simulate missing permissions
         every { Permissions.hasNotificationPermissions(any()) } returns false
+
+        every { context.sendBroadcast(any()) } just Runs
 
         val intent = Intent(context, DataLoggerService::class.java).apply {
             action = "org.obd.graphs.logger.START"
@@ -73,17 +80,41 @@ class DataLoggerServiceTest : TestSetup() {
         val shadowService = Shadows.shadowOf(service)
         // Service should have stopped itself
         assertEquals("Service should be stopped if permissions are missing", true, shadowService.isStoppedBySelf)
+
+        verify { context.sendBroadcast(any()) }
     }
 
     @Test
     fun `onStartCommand with ACTION_STOP should stop Orchestrator and Service`() {
         // Arrange
+        val app = org.robolectric.RuntimeEnvironment.getApplication()
+        val shadowPackageManager = Shadows.shadowOf(app.packageManager)
+
+        val packageName = app.packageName
+        val componentName = ComponentName(packageName, "MainActivity")
+
+        shadowPackageManager.addActivityIfNotPresent(componentName)
+
+        val launchIntentFilter = Intent(Intent.ACTION_MAIN)
+        launchIntentFilter.addCategory(Intent.CATEGORY_LAUNCHER)
+        launchIntentFilter.setPackage(packageName)
+
+        val resolveInfo = android.content.pm.ResolveInfo()
+        resolveInfo.activityInfo = android.content.pm.ActivityInfo()
+        resolveInfo.activityInfo.packageName = packageName
+        resolveInfo.activityInfo.name = componentName.className
+
+        // 5. Register the resolve info
+        shadowPackageManager.addResolveInfoForIntent(launchIntentFilter, resolveInfo)
+
+        // --- Rest of your test ---
+
         val controller = Robolectric.buildService(DataLoggerService::class.java)
-        val startIntent = Intent(context, DataLoggerService::class.java).apply {
+        val startIntent = Intent(app, DataLoggerService::class.java).apply {
             action = "org.obd.graphs.logger.START"
             putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
         }
-        val stopIntent = Intent(context, DataLoggerService::class.java).apply {
+        val stopIntent = Intent(app, DataLoggerService::class.java).apply {
             action = "org.obd.graphs.logger.STOP"
         }
 
