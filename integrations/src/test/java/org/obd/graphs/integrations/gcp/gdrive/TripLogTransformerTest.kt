@@ -104,7 +104,9 @@ class TripLogTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> v.toFloat() * 2 }
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v ->
+            if (v is Number) v.toFloat() * 2 else v.toString()
+        }
         val meta = mutableMapOf<String, String>()
         meta["key1"] = "value1"
         meta["key2"] = "value2"
@@ -146,7 +148,7 @@ class TripLogTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> v.toFloat() * 2 }
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> if (v is Number) v.toFloat() * 2 else v.toString() }
         val result = transformer.transform(rawJson).readText()
 
         val expectedJson =
