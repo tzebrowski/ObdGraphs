@@ -151,7 +151,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                             for (i in 0 until count) {
                                 if (status.usedInFix(i)) used++
                             }
-                            Log.i(TAG,"Satellite Count: $count Visible / $used Used")
+                            Log.d(TAG,"Satellite Count: $count Visible / $used Used")
                         }
                     }
                 locationManager?.registerGnssStatusCallback(gnssCallback!!, Handler(Looper.getMainLooper()))
@@ -196,7 +196,6 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         command: ObdCommand,
         value: Any,
     ) {
-        Log.e(TAG,"Emitting $value")
         replyObserver?.onNext(
             ObdMetric
                 .builder()

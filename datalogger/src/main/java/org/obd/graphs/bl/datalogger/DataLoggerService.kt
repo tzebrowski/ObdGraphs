@@ -98,16 +98,25 @@ internal class DataLoggerService : Service(), DataLogger {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.i(LOG_TAG, "Starting DataLoggerService in Foreground Mode")
+        Log.i(LOG_TAG, "Starting DataLoggerService in the Foreground Mode")
 
         createNotificationChannel()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            var serviceTypes = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+
+            if (Permissions.hasLocationPermissions(this)) {
+                serviceTypes = serviceTypes or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            } else {
+                Log.w(LOG_TAG, "Location permission missing. Starting Service without GPS capabilities to avoid crash.")
+            }
+
+            Log.i(LOG_TAG, "Starting foreground service with types: $serviceTypes")
+
             startForeground(
                 NOTIFICATION_ID,
                 createNotification(),
-                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or
-                        android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+                serviceTypes
             )
         } else {
             startForeground(NOTIFICATION_ID, createNotification())
@@ -243,10 +252,6 @@ internal class DataLoggerService : Service(), DataLogger {
         }
     }
 
-    // Create an Intent that opens your main Activity when the notification is clicked
-    // Replace 'MainActivity::class.java' with your actual main activity
-    // val notificationIntent = Intent(this, MainActivity::class.java)
-    // val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
     private fun createNotification(): Notification =
         NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle("OBD Data Logging")

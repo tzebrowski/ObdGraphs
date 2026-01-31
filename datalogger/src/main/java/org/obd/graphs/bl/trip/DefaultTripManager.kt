@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -41,8 +41,9 @@ private const val TRIP_DIRECTORY = "trips"
 
 private const val TRIP_FILE_PREFIX = "trip"
 
-internal class DefaultTripManager : TripManager, MetricsProcessor {
-
+internal class DefaultTripManager :
+    TripManager,
+    MetricsProcessor {
     private val dateFormat: SimpleDateFormat =
         SimpleDateFormat("MM.dd HH:mm:ss", Locale.getDefault())
 
@@ -50,9 +51,8 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
     private val tripCache = TripCache()
 
     private val tripDescParser = TripDescParser()
-    override fun getTripsDirectory(context: Context) =
-        "${context.getExternalFilesDir(TRIP_DIRECTORY)?.absolutePath}"
 
+    override fun getTripsDirectory(context: Context) = "${context.getExternalFilesDir(TRIP_DIRECTORY)?.absolutePath}"
 
     override fun postValue(obdMetric: ObdMetric) {
         try {
@@ -67,23 +67,24 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                         Metric(
                             entry = newRecord,
                             ts = obdMetric.timestamp,
-                            rawAnswer = obdMetric.raw
-                        )
+                            rawAnswer = obdMetric.raw,
+                        ),
                     )
                 } else {
-                    trip.entries[key] = SensorData(
-                        id = key,
-                        metrics = mutableListOf(
-                            Metric(
-                                entry = newRecord,
-                                ts = obdMetric.timestamp,
-                                rawAnswer = obdMetric.raw
-                            )
+                    trip.entries[key] =
+                        SensorData(
+                            id = key,
+                            metrics =
+                                mutableListOf(
+                                    Metric(
+                                        entry = newRecord,
+                                        ts = obdMetric.timestamp,
+                                        rawAnswer = obdMetric.raw,
+                                    ),
+                                ),
                         )
-                    )
                 }
             }
-
         } catch (e: Throwable) {
             Log.e(LOGGER_TAG, "Failed to add cache entry", e)
         }
@@ -113,13 +114,13 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
             if (recordShortTrip || tripLength > MIN_TRIP_LENGTH) {
                 val tripStartTs = trip.startTs
 
-                val filter = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-${tripStartTs}"
+                val filter = "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$tripStartTs"
                 val alreadySaved = findAllTripsBy(filter)
 
                 if (alreadySaved.isNotEmpty()) {
                     Log.e(
                         LOGGER_TAG,
-                        "It seems that Trip which start same date='${filter}' is already saved."
+                        "It seems that Trip which start same date='$filter' is already saved.",
                     )
                 } else {
                     try {
@@ -141,15 +142,15 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                             tripModelSerializer.serializer.writeValueAsString(trip)
 
                         val fileName =
-                            "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-${tripStartTs}-${tripLength}.json"
+                            "$TRIP_FILE_PREFIX-${profile.getCurrentProfile()}-$tripStartTs-$tripLength.json"
                         Log.i(
                             LOGGER_TAG,
-                            "Saving the trip to the file: '$fileName'. Length: ${tripLength}s"
+                            "Saving the trip to the file: '$fileName'. Length: ${tripLength}s",
                         )
                         writeFile(getContext()!!, fileName, content)
                         Log.i(
                             LOGGER_TAG,
-                            "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
+                            "Trip was written to the file: '$fileName'. Length: ${tripLength}s",
                         )
                     } catch (e: java.lang.Exception) {
                         Log.e(LOGGER_TAG, "Failed to save trip", e)
@@ -169,30 +170,27 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
             Log.i(LOGGER_TAG, "No files were found in the trips directory.")
             return mutableListOf()
         } else {
-            val result = files
-                .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
-                .filter { it.startsWith("${TRIP_FILE_PREFIX}_") || it.startsWith("$TRIP_FILE_PREFIX-") }
-                .filter {
-                    it.contains("${profile.getCurrentProfile()}-")
-                }
-                .filter {
-                    try {
-                        tripDescParser.decodeTripName(it).size > 3
-                    } catch (e: Throwable) {
-                        false
-                    }
-                }
-                .mapNotNull { fileName ->
-                    Log.d(LOGGER_TAG, "Found trip which fits the conditions: $fileName")
-                    tripDescParser.getTripDesc(fileName)
-                }
-                .sortedByDescending { it.startTime.toLongOrNull() }
-                .toMutableList()
-            Log.i(LOGGER_TAG, "Found trips by filter: '${filter}' for profile=${profile.getCurrentProfile()}. Result size: ${result.size}")
+            val result =
+                files
+                    .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
+                    .filter { it.startsWith("${TRIP_FILE_PREFIX}_") || it.startsWith("$TRIP_FILE_PREFIX-") }
+                    .filter {
+                        it.contains("${profile.getCurrentProfile()}-")
+                    }.filter {
+                        try {
+                            tripDescParser.decodeTripName(it).size > 3
+                        } catch (e: Throwable) {
+                            false
+                        }
+                    }.mapNotNull { fileName ->
+                        Log.d(LOGGER_TAG, "Found trip which fits the conditions: $fileName")
+                        tripDescParser.getTripDesc(fileName)
+                    }.sortedByDescending { it.startTime.toLongOrNull() }
+                    .toMutableList()
+            Log.i(LOGGER_TAG, "Found trips by filter: '$filter' for profile=${profile.getCurrentProfile()}. Result size: ${result.size}")
             return result
         }
     }
-
 
     override fun deleteTrip(trip: TripFileDesc) {
         Log.i(LOGGER_TAG, "Deleting '${trip.fileName}' from the storage.")
@@ -215,8 +213,11 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                 Log.i(LOGGER_TAG, "Number of entries ${trip.entries.values.size} collected within the trip")
 
                 tripCache.updateTrip(trip)
-                tripVirtualScreenManager.updateReservedVirtualScreen(trip.entries.keys.map { it.toString() }.toList())
-
+                tripVirtualScreenManager.updateReservedVirtualScreen(
+                    trip.entries.keys
+                        .map { it.toString() }
+                        .toList(),
+                )
             } catch (e: Throwable) {
                 Log.e(LOGGER_TAG, "Did not find trip '$tripName'.", e)
                 updateCache(System.currentTimeMillis())
@@ -227,16 +228,15 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
     private fun writeFile(
         context: Context,
         fileName: String,
-        content: String
+        content: String,
     ) {
-
         var fd: FileOutputStream? = null
         try {
             val file = getTripFile(context, fileName)
-            fd = FileOutputStream(file).apply {
-                write(content.toByteArray())
-            }
-
+            fd =
+                FileOutputStream(file).apply {
+                    write(content.toByteArray())
+                }
         } finally {
             fd?.run {
                 flush()
@@ -245,9 +245,10 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
         }
     }
 
-    private fun getTripFile(context: Context, fileName: String): File =
-        File(getTripsDirectory(context), fileName)
-
+    private fun getTripFile(
+        context: Context,
+        fileName: String,
+    ): File = File(getTripsDirectory(context), fileName)
 
     private fun updateCache(newTs: Long) {
         val trip = Trip(startTs = newTs, entries = mutableMapOf())
@@ -255,10 +256,12 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
         Log.i(LOGGER_TAG, "Init new Trip with timestamp: '${formatTimestamp(newTs)}'")
     }
 
-    private fun getTripLength(trip: Trip): Long = if (trip.startTs == 0L) 0 else {
-        (Date().time - trip.startTs) / 1000
-    }
+    private fun getTripLength(trip: Trip): Long =
+        if (trip.startTs == 0L) {
+            0
+        } else {
+            (Date().time - trip.startTs) / 1000
+        }
 
-    private fun formatTimestamp(ts: Long) =
-        dateFormat.format(Date(ts))
+    private fun formatTimestamp(ts: Long) = dateFormat.format(Date(ts))
 }
