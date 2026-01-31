@@ -277,10 +277,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private fun registerGPSPids(pidRegistry: PidDefinitionRegistry) {
         Log.d(LOG_TAG,"Registering GPS PIDs")
-
-        pidRegistry.register(PidDefinition(Pid.GPS_LAT_PID_ID.id, 2, "", "22", "Lat", "deg", "GPS Latitude", -90, 90, ValueType.DOUBLE))
-        pidRegistry.register(PidDefinition(Pid.GPS_LON_PID_ID.id, 2, "", "22", "Lon", "deg", "GPS Longitude", -180, 180, ValueType.DOUBLE))
-        pidRegistry.register(PidDefinition(Pid.GPS_ALT_PID_ID.id, 2, "", "22", "Alt", "m", "GPS Altitude", -100, 10000, ValueType.DOUBLE))
         pidRegistry.register(PidDefinition(Pid.GPS_LOCATION_PID_ID.id, 2, "", "22", "Alt", "m", "GPS", -180, 10000, ValueType.DOUBLE))
     }
 

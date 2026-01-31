@@ -68,17 +68,11 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     private var locationListener: LocationListener? = null
     private var gnssCallback: GnssStatus.Callback? = null
 
-    private lateinit var latitudeCommand: ObdCommand
-    private lateinit var longitudeCommand: ObdCommand
-    private lateinit var altitudeCommand: ObdCommand
     private lateinit var locationCommand: ObdCommand
 
     override fun init(replyObserver: ReplyObserver<Reply<*>>) {
         this.replyObserver = replyObserver
         val registry = dataLogger.getPidDefinitionRegistry()
-        latitudeCommand = ObdCommand(registry.findBy(Pid.GPS_LAT_PID_ID.id))
-        longitudeCommand = ObdCommand(registry.findBy(Pid.GPS_LON_PID_ID.id))
-        altitudeCommand = ObdCommand(registry.findBy(Pid.GPS_ALT_PID_ID.id))
         locationCommand = ObdCommand(registry.findBy(Pid.GPS_LOCATION_PID_ID.id))
     }
 
@@ -207,9 +201,6 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     private fun processLocation(location: Location) {
         if (location.latitude == 0.0 && location.longitude == 0.0) return
 
-        if (::latitudeCommand.isInitialized) emitMetric(latitudeCommand, location.latitude)
-        if (::longitudeCommand.isInitialized) emitMetric(longitudeCommand, location.longitude)
-        if (::altitudeCommand.isInitialized) emitMetric(altitudeCommand, location.altitude)
         if (::locationCommand.isInitialized) {
             emitMetric(
                 locationCommand,
