@@ -18,11 +18,15 @@ package org.obd.graphs.bl.gps
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.HandlerThread
+import android.os.Looper
 import android.util.Log
 import org.obd.graphs.LOCATION_IS_DISABLED
 import org.obd.graphs.Permissions
@@ -58,6 +62,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     private var locationManager: LocationManager? = null
     private var locationListener: LocationListener? = null
     private var handlerThread: HandlerThread? = null
+    private var gnssCallback: GnssStatus.Callback? = null
 
     private lateinit var latitudeCommand: ObdCommand
     private lateinit var longitudeCommand: ObdCommand
@@ -70,6 +75,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         latitudeCommand = ObdCommand(registry.findBy(Pid.GPS_LAT_PID_ID.id))
         longitudeCommand = ObdCommand(registry.findBy(Pid.GPS_LON_PID_ID.id))
         altitudeCommand = ObdCommand(registry.findBy(Pid.GPS_ALT_PID_ID.id))
+        locationCommand = ObdCommand(registry.findBy(Pid.GPS_LOCATION_PID_ID.id))
     }
 
     @SuppressLint("MissingPermission")
@@ -106,6 +112,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                             processLocation(location)
                         }
 
+                        @Deprecated("Deprecated in Java")
                         override fun onStatusChanged(
                             provider: String?,
                             status: Int,
@@ -125,7 +132,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                     LocationManager.NETWORK_PROVIDER
                 }
 
-            Log.i(TAG, "Starting $provider GPS Provider.")
+            Log.i(TAG, "Starting $provider Provider.")
 
             locationManager?.requestLocationUpdates(
                 provider,
@@ -134,6 +141,24 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                 locationListener!!,
                 handlerThread!!.looper,
             )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                gnssCallback =
+                    object : GnssStatus.Callback() {
+                        override fun onSatelliteStatusChanged(status: GnssStatus) {
+                            val count = status.satelliteCount
+                            var used = 0
+                            for (i in 0 until count) {
+                                if (status.usedInFix(i)) used++
+                            }
+                            Log.i(TAG,"Satellite Count: $count Visible / $used Used")
+                        }
+                    }
+                locationManager?.registerGnssStatusCallback(gnssCallback!!, Handler(Looper.getMainLooper()))
+                Log.i(TAG, "Registered GNSS Status Callback.")
+            }
+
+
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start Raw GPS updates", e)
         }
@@ -171,6 +196,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         command: ObdCommand,
         value: Any,
     ) {
+        Log.e(TAG,"Emitting $value")
         replyObserver?.onNext(
             ObdMetric
                 .builder()

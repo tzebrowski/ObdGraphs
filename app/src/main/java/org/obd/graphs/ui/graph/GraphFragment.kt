@@ -337,7 +337,11 @@ class GraphFragment : Fragment() {
 
     private fun getEntries(entry: SensorData): MutableList<Entry> =
         mutableListOf<Entry>().apply {
-            entry.metrics.forEach { add(Entry(it.entry.x, it.entry.y, it.entry.data)) }
+            entry.metrics.forEach {
+                if (it.entry.y is Number) {
+                    add(Entry(it.entry.x, (it.entry.y as Number).toFloat(), it.entry.data))
+                }
+            }
             sortBy { entry -> entry.x }
         }
 

@@ -96,7 +96,6 @@ class GpsStatusActivity : AppCompatActivity() {
             )
             log("Started requesting GPS_PROVIDER updates...")
 
-            // 2. Register for Satellite Status (Android N / API 24+)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 gnssCallback =
                     object : GnssStatus.Callback() {

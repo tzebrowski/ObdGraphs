@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,7 +30,8 @@ import org.obd.metrics.api.model.ObdMetric
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 val tripManager: TripManager = DefaultTripManager()
 
@@ -55,40 +56,34 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
 
     override fun postValue(obdMetric: ObdMetric) {
         try {
+            tripCache.getTrip { trip ->
+                val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
+                val key = obdMetric.command.pid.id
+                val newRecord = if (obdMetric.isNumber()) Entry(ts, obdMetric.scaleToRange(), key) else Entry(ts, obdMetric.value, key)
 
-            if (obdMetric.isNumber()){
-                tripCache.getTrip { trip ->
-                    val ts = (System.currentTimeMillis() - trip.startTs).toFloat()
-                    val key = obdMetric.command.pid.id
-                    val newRecord = Entry(ts, obdMetric.scaleToRange(), key)
-
-                    if (trip.entries.containsKey(key)) {
-                        val tripEntry = trip.entries[key]!!
-                        tripEntry.metrics.add(
+                if (trip.entries.containsKey(key)) {
+                    val tripEntry = trip.entries[key]!!
+                    tripEntry.metrics.add(
+                        Metric(
+                            entry = newRecord,
+                            ts = obdMetric.timestamp,
+                            rawAnswer = obdMetric.raw
+                        )
+                    )
+                } else {
+                    trip.entries[key] = SensorData(
+                        id = key,
+                        metrics = mutableListOf(
                             Metric(
                                 entry = newRecord,
                                 ts = obdMetric.timestamp,
                                 rawAnswer = obdMetric.raw
                             )
                         )
-                    } else {
-                        trip.entries[key] = SensorData(
-                            id = key,
-                            metrics = mutableListOf(
-                                Metric(
-                                    entry = newRecord,
-                                    ts = obdMetric.timestamp,
-                                    rawAnswer = obdMetric.raw
-                                )
-                            )
-                        )
-                    }
-                }
-            }else {
-                if (Log.isLoggable(LOGGER_TAG,Log.VERBOSE)) {
-                    Log.v(LOGGER_TAG, "Rejecting Non-Number metrics")
+                    )
                 }
             }
+
         } catch (e: Throwable) {
             Log.e(LOGGER_TAG, "Failed to add cache entry", e)
         }
@@ -156,8 +151,8 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                             LOGGER_TAG,
                             "Trip was written to the file: '$fileName'. Length: ${tripLength}s"
                         )
-                    }catch (e: java.lang.Exception) {
-                        Log.e(LOGGER_TAG,"Failed to save trip", e)
+                    } catch (e: java.lang.Exception) {
+                        Log.e(LOGGER_TAG, "Failed to save trip", e)
                     }
                 }
             } else {
@@ -178,16 +173,17 @@ internal class DefaultTripManager : TripManager, MetricsProcessor {
                 .filter { if (filter.isNotEmpty()) it.startsWith(filter) else true }
                 .filter { it.startsWith("${TRIP_FILE_PREFIX}_") || it.startsWith("$TRIP_FILE_PREFIX-") }
                 .filter {
-                    it.contains("${profile.getCurrentProfile()}-") }
+                    it.contains("${profile.getCurrentProfile()}-")
+                }
                 .filter {
                     try {
                         tripDescParser.decodeTripName(it).size > 3
-                    }catch (e: Throwable){
+                    } catch (e: Throwable) {
                         false
                     }
                 }
                 .mapNotNull { fileName ->
-                    Log.d(LOGGER_TAG,"Found trip which fits the conditions: $fileName")
+                    Log.d(LOGGER_TAG, "Found trip which fits the conditions: $fileName")
                     tripDescParser.getTripDesc(fileName)
                 }
                 .sortedByDescending { it.startTime.toLongOrNull() }
