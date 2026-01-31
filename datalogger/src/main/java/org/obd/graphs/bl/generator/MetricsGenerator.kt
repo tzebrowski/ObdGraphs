@@ -28,6 +28,7 @@ import org.obd.metrics.api.model.ReplyObserver
 import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.ValueType
 import org.obd.metrics.transport.message.ConnectorResponse
 import java.util.concurrent.ExecutorService
@@ -58,7 +59,8 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
 
         if (isGeneratorEnabled()) {
-            val metrics = generateMetricsFor(dataLogger.getCurrentQuery())
+            val metrics = generateMetricsFor(dataLogger.getPidDefinitionRegistry(),
+                dataLogger.getCurrentQuery())
 
             if (!broadcasterLaunched) {
                 broadcasterLaunched = true
@@ -85,10 +87,11 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
             Prefs.getBoolean("pref.debug.generator.broadcast_fake_metrics", false)
 
 
-    private fun generateMetricsFor(query: Query?) = mutableSetOf<MetricGeneratorDefinition>().apply {
+    private fun generateMetricsFor(pidDefinitionRegistry: PidDefinitionRegistry, query: Query?) = mutableSetOf<MetricGeneratorDefinition>().apply {
+        val metrics = baseMetrics(pidDefinitionRegistry)
         query?.getIDs()?.forEach { id ->
-            if (baseMetrics.containsKey(id)) {
-                add(baseMetrics[id]!!)
+            if (metrics.containsKey(id)) {
+                add(metrics[id]!!)
             } else {
                 val pid = dataLogger.getPidDefinitionRegistry().findBy(id)
                 val metric = MetricGeneratorDefinition(

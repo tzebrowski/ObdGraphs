@@ -19,8 +19,9 @@ package org.obd.graphs.bl.generator
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.metrics.pid.PidDefinition
+import org.obd.metrics.pid.PidDefinitionRegistry
 
-private const val VEHICLE_RUNNING_KEY = "vehicle.running"
+ private const val VEHICLE_RUNNING_KEY = "vehicle.running"
 private const val KEY_STATUS_KEY = "key.status"
 private const val ENGINE_RUNNING_KEY = "engine.running"
 
@@ -60,9 +61,9 @@ private val toString: ToStringHashMap.ToStringConverter<String, Boolean> = objec
 
 internal data class MetricGeneratorDefinition(val pid: PidDefinition, val data: MutableList<*>, var counter: Int = 0)
 
-internal val baseMetrics = mutableMapOf(
+internal fun baseMetrics(pidDefinitionRegistry: PidDefinitionRegistry) = mutableMapOf(
     Pid.DYNAMIC_SELECTOR_PID_ID to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.DYNAMIC_SELECTOR_PID_ID.id),
+        pid = pidDefinitionRegistry.findBy(Pid.DYNAMIC_SELECTOR_PID_ID.id),
         data = mutableListOf<Number>().apply {
             (0..100).forEach{ _ ->
                 add(0)
@@ -79,7 +80,7 @@ internal val baseMetrics = mutableMapOf(
     }),
 
     Pid.ATM_PRESSURE_PID_ID.id to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.ATM_PRESSURE_PID_ID.id),
+        pid = pidDefinitionRegistry.findBy(Pid.ATM_PRESSURE_PID_ID.id),
         data = mutableListOf<Number>().apply {
             (0..125).forEach{ _ ->
                 add(1020)
@@ -90,7 +91,7 @@ internal val baseMetrics = mutableMapOf(
         }),
 
     Pid.AMBIENT_TEMP_PID_ID.id to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.AMBIENT_TEMP_PID_ID.id),
+        pid = pidDefinitionRegistry.findBy(Pid.AMBIENT_TEMP_PID_ID.id),
         data = mutableListOf<Number>().apply {
             (5..25).forEach{
                 add(it)
@@ -99,7 +100,7 @@ internal val baseMetrics = mutableMapOf(
 
 
     Pid.GAS_PID_ID.id to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.GAS_PID_ID.id),
+        pid = pidDefinitionRegistry.findBy(Pid.GAS_PID_ID.id),
         data = mutableListOf<Number>().apply {
             (0..100).forEach{ _ ->
                 add(50)
@@ -110,7 +111,7 @@ internal val baseMetrics = mutableMapOf(
         }),
 
     Pid.VEHICLE_SPEED_PID_ID.id to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.VEHICLE_SPEED_PID_ID.id),
+        pid = pidDefinitionRegistry.findBy(Pid.VEHICLE_SPEED_PID_ID.id),
         data = mutableListOf<Number>().apply {
             (0..100).forEach{ _ ->
                 add(0)
@@ -121,7 +122,7 @@ internal val baseMetrics = mutableMapOf(
         }),
 
     Pid.EXT_VEHICLE_SPEED_PID_ID.id to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.EXT_VEHICLE_SPEED_PID_ID.id),
+        pid = pidDefinitionRegistry.findBy(Pid.EXT_VEHICLE_SPEED_PID_ID.id),
         data = mutableListOf<Number>().apply {
             (0..100).forEach{ _ ->
                 add(0)
@@ -133,7 +134,7 @@ internal val baseMetrics = mutableMapOf(
 
 
     Pid.VEHICLE_STATUS_PID_ID.id to MetricGeneratorDefinition(
-        pid = dataLogger.getPidDefinitionRegistry().findBy(Pid.VEHICLE_STATUS_PID_ID.id),
+        pid = pidDefinitionRegistry.findBy(Pid.VEHICLE_STATUS_PID_ID.id),
         data = mutableListOf<Map<String,Boolean>>().apply {
 
             (0..100).forEach{ _ ->

@@ -20,8 +20,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -54,7 +55,7 @@
 
         <service
             android:name="org.obd.graphs.bl.datalogger.DataLoggerService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:foregroundServiceType="location|connectedDevice"
             android:exported="false" />
 
         <receiver
@@ -84,6 +85,14 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
             <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
+        </activity>
+
+        <activity
+            android:name="org.obd.graphs.activity.GpsStatusActivity"
+            android:label="GPS Status"
+            android:exported="false"
+            android:parentActivityName="org.obd.graphs.activity.MainActivity"
+            android:theme="@style/Theme.DefaultTheme">
         </activity>
 
         <activity

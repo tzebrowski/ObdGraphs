@@ -17,6 +17,7 @@
 package org.obd.graphs.integrations.gcp.gdrive
 
 import android.app.Activity
+import android.util.Log
 import androidx.fragment.app.Fragment
 import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.TRIPS_UPLOAD_FAILED
@@ -51,7 +52,13 @@ internal open class DefaultTripLogDriveManager(
                     val signalsMapper = definitions.associate { it.id.toInt() to it.description.replace("\n", " ") }
                     val pidMap = definitions.associateBy { it.id.toInt() }
                     val transformer =
-                        TripLog.transformer(OutputType.JSON, signalsMapper) { s, v -> (pidMap[s]?.scaleToRange(v.toFloat())) ?: v }
+                        TripLog.transformer(OutputType.JSON, signalsMapper) { s, v ->
+                            if (v is Number) {
+                                (pidMap[s]?.scaleToRange(v.toFloat())) ?: v
+                            } else {
+                                v
+                            }
+                         }
 
                     val deviceId = Device.id()
                     files.forEach { inFile ->

@@ -104,7 +104,9 @@ class TripLogTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> v.toFloat() * 2 }
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v ->
+            if (v is Number) v.toFloat() * 2 else v.toString()
+        }
         val meta = mutableMapOf<String, String>()
         meta["key1"] = "value1"
         meta["key2"] = "value2"
@@ -115,6 +117,42 @@ class TripLogTransformerTest {
             """[{"metadata":{"key1":"value1","key2":"value2"}},{"t":1000,"s":"Boost","v":101.0},{"t":2000,"s":"13","v":121.0}]"""
 
         Assertions.assertThat(expectedJson).isEqualTo(result)
+    }
+
+    @Test
+    fun `should support map type in value field`() {
+        val rawJson =
+            """
+            {
+              "startTs": 123456789,
+              "entries": {
+                "10": {
+                  "id": 999,
+                  "metrics": [
+                    {
+                      "entry": {
+                          "x": 100.0,
+                          "y": {
+                            "GPS altitude": 57.10662841796875,
+                            "GPS Location": { "altitude": 57.10662841796875, "accuracy": 46.843723 ,"latitude":54.16406183,"longitude":16.29066863}
+                          },
+                          "data": 99
+                      },
+                      "ts": 1500,
+                      "rawAnswer": "raw"
+                    }
+                  ]
+                }
+              }
+            }
+            """.trimIndent()
+
+        val transformer: TripLogTransformer = TripLog.transformer { s, v -> v }
+        val result = transformer.transform(rawJson).readText()
+
+        val expectedJson = """[{"t":1500,"s":"99","v":{"GPS altitude":57.10662841796875,"GPS Location":{"altitude":57.10662841796875,"accuracy":46.843723,"latitude":54.16406183,"longitude":16.29066863}}}]"""
+
+        Assertions.assertThat(result).isEqualTo(expectedJson)
     }
 
     @Test
@@ -146,7 +184,7 @@ class TripLogTransformerTest {
             }
             """.trimIndent()
         val signalMapper = mapOf(12 to "Boost", 14 to "Engine speed")
-        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> v.toFloat() * 2 }
+        val transformer: TripLogTransformer = TripLog.transformer(signalMapper=signalMapper) { s, v -> if (v is Number) v.toFloat() * 2 else v.toString() }
         val result = transformer.transform(rawJson).readText()
 
         val expectedJson =

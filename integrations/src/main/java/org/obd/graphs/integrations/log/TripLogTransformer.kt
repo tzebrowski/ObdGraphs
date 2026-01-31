@@ -18,6 +18,7 @@ package org.obd.graphs.integrations.log
 
 import android.util.Log
 import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import java.io.File
 import java.io.InputStreamReader
@@ -35,7 +36,7 @@ object TripLog {
     internal fun transformer(
         outputType: OutputType = OutputType.JSON,
         signalMapper: Map<Int, String> = mapOf(),
-        valueMapper: (signal: Int, value: Number) -> Number,
+        valueMapper: (signal: Int, value: Any) -> Any,
     ): TripLogTransformer =
         when (outputType) {
             else -> DefaultJSONOutput(signalMapper, valueMapper)
@@ -44,7 +45,7 @@ object TripLog {
 
 private class DefaultJSONOutput(
     private val signalMapper: Map<Int, String> = mapOf(),
-    private val valueMapper: (signal: Int, value: Number) -> Number,
+    private val valueMapper: (signal: Int, value: Any) -> Any,
 ) : TripLogTransformer {
 
     override fun transform(file: File, metadata: Map<String,String>): File =
@@ -155,7 +156,7 @@ private class DefaultJSONOutput(
     ) {
         var ts: Long = 0
         var signal = 0
-        var value = 0.0
+        var value: Any = 0.0
 
         reader.beginObject() // Metric object {
         while (reader.hasNext()) {
@@ -166,23 +167,97 @@ private class DefaultJSONOutput(
                     while (reader.hasNext()) {
                         when (reader.nextName()) {
                             "data" -> signal = reader.nextInt()
-                            "y" -> value = reader.nextDouble()
-                            else -> reader.skipValue() // Skip "x"
+                            "y" -> {
+                                value = if (reader.peek() == JsonToken.BEGIN_OBJECT) {
+                                    reader.readMap()
+                                } else {
+                                    reader.nextDouble()
+                                }
+                            }
+                            else -> reader.skipValue()
                         }
                     }
                     reader.endObject()
                 }
 
-                else -> reader.skipValue() // Skip "rawAnswer"
+                else -> reader.skipValue()
             }
         }
-        reader.endObject()
 
-        // Write directly to output (No intermediate object creation)
+        reader.endObject()
         writer.beginObject()
         writer.name("t").value(ts)
         writer.name("s").value((signalMapper[signal] ?: signal).toString())
-        writer.name("v").value(valueMapper(signal, value))
+        val mappedResult: Any = valueMapper(signal, value)
+
+        writer.name("v")
+        writer.writeDynamicValue(mappedResult)
         writer.endObject()
+    }
+
+    /**
+     * Recursively reads a JSON object from the reader and returns it as a Map.
+     */
+    private fun JsonReader.readMap(): Map<String, Any?> {
+        val map = mutableMapOf<String, Any?>()
+
+        this.beginObject()
+        while (this.hasNext()) {
+            val key = this.nextName()
+            val value: Any? = when (this.peek()) {
+                JsonToken.BEGIN_OBJECT -> readMap() // Recursive call for nested maps
+                JsonToken.BEGIN_ARRAY -> {
+                    // Optional: Handle arrays if your source map has lists
+                    // For now we just skip or you can implement readList() similarly
+                    this.skipValue()
+                    null
+                }
+                JsonToken.NUMBER -> this.nextDouble()
+                JsonToken.STRING -> this.nextString()
+                JsonToken.BOOLEAN -> this.nextBoolean()
+                else -> {
+                    this.skipValue()
+                    null
+                }
+            }
+            map[key] = value
+        }
+        this.endObject()
+
+        return map
+    }
+
+    /**
+     * Extension to write mixed types (Number, String, Map, List) to JsonWriter.
+     */
+    private fun JsonWriter.writeDynamicValue(value: Any?) {
+        when (value) {
+            null -> this.nullValue()
+            is Number -> this.value(value)
+            is String -> this.value(value)
+            is Boolean -> this.value(value)
+
+            // Handle Map -> JSON Object
+            is Map<*, *> -> {
+                this.beginObject()
+                for ((k, v) in value) {
+                    this.name(k.toString())
+                    writeDynamicValue(v) // Recursive call for nested values
+                }
+                this.endObject()
+            }
+
+            // Handle List/Array -> JSON Array (Optional, but good for safety)
+            is Collection<*> -> {
+                this.beginArray()
+                for (item in value) {
+                    writeDynamicValue(item)
+                }
+                this.endArray()
+            }
+
+            // Fallback for unknown objects
+            else -> this.value(value.toString())
+        }
     }
 }

@@ -30,7 +30,7 @@ data class TripFileDesc(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Entry(
     var x: Float = 0f,
-    var y: Float = 0f,
+    var y: Any = 0f,
     var data: Long,
 )
 

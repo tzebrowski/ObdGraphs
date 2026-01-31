@@ -406,6 +406,7 @@
 
     <string name="main_activity.toggle_toolbar">Toggle toolbar</string>
     <string name="main_activity.btn_start">Start/Stop session with the vehicle</string>
+    <string name="data">Start/Stop session with the vehicle</string>
 
     <string-array name="pref.empty_array" />
     <string name="pref.theme">Theme</string>

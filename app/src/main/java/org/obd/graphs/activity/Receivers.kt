@@ -38,11 +38,13 @@ import org.obd.graphs.BACKUP_START
 import org.obd.graphs.BACKUP_SUCCESSFUL
 import org.obd.graphs.GOOGLE_SIGN_IN_GENERAL_FAILURE
 import org.obd.graphs.GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE
+import org.obd.graphs.LOCATION_IS_DISABLED
 import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.Permissions
 import org.obd.graphs.PowerBroadcastReceiver
 import org.obd.graphs.R
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
+import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_OFF_EVENT
@@ -116,7 +118,10 @@ internal fun MainActivity.receive(intent: Intent?) {
                 backupManager.backup()
             }
 
+        REQUEST_NOTIFICATION_PERMISSIONS -> Permissions.requestNotificationPermissions(this)
         REQUEST_LOCATION_PERMISSIONS -> Permissions.requestLocationPermissions(this)
+
+        LOCATION_IS_DISABLED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_location_disabled)
 
         DATA_LOGGER_WIFI_NOT_CONNECTED -> {
             getContext()?.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
@@ -349,6 +354,8 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(GOOGLE_SIGN_IN_GENERAL_FAILURE)
         it.addAction(GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE)
 
+        it.addAction(REQUEST_NOTIFICATION_PERMISSIONS)
+        it.addAction(LOCATION_IS_DISABLED)
     }
 
     registerReceiver(this, powerReceiver) {
