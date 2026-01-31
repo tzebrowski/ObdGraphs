@@ -76,14 +76,11 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
-
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dip"
@@ -91,7 +88,6 @@
                 android:background="#FF909090"
                 android:padding="2dip" />
         </TableRow>
-
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -99,6 +95,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/tablelayout"
+        android:layout_above="@id/details_view"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="2dp"
         android:background="@color/white" />
@@ -108,11 +105,11 @@
         android:id="@+id/details_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/recycler_view">
+        android:layout_above="@id/status_panel">
+
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
@@ -123,7 +120,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/pid_details_name"
                 android:layout_width="0dp"
@@ -139,7 +135,6 @@
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
@@ -150,7 +145,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
             <EditText
                 android:hint="e.g A+B"
                 android:importantForAutofill="no"
@@ -169,7 +163,6 @@
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
@@ -180,7 +173,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
             <EditText
                 android:inputType="number"
                 android:id="@+id/pid_details_alert_lower_threshold"
@@ -194,11 +186,9 @@
                 android:textSize="12sp" />
         </TableRow>
 
-
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
@@ -209,7 +199,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
             <EditText
                 android:inputType="number"
                 android:id="@+id/pid_details_alert_upper_threshold"
@@ -226,7 +215,6 @@
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
@@ -237,7 +225,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/pid_details_supported"
                 android:layout_width="0dp"
@@ -249,7 +236,6 @@
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp" />
         </TableRow>
-
     </TableLayout>
 
     <LinearLayout
@@ -257,16 +243,19 @@
         style="?android:attr/buttonBarStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/details_view"
         android:layout_alignParentBottom="true"
+        android:padding="4dp"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/pid_list_select_all"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:backgroundTint="@color/rainbow_indigo"
+            android:textColor="@android:color/white"
             android:text="@string/dialog_select_all_action"
             android:textSize="10sp"
             tools:ignore="SmallSp" />
@@ -274,10 +263,12 @@
         <Button
             android:id="@+id/pid_list_deselect_all"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="2dp"
             android:backgroundTint="@color/rainbow_indigo"
+            android:textColor="@android:color/white"
             android:text="@string/dialog_deselect_all_action"
             android:textSize="10sp"
             tools:ignore="SmallSp" />
@@ -285,10 +276,12 @@
         <Button
             android:id="@+id/trip_action_close_window"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="70dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="2dp"
             android:backgroundTint="@color/rainbow_indigo"
+            android:textColor="@android:color/white"
             android:text="@string/dialog_close_window_action"
             android:textSize="10sp"
             tools:ignore="SmallSp" />
@@ -296,12 +289,15 @@
         <Button
             android:id="@+id/pid_list_save"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="70dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="2dp"
+            android:backgroundTint="@color/rainbow_indigo"
+            android:textColor="@android:color/white"
             android:text="@string/dialog_save_action"
+            android:textStyle="bold"
             android:textSize="10sp"
             tools:ignore="SmallSp" />
     </LinearLayout>
 </RelativeLayout>
-
