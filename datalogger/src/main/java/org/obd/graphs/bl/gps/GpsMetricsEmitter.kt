@@ -214,11 +214,11 @@ internal class GpsMetricsEmitter : MetricsProcessor {
             emitMetric(
                 locationCommand,
                 mapOf(
-                    "altitude" to location.altitude,
-                    "accuracy" to location.accuracy,
-                    "bearing" to location.bearing,
-                    "latitude" to location.latitude,
-                    "longitude" to location.longitude,
+                    "alt" to location.altitude,
+                    "acc" to location.accuracy,
+                    "bear" to location.bearing,
+                    "lat" to location.latitude,
+                    "lon" to location.longitude,
                 ),
             )
         }
