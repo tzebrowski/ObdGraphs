@@ -159,8 +159,8 @@ class GpsMetricsEmitterTest : TestSetup() {
         // Act
         listener.onLocationChanged(validLocation)
 
-        // Assert: Expect 4 metrics (Latitude, Longitude, Altitude, Location composite)
-        verify(exactly = 4) { mockReplyObserver.onNext(any()) }
+        // Assert: Expect 1 metrics ( Location composite)
+        verify(exactly = 1) { mockReplyObserver.onNext(any()) }
     }
 
     @Test
