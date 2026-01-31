@@ -56,7 +56,7 @@ private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
 private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
 
-private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel"
+private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
 private const val NOTIFICATION_ID = 12345
 
 private var _workflowOrchestrator: WorkflowOrchestrator? = null
@@ -254,19 +254,25 @@ internal class DataLoggerService : Service(), DataLogger {
 
     private fun createNotification(): Notification =
         NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("OBD Data Logging")
-            .setContentText("Connected to vehicle...")
+            .setContentTitle("Vehicle Telemetry Service")
+            .setContentText("Logging OBD & GPS data in background...")
             .setSmallIcon(R.drawable.ic_mygiulia_logo)
-            // .setContentIntent(pendingIntent)
+            .setContentIntent(android.app.PendingIntent.getActivity(
+                this,
+                0,
+                packageManager.getLaunchIntentForPackage(packageName),
+                android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
+            ))
             .setOngoing(true)
             .build()
+
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 "OBD Logger Service",
-                NotificationManager.IMPORTANCE_LOW // Low importance to avoid annoying sounds
+                NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
