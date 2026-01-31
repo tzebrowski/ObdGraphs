@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -44,7 +44,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33]) // Test on Android 13 (Tiramisu)
 class DataLoggerServiceTest : TestSetup() {
-
     @MockK(relaxed = true)
     internal lateinit var mockOrchestrator: WorkflowOrchestrator
 
@@ -66,9 +65,10 @@ class DataLoggerServiceTest : TestSetup() {
 
         every { context.sendBroadcast(any()) } just Runs
 
-        val intent = Intent(context, DataLoggerService::class.java).apply {
-            action = "org.obd.graphs.logger.START"
-        }
+        val intent =
+            Intent(context, DataLoggerService::class.java).apply {
+                action = "org.obd.graphs.logger.START"
+            }
 
         val controller = Robolectric.buildService(DataLoggerService::class.java, intent)
 
@@ -110,13 +110,15 @@ class DataLoggerServiceTest : TestSetup() {
         // --- Rest of your test ---
 
         val controller = Robolectric.buildService(DataLoggerService::class.java)
-        val startIntent = Intent(app, DataLoggerService::class.java).apply {
-            action = "org.obd.graphs.logger.START"
-            putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
-        }
-        val stopIntent = Intent(app, DataLoggerService::class.java).apply {
-            action = "org.obd.graphs.logger.STOP"
-        }
+        val startIntent =
+            Intent(app, DataLoggerService::class.java).apply {
+                action = "org.obd.graphs.logger.START"
+                putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
+            }
+        val stopIntent =
+            Intent(app, DataLoggerService::class.java).apply {
+                action = "org.obd.graphs.logger.STOP"
+            }
 
         val service = controller.create().get()
 
@@ -150,10 +152,11 @@ class DataLoggerServiceTest : TestSetup() {
     @Test
     fun `onStartCommand with ACTION_START should promote to Foreground and start Orchestrator`() {
         // Arrange
-        val intent = Intent(context, DataLoggerService::class.java).apply {
-            action = "org.obd.graphs.logger.START"
-            putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
-        }
+        val intent =
+            Intent(context, DataLoggerService::class.java).apply {
+                action = "org.obd.graphs.logger.START"
+                putExtra("org.obd.graphs.logger.QUERY", mockk<Query>(relaxed = true))
+            }
 
         // Inject the mock (Ensures the service uses OUR object, not a real one)
         setWorkflowOrchestrator(mockOrchestrator)

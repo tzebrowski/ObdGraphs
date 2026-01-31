@@ -39,6 +39,7 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
+import org.obd.metrics.api.model.VehicleCapabilities
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.transport.message.ConnectorResponse
 
@@ -49,9 +50,10 @@ private const val MIN_DISTANCE_M = 0.1f
 val gpsMetricsEmitter: MetricsProcessor = GpsMetricsEmitter()
 
 internal class GpsMetricsEmitter : MetricsProcessor {
-    private val raw =
+    // Stateless dummy object for metrics
+    private val emptyConnectorResponse =
         object : ConnectorResponse {
-            override fun at(p0: Int): Byte = "".toByte()
+            override fun at(p0: Int): Byte = 0
 
             override fun capacity(): Long = 0
 
@@ -60,8 +62,10 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     private var replyObserver: ReplyObserver<Reply<*>>? = null
     private var locationManager: LocationManager? = null
-    private var locationListener: LocationListener? = null
     private var handlerThread: HandlerThread? = null
+
+    // Listeners reference to allow proper unregistering
+    private var locationListener: LocationListener? = null
     private var gnssCallback: GnssStatus.Callback? = null
 
     private lateinit var latitudeCommand: ObdCommand
@@ -79,90 +83,126 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     }
 
     @SuppressLint("MissingPermission")
-    override fun onRunning(vehicleCapabilities: org.obd.metrics.api.model.VehicleCapabilities?) {
+    override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
         val context = getContext() ?: return
 
+        // Guard Clauses
         if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) return
-
         if (!Permissions.hasLocationPermissions(context)) return
-
         if (!Permissions.isLocationEnabled(context)) {
             Log.w(TAG, "Location is disabled. Skipping")
             sendBroadcastEvent(LOCATION_IS_DISABLED)
             return
         }
 
+        // Start Updates
+        startGpsUpdates(context)
+    }
+
+    override fun onStopped() {
+        Log.i(TAG, "Stopping GPS updates")
+        stopGpsUpdates()
+    }
+
+    override fun postValue(obdMetric: ObdMetric) {
+        // No-op
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startGpsUpdates(context: Context) {
         try {
+            // Ensure clean state before starting
+            stopGpsUpdates()
 
-            if (locationManager == null) {
-                locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            }
+            val manager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return
+            locationManager = manager
 
-            if (handlerThread == null) {
-                handlerThread = HandlerThread("RawGpsThread").apply { start() }
-            }
+            val thread = HandlerThread("RawGpsThread").apply { start() }
+            handlerThread = thread
 
-            if (locationListener == null) {
-                locationListener =
-                    object : LocationListener {
-                        override fun onLocationChanged(location: Location) {
-                            if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                                Log.v(TAG, "Fix: ${location.latitude},${location.longitude} Prov:${location.provider}")
-                            }
-                            processLocation(location)
-                        }
-
-                        @Deprecated("Deprecated in Java")
-                        override fun onStatusChanged(
-                            provider: String?,
-                            status: Int,
-                            extras: Bundle?,
-                        ) {}
-
-                        override fun onProviderEnabled(provider: String) {}
-
-                        override fun onProviderDisabled(provider: String) {}
-                    }
-            }
+            val listener = createLocationListener()
+            locationListener = listener
 
             val provider =
-                if (locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     LocationManager.GPS_PROVIDER
                 } else {
                     LocationManager.NETWORK_PROVIDER
                 }
 
-            Log.i(TAG, "Starting $provider Provider.")
-
-            locationManager?.requestLocationUpdates(
+            Log.i(TAG, "Starting '$provider' Provider.")
+            manager.requestLocationUpdates(
                 provider,
                 MIN_TIME_MS,
                 MIN_DISTANCE_M,
-                locationListener!!,
-                handlerThread!!.looper,
+                listener,
+                thread.looper,
             )
 
+            // Register GNSS Status Callback (Android N+)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                gnssCallback =
-                    object : GnssStatus.Callback() {
-                        override fun onSatelliteStatusChanged(status: GnssStatus) {
-                            val count = status.satelliteCount
-                            var used = 0
-                            for (i in 0 until count) {
-                                if (status.usedInFix(i)) used++
-                            }
-                            Log.d(TAG,"Satellite Count: $count Visible / $used Used")
-                        }
-                    }
-                locationManager?.registerGnssStatusCallback(gnssCallback!!, Handler(Looper.getMainLooper()))
+                val callback = createGnssCallback()
+                gnssCallback = callback
+                manager.registerGnssStatusCallback(callback, Handler(Looper.getMainLooper()))
                 Log.i(TAG, "Registered GNSS Status Callback.")
             }
-
-
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start Raw GPS updates", e)
         }
     }
+
+    private fun stopGpsUpdates() {
+        try {
+            locationListener?.let { locationManager?.removeUpdates(it) }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                gnssCallback?.let { locationManager?.unregisterGnssStatusCallback(it) }
+            }
+
+            handlerThread?.quitSafely()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping GPS updates", e)
+        } finally {
+            // Null out references to prevent memory leaks and reuse of dead objects
+            locationListener = null
+            gnssCallback = null
+            handlerThread = null
+            locationManager = null // Optional, but cleaner
+        }
+    }
+
+    private fun createLocationListener() =
+        object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                    Log.v(TAG, "Fix: ${location.latitude},${location.longitude} Prov:${location.provider}")
+                }
+                processLocation(location)
+            }
+
+            override fun onProviderEnabled(provider: String) {}
+
+            override fun onProviderDisabled(provider: String) {}
+
+            @Deprecated("Deprecated in Java")
+            override fun onStatusChanged(
+                provider: String?,
+                status: Int,
+                extras: Bundle?,
+            ) {}
+        }
+
+    private fun createGnssCallback() =
+        object : GnssStatus.Callback() {
+            override fun onSatelliteStatusChanged(status: GnssStatus) {
+                val count = status.satelliteCount
+                var used = 0
+                for (i in 0 until count) {
+                    if (status.usedInFix(i)) used++
+                }
+                Log.d(TAG, "Satellite Count: $count Visible / $used Used")
+            }
+        }
 
     private fun processLocation(location: Location) {
         if (location.latitude == 0.0 && location.longitude == 0.0) return
@@ -170,26 +210,19 @@ internal class GpsMetricsEmitter : MetricsProcessor {
         if (::latitudeCommand.isInitialized) emitMetric(latitudeCommand, location.latitude)
         if (::longitudeCommand.isInitialized) emitMetric(longitudeCommand, location.longitude)
         if (::altitudeCommand.isInitialized) emitMetric(altitudeCommand, location.altitude)
-        if (::locationCommand.isInitialized) emitMetric(locationCommand, mapOf(
-            "altitude" to location.altitude,
-            "accuracy" to location.accuracy,
-            "bearing" to location.bearing,
-            "latitude" to location.latitude,
-            "longitude" to location.longitude))
-    }
-
-    override fun onStopped() {
-        Log.i(TAG, "Stopping GPS updates")
-        try {
-            locationManager?.removeUpdates(locationListener!!)
-            handlerThread?.quitSafely()
-            handlerThread = null
-        } catch (e: Exception) {
-            Log.e(TAG, "Error stopping GPS updates", e)
+        if (::locationCommand.isInitialized) {
+            emitMetric(
+                locationCommand,
+                mapOf(
+                    "altitude" to location.altitude,
+                    "accuracy" to location.accuracy,
+                    "bearing" to location.bearing,
+                    "latitude" to location.latitude,
+                    "longitude" to location.longitude,
+                ),
+            )
         }
     }
-
-    override fun postValue(obdMetric: ObdMetric) { }
 
     private fun emitMetric(
         command: ObdCommand,
@@ -200,7 +233,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
                 .builder()
                 .command(command)
                 .value(value)
-                .raw(raw)
+                .raw(emptyConnectorResponse)
                 .build(),
         )
     }
