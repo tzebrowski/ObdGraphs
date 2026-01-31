@@ -130,13 +130,13 @@ class TripLogTransformerTest {
                   "id": 999,
                   "metrics": [
                     {
-                      "entry": { 
-                          "x": 100.0, 
-                          "y": { 
-                            "GPS altitude": 57.10662841796875, 
-                            "GPS Location": { "altitude": 57.10662841796875, "accuracy": 46.843723 ,"latitude":54.16406183,"longitude":16.29066863} 
-                          }, 
-                          "data": 99 
+                      "entry": {
+                          "x": 100.0,
+                          "y": {
+                            "GPS altitude": 57.10662841796875,
+                            "GPS Location": { "altitude": 57.10662841796875, "accuracy": 46.843723 ,"latitude":54.16406183,"longitude":16.29066863}
+                          },
+                          "data": 99
                       },
                       "ts": 1500,
                       "rawAnswer": "raw"
