@@ -76,7 +76,7 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_dashboard_prefs -> navigateToPreferencesScreen("pref.dashboard")
                 R.id.navigation_giulia_prefs -> navigateToPreferencesScreen("pref.giulia")
                 R.id.navigation_gauge_prefs -> navigateToPreferencesScreen("pref.gauge")
-                R.id.navigation_android_auto -> navigateToPreferencesScreen("pref.aa")
+                R.id.ctx_menu_android_auto -> navigateToPreferencesScreen("pref.aa")
                 R.id.ctx_menu_vehicle_properties -> navigateToPreferencesScreen("pref.vehicle.properties")
                 R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
                 R.id.ctx_menu_view_profiles -> navigateToPreferencesScreen("pref.profiles")
@@ -122,7 +122,6 @@ internal fun MainActivity.setupLeftNavigationPanel() {
 
 internal fun MainActivity.setupNavigationBar() {
     navController { navController ->
-
         bottomAppBar {
             it.setOnApplyWindowInsetsListener(null)
             it.menu.run {
@@ -154,7 +153,7 @@ internal fun MainActivity.setupNavigationBar() {
 
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
-                it.menu.findItem(R.id.ctx_menu_android_auto).let {
+                it.menu.findItem(R.id.ctx_menu_android_auto)?.let {
                     if (isAndroidAutoEnabled()) {
                         val spanString = SpannableString(it.title.toString())
                         spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)

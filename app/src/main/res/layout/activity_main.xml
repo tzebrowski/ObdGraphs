@@ -18,6 +18,7 @@
             android:id="@+id/content_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/connection_status"
                 android:layout_width="wrap_content"
@@ -77,11 +78,9 @@
                 android:focusable="true"
                 android:padding="12dp"
                 android:scaleType="centerInside"
-                android:tooltipText="@string/main_activity.toggle_toolbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="?attr/actionModeCopyDrawable"
-                tools:targetApi="o" />
+                app:srcCompat="?attr/actionModeCopyDrawable" />
 
             <ProgressBar
                 android:id="@+id/p_bar"
@@ -90,8 +89,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:indeterminate="true"
-                android:max="100"
-                android:progress="0"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/connection_status" />
@@ -101,7 +98,6 @@
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="4dp"
                 app:defaultNavHost="true"
                 app:navGraph="@navigation/mobile_navigation"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -112,21 +108,19 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.bottomappbar.BottomAppBar
+            android:minHeight="72dp"
             android:id="@+id/bottom_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            app:itemIconTint="@android:color/black"
-            app:itemTextColor="@android:color/black"
-            app:backgroundTint="#CC2D2D2D"
-            app:labelVisibilityMode="labeled"
+            app:backgroundTint="#CCFFFFFF"
             app:fabAlignmentMode="center"
             app:fabCradleMargin="4dp"
-            app:fabCradleRoundedCornerRadius="8dp"
-            app:fabCradleVerticalOffset="0dp"
+            app:fabCradleRoundedCornerRadius="2dp"
+            app:fabCradleVerticalOffset="2dp"
             app:hideOnScroll="true"
             app:menu="@menu/bottom_nav_menu"
-            app:navigationIconTint="@color/white"
+            app:navigationIconTint="@color/black"
             android:theme="@style/AppTheme.CompactBottomBar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -135,11 +129,10 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/main_activity.btn_start"
             android:src="@android:drawable/ic_lock_idle_charging"
-            android:tooltipText="@string/main_activity.btn_start"
             app:backgroundTint="#01804F"
             app:fabSize="mini"
-            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-            app:layout_anchor="@id/bottom_app_bar" />
+            app:layout_anchor="@id/bottom_app_bar"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

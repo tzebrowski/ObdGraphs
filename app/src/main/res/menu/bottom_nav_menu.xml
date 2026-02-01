@@ -69,10 +69,15 @@
             <item
                 android:id="@+id/ctx_menu_submenu_filters_filter_7"
                 android:title="@string/pref.graph.view.filters_filter_7"/>
-
         </menu>
-
     </item>
+
+    <item
+        android:id="@+id/navigation_gauge"
+        android:icon="@drawable/ic_gauge"
+        android:title="@string/navigation.title_gauge"
+        android:tooltipText="@string/navigation.tooltip_gauge"
+        app:showAsAction="always" />
 
 
     <item
@@ -105,25 +110,6 @@
                 android:title="@string/context_menu.trip_info" />
         </menu>
     </item>
-
-    <item
-        app:showAsAction="always"
-        android:icon="@drawable/ic_aa"
-        android:id="@+id/ctx_menu_android_auto"
-        android:title="@string/pref.aa.title" />
-
-    <item
-        android:id="@+id/navigation_gauge"
-        android:icon="@drawable/ic_gauge"
-        android:title="@string/navigation.title_gauge"
-        android:tooltipText="@string/navigation.tooltip_gauge"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/placeholder"
-        android:title=""
-        android:enabled="false"
-        app:showAsAction="always" />
 
     <item
         android:id="@+id/navigation_giulia"
