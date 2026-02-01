@@ -107,6 +107,9 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_gauge -> navigateToScreen(R.id.nav_gauge)
                 R.id.navigation_dashboard -> navigateToScreen(R.id.nav_dashboard)
                 R.id.navigation_preferences -> navigateToScreen(R.id.nav_preferences)
+                R.id.navigation_drag_racing -> navigateToScreen(R.id.nav_drag_racing)
+                R.id.navigation_trip_info -> navigateToScreen(R.id.nav_trip_info)
+                R.id.navigation_performance -> navigateToScreen(R.id.nav_performance)
 
                 else -> Log.e(LOG_TAG, "Unknown Navigation menu item ${item.itemId}")
             }
@@ -212,9 +215,9 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 R.id.navigation_dashboard -> navigateToScreen(R.id.nav_dashboard)
                 R.id.navigation_preferences -> navigateToScreen(R.id.nav_preferences)
 
-                R.id.ctx_menu_trip_info_view -> navigateToScreen(R.id.navigation_trip_info)
-                R.id.ctx_menu_performance_view -> navigateToScreen(R.id.navigation_performance)
-                R.id.ctx_menu_drag_racing_view -> navigateToScreen(R.id.navigation_drag_racing)
+                R.id.ctx_menu_trip_info_view -> navigateToScreen(R.id.nav_trip_info)
+                R.id.ctx_menu_performance_view -> navigateToScreen(R.id.nav_performance)
+                R.id.ctx_menu_drag_racing_view -> navigateToScreen(R.id.nav_drag_racing)
 
                 R.id.ctx_menu_vehicle_properties -> navigateToPreferencesScreen("pref.vehicle.properties")
                 R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
