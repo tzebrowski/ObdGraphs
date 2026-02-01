@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -272,7 +272,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
                     navigateToPreferencesScreen(
                         when (getCurrentScreenId()) {
                             R.id.nav_giulia -> "pref.giulia"
-                            R.id.navigation_gauge -> "pref.gauge"
+                            R.id.nav_gauge -> "pref.gauge"
                             R.id.nav_graph -> "pref.graph"
                             R.id.nav_dashboard -> "pref.dashboard"
                             else -> "pref.root"
