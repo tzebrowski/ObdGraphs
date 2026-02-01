@@ -38,12 +38,15 @@ import org.obd.graphs.preferences.PREF_LOGS
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
-const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
+internal const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
+internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN = "pref.navigation.last_visited.screen"
+internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED = "pref.views.navigation.navigate_last_visited_view"
 
 fun navigateToPreferencesScreen(navigateToPrefKey: String) {
     (getContext() as MainActivity).navController {
@@ -56,6 +59,7 @@ fun navigateToScreen(id: Int) {
         (getContext() as MainActivity).navController {
             it.navigate(id, null)
         }
+        Prefs.updateInt(PREF_NAVIGATION_LAST_VISITED_SCREEN, id)
     } catch (e: IllegalArgumentException) {
         Log.e(LOG_TAG, "Most probably the $id is not the navigation id.", e)
     }

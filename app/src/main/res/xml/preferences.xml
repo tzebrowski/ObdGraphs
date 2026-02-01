@@ -611,10 +611,20 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref.view_category">
+
         <PreferenceScreen
             android:key="pref.views"
             android:summary="@string/pref.view_category_summary"
             android:title="@string/pref.settings">
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref.views.navigation.navigate_last_visited_view"
+                android:summary="@string/pref.view.navigation.navigate_to_last_visited_view_summary"
+                android:title="@string/pref.view.navigation.navigate_to_last_visited_view"
+                app:broadcastEvent="navigation.buttons.changes.event"
+                app:singleLineTitle="false" />
+
             <PreferenceScreen
                 android:summary="@string/pref.gauge.category"
                 android:title="@string/navigation.title_gauge"
