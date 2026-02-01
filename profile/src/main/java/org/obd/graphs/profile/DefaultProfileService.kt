@@ -164,7 +164,11 @@ internal class DefaultProfileService :
                 }
 
                 if (pref.startsWith("profile_") || pref == getInstallationVersion()) {
-                    Log.v(PROFILE_AUTO_SAVER_LOG_TAG, "Skipping: $pref")
+                    if (Log.isLoggable(PROFILE_AUTO_SAVER_LOG_TAG,Log.VERBOSE)) {
+                        Log.v(PROFILE_AUTO_SAVER_LOG_TAG, "Skipping: $pref")
+                    } else {
+                        //
+                    }
                 } else {
                     val profileName = getCurrentProfile()
                     ss?.edit {

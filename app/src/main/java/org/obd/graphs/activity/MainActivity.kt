@@ -20,15 +20,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
-import android.provider.Settings
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -41,6 +36,7 @@ import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.Permissions
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
@@ -161,12 +157,13 @@ class MainActivity :
         setupLeftNavigationPanel()
         supportActionBar?.hide()
         setupMetricsProcessors()
-        setupBatteryOptimization()
         backupManager = BackupManager(this)
         displayAppSignature(this)
 
         navigateToLastVisitedScreen()
+        validatePermissions()
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -258,22 +255,9 @@ class MainActivity :
         }
     }
 
-    private fun setupBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val registered = (getSystemService(POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(packageName)
-            Log.i(
-                LOG_TAG,
-                "Checking permissions related to battery optimization. Ignoring Battery Optimization for package=$packageName, " +
-                    "registered=$registered",
-            )
-            if (!registered) {
-                startActivity(
-                    Intent().apply {
-                        action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                        data = Uri.parse("package:$packageName")
-                    },
-                )
-            }
+    private fun validatePermissions() {
+        if (Permissions.isAnyPermissionMissing(this)) {
+            Permissions.showPermissionOnboarding(this)
         }
     }
 }
