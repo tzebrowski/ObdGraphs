@@ -41,6 +41,7 @@ import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.Permissions
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
@@ -166,7 +167,9 @@ class MainActivity :
         displayAppSignature(this)
 
         navigateToLastVisitedScreen()
+        validatePermissions()
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -274,6 +277,12 @@ class MainActivity :
                     },
                 )
             }
+        }
+    }
+
+    private fun validatePermissions() {
+        if (Permissions.isAnyPermissionMissing(this)) {
+            Permissions.showPermissionOnboarding(this)
         }
     }
 }

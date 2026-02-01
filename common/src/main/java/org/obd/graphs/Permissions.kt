@@ -35,6 +35,42 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
 
 object Permissions {
     /**
+     * Returns TRUE if any required permission is missing.
+     * Reuses your existing individual checks.
+     */
+    fun isAnyPermissionMissing(context: Context): Boolean {
+        // Reuse hasLocationPermissions
+        if (!hasLocationPermissions(context)) return true
+
+        // Reuse hasNotificationPermissions
+        if (!hasNotificationPermissions(context)) return true
+
+        // Reuse Bluetooth check
+        val btPerms = getBluetoothPermissions()
+        return !EasyPermissions.hasPermissions(context, *btPerms)
+    }
+
+    fun showPermissionOnboarding(activity: Activity) {
+        val message =
+            """
+            To provide full functionality, please allow the following in the next steps:
+
+            • Location: To track your trip via GPS.
+            • Bluetooth: To connect to your OBD adapter.
+            • Notifications: To keep the logger running in the background.
+            """.trimIndent()
+
+        androidx.appcompat.app.AlertDialog
+            .Builder(activity)
+            .setTitle("Setup Required")
+            .setMessage(message)
+            .setPositiveButton("Begin Setup") { _, _ ->
+                requestAll(activity)
+            }.setNegativeButton("Later", null)
+            .show()
+    }
+
+    /**
      * Returns TRUE if all required location permissions are granted.
      * Also performs a diagnostic check to warn if the user has selected "Approximate" location.
      */
@@ -164,5 +200,43 @@ object Permissions {
             perms.add(Manifest.permission.BLUETOOTH_ADMIN)
         }
         return perms.toTypedArray()
+    }
+
+    /**
+     * Aggregates and requests all required permissions for the application.
+     * Use this at app startup to minimize the number of pop-ups.
+     */
+    private fun requestAll(activity: Activity) {
+        val perms = mutableListOf<String>()
+
+        perms.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        perms.add(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            perms.add(Manifest.permission.BLUETOOTH_SCAN)
+            perms.add(Manifest.permission.BLUETOOTH_CONNECT)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            perms.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        val missingPermissions =
+            perms.filter {
+                ContextCompat.checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED
+            }
+
+        if (missingPermissions.isNotEmpty()) {
+            Log.i(TAG, "Requesting missing permissions: $missingPermissions")
+
+            EasyPermissions.requestPermissions(
+                activity,
+                "This app requires Location, Bluetooth, and Notification permissions to function correctly.",
+                1000, // Use a generic ALL_PERMISSIONS_REQUEST_CODE
+                *missingPermissions.toTypedArray(),
+            )
+        } else {
+            Log.v(TAG, "All permissions already granted.")
+        }
     }
 }

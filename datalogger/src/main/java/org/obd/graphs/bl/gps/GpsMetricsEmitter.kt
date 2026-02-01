@@ -94,7 +94,6 @@ internal class GpsMetricsEmitter : MetricsProcessor {
     }
 
     override fun onStopped() {
-        Log.i(TAG, "Stopping GPS updates")
         stopGpsUpdates()
     }
 
@@ -147,6 +146,9 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     private fun stopGpsUpdates() {
         try {
+
+            Log.i(TAG, "Stopping GPS updates")
+
             locationListener?.let { locationManager?.removeUpdates(it) }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
