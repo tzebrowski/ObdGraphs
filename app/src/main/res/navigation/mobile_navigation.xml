@@ -2,11 +2,11 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/navigation_gauge">
+    app:startDestination="@+id/nav_gauge">
 
 
     <fragment
-        android:id="@+id/navigation_gauge"
+        android:id="@+id/nav_gauge"
         android:name="org.obd.graphs.ui.gauge.GaugeFragment"
         android:label="@string/navigation.title_gauge"
         tools:layout="@layout/fragment_gauge" />
@@ -30,25 +30,25 @@
         tools:layout="@layout/fragment_performance" />
 
     <fragment
-        android:id="@+id/navigation_giulia"
+        android:id="@+id/nav_giulia"
         android:name="org.obd.graphs.ui.giulia.GiuliaFragment"
         android:label="@string/navigation.title_giulia"
         tools:layout="@layout/fragment_giulia" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/nav_dashboard"
         android:name="org.obd.graphs.ui.dashboard.DashboardFragment"
         android:label="@string/navigation.title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_graph"
+        android:id="@+id/nav_graph"
         android:name="org.obd.graphs.ui.graph.GraphFragment"
         android:label="@string/navigation.title_graph"
         tools:layout="@layout/fragment_graph" />
 
     <fragment
-        android:id="@+id/navigation_preferences"
+        android:id="@+id/nav_preferences"
         android:name="org.obd.graphs.preferences.PreferencesFragment"
         android:label="@string/navigation.title_preferences"
         tools:layout="@layout/fragment_preferences" />

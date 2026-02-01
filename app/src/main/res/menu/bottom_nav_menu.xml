@@ -1,32 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:tooltipText="@string/navigation.tooltip_gauge"
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_view_configuration"
+        android:title="@string/context_menu.view_configuration" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_pids_to_display"
+        android:title="@string/context_menu.parameters_id_to_display" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_pids_to_query"
+        android:title="@string/context_menu.parameters_id_to_query" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_view_profiles"
+        android:title="@string/context_menu.profiles" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_dtc"
+        android:title="@string/pref.dtc.title" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_vehicle_properties"
+        android:title="@string/pref.vehicle.metadata_title" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_view_custom_action_1"
+        android:title="@string/context_menu.custom_action_1" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_submenu_filters"
+        android:title="@string/pref.graph.view.filters">
+        <menu>
+            <item
+                android:id="@+id/ctx_menu_submenu_filters_filter_1"
+                android:title="@string/pref.graph.view.filters_filter_1"/>
+
+            <item
+                android:id="@+id/ctx_menu_submenu_filters_filter_2"
+                android:title="@string/pref.graph.view.filters_filter_2"/>
+
+            <item
+                android:id="@+id/ctx_menu_submenu_filters_filter_3"
+                android:title="@string/pref.graph.view.filters_filter_3"/>
+
+            <item
+                android:id="@+id/ctx_menu_submenu_filters_filter_4"
+                android:title="@string/pref.graph.view.filters_filter_4"/>
+
+            <item
+                android:id="@+id/ctx_menu_submenu_filters_filter_5"
+                android:title="@string/pref.graph.view.filters_filter_5"/>
+
+            <item
+                android:id="@+id/ctx_menu_submenu_filters_filter_6"
+                android:title="@string/pref.graph.view.filters_filter_6"/>
+
+            <item
+                android:id="@+id/ctx_menu_submenu_filters_filter_7"
+                android:title="@string/pref.graph.view.filters_filter_7"/>
+
+        </menu>
+
+    </item>
+
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/ctx_menu_about"
+        android:title="@string/context_menu.about" />
+
+    <item
+        android:icon="@drawable/ic_menu"
+        app:showAsAction="always|withText"
+        android:id="@+id/ctx_menu_views"
+        android:title="@string/context_menu.jump_to_view">
+        <menu>
+            <item
+                android:icon="@drawable/action_drag_race"
+                app:showAsAction="ifRoom|withText"
+                android:id="@+id/ctx_menu_drag_racing_view"
+                android:title="@string/context_menu.drag_racing" />
+
+            <item
+                app:showAsAction="ifRoom|withText"
+                android:icon="@drawable/action_drag_race"
+                android:id="@+id/ctx_menu_performance_view"
+                android:title="@string/context_menu.performance" />
+
+            <item
+                android:icon="@android:drawable/ic_dialog_dialer"
+                app:showAsAction="ifRoom|withText"
+                android:id="@+id/ctx_menu_trip_info_view"
+                android:title="@string/context_menu.trip_info" />
+        </menu>
+    </item>
+
+    <item
+        app:showAsAction="always"
+        android:icon="@drawable/ic_aa"
+        android:id="@+id/ctx_menu_android_auto"
+        android:title="@string/pref.aa.title" />
+
+    <item
         android:id="@+id/navigation_gauge"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:title="@string/navigation.title_gauge" />
+        android:icon="@drawable/ic_gauge"
+        android:title="@string/navigation.title_gauge"
+        android:tooltipText="@string/navigation.tooltip_gauge"
+        app:showAsAction="always" />
 
     <item
-        android:tooltipText="@string/navigation.tooltip_giulia_dashboard"
+        android:id="@+id/placeholder"
+        android:title=""
+        android:enabled="false"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/navigation_giulia"
-        android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/navigation.title_giulia" />
+        android:icon="@drawable/ic_giulia"
+        android:title="@string/navigation.title_giulia"
+        android:tooltipText="@string/navigation.tooltip_giulia_dashboard"
+        app:showAsAction="always" />
 
     <item
-        android:tooltipText="@string/navigation.tooltip_graph"
         android:id="@+id/navigation_graph"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:title="@string/navigation.title_graph" />
+        android:icon="@drawable/ic_graph"
+        android:title="@string/navigation.title_graph"
+        android:tooltipText="@string/navigation.tooltip_graph"
+        app:showAsAction="always" />
     <item
-        android:tooltipText="@string/navigation.tooltip_dashboard"
         android:id="@+id/navigation_dashboard"
         android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/navigation.title_dashboard" />
+        android:title="@string/navigation.title_dashboard"
+        android:tooltipText="@string/navigation.tooltip_dashboard"
+        app:showAsAction="always" />
 
     <item
-        android:tooltipText="@string/navigation.tooltip_preferences"
         android:id="@+id/navigation_preferences"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/navigation.title_preferences" />
+        android:icon="@drawable/ic_preferences"
+        android:title="@string/navigation.title_preferences"
+        android:tooltipText="@string/navigation.tooltip_preferences"
+        app:showAsAction="always" />
 </menu>

@@ -89,22 +89,22 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 when (preference.source) {
                     "dash" -> {
                         openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD)
-                        { navigateToScreen(R.id.navigation_dashboard) }
+                        { navigateToScreen(R.id.nav_dashboard) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GRAPH -> {
                         openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(), preference.source)
-                        { navigateToScreen(R.id.navigation_graph) }
+                        { navigateToScreen(R.id.nav_graph) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GIULIA -> {
                         openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(), preference.source)
-                        { navigateToScreen(R.id.navigation_giulia) }
+                        { navigateToScreen(R.id.nav_giulia) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GAUGE -> {
                         openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), preference.source)
-                        { navigateToScreen(R.id.navigation_gauge) }
+                        { navigateToScreen(R.id.nav_gauge) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_TRIP_INFO -> {
@@ -281,19 +281,19 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
             PREFERENCE_SCREEN_KEY_DASH ->
                 openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD)
-                { navigateToScreen(R.id.navigation_dashboard) }
+                { navigateToScreen(R.id.nav_dashboard) }
 
             PREFERENCE_SCREEN_KEY_GAUGE ->
                 openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GAUGE)
-                { navigateToScreen(R.id.navigation_gauge) }
+                { navigateToScreen(R.id.nav_gauge) }
 
             PREFERENCE_SCREEN_KEY_GIULIA ->
                 openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GIULIA)
-                { navigateToScreen(R.id.navigation_giulia) }
+                { navigateToScreen(R.id.nav_giulia) }
 
             PREFERENCE_SCREEN_KEY_GRAPH ->
                 openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GRAPH)
-                { navigateToScreen(R.id.navigation_graph) }
+                { navigateToScreen(R.id.nav_graph) }
         }
     }
 
