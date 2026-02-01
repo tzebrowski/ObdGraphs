@@ -143,15 +143,7 @@ internal fun MainActivity.setupNavigationBar() {
         }
 
         NavigationUI.setupWithNavController(findViewById(R.id.bottom_app_bar), navController, appBarConfiguration)
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
-
-            if (destination.id == R.id.nav_dashboard || destination.id == R.id.nav_graph || destination.id == R.id.nav_giulia) {
-                supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            } else {
-                supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            }
-
 
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
@@ -263,7 +255,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
                         else -> null
                     }
 
-                    Log.e(LOG_TAG, "current screen $screenId  ${getCurrentScreenId()}")
+                    Log.d(LOG_TAG, "Jumping to preference screen for current screen $screenId  ${getCurrentScreenId()}")
                     screenId?.apply {
                         navigateToPreferencesScreen(this)
                     }

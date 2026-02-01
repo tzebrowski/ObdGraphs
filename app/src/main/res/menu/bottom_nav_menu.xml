@@ -86,11 +86,40 @@
         android:title="@string/context_menu.about" />
 
     <item
+        android:id="@+id/navigation_giulia"
+        android:icon="@drawable/ic_giulia"
+        android:title="@string/navigation.title_giulia"
+        android:tooltipText="@string/navigation.tooltip_giulia_dashboard"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/navigation_graph"
+        android:icon="@drawable/ic_graph"
+        android:title="@string/navigation.title_graph"
+        android:tooltipText="@string/navigation.tooltip_graph"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/navigation_preferences"
+        android:icon="@drawable/ic_preferences"
+        android:title="@string/navigation.title_preferences"
+        android:tooltipText="@string/navigation.tooltip_preferences"
+        app:showAsAction="always" />
+
+    <item
         android:icon="@drawable/ic_menu"
         app:showAsAction="always|withText"
         android:id="@+id/ctx_menu_views"
         android:title="@string/context_menu.jump_to_view">
         <menu>
+            <item
+                android:id="@+id/navigation_dashboard"
+                android:icon="@android:drawable/ic_dialog_dialer"
+                android:title="@string/navigation.title_dashboard"
+                android:tooltipText="@string/navigation.tooltip_dashboard"
+                app:showAsAction="always" />
+
             <item
                 android:icon="@drawable/action_drag_race"
                 app:showAsAction="ifRoom|withText"
@@ -111,30 +140,4 @@
         </menu>
     </item>
 
-    <item
-        android:id="@+id/navigation_giulia"
-        android:icon="@drawable/ic_giulia"
-        android:title="@string/navigation.title_giulia"
-        android:tooltipText="@string/navigation.tooltip_giulia_dashboard"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/navigation_graph"
-        android:icon="@drawable/ic_graph"
-        android:title="@string/navigation.title_graph"
-        android:tooltipText="@string/navigation.tooltip_graph"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@android:drawable/ic_dialog_dialer"
-        android:title="@string/navigation.title_dashboard"
-        android:tooltipText="@string/navigation.tooltip_dashboard"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/navigation_preferences"
-        android:icon="@drawable/ic_preferences"
-        android:title="@string/navigation.title_preferences"
-        android:tooltipText="@string/navigation.tooltip_preferences"
-        app:showAsAction="always" />
 </menu>
