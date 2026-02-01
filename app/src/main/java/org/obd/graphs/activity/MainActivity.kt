@@ -20,15 +20,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
-import android.provider.Settings
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -162,7 +157,6 @@ class MainActivity :
         setupLeftNavigationPanel()
         supportActionBar?.hide()
         setupMetricsProcessors()
-        setupBatteryOptimization()
         backupManager = BackupManager(this)
         displayAppSignature(this)
 
@@ -258,25 +252,6 @@ class MainActivity :
 
         if (BuildConfig.DEBUG) {
             dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
-        }
-    }
-
-    private fun setupBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val registered = (getSystemService(POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(packageName)
-            Log.i(
-                LOG_TAG,
-                "Checking permissions related to battery optimization. Ignoring Battery Optimization for package=$packageName, " +
-                    "registered=$registered",
-            )
-            if (!registered) {
-                startActivity(
-                    Intent().apply {
-                        action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                        data = Uri.parse("package:$packageName")
-                    },
-                )
-            }
         }
     }
 

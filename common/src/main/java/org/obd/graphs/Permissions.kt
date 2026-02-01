@@ -17,11 +17,16 @@
 package org.obd.graphs
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
@@ -33,19 +38,18 @@ private const val LOCATION_REQUEST_CODE = 1001
 private const val BLUETOOTH_REQUEST_CODE = 1002
 private const val NOTIFICATION_REQUEST_CODE = 1003
 
-object Permissions {
+ @SuppressLint("ObsoleteSdkInt")
+ object Permissions {
+
     /**
      * Returns TRUE if any required permission is missing.
      * Reuses your existing individual checks.
      */
     fun isAnyPermissionMissing(context: Context): Boolean {
-        // Reuse hasLocationPermissions
         if (!hasLocationPermissions(context)) return true
-
-        // Reuse hasNotificationPermissions
         if (!hasNotificationPermissions(context)) return true
+        if (!isBatteryOptimizationEnabled(context)) return true
 
-        // Reuse Bluetooth check
         val btPerms = getBluetoothPermissions()
         return !EasyPermissions.hasPermissions(context, *btPerms)
     }
@@ -54,7 +58,7 @@ object Permissions {
         val message =
             """
             To provide full functionality, please allow the following in the next steps:
-
+            • Battery Optimization: To ensure data logging isn't interrupted in the background.
             • Location: To track your trip via GPS.
             • Bluetooth: To connect to your OBD adapter.
             • Notifications: To keep the logger running in the background.
@@ -65,9 +69,27 @@ object Permissions {
             .setTitle("Setup Required")
             .setMessage(message)
             .setPositiveButton("Begin Setup") { _, _ ->
-                requestAll(activity)
+               requestAll(activity)
+
+                if (!isBatteryOptimizationEnabled(activity)) {
+                    requestBatteryOptimization(activity)
+                }
             }.setNegativeButton("Later", null)
             .show()
+    }
+
+
+
+    /**
+     * Checks if the app is already ignoring battery optimizations.
+     */
+    @SuppressLint("ObsoleteSdkInt")
+    fun isBatteryOptimizationEnabled(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
+            return powerManager?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+        }
+        return true
     }
 
     /**
@@ -237,6 +259,21 @@ object Permissions {
             )
         } else {
             Log.v(TAG, "All permissions already granted.")
+        }
+    }
+
+    /**
+     * Triggers the battery optimization intent.
+     * Note: This must be called from an Activity.
+     */
+    private fun requestBatteryOptimization(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.i(TAG, "Requesting to ignore battery optimizations.")
+            val intent = Intent().apply {
+                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                data = Uri.parse("package:${activity.packageName}")
+            }
+            activity.startActivity(intent)
         }
     }
 }
