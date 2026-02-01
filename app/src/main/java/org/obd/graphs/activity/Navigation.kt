@@ -19,41 +19,55 @@ package org.obd.graphs.activity
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
-import android.view.MenuItem
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.trip.RESERVED_SCREEN_ID
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.getContext
-import org.obd.graphs.preferences.*
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_DASH
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GAUGE
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GIULIA
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GRAPH
+import org.obd.graphs.preferences.PREF_GAUGE_TRIPS
+import org.obd.graphs.preferences.PREF_LOGS
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
+internal const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
+private const val PREF_NAVIGATION_LAST_VISITED_SCREEN = "pref.navigation.last_visited.screen"
+private const val PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED = "pref.views.navigation.navigate_last_visited_view"
 
 fun navigateToPreferencesScreen(navigateToPrefKey: String) {
     (getContext() as MainActivity).navController {
-        it.navigate(R.id.navigation_preferences, bundleOf(PREFERENCE_SCREEN_KEY to navigateToPrefKey))
+        it.navigate(R.id.nav_preferences, bundleOf(PREFERENCE_SCREEN_KEY to navigateToPrefKey))
     }
 }
 
 fun navigateToScreen(id: Int) {
-    (getContext() as MainActivity).navController {
-        it.navigate(id, null)
+    try {
+        (getContext() as MainActivity).navController {
+            it.navigate(id, null)
+        }
+        Prefs.updateInt(PREF_NAVIGATION_LAST_VISITED_SCREEN, id)
+    } catch (e: IllegalArgumentException) {
+        Log.e(LOG_TAG, "Most probably the $id is not the navigation id.", e)
     }
 }
 
 internal fun MainActivity.setupLeftNavigationPanel() {
-
     leftAppBar { navigationView ->
-
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_preferences_alerts -> navigateToPreferencesScreen("pref.alerts.settings")
@@ -67,7 +81,7 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_dashboard_prefs -> navigateToPreferencesScreen("pref.dashboard")
                 R.id.navigation_giulia_prefs -> navigateToPreferencesScreen("pref.giulia")
                 R.id.navigation_gauge_prefs -> navigateToPreferencesScreen("pref.gauge")
-                R.id.navigation_android_auto -> navigateToPreferencesScreen("pref.aa")
+                R.id.ctx_menu_android_auto -> navigateToPreferencesScreen("pref.aa")
                 R.id.ctx_menu_vehicle_properties -> navigateToPreferencesScreen("pref.vehicle.properties")
                 R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
                 R.id.ctx_menu_view_profiles -> navigateToPreferencesScreen("pref.profiles")
@@ -88,12 +102,21 @@ internal fun MainActivity.setupLeftNavigationPanel() {
                 R.id.navigation_dashboard_pids -> navigateToPreferencesScreen(PREFERENCE_SCREEN_KEY_DASH)
                 R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_TRIPS)
                 R.id.ctx_menu_pids_to_query -> navigateToPreferencesScreen("pref.registry")
-                R.id.navigation_preferences -> navigateToPreferencesScreen("pref.root")
+                R.id.nav_preferences -> navigateToPreferencesScreen("pref.root")
                 R.id.navigation_preferences_adapter -> navigateToPreferencesScreen("pref.adapter.connection")
                 R.id.navigation_adapter_dri -> navigateToPreferencesScreen("pref.init")
-
                 R.id.navigation_trip_logs -> navigateToPreferencesScreen(PREF_LOGS)
-                else -> navigateToScreen(item.itemId)
+
+                R.id.navigation_giulia -> navigateToScreen(R.id.nav_giulia)
+                R.id.navigation_graph -> navigateToScreen(R.id.nav_graph)
+                R.id.navigation_gauge -> navigateToScreen(R.id.nav_gauge)
+                R.id.navigation_dashboard -> navigateToScreen(R.id.nav_dashboard)
+                R.id.navigation_preferences -> navigateToScreen(R.id.nav_preferences)
+                R.id.navigation_drag_racing -> navigateToScreen(R.id.nav_drag_racing)
+                R.id.navigation_trip_info -> navigateToScreen(R.id.nav_trip_info)
+                R.id.navigation_performance -> navigateToScreen(R.id.nav_performance)
+
+                else -> Log.e(LOG_TAG, "Unknown Navigation menu item ${item.itemId}")
             }
 
             getDrawer().closeDrawer(GravityCompat.START)
@@ -104,25 +127,8 @@ internal fun MainActivity.setupLeftNavigationPanel() {
 
 internal fun MainActivity.setupNavigationBar() {
     navController { navController ->
-
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_gauge,
-                R.id.navigation_graph,
-                R.id.navigation_giulia,
-                R.id.navigation_dashboard,
-                R.id.navigation_preferences,
-            )
-        )
-
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        bottomNavigationView {
-            it.setPadding(0, 0, 0, 20)
+        bottomAppBar {
             it.setOnApplyWindowInsetsListener(null)
-            it.setupWithNavController(navController)
-            it.selectedItemId = R.id.navigation_gauge
-
             it.menu.run {
                 val mainActivityPreferences = getMainActivityPreferences()
                 findItem(R.id.navigation_giulia).isVisible =
@@ -139,10 +145,12 @@ internal fun MainActivity.setupNavigationBar() {
             }
         }
 
+        NavigationUI.setupWithNavController(findViewById(R.id.bottom_app_bar), navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
+
             bottomAppBar {
                 it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
-                it.menu.findItem(R.id.ctx_menu_android_auto).let {
+                it.menu.findItem(R.id.ctx_menu_android_auto)?.let {
                     if (isAndroidAutoEnabled()) {
                         val spanString = SpannableString(it.title.toString())
                         spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
@@ -151,11 +159,10 @@ internal fun MainActivity.setupNavigationBar() {
                     } else {
                         it.isVisible = false
                     }
-
                 }
 
                 it.menu.findItem(R.id.ctx_menu_views).let {
-                    val spanString = SpannableString(it.title.toString()).apply {  }
+                    val spanString = SpannableString(it.title.toString()).apply { }
                     spanString.setSpan(ForegroundColorSpan(COLOR_CARDINAL), 0, spanString.length, 0)
                     it.title = spanString
                 }
@@ -168,20 +175,21 @@ internal fun MainActivity.setupNavigationBar() {
 
                         it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = true
 
-                        val spanString = SpannableString("${resources.getString(R.string.pref_graph_view_filters)} (${getGraphFilterSource()})")
+                        val spanString =
+                            SpannableString("${resources.getString(R.string.pref_graph_view_filters)} (${getGraphFilterSource()})")
                         spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
                         it.menu.findItem(R.id.ctx_menu_submenu_filters).title = spanString
-                     }
+                    }
 
                     resources.getString(R.string.navigation_title_giulia) -> {
-                       it.menu.findItem(R.id.ctx_menu_view_custom_action_1).title = resources.getString(R.string.pref_giulia_apply_graph_filter)
-                       it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
+                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).title =
+                            resources.getString(R.string.pref_giulia_apply_graph_filter)
+                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
                     }
 
                     else -> {
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
                         it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = false
-
                     }
                 }
             }
@@ -189,15 +197,27 @@ internal fun MainActivity.setupNavigationBar() {
     }
 }
 
+internal fun MainActivity.navigateToLastVisitedScreen() {
+    val lastVisitedScreen = Prefs.getInt(PREF_NAVIGATION_LAST_VISITED_SCREEN, -1)
+    if (lastVisitedScreen != -1 && Prefs.isEnabled(PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED)) {
+        Log.i(LOG_TAG, "Loading last visited view: $lastVisitedScreen")
+        navigateToScreen(lastVisitedScreen)
+    }
+}
+
 internal fun MainActivity.setupNavigationBarButtons() {
     bottomAppBar {
-
         it.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.navigation_giulia -> navigateToScreen(R.id.nav_giulia)
+                R.id.navigation_graph -> navigateToScreen(R.id.nav_graph)
+                R.id.navigation_gauge -> navigateToScreen(R.id.nav_gauge)
+                R.id.navigation_dashboard -> navigateToScreen(R.id.nav_dashboard)
+                R.id.navigation_preferences -> navigateToScreen(R.id.nav_preferences)
 
-                R.id.ctx_menu_trip_info_view -> navigateToScreen(R.id.navigation_trip_info)
-                R.id.ctx_menu_performance_view -> navigateToScreen(R.id.navigation_performance)
-                R.id.ctx_menu_drag_racing_view ->  navigateToScreen(R.id.navigation_drag_racing)
+                R.id.ctx_menu_trip_info_view -> navigateToScreen(R.id.nav_trip_info)
+                R.id.ctx_menu_performance_view -> navigateToScreen(R.id.nav_performance)
+                R.id.ctx_menu_drag_racing_view -> navigateToScreen(R.id.nav_drag_racing)
 
                 R.id.ctx_menu_vehicle_properties -> navigateToPreferencesScreen("pref.vehicle.properties")
                 R.id.ctx_menu_about -> navigateToPreferencesScreen("pref.about")
@@ -216,14 +236,16 @@ internal fun MainActivity.setupNavigationBarButtons() {
 
                 R.id.ctx_menu_view_custom_action_1 -> {
                     when (getCurrentScreenId()) {
-                        R.id.navigation_graph -> {
+                        R.id.nav_graph -> {
                             navigateToPreferencesScreen(PREF_GAUGE_TRIPS)
                         }
-                        R.id.navigation_giulia -> {
-                            tripVirtualScreenManager.updateReservedVirtualScreen(Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList())
-                            tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
 
-                            navigateToScreen(R.id.navigation_graph)
+                        R.id.nav_giulia -> {
+                            tripVirtualScreenManager.updateReservedVirtualScreen(
+                                Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList(),
+                            )
+                            tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
+                            navigateToScreen(R.id.nav_graph)
                         }
 
                         else -> {}
@@ -231,13 +253,16 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 }
 
                 R.id.ctx_menu_pids_to_display -> {
-                    val screenId = when (getCurrentScreenId()) {
-                        R.id.navigation_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
-                        R.id.navigation_graph -> PREFERENCE_SCREEN_KEY_GRAPH
-                        R.id.navigation_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
-                        R.id.navigation_dashboard -> PREFERENCE_SCREEN_KEY_DASH
-                        else -> null
-                    }
+                    val screenId =
+                        when (getCurrentScreenId()) {
+                            R.id.nav_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
+                            R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
+                            R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
+                            R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
+                            else -> null
+                        }
+
+                    Log.d(LOG_TAG, "Jumping to preference screen for current screen $screenId  ${getCurrentScreenId()}")
                     screenId?.apply {
                         navigateToPreferencesScreen(this)
                     }
@@ -246,12 +271,12 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 R.id.ctx_menu_view_configuration -> {
                     navigateToPreferencesScreen(
                         when (getCurrentScreenId()) {
-                            R.id.navigation_giulia -> "pref.giulia"
+                            R.id.nav_giulia -> "pref.giulia"
                             R.id.navigation_gauge -> "pref.gauge"
-                            R.id.navigation_graph -> "pref.graph"
-                            R.id.navigation_dashboard -> "pref.dashboard"
+                            R.id.nav_graph -> "pref.graph"
+                            R.id.nav_dashboard -> "pref.dashboard"
                             else -> "pref.root"
-                        }
+                        },
                     )
                 }
             }
@@ -261,28 +286,30 @@ internal fun MainActivity.setupNavigationBarButtons() {
 }
 
 private fun MainActivity.applyGraphViewFilter(screenId: Int) {
-    val propertyId: String? =  when (getGraphFilterSource()){
-        "Giulia" -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
-        "Gauge" -> gaugeVirtualScreen.getVirtualScreenPrefKey("$screenId")
-        "AA" -> {
-            if (isAndroidAutoEnabled()) {
-               "pref.aa.pids.profile_$screenId"
-            } else {
-                null
+    val propertyId: String? =
+        when (getGraphFilterSource()) {
+            "Giulia" -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
+            "Gauge" -> gaugeVirtualScreen.getVirtualScreenPrefKey("$screenId")
+            "AA" -> {
+                if (isAndroidAutoEnabled()) {
+                    "pref.aa.pids.profile_$screenId"
+                } else {
+                    null
+                }
             }
+
+            else -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
         }
-        else -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
-    }
 
     Log.i(LOG_TAG, "Applying graph view filter for property.id=$propertyId")
 
-    propertyId?.let{
+    propertyId?.let {
         val filter = Prefs.getStringSet(propertyId).toList()
         Log.i(LOG_TAG, "Applying graph view filter=$filter")
         tripVirtualScreenManager.updateReservedVirtualScreen(filter)
         tripVirtualScreenManager.updateScreenId()
 
-        navigateToScreen(R.id.navigation_graph)
+        navigateToScreen(R.id.nav_graph)
     }
 }
 
@@ -291,9 +318,8 @@ private fun getGraphFilterSource() = Prefs.getS("pref.graph.filter.source", "Giu
 private fun MainActivity.isAndroidAutoEnabled() = resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)
 
 private fun MainActivity.getCurrentScreenId(): Int {
-    val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottom_nav_view)
-    val selectedItemId: Int = bottomNavigationView.selectedItemId
-    val currentView: MenuItem =
-        bottomNavigationView.menu.findItem(selectedItemId)
-    return currentView.itemId
+    val navHostFragment =
+        supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+    return navHostFragment?.navController?.currentDestination?.id ?: -1
 }

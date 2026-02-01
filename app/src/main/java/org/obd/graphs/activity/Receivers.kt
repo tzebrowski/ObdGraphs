@@ -96,6 +96,8 @@ private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
+
+        NAVIGATION_BUTTONS_VISIBILITY_CHANGED -> setupNavigationBar()
         GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed)
         GOOGLE_SIGN_IN_GENERAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed_restart)
         TRIPS_UPLOAD_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_failed)
@@ -171,10 +173,10 @@ internal fun MainActivity.receive(intent: Intent?) {
             updateVehicleProfile()
             updateAdapterConnectionType()
 
-            toggleNavigationItem(GIULIA_VIEW_ID, R.id.navigation_giulia)
-            toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
-            toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
-            toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
+            toggleNavigationItem(GIULIA_VIEW_ID, R.id.nav_giulia)
+            toggleNavigationItem(GRAPH_VIEW_ID, R.id.nav_graph)
+            toggleNavigationItem(DASH_VIEW_ID, R.id.nav_dashboard)
+            toggleNavigationItem(GAUGE_VIEW_ID, R.id.nav_gauge)
         }
 
         SCREEN_OFF_EVENT -> screen.lockScreen(this)
@@ -187,9 +189,9 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(org.obd.graphs.commons.R.string.main_activity_toast_adapter_is_not_selected)
         }
 
-        NOTIFICATION_GIULIA_VIEW_TOGGLE -> toggleNavigationItem(GIULIA_VIEW_ID, R.id.navigation_giulia)
-        NOTIFICATION_GRAPH_VIEW_TOGGLE -> toggleNavigationItem(GRAPH_VIEW_ID, R.id.navigation_graph)
-        NOTIFICATION_DASH_VIEW_TOGGLE -> toggleNavigationItem(DASH_VIEW_ID, R.id.navigation_dashboard)
+        NOTIFICATION_GIULIA_VIEW_TOGGLE -> toggleNavigationItem(GIULIA_VIEW_ID, R.id.nav_giulia)
+        NOTIFICATION_GRAPH_VIEW_TOGGLE -> toggleNavigationItem(GRAPH_VIEW_ID, R.id.nav_graph)
+        NOTIFICATION_DASH_VIEW_TOGGLE -> toggleNavigationItem(DASH_VIEW_ID, R.id.nav_dashboard)
         NOTIFICATION_GAUGE_VIEW_TOGGLE -> toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
 
         DATA_LOGGER_CONNECTING_EVENT -> {
@@ -289,7 +291,7 @@ internal fun MainActivity.toggleNavigationItem(
     prefKey: String,
     id: Int,
 ) {
-    bottomNavigationView {
+    bottomAppBar {
         it.menu.findItem(id)?.run {
             this.isVisible = Prefs.getBoolean(prefKey, true)
         }
@@ -356,6 +358,7 @@ internal fun MainActivity.registerReceiver() {
 
         it.addAction(REQUEST_NOTIFICATION_PERMISSIONS)
         it.addAction(LOCATION_IS_DISABLED)
+        it.addAction(NAVIGATION_BUTTONS_VISIBILITY_CHANGED)
     }
 
     registerReceiver(this, powerReceiver) {

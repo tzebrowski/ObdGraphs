@@ -24,7 +24,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import org.obd.graphs.R
@@ -36,10 +35,6 @@ fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
 fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {
     func(findViewById(R.id.p_bar))
 }
-
- fun MainActivity.bottomNavigationView(func: (p: BottomNavigationView) -> Unit) {
-     func(findViewById(R.id.bottom_nav_view))
- }
 
 fun MainActivity.timer(func: (p: Chronometer) -> Unit) {
     func(findViewById(R.id.timer))

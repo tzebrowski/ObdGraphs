@@ -73,7 +73,7 @@
     <item android:title="@string/navigation.title_aa" android:visible="@bool/MODULE_ANDROID_AUTO_ENABLED">
         <menu>
             <item
-                android:id="@+id/navigation_android_auto"
+                android:id="@+id/ctx_menu_android_auto"
                 android:icon="@drawable/android_auto_icon"
                 android:title="@string/pref.settings"
                 android:tooltipText="@string/pref.settings"

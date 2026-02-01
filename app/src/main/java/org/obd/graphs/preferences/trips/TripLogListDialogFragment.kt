@@ -77,7 +77,7 @@ class TripLogListDialogFragment(
         recyclerView.adapter = adapter
 
         attachCloseButton(root) {
-            navigateToScreen(R.id.navigation_graph)
+            navigateToScreen(R.id.nav_graph)
         }
         if (enableDeleteButtons) {
             root.findViewById<Button>(R.id.trip_action_delete_all).apply {

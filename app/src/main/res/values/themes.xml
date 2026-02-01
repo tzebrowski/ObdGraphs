@@ -21,4 +21,22 @@
         <item name="android:textColor">@color/gray_dark</item>
         <item name="android:textColorSecondary">@color/gray_light</item>
     </style>
+
+
+    <style name="AppTheme.CompactBottomBar" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="actionButtonStyle">@style/CompactActionButton</item>
+        <item name="colorControlNormal">@color/black</item>
+
+    </style>
+
+    <style name="CompactActionButton" parent="Widget.AppCompat.ActionButton">
+
+        <item name="android:minWidth">32dp</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:translationY">8dp</item>
+
+    </style>
+
 </resources>

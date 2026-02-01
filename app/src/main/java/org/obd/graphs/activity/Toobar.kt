@@ -19,7 +19,6 @@ package org.obd.graphs.activity
 import android.view.View
 import androidx.core.view.isVisible
 import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 
@@ -27,7 +26,6 @@ const val TOOLBAR_TOGGLE_ACTION: String = "toolbar.toggle.event"
 const val TOOLBAR_SHOW: String = "toolbar.reset.animation"
 
 private fun toolbarHide(
-    bottomNavigationView: BottomNavigationView,
     bottomAppBar: BottomAppBar,
     floatingActionButton: FloatingActionButton,
     hide: Boolean,
@@ -35,26 +33,15 @@ private fun toolbarHide(
     fun runAnim() {
         val duration = 250L
 
-        val navHeight = bottomNavigationView.height.toFloat().takeIf { it > 0 } ?: 500f
         val barHeight = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 500f
         val fabHeight = barHeight + floatingActionButton.height.toFloat()
 
         if (!hide) {
-            bottomNavigationView.translationY = navHeight
             bottomAppBar.translationY = barHeight
             floatingActionButton.translationY = fabHeight
-
-            bottomNavigationView.isVisible = true
             bottomAppBar.isVisible = true
             floatingActionButton.visibility = View.VISIBLE
         }
-
-        bottomNavigationView
-            .animate()
-            .translationY(if (hide) navHeight else 0f)
-            .setDuration(duration)
-            .withEndAction { if (hide) bottomNavigationView.isVisible = false }
-            .start()
 
         bottomAppBar
             .animate()
@@ -72,19 +59,19 @@ private fun toolbarHide(
             }.start()
     }
 
-    bottomNavigationView.post { runAnim() }
+    bottomAppBar.post { runAnim() }
 }
 
 fun MainActivity.toolbarToggle() =
-    toolbar { a, b, c ->
-        toolbarHide(a, b, c, a.translationY == 0f && b.isVisible && c.isVisible)
+    toolbar { b, c ->
+        toolbarHide(b, c, b.isVisible && c.isVisible)
     }
 
 fun MainActivity.toolbarHide(hide: Boolean) =
-    toolbar { bottomNavigationView, bottomAppBar, floatingActionButton ->
-        toolbarHide(bottomNavigationView, bottomAppBar, floatingActionButton, hide)
+    toolbar { bottomAppBar, floatingActionButton ->
+        toolbarHide(bottomAppBar, floatingActionButton, hide)
     }
 
-private fun MainActivity.toolbar(func: (p: BottomNavigationView, r: BottomAppBar, c: FloatingActionButton) -> Unit) {
-    func(findViewById(R.id.bottom_nav_view), findViewById(R.id.bottom_app_bar), findViewById(R.id.connect_btn))
+private fun MainActivity.toolbar(func: (r: BottomAppBar, c: FloatingActionButton) -> Unit) {
+    func(findViewById(R.id.bottom_app_bar), findViewById(R.id.connect_btn))
 }

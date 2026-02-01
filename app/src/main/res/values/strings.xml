@@ -362,6 +362,9 @@
     <string name="pref.enable_view_summary">When enabled, an extra button will appear on the taskbar, providing a shortcut to the view.</string>
     <string name="pref.enable_view">Display view shortcut on the taskbar</string>
 
+    <string name="pref.view.navigation.navigate_to_last_visited_view">Navigate to last visited view</string>
+    <string name="pref.view.navigation.navigate_to_last_visited_view_summary">When enabled, app during startup opens last visited view</string>
+
     <string name="pref.graph.trips_recordings_display_info">Display trip info</string>
     <string name="pref.graph.trips_recordings_save_short_trip">Record trips shorten than 5s length (engine start)</string>
     <string name="pref.graph.x_axis_start_moving_after_time">X-Axis start moving after</string>

@@ -34,6 +34,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
@@ -74,6 +77,7 @@ class MainActivity :
         }
 
     private val cache: MutableMap<String, Any> = mutableMapOf()
+    internal lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -123,15 +127,22 @@ class MainActivity :
         sendBroadcastEvent(MAIN_ACTIVITY_EVENT_PAUSE)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        return NavigationUI.navigateUp(navController,appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setupStrictMode()
         super.onCreate(savedInstanceState)
-
         setActivityContext(this)
         initCache()
         setContentView(R.layout.activity_main)
 
         screen.setupWindowManager(this)
+
+        this.appBarConfiguration = getAppBarConfiguration()
+
         setupNavigationBar()
         setupNavigationBarButtons()
         registerReceiver()
@@ -153,6 +164,8 @@ class MainActivity :
         setupBatteryOptimization()
         backupManager = BackupManager(this)
         displayAppSignature(this)
+
+        navigateToLastVisitedScreen()
     }
 
     override fun onResume() {
@@ -179,6 +192,14 @@ class MainActivity :
     }
 
 
+    fun getAppBarConfiguration(): AppBarConfiguration = AppBarConfiguration(
+        setOf(
+            R.id.nav_giulia,
+            R.id.nav_graph,
+            R.id.nav_gauge,
+        ),
+        findViewById<DrawerLayout>(R.id.drawer_layout)
+    )
 
     private fun initCache() {
         cacheManager.initCache(cache)
