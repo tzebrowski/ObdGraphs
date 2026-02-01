@@ -140,7 +140,8 @@ class MainActivity :
         this.appBarConfiguration = getAppBarConfiguration()
 
         setupNavigationBar()
-        setupNavigationBarButtons()
+        setupBottomBarNavigation()
+        setupNavigationViewNavigation()
         registerReceiver()
 
         setupExceptionHandler()
@@ -154,7 +155,6 @@ class MainActivity :
         }
 
         setupLockScreenDialog()
-        setupLeftNavigationPanel()
         supportActionBar?.hide()
         setupMetricsProcessors()
         backupManager = BackupManager(this)
