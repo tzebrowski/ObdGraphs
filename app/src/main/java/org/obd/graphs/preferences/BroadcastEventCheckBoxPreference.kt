@@ -19,8 +19,8 @@ package org.obd.graphs.preferences
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
+import android.util.Log
 import androidx.preference.CheckBoxPreference
-import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
@@ -32,14 +32,16 @@ class BroadcastEventCheckBoxPreference(
     private val experimental = getAttribute("experimental").toBooleanStrictOrNull() ?: false
     private val broadcastEvent = getAttribute("broadcastEvent")
 
-    init {
-        onPreferenceChangeListener =
-            OnPreferenceChangeListener { _, _ ->
-                if (broadcastEvent != null && broadcastEvent.isNotEmpty()) {
-                    sendBroadcastEvent(broadcastEvent)
-                }
-                true
+    override fun setChecked(checked: Boolean) {
+        val changed = isChecked != checked
+        super.setChecked(checked)
+
+        if (changed) {
+            Log.e("BroadcastEventCheckBoxPreference", "Visibility changed to: $checked")
+            if (broadcastEvent != null && broadcastEvent.isNotEmpty()) {
+                sendBroadcastEvent(broadcastEvent)
             }
+        }
     }
 
     override fun getSummary(): CharSequence? =

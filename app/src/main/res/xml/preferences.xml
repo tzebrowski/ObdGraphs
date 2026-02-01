@@ -639,11 +639,12 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.general_settings">
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.gauge.view.enabled"
                         android:summary="@string/pref.enable_view_summary"
                         android:title="@string/pref.enable_view"
+                        app:broadcastEvent="navigation.buttons.changes.event"
                         app:singleLineTitle="false" />
 
                     <CheckBoxPreference
@@ -805,11 +806,12 @@
 
                 <PreferenceCategory android:title="@string/pref.general_settings">
 
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.giulia.view.enabled"
                         android:summary="@string/pref.enable_view_summary"
                         android:title="@string/pref.enable_view"
+                        app:broadcastEvent="navigation.buttons.changes.event"
                         app:singleLineTitle="false" />
 
                     <ListPreference
@@ -1858,11 +1860,12 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.graph.view.enabled"
                         android:summary="@string/pref.enable_view_summary"
                         android:title="@string/pref.enable_view"
+                        app:broadcastEvent="navigation.buttons.changes.event"
                         app:singleLineTitle="false" />
 
                     <CheckBoxPreference
@@ -1939,9 +1942,10 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.general_settings">
-                    <CheckBoxPreference
+                    <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.dash.view.enabled"
+                        app:broadcastEvent="navigation.buttons.changes.event"
                         android:summary="@string/pref.enable_view_summary"
                         android:title="@string/pref.enable_view"
                         app:singleLineTitle="false" />

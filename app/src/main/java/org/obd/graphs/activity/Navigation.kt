@@ -44,6 +44,8 @@ import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
 
+const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
+
 fun navigateToPreferencesScreen(navigateToPrefKey: String) {
     (getContext() as MainActivity).navController {
         it.navigate(R.id.nav_preferences, bundleOf(PREFERENCE_SCREEN_KEY to navigateToPrefKey))

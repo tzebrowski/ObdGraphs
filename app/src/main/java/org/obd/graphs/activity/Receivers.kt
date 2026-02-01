@@ -96,6 +96,8 @@ private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
+
+        NAVIGATION_BUTTONS_VISIBILITY_CHANGED -> setupNavigationBar()
         GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed)
         GOOGLE_SIGN_IN_GENERAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed_restart)
         TRIPS_UPLOAD_FAILED -> toast(org.obd.graphs.commons.R.string.main_activity_toast_trips_upload_failed)
@@ -356,6 +358,7 @@ internal fun MainActivity.registerReceiver() {
 
         it.addAction(REQUEST_NOTIFICATION_PERMISSIONS)
         it.addAction(LOCATION_IS_DISABLED)
+        it.addAction(NAVIGATION_BUTTONS_VISIBILITY_CHANGED)
     }
 
     registerReceiver(this, powerReceiver) {
