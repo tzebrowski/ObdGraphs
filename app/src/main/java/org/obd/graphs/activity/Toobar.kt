@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,6 @@ const val TOOLBAR_TOGGLE_ACTION: String = "toolbar.toggle.event"
 const val TOOLBAR_SHOW: String = "toolbar.reset.animation"
 
 private fun toolbarHide(
-
     bottomAppBar: BottomAppBar,
     floatingActionButton: FloatingActionButton,
     hide: Boolean,

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,7 +43,6 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
-
 const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
 
 fun navigateToPreferencesScreen(navigateToPrefKey: String) {
@@ -63,7 +62,6 @@ fun navigateToScreen(id: Int) {
 }
 
 internal fun MainActivity.setupLeftNavigationPanel() {
-
     leftAppBar { navigationView ->
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -156,7 +154,6 @@ internal fun MainActivity.setupNavigationBar() {
                     } else {
                         it.isVisible = false
                     }
-
                 }
 
                 it.menu.findItem(R.id.ctx_menu_views).let {
@@ -188,15 +185,12 @@ internal fun MainActivity.setupNavigationBar() {
                     else -> {
                         it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
                         it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = false
-
                     }
                 }
             }
         }
     }
 }
-
-
 
 internal fun MainActivity.setupNavigationBarButtons() {
     bottomAppBar {
@@ -235,7 +229,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
 
                         R.id.nav_giulia -> {
                             tripVirtualScreenManager.updateReservedVirtualScreen(
-                                Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList()
+                                Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList(),
                             )
                             tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
                             navigateToScreen(R.id.nav_graph)
@@ -246,14 +240,14 @@ internal fun MainActivity.setupNavigationBarButtons() {
                 }
 
                 R.id.ctx_menu_pids_to_display -> {
-
-                    val screenId = when (getCurrentScreenId()) {
-                        R.id.nav_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
-                        R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
-                        R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
-                        R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
-                        else -> null
-                    }
+                    val screenId =
+                        when (getCurrentScreenId()) {
+                            R.id.nav_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
+                            R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
+                            R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
+                            R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
+                            else -> null
+                        }
 
                     Log.d(LOG_TAG, "Jumping to preference screen for current screen $screenId  ${getCurrentScreenId()}")
                     screenId?.apply {
@@ -269,7 +263,7 @@ internal fun MainActivity.setupNavigationBarButtons() {
                             R.id.nav_graph -> "pref.graph"
                             R.id.nav_dashboard -> "pref.dashboard"
                             else -> "pref.root"
-                        }
+                        },
                     )
                 }
             }
@@ -279,19 +273,20 @@ internal fun MainActivity.setupNavigationBarButtons() {
 }
 
 private fun MainActivity.applyGraphViewFilter(screenId: Int) {
-    val propertyId: String? = when (getGraphFilterSource()) {
-        "Giulia" -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
-        "Gauge" -> gaugeVirtualScreen.getVirtualScreenPrefKey("$screenId")
-        "AA" -> {
-            if (isAndroidAutoEnabled()) {
-                "pref.aa.pids.profile_$screenId"
-            } else {
-                null
+    val propertyId: String? =
+        when (getGraphFilterSource()) {
+            "Giulia" -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
+            "Gauge" -> gaugeVirtualScreen.getVirtualScreenPrefKey("$screenId")
+            "AA" -> {
+                if (isAndroidAutoEnabled()) {
+                    "pref.aa.pids.profile_$screenId"
+                } else {
+                    null
+                }
             }
-        }
 
-        else -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
-    }
+            else -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
+        }
 
     Log.i(LOG_TAG, "Applying graph view filter for property.id=$propertyId")
 
@@ -309,9 +304,9 @@ private fun getGraphFilterSource() = Prefs.getS("pref.graph.filter.source", "Giu
 
 private fun MainActivity.isAndroidAutoEnabled() = resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)
 
-
 private fun MainActivity.getCurrentScreenId(): Int {
-    val navHostFragment = supportFragmentManager
-        .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+    val navHostFragment =
+        supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
     return navHostFragment?.navController?.currentDestination?.id ?: -1
 }
