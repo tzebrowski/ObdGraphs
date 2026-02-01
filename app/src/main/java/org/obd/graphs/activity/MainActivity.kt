@@ -50,9 +50,6 @@ import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
 import org.obd.graphs.network
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.isEnabled
-import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
@@ -167,6 +164,7 @@ class MainActivity :
         setupBatteryOptimization()
         backupManager = BackupManager(this)
         displayAppSignature(this)
+
         navigateToLastVisitedScreen()
     }
 
@@ -257,15 +255,6 @@ class MainActivity :
 
         if (BuildConfig.DEBUG) {
             dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
-        }
-    }
-
-    private fun navigateToLastVisitedScreen() {
-
-        val lastVisitedScreen = Prefs.getInt(PREF_NAVIGATION_LAST_VISITED_SCREEN, -1)
-        if (lastVisitedScreen != -1 && Prefs.isEnabled(PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED)) {
-            Log.i(LOG_TAG, "Loading last visited view: $lastVisitedScreen")
-            navigateToScreen(lastVisitedScreen)
         }
     }
 

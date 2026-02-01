@@ -38,6 +38,7 @@ import org.obd.graphs.preferences.PREF_LOGS
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -45,8 +46,8 @@ import org.obd.graphs.ui.gauge.gaugeVirtualScreen
 import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
 internal const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
-internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN = "pref.navigation.last_visited.screen"
-internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED = "pref.views.navigation.navigate_last_visited_view"
+private const val PREF_NAVIGATION_LAST_VISITED_SCREEN = "pref.navigation.last_visited.screen"
+private const val PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED = "pref.views.navigation.navigate_last_visited_view"
 
 fun navigateToPreferencesScreen(navigateToPrefKey: String) {
     (getContext() as MainActivity).navController {
@@ -193,6 +194,14 @@ internal fun MainActivity.setupNavigationBar() {
                 }
             }
         }
+    }
+}
+
+internal fun MainActivity.navigateToLastVisitedScreen() {
+    val lastVisitedScreen = Prefs.getInt(PREF_NAVIGATION_LAST_VISITED_SCREEN, -1)
+    if (lastVisitedScreen != -1 && Prefs.isEnabled(PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED)) {
+        Log.i(LOG_TAG, "Loading last visited view: $lastVisitedScreen")
+        navigateToScreen(lastVisitedScreen)
     }
 }
 
