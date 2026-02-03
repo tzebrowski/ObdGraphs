@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -40,6 +40,7 @@ import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.SurfaceController
+import org.obd.graphs.ui.withDataLogger
 
 open class DragRacingFragment : BaseFragment() {
 
@@ -65,7 +66,9 @@ open class DragRacingFragment : BaseFragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    dataLogger?.updateQuery(query)
+                    withDataLogger { dataLogger ->
+                        dataLogger.updateQuery(query)
+                    }
                     renderingThread.start()
                 }
 
@@ -130,7 +133,9 @@ open class DragRacingFragment : BaseFragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            dataLogger?.updateQuery(query)
+            withDataLogger { dataLogger ->
+                dataLogger.updateQuery(query)
+            }
             renderingThread.start()
         }
 

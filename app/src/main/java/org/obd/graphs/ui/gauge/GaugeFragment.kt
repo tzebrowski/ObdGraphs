@@ -42,6 +42,7 @@ import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import org.obd.graphs.ui.recycler.RefreshableFragment
+import org.obd.graphs.ui.withDataLogger
 import kotlin.math.roundToInt
 
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
@@ -61,7 +62,6 @@ class GaugeFragment : RefreshableFragment() {
         }
     )
 
-
     @SuppressLint("NotifyDataSetChanged")
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -69,7 +69,9 @@ class GaugeFragment : RefreshableFragment() {
                 DATA_LOGGER_SCHEDULED_START_EVENT -> {
                     if (isAdded && isVisible) {
                         Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                        dataLogger?.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                        withDataLogger { dataLogger ->
+                            dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                        }
                     }
                 }
 
@@ -133,7 +135,10 @@ class GaugeFragment : RefreshableFragment() {
         setupVirtualViewPanel()
 
         if (DataLoggerRepository.isRunning()) {
-            dataLogger?.updateQuery(query())
+            withDataLogger { dataLogger ->
+               dataLogger.updateQuery(query())
+            }
+
             renderingThread.start()
         }
 
@@ -238,7 +243,9 @@ class GaugeFragment : RefreshableFragment() {
                 gaugeVirtualScreen.updateVirtualScreen(viewId)
 
                 if (DataLoggerRepository.isRunning()) {
-                    dataLogger?.updateQuery(query())
+                    withDataLogger { dataLogger ->
+                        dataLogger.updateQuery(query())
+                    }
                 }
 
                 configureView(true)

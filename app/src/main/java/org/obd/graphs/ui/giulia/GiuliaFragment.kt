@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -46,6 +46,7 @@ import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
+import org.obd.graphs.ui.withDataLogger
 
 open class GiuliaFragment : BaseFragment() {
     private lateinit var root: View
@@ -80,7 +81,9 @@ open class GiuliaFragment : BaseFragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            dataLogger?.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                            withDataLogger { dataLogger ->
+                                dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                            }
                         }
                     }
 
@@ -152,7 +155,9 @@ open class GiuliaFragment : BaseFragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            dataLogger?.updateQuery(query())
+            withDataLogger { dataLogger ->
+                dataLogger.updateQuery(query())
+            }
             renderingThread.start()
         }
 
@@ -175,8 +180,10 @@ open class GiuliaFragment : BaseFragment() {
 
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
+                withDataLogger { dataLogger ->
+                    dataLogger.updateQuery(query())
+                }
 
-                dataLogger?.updateQuery(query())
                 applyFilter()
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -41,6 +41,7 @@ import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.SurfaceController
+import org.obd.graphs.ui.withDataLogger
 
 open class PerformanceFragment : BaseFragment() {
     private lateinit var root: View
@@ -52,37 +53,42 @@ open class PerformanceFragment : BaseFragment() {
     private val settings = PerformanceSettings()
     private lateinit var surfaceController: SurfaceController
 
-    private val renderingThread: RenderingThread = RenderingThread(
-        id = "DragRacingRenderingThread",
-        renderAction = {
-            surfaceController.renderFrame()
-        },
-        perfFrameRate = {
-            settings.getSurfaceFrameRate()
-        }
-    )
+    private val renderingThread: RenderingThread =
+        RenderingThread(
+            id = "DragRacingRenderingThread",
+            renderAction = {
+                surfaceController.renderFrame()
+            },
+            perfFrameRate = {
+                settings.getSurfaceFrameRate()
+            },
+        )
 
-    private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
+    private var broadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                when (intent?.action) {
+                    DATA_LOGGER_CONNECTED_EVENT -> {
+                        withDataLogger { dataLogger ->
+                            dataLogger.updateQuery(query)
+                        }
+                        renderingThread.start()
+                    }
 
-                DATA_LOGGER_CONNECTED_EVENT -> {
-                    dataLogger?.updateQuery(query)
-                    renderingThread.start()
-                }
-
-                DATA_LOGGER_STOPPED_EVENT -> {
-                    renderingThread.stop()
-                    attachToFloatingButton(activity, query)
+                    DATA_LOGGER_STOPPED_EVENT -> {
+                        renderingThread.stop()
+                        attachToFloatingButton(activity, query)
+                    }
                 }
             }
         }
-    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         surfaceController.renderFrame()
-
     }
 
     override fun onAttach(context: Context) {
@@ -109,22 +115,26 @@ open class PerformanceFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
         root = inflater.inflate(R.layout.fragment_drag_racing, container, false)
 
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
-        val renderer = SurfaceRenderer.allocate(
-            requireContext(), settings, metricsCollector, fps,
-            surfaceRendererType = SurfaceRendererType.PERFORMANCE, viewSettings = ViewSettings(marginTop = 20)
-        )
+        val renderer =
+            SurfaceRenderer.allocate(
+                requireContext(),
+                settings,
+                metricsCollector,
+                fps,
+                surfaceRendererType = SurfaceRendererType.PERFORMANCE,
+                viewSettings = ViewSettings(marginTop = 20),
+            )
 
         surfaceController = SurfaceController(renderer)
         surfaceView.holder.addCallback(surfaceController)
 
         metricsCollector.applyFilter(
-            enabled = query.getIDs()
+            enabled = query.getIDs(),
         )
 
         DataLoggerRepository.observe(viewLifecycleOwner) {
@@ -134,7 +144,9 @@ open class PerformanceFragment : BaseFragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            dataLogger?.updateQuery(query)
+            withDataLogger { dataLogger ->
+                dataLogger.updateQuery(query)
+            }
             renderingThread.start()
         }
 

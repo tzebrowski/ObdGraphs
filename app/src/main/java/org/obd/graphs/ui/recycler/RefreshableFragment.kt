@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -37,11 +37,13 @@ import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 import org.obd.graphs.ui.gauge.AdapterContext
 
 open class RefreshableFragment : BaseFragment() {
-
     protected val query: Query = Query.instance()
     protected lateinit var root: View
 
-    protected fun refreshRecyclerView(metricsCollector: MetricsCollector, recyclerViewId: Int) {
+    protected fun refreshRecyclerView(
+        metricsCollector: MetricsCollector,
+        recyclerViewId: Int,
+    ) {
         if (::root.isInitialized) {
             val adapter = ((root.findViewById<RecyclerView>(recyclerViewId)!!).adapter) as RecyclerViewAdapter<RecyclerView.ViewHolder>
             val data = adapter.data
@@ -59,7 +61,7 @@ open class RefreshableFragment : BaseFragment() {
 
     protected fun prepareMetrics(
         metricsIdsPref: String,
-        metricsSerializerPref: String
+        metricsSerializerPref: String,
     ): MutableList<Metric> {
         val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = query.filterBy(metricsIdsPref)
@@ -79,20 +81,20 @@ open class RefreshableFragment : BaseFragment() {
             context: Context,
             data: MutableList<Metric>,
             resourceId: Int,
-            height: Int?
+            height: Int?,
         ) -> RecyclerViewAdapter<*>,
-        metricsSerializerPref: String
+        metricsSerializerPref: String,
     ) {
-
         val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
         val metricsIds = query.filterBy(metricsIdsPref)
         val metrics = MetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
 
         recyclerView.layoutManager = GridLayoutManager(requireContext(), adapterContext.spanCount)
-        recyclerView.adapter = adapter(requireContext(), metrics, adapterContext.layoutId, adapterContext.height).apply {
-            setHasStableIds(true)
-            notifyDataSetChanged()
-        }
+        recyclerView.adapter =
+            adapter(requireContext(), metrics, adapterContext.layoutId, adapterContext.height).apply {
+                setHasStableIds(true)
+                notifyDataSetChanged()
+            }
 
         attachDragManager(
             configureChangeEventId = configureChangeEventId,
@@ -100,7 +102,7 @@ open class RefreshableFragment : BaseFragment() {
             enableDragManager = enableDragManager,
             recyclerView = recyclerView,
             metricsIdsPref = metricsIdsPref,
-            viewPreferences = viewPreferences
+            viewPreferences = viewPreferences,
         )
 
         attachOnTouchListener(enableOnTouchListener, recyclerView)
@@ -112,41 +114,45 @@ open class RefreshableFragment : BaseFragment() {
         configureChangeEventId: String,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewSerializer: ViewPreferencesSerializer
-    ): SwappableAdapter = object : SwappableAdapter {
-        override fun swapItems(fromPosition: Int, toPosition: Int) {
-            adapter(recyclerView).swapItems(
-                fromPosition,
-                toPosition
-            )
-        }
+        viewSerializer: ViewPreferencesSerializer,
+    ): SwappableAdapter =
+        object : SwappableAdapter {
+            override fun swapItems(
+                fromPosition: Int,
+                toPosition: Int,
+            ) {
+                adapter(recyclerView).swapItems(
+                    fromPosition,
+                    toPosition,
+                )
+            }
 
-        override fun storePreferences(context: Context) {
-            viewSerializer.store(adapter(recyclerView).data.map { it.source.command.pid.id })
-        }
+            override fun storePreferences(context: Context) {
+                viewSerializer.store(adapter(recyclerView).data.map { it.source.command.pid.id })
+            }
 
-        override fun deleteItems(fromPosition: Int) {
-            val data = adapter(recyclerView).data
-            val itemId: Metric = data[fromPosition]
-            data.remove(itemId)
+            override fun deleteItems(fromPosition: Int) {
+                val data = adapter(recyclerView).data
+                val itemId: Metric = data[fromPosition]
+                data.remove(itemId)
 
-            Prefs.updateLongSet(
-                metricsIdsPref,
-                data.map { obdMetric -> obdMetric.source.command.pid.id }.toList()
-            )
-            sendBroadcastEvent(configureChangeEventId)
+                Prefs.updateLongSet(
+                    metricsIdsPref,
+                    data.map { obdMetric -> obdMetric.source.command.pid.id }.toList(),
+                )
+                sendBroadcastEvent(configureChangeEventId)
+            }
         }
-    }
 
     private fun attachOnTouchListener(
         enableOnTouchListener: Boolean,
-        recyclerView: RecyclerView
+        recyclerView: RecyclerView,
     ) {
         if (enableOnTouchListener) {
             recyclerView.addOnItemTouchListener(
                 ToggleToolbarDoubleClickListener(
-                    requireContext()
-                )
+                    requireContext(),
+                ),
             )
         }
     }
@@ -157,29 +163,31 @@ open class RefreshableFragment : BaseFragment() {
         enableSwipeToDelete: Boolean = false,
         recyclerView: RecyclerView,
         metricsIdsPref: String,
-        viewPreferences: ViewPreferencesSerializer
+        viewPreferences: ViewPreferencesSerializer,
     ) {
         if (enableDragManager) {
             val swappableAdapter = createSwappableAdapter(configureChangeEventId, recyclerView, metricsIdsPref, viewPreferences)
 
-            val callback = if (enableSwipeToDelete)
-                DragManageAdapter(
-                    requireContext(),
-                    ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                    ItemTouchHelper.START or ItemTouchHelper.END, swappableAdapter
-                )
-            else
-                DragManageAdapter(
-                    requireContext(),
-                    ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                    ItemTouchHelper.ACTION_STATE_DRAG, swappableAdapter
-                )
+            val callback =
+                if (enableSwipeToDelete) {
+                    DragManageAdapter(
+                        requireContext(),
+                        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                        ItemTouchHelper.START or ItemTouchHelper.END,
+                        swappableAdapter,
+                    )
+                } else {
+                    DragManageAdapter(
+                        requireContext(),
+                        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+                        ItemTouchHelper.ACTION_STATE_DRAG,
+                        swappableAdapter,
+                    )
+                }
 
             ItemTouchHelper(callback).attachToRecyclerView(recyclerView)
         }
     }
 
-    private fun adapter(recyclerView: RecyclerView) =
-        (recyclerView.adapter as RecyclerViewAdapter)
-
+    private fun adapter(recyclerView: RecyclerView) = (recyclerView.adapter as RecyclerViewAdapter)
 }

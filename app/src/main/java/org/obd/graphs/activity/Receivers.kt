@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -82,6 +82,7 @@ import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.toast
+import org.obd.graphs.ui.withDataLogger
 
 internal val powerReceiver = PowerBroadcastReceiver()
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"
@@ -102,8 +103,10 @@ internal fun MainActivity.receive(intent: Intent?) {
                 LOG_TAG,
                 "Stop data logging",
             )
-            dataLogger?.stop()
-            dataLogger?.scheduledStop()
+            withDataLogger { dataLogger ->
+                dataLogger.stop()
+                dataLogger.scheduledStop()
+            }
         }
 
         NAVIGATION_BUTTONS_VISIBILITY_CHANGED -> setupNavigationBar()
@@ -159,7 +162,9 @@ internal fun MainActivity.receive(intent: Intent?) {
         UsbManager.ACTION_USB_DEVICE_DETACHED -> {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_detached, usbDevice.productName!!)
-            dataLogger?.stop()
+            withDataLogger { dataLogger ->
+                dataLogger.stop()
+            }
         }
 
         USB_DEVICE_ATTACHED_EVENT -> {
@@ -220,7 +225,9 @@ internal fun MainActivity.receive(intent: Intent?) {
                     ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.cardinal)
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
-                    dataLogger?.stop()
+                    withDataLogger { dataLogger ->
+                        dataLogger.stop()
+                    }
                 }
                 it.refreshDrawableState()
             }
@@ -273,7 +280,9 @@ internal fun MainActivity.receive(intent: Intent?) {
             updateVehicleStatus("Key off")
             if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff) {
                 Log.i(LOG_TAG, "Received vehicle status OFF event. Closing the session.")
-                dataLogger?.stop()
+                withDataLogger { dataLogger ->
+                    dataLogger.stop()
+                }
             }
         }
     }
@@ -376,7 +385,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
     }
 
-    registerReceiver(this,DataLoggerRepository.eventsReceiver) {
+    registerReceiver(this, DataLoggerRepository.eventsReceiver) {
         it.addAction(MODULES_LIST_CHANGED_EVENT)
         it.addAction(PROFILE_CHANGED_EVENT)
     }
