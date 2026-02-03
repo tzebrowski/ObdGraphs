@@ -164,7 +164,7 @@ class DataLoggerServiceTest : TestSetup() {
         val controller = Robolectric.buildService(DataLoggerService::class.java, intent)
 
         // Act
-        val service = controller.create().get()
+        controller.create().get()
         controller.startCommand(0, 1)
 
         // Assert

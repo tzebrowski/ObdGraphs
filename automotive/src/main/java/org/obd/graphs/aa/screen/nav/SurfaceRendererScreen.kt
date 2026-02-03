@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -160,19 +160,19 @@ internal class SurfaceRendererScreen(
                 } else {
                     query.setStrategy(QueryStrategyType.SHARED_QUERY)
                 }
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(query = query)
+                withDataLogger {
+                    updateQuery(query = query)
                 }
                 surfaceRendererController.allocateSurfaceRenderer(screenId as SurfaceRendererType)
             }
 
             SurfaceRendererType.DRAG_RACING -> {
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(
+                withDataLogger {
+                    updateQuery(
                         query =
-                            query.apply {
-                                setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                            },
+                        query.apply {
+                            setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                        },
                     )
                 }
 
@@ -180,24 +180,24 @@ internal class SurfaceRendererScreen(
             }
 
             SurfaceRendererType.TRIP_INFO -> {
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(
+                withDataLogger {
+                    updateQuery(
                         query =
-                            query.apply {
-                                setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-                            },
+                        query.apply {
+                            setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+                        },
                     )
                 }
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.TRIP_INFO)
             }
 
             SurfaceRendererType.PERFORMANCE -> {
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(
+                withDataLogger {
+                    updateQuery(
                         query =
-                            query.apply {
-                                setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
-                            },
+                        query.apply {
+                            setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
+                        },
                     )
                 }
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.PERFORMANCE)
@@ -216,14 +216,14 @@ internal class SurfaceRendererScreen(
                 } else {
                     query.setStrategy(QueryStrategyType.SHARED_QUERY)
                 }
-                withDataLogger { dataLogger ->
-                    dataLogger.start(query)
+                withDataLogger {
+                    start(query)
                 }
             }
 
             SurfaceRendererType.DRAG_RACING ->
-                withDataLogger { dataLogger ->
-                    dataLogger.start(
+                withDataLogger {
+                    start(
                         query.apply {
                             setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
                         },
@@ -231,8 +231,8 @@ internal class SurfaceRendererScreen(
                 }
 
             SurfaceRendererType.TRIP_INFO ->
-                withDataLogger { dataLogger ->
-                    dataLogger.start(
+                withDataLogger {
+                    start(
                         query.apply {
                             setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
                         },
@@ -240,8 +240,8 @@ internal class SurfaceRendererScreen(
                 }
 
             SurfaceRendererType.PERFORMANCE ->
-                withDataLogger { dataLogger ->
-                    dataLogger.start(
+                withDataLogger {
+                    start(
                         query.apply {
                             setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
                         },
@@ -352,8 +352,8 @@ internal class SurfaceRendererScreen(
                 query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
                 metricsCollector.applyFilter(enabled = query.getIDs())
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(query)
+                withDataLogger {
+                    updateQuery(query)
                 }
             } else if (screenId == SurfaceRendererType.TRIP_INFO) {
                 Log.i(LOG_TAG, "Updating query for  TRIP_INFO_SCREEN_ID screen")
@@ -361,8 +361,8 @@ internal class SurfaceRendererScreen(
                 query.setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
                 metricsCollector.applyFilter(enabled = query.getIDs())
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(query)
+                withDataLogger {
+                    updateQuery(query)
                 }
             } else if (screenId == SurfaceRendererType.PERFORMANCE) {
                 Log.i(LOG_TAG, "Updating query for  DYNAMIC_SCREEN_ID screen")
@@ -370,8 +370,8 @@ internal class SurfaceRendererScreen(
                 query.setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
                 metricsCollector.applyFilter(enabled = query.getIDs())
                 Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(query)
+                withDataLogger {
+                    updateQuery(query)
                 }
             } else if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
                 Log.i(LOG_TAG, "Updating query for  individualQueryStrategyEnabled")
@@ -381,8 +381,8 @@ internal class SurfaceRendererScreen(
                 query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
                 query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
                 Log.i(LOG_TAG, "User selection PIDs=$selectedPIDs")
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(query)
+                withDataLogger {
+                    updateQuery(query)
                 }
             } else {
                 Log.i(LOG_TAG, "Updating query to SHARED_QUERY strategy")

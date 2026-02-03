@@ -66,8 +66,8 @@ open class DragRacingFragment : BaseFragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    withDataLogger { dataLogger ->
-                        dataLogger.updateQuery(query)
+                    withDataLogger {
+                       updateQuery(query)
                     }
                     renderingThread.start()
                 }
@@ -133,8 +133,8 @@ open class DragRacingFragment : BaseFragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            withDataLogger { dataLogger ->
-                dataLogger.updateQuery(query)
+            withDataLogger {
+                updateQuery(query)
             }
             renderingThread.start()
         }

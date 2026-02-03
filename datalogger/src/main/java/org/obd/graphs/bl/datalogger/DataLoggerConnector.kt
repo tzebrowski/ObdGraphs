@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,40 +24,38 @@ import android.os.IBinder
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 
-
 class DataLoggerConnector(
     private val context: Context,
-    private val onServiceConnected: (DataLoggerService) -> Unit,
+    private val onConnected: DataLoggerService.() -> Unit
 ) : DefaultLifecycleObserver {
-    private var dataLogger: DataLoggerService? = null
+
     private var isBound = false
+    private var dataLogger: DataLoggerService? = null
 
-    private val serviceConnection =
-        object : ServiceConnection {
-            override fun onServiceConnected(
-                className: ComponentName,
-                service: IBinder,
-            ) {
-                val binder = service as DataLoggerService.LocalBinder
-                val logger = binder.getService()
-                dataLogger = logger
-                isBound = true
-                onServiceConnected(logger)
-            }
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as DataLoggerService.LocalBinder
+            val logger = binder.getService()
+            dataLogger = logger
+            isBound = true
 
-            override fun onServiceDisconnected(className: ComponentName) {
-                dataLogger = null
-                isBound = false
-            }
+            // CHANGE 2: Call the function *on* the logger object
+            logger.onConnected()
         }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            dataLogger = null
+            isBound = false
+        }
+    }
 
     override fun onStart(owner: LifecycleOwner) {
         val intent = Intent(context, DataLoggerService::class.java)
+        // Check standard binding flags; usually BIND_AUTO_CREATE is correct
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onStop(owner: LifecycleOwner) {
-
         if (isBound) {
             context.unbindService(serviceConnection)
             isBound = false

@@ -47,7 +47,6 @@ object DataLoggerRepository {
     }
 
     fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
-    fun findAlertFor(metric: ObdMetric): List<Alert> = workflowOrchestrator.findAlertFor(metric)
     fun isRunning(): Boolean = workflowOrchestrator.isRunning()
     fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
     fun findHistogramFor(metric: ObdMetric): Histogram = workflowOrchestrator.findHistogramFor(metric)

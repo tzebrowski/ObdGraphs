@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,8 +20,7 @@ import androidx.car.app.Screen
 import org.obd.graphs.bl.datalogger.DataLoggerConnector
 import org.obd.graphs.bl.datalogger.DataLoggerService
 
-fun Screen.withDataLogger(onConnected: (DataLoggerService) -> Unit) {
-    val context = carContext
-    val connector = DataLoggerConnector(context, onConnected)
-    lifecycle.addObserver(connector)
+fun Screen.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
+    val connector = DataLoggerConnector(carContext, onConnected)
+    this.lifecycle.addObserver(connector)
 }

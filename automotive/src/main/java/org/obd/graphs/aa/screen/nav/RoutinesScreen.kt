@@ -208,8 +208,8 @@ internal class RoutinesScreen(
     }
 
     override fun actionStartDataLogging() {
-        withDataLogger { dataLogger ->
-            dataLogger.start(query)
+        withDataLogger { 
+            start(query)
         }
     }
 
@@ -272,8 +272,8 @@ internal class RoutinesScreen(
                         routineId = -1L
                     }
                     invalidate()
-                    withDataLogger { dataLogger ->
-                        dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
+                    withDataLogger { 
+                        executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
                     }
                 }.setBrowsable(false)
                 .addText(data.longDescription ?: data.description)
@@ -328,8 +328,8 @@ internal class RoutinesScreen(
                         R.drawable.actions_connect,
                         mapColor(settings.getColorTheme().actionsBtnConnectColor),
                     ) {
-                        withDataLogger { dataLogger ->
-                            dataLogger.start(query)
+                        withDataLogger { 
+                            start(query)
                         }
                     },
                 )

@@ -35,14 +35,14 @@ abstract class BaseFragment : Fragment() {
 
             btn?.setOnClickListener {
                 if (DataLoggerRepository.isRunning()) {
-                    withDataLogger { dataLogger ->
+                    withDataLogger {
                         Log.i("BaseFragment", "Stop data logging")
-                        dataLogger.stop()
+                        stop()
                     }
                 } else {
-                    withDataLogger { dataLogger ->
+                    withDataLogger {
                         Log.i("BaseFragment", "Start data logging")
-                        dataLogger.start(query)
+                        start(query)
                     }
                 }
             }

@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -118,8 +118,8 @@ class DashboardFragment : RefreshableFragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            withDataLogger { dataLogger ->
-                dataLogger.updateQuery(query())
+            withDataLogger {
+                updateQuery(query())
             }
             renderingThread.start()
         }
@@ -137,19 +137,19 @@ class DashboardFragment : RefreshableFragment() {
             recyclerView = root.findViewById<RecyclerView>(R.id.dashboard_recycler_view)!!,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext =
-                AdapterContext(
-                    layoutId = R.layout.item_dashboard,
-                    spanCount = calculateSpanCount(),
-                    height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
-                ),
+            AdapterContext(
+                layoutId = R.layout.item_dashboard,
+                spanCount = calculateSpanCount(),
+                height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
+            ),
             enableDragManager = dashboardPreferences.dragAndDropEnabled,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = {
-                context: Context,
-                data: MutableList<Metric>,
-                resourceId: Int,
-                height: Int?,
+                    context: Context,
+                    data: MutableList<Metric>,
+                    resourceId: Int,
+                    height: Int?,
                 ->
                 DashboardViewAdapter(context, data, resourceId, height)
             },

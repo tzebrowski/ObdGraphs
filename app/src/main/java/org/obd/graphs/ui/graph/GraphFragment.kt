@@ -86,8 +86,8 @@ class GraphFragment : BaseFragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            withDataLogger { dataLogger ->
-                                dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                            withDataLogger { 
+                                scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                             }
                         }
                     }

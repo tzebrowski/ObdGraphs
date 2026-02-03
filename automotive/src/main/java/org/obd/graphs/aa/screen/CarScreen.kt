@@ -83,8 +83,8 @@ internal abstract class CarScreen(
 
     protected fun actionStopDataLogging() {
         Log.i(LOG_TAG, "Stopping data logging process")
-        withDataLogger { dataLogger ->
-            dataLogger.stop()
+        withDataLogger {
+            stop()
         }
         cancelRenderingTask()
     }

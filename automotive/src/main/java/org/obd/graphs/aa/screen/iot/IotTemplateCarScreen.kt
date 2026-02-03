@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -214,8 +214,9 @@ internal class IotTemplateCarScreen(
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
         }
-        withDataLogger { dataLogger ->
-            dataLogger.start(query)
+
+        withDataLogger {
+            start(query)
         }
     }
 
@@ -292,8 +293,8 @@ internal class IotTemplateCarScreen(
 
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-            withDataLogger { dataLogger ->
-                dataLogger.updateQuery(query)
+            withDataLogger {
+                updateQuery(query)
             }
         }
     }

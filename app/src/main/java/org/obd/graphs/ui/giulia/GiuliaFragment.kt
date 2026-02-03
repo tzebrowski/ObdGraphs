@@ -81,8 +81,8 @@ open class GiuliaFragment : BaseFragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            withDataLogger { dataLogger ->
-                                dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                            withDataLogger { 
+                                scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                             }
                         }
                     }
@@ -155,8 +155,8 @@ open class GiuliaFragment : BaseFragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            withDataLogger { dataLogger ->
-                dataLogger.updateQuery(query())
+            withDataLogger { 
+                updateQuery(query())
             }
             renderingThread.start()
         }
@@ -180,8 +180,8 @@ open class GiuliaFragment : BaseFragment() {
 
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
-                withDataLogger { dataLogger ->
-                    dataLogger.updateQuery(query())
+                withDataLogger { 
+                   updateQuery(query())
                 }
 
                 applyFilter()

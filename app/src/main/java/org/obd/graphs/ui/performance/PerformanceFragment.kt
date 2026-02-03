@@ -72,8 +72,8 @@ open class PerformanceFragment : BaseFragment() {
             ) {
                 when (intent?.action) {
                     DATA_LOGGER_CONNECTED_EVENT -> {
-                        withDataLogger { dataLogger ->
-                            dataLogger.updateQuery(query)
+                        withDataLogger { 
+                            updateQuery(query)
                         }
                         renderingThread.start()
                     }
@@ -144,8 +144,8 @@ open class PerformanceFragment : BaseFragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            withDataLogger { dataLogger ->
-                dataLogger.updateQuery(query)
+            withDataLogger { 
+                updateQuery(query)
             }
             renderingThread.start()
         }

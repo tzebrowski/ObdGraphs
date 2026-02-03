@@ -103,9 +103,9 @@ internal fun MainActivity.receive(intent: Intent?) {
                 LOG_TAG,
                 "Stop data logging",
             )
-            withDataLogger { dataLogger ->
-                dataLogger.stop()
-                dataLogger.scheduledStop()
+            withDataLogger {
+                stop()
+                scheduledStop()
             }
         }
 
@@ -162,8 +162,8 @@ internal fun MainActivity.receive(intent: Intent?) {
         UsbManager.ACTION_USB_DEVICE_DETACHED -> {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_detached, usbDevice.productName!!)
-            withDataLogger { dataLogger ->
-                dataLogger.stop()
+            withDataLogger {
+                stop()
             }
         }
 
@@ -225,8 +225,8 @@ internal fun MainActivity.receive(intent: Intent?) {
                     ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.cardinal)
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
-                    withDataLogger { dataLogger ->
-                        dataLogger.stop()
+                    withDataLogger {
+                       stop()
                     }
                 }
                 it.refreshDrawableState()
@@ -280,8 +280,8 @@ internal fun MainActivity.receive(intent: Intent?) {
             updateVehicleStatus("Key off")
             if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff) {
                 Log.i(LOG_TAG, "Received vehicle status OFF event. Closing the session.")
-                withDataLogger { dataLogger ->
-                    dataLogger.stop()
+                withDataLogger {
+                    stop()
                 }
             }
         }
