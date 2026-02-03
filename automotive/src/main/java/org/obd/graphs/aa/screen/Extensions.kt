@@ -14,19 +14,14 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui
+package org.obd.graphs.aa.screen
 
-import androidx.activity.ComponentActivity
-import androidx.fragment.app.Fragment
+import androidx.car.app.Screen
 import org.obd.graphs.bl.datalogger.DataLoggerConnector
 import org.obd.graphs.bl.datalogger.DataLoggerService
 
-fun Fragment.withDataLogger(onConnected: (DataLoggerService) -> Unit) {
-    val connector = DataLoggerConnector(requireContext(), onConnected)
-    this.lifecycle.addObserver(connector)
-}
-
-fun ComponentActivity.withDataLogger(onConnected: (DataLoggerService) -> Unit) {
-    val connector = DataLoggerConnector(this, onConnected)
-    this.lifecycle.addObserver(connector)
+fun Screen.withDataLogger(onConnected: (DataLoggerService) -> Unit) {
+    val context = carContext
+    val connector = DataLoggerConnector(context, onConnected)
+    lifecycle.addObserver(connector)
 }
