@@ -14,28 +14,16 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs
+package org.obd.graphs.bl.datalogger
 
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import androidx.activity.ComponentActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.bl.datalogger.DataLoggerService
 
-fun Fragment.withDataLogger(onConnected: (DataLoggerService) -> Unit) {
-    val connector = DataLoggerConnector(requireContext(), onConnected)
-    this.lifecycle.addObserver(connector)
-}
-
-fun ComponentActivity.withDataLogger(onConnected: (DataLoggerService) -> Unit) {
-    val connector = DataLoggerConnector(this, onConnected)
-    this.lifecycle.addObserver(connector)
-}
 
 class DataLoggerConnector(
     private val context: Context,

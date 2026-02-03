@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -41,7 +41,7 @@ import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.SurfaceController
-import org.obd.graphs.withDataLogger
+import org.obd.graphs.ui.withDataLogger
 
 open class TripInfoFragment : BaseFragment() {
     private lateinit var root: View

@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,9 +24,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.withDataLogger
 
- abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : Fragment() {
     protected fun attachToFloatingButton(
         activity: Activity?,
         query: Query,

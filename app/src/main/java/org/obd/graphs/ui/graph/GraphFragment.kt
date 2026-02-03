@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -65,7 +65,7 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
-import org.obd.graphs.withDataLogger
+import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry

@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -35,14 +35,21 @@ import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.getPowerPreferences
-import org.obd.graphs.preferences.*
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.ui.common.*
+import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_TRANSPARENT
+import org.obd.graphs.ui.common.isTablet
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import org.obd.graphs.ui.recycler.RefreshableFragment
-import org.obd.graphs.withDataLogger
+import org.obd.graphs.ui.withDataLogger
 import kotlin.math.roundToInt
 
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"
@@ -78,8 +85,9 @@ class GaugeFragment : RefreshableFragment() {
                 CONFIGURE_CHANGE_EVENT_GAUGE -> {
                     configureView(false)
                 }
+
                 DATA_LOGGER_CONNECTING_EVENT -> {
-                    val recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView
+                    val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
                     val adapter = recyclerView.adapter as RecyclerViewAdapter
                     val metrics = prepareMetrics(
                         metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
@@ -89,6 +97,7 @@ class GaugeFragment : RefreshableFragment() {
                     adapter.data.addAll(metrics)
                     adapter.notifyDataSetChanged()
                 }
+
                 DATA_LOGGER_CONNECTED_EVENT -> {
                     virtualScreensPanel {
                         it.isVisible = false
@@ -136,7 +145,7 @@ class GaugeFragment : RefreshableFragment() {
 
         if (DataLoggerRepository.isRunning()) {
             withDataLogger { dataLogger ->
-               dataLogger.updateQuery(query())
+                dataLogger.updateQuery(query())
             }
 
             renderingThread.start()
@@ -150,7 +159,7 @@ class GaugeFragment : RefreshableFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        registerReceiver(activity, broadcastReceiver){
+        registerReceiver(activity, broadcastReceiver) {
             it.addAction(CONFIGURE_CHANGE_EVENT_GAUGE)
             it.addAction(DATA_LOGGER_CONNECTING_EVENT)
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
@@ -179,7 +188,7 @@ class GaugeFragment : RefreshableFragment() {
     private fun configureView(enableOnTouchListener: Boolean) {
         configureView(
             configureChangeEventId = CONFIGURE_CHANGE_EVENT_GAUGE,
-            recyclerView = root.findViewById(R.id.recycler_view) as RecyclerView,
+            recyclerView = root.findViewById<RecyclerView>(R.id.recycler_view)!!,
             metricsIdsPref = gaugeVirtualScreen.getVirtualScreenPrefKey(),
             adapterContext = AdapterContext(
                 layoutId = R.layout.item_gauge,
@@ -218,6 +227,7 @@ class GaugeFragment : RefreshableFragment() {
                     }
                 }
             }
+
             else -> {
                 when (numberOfPIDsToDisplay) {
                     0 -> 1

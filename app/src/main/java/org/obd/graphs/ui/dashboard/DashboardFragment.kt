@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,7 +39,7 @@ import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.recycler.RefreshableFragment
-import org.obd.graphs.withDataLogger
+import org.obd.graphs.ui.withDataLogger
 
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 
@@ -137,19 +137,19 @@ class DashboardFragment : RefreshableFragment() {
             recyclerView = root.findViewById<RecyclerView>(R.id.dashboard_recycler_view)!!,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext =
-                AdapterContext(
-                    layoutId = R.layout.item_dashboard,
-                    spanCount = calculateSpanCount(),
-                    height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
-                ),
+            AdapterContext(
+                layoutId = R.layout.item_dashboard,
+                spanCount = calculateSpanCount(),
+                height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
+            ),
             enableDragManager = dashboardPreferences.dragAndDropEnabled,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
             adapter = {
-                context: Context,
-                data: MutableList<Metric>,
-                resourceId: Int,
-                height: Int?,
+                    context: Context,
+                    data: MutableList<Metric>,
+                    resourceId: Int,
+                    height: Int?,
                 ->
                 DashboardViewAdapter(context, data, resourceId, height)
             },
