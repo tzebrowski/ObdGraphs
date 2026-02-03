@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui
+package org.obd.graphs
 
 import android.content.ComponentName
 import android.content.Context

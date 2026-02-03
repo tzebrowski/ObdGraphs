@@ -46,7 +46,7 @@ import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
-import org.obd.graphs.ui.withDataLogger
+import org.obd.graphs.withDataLogger
 
 open class GiuliaFragment : BaseFragment() {
     private lateinit var root: View

@@ -82,7 +82,7 @@ import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.toast
-import org.obd.graphs.ui.withDataLogger
+import org.obd.graphs.withDataLogger
 
 internal val powerReceiver = PowerBroadcastReceiver()
 const val NOTIFICATION_GRAPH_VIEW_TOGGLE = "view.graph.toggle"

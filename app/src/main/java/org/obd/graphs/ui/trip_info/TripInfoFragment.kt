@@ -41,7 +41,7 @@ import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.SurfaceController
-import org.obd.graphs.ui.withDataLogger
+import org.obd.graphs.withDataLogger
 
 open class TripInfoFragment : BaseFragment() {
     private lateinit var root: View

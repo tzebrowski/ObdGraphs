@@ -42,7 +42,7 @@ import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.*
 import org.obd.graphs.ui.recycler.RecyclerViewAdapter
 import org.obd.graphs.ui.recycler.RefreshableFragment
-import org.obd.graphs.ui.withDataLogger
+import org.obd.graphs.withDataLogger
 import kotlin.math.roundToInt
 
 private const val ENABLE_DRAG_AND_DROP_PREF = "pref.gauge_enable_drag_and_drop"

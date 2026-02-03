@@ -39,7 +39,7 @@ import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.recycler.RefreshableFragment
-import org.obd.graphs.ui.withDataLogger
+import org.obd.graphs.withDataLogger
 
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
 
