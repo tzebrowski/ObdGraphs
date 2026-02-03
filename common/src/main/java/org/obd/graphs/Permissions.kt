@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -42,7 +42,6 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
 
 @SuppressLint("ObsoleteSdkInt")
 object Permissions {
-
     /**
      * Returns TRUE if any required permission is missing.
      * Reuses your existing individual checks.
@@ -66,8 +65,7 @@ object Permissions {
                 if (!isBatteryOptimizationEnabled(activity)) {
                     requestBatteryOptimization(activity)
                 }
-            }
-            .setNegativeButton(R.string.permission_onboarding_btn_negative, null)
+            }.setNegativeButton(R.string.permission_onboarding_btn_negative, null)
             .show()
 
     /**
@@ -247,10 +245,11 @@ object Permissions {
     private fun requestBatteryOptimization(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Log.i(TAG, "Requesting to ignore battery optimizations.")
-            val intent = Intent().apply {
-                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                data = Uri.parse("package:${activity.packageName}")
-            }
+            val intent =
+                Intent().apply {
+                    action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                    data = Uri.parse("package:${activity.packageName}")
+                }
             activity.startActivity(intent)
         }
     }
