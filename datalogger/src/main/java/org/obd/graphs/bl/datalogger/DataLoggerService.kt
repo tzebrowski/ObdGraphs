@@ -22,28 +22,18 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.Permissions
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
 import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
-import org.obd.metrics.alert.Alert
-import org.obd.metrics.api.model.ObdMetric
-import org.obd.metrics.diagnostic.Diagnostics
-import org.obd.metrics.diagnostic.Histogram
-import org.obd.metrics.diagnostic.Rate
-import org.obd.metrics.pid.PidDefinitionRegistry
-import java.util.Optional
 
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
 private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
@@ -58,50 +48,7 @@ private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
 private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
 private const val NOTIFICATION_ID = 12345
 
-object DataLoggerRepository {
-    private var _workflowOrchestrator: WorkflowOrchestrator? = null
-
-    internal val workflowOrchestrator: WorkflowOrchestrator
-        get() {
-            if (_workflowOrchestrator == null) {
-                Log.i(LOG_TAG, "Initializing WorkflowOrchestrator")
-                _workflowOrchestrator = WorkflowOrchestrator()
-            }
-            return _workflowOrchestrator!!
-        }
-
-    @VisibleForTesting
-    internal fun setWorkflowOrchestrator(mock: WorkflowOrchestrator) {
-        _workflowOrchestrator = mock
-    }
-
-    fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
-    fun findAlertFor(metric: ObdMetric): List<Alert> = workflowOrchestrator.findAlertFor(metric)
-    fun isRunning(): Boolean = workflowOrchestrator.isRunning()
-    fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
-    fun findHistogramFor(metric: ObdMetric): Histogram = workflowOrchestrator.findHistogramFor(metric)
-    fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
-    fun getPidDefinitionRegistry(): PidDefinitionRegistry = workflowOrchestrator.pidDefinitionRegistry()
-    fun isDTCEnabled(): Boolean = workflowOrchestrator.isDTCEnabled()
-    fun status(): WorkflowStatus = workflowOrchestrator.status()
-
-    fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
-        workflowOrchestrator.observe(lifecycleOwner, observer)
-    }
-
-    fun observe(metricsProcessor: MetricsProcessor): DataLoggerRepository {
-        workflowOrchestrator.observe(metricsProcessor)
-        return this
-    }
-
-
-    val eventsReceiver: BroadcastReceiver
-        get() = workflowOrchestrator.eventsReceiver
-}
-
-
 class DataLoggerService : Service() {
-
     private val workflowOrchestrator = DataLoggerRepository.workflowOrchestrator
 
     private val jobScheduler = DataLoggerJobScheduler(this)
@@ -111,16 +58,18 @@ class DataLoggerService : Service() {
         fun getService(): DataLoggerService = this@DataLoggerService
     }
 
-    override fun onBind(intent: Intent?): IBinder {
-        return binder
-    }
+    override fun onBind(intent: Intent?): IBinder = binder
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(LOG_TAG, "Destroying DataLoggerService")
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(
+        intent: Intent?,
+        flags: Int,
+        startId: Int,
+    ): Int {
         Log.i(LOG_TAG, "Starting DataLoggerService in the Foreground Mode")
 
         createNotificationChannel()
@@ -192,9 +141,10 @@ class DataLoggerService : Service() {
         }
     }
 
-
-
-    fun scheduleStart(delay: Long, query: Query) {
+    fun scheduleStart(
+        delay: Long,
+        query: Query,
+    ) {
         enqueueWork(SCHEDULED_ACTION_START) {
             it.putExtra(SCHEDULED_START_DELAY, delay)
             it.putExtra(QUERY, query)
@@ -219,13 +169,17 @@ class DataLoggerService : Service() {
 
     // --- Helper Methods ---
 
-    private fun enqueueWork(intentAction: String, func: (p: Intent) -> Unit = {}) {
+    private fun enqueueWork(
+        intentAction: String,
+        func: (p: Intent) -> Unit = {},
+    ) {
         try {
             getContext()?.let { context ->
-                val intent = Intent(context, DataLoggerService::class.java).apply {
-                    action = intentAction
-                    putExtra("init", 1)
-                }
+                val intent =
+                    Intent(context, DataLoggerService::class.java).apply {
+                        action = intentAction
+                        putExtra("init", 1)
+                    }
                 func(intent)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -241,33 +195,35 @@ class DataLoggerService : Service() {
 
     private fun createNotification(): Notification {
         // Fix for NullPointerException in tests/edge cases where LaunchIntent is null
-        val contentIntent = packageManager.getLaunchIntentForPackage(packageName)?.let {
-            PendingIntent.getActivity(
-                this,
-                0,
-                it,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
+        val contentIntent =
+            packageManager.getLaunchIntentForPackage(packageName)?.let {
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    it,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+            }
 
-        return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        return NotificationCompat
+            .Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle("Vehicle Telemetry Service")
             .setContentText("Logging OBD & GPS data in background...")
             .setSmallIcon(R.drawable.ic_mygiulia_logo)
             .apply {
                 contentIntent?.let { setContentIntent(it) }
-            }
-            .setOngoing(true)
+            }.setOngoing(true)
             .build()
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                "OBD Logger Service",
-                NotificationManager.IMPORTANCE_LOW
-            )
+            val serviceChannel =
+                NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    "OBD Logger Service",
+                    NotificationManager.IMPORTANCE_LOW,
+                )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
         }
