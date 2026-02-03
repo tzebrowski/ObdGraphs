@@ -16,7 +16,7 @@
  */
 package org.obd.graphs.bl.generator
 
-import org.obd.graphs.bl.datalogger.dataLogger
+
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry

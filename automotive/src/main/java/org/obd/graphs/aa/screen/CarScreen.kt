@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -16,6 +16,11 @@
  */
 package org.obd.graphs.aa.screen
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -23,6 +28,7 @@ import androidx.car.app.connection.CarConnection
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarColor
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.AA_EDIT_PREF_SCREEN
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.aa.CarSettings
@@ -32,8 +38,9 @@ import org.obd.graphs.aa.screen.nav.CHANGE_SCREEN_EVENT
 import org.obd.graphs.aa.screen.nav.FeatureDescription
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DataLoggerService
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.WorkflowStatus
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.Identity
 import org.obd.graphs.sendBroadcastEvent
@@ -66,6 +73,24 @@ internal abstract class CarScreen(
 
     open fun onCarConfigurationChanged() {}
 
+    protected var dataLogger: DataLoggerService? = null
+    private var isBound = false
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val binder = service as DataLoggerService.LocalBinder
+            dataLogger = binder.getService()
+            isBound = true
+            invalidate()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            dataLogger = null
+            isBound = false
+        }
+    }
+
+
     protected val renderingThread: RenderingThread = RenderingThread(
         id = "CarScreenRenderingThread",
         renderAction = {
@@ -80,10 +105,23 @@ internal abstract class CarScreen(
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        val intent = Intent(carContext, DataLoggerService::class.java)
+        carContext.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+        if (isBound) {
+            carContext.unbindService(serviceConnection)
+            isBound = false
+        }
+    }
 
     protected fun actionStopDataLogging() {
         Log.i(LOG_TAG, "Stopping data logging process")
-        dataLogger.stop()
+        dataLogger?.stop()
         cancelRenderingTask()
     }
 
@@ -94,7 +132,7 @@ internal abstract class CarScreen(
     ): ActionStrip {
         var builder = ActionStrip.Builder()
 
-        builder = if (dataLogger.status() == WorkflowStatus.Connecting || dataLogger.status() == WorkflowStatus.Connected) {
+        builder = if (DataLoggerRepository.status() == WorkflowStatus.Connecting || DataLoggerRepository.status() == WorkflowStatus.Connected) {
             builder.addAction(
                 createAction(
                     carContext,
@@ -148,7 +186,7 @@ internal abstract class CarScreen(
     }
 
     protected fun submitRenderingTask() {
-        if (!renderingThread.isRunning() && dataLogger.status() == WorkflowStatus.Connected) {
+        if (!renderingThread.isRunning() && DataLoggerRepository.status() == WorkflowStatus.Connected) {
             renderingThread.start()
             fps.start()
         }
@@ -158,12 +196,12 @@ internal abstract class CarScreen(
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isLoadLastVisitedScreenEnabled()) {
-                    Log.i(LOG_TAG,"Load last visited screen flag is enabled. Loading last visited screen....")
+                    Log.i(LOG_TAG, "Load last visited screen flag is enabled. Loading last visited screen....")
                     gotoScreen(settings.getLastVisitedScreen())
                 }
 
-                if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    Log.i(LOG_TAG,"Auto connection enabled. Auto start data logging.....")
+                if (settings.isAutomaticConnectEnabled() && !DataLoggerRepository.isRunning()) {
+                    Log.i(LOG_TAG, "Auto connection enabled. Auto start data logging.....")
                     actionStartDataLogging()
                 }
             }

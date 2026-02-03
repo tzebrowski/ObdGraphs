@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,6 +23,8 @@ const val DATA_LOGGER_WIFI_INCORRECT = "data.logger.error.wifi.incorrect"
 const val DATA_LOGGER_WIFI_NOT_CONNECTED = "data.logger.error.wifi.not.connected"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
 const val DATA_LOGGER_SCHEDULED_START_EVENT = "data.logger.scheduled.start"
+const val DATA_LOGGER_SCHEDULED_STOP_EVENT = "data.logger.scheduled.stop"
+
 const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"
 const val DATA_LOGGER_CONNECTING_EVENT = "data.logger.connecting"
 const val DATA_LOGGER_STOPPED_EVENT = "data.logger.stopped"

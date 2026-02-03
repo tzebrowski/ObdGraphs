@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -58,33 +58,53 @@ private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
 private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
 private const val NOTIFICATION_ID = 12345
 
-// Thread-safe Singleton Management
-private var _workflowOrchestrator: WorkflowOrchestrator? = null
-private val orchestratorLock = Any()
+object DataLoggerRepository {
+    private var _workflowOrchestrator: WorkflowOrchestrator? = null
 
-internal val workflowOrchestrator: WorkflowOrchestrator
-    get() {
-        synchronized(orchestratorLock) {
+    internal val workflowOrchestrator: WorkflowOrchestrator
+        get() {
             if (_workflowOrchestrator == null) {
                 Log.i(LOG_TAG, "Initializing WorkflowOrchestrator")
                 _workflowOrchestrator = WorkflowOrchestrator()
             }
             return _workflowOrchestrator!!
         }
-    }
 
-@VisibleForTesting
-internal fun setWorkflowOrchestrator(mock: WorkflowOrchestrator) {
-    synchronized(orchestratorLock) {
+    @VisibleForTesting
+    internal fun setWorkflowOrchestrator(mock: WorkflowOrchestrator) {
         _workflowOrchestrator = mock
     }
+
+    fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
+    fun findAlertFor(metric: ObdMetric): List<Alert> = workflowOrchestrator.findAlertFor(metric)
+    fun isRunning(): Boolean = workflowOrchestrator.isRunning()
+    fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
+    fun findHistogramFor(metric: ObdMetric): Histogram = workflowOrchestrator.findHistogramFor(metric)
+    fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
+    fun getPidDefinitionRegistry(): PidDefinitionRegistry = workflowOrchestrator.pidDefinitionRegistry()
+    fun isDTCEnabled(): Boolean = workflowOrchestrator.isDTCEnabled()
+    fun status(): WorkflowStatus = workflowOrchestrator.status()
+
+    fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
+        workflowOrchestrator.observe(lifecycleOwner, observer)
+    }
+
+    fun observe(metricsProcessor: MetricsProcessor): DataLoggerRepository {
+        workflowOrchestrator.observe(metricsProcessor)
+        return this
+    }
+
+
+    val eventsReceiver: BroadcastReceiver
+        get() = workflowOrchestrator.eventsReceiver
 }
 
-val dataLogger: DataLogger = DataLoggerService()
 
-internal class DataLoggerService : Service(), DataLogger {
+class DataLoggerService : Service() {
 
-    private val jobScheduler = DataLoggerJobScheduler()
+    private val workflowOrchestrator = DataLoggerRepository.workflowOrchestrator
+
+    private val jobScheduler = DataLoggerJobScheduler(this)
     private val binder = LocalBinder()
 
     inner class LocalBinder : Binder() {
@@ -98,8 +118,6 @@ internal class DataLoggerService : Service(), DataLogger {
     override fun onDestroy() {
         super.onDestroy()
         Log.i(LOG_TAG, "Destroying DataLoggerService")
-        // Check for null to avoid initializing it just to stop it
-        _workflowOrchestrator?.stop()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -138,18 +156,22 @@ internal class DataLoggerService : Service(), DataLogger {
                 val query = intent.extras?.get(QUERY) as? Query
                 query?.let { workflowOrchestrator.updateQuery(query = it) }
             }
+
             ACTION_START -> {
                 val query = intent.extras?.get(QUERY) as? Query
                 query?.let { workflowOrchestrator.start(it) }
             }
+
             EXECUTE_ROUTINE -> {
                 val query = intent.extras?.get(QUERY) as? Query
                 query?.let { workflowOrchestrator.executeRoutine(it) }
             }
+
             ACTION_STOP -> {
                 workflowOrchestrator.stop()
                 serviceStop()
             }
+
             SCHEDULED_ACTION_STOP -> jobScheduler.stop()
             SCHEDULED_ACTION_START -> {
                 val delay = intent.extras?.getLong(SCHEDULED_START_DELAY) ?: 0L
@@ -161,61 +183,39 @@ internal class DataLoggerService : Service(), DataLogger {
         return START_STICKY
     }
 
-    override fun updateQuery(query: Query) {
-        isRunning()
+    fun updateQuery(query: Query) {
         Log.i(LOG_TAG, "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}")
-        if (isRunning()) {
+        if (DataLoggerRepository.isRunning()) {
             enqueueWork(UPDATE_QUERY) { it.putExtra(QUERY, query) }
         } else {
             Log.w(LOG_TAG, "No workflow is currently running. Query won't be updated.")
         }
     }
 
-    override fun status(): WorkflowStatus = workflowOrchestrator.status()
 
-    override fun scheduleStart(delay: Long, query: Query) {
+
+    fun scheduleStart(delay: Long, query: Query) {
         enqueueWork(SCHEDULED_ACTION_START) {
             it.putExtra(SCHEDULED_START_DELAY, delay)
             it.putExtra(QUERY, query)
         }
     }
 
-    override fun scheduledStop() {
+    fun scheduledStop() {
         enqueueWork(SCHEDULED_ACTION_STOP)
     }
 
-    override fun executeRoutine(query: Query) {
+    fun executeRoutine(query: Query) {
         enqueueWork(EXECUTE_ROUTINE) { it.putExtra(QUERY, query) }
     }
 
-    override fun start(query: Query) {
+    fun start(query: Query) {
         enqueueWork(ACTION_START) { it.putExtra(QUERY, query) }
     }
 
-    override fun stop() {
+    fun stop() {
         enqueueWork(ACTION_STOP)
     }
-
-    override val eventsReceiver: BroadcastReceiver
-        get() = workflowOrchestrator.eventsReceiver
-
-    override fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {
-        workflowOrchestrator.observe(lifecycleOwner, observer)
-    }
-
-    override fun observe(metricsProcessor: MetricsProcessor): DataLogger {
-        workflowOrchestrator.observe(metricsProcessor)
-        return this
-    }
-
-    override fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
-    override fun findAlertFor(metric: ObdMetric): List<Alert> = workflowOrchestrator.findAlertFor(metric)
-    override fun isRunning(): Boolean = workflowOrchestrator.isRunning()
-    override fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
-    override fun findHistogramFor(metric: ObdMetric): Histogram = workflowOrchestrator.findHistogramFor(metric)
-    override fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
-    override fun getPidDefinitionRegistry(): PidDefinitionRegistry = workflowOrchestrator.pidDefinitionRegistry()
-    override fun isDTCEnabled(): Boolean = workflowOrchestrator.isDTCEnabled()
 
     // --- Helper Methods ---
 

@@ -26,9 +26,9 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.WorkflowStatus
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
 import org.obd.graphs.mapRange
@@ -195,7 +195,7 @@ internal abstract class AbstractDrawer(
 
         val color: Int
         val colorTheme = settings.getColorTheme()
-        text = dataLogger.status().name.lowercase()
+        text = DataLoggerRepository.status().name.lowercase()
 
         color = mapColor(colorTheme)
 
@@ -316,7 +316,7 @@ internal abstract class AbstractDrawer(
     }
 
     private fun mapColor(colorTheme: ColorTheme) =
-        when (dataLogger.status()) {
+        when (DataLoggerRepository.status()) {
             WorkflowStatus.Disconnected -> {
                 colorTheme.statusDisconnectedColor
             }

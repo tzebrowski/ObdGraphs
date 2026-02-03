@@ -166,7 +166,7 @@ internal class RoutinesScreen(
     }
 
     override fun actionStartDataLogging(){
-        dataLogger.start(query)
+        dataLogger?.start(query)
     }
 
 
@@ -176,14 +176,14 @@ internal class RoutinesScreen(
                 .setLoading(true)
                 .setTitle(carContext.getString(R.string.routine_execution_start))
                 .setActionStrip(getHorizontalActionStrip()).build()
-        } else if (dataLogger.status() == WorkflowStatus.Connecting) {
+        } else if (DataLoggerRepository.status() == WorkflowStatus.Connecting) {
             ListTemplate.Builder()
                 .setLoading(true)
                 .setTitle(carContext.getString(R.string.routine_page_connecting))
                 .setActionStrip(getHorizontalActionStrip()).build()
         } else {
             var items = ItemList.Builder()
-            dataLogger.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE)
+            DataLoggerRepository.getPidDefinitionRegistry().findBy(PIDsGroup.ROUTINE)
                 .sortedBy { it.description }
                 .sortedBy { it.id != routineId }
                 .forEach {
@@ -211,14 +211,14 @@ internal class RoutinesScreen(
             .setOnClickListener {
                 Log.i(LOG_TAG, "Executing routine ${data.description}")
 
-                if (dataLogger.isRunning()) {
+                if (DataLoggerRepository.isRunning()) {
                     routineExecuting = true
                     routineId = data.id
                 } else {
                     routineId = -1L
                 }
                 invalidate()
-                dataLogger.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
+                dataLogger?.executeRoutine(Query.instance(QueryStrategyType.ROUTINES_QUERY).update(setOf(data.id)))
             }
             .setBrowsable(false)
 
@@ -250,7 +250,7 @@ internal class RoutinesScreen(
     private fun getHorizontalActionStrip(): ActionStrip {
         var builder = ActionStrip.Builder()
 
-        builder = if (dataLogger.isRunning()) {
+        builder = if (DataLoggerRepository.isRunning()) {
             builder.addAction(
                 createAction(
                     carContext,
@@ -262,7 +262,7 @@ internal class RoutinesScreen(
                 })
         } else {
             builder.addAction(createAction(carContext, R.drawable.actions_connect, mapColor(settings.getColorTheme().actionsBtnConnectColor)) {
-                dataLogger.start(query)
+                dataLogger?.start(query)
             })
         }
 

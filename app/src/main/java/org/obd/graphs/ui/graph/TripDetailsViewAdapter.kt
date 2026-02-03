@@ -24,7 +24,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.format
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -47,7 +47,7 @@ class TripDetailsViewAdapter internal constructor(
         position: Int,
     ) {
         mData.elementAt(position).let { metric ->
-            val pid = dataLogger.getPidDefinitionRegistry().findBy(metric.id)
+            val pid = DataLoggerRepository.getPidDefinitionRegistry().findBy(metric.id)
             holder.metricName.setText(pid.description, COLOR_PHILIPPINE_GREEN, 1.0f)
             metric.run {
                 holder.metricMaxValue.setText(

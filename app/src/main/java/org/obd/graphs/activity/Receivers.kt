@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -60,10 +60,11 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_AVAILABLE
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_NO_NETWORK_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_STOP_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_NOT_CONNECTED
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_IGNITION_OFF
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_IGNITION_ON
@@ -96,6 +97,14 @@ private const val EVENT_VEHICLE_STATUS_CHANGED = "event.vehicle.status.CHANGED"
 
 internal fun MainActivity.receive(intent: Intent?) {
     when (intent?.action) {
+        DATA_LOGGER_SCHEDULED_STOP_EVENT -> {
+            Log.d(
+                LOG_TAG,
+                "Stop data logging",
+            )
+            dataLogger?.stop()
+            dataLogger?.scheduledStop()
+        }
 
         NAVIGATION_BUTTONS_VISIBILITY_CHANGED -> setupNavigationBar()
         GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE -> toast(org.obd.graphs.commons.R.string.main_activity_toast_google_signin_failed)
@@ -150,7 +159,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         UsbManager.ACTION_USB_DEVICE_DETACHED -> {
             val usbDevice: UsbDevice = intent.extras?.get(UsbManager.EXTRA_DEVICE) as UsbDevice
             toast(R.string.pref_usb_device_detached, usbDevice.productName!!)
-            dataLogger.stop()
+            dataLogger?.stop()
         }
 
         USB_DEVICE_ATTACHED_EVENT -> {
@@ -211,7 +220,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                     ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.cardinal)
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
-                    dataLogger.stop()
+                    dataLogger?.stop()
                 }
                 it.refreshDrawableState()
             }
@@ -264,7 +273,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             updateVehicleStatus("Key off")
             if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff) {
                 Log.i(LOG_TAG, "Received vehicle status OFF event. Closing the session.")
-                dataLogger.stop()
+                dataLogger?.stop()
             }
         }
     }
@@ -301,7 +310,7 @@ internal fun MainActivity.toggleNavigationItem(
 internal fun MainActivity.unregisterReceiver() {
     unregisterReceiver(activityBroadcastReceiver)
     unregisterReceiver(powerReceiver)
-    unregisterReceiver(dataLogger.eventsReceiver)
+    unregisterReceiver(DataLoggerRepository.eventsReceiver)
 }
 
 internal fun MainActivity.registerReceiver() {
@@ -359,6 +368,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(REQUEST_NOTIFICATION_PERMISSIONS)
         it.addAction(LOCATION_IS_DISABLED)
         it.addAction(NAVIGATION_BUTTONS_VISIBILITY_CHANGED)
+        it.addAction(DATA_LOGGER_SCHEDULED_STOP_EVENT)
     }
 
     registerReceiver(this, powerReceiver) {
@@ -366,7 +376,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction("android.intent.action.ACTION_POWER_DISCONNECTED")
     }
 
-    registerReceiver(this, dataLogger.eventsReceiver) {
+    registerReceiver(this,DataLoggerRepository.eventsReceiver) {
         it.addAction(MODULES_LIST_CHANGED_EVENT)
         it.addAction(PROFILE_CHANGED_EVENT)
     }

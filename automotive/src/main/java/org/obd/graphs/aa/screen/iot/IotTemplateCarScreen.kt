@@ -182,7 +182,7 @@ internal class IotTemplateCarScreen(
         } else {
             query.setStrategy(QueryStrategyType.SHARED_QUERY)
         }
-        dataLogger.start(query)
+        dataLogger?.start(query)
     }
     override fun renderAction() {
         invalidate()
@@ -194,7 +194,7 @@ internal class IotTemplateCarScreen(
     }
 
     override fun onGetTemplate(): Template =
-            if (dataLogger.status() == WorkflowStatus.Connecting) {
+            if (DataLoggerRepository.status() == WorkflowStatus.Connecting) {
                 GridTemplate.Builder()
                     .setTitle(carContext.resources.getString(R.string.app_name))
                     .setLoading(true)
@@ -248,7 +248,7 @@ internal class IotTemplateCarScreen(
 
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             query.update(metricsCollector.getMetrics().map { p-> p.source.command.pid.id }.toSet())
-            dataLogger.updateQuery(query)
+            dataLogger?.updateQuery(query)
         }
     }
 
@@ -264,10 +264,10 @@ internal class IotTemplateCarScreen(
     init {
         Log.i(LOG_TAG, "IotTemplate Screen Init")
         lifecycle.addObserver(this)
-        dataLogger.observe(this) {
+        DataLoggerRepository.observe(this) {
             metricsCollector.append(it)
         }
-        dataLogger.observe(dynamicSelectorModeEventBroadcaster)
+        DataLoggerRepository.observe(dynamicSelectorModeEventBroadcaster)
         submitRenderingTask()
         registerConnectionStateReceiver()
     }

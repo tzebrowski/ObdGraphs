@@ -61,6 +61,7 @@ class GaugeFragment : RefreshableFragment() {
         }
     )
 
+
     @SuppressLint("NotifyDataSetChanged")
     private var broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -68,7 +69,7 @@ class GaugeFragment : RefreshableFragment() {
                 DATA_LOGGER_SCHEDULED_START_EVENT -> {
                     if (isAdded && isVisible) {
                         Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                        dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                        dataLogger?.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                     }
                 }
 
@@ -122,7 +123,7 @@ class GaugeFragment : RefreshableFragment() {
     ): View {
         root = inflater.inflate(R.layout.fragment_gauge, container, false)
 
-        dataLogger.observe(viewLifecycleOwner) {
+        DataLoggerRepository.observe(viewLifecycleOwner) {
             it.run {
                 metricsCollector.append(it)
             }
@@ -131,8 +132,8 @@ class GaugeFragment : RefreshableFragment() {
         configureView(true)
         setupVirtualViewPanel()
 
-        if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(query())
+        if (DataLoggerRepository.isRunning()) {
+            dataLogger?.updateQuery(query())
             renderingThread.start()
         }
 
@@ -236,8 +237,8 @@ class GaugeFragment : RefreshableFragment() {
             it.setOnClickListener {
                 gaugeVirtualScreen.updateVirtualScreen(viewId)
 
-                if (dataLogger.isRunning()) {
-                    dataLogger.updateQuery(query())
+                if (DataLoggerRepository.isRunning()) {
+                    dataLogger?.updateQuery(query())
                 }
 
                 configureView(true)

@@ -30,9 +30,9 @@ import android.os.Looper
 import android.util.Log
 import org.obd.graphs.LOCATION_IS_DISABLED
 import org.obd.graphs.Permissions
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
@@ -72,7 +72,7 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
     override fun init(replyObserver: ReplyObserver<Reply<*>>) {
         this.replyObserver = replyObserver
-        val registry = dataLogger.getPidDefinitionRegistry()
+        val registry = DataLoggerRepository.getPidDefinitionRegistry()
         locationCommand = ObdCommand(registry.findBy(Pid.GPS_LOCATION_PID_ID.id))
     }
 

@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,7 +25,7 @@ import android.util.Log
 import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.MainActivity
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_STOP_EVENT
 
 const val SCREEN_OFF_EVENT = "power.screen.off"
 const val SCREEN_ON_EVENT = "power.screen.on"
@@ -65,12 +65,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
             }
 
             if (powerPreferences.connectOnPower) {
-                Log.d(
-                    LOG_TAG,
-                    "Stop data logging",
-                )
-                dataLogger.stop()
-                dataLogger.scheduledStop()
+                sendBroadcastEvent(DATA_LOGGER_SCHEDULED_STOP_EVENT)
             }
 
             if (powerPreferences.screenOnOff) {

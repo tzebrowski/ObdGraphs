@@ -188,7 +188,7 @@ internal class NavTemplateCarScreen(
                 EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
                     if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff){
                         Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
-                        dataLogger.stop()
+                        dataLogger?.stop()
                     }
                 }
             }
@@ -284,7 +284,7 @@ internal class NavTemplateCarScreen(
     override fun onGetTemplate(): Template  = try {
         settings.initItemsSortOrder()
 
-        if (settings.isConnectionDialogEnabled() && dataLogger.status() == WorkflowStatus.Connecting) {
+        if (settings.isConnectionDialogEnabled() && DataLoggerRepository.status() == WorkflowStatus.Connecting) {
             NavigationTemplate.Builder()
                 .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
                 .setActionStrip(getHorizontalActionStrip())
@@ -311,13 +311,13 @@ internal class NavTemplateCarScreen(
 
         lifecycle.addObserver(surfaceRendererScreen.getLifecycleObserver())
 
-        dataLogger.observe(this) {
+        DataLoggerRepository.observe(this) {
             metricsCollector.append(it, forceAppend = false)
         }
 
-        dataLogger.observe(dynamicSelectorModeEventBroadcaster)
+        DataLoggerRepository.observe(dynamicSelectorModeEventBroadcaster)
 
-        dataLogger
+        DataLoggerRepository
             .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)

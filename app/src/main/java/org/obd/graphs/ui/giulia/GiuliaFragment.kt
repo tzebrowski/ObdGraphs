@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,6 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
@@ -35,7 +34,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.registerReceiver
@@ -43,12 +42,12 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
+import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
-import org.obd.graphs.ui.common.attachToFloatingButton
 
-open class GiuliaFragment : Fragment() {
+open class GiuliaFragment : BaseFragment() {
     private lateinit var root: View
 
     private val query = Query.instance()
@@ -81,7 +80,7 @@ open class GiuliaFragment : Fragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                            dataLogger?.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                         }
                     }
 
@@ -146,14 +145,14 @@ open class GiuliaFragment : Fragment() {
 
         applyFilter()
 
-        dataLogger.observe(viewLifecycleOwner) {
+        DataLoggerRepository.observe(viewLifecycleOwner) {
             it.run {
                 metricsCollector.append(it, forceAppend = false)
             }
         }
 
-        if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(query())
+        if (DataLoggerRepository.isRunning()) {
+            dataLogger?.updateQuery(query())
             renderingThread.start()
         }
 
@@ -177,7 +176,7 @@ open class GiuliaFragment : Fragment() {
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
 
-                dataLogger.updateQuery(query())
+                dataLogger?.updateQuery(query())
                 applyFilter()
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()

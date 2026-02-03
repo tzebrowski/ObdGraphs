@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,7 +23,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.navigation.ui.NavigationUI
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.getContext
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY
 import org.obd.graphs.preferences.Prefs
@@ -99,7 +99,7 @@ internal fun MainActivity.setupNavigationBar() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
             bottomAppBar {
-                it.menu.findItem(R.id.ctx_menu_dtc).isVisible = dataLogger.isDTCEnabled()
+                it.menu.findItem(R.id.ctx_menu_dtc).isVisible = DataLoggerRepository.isDTCEnabled() ?: false
                 it.menu.findItem(R.id.ctx_menu_android_auto)?.let {
                     if (NavigationRouter.isAndroidAutoEnabled(this)) {
                         val spanString = SpannableString(it.title.toString())

@@ -26,7 +26,7 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
@@ -111,7 +111,7 @@ class MarkerWindow(
         id: Long,
         v: Float,
     ): ObdMetric {
-        val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
+        val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
         val pid = pidRegistry.findBy(id)
         val value = pid.scaleToRange(v)
         return ObdMetric

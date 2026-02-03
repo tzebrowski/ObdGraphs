@@ -27,7 +27,7 @@ import android.view.ViewGroup
 import androidx.preference.*
 import org.obd.graphs.R
 import org.obd.graphs.activity.*
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
@@ -191,7 +191,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     private fun hidePreferences() {
         findPreference<PreferenceCategory>("pref.dtc.category")?.isVisible =
-            dataLogger.isDTCEnabled()
+            DataLoggerRepository.isDTCEnabled()
     }
 
     private fun registerListeners() {

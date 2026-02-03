@@ -19,8 +19,8 @@ package org.obd.graphs.bl.trip
 import android.content.Context
 import android.util.Log
 import org.obd.graphs.*
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.commons.R
 
 private const val LOG_TAG = "TripManager"
@@ -48,7 +48,7 @@ interface TripManager : MetricsProcessor {
     fun deleteTrip(trip: TripFileDesc)
     fun loadTrip(tripName: String)
     fun loadTripAsync(tripName: String){
-        if (!dataLogger.isRunning()) {
+        if (!DataLoggerRepository.isRunning()) {
             sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, getContext()?.getText(R.string.dialog_screen_lock_trip_load_message) as String)
             runAsync (wait = false) {
                 try {

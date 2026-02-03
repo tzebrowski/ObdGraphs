@@ -17,13 +17,17 @@
 package org.obd.graphs.activity
 
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.IBinder
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -38,7 +42,8 @@ import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.Permissions
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerService
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
@@ -61,6 +66,26 @@ class MainActivity :
 
     lateinit var lockScreenDialog: AlertDialog
     internal lateinit var backupManager: BackupManager
+
+    var dataLogger: DataLoggerService? = null
+    private var isBound = false
+
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as DataLoggerService.LocalBinder
+            dataLogger = binder.getService()
+            isBound = true
+            Log.i("ServiceConnection", "Service Connected! Ready to send commands.")
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            Log.e("ServiceConnection", "Service Disconnected unexpectedly.")
+            isBound = false
+            dataLogger = null
+        }
+    }
+
 
     internal var activityBroadcastReceiver =
         object : BroadcastReceiver() {
@@ -117,6 +142,23 @@ class MainActivity :
     }
 
     fun getDrawer() = findViewById<View>(R.id.drawer_layout) as DrawerLayout
+
+
+    override fun onStart() {
+        super.onStart()
+        Intent(this, DataLoggerService::class.java).also { intent ->
+            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
+            dataLogger = null
+        }
+    }
 
     override fun onPause() {
         super.onPause()
@@ -244,14 +286,13 @@ class MainActivity :
     }
 
     private fun setupMetricsProcessors() {
-        dataLogger
-            .observe(dragRacingMetricsProcessor)
+        DataLoggerRepository.observe(dragRacingMetricsProcessor)
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
             .observe(gpsMetricsEmitter)
 
         if (BuildConfig.DEBUG) {
-            dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
+            DataLoggerRepository.observe(MetricsGenerator(BuildConfig.DEBUG))
         }
     }
 

@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-internal class DataLoggerJobScheduler {
+internal class DataLoggerJobScheduler(private val dataLogger: DataLoggerService) {
 
     private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var future: ScheduledFuture<*>? = null

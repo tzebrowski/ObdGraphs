@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,25 +21,27 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.SurfaceView
+import android.view.View
+import android.view.ViewGroup
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
+import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.SurfaceController
-import org.obd.graphs.ui.common.attachToFloatingButton
 
-open class DragRacingFragment : Fragment() {
+open class DragRacingFragment : BaseFragment() {
 
     private lateinit var root: View
     private val query = Query.instance(QueryStrategyType.DRAG_RACING_QUERY)
@@ -63,7 +65,7 @@ open class DragRacingFragment : Fragment() {
             when (intent?.action) {
 
                 DATA_LOGGER_CONNECTED_EVENT -> {
-                    dataLogger.updateQuery(query)
+                    dataLogger?.updateQuery(query)
                     renderingThread.start()
                 }
 
@@ -83,7 +85,7 @@ open class DragRacingFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        registerReceiver(activity, broadcastReceiver){
+        registerReceiver(activity, broadcastReceiver) {
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
         }
@@ -106,7 +108,7 @@ open class DragRacingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        root  = inflater.inflate(R.layout.fragment_drag_racing, container, false)
+        root = inflater.inflate(R.layout.fragment_drag_racing, container, false)
 
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
         val renderer = SurfaceRenderer.allocate(
@@ -121,14 +123,14 @@ open class DragRacingFragment : Fragment() {
             enabled = query.getIDs()
         )
 
-        dataLogger.observe(viewLifecycleOwner) {
+        DataLoggerRepository.observe(viewLifecycleOwner) {
             it.run {
                 metricsCollector.append(it)
             }
         }
 
-        if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(query)
+        if (DataLoggerRepository.isRunning()) {
+            dataLogger?.updateQuery(query)
             renderingThread.start()
         }
 

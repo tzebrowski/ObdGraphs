@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,20 +26,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.ui.common.attachToFloatingButton
-import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.gauge.AdapterContext
+import org.obd.graphs.ui.recycler.RefreshableFragment
 
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
+
 class DashboardFragment : RefreshableFragment() {
     private val metricsCollector = MetricsCollector.instance()
 
@@ -103,14 +105,14 @@ class DashboardFragment : RefreshableFragment() {
         root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         setupDashboardRecyclerView(true)
 
-        dataLogger.observe(viewLifecycleOwner) {
+        DataLoggerRepository.observe(viewLifecycleOwner) {
             it.run {
                 metricsCollector.append(it)
             }
         }
 
-        if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(query())
+        if (DataLoggerRepository.isRunning()) {
+            dataLogger?.updateQuery(query())
             renderingThread.start()
         }
 
@@ -124,7 +126,7 @@ class DashboardFragment : RefreshableFragment() {
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
         configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_DASH,
-            recyclerView = root.findViewById(R.id.dashboard_recycler_view) as RecyclerView,
+            recyclerView = root.findViewById<RecyclerView>(R.id.dashboard_recycler_view)!!,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext = AdapterContext(
                 layoutId = R.layout.item_dashboard,
@@ -154,7 +156,7 @@ class DashboardFragment : RefreshableFragment() {
     }
 
     private fun calculateSpanCount(): Int {
-        val numberOfItems =  Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size
+        val numberOfItems = Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size
         return if (numberOfItems <= 3) {
             1
         } else {
