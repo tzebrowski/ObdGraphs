@@ -36,7 +36,7 @@ abstract class BaseFragment : Fragment() {
             btn?.setOnClickListener {
                 if (DataLoggerRepository.isRunning()) {
                     withDataLogger { dataLogger ->
-                        Log.i("BaseFragment", "DragRacingFragment: Start data logging")
+                        Log.i("BaseFragment", "Stop data logging")
                         dataLogger.stop()
                     }
                 } else {
