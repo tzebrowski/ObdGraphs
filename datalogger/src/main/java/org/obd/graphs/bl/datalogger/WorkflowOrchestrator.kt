@@ -165,8 +165,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun findRateFor(metric: ObdMetric): Optional<Rate> = workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
 
-    fun findAlertFor(metric: ObdMetric): List<Alert> = workflow.alerts.findBy(metric.command.pid)
-
     fun pidDefinitionRegistry(): PidDefinitionRegistry = workflow.pidRegistry
 
     fun stop() {
