@@ -39,7 +39,6 @@ class DataLoggerConnector(
             dataLogger = logger
             isBound = true
 
-            // CHANGE 2: Call the function *on* the logger object
             logger.onConnected()
         }
 
@@ -51,7 +50,6 @@ class DataLoggerConnector(
 
     override fun onStart(owner: LifecycleOwner) {
         val intent = Intent(context, DataLoggerService::class.java)
-        // Check standard binding flags; usually BIND_AUTO_CREATE is correct
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
