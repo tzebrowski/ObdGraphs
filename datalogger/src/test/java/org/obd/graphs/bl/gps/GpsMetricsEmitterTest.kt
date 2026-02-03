@@ -29,7 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.Permissions
 import org.obd.graphs.bl.TestSetup
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
@@ -62,7 +62,7 @@ class GpsMetricsEmitterTest : TestSetup() {
         super.setup()
         mockkObject(Permissions)
         mockkObject(dataLoggerSettings)
-        mockkObject(dataLogger)
+        mockkObject(DataLoggerRepository)
 
 
         // Mock System Service retrieval
@@ -86,7 +86,7 @@ class GpsMetricsEmitterTest : TestSetup() {
         every { mockLocationManager.removeUpdates(any<LocationListener>()) } just Runs
 
         // Mock Registry & Settings
-        every { dataLogger.getPidDefinitionRegistry() } returns mockRegistry
+        every { DataLoggerRepository.getPidDefinitionRegistry() } returns mockRegistry
         // Return dummy PID definition so the command initialization succeeds
         val dummyPid = mockk<PidDefinition>(relaxed = true) {
             every { id } returns 100L

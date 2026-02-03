@@ -54,7 +54,7 @@ class DataLoggerService : Service() {
     private val jobScheduler = DataLoggerJobScheduler(this)
     private val binder = LocalBinder()
 
-    inner class LocalBinder : Binder() {
+    internal inner class LocalBinder : Binder() {
         fun getService(): DataLoggerService = this@DataLoggerService
     }
 

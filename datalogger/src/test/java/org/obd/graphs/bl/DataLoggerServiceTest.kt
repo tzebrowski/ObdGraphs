@@ -32,9 +32,9 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.obd.graphs.Permissions
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.datalogger.WorkflowOrchestrator
-import org.obd.graphs.bl.datalogger.setWorkflowOrchestrator
 import org.obd.graphs.bl.query.Query
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
@@ -50,7 +50,7 @@ class DataLoggerServiceTest : TestSetup() {
     @Before
     override fun setup() {
         super.setup()
-        setWorkflowOrchestrator(mockOrchestrator)
+        DataLoggerRepository.setWorkflowOrchestrator(mockOrchestrator)
     }
 
     @After
@@ -159,7 +159,7 @@ class DataLoggerServiceTest : TestSetup() {
             }
 
         // Inject the mock (Ensures the service uses OUR object, not a real one)
-        setWorkflowOrchestrator(mockOrchestrator)
+        DataLoggerRepository.setWorkflowOrchestrator(mockOrchestrator)
 
         val controller = Robolectric.buildService(DataLoggerService::class.java, intent)
 
