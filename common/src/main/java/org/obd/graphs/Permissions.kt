@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,8 +28,10 @@ import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
+import androidx.core.text.HtmlCompat
 import org.obd.graphs.commons.R
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -38,8 +40,8 @@ private const val LOCATION_REQUEST_CODE = 1001
 private const val BLUETOOTH_REQUEST_CODE = 1002
 private const val NOTIFICATION_REQUEST_CODE = 1003
 
- @SuppressLint("ObsoleteSdkInt")
- object Permissions {
+@SuppressLint("ObsoleteSdkInt")
+object Permissions {
 
     /**
      * Returns TRUE if any required permission is missing.
@@ -54,43 +56,19 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
         return !EasyPermissions.hasPermissions(context, *btPerms)
     }
 
-    fun showPermissionOnboarding(activity: Activity) {
-        val message =
-            """
-            To provide full functionality, please allow the following in the next steps:
-            • Battery Optimization: To ensure data logging isn't interrupted in the background.
-            • Location: To track your trip via GPS.
-            • Bluetooth: To connect to your OBD adapter.
-            • Notifications: To keep the logger running in the background.
-            """.trimIndent()
-
-        androidx.appcompat.app.AlertDialog
+    fun showPermissionOnboarding(activity: Activity): AlertDialog =
+        AlertDialog
             .Builder(activity)
-            .setTitle("Setup Required")
-            .setMessage(message)
-            .setPositiveButton("Begin Setup") { _, _ ->
-               requestAll(activity)
-
+            .setTitle(R.string.permission_onboarding_title)
+            .setMessage(HtmlCompat.fromHtml(activity.getString(R.string.permission_onboarding_message), HtmlCompat.FROM_HTML_MODE_LEGACY))
+            .setPositiveButton(R.string.permission_onboarding_btn_positive) { _, _ ->
+                requestAll(activity)
                 if (!isBatteryOptimizationEnabled(activity)) {
                     requestBatteryOptimization(activity)
                 }
-            }.setNegativeButton("Later", null)
+            }
+            .setNegativeButton(R.string.permission_onboarding_btn_negative, null)
             .show()
-    }
-
-
-
-    /**
-     * Checks if the app is already ignoring battery optimizations.
-     */
-    @SuppressLint("ObsoleteSdkInt")
-    fun isBatteryOptimizationEnabled(context: Context): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
-            return powerManager?.isIgnoringBatteryOptimizations(context.packageName) ?: true
-        }
-        return true
-    }
 
     /**
      * Returns TRUE if all required location permissions are granted.
@@ -275,5 +253,17 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
             }
             activity.startActivity(intent)
         }
+    }
+
+    /**
+     * Checks if the app is already ignoring battery optimizations.
+     */
+    @SuppressLint("ObsoleteSdkInt")
+    private fun isBatteryOptimizationEnabled(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
+            return powerManager?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+        }
+        return true
     }
 }

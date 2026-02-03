@@ -35,5 +35,15 @@
 
     <string name="permissions.missing.bt_msg">To communicate with your vehicle, please allow Bluetooth access.</string>
     <string name="permissions.missing.location_msg">To access WIFI network, record your trip route and speed, please allow Location access.</string>
+    <string name="permission.onboarding_title">Setup Required</string>
+    <string name="permission_onboarding_message"><![CDATA[
+To provide full functionality, please allow the following in the next steps:<br/><br/>
+• <b>Battery Optimization</b>: To ensure data logging isn\'t interrupted.<br/>
+• <b>Location</b>: To track your trip via GPS.<br/>
+• <b>Bluetooth</b>: To connect to your OBD adapter.<br/>
+• <b>Notifications</b>: To keep the logger running in the background.
+]]></string>
+    <string name="permission.onboarding_btn_positive">Begin Setup</string>
+    <string name="permission.onboarding_btn_negative">Later</string>
 
 </resources>
