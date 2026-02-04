@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -170,9 +170,9 @@ internal class SurfaceRendererScreen(
                 withDataLogger {
                     updateQuery(
                         query =
-                        query.apply {
-                            setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                        },
+                            query.apply {
+                                setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
+                            },
                     )
                 }
 
@@ -183,9 +183,9 @@ internal class SurfaceRendererScreen(
                 withDataLogger {
                     updateQuery(
                         query =
-                        query.apply {
-                            setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-                        },
+                            query.apply {
+                                setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
+                            },
                     )
                 }
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.TRIP_INFO)
@@ -195,9 +195,9 @@ internal class SurfaceRendererScreen(
                 withDataLogger {
                     updateQuery(
                         query =
-                        query.apply {
-                            setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
-                        },
+                            query.apply {
+                                setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
+                            },
                     )
                 }
                 surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.PERFORMANCE)

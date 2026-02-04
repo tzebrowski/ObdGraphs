@@ -21,7 +21,6 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.bl.query.Query
-import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram

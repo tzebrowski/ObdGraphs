@@ -48,7 +48,9 @@ private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
 private const val NOTIFICATION_ID = 12345
 
 class DataLoggerService : Service() {
-    private val workflowOrchestrator = DataLoggerRepository.workflowOrchestrator
+    private val workflowOrchestrator by lazy {
+        DataLoggerRepository.workflowOrchestrator
+    }
 
     private val jobScheduler = DataLoggerJobScheduler(this)
     private val binder = LocalBinder()
