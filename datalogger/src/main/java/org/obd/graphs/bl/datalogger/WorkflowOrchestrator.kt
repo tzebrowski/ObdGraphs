@@ -26,7 +26,6 @@ import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
-import org.obd.metrics.alert.Alert
 import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*

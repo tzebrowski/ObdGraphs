@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,7 +32,6 @@ import org.obd.graphs.Permissions
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
-import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
 
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
@@ -90,7 +89,7 @@ class DataLoggerService : Service() {
         }
 
         // Fail-fast if permissions are missing
-        if (!Permissions.hasNotificationPermissions(getContext()!!)) {
+        if (!Permissions.hasNotificationPermissions(this)) {
             Log.e(LOG_TAG, "CRITICAL: Missing required permissions. Service cannot start.")
             serviceStop()
             sendBroadcastEvent(REQUEST_NOTIFICATION_PERMISSIONS)
@@ -174,19 +173,18 @@ class DataLoggerService : Service() {
         func: (p: Intent) -> Unit = {},
     ) {
         try {
-            getContext()?.let { context ->
-                val intent =
-                    Intent(context, DataLoggerService::class.java).apply {
-                        action = intentAction
-                        putExtra("init", 1)
-                    }
-                func(intent)
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context.startForegroundService(intent)
-                } else {
-                    context.startService(intent)
+            val intent =
+                Intent(this, DataLoggerService::class.java).apply {
+                    action = intentAction
+                    putExtra("init", 1)
                 }
+            func(intent)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
             }
         } catch (e: IllegalStateException) {
             Log.e(LOG_TAG, "Failed to enqueue the work", e)
