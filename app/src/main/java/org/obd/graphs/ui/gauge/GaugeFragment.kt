@@ -44,6 +44,7 @@ import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.isTablet
@@ -116,7 +117,7 @@ class GaugeFragment : RefreshableFragment() {
                             it.isVisible = true
                         }
                         renderingThread.stop()
-                        attachToFloatingButton(activity, query())
+                        configureActionButton(query())
                     }
 
                     TOOLBAR_TOGGLE_ACTION -> {
@@ -157,7 +158,7 @@ class GaugeFragment : RefreshableFragment() {
             renderingThread.start()
         }
 
-        attachToFloatingButton(activity, query())
+        configureActionButton(query())
 
         return root
     }

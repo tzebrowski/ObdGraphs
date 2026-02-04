@@ -30,6 +30,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.LineChart
@@ -60,7 +61,7 @@ import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.ui.BaseFragment
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.Colors
@@ -75,7 +76,7 @@ import java.util.Locale
 
 private const val LOG_TAG = "Graph"
 
-class GraphFragment : BaseFragment() {
+class GraphFragment : Fragment() {
     private var broadcastReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(
@@ -101,7 +102,7 @@ class GraphFragment : BaseFragment() {
                             it.isVisible = true
                         }
 
-                        attachToFloatingButton(activity, query())
+                        configureActionButton(query())
                     }
 
                     DATA_LOGGER_CONNECTED_EVENT -> {
@@ -203,7 +204,7 @@ class GraphFragment : BaseFragment() {
         registerReceivers()
         configureRecyclerView()
         setupVirtualViewPanel()
-        attachToFloatingButton(activity, query())
+        configureActionButton(query())
         return root
     }
 

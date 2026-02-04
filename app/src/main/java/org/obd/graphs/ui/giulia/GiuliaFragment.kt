@@ -27,6 +27,7 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
@@ -42,13 +43,13 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
-import org.obd.graphs.ui.BaseFragment
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.SurfaceController
 import org.obd.graphs.ui.withDataLogger
 
-open class GiuliaFragment : BaseFragment() {
+open class GiuliaFragment : Fragment() {
     private lateinit var root: View
 
     private val query = Query.instance()
@@ -94,7 +95,7 @@ open class GiuliaFragment : BaseFragment() {
 
                     DATA_LOGGER_STOPPED_EVENT -> {
                         renderingThread.stop()
-                        attachToFloatingButton(activity, query())
+                        configureActionButton(query())
                     }
                 }
             }
@@ -161,7 +162,7 @@ open class GiuliaFragment : BaseFragment() {
             renderingThread.start()
         }
 
-        attachToFloatingButton(activity, query())
+        configureActionButton(query())
 
         return root
     }

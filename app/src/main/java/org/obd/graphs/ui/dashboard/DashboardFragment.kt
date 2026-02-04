@@ -37,6 +37,7 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.withDataLogger
@@ -72,7 +73,7 @@ class DashboardFragment : RefreshableFragment() {
 
                     DATA_LOGGER_STOPPED_EVENT -> {
                         renderingThread.stop()
-                        attachToFloatingButton(activity, query())
+                        configureActionButton(query())
                     }
                 }
             }
@@ -124,7 +125,6 @@ class DashboardFragment : RefreshableFragment() {
             renderingThread.start()
         }
 
-        attachToFloatingButton(activity, query())
 
         return root
     }

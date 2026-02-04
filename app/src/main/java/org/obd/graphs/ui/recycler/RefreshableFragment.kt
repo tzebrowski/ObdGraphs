@@ -19,6 +19,7 @@ package org.obd.graphs.ui.recycler
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -30,13 +31,12 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.updateLongSet
 import org.obd.graphs.sendBroadcastEvent
-import org.obd.graphs.ui.BaseFragment
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
 import org.obd.graphs.ui.gauge.AdapterContext
 
-open class RefreshableFragment : BaseFragment() {
+open class RefreshableFragment : Fragment() {
     protected val query: Query = Query.instance()
     protected lateinit var root: View
 

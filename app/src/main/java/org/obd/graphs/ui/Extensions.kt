@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -16,17 +16,56 @@
  */
 package org.obd.graphs.ui
 
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerConnector
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
+import org.obd.graphs.bl.query.Query
 
- fun Fragment.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
-     val connector = DataLoggerConnector(requireContext(), onConnected)
-     this.lifecycle.addObserver(connector)
- }
+fun Fragment.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
+    val connector = DataLoggerConnector(requireContext(), onConnected)
+    this.lifecycle.addObserver(connector)
+}
 
- fun ComponentActivity.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
-     val connector = DataLoggerConnector(this, onConnected)
-     this.lifecycle.addObserver(connector)
- }
+fun ComponentActivity.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
+    val connector = DataLoggerConnector(this, onConnected)
+    this.lifecycle.addObserver(connector)
+}
+
+
+fun Fragment.configureActionButton(
+    query: Query,
+) {
+    activity?.let {
+        val btn = it.findViewById<FloatingActionButton>(R.id.connect_btn)
+
+        btn?.setOnClickListener {
+            if (DataLoggerRepository.isRunning()) {
+                withDataLogger {
+                    Log.i("Fragment", "Stop data logging")
+                    stop()
+                }
+            } else {
+                withDataLogger {
+                    Log.i("Fragment", "Start data logging")
+                    start(query)
+                }
+            }
+        }
+
+        btn?.backgroundTintList =
+            ContextCompat.getColorStateList(
+                it,
+                if (DataLoggerRepository.isRunning()) {
+                    org.obd.graphs.commons.R.color.cardinal
+                } else {
+                    org.obd.graphs.commons.R.color.philippine_green
+                },
+            )
+    }
+}

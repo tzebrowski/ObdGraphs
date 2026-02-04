@@ -26,6 +26,7 @@ import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -39,11 +40,11 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.renderer.ViewSettings
-import org.obd.graphs.ui.BaseFragment
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.common.SurfaceController
 import org.obd.graphs.ui.withDataLogger
 
-open class PerformanceFragment : BaseFragment() {
+open class PerformanceFragment : Fragment() {
     private lateinit var root: View
 
     private val query = Query.instance(QueryStrategyType.PERFORMANCE_QUERY)
@@ -80,7 +81,7 @@ open class PerformanceFragment : BaseFragment() {
 
                     DATA_LOGGER_STOPPED_EVENT -> {
                         renderingThread.stop()
-                        attachToFloatingButton(activity, query)
+                        configureActionButton(query)
                     }
                 }
             }
@@ -150,7 +151,7 @@ open class PerformanceFragment : BaseFragment() {
             renderingThread.start()
         }
 
-        attachToFloatingButton(activity, query)
+        configureActionButton(query)
         return root
     }
 }
