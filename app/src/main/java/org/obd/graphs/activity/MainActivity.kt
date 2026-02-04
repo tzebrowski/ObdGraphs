@@ -46,6 +46,7 @@ import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
 import org.obd.graphs.network
+import org.obd.graphs.preferences.initPrefs
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
@@ -131,6 +132,7 @@ class MainActivity :
         setupStrictMode()
         super.onCreate(savedInstanceState)
         setActivityContext(this)
+        initPrefs(this)
         initCache()
         setContentView(R.layout.activity_main)
 

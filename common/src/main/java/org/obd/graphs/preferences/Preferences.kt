@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,14 +17,17 @@
 package org.obd.graphs.preferences
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import org.obd.graphs.getContext
 
-val Prefs: SharedPreferences by lazy {
-   PreferenceManager.getDefaultSharedPreferences(
-       getContext()!!
-    )
+lateinit var Prefs: SharedPreferences
+    private set
+
+fun initPrefs(context: Context) {
+    if (!::Prefs.isInitialized) {
+        Prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
+    }
 }
 
 fun SharedPreferences.Editor.updatePreference(
@@ -36,12 +39,15 @@ fun SharedPreferences.Editor.updatePreference(
         is String -> {
             putString(prefName, value)
         }
+
         is Set<*> -> {
             putStringSet(prefName, value as MutableSet<String>?)
         }
+
         is Int -> {
             putInt(prefName, value)
         }
+
         is Boolean -> {
             putBoolean(prefName, value)
         }
@@ -59,8 +65,8 @@ fun SharedPreferences.updateString(key: String, value: String?): SharedPreferenc
 }
 
 @SuppressLint("ApplySharedPref")
-fun SharedPreferences.updateInt(key: String, value: Int){
-   edit().putInt(key, value).commit()
+fun SharedPreferences.updateInt(key: String, value: Int) {
+    edit().putInt(key, value).commit()
 }
 
 @SuppressLint("ApplySharedPref")
@@ -74,7 +80,7 @@ fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
 }
 
 fun SharedPreferences.getLongSet(key: String, defaults: MutableSet<String> = mutableSetOf()): Set<Long> {
-    return getStringSet(key,defaults)?.map { s -> s.toLong() }?.toSet()!!
+    return getStringSet(key, defaults)?.map { s -> s.toLong() }?.toSet()!!
 }
 
 fun SharedPreferences.getStringSet(key: String): MutableSet<String> {

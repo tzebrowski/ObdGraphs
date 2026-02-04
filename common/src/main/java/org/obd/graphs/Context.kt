@@ -32,7 +32,6 @@ fun setCarContext(carContext: ContextWrapper) {
 
 fun getContext(): ContextWrapper? =
     when {
-        //Application context has priority over Car context
         ::activityContext.isInitialized -> {
             activityContext.get()
         }
