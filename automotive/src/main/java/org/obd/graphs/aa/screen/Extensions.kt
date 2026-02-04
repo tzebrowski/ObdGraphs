@@ -20,7 +20,6 @@ import androidx.car.app.Screen
 import org.obd.graphs.bl.datalogger.DataLoggerConnector
 import org.obd.graphs.bl.datalogger.DataLoggerService
 
-fun Screen.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
-    val connector = DataLoggerConnector(carContext, onConnected)
-    this.lifecycle.addObserver(connector)
+fun Screen.withDataLogger(action: DataLoggerService.() -> Unit) {
+    DataLoggerConnector.run(carContext, action)
 }

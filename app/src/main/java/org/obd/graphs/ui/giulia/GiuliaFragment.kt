@@ -82,7 +82,7 @@ open class GiuliaFragment : Fragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            withDataLogger { 
+                            withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                             }
                         }
@@ -156,7 +156,7 @@ open class GiuliaFragment : Fragment() {
         }
 
         if (DataLoggerRepository.isRunning()) {
-            withDataLogger { 
+            withDataLogger {
                 updateQuery(query())
             }
             renderingThread.start()
@@ -181,7 +181,7 @@ open class GiuliaFragment : Fragment() {
 
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
-                withDataLogger { 
+                withDataLogger {
                    updateQuery(query())
                 }
 

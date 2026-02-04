@@ -87,7 +87,7 @@ class GraphFragment : Fragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            withDataLogger { 
+                            withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                             }
                         }
@@ -204,6 +204,7 @@ class GraphFragment : Fragment() {
         registerReceivers()
         configureRecyclerView()
         setupVirtualViewPanel()
+        configureActionButton(query())
         configureActionButton(query())
         return root
     }

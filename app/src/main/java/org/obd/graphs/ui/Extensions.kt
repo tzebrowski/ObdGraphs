@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,20 +27,15 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.query.Query
 
-fun Fragment.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
-    val connector = DataLoggerConnector(requireContext(), onConnected)
-    this.lifecycle.addObserver(connector)
+fun Fragment.withDataLogger(action: DataLoggerService.() -> Unit) {
+    DataLoggerConnector.run(requireContext(), action)
 }
 
-fun ComponentActivity.withDataLogger(onConnected: DataLoggerService.() -> Unit) {
-    val connector = DataLoggerConnector(this, onConnected)
-    this.lifecycle.addObserver(connector)
+fun ComponentActivity.withDataLogger(action: DataLoggerService.() -> Unit) {
+    DataLoggerConnector.run(this, action)
 }
 
-
-fun Fragment.configureActionButton(
-    query: Query,
-) {
+fun Fragment.configureActionButton(query: Query) {
     activity?.let {
         val btn = it.findViewById<FloatingActionButton>(R.id.connect_btn)
 

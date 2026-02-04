@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,43 +21,70 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
+import android.util.Log
 
-class DataLoggerConnector(
-    private val context: Context,
-    private val onConnected: DataLoggerService.() -> Unit
-) : DefaultLifecycleObserver {
-
+object DataLoggerConnector {
+    private var service: DataLoggerService? = null
     private var isBound = false
-    private var dataLogger: DataLoggerService? = null
+    private val pendingTasks = mutableListOf<DataLoggerService.() -> Unit>()
 
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as DataLoggerService.LocalBinder
-            val logger = binder.getService()
-            dataLogger = logger
+    private val serviceConnection =
+        object : ServiceConnection {
+            override fun onServiceConnected(
+                className: ComponentName,
+                binder: IBinder,
+            ) {
+                Log.i("DataLoggerConnector", "Service connected globally.")
+                val localBinder = binder as DataLoggerService.LocalBinder
+                service = localBinder.getService()
+                isBound = true
+
+                synchronized(pendingTasks) {
+                    pendingTasks.forEach { task -> service?.task() }
+                    pendingTasks.clear()
+                }
+            }
+
+            override fun onServiceDisconnected(className: ComponentName) {
+                service = null
+                isBound = false
+            }
+        }
+
+    /**
+     * The core function. Binds lazily (on first use) and executes the action.
+     */
+    fun run(
+        context: Context,
+        action: DataLoggerService.() -> Unit,
+    ) {
+        val currentService = service
+
+        if (currentService != null) {
+            currentService.action()
+        } else {
+            Log.i("DataLoggerConnector", "Service not ready. Queueing task...")
+            synchronized(pendingTasks) {
+                pendingTasks.add(action)
+            }
+            bind(context)
+        }
+    }
+
+    private fun bind(context: Context) {
+        if (!isBound) {
+            val appContext = context.applicationContext
+            val intent = Intent(appContext, DataLoggerService::class.java)
+            appContext.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
             isBound = true
-
-            logger.onConnected()
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            dataLogger = null
-            isBound = false
         }
     }
 
-    override fun onStart(owner: LifecycleOwner) {
-        val intent = Intent(context, DataLoggerService::class.java)
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
+    fun release(context: Context) {
         if (isBound) {
-            context.unbindService(serviceConnection)
+            context.applicationContext.unbindService(serviceConnection)
             isBound = false
+            service = null
         }
-        dataLogger = null
     }
 }

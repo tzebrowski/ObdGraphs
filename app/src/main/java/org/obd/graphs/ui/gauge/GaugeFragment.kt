@@ -82,7 +82,7 @@ class GaugeFragment : RefreshableFragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            withDataLogger { 
+                            withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                             }
                         }
@@ -151,7 +151,7 @@ class GaugeFragment : RefreshableFragment() {
         setupVirtualViewPanel()
 
         if (DataLoggerRepository.isRunning()) {
-            withDataLogger { 
+            withDataLogger {
                 updateQuery(query())
             }
 
@@ -265,7 +265,7 @@ class GaugeFragment : RefreshableFragment() {
                 gaugeVirtualScreen.updateVirtualScreen(viewId)
 
                 if (DataLoggerRepository.isRunning()) {
-                    withDataLogger { 
+                    withDataLogger {
                         updateQuery(query())
                     }
                 }
