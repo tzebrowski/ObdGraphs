@@ -38,7 +38,7 @@ import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.Permissions
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.generator.MetricsGenerator
@@ -46,6 +46,7 @@ import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
 import org.obd.graphs.network
+import org.obd.graphs.preferences.initPrefs
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setActivityContext
@@ -58,7 +59,6 @@ const val LOG_TAG = "MainActivity"
 class MainActivity :
     AppCompatActivity(),
     EasyPermissions.PermissionCallbacks {
-
     lateinit var lockScreenDialog: AlertDialog
     internal lateinit var backupManager: BackupManager
 
@@ -125,13 +125,14 @@ class MainActivity :
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
-        return NavigationUI.navigateUp(navController,appBarConfiguration) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setupStrictMode()
         super.onCreate(savedInstanceState)
         setActivityContext(this)
+        initPrefs(this)
         initCache()
         setContentView(R.layout.activity_main)
 
@@ -164,7 +165,6 @@ class MainActivity :
         validatePermissions()
     }
 
-
     override fun onResume() {
         super.onResume()
         screen.setupWindowManager(this)
@@ -188,15 +188,15 @@ class MainActivity :
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
 
-
-    fun getAppBarConfiguration(): AppBarConfiguration = AppBarConfiguration(
-        setOf(
-            R.id.nav_giulia,
-            R.id.nav_graph,
-            R.id.nav_gauge,
-        ),
-        findViewById<DrawerLayout>(R.id.drawer_layout)
-    )
+    fun getAppBarConfiguration(): AppBarConfiguration =
+        AppBarConfiguration(
+            setOf(
+                R.id.nav_giulia,
+                R.id.nav_graph,
+                R.id.nav_gauge,
+            ),
+            findViewById<DrawerLayout>(R.id.drawer_layout),
+        )
 
     private fun initCache() {
         cacheManager.initCache(cache)
@@ -244,14 +244,14 @@ class MainActivity :
     }
 
     private fun setupMetricsProcessors() {
-        dataLogger
+        DataLoggerRepository
             .observe(dragRacingMetricsProcessor)
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
             .observe(gpsMetricsEmitter)
 
         if (BuildConfig.DEBUG) {
-            dataLogger.observe(MetricsGenerator(BuildConfig.DEBUG))
+            DataLoggerRepository.observe(MetricsGenerator(BuildConfig.DEBUG))
         }
     }
 

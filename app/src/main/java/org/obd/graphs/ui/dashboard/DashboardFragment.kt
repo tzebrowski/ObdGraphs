@@ -26,49 +26,58 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.ui.common.attachToFloatingButton
-import org.obd.graphs.ui.recycler.RefreshableFragment
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.gauge.AdapterContext
+import org.obd.graphs.ui.recycler.RefreshableFragment
+import org.obd.graphs.ui.withDataLogger
 
 private const val CONFIGURATION_CHANGE_EVENT_DASH = "recycler.view.change.configuration.event.dash_id"
+
 class DashboardFragment : RefreshableFragment() {
     private val metricsCollector = MetricsCollector.instance()
 
-    private val renderingThread: RenderingThread = RenderingThread(
-        renderAction = {
-            refreshRecyclerView(metricsCollector, R.id.dashboard_recycler_view)
-        },
-        perfFrameRate = {
-            Prefs.getS("pref.dashboard.fps", "10").toInt()
-        }
-    )
+    private val renderingThread: RenderingThread =
+        RenderingThread(
+            renderAction = {
+                refreshRecyclerView(metricsCollector, R.id.dashboard_recycler_view)
+            },
+            perfFrameRate = {
+                Prefs.getS("pref.dashboard.fps", "10").toInt()
+            },
+        )
 
     private val dashboardPreferences: DashboardPreferences by lazy { getDashboardPreferences() }
-    private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.action) {
-                CONFIGURATION_CHANGE_EVENT_DASH -> setupDashboardRecyclerView(false)
+    private var broadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                when (intent?.action) {
+                    CONFIGURATION_CHANGE_EVENT_DASH -> setupDashboardRecyclerView(false)
 
-                DATA_LOGGER_CONNECTED_EVENT -> {
-                    renderingThread.start()
-                }
+                    DATA_LOGGER_CONNECTED_EVENT -> {
+                        renderingThread.start()
+                    }
 
-                DATA_LOGGER_STOPPED_EVENT -> {
-                    renderingThread.stop()
-                    attachToFloatingButton(activity, query())
+                    DATA_LOGGER_STOPPED_EVENT -> {
+                        renderingThread.stop()
+                        configureActionButton(query())
+                    }
                 }
             }
         }
-    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -98,23 +107,23 @@ class DashboardFragment : RefreshableFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         root = inflater.inflate(R.layout.fragment_dashboard, container, false)
         setupDashboardRecyclerView(true)
 
-        dataLogger.observe(viewLifecycleOwner) {
+        DataLoggerRepository.observe(viewLifecycleOwner) {
             it.run {
                 metricsCollector.append(it)
             }
         }
 
-        if (dataLogger.isRunning()) {
-            dataLogger.updateQuery(query())
+        if (DataLoggerRepository.isRunning()) {
+            withDataLogger {
+                updateQuery(query())
+            }
             renderingThread.start()
         }
-
-        attachToFloatingButton(activity, query())
 
         return root
     }
@@ -124,23 +133,26 @@ class DashboardFragment : RefreshableFragment() {
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
         configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_DASH,
-            recyclerView = root.findViewById(R.id.dashboard_recycler_view) as RecyclerView,
+            recyclerView = root.findViewById<RecyclerView>(R.id.dashboard_recycler_view)!!,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
-            adapterContext = AdapterContext(
-                layoutId = R.layout.item_dashboard,
-                spanCount = calculateSpanCount(),
-                height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size)
-            ),
+            adapterContext =
+                AdapterContext(
+                    layoutId = R.layout.item_dashboard,
+                    spanCount = calculateSpanCount(),
+                    height = calculateHeight(Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size),
+                ),
             enableDragManager = dashboardPreferences.dragAndDropEnabled,
             enableOnTouchListener = enableOnTouchListener,
             enableSwipeToDelete = dashboardPreferences.swipeToDeleteEnabled,
-            adapter = { context: Context,
-                        data: MutableList<Metric>,
-                        resourceId: Int,
-                        height: Int? ->
+            adapter = {
+                context: Context,
+                data: MutableList<Metric>,
+                resourceId: Int,
+                height: Int?,
+                ->
                 DashboardViewAdapter(context, data, resourceId, height)
             },
-            metricsSerializerPref = "prefs.dash.pids.settings"
+            metricsSerializerPref = "prefs.dash.pids.settings",
         )
 
         metricsCollector.applyFilter(dashboardPreferences.dashboardSelectedMetrics.second)
@@ -154,7 +166,7 @@ class DashboardFragment : RefreshableFragment() {
     }
 
     private fun calculateSpanCount(): Int {
-        val numberOfItems =  Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size
+        val numberOfItems = Prefs.getLongSet(dashboardPreferences.dashboardSelectedMetrics.first).size
         return if (numberOfItems <= 3) {
             1
         } else {

@@ -14,31 +14,12 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs
+package org.obd.graphs.aa.screen
 
-import android.content.ContextWrapper
-import java.lang.ref.WeakReference
+import androidx.car.app.Screen
+import org.obd.graphs.bl.datalogger.DataLoggerService
 
-private lateinit var activityContext: WeakReference<ContextWrapper>
-private lateinit var carContext: WeakReference<ContextWrapper>
-
-fun setActivityContext(activity: ContextWrapper) {
-    activityContext = WeakReference(activity)
+fun Screen.withDataLogger(action: DataLoggerService.() -> Unit) {
+    org.obd.graphs.bl.datalogger
+        .withDataLogger(carContext, action)
 }
-
-fun setCarContext(carContext: ContextWrapper) {
-    org.obd.graphs.carContext = WeakReference(carContext)
-}
-
-fun getContext(): ContextWrapper? =
-    when {
-        ::activityContext.isInitialized -> {
-            activityContext.get()
-        }
-        ::carContext.isInitialized -> {
-            carContext.get()
-        }
-        else -> {
-            null
-        }
-    }

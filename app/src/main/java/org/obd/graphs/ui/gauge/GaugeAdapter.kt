@@ -33,7 +33,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.PREF_ALERTING_ENABLED
 import org.obd.graphs.R
 import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.format
 import org.obd.graphs.mapRange
 import org.obd.graphs.modules
@@ -212,7 +212,7 @@ class GaugeAdapter(
             if (preferences.commandRateEnabled) {
                 this.visibility = View.VISIBLE
                 val rate =
-                    dataLogger
+                    DataLoggerRepository
                         .getDiagnostics()
                         .rate()
                         .findBy(RateType.MEAN, pid)

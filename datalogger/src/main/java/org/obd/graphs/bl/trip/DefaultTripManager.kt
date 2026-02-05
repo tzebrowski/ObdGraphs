@@ -18,8 +18,8 @@ package org.obd.graphs.bl.trip
 
 import android.content.Context
 import android.util.Log
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.getContext
 import org.obd.graphs.isNumber
@@ -125,8 +125,8 @@ internal class DefaultTripManager :
                 } else {
                     try {
                         f()
-                        val histogram = dataLogger.getDiagnostics().histogram()
-                        val pidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
+                        val histogram = DataLoggerRepository.getDiagnostics().histogram()
+                        val pidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
 
                         trip.entries.forEach { (t, u) ->
                             val p = pidDefinitionRegistry.findBy(t)

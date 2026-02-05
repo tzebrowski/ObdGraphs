@@ -17,7 +17,7 @@
 package org.obd.graphs.bl.collector
 
 import android.util.Log
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.metrics.api.model.ObdMetric
 import java.util.*
@@ -91,8 +91,8 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
                 it.source = metric
 
                 it.value = metric.value
-                val hist = dataLogger.findHistogramFor(metric)
-                val rate = dataLogger.findRateFor(metric)
+                val hist = DataLoggerRepository.findHistogramFor(metric)
+                val rate = DataLoggerRepository.findRateFor(metric)
 
                 if (metric.isLowerAlert) {
                     it.inLowerAlertRisedHist = metric.isLowerAlert

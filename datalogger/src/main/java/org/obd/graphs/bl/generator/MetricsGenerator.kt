@@ -18,8 +18,8 @@ package org.obd.graphs.bl.generator
 
 import android.os.Handler
 import android.os.Looper
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.MetricsProcessor
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.metrics.api.model.ObdMetric
@@ -59,8 +59,8 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
     override fun onRunning(vehicleCapabilities: VehicleCapabilities?) {
 
         if (isGeneratorEnabled()) {
-            val metrics = generateMetricsFor(dataLogger.getPidDefinitionRegistry(),
-                dataLogger.getCurrentQuery())
+            val metrics = generateMetricsFor(DataLoggerRepository.getPidDefinitionRegistry(),
+                DataLoggerRepository.getCurrentQuery())
 
             if (!broadcasterLaunched) {
                 broadcasterLaunched = true
@@ -93,7 +93,7 @@ class MetricsGenerator(private val debugBuild: Boolean) : MetricsProcessor {
             if (metrics.containsKey(id)) {
                 add(metrics[id]!!)
             } else {
-                val pid = dataLogger.getPidDefinitionRegistry().findBy(id)
+                val pid = DataLoggerRepository.getPidDefinitionRegistry().findBy(id)
                 val metric = MetricGeneratorDefinition(
                     pid = pid,
                     data = generateSequenceFor(pid)

@@ -17,7 +17,7 @@
 package org.obd.graphs.bl.collector
 
 
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
@@ -39,7 +39,7 @@ class MetricsBuilder {
 
 
     fun buildFor(obdMetric: ObdMetric): Metric {
-        val histogramSupplier = dataLogger.getDiagnostics().histogram()
+        val histogramSupplier = DataLoggerRepository.getDiagnostics().histogram()
         val histogram = histogramSupplier.findBy(obdMetric.command.pid)
         return Metric
             .newInstance(
@@ -74,8 +74,8 @@ class MetricsBuilder {
 
 
     private fun buildMetrics(ids: Set<Long>): MutableList<Metric> {
-        val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
-        val histogramSupplier = dataLogger.getDiagnostics().histogram()
+        val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
+        val histogramSupplier = DataLoggerRepository.getDiagnostics().histogram()
 
         return ids.mapNotNull {
             pidRegistry.findBy(it)?.let { pid ->

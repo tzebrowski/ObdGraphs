@@ -32,12 +32,11 @@ import org.obd.graphs.aa.screen.nav.CHANGE_SCREEN_EVENT
 import org.obd.graphs.aa.screen.nav.FeatureDescription
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.WorkflowStatus
-import org.obd.graphs.bl.datalogger.dataLogger
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.Identity
 import org.obd.graphs.sendBroadcastEvent
-
 
 const val GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"
 const val GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.pids.profile_2.event.changed"
@@ -50,10 +49,11 @@ internal abstract class CarScreen(
     carContext: CarContext,
     protected val settings: CarSettings,
     protected val metricsCollector: MetricsCollector,
-    protected val fps: Fps = Fps()
-) : Screen(carContext), DefaultLifecycleObserver {
-
+    protected val fps: Fps = Fps(),
+) : Screen(carContext),
+    DefaultLifecycleObserver {
     open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
+
     abstract fun actionStartDataLogging()
 
     protected open fun gotoScreen(identity: Identity) {}
@@ -66,77 +66,91 @@ internal abstract class CarScreen(
 
     open fun onCarConfigurationChanged() {}
 
-    protected val renderingThread: RenderingThread = RenderingThread(
-        id = "CarScreenRenderingThread",
-        renderAction = {
-            renderAction()
-        },
-        perfFrameRate = {
-            settings.getSurfaceFrameRate()
-        }
-    )
+    protected val renderingThread: RenderingThread =
+        RenderingThread(
+            id = "CarScreenRenderingThread",
+            renderAction = {
+                renderAction()
+            },
+            perfFrameRate = {
+                settings.getSurfaceFrameRate()
+            },
+        )
 
     protected fun registerConnectionStateReceiver() {
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
     }
 
-
     protected fun actionStopDataLogging() {
         Log.i(LOG_TAG, "Stopping data logging process")
-        dataLogger.stop()
+        withDataLogger {
+            stop()
+        }
         cancelRenderingTask()
     }
 
     protected open fun getHorizontalActionStrip(
         preferencesEnabled: Boolean = true,
         exitEnabled: Boolean = true,
-        featureListsEnabledSetting: Boolean = true
+        featureListsEnabledSetting: Boolean = true,
     ): ActionStrip {
         var builder = ActionStrip.Builder()
 
-        builder = if (dataLogger.status() == WorkflowStatus.Connecting || dataLogger.status() == WorkflowStatus.Connected) {
-            builder.addAction(
-                createAction(
-                    carContext,
-                    R.drawable.action_disconnect,
-                    mapColor(settings.getColorTheme().actionsBtnDisconnectColor)
-                ) {
-                    actionStopDataLogging()
-                    toast.show(carContext, R.string.toast_connection_disconnect)
-                })
-        } else {
-            builder.addAction(
-                createAction(
-                    carContext,
-                    R.drawable.actions_connect,
-                    mapColor(settings.getColorTheme().actionsBtnConnectColor)
-                ) {
-                    actionStartDataLogging()
-                })
-        }
+        builder =
+            if (DataLoggerRepository.status() == WorkflowStatus.Connecting || DataLoggerRepository.status() == WorkflowStatus.Connected) {
+                builder.addAction(
+                    createAction(
+                        carContext,
+                        R.drawable.action_disconnect,
+                        mapColor(settings.getColorTheme().actionsBtnDisconnectColor),
+                    ) {
+                        actionStopDataLogging()
+                        toast.show(carContext, R.string.toast_connection_disconnect)
+                    },
+                )
+            } else {
+                builder.addAction(
+                    createAction(
+                        carContext,
+                        R.drawable.actions_connect,
+                        mapColor(settings.getColorTheme().actionsBtnConnectColor),
+                    ) {
+                        actionStartDataLogging()
+                    },
+                )
+            }
 
         if (featureListsEnabledSetting) {
-            builder = builder.addAction(createAction(carContext, android.R.drawable.ic_dialog_dialer, CarColor.BLUE) {
-                sendBroadcastEvent(CHANGE_SCREEN_EVENT)
-            })
+            builder =
+                builder.addAction(
+                    createAction(carContext, android.R.drawable.ic_dialog_dialer, CarColor.BLUE) {
+                        sendBroadcastEvent(CHANGE_SCREEN_EVENT)
+                    },
+                )
         }
 
         if (preferencesEnabled) {
-            builder = builder.addAction(createAction(carContext, R.drawable.config, CarColor.BLUE) {
-                sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
-                toast.show(carContext, R.string.pref_aa_get_to_app_conf)
-            })
+            builder =
+                builder.addAction(
+                    createAction(carContext, R.drawable.config, CarColor.BLUE) {
+                        sendBroadcastEvent(AA_EDIT_PREF_SCREEN)
+                        toast.show(carContext, R.string.pref_aa_get_to_app_conf)
+                    },
+                )
         }
 
         if (exitEnabled) {
-            builder = builder.addAction(createAction(carContext, R.drawable.action_exit, CarColor.RED) {
-                try {
-                    actionStopDataLogging()
-                } finally {
-                    Log.i(LOG_TAG, "Exiting the app. Closing the context")
-                    carContext.finishCarApp()
-                }
-            })
+            builder =
+                builder.addAction(
+                    createAction(carContext, R.drawable.action_exit, CarColor.RED) {
+                        try {
+                            actionStopDataLogging()
+                        } finally {
+                            Log.i(LOG_TAG, "Exiting the app. Closing the context")
+                            carContext.finishCarApp()
+                        }
+                    },
+                )
         }
 
         return builder.build()
@@ -148,7 +162,7 @@ internal abstract class CarScreen(
     }
 
     protected fun submitRenderingTask() {
-        if (!renderingThread.isRunning() && dataLogger.status() == WorkflowStatus.Connected) {
+        if (!renderingThread.isRunning() && DataLoggerRepository.status() == WorkflowStatus.Connected) {
             renderingThread.start()
             fps.start()
         }
@@ -158,12 +172,12 @@ internal abstract class CarScreen(
         when (connectionState) {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isLoadLastVisitedScreenEnabled()) {
-                    Log.i(LOG_TAG,"Load last visited screen flag is enabled. Loading last visited screen....")
+                    Log.i(LOG_TAG, "Load last visited screen flag is enabled. Loading last visited screen....")
                     gotoScreen(settings.getLastVisitedScreen())
                 }
 
-                if (settings.isAutomaticConnectEnabled() && !dataLogger.isRunning()) {
-                    Log.i(LOG_TAG,"Auto connection enabled. Auto start data logging.....")
+                if (settings.isAutomaticConnectEnabled() && !DataLoggerRepository.isRunning()) {
+                    Log.i(LOG_TAG, "Auto connection enabled. Auto start data logging.....")
                     actionStartDataLogging()
                 }
             }

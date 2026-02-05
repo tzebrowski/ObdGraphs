@@ -36,7 +36,7 @@ internal class AvailableFeaturesScreen(
 ) : Screen(carContext) {
 
     override fun onGetTemplate(): Template  = try {
-        if (dataLogger.status() == WorkflowStatus.Connecting) {
+        if (DataLoggerRepository.status() == WorkflowStatus.Connecting) {
              ListTemplate.Builder()
                 .setHeaderAction(Action.BACK)
                 .setActionStrip(getHorizontalActionStrip())

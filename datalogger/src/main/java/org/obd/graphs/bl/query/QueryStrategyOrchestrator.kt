@@ -23,41 +23,46 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.runAsync
 
-private const val LOG_KEY = "QueryStrategyOrchestrator"
+private const val LOG_KEY = "QueryOrchestrator"
 
-internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
-
-    private val strategies: Map<QueryStrategyType, QueryStrategy> = mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
-        runAsync {
-            this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
-            this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
-            this[QueryStrategyType.INDIVIDUAL_QUERY] = IndividualQueryStrategy()
-            this[QueryStrategyType.ROUTINES_QUERY] = RoutinesQueryStrategy()
-            this[QueryStrategyType.TRIP_INFO_QUERY] = TripInfoQueryStrategy()
-            this[QueryStrategyType.PERFORMANCE_QUERY] = PerformanceQueryStrategy()
+internal class QueryStrategyOrchestrator :
+    java.io.Serializable,
+    Query {
+    private val strategies: Map<QueryStrategyType, QueryStrategy> =
+        mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
+            runAsync {
+                this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
+                this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
+                this[QueryStrategyType.INDIVIDUAL_QUERY] = IndividualQueryStrategy()
+                this[QueryStrategyType.ROUTINES_QUERY] = RoutinesQueryStrategy()
+                this[QueryStrategyType.TRIP_INFO_QUERY] = TripInfoQueryStrategy()
+                this[QueryStrategyType.PERFORMANCE_QUERY] = PerformanceQueryStrategy()
+            }
         }
-    }
 
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
+
     override fun getDefaults(): Set<Long> = strategies[strategy]?.getDefaults() ?: emptySet()
 
-    override fun getIDs(): MutableSet<Long>  {
+    override fun getIDs(): MutableSet<Long> {
         val pids = strategies[strategy]?.getPIDs() ?: mutableSetOf()
 
-        //decorate with Vehicle Status PID
+        // decorate with Vehicle Status PID
         if (dataLoggerSettings.instance().vehicleStatusPanelEnabled ||
-            dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff){
+            dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff
+        ) {
             pids.add(Pid.VEHICLE_STATUS_PID_ID.id)
         }
-
-        Log.d(LOG_KEY,"Gets PIDs '$pids' for current strategy $strategy")
+        if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
+            Log.d(LOG_KEY, "Gets PIDs '$pids' for current strategy $strategy")
+        }
         return pids
     }
 
     override fun getStrategy(): QueryStrategyType = strategy
 
     override fun setStrategy(queryStrategyType: QueryStrategyType): Query {
-        Log.d(LOG_KEY,"Sets new strategy $queryStrategyType")
+        Log.d(LOG_KEY, "Sets new strategy $queryStrategyType")
         this.strategy = queryStrategyType
         return this
     }
@@ -70,19 +75,23 @@ internal class QueryStrategyOrchestrator : java.io.Serializable, Query {
     override fun filterBy(filter: String): Set<Long> {
         val query = getIDs()
         val selection = Prefs.getLongSet(filter)
-        val intersection =  selection.filter { query.contains(it) }.toSet()
+        val intersection = selection.filter { query.contains(it) }.toSet()
 
-        Log.i(LOG_KEY,"Individual query enabled:${isIndividualQuerySelected()}, " +
-                " key:$filter, query=$query,selection=$selection, intersection=$intersection")
+        Log.i(
+            LOG_KEY,
+            "Individual query enabled:${isIndividualQuerySelected()}, " +
+                " key:$filter, query=$query,selection=$selection, intersection=$intersection",
+        )
 
         return if (isIndividualQuerySelected()) {
-            Log.i(LOG_KEY,"Returning selection=$selection")
+            Log.i(LOG_KEY, "Returning selection=$selection")
             selection
         } else {
-            Log.i(LOG_KEY,"Returning intersection=$intersection")
+            Log.i(LOG_KEY, "Returning intersection=$intersection")
             intersection
         }
     }
+
     override fun apply(filter: String): Query =
         if (isIndividualQuerySelected()) {
             setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)

@@ -63,7 +63,7 @@ class VehicleCapabilitiesManager {
     }
 
     fun getCapabilities(): MutableList<String> {
-        val pidList = dataLogger.getPidDefinitionRegistry().findAll()
+        val pidList = DataLoggerRepository.getPidDefinitionRegistry().findAll()
         return Prefs.getStringSet(PREF_VEHICLE_CAPABILITIES, emptySet())!!.toMutableList()
             .sortedWith(compareBy { t -> pidList.firstOrNull { a -> a.pid == t.uppercase() } }).toMutableList()
     }

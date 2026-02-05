@@ -35,7 +35,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.serialize
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
@@ -317,12 +317,12 @@ open class PidDefinitionPreferenceDialogFragment(
     private fun getAdapter() = (getRecyclerView(root).adapter as PidViewAdapter)
 
     private fun sourceList(): MutableList<PidDefinitionDetails> {
-        val all = dataLogger.getPidDefinitionRegistry().findAll()
+        val all = DataLoggerRepository.getPidDefinitionRegistry().findAll()
         val individualQuery = dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled
 
         val sourceList: List<PidDefinitionDetails> =
             if (source == PREFERENCE_SCREEN_SOURCE_TRIP_INFO) {
-                val pidRegistry = dataLogger.getPidDefinitionRegistry()
+                val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
                 val list =
                     Query
                         .instance(QueryStrategyType.TRIP_INFO_QUERY)
@@ -331,7 +331,7 @@ open class PidDefinitionPreferenceDialogFragment(
                         .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }
             } else if (source == PREFERENCE_SCREEN_SOURCE_PERFORMANCE) {
-                val pidRegistry = dataLogger.getPidDefinitionRegistry()
+                val pidRegistry = DataLoggerRepository.getPidDefinitionRegistry()
                 val list =
                     Query
                         .instance(QueryStrategyType.PERFORMANCE_QUERY)
@@ -340,18 +340,18 @@ open class PidDefinitionPreferenceDialogFragment(
                         .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }
             } else if (individualQuery) {
-                findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
+                findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
             } else {
                 when (source) {
                     "low" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority > 0 }
                     "high" -> findPidDefinitionByPriority(all) { pidDefinition -> pidDefinition.priority == 0 }
-                    "edit" -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
+                    "edit" -> findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
                     "dashboard" -> map(all)
                     "graph" -> map(all)
                     "gauge" -> map(all)
                     "giulia" -> map(all)
                     "aa" -> map(all)
-                    else -> findPidDefinitionByPriority(dataLogger.getPidDefinitionRegistry().findAll()) { true }
+                    else -> findPidDefinitionByPriority(DataLoggerRepository.getPidDefinitionRegistry().findAll()) { true }
                 }
             }
 

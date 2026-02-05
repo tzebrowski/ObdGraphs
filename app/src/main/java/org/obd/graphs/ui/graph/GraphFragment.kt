@@ -51,7 +51,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.dataLogger
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.scaleToRange
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
@@ -61,11 +61,12 @@ import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.registerReceiver
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.Colors
-import org.obd.graphs.ui.common.attachToFloatingButton
 import org.obd.graphs.ui.common.onDoubleClickListener
+import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
@@ -86,7 +87,9 @@ class GraphFragment : Fragment() {
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
                         if (isAdded && isVisible) {
                             Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            dataLogger.scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                            withDataLogger {
+                                scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
+                            }
                         }
                     }
 
@@ -99,7 +102,7 @@ class GraphFragment : Fragment() {
                             it.isVisible = true
                         }
 
-                        attachToFloatingButton(activity, query())
+                        configureActionButton(query())
                     }
 
                     DATA_LOGGER_CONNECTED_EVENT -> {
@@ -133,7 +136,8 @@ class GraphFragment : Fragment() {
             override fun onChartGestureStart(
                 me: MotionEvent,
                 lastPerformedGesture: ChartGesture,
-            ) {}
+            ) {
+            }
 
             override fun onChartGestureEnd(
                 me: MotionEvent,
@@ -162,13 +166,15 @@ class GraphFragment : Fragment() {
                 me: MotionEvent,
                 scaleX: Float,
                 scaleY: Float,
-            ) {}
+            ) {
+            }
 
             override fun onChartTranslate(
                 me: MotionEvent,
                 dX: Float,
                 dY: Float,
-            ) {}
+            ) {
+            }
         }
 
     private val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
@@ -198,7 +204,8 @@ class GraphFragment : Fragment() {
         registerReceivers()
         configureRecyclerView()
         setupVirtualViewPanel()
-        attachToFloatingButton(activity, query())
+        configureActionButton(query())
+        configureActionButton(query())
         return root
     }
 
@@ -223,7 +230,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun registerMetricsObserver() {
-        dataLogger.observe(viewLifecycleOwner) {
+        DataLoggerRepository.observe(viewLifecycleOwner) {
             if (preferences.metrics.contains(it.command.pid.id)) {
                 addEntry(it)
             }
@@ -238,8 +245,8 @@ class GraphFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(root.context, 1)
         recyclerView.adapter = adapter
 
-        dataLogger.observe(viewLifecycleOwner) {
-            dataLogger.findHistogramFor(it).let { hist ->
+        DataLoggerRepository.observe(viewLifecycleOwner) {
+            DataLoggerRepository.findHistogramFor(it).let { hist ->
                 val sensorData =
                     SensorData(
                         id = it.command.pid.id,
@@ -264,7 +271,7 @@ class GraphFragment : Fragment() {
         val colors = Colors().get()
         chart =
             buildChart(root).apply {
-                val pidRegistry: PidDefinitionRegistry = dataLogger.getPidDefinitionRegistry()
+                val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
                 val metrics =
                     preferences.metrics
                         .mapNotNull {
@@ -300,7 +307,7 @@ class GraphFragment : Fragment() {
     private fun loadCurrentTrip() {
         if (preferences.cacheEnabled) {
             val trip = tripManager.getCurrentTrip()
-            val registry = dataLogger.getPidDefinitionRegistry()
+            val registry = DataLoggerRepository.getPidDefinitionRegistry()
             tripStartTs = trip.startTs
 
             val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
