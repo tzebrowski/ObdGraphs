@@ -22,17 +22,16 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLoggerConnector
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.query.Query
 
 fun Fragment.withDataLogger(action: DataLoggerService.() -> Unit) {
-    DataLoggerConnector.run(requireContext(), action)
+    org.obd.graphs.bl.datalogger.withDataLogger(requireContext(), action)
 }
 
 fun ComponentActivity.withDataLogger(action: DataLoggerService.() -> Unit) {
-    DataLoggerConnector.run(this, action)
+    org.obd.graphs.bl.datalogger.withDataLogger(this, action)
 }
 
 fun Fragment.configureActionButton(query: Query) {

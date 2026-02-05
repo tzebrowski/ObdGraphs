@@ -25,7 +25,14 @@ import android.util.Log
 
 private const val TAG = "DataLoggerConnector"
 
-object DataLoggerConnector {
+fun withDataLogger(
+    context: Context,
+    action: DataLoggerService.() -> Unit,
+) {
+    DataLoggerConnector.run(context, action)
+}
+
+internal object DataLoggerConnector {
     private var service: DataLoggerService? = null
     private var isBound = false
     private val pendingTasks = mutableListOf<DataLoggerService.() -> Unit>()

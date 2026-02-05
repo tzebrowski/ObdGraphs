@@ -17,9 +17,9 @@
 package org.obd.graphs.aa.screen
 
 import androidx.car.app.Screen
-import org.obd.graphs.bl.datalogger.DataLoggerConnector
 import org.obd.graphs.bl.datalogger.DataLoggerService
 
 fun Screen.withDataLogger(action: DataLoggerService.() -> Unit) {
-    DataLoggerConnector.run(carContext, action)
+    org.obd.graphs.bl.datalogger
+        .withDataLogger(carContext, action)
 }
