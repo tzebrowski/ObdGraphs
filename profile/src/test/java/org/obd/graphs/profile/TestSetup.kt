@@ -36,6 +36,7 @@ import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileInputStream
+import java.lang.ref.WeakReference
 import java.util.Properties
 
  internal abstract class TestSetup {
@@ -74,7 +75,9 @@ import java.util.Properties
         mockIntent()
         mockEnvironment()
         profileService = DefaultProfileService()
-  }
+
+        initPrefs(context)
+    }
 
     protected fun mockPropertiesFiles(assetFilenames: List<String> = listOf("alfa_2_0_gme.properties")) {
         val basePath = "src/test/assets"
@@ -121,7 +124,13 @@ import java.util.Properties
     }
 
     private fun mockContext() {
-        initPrefs(context)
+        mockkStatic("org.obd.graphs.ContextKt")
+        val field =
+            Class
+                .forName("org.obd.graphs.ContextKt")
+                .getDeclaredField("activityContext")
+        field.isAccessible = true
+        field.set(null, WeakReference(context))
     }
 
     private fun mockLog() {
