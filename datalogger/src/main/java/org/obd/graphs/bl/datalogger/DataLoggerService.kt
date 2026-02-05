@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -50,7 +50,6 @@ private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
 private const val NOTIFICATION_ID = 12345
 
 class DataLoggerService : Service() {
-
     private val jobScheduler = DataLoggerJobScheduler(this)
     private val binder = LocalBinder()
 
