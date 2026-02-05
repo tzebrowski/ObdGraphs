@@ -31,11 +31,11 @@ import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Before
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.initPrefs
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
 import java.io.FileInputStream
-import java.lang.ref.WeakReference
 import java.util.Properties
 
  internal abstract class TestSetup {
@@ -121,13 +121,7 @@ import java.util.Properties
     }
 
     private fun mockContext() {
-        mockkStatic("org.obd.graphs.ContextKt")
-        val field =
-            Class
-                .forName("org.obd.graphs.ContextKt")
-                .getDeclaredField("activityContext")
-        field.isAccessible = true
-        field.set(null, WeakReference(context))
+        initPrefs(context)
     }
 
     private fun mockLog() {
