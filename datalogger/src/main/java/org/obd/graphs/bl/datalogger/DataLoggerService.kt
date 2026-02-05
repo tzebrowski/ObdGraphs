@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -50,9 +50,6 @@ private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
 private const val NOTIFICATION_ID = 12345
 
 class DataLoggerService : Service() {
-    private val workflowOrchestrator by lazy {
-        DataLoggerRepository.workflowOrchestrator
-    }
 
     private val jobScheduler = DataLoggerJobScheduler(this)
     private val binder = LocalBinder()
@@ -93,21 +90,21 @@ class DataLoggerService : Service() {
         when (action) {
             UPDATE_QUERY -> {
                 val query = intent.extras?.get(QUERY) as? Query
-                query?.let { workflowOrchestrator.updateQuery(query = it) }
+                query?.let { DataLoggerRepository.workflowOrchestrator.updateQuery(query = it) }
             }
 
             ACTION_START -> {
                 val query = intent.extras?.get(QUERY) as? Query
-                query?.let { workflowOrchestrator.start(it) }
+                query?.let { DataLoggerRepository.workflowOrchestrator.start(it) }
             }
 
             EXECUTE_ROUTINE -> {
                 val query = intent.extras?.get(QUERY) as? Query
-                query?.let { workflowOrchestrator.executeRoutine(it) }
+                query?.let { DataLoggerRepository.workflowOrchestrator.executeRoutine(it) }
             }
 
             ACTION_STOP -> {
-                workflowOrchestrator.stop()
+                DataLoggerRepository.workflowOrchestrator.stop()
                 serviceStop()
             }
 
@@ -187,7 +184,7 @@ class DataLoggerService : Service() {
                 } catch (e2: Exception) {
                     Log.e(LOG_TAG, "CRITICAL: Failed to start FGS even with fallback.", e2)
                     sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
-                    stopSelf()
+                    serviceStop()
                 }
             }
         }
