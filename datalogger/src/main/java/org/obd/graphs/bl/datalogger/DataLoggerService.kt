@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,12 +23,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import org.obd.graphs.Permissions
+import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
@@ -75,20 +77,7 @@ class DataLoggerService : Service() {
 
         createNotificationChannel()
 
-        // Handle Foreground Service Types (Android 10+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            var serviceTypes = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
-
-            if (Permissions.hasLocationPermissions(this)) {
-                serviceTypes = serviceTypes or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
-            } else {
-                Log.w(LOG_TAG, "Location permission missing. Starting Service without GPS capabilities.")
-            }
-
-            startForeground(NOTIFICATION_ID, createNotification(), serviceTypes)
-        } else {
-            startForeground(NOTIFICATION_ID, createNotification())
-        }
+        startForegroundServiceSafe()
 
         // Fail-fast if permissions are missing
         if (!Permissions.hasNotificationPermissions(this)) {
@@ -168,7 +157,42 @@ class DataLoggerService : Service() {
         enqueueWork(ACTION_STOP)
     }
 
-    // --- Helper Methods ---
+    private fun startForegroundServiceSafe() {
+        try {
+            val notification = createNotification()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                var serviceTypes = ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+
+                // Only add LOCATION type if we actually have runtime permission
+                if (Permissions.hasLocationPermissions(this)) {
+                    serviceTypes = serviceTypes or ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                } else {
+                    Log.w(LOG_TAG, "Location permission missing. Starting Service without GPS capabilities.")
+                }
+
+                startForeground(NOTIFICATION_ID, notification, serviceTypes)
+            } else {
+                startForeground(NOTIFICATION_ID, notification)
+            }
+        } catch (e: SecurityException) {
+            Log.e(LOG_TAG, "Failed to start FGS with requested types. Retrying with basic type.", e)
+            // Fallback: Try starting without Location to keep the service alive
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                try {
+                    startForeground(
+                        NOTIFICATION_ID,
+                        createNotification(),
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+                    )
+                } catch (e2: Exception) {
+                    Log.e(LOG_TAG, "CRITICAL: Failed to start FGS even with fallback.", e2)
+                    sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
+                    stopSelf()
+                }
+            }
+        }
+    }
 
     private fun enqueueWork(
         intentAction: String,
