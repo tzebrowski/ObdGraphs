@@ -48,7 +48,7 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'com.github.tony19:logback-android:2.0.0'
     implementation 'org.apache.commons:commons-collections4:4.1'

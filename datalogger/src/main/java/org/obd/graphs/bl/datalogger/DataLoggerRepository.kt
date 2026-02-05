@@ -16,7 +16,6 @@
  */
 package org.obd.graphs.bl.datalogger
 
-import android.content.BroadcastReceiver
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
@@ -62,8 +61,4 @@ object DataLoggerRepository {
         workflowOrchestrator.observe(metricsProcessor)
         return this
     }
-
-
-    val eventsReceiver: BroadcastReceiver
-        get() = workflowOrchestrator.eventsReceiver
 }
