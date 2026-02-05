@@ -218,7 +218,7 @@ internal class WorkflowOrchestrator internal constructor() {
     fun getCurrentQuery (): Query? = if (::currentQuery.isInitialized) currentQuery else null
 
     fun updateQuery(query: Query) {
-        if (::currentQuery.isInitialized && query.getIDs() == currentQuery.getIDs()) {
+        if (isSameQuery(query)) {
             Log.w(LOG_TAG, "Received same query=${query.getIDs()}. Do not update.")
         } else {
 
@@ -234,6 +234,8 @@ internal class WorkflowOrchestrator internal constructor() {
 
         currentQuery = query
     }
+
+    fun isSameQuery(query: Query) = ::currentQuery.isInitialized && query.getIDs() == currentQuery.getIDs()
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 

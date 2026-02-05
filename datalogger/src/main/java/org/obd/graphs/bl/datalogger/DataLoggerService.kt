@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,11 +29,13 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.Permissions
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
+import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
@@ -62,6 +64,16 @@ class DataLoggerService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Log.i(LOG_TAG, "Destroying DataLoggerService")
+        unregisterReceiver(DataLoggerRepository.workflowOrchestrator.eventsReceiver)
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        org.obd.graphs.registerReceiver(this, DataLoggerRepository.workflowOrchestrator.eventsReceiver) {
+            it.addAction(MODULES_LIST_CHANGED_EVENT)
+            it.addAction(PROFILE_CHANGED_EVENT)
+        }
     }
 
     override fun onStartCommand(
@@ -119,9 +131,15 @@ class DataLoggerService : Service() {
     }
 
     fun updateQuery(query: Query) {
-        Log.i(LOG_TAG, "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}")
         if (DataLoggerRepository.isRunning()) {
-            enqueueWork(UPDATE_QUERY) { it.putExtra(QUERY, query) }
+            if (DataLoggerRepository.workflowOrchestrator.isSameQuery(query)) {
+                if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                    Log.d(LOG_TAG, "Do not update the query for strategy=${query.getStrategy()}. It is the same query that already running")
+                }
+            } else {
+                Log.i(LOG_TAG, "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}")
+                enqueueWork(UPDATE_QUERY) { it.putExtra(QUERY, query) }
+            }
         } else {
             Log.w(LOG_TAG, "No workflow is currently running. Query won't be updated.")
         }
