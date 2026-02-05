@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -158,9 +158,8 @@ class DataLoggerService : Service() {
     }
 
     private fun startForegroundServiceSafe() {
+        val notification = createNotification()
         try {
-            val notification = createNotification()
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 var serviceTypes = ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
 
@@ -182,8 +181,8 @@ class DataLoggerService : Service() {
                 try {
                     startForeground(
                         NOTIFICATION_ID,
-                        createNotification(),
-                        ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+                        notification,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE,
                     )
                 } catch (e2: Exception) {
                     Log.e(LOG_TAG, "CRITICAL: Failed to start FGS even with fallback.", e2)
