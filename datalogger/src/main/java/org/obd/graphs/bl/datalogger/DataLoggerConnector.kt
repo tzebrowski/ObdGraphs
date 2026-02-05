@@ -23,6 +23,8 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
 
+private const val TAG = "DataLoggerConnector"
+
 object DataLoggerConnector {
     private var service: DataLoggerService? = null
     private var isBound = false
@@ -34,13 +36,15 @@ object DataLoggerConnector {
                 className: ComponentName,
                 binder: IBinder,
             ) {
-                Log.i("DataLoggerConnector", "Service connected globally.")
+                Log.i(TAG, "Service connected globally.")
                 val localBinder = binder as DataLoggerService.LocalBinder
                 service = localBinder.getService()
                 isBound = true
 
                 synchronized(pendingTasks) {
-                    pendingTasks.forEach { task -> service?.task() }
+                    pendingTasks.forEach { task ->
+                        service?.apply(task)
+                    }
                     pendingTasks.clear()
                 }
             }
@@ -60,14 +64,14 @@ object DataLoggerConnector {
     ) {
         val currentService = service
 
-        if (currentService != null) {
-            currentService.action()
-        } else {
-            Log.i("DataLoggerConnector", "Service not ready. Queueing task...")
+        if (currentService == null) {
+            Log.i(TAG, "Service not ready. Queueing task...")
             synchronized(pendingTasks) {
                 pendingTasks.add(action)
             }
             bind(context)
+        } else {
+            currentService.apply(action)
         }
     }
 
@@ -77,14 +81,6 @@ object DataLoggerConnector {
             val intent = Intent(appContext, DataLoggerService::class.java)
             appContext.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
             isBound = true
-        }
-    }
-
-    fun release(context: Context) {
-        if (isBound) {
-            context.applicationContext.unbindService(serviceConnection)
-            isBound = false
-            service = null
         }
     }
 }
