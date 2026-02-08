@@ -24,6 +24,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.SweepGradient
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
@@ -302,6 +303,8 @@ internal class GaugeDrawer(
 
         var centerY =
             (area.centerY() + labelCenterYPadding - (if (settings.isStatisticsEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
+        Log.e("WWWWWWWWWw","centerY = $centerY ")
+
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
         val valueY = centerY - valueHeight
         canvas.drawText(value, area.centerX() - (textRect.width() / 2), valueY, valuePaint)

@@ -94,6 +94,7 @@ data class BreakBoostingSettings(
 )
 
 data class PerformanceScreenSettings(
+    var labelCenterYPadding:Float = 22f,
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
     var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()

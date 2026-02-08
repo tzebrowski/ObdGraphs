@@ -81,7 +81,7 @@ android {
             resValue "string", "DEFAULT_PROFILE", "profile_8"
             resValue "string", "applicationId", "org.obd.graphs.my.giulia.aa"
             applicationId "org.obd.graphs.my.giulia.aa"
-            versionCode 200
+            versionCode 204
         }
 
         giuliaPerformanceMonitor {
