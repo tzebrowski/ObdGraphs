@@ -729,6 +729,16 @@
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
+                <org.obd.graphs.preferences.components.ExtendedSeekBar
+                    android:defaultValue="22"
+                    android:dialogTitle="@string/pref.performance.screen_label_y_padding"
+                    android:key="pref.performance.screen_label_y_padding"
+                    android:max="30"
+                    android:title="@string/pref.performance.screen_label_y_padding"
+                    app:min="-100"
+                    app:showSeekBarValue="true"
+                    app:singleLineTitle="false"
+                    app:useSimpleSummaryProvider="true" />
             </PreferenceScreen>
 
             <PreferenceScreen

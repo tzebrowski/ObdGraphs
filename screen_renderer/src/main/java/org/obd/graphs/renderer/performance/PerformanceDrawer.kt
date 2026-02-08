@@ -18,6 +18,7 @@ package org.obd.graphs.renderer.performance
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -99,25 +100,25 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         if (performanceInfoDetails.torque == null) numGauges--
         if (performanceInfoDetails.intakePressure == null) numGauges--
 
-
+        val labelCenterYPadding = settings.getPerformanceScreenSettings().labelCenterYPadding - 4
 
         when (numGauges) {
             4 ->{
-                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
-                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
+                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
                 drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
                 drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
             }
             3  -> {
-                if (drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)){
+                if (drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)){
                     drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() /2.9f) , area.width() / 3.7f)
                 } else {
-                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
                 }
-                if (drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)){
+                if (drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)){
                     drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop - 4f, (area.left + area.width() / 2.9f) , area.width() / 3.7f)
                 } else {
-                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = 18f)
+                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
                 }
             }
 
@@ -177,13 +178,13 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         top: Float,
         left: Float,
         width: Float,
-        labelCenterYPadding: Float = 22f,
+        labelCenterYPadding: Float = settings.getPerformanceScreenSettings().labelCenterYPadding,
     ): Boolean  =
         if (metric == null){
             false
         }else {
             gaugeDrawer.drawGauge(
-                canvas = canvas,
+               canvas = canvas,
                 left = left,
                 top = top ,
                 width = width,
