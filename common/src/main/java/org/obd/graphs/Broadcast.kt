@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,12 +26,17 @@ private const val EXTRA_PARAM_NAME = "extra"
 
 fun Intent.getExtraParam(): String = extras?.get(EXTRA_PARAM_NAME) as String
 
-fun sendBroadcastEvent(actionName: String, extra: String? = "") {
+fun sendBroadcastEvent(
+    actionName: String,
+    extra: String? = "",
+) {
     getContext()?.run {
-        sendBroadcast(Intent().apply {
-            action = actionName
-            putExtra(EXTRA_PARAM_NAME, extra)
-        })
+        sendBroadcast(
+            Intent().apply {
+                action = actionName
+                putExtra(EXTRA_PARAM_NAME, extra)
+            },
+        )
     }
 }
 
@@ -39,18 +44,19 @@ fun registerReceiver(
     context: Context?,
     receiver: BroadcastReceiver,
     exportReceiver: Boolean = true,
-    func: (filter: IntentFilter) -> Unit
+    func: (filter: IntentFilter) -> Unit,
 ) {
     context?.let {
         val intentFilter = IntentFilter()
         func(intentFilter)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val flags = if (exportReceiver) {
-                Context.RECEIVER_EXPORTED
-            } else {
-                Context.RECEIVER_NOT_EXPORTED
-            }
+            val flags =
+                if (exportReceiver) {
+                    Context.RECEIVER_EXPORTED
+                } else {
+                    Context.RECEIVER_NOT_EXPORTED
+                }
             it.registerReceiver(receiver, intentFilter, flags)
         } else {
             it.registerReceiver(receiver, intentFilter)
