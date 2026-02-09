@@ -343,7 +343,7 @@ internal class GaugeDrawer(
 
         pid.units?.let {
             valuePaint.getTextBounds(it, 0, it.length, unitRect)
-            canvas.drawText(it, area.centerX() + textRect.width() / 2 + 12, unitY, valuePaint)
+            canvas.drawText(it, area.centerX() + textRect.width() / 2 + 10, unitY, valuePaint)
             centerY += unitRect.height() / 2
         }
 
