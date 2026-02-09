@@ -18,7 +18,6 @@ package org.obd.graphs.renderer.performance
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -26,16 +25,18 @@ import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
-
+import org.obd.graphs.isNumber
 
 private const val MAX_ITEMS_IN_ROW = 6
- @Suppress("NOTHING_TO_INLINE")
+
+@Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
         drawerSettings = DrawerSettings(
-            gaugeProgressBarType = GaugeProgressBarType.LONG)
+            gaugeProgressBarType = GaugeProgressBarType.LONG
+        )
     )
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
@@ -43,10 +44,15 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
     private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
 
+    private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.DKGRAY
+        strokeWidth = 2f
+        alpha = 100
+    }
+
     override fun getBackground(): Bitmap = background
 
     override fun recycle() {
-        super.getBackground().recycle()
         this.background.recycle()
     }
 
@@ -57,119 +63,107 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         top: Float,
         performanceInfoDetails: PerformanceInfoDetails
     ) {
+        val textSize = calculateFontSize(
+            multiplier = area.width() / 17f,
+            fontSize = settings.getPerformanceScreenSettings().fontSize
+        )
 
-        val textSize = calculateFontSize(multiplier = area.width() / 17f,
-            fontSize = settings.getPerformanceScreenSettings().fontSize)
+        val itemWidth = area.width() / MAX_ITEMS_IN_ROW.toFloat()
+        var rowTop = top + 2f
 
-        val x = maxItemWidth(area) + 4
+        val metricsToDraw = listOfNotNull(
+            performanceInfoDetails.postICAirTemp,
+            performanceInfoDetails.coolantTemp,
+            performanceInfoDetails.oilTemp,
+            performanceInfoDetails.exhaustTemp,
+            performanceInfoDetails.gearboxOilTemp,
+            performanceInfoDetails.ambientTemp,
+            performanceInfoDetails.preICAirTemp,
+            performanceInfoDetails.wcacTemp,
+            performanceInfoDetails.gearEngaged
+        )
 
-        var rowTop = top + 12f
-        var leftAlignment = 0
+        metricsToDraw.take(MAX_ITEMS_IN_ROW).forEachIndexed { index, metric ->
+            val itemLeft = left + (index * itemWidth)
 
-        performanceInfoDetails.postICAirTemp?.let { tripInfoDrawer
-            .drawMetric(it, top = rowTop, left = left + leftAlignment++, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
-        performanceInfoDetails.coolantTemp?.let {  tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true,area=area, castToInt = true) }
-        performanceInfoDetails.oilTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true,area=area, castToInt = true) }
-        performanceInfoDetails.exhaustTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
-        performanceInfoDetails.gearboxOilTemp?.let { tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, statsEnabled = true, area=area, castToInt = true) }
-        performanceInfoDetails.ambientTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize, area=area) }
+            tripInfoDrawer.drawMetric(
+                metric,
+                rowTop,
+                itemLeft,
+                canvas,
+                textSize,
+                statsEnabled = metric.source.isNumber(),
+                area = area,
+                castToInt = true
+            )
 
-
-        if (leftAlignment < MAX_ITEMS_IN_ROW){
-            performanceInfoDetails.preICAirTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
-                statsEnabled = true, area=area) }
-        }
-
-        if (leftAlignment < MAX_ITEMS_IN_ROW){
-            performanceInfoDetails.wcacTemp?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
-                statsEnabled = true, area=area) }
-        }
-
-        if (leftAlignment < MAX_ITEMS_IN_ROW){
-            performanceInfoDetails.gearEngaged?.let{ tripInfoDrawer.drawMetric(it, rowTop, left + (leftAlignment++) * x, canvas, textSize,
-                statsEnabled = true, area=area) }
+            if (index < metricsToDraw.take(MAX_ITEMS_IN_ROW).size - 1) {
+                val lineX = itemLeft + itemWidth
+                canvas.drawLine(
+                    lineX,
+                    rowTop,
+                    lineX,
+                    rowTop + textSize + 10f,
+                    dividerPaint
+                )
+            }
         }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
 
         rowTop += textSize + 16
 
-        var numGauges = 4
-        if (performanceInfoDetails.vehicleSpeed == null) numGauges--
-        if (performanceInfoDetails.gas == null) numGauges--
-        if (performanceInfoDetails.torque == null) numGauges--
-        if (performanceInfoDetails.intakePressure == null) numGauges--
+        val availableWidth = area.width().toFloat()
+        val areaLeft = area.left.toFloat()
+
+        val gauges = listOfNotNull(
+            performanceInfoDetails.torque,
+            performanceInfoDetails.intakePressure,
+            performanceInfoDetails.gas,
+            performanceInfoDetails.vehicleSpeed
+        )
 
         val labelCenterYPadding = settings.getPerformanceScreenSettings().labelCenterYPadding - 4
 
-        when (numGauges) {
-            4 ->{
-                drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
-                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
-                drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() / 2.6f), area.width() / 4.5f)
-                drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop  + area.height() / 3f, (area.left + area.width() / 2.65f), area.width() / 4.1f)
-            }
-            3  -> {
-                if (drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)){
-                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, (area.left + area.width() /2.9f) , area.width() / 3.7f)
-                } else {
-                    drawGauge(performanceInfoDetails.gas, canvas, rowTop - 4f, area.left.toFloat(),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
-                }
-                if (drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)){
-                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop - 4f, (area.left + area.width() / 2.9f) , area.width() / 3.7f)
-                } else {
-                    drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 1.65f),  area.width() / 2.6f, labelCenterYPadding = labelCenterYPadding)
-                }
+        when (gauges.size) {
+            4 -> {
+                val topRowWidth = availableWidth / 2f
+                drawGauge(gauges[0], canvas, rowTop, areaLeft, topRowWidth, labelCenterYPadding)
+                drawGauge(gauges[1], canvas, rowTop, areaLeft + topRowWidth, topRowWidth, labelCenterYPadding)
+
+                val topRowHeight = topRowWidth * 0.8f
+                val bottomRowTop = rowTop + (topRowHeight * 0.45f)
+                val bottomRowWidth = availableWidth / 3.5f
+                val centerOffset = (availableWidth - (bottomRowWidth * 2)) / 2f
+
+                drawGauge(gauges[2], canvas, bottomRowTop, areaLeft + centerOffset - 10f, bottomRowWidth, labelCenterYPadding)
+                drawGauge(gauges[3], canvas, bottomRowTop, areaLeft + centerOffset + bottomRowWidth + 10f, bottomRowWidth, labelCenterYPadding)
             }
 
+            3 -> {
+                val width = availableWidth / 3f
+                drawGauge(gauges[0], canvas, rowTop, areaLeft, width, labelCenterYPadding)
+                drawGauge(gauges[1], canvas, rowTop, areaLeft + width, width, labelCenterYPadding)
+                drawGauge(gauges[2], canvas, rowTop, areaLeft + (width * 2), width, labelCenterYPadding)
+            }
 
             2 -> {
-                // left side
-                val labelCenterYPadding = 10f
-                val width = area.width() / 2.0f
-
-                if (!drawGauge(performanceInfoDetails.torque, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
-                    if (!drawGauge(performanceInfoDetails.gas, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)){
-                        drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area.left.toFloat(), width, labelCenterYPadding = labelCenterYPadding)
-                    }
-                }
-                //right side
-                if (!drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, (area.left + area.width() / 2f) - 6f,
-                        width, labelCenterYPadding = labelCenterYPadding
-                    )){
-                   if (!drawGauge(performanceInfoDetails.vehicleSpeed, canvas, rowTop, (area.left + area.width() / 2f) - 6f,
-                           width, labelCenterYPadding = labelCenterYPadding
-                       )){
-                        drawGauge(performanceInfoDetails.gas, canvas, rowTop, (area.left + area.width() / 2f) - 6f,
-                            width, labelCenterYPadding = labelCenterYPadding
-                        )
-                    }
-                }
+                val width = availableWidth / 2f
+                drawGauge(gauges[0], canvas, rowTop, areaLeft, width, labelCenterYPadding)
+                drawGauge(gauges[1], canvas, rowTop, areaLeft + width, width, labelCenterYPadding)
             }
 
             1 -> {
-                drawGaugeSingle(performanceInfoDetails.torque, canvas, rowTop, area)
-                drawGaugeSingle(performanceInfoDetails.intakePressure, canvas, rowTop, area)
-                drawGaugeSingle(performanceInfoDetails.gas, canvas, rowTop, area)
-                drawGaugeSingle(performanceInfoDetails.vehicleSpeed, canvas, rowTop, area)
+                drawGauge(
+                    gauges[0],
+                    canvas,
+                    rowTop,
+                    areaLeft + (availableWidth / 4f),
+                    availableWidth / 2f,
+                    labelCenterYPadding = 6f
+                )
             }
         }
-    }
-
-    fun drawGaugeSingle(
-        metric: Metric?,
-        canvas: Canvas,
-        rowTop: Float,
-        area: Rect
-    ) {
-        drawGauge(
-            metric,
-            canvas,
-            rowTop,
-            area.left.toFloat() + (area.width() / 4f),
-            area.width().toFloat() / 2f,
-            labelCenterYPadding = 6f
-        )
     }
 
     fun drawGauge(
@@ -179,22 +173,21 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         left: Float,
         width: Float,
         labelCenterYPadding: Float = settings.getPerformanceScreenSettings().labelCenterYPadding,
-    ): Boolean  =
-        if (metric == null){
+    ): Boolean =
+        if (metric == null) {
             false
-        }else {
+        } else {
             gaugeDrawer.drawGauge(
-               canvas = canvas,
+                canvas = canvas,
                 left = left,
-                top = top ,
+                top = top,
                 width = width,
                 metric = metric,
-                labelCenterYPadding =  labelCenterYPadding,
+                labelCenterYPadding = labelCenterYPadding,
                 fontSize = settings.getPerformanceScreenSettings().fontSize,
-                scaleEnabled = false
+                scaleEnabled = false,
+                statsEnabled = metric.source.isNumber()
             )
             true
         }
-
-    private inline fun maxItemWidth(area: Rect) = (area.width() / 6)
 }

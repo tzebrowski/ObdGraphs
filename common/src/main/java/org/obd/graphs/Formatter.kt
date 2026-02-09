@@ -20,7 +20,7 @@ import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.ValueType
 
-private const val NO_DATA = "No data"
+private const val NO_DATA = "--"
 
 fun ObdMetric.format(
     castToInt: Boolean = false,
