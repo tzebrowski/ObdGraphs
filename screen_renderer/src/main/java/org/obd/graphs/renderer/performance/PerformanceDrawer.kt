@@ -18,7 +18,6 @@ package org.obd.graphs.renderer.performance
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType

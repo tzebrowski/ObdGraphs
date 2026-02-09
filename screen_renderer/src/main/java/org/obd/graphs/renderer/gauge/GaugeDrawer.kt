@@ -63,6 +63,21 @@ data class DrawerSettings(
     val dividerHighlightStart: Int = 9,
 )
 
+private data class CachedScaleNumber(
+    val x: Float,
+    val y: Float,
+    val text: String,
+    val color: Int,
+)
+
+private data class ScaleCacheEntry(
+    val min: Double,
+    val max: Double,
+    val radius: Float,
+    val dividerCount: Int,
+    val numbers: List<CachedScaleNumber>,
+)
+
 @Suppress("NOTHING_TO_INLINE")
 internal class GaugeDrawer(
     settings: ScreenSettings,
@@ -97,6 +112,9 @@ internal class GaugeDrawer(
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             strokeCap = Paint.Cap.BUTT
         }
+
+    // Cache map keyed by PID ID
+    private val scaleNumbersCache = mutableMapOf<Long, ScaleCacheEntry>()
 
     fun drawGauge(
         canvas: Canvas,
@@ -171,6 +189,7 @@ internal class GaugeDrawer(
         )
 
         if (scaleEnabled) {
+            Log.e("EEEEEEEEE"," scaleEnabled: ${metric.pid().pid}")
             drawNumerals(
                 metric,
                 canvas,
@@ -303,7 +322,6 @@ internal class GaugeDrawer(
 
         var centerY =
             (area.centerY() + labelCenterYPadding - (if (settings.isStatisticsEnabled()) 8 else 1) * scaleRationBasedOnScreenSize(area))
-        Log.e("WWWWWWWWWw","centerY = $centerY ")
 
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
         val valueY = centerY - valueHeight
@@ -468,40 +486,84 @@ internal class GaugeDrawer(
         radius: Float,
         area: RectF,
     ) {
+
         if (metric.source.isNumber()) {
             val pid = metric.pid()
-            val startValue = pid.min.toDouble()
-            val endValue = pid.max.toDouble()
 
-            val numberOfItems = (drawerSettings.dividersCount / drawerSettings.scaleStep)
+            val cachedEntry = scaleNumbersCache[pid.id]
 
-            val scaleRation = scaleRationBasedOnScreenSize(area, targetMin = 0.4f, targetMax = 1.9f)
-            val stepValue = (endValue - startValue) / numberOfItems
-            val baseRadius = radius * NUMERALS_RADIUS_SCALE_FACTOR
+            val isCacheValid =
+                cachedEntry != null &&
+                    cachedEntry.radius == radius &&
+                    cachedEntry.min == pid.min.toDouble() &&
+                    cachedEntry.max == pid.max.toDouble() &&
+                    cachedEntry.dividerCount == drawerSettings.dividersCount
 
-            val start = 0
-            val end = drawerSettings.dividersCount + 1
+            val scaleNumbers =
+                if (isCacheValid) {
+                    // Return cached numbers (fast path)
+                    cachedEntry!!.numbers
+                } else {
+                    // Recalculate and update cache (slow path - only once per config change)
+                    val newNumbers = calculateScaleNumbers(metric, radius, area)
+                    scaleNumbersCache[pid.id] =
+                        ScaleCacheEntry(
+                            min = pid.min.toDouble(),
+                            max = pid.max.toDouble(),
+                            radius = radius,
+                            dividerCount = drawerSettings.dividersCount,
+                            numbers = newNumbers,
+                        )
+                    newNumbers
+                }
 
-            for (j in start..end step drawerSettings.scaleStep) {
-                val angle = (drawerSettings.startAngle + j * drawerSettings.dividersStepAngle) * (Math.PI / 180)
-                val text = valueAsString(metric, value = (startValue + stepValue * j / drawerSettings.scaleStep).round(1))
-                val rect = Rect()
-                numbersPaint.getTextBounds(text, 0, text.length, rect)
-                numbersPaint.textSize = drawerSettings.scaleNumbersTextSize * scaleRation
-
-                val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
-                val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
-
-                numbersPaint.color =
-                    if (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep) {
-                        settings.getColorTheme().progressColor
-                    } else {
-                        color(R.color.gray)
-                    }
-
-                canvas.drawText(text, x, y, numbersPaint)
+            scaleNumbers.forEach { item ->
+                numbersPaint.color = item.color
+                canvas.drawText(item.text, item.x, item.y, numbersPaint)
             }
         }
+    }
+
+    private fun calculateScaleNumbers(
+        metric: Metric,
+        radius: Float,
+        area: RectF,
+    ): List<CachedScaleNumber> {
+        val result = mutableListOf<CachedScaleNumber>()
+        val pid = metric.pid()
+        val startValue = pid.min.toDouble()
+        val endValue = pid.max.toDouble()
+
+        val numberOfItems = (drawerSettings.dividersCount / drawerSettings.scaleStep)
+        val scaleRation = scaleRationBasedOnScreenSize(area, targetMin = 0.4f, targetMax = 1.9f)
+        val stepValue = (endValue - startValue) / numberOfItems
+        val baseRadius = radius * NUMERALS_RADIUS_SCALE_FACTOR
+
+        val start = 0
+        val end = drawerSettings.dividersCount + 1
+
+        for (j in start..end step drawerSettings.scaleStep) {
+            val angle = (drawerSettings.startAngle + j * drawerSettings.dividersStepAngle) * (Math.PI / 180)
+            val value = (startValue + stepValue * j / drawerSettings.scaleStep).round(1)
+            val text = valueAsString(metric, value)
+
+            numbersPaint.textSize = drawerSettings.scaleNumbersTextSize * scaleRation
+            val rect = Rect()
+            numbersPaint.getTextBounds(text, 0, text.length, rect)
+
+            val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
+            val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
+
+            val color =
+                if (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep) {
+                    settings.getColorTheme().progressColor
+                } else {
+                    color(R.color.gray)
+                }
+
+            result.add(CachedScaleNumber(x, y, text, color))
+        }
+        return result
     }
 
     private inline fun valueAsString(
