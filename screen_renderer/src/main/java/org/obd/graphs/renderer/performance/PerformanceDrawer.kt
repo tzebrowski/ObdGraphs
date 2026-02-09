@@ -25,6 +25,7 @@ import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
+import org.obd.graphs.isNumber
 
 private const val MAX_ITEMS_IN_ROW = 6
 
@@ -43,10 +44,15 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
     private val background: Bitmap =
         BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
 
+    private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.DKGRAY
+        strokeWidth = 2f
+        alpha = 100
+    }
+
     override fun getBackground(): Bitmap = background
 
     override fun recycle() {
-        // FIX: Removed dangerous super.getBackground().recycle() to prevent crashes
         this.background.recycle()
     }
 
@@ -63,7 +69,6 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         )
 
         val itemWidth = area.width() / MAX_ITEMS_IN_ROW.toFloat()
-
         var rowTop = top + 2f
 
         val metricsToDraw = listOfNotNull(
@@ -78,18 +83,30 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
             performanceInfoDetails.gearEngaged
         )
 
-        // Draw loop using positional arguments to match TripInfoDrawer signature
         metricsToDraw.take(MAX_ITEMS_IN_ROW).forEachIndexed { index, metric ->
+            val itemLeft = left + (index * itemWidth)
+
             tripInfoDrawer.drawMetric(
                 metric,
                 rowTop,
-                left + (index * itemWidth),
+                itemLeft,
                 canvas,
                 textSize,
-                statsEnabled = true,
+                statsEnabled = metric.source.isNumber(),
                 area = area,
                 castToInt = true
             )
+
+            if (index < metricsToDraw.take(MAX_ITEMS_IN_ROW).size - 1) {
+                val lineX = itemLeft + itemWidth
+                canvas.drawLine(
+                    lineX,
+                    rowTop,
+                    lineX,
+                    rowTop + textSize + 10f,
+                    dividerPaint
+                )
+            }
         }
 
         drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
@@ -111,17 +128,16 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         when (gauges.size) {
             4 -> {
                 val topRowWidth = availableWidth / 2f
-
-                drawGauge(performanceInfoDetails.torque, canvas, rowTop, areaLeft, topRowWidth, labelCenterYPadding)
-                drawGauge(performanceInfoDetails.intakePressure, canvas, rowTop, areaLeft + topRowWidth, topRowWidth, labelCenterYPadding)
+                drawGauge(gauges[0], canvas, rowTop, areaLeft, topRowWidth, labelCenterYPadding)
+                drawGauge(gauges[1], canvas, rowTop, areaLeft + topRowWidth, topRowWidth, labelCenterYPadding)
 
                 val topRowHeight = topRowWidth * 0.8f
                 val bottomRowTop = rowTop + (topRowHeight * 0.45f)
                 val bottomRowWidth = availableWidth / 3.5f
                 val centerOffset = (availableWidth - (bottomRowWidth * 2)) / 2f
 
-                drawGauge(performanceInfoDetails.gas, canvas, bottomRowTop, areaLeft + centerOffset - 10f, bottomRowWidth, labelCenterYPadding)
-                drawGauge(performanceInfoDetails.vehicleSpeed, canvas, bottomRowTop, areaLeft + centerOffset + bottomRowWidth + 10f, bottomRowWidth, labelCenterYPadding)
+                drawGauge(gauges[2], canvas, bottomRowTop, areaLeft + centerOffset - 10f, bottomRowWidth, labelCenterYPadding)
+                drawGauge(gauges[3], canvas, bottomRowTop, areaLeft + centerOffset + bottomRowWidth + 10f, bottomRowWidth, labelCenterYPadding)
             }
 
             3 -> {
@@ -138,7 +154,14 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
             }
 
             1 -> {
-                drawGauge(gauges[0], canvas, rowTop, areaLeft + (availableWidth / 4f), availableWidth / 2f, labelCenterYPadding = 6f)
+                drawGauge(
+                    gauges[0],
+                    canvas,
+                    rowTop,
+                    areaLeft + (availableWidth / 4f),
+                    availableWidth / 2f,
+                    labelCenterYPadding = 6f
+                )
             }
         }
     }

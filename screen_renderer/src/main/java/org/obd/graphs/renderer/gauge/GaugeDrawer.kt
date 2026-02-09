@@ -57,7 +57,7 @@ data class DrawerSettings(
     val dividerWidth: Float = 1f,
     val lineOffset: Float = 8f,
     val valueTextSize: Float = 46f,
-    val labelTextSize: Float = 16f,
+    val labelTextSize: Float = 12f,
     val scaleNumbersTextSize: Float = 12f,
     val dividerHighlightStart: Int = 9,
 )
@@ -102,7 +102,7 @@ internal class GaugeDrawer(
 
     private val progressPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            strokeCap = Paint.Cap.BUTT
+            strokeCap = Paint.Cap.ROUND
             style = Paint.Style.STROKE
             color = COLOR_WHITE
         }
@@ -112,7 +112,6 @@ internal class GaugeDrawer(
             strokeCap = Paint.Cap.BUTT
         }
 
-    // Cache map keyed by PID ID
     private val scaleNumbersCache = mutableMapOf<Long, ScaleCacheEntry>()
 
     fun drawGauge(
@@ -231,7 +230,9 @@ internal class GaugeDrawer(
             val startValue = metric.pid().min.toFloat()
             val endValue = metric.pid().max.toFloat()
 
-            if (value == startValue) {
+            val clampedValue = value.coerceIn(startValue, endValue)
+
+            if (clampedValue == startValue) {
                 canvas.drawArc(
                     progressRect,
                     drawerSettings.startAngle,
@@ -241,7 +242,7 @@ internal class GaugeDrawer(
                 )
             } else {
                 val pointAngle = abs(drawerSettings.sweepAngle).toDouble() / (endValue - startValue)
-                val point = (drawerSettings.startAngle + (value - startValue) * pointAngle).toInt()
+                val point = (drawerSettings.startAngle + (clampedValue - startValue) * pointAngle).toInt()
                 when (drawerSettings.gaugeProgressBarType) {
                     GaugeProgressBarType.SHORT -> {
                         progressPaint.strokeWidth = strokeWidth
@@ -291,10 +292,17 @@ internal class GaugeDrawer(
     }
 
     private fun setProgressGradient(rect: RectF) {
-        val colors = intArrayOf(COLOR_WHITE, settings.getColorTheme().progressColor)
-        val gradient = SweepGradient(rect.centerY(), rect.centerX(), colors, null)
+        val colors =
+            intArrayOf(
+                color(R.color.gray),
+                settings.getColorTheme().progressColor,
+                Color.RED,
+            )
+        val positions = floatArrayOf(0.0f, 0.75f, 1.0f)
+
+        val gradient = SweepGradient(rect.centerY(), rect.centerX(), colors, positions)
         val matrix = Matrix()
-        matrix.postRotate(90f, rect.centerY(), rect.centerX())
+        matrix.postRotate(drawerSettings.startAngle - 5, rect.centerY(), rect.centerX())
         gradient.setLocalMatrix(matrix)
         paint.shader = gradient
     }
@@ -335,7 +343,7 @@ internal class GaugeDrawer(
 
         pid.units?.let {
             valuePaint.getTextBounds(it, 0, it.length, unitRect)
-            canvas.drawText(it, area.centerX() + textRect.width() / 2 + 4, unitY, valuePaint)
+            canvas.drawText(it, area.centerX() + textRect.width() / 2 + 12, unitY, valuePaint)
             centerY += unitRect.height() / 2
         }
 
@@ -365,6 +373,9 @@ internal class GaugeDrawer(
             labelPaint.getTextBounds(label, 0, label.length, labelRect)
 
             labelY = unitY + labelRect.height()
+            if (labelY > area.bottom - 5) {
+                labelY = area.bottom - 5f
+            }
             canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
         }
 
@@ -484,7 +495,6 @@ internal class GaugeDrawer(
         radius: Float,
         area: RectF,
     ) {
-
         if (metric.source.isNumber()) {
             val pid = metric.pid()
 
@@ -499,10 +509,8 @@ internal class GaugeDrawer(
 
             val scaleNumbers =
                 if (isCacheValid) {
-                    // Return cached numbers (fast path)
                     cachedEntry!!.numbers
                 } else {
-                    // Recalculate and update cache (slow path - only once per config change)
                     val newNumbers = calculateScaleNumbers(metric, radius, area)
                     scaleNumbersCache[pid.id] =
                         ScaleCacheEntry(
