@@ -35,6 +35,8 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.SurfaceRenderer
@@ -128,7 +130,7 @@ open class PerformanceFragment : Fragment() {
                 metricsCollector,
                 fps,
                 surfaceRendererType = SurfaceRendererType.PERFORMANCE,
-                viewSettings = ViewSettings(marginTop = 20),
+                viewSettings = ViewSettings(marginTop =  settings.getMarginTop()),
             )
 
         surfaceController = SurfaceController(renderer)

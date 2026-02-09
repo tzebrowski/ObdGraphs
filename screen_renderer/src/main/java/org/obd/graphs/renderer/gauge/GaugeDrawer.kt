@@ -24,7 +24,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.SweepGradient
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
@@ -189,7 +188,6 @@ internal class GaugeDrawer(
         )
 
         if (scaleEnabled) {
-            Log.e("EEEEEEEEE"," scaleEnabled: ${metric.pid().pid}")
             drawNumerals(
                 metric,
                 canvas,
