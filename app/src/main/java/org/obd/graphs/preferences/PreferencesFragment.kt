@@ -17,7 +17,6 @@
 package org.obd.graphs.preferences
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -67,11 +66,6 @@ private const val NAVIGATE_TO_PREF_KEY = "pref.aa"
 private const val PREFERENCE_SCREEN_SOURCE_DASHBOARD = "dashboard"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
-
-    private val onSharedPreferenceChangeListener =
-        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            Log.v(LOG_KEY, "Preference $key changed")
-        }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
         when (preference) {
@@ -154,20 +148,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 openPreferenceDialogFor(it)
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(
-            onSharedPreferenceChangeListener
-        )
-    }
-
-    override fun onPause() {
-        super.onPause()
-        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(
-            onSharedPreferenceChangeListener
-        )
     }
 
     override fun onCreateView(
