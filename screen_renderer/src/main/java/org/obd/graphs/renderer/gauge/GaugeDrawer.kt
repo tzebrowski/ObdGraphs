@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -79,9 +79,9 @@ private data class ScaleCacheEntry(
 
 private data class ScaleBitmapCache(
     val bitmap: Bitmap,
-    val width: Int,  // Store Int dimensions
+    val width: Int, // Store Int dimensions
     val height: Int, // Store Int dimensions
-    val dividerCount: Int
+    val dividerCount: Int,
 )
 
 @Suppress("NOTHING_TO_INLINE")
@@ -281,6 +281,12 @@ internal class GaugeDrawer(
         }
     }
 
+    override fun recycle() {
+        super.recycle()
+        scaleBitmapCache = null
+        scaleNumbersCache.clear()
+    }
+
     private fun calculateRect(
         left: Float,
         width: Float,
@@ -428,7 +434,8 @@ internal class GaugeDrawer(
         val targetHeight = rect.height().toInt()
 
         val currentCache = scaleBitmapCache
-        val isValid = currentCache != null &&
+        val isValid =
+            currentCache != null &&
                 currentCache.width == targetWidth &&
                 currentCache.height == targetHeight &&
                 currentCache.dividerCount == drawerSettings.dividersCount
@@ -436,7 +443,6 @@ internal class GaugeDrawer(
         if (isValid && currentCache != null) {
             canvas.drawBitmap(currentCache.bitmap, rect.left, rect.top, paint)
         } else {
-
             if (targetWidth <= 0 || targetHeight <= 0) return
 
             val cachedBitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
@@ -489,7 +495,7 @@ internal class GaugeDrawer(
 
             val widthArc =
                 (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
-                        (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
+                    (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
 
             cacheCanvas.drawArc(
                 rect,
@@ -538,9 +544,9 @@ internal class GaugeDrawer(
 
             val isCacheValid =
                 cachedEntry != null &&
-                        cachedEntry.area == area &&
-                        cachedEntry.radius == radius &&
-                        cachedEntry.dividerCount == drawerSettings.dividersCount
+                    cachedEntry.area == area &&
+                    cachedEntry.radius == radius &&
+                    cachedEntry.dividerCount == drawerSettings.dividersCount
 
             val scaleNumbers =
                 if (isCacheValid) {
@@ -552,7 +558,7 @@ internal class GaugeDrawer(
                             radius = radius,
                             dividerCount = drawerSettings.dividersCount,
                             numbers = newNumbers,
-                            area = area
+                            area = area,
                         )
                     newNumbers
                 }
