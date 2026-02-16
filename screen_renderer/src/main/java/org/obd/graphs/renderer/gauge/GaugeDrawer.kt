@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,7 +24,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.SweepGradient
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
@@ -67,12 +66,10 @@ private data class CachedScaleNumber(
     val x: Float,
     val y: Float,
     val text: String,
-    val color: Int,
+    val hotColors: Boolean,
 )
 
 private data class ScaleCacheEntry(
-    val min: Double,
-    val max: Double,
     val radius: Float,
     val dividerCount: Int,
     val numbers: List<CachedScaleNumber>,
@@ -459,7 +456,7 @@ internal class GaugeDrawer(
 
         val width =
             (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
-                (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
+                    (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
 
         canvas.drawArc(
             rect,
@@ -504,11 +501,9 @@ internal class GaugeDrawer(
 
             val isCacheValid =
                 cachedEntry != null &&
-                    cachedEntry.area == area &&
-                    cachedEntry.radius == radius &&
-                    cachedEntry.min == pid.min.toDouble() &&
-                    cachedEntry.max == pid.max.toDouble() &&
-                    cachedEntry.dividerCount == drawerSettings.dividersCount
+                        cachedEntry.area == area &&
+                        cachedEntry.radius == radius &&
+                        cachedEntry.dividerCount == drawerSettings.dividersCount
 
             val scaleNumbers =
                 if (isCacheValid) {
@@ -517,8 +512,6 @@ internal class GaugeDrawer(
                     val newNumbers = calculateScaleNumbers(metric, radius, area)
                     scaleNumbersCache[pid.id] =
                         ScaleCacheEntry(
-                            min = pid.min.toDouble(),
-                            max = pid.max.toDouble(),
                             radius = radius,
                             dividerCount = drawerSettings.dividersCount,
                             numbers = newNumbers,
@@ -526,9 +519,8 @@ internal class GaugeDrawer(
                         )
                     newNumbers
                 }
-
             scaleNumbers.forEach { item ->
-                numbersPaint.color = item.color
+                numbersPaint.color = if (item.hotColors) settings.getColorTheme().progressColor else color(R.color.gray)
                 canvas.drawText(item.text, item.x, item.y, numbersPaint)
             }
         }
@@ -564,14 +556,8 @@ internal class GaugeDrawer(
             val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - rect.width() / 2).toFloat()
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
-            val color =
-                if (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep) {
-                    settings.getColorTheme().progressColor
-                } else {
-                    color(R.color.gray)
-                }
-
-            result.add(CachedScaleNumber(x, y, text, color))
+            val hotColors = (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep)
+            result.add(CachedScaleNumber(x, y, text, hotColors))
         }
         return result
     }
