@@ -24,6 +24,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.SweepGradient
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
@@ -75,6 +76,7 @@ private data class ScaleCacheEntry(
     val radius: Float,
     val dividerCount: Int,
     val numbers: List<CachedScaleNumber>,
+    val area: RectF,
 )
 
 @Suppress("NOTHING_TO_INLINE")
@@ -502,6 +504,7 @@ internal class GaugeDrawer(
 
             val isCacheValid =
                 cachedEntry != null &&
+                    cachedEntry.area == area &&
                     cachedEntry.radius == radius &&
                     cachedEntry.min == pid.min.toDouble() &&
                     cachedEntry.max == pid.max.toDouble() &&
@@ -519,6 +522,7 @@ internal class GaugeDrawer(
                             radius = radius,
                             dividerCount = drawerSettings.dividersCount,
                             numbers = newNumbers,
+                            area = area
                         )
                     newNumbers
                 }
