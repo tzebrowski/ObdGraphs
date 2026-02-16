@@ -63,25 +63,20 @@ data class DrawerSettings(
     val dividerHighlightStart: Int = 9,
 )
 
-private data class CachedScaleNumber(
+private data class ScaleNumber(
     val x: Float,
     val y: Float,
     val text: String,
     val hotColors: Boolean,
 )
 
-private data class ScaleCacheEntry(
-    val radius: Float,
-    val dividerCount: Int,
-    val numbers: List<CachedScaleNumber>,
-    val area: RectF,
-)
-
 private data class ScaleBitmapCache(
     val bitmap: Bitmap,
-    val width: Int, // Store Int dimensions
-    val height: Int, // Store Int dimensions
+    val width: Int,
+    val height: Int,
     val dividerCount: Int,
+    val driveMode: Int,
+    val displayScaleNumber: Boolean
 )
 
 @Suppress("NOTHING_TO_INLINE")
@@ -118,8 +113,6 @@ internal class GaugeDrawer(
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             strokeCap = Paint.Cap.BUTT
         }
-
-    private val scaleNumbersCache = mutableMapOf<Long, ScaleCacheEntry>()
 
     private var scaleBitmapCache: ScaleBitmapCache? = null
 
@@ -193,16 +186,9 @@ internal class GaugeDrawer(
         drawScale(
             canvas,
             rect,
+            metric,
+            scaleEnabled
         )
-
-        if (scaleEnabled) {
-            drawScaleNumbers(
-                metric,
-                canvas,
-                calculateRadius(width),
-                arcTopRect,
-            )
-        }
 
         drawGauge(
             canvas,
@@ -284,7 +270,6 @@ internal class GaugeDrawer(
     override fun recycle() {
         super.recycle()
         scaleBitmapCache = null
-        scaleNumbersCache.clear()
     }
 
     private fun calculateRect(
@@ -429,6 +414,8 @@ internal class GaugeDrawer(
     private fun drawScale(
         canvas: Canvas,
         rect: RectF,
+        metric: Metric,
+        scaleEnabled: Boolean
     ) {
         val targetWidth = rect.width().toInt()
         val targetHeight = rect.height().toInt()
@@ -436,6 +423,8 @@ internal class GaugeDrawer(
         val currentCache = scaleBitmapCache
         val isValid =
             currentCache != null &&
+                currentCache.displayScaleNumber == scaleEnabled &&
+                currentCache.driveMode == settings.getColorTheme().progressColor &&
                 currentCache.width == targetWidth &&
                 currentCache.height == targetHeight &&
                 currentCache.dividerCount == drawerSettings.dividersCount
@@ -448,12 +437,16 @@ internal class GaugeDrawer(
             val cachedBitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
             val cacheCanvas = Canvas(cachedBitmap)
 
-            // Translate the cache canvas so absolute coordinates map to (0,0)
-            // We shift the world "up and left" by the current rect's position.
             cacheCanvas.translate(-rect.left, -rect.top)
 
-            // These still use 'rect' which has absolute coordinates (e.g. left=500),
-            // but the translate(-500) above makes them draw at x=0 on our new bitmap.
+            if (scaleEnabled) {
+                drawScaleNumbers(
+                    metric,
+                    cacheCanvas,
+                    calculateRadius(targetWidth.toFloat()),
+                    rect,
+                )
+            }
 
             val scaleRect = RectF()
             scaleRect[
@@ -505,7 +498,9 @@ internal class GaugeDrawer(
                 paint,
             )
 
-            scaleBitmapCache = ScaleBitmapCache(cachedBitmap, targetWidth, targetHeight, drawerSettings.dividersCount)
+            scaleBitmapCache = ScaleBitmapCache(cachedBitmap, targetWidth, targetHeight, drawerSettings.dividersCount,
+                settings.getColorTheme().progressColor,
+                scaleEnabled)
             canvas.drawBitmap(cachedBitmap, rect.left, rect.top, paint)
         }
     }
@@ -538,30 +533,7 @@ internal class GaugeDrawer(
         area: RectF,
     ) {
         if (metric.source.isNumber()) {
-            val pid = metric.pid()
-
-            val cachedEntry = scaleNumbersCache[pid.id]
-
-            val isCacheValid =
-                cachedEntry != null &&
-                    cachedEntry.area == area &&
-                    cachedEntry.radius == radius &&
-                    cachedEntry.dividerCount == drawerSettings.dividersCount
-
-            val scaleNumbers =
-                if (isCacheValid) {
-                    cachedEntry!!.numbers
-                } else {
-                    val newNumbers = calculateScaleNumbers(metric, radius, area)
-                    scaleNumbersCache[pid.id] =
-                        ScaleCacheEntry(
-                            radius = radius,
-                            dividerCount = drawerSettings.dividersCount,
-                            numbers = newNumbers,
-                            area = area,
-                        )
-                    newNumbers
-                }
+            val scaleNumbers = calculateScaleNumbers(metric, radius, area)
             scaleNumbers.forEach { item ->
                 numbersPaint.color = if (item.hotColors) settings.getColorTheme().progressColor else color(R.color.gray)
                 canvas.drawText(item.text, item.x, item.y, numbersPaint)
@@ -573,8 +545,8 @@ internal class GaugeDrawer(
         metric: Metric,
         radius: Float,
         area: RectF,
-    ): List<CachedScaleNumber> {
-        val result = mutableListOf<CachedScaleNumber>()
+    ): List<ScaleNumber> {
+        val result = mutableListOf<ScaleNumber>()
         val pid = metric.pid()
         val startValue = pid.min.toDouble()
         val endValue = pid.max.toDouble()
@@ -600,7 +572,7 @@ internal class GaugeDrawer(
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
             val hotColors = (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep)
-            result.add(CachedScaleNumber(x, y, text, hotColors))
+            result.add(ScaleNumber(x, y, text, hotColors))
         }
         return result
     }
