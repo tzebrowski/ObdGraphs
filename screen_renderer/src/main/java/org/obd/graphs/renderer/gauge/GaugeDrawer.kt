@@ -75,8 +75,8 @@ private data class ScaleBitmapCache(
     val width: Int,
     val height: Int,
     val dividerCount: Int,
-    val driveMode: Int,
-    val displayScaleNumber: Boolean
+    val progressColor: Int,
+    val scaleEnabled: Boolean,
 )
 
 @Suppress("NOTHING_TO_INLINE")
@@ -187,7 +187,7 @@ internal class GaugeDrawer(
             canvas,
             rect,
             metric,
-            scaleEnabled
+            scaleEnabled,
         )
 
         drawGauge(
@@ -295,7 +295,7 @@ internal class GaugeDrawer(
         val colors =
             intArrayOf(
                 color(R.color.gray),
-                settings.getColorTheme().progressColor,
+                getProgressColor(),
                 Color.RED,
             )
         val positions = floatArrayOf(0.0f, 0.75f, 1.0f)
@@ -406,7 +406,7 @@ internal class GaugeDrawer(
 
     private inline fun scaleColor(j: Int): Int =
         if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {
-            settings.getColorTheme().progressColor
+            getProgressColor()
         } else {
             color(R.color.gray_light)
         }
@@ -415,7 +415,7 @@ internal class GaugeDrawer(
         canvas: Canvas,
         rect: RectF,
         metric: Metric,
-        scaleEnabled: Boolean
+        scaleEnabled: Boolean,
     ) {
         val targetWidth = rect.width().toInt()
         val targetHeight = rect.height().toInt()
@@ -423,8 +423,8 @@ internal class GaugeDrawer(
         val currentCache = scaleBitmapCache
         val isValid =
             currentCache != null &&
-                currentCache.displayScaleNumber == scaleEnabled &&
-                currentCache.driveMode == settings.getColorTheme().progressColor &&
+                currentCache.scaleEnabled == scaleEnabled &&
+                currentCache.progressColor == getProgressColor() &&
                 currentCache.width == targetWidth &&
                 currentCache.height == targetHeight &&
                 currentCache.dividerCount == drawerSettings.dividersCount
@@ -439,7 +439,7 @@ internal class GaugeDrawer(
 
             cacheCanvas.translate(-rect.left, -rect.top)
 
-            if (scaleEnabled) {
+            if (metric.source.isNumber() && scaleEnabled) {
                 drawScaleNumbers(
                     metric,
                     cacheCanvas,
@@ -460,7 +460,7 @@ internal class GaugeDrawer(
 
             drawScale(cacheCanvas, scaleRect, start, end, paintColor = {
                 if (it == 10 || it == 12) {
-                    settings.getColorTheme().progressColor
+                    getProgressColor()
                 } else {
                     color(R.color.gray_light)
                 }
@@ -481,7 +481,7 @@ internal class GaugeDrawer(
                 rect,
                 (drawerSettings.dividersStepAngle * drawerSettings.dividerHighlightStart + 3).toInt(),
                 (drawerSettings.dividersStepAngle * (drawerSettings.dividersCount - 1)).toInt(),
-                paintColor = { settings.getColorTheme().progressColor },
+                paintColor = { getProgressColor() },
             ) {
                 drawerSettings.startAngle + it
             }
@@ -498,9 +498,15 @@ internal class GaugeDrawer(
                 paint,
             )
 
-            scaleBitmapCache = ScaleBitmapCache(cachedBitmap, targetWidth, targetHeight, drawerSettings.dividersCount,
-                settings.getColorTheme().progressColor,
-                scaleEnabled)
+            scaleBitmapCache =
+                ScaleBitmapCache(
+                    cachedBitmap,
+                    targetWidth,
+                    targetHeight,
+                    drawerSettings.dividersCount,
+                    getProgressColor(),
+                    scaleEnabled,
+                )
             canvas.drawBitmap(cachedBitmap, rect.left, rect.top, paint)
         }
     }
@@ -526,27 +532,12 @@ internal class GaugeDrawer(
         }
     }
 
-    private fun drawScaleNumbers(
+    private inline fun drawScaleNumbers(
         metric: Metric,
         canvas: Canvas,
         radius: Float,
         area: RectF,
     ) {
-        if (metric.source.isNumber()) {
-            val scaleNumbers = calculateScaleNumbers(metric, radius, area)
-            scaleNumbers.forEach { item ->
-                numbersPaint.color = if (item.hotColors) settings.getColorTheme().progressColor else color(R.color.gray)
-                canvas.drawText(item.text, item.x, item.y, numbersPaint)
-            }
-        }
-    }
-
-    private fun calculateScaleNumbers(
-        metric: Metric,
-        radius: Float,
-        area: RectF,
-    ): List<ScaleNumber> {
-        val result = mutableListOf<ScaleNumber>()
         val pid = metric.pid()
         val startValue = pid.min.toDouble()
         val endValue = pid.max.toDouble()
@@ -558,6 +549,8 @@ internal class GaugeDrawer(
 
         val start = 0
         val end = drawerSettings.dividersCount + 1
+
+        val scaleNumbers = mutableListOf<ScaleNumber>()
 
         for (j in start..end step drawerSettings.scaleStep) {
             val angle = (drawerSettings.startAngle + j * drawerSettings.dividersStepAngle) * (Math.PI / 180)
@@ -572,10 +565,16 @@ internal class GaugeDrawer(
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + rect.height() / 2).toFloat()
 
             val hotColors = (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep)
-            result.add(ScaleNumber(x, y, text, hotColors))
+            scaleNumbers.add(ScaleNumber(x, y, text, hotColors))
         }
-        return result
+
+        scaleNumbers.forEach { item ->
+            numbersPaint.color = if (item.hotColors) getProgressColor() else color(R.color.gray)
+            canvas.drawText(item.text, item.x, item.y, numbersPaint)
+        }
     }
+
+    private inline fun getProgressColor() = settings.getColorTheme().progressColor
 
     private inline fun valueAsString(
         metric: Metric,
