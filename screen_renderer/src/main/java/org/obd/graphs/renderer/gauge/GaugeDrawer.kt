@@ -17,6 +17,7 @@
 package org.obd.graphs.renderer.gauge
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
@@ -76,6 +77,13 @@ private data class ScaleCacheEntry(
     val area: RectF,
 )
 
+private data class ScaleBitmapCache(
+    val bitmap: Bitmap,
+    val width: Int,  // Store Int dimensions
+    val height: Int, // Store Int dimensions
+    val dividerCount: Int
+)
+
 @Suppress("NOTHING_TO_INLINE")
 internal class GaugeDrawer(
     settings: ScreenSettings,
@@ -112,6 +120,8 @@ internal class GaugeDrawer(
         }
 
     private val scaleNumbersCache = mutableMapOf<Long, ScaleCacheEntry>()
+
+    private var scaleBitmapCache: ScaleBitmapCache? = null
 
     fun drawGauge(
         canvas: Canvas,
@@ -414,57 +424,84 @@ internal class GaugeDrawer(
         canvas: Canvas,
         rect: RectF,
     ) {
-        val scaleRect = RectF()
+        val targetWidth = rect.width().toInt()
+        val targetHeight = rect.height().toInt()
 
-        scaleRect[
-            rect.left + drawerSettings.lineOffset,
-            rect.top + drawerSettings.lineOffset,
-            rect.right - drawerSettings.lineOffset,
-        ] =
-            rect.bottom - drawerSettings.lineOffset
+        val currentCache = scaleBitmapCache
+        val isValid = currentCache != null &&
+                currentCache.width == targetWidth &&
+                currentCache.height == targetHeight &&
+                currentCache.dividerCount == drawerSettings.dividersCount
 
-        val start = 0
-        val end = drawerSettings.dividersCount + 1
+        if (isValid && currentCache != null) {
+            canvas.drawBitmap(currentCache.bitmap, rect.left, rect.top, paint)
+        } else {
 
-        drawScale(canvas, scaleRect, start, end, paintColor = {
-            if (it == 10 || it == 12) {
-                settings.getColorTheme().progressColor
-            } else {
-                color(R.color.gray_light)
+            if (targetWidth <= 0 || targetHeight <= 0) return
+
+            val cachedBitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
+            val cacheCanvas = Canvas(cachedBitmap)
+
+            // Translate the cache canvas so absolute coordinates map to (0,0)
+            // We shift the world "up and left" by the current rect's position.
+            cacheCanvas.translate(-rect.left, -rect.top)
+
+            // These still use 'rect' which has absolute coordinates (e.g. left=500),
+            // but the translate(-500) above makes them draw at x=0 on our new bitmap.
+
+            val scaleRect = RectF()
+            scaleRect[
+                rect.left + drawerSettings.lineOffset,
+                rect.top + drawerSettings.lineOffset,
+                rect.right - drawerSettings.lineOffset,
+            ] = rect.bottom - drawerSettings.lineOffset
+
+            val start = 0
+            val end = drawerSettings.dividersCount + 1
+
+            drawScale(cacheCanvas, scaleRect, start, end, paintColor = {
+                if (it == 10 || it == 12) {
+                    settings.getColorTheme().progressColor
+                } else {
+                    color(R.color.gray_light)
+                }
+            }) {
+                drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
             }
-        }) {
-            drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
+
+            drawScale(cacheCanvas, scaleRect, start, drawerSettings.dividersCount + 2) {
+                drawerSettings.startAngle + it * drawerSettings.dividersStepAngle * 0.5f
+            }
+
+            drawScale(cacheCanvas, rect, start, end, paintColor = { scaleColor(it) }) {
+                drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
+            }
+
+            drawScale(
+                cacheCanvas,
+                rect,
+                (drawerSettings.dividersStepAngle * drawerSettings.dividerHighlightStart + 3).toInt(),
+                (drawerSettings.dividersStepAngle * (drawerSettings.dividersCount - 1)).toInt(),
+                paintColor = { settings.getColorTheme().progressColor },
+            ) {
+                drawerSettings.startAngle + it
+            }
+
+            val widthArc =
+                (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
+                        (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
+
+            cacheCanvas.drawArc(
+                rect,
+                drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 2),
+                widthArc,
+                false,
+                paint,
+            )
+
+            scaleBitmapCache = ScaleBitmapCache(cachedBitmap, targetWidth, targetHeight, drawerSettings.dividersCount)
+            canvas.drawBitmap(cachedBitmap, rect.left, rect.top, paint)
         }
-
-        drawScale(canvas, scaleRect, start, drawerSettings.dividersCount + 2) {
-            drawerSettings.startAngle + it * drawerSettings.dividersStepAngle * 0.5f
-        }
-
-        drawScale(canvas, rect, start, end, paintColor = { scaleColor(it) }) {
-            drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
-        }
-
-        drawScale(
-            canvas,
-            rect,
-            (drawerSettings.dividersStepAngle * drawerSettings.dividerHighlightStart + 3).toInt(),
-            (drawerSettings.dividersStepAngle * (drawerSettings.dividersCount - 1)).toInt(),
-            paintColor = { settings.getColorTheme().progressColor },
-        ) {
-            drawerSettings.startAngle + it
-        }
-
-        val width =
-            (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
-                    (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
-
-        canvas.drawArc(
-            rect,
-            drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 2),
-            width,
-            false,
-            paint,
-        )
     }
 
     private fun drawScale(
