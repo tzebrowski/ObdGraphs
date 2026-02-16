@@ -186,7 +186,7 @@ internal class GaugeDrawer(
         )
 
         if (scaleEnabled) {
-            drawNumerals(
+            drawScaleNumbers(
                 metric,
                 canvas,
                 calculateRadius(width),
@@ -488,7 +488,7 @@ internal class GaugeDrawer(
         }
     }
 
-    private fun drawNumerals(
+    private fun drawScaleNumbers(
         metric: Metric,
         canvas: Canvas,
         radius: Float,
