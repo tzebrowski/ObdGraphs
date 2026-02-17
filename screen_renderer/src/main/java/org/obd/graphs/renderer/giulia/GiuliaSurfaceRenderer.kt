@@ -30,7 +30,6 @@ import org.obd.graphs.renderer.CoreSurfaceRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.ViewSettings
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
@@ -47,9 +46,8 @@ internal class GiuliaSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
-    viewSettings: ViewSettings,
-) : CoreSurfaceRenderer(viewSettings) {
+    private val fps: Fps
+) : CoreSurfaceRenderer() {
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     override fun applyMetricsFilter(query: Query) {

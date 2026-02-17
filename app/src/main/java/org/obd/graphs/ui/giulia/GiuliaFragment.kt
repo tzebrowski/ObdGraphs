@@ -16,155 +16,40 @@
  */
 package org.obd.graphs.ui.giulia
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import org.obd.graphs.R
-import org.obd.graphs.RenderingThread
-import org.obd.graphs.activity.LOG_TAG
-import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.getPowerPreferences
-import org.obd.graphs.registerReceiver
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.SurfaceRenderer
+import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRendererType
-import org.obd.graphs.renderer.ViewSettings
-import org.obd.graphs.ui.configureActionButton
+import org.obd.graphs.ui.SurfaceFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
-import org.obd.graphs.ui.common.SurfaceController
 import org.obd.graphs.ui.withDataLogger
 
-open class GiuliaFragment : Fragment() {
-    private lateinit var root: View
-
-    private val query = Query.instance()
-    private val metricsCollector = MetricsCollector.instance()
+internal class GiuliaFragment :
+    SurfaceFragment(
+        R.layout.fragment_giulia,
+        SurfaceRendererType.GIULIA,
+    ) {
+    private val query: Query = Query.instance()
     private val settings = GiuliaSettings(query)
-    private val fps = Fps()
 
-    private lateinit var surfaceController: SurfaceController
+    override fun query() = query.apply(giuliaVirtualScreen.getVirtualScreenPrefKey())
 
-    private val renderingThread: RenderingThread =
-        RenderingThread(
-            id = "GiuliaFragmentRenderingThread",
-            renderAction = {
-                if (::surfaceController.isInitialized) {
-                    surfaceController.renderFrame()
-                }
-            },
-            perfFrameRate = {
-                settings.getSurfaceFrameRate()
-            },
-        )
-
-    private var broadcastReceiver =
-        object : BroadcastReceiver() {
-            override fun onReceive(
-                context: Context?,
-                intent: Intent?,
-            ) {
-                when (intent?.action) {
-                    DATA_LOGGER_SCHEDULED_START_EVENT -> {
-                        if (isAdded && isVisible) {
-                            Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            withDataLogger {
-                                scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
-                            }
-                        }
-                    }
-
-                    DATA_LOGGER_CONNECTED_EVENT -> {
-                        applyFilter()
-                        renderingThread.start()
-                    }
-
-                    DATA_LOGGER_STOPPED_EVENT -> {
-                        renderingThread.stop()
-                        configureActionButton(query())
-                    }
-                }
-            }
-        }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        surfaceController.renderFrame()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        registerReceiver(activity, broadcastReceiver) {
-            it.addAction(DATA_LOGGER_CONNECTED_EVENT)
-            it.addAction(DATA_LOGGER_STOPPED_EVENT)
-            it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        renderingThread.stop()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        activity?.unregisterReceiver(broadcastReceiver)
-        renderingThread.stop()
-    }
+    override fun getScreenSettings(): ScreenSettings = settings
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        root = inflater.inflate(R.layout.fragment_giulia, container, false)
-        val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
+        val view = super.onCreateView(inflater, container, savedInstanceState)
         setupVirtualViewPanel()
-        surfaceController =
-            SurfaceController(
-                SurfaceRenderer.allocate(
-                    context = requireContext(),
-                    settings = settings,
-                    metricsCollector = metricsCollector,
-                    fps = fps,
-                    surfaceRendererType = SurfaceRendererType.GIULIA,
-                    viewSettings = ViewSettings(marginTop = 16),
-                ),
-            )
-        surfaceView.holder.addCallback(surfaceController)
-
-        applyFilter()
-
-        DataLoggerRepository.observe(viewLifecycleOwner) {
-            it.run {
-                metricsCollector.append(it, forceAppend = false)
-            }
-        }
-
-        if (DataLoggerRepository.isRunning()) {
-            withDataLogger {
-                updateQuery(query())
-            }
-            renderingThread.start()
-        }
-
-        configureActionButton(query())
-
-        return root
+        return view
     }
 
     private fun setVirtualViewBtn(
@@ -182,7 +67,7 @@ open class GiuliaFragment : Fragment() {
             it.setOnClickListener {
                 giuliaVirtualScreen.updateVirtualScreen(viewId)
                 withDataLogger {
-                   updateQuery(query())
+                    updateQuery(query())
                 }
 
                 applyFilter()
@@ -193,8 +78,6 @@ open class GiuliaFragment : Fragment() {
     }
 
     private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
-
-    private fun query() = query.apply(giuliaVirtualScreen.getVirtualScreenPrefKey())
 
     private fun setupVirtualViewPanel() {
         val currentVirtualScreen = giuliaVirtualScreen.getCurrentVirtualScreen()

@@ -42,6 +42,4 @@ class PerformanceSettings : ScreenSettings {
     override fun isStatusPanelEnabled(): Boolean = false
 
     override fun getMaxAllowedItemsInColumn(): Int = 8
-
-    fun getMarginTop(): Int = Prefs.getS("pref.performance.screen_top_margin", "24").toInt()
 }

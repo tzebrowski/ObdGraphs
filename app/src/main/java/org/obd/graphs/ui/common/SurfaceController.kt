@@ -34,16 +34,38 @@ class SurfaceController(
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
 
+    private var topInset = 0
+
+    fun updateInsets(top: Int) {
+        topInset = top
+        // If surface already exists, update area and redraw immediately
+        if (::surfaceHolder.isInitialized && surface?.isValid == true) {
+            val frame = surfaceHolder.surfaceFrame
+            updateVisibleArea(frame.width(), frame.height())
+            renderFrame()
+        }
+    }
+
+    private fun updateVisibleArea(
+        width: Int,
+        height: Int,
+    ) {
+        visibleArea?.set(
+            10,
+            10 + topInset,
+            width,
+            height,
+        )
+    }
+
     override fun surfaceCreated(holder: SurfaceHolder) {
         surfaceHolder = holder
         surfaceHolder.addCallback(this)
         visibleArea = Rect()
-        visibleArea?.set(
-            holder.surfaceFrame.left + 10,
-            holder.surfaceFrame.top + 10,
-            holder.surfaceFrame.right + 10,
-            holder.surfaceFrame.bottom,
-        )
+
+        val frame = holder.surfaceFrame
+        updateVisibleArea(frame.width(), frame.height())
+
         surface = surfaceHolder.surface
         renderFrame()
     }
@@ -55,8 +77,7 @@ class SurfaceController(
         height: Int,
     ) {
         surface = surfaceHolder.surface
-        visibleArea?.set(holder.surfaceFrame.left + 10, holder.surfaceFrame.top + 10, width, height)
-
+        updateVisibleArea(width, height)
         renderFrame()
         renderFrame()
     }

@@ -740,17 +740,6 @@
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
-                <org.obd.graphs.preferences.components.ExtendedSeekBar
-                    android:defaultValue="24"
-                    android:dialogTitle="@string/pref.performance.screen_top_margin"
-                    android:key="pref.performance.screen_top_margin"
-                    android:max="40"
-                    android:title="@string/pref.performance.screen_top_margin"
-                    app:min="0"
-                    app:showSeekBarValue="true"
-                    app:singleLineTitle="false"
-                    app:useSimpleSummaryProvider="true" />
-
             </PreferenceScreen>
 
             <PreferenceScreen

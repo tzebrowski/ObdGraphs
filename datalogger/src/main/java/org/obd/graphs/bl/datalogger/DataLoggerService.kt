@@ -190,7 +190,6 @@ class DataLoggerService : Service() {
             }
         } catch (e: SecurityException) {
             Log.e(LOG_TAG, "Failed to start FGS with requested types. Retrying with basic type.", e)
-            // Fallback: Try starting without Location to keep the service alive
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 try {
                     startForeground(

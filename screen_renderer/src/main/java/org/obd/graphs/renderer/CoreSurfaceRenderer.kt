@@ -21,10 +21,8 @@ import android.graphics.Rect
 
 const val MARGIN_TOP = 8
 
-internal abstract class CoreSurfaceRenderer(
-    protected val viewSettings: ViewSettings,
-) : SurfaceRenderer {
-    open fun getTop(area: Rect): Float = area.top + getDefaultTopMargin() + viewSettings.marginTop
+internal abstract class CoreSurfaceRenderer : SurfaceRenderer {
+    open fun getTop(area: Rect): Float = area.top + getDefaultTopMargin()
 
     fun getDefaultTopMargin(): Float = 20f
 
@@ -34,8 +32,8 @@ internal abstract class CoreSurfaceRenderer(
         margin: Int = 0,
     ): Rect =
         if (area.isEmpty) {
-            Rect(0 + margin, viewSettings.marginTop, canvas.width - 1 - margin, canvas.height)
+            Rect(0 + margin, 0, canvas.width - 1 - margin, canvas.height)
         } else {
-            Rect(area.left + margin, area.top + viewSettings.marginTop, area.right - margin, area.bottom)
+            Rect(area.left + margin, area.top , area.right - margin, area.bottom)
         }
 }

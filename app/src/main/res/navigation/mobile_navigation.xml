@@ -15,7 +15,7 @@
         android:id="@+id/nav_drag_racing"
         android:name="org.obd.graphs.ui.drag_racing.DragRacingFragment"
         android:label="@string/navigation.title_drag_racing"
-        tools:layout="@layout/fragment_drag_racing" />
+        tools:layout="@layout/fragment_surface_renderer" />
 
     <fragment
         android:id="@+id/nav_trip_info"
