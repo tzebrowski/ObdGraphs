@@ -38,7 +38,7 @@ internal class GiuliaFragment :
     private val query: Query = Query.instance()
     private val settings = GiuliaSettings(query)
 
-    override fun query() = query.apply(giuliaVirtualScreen.getVirtualScreenPrefKey())
+    override fun query() = query.apply(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey())
 
     override fun getScreenSettings(): ScreenSettings = settings
 
@@ -65,7 +65,7 @@ internal class GiuliaFragment :
             }
 
             it.setOnClickListener {
-                giuliaVirtualScreen.updateVirtualScreen(viewId)
+                giuliaVirtualScreenPreferences.updateVirtualScreen(viewId)
                 withDataLogger {
                     updateQuery(query())
                 }
@@ -77,10 +77,10 @@ internal class GiuliaFragment :
         }
     }
 
-    private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreen.getVirtualScreenPrefKey()))
+    private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()))
 
     private fun setupVirtualViewPanel() {
-        val currentVirtualScreen = giuliaVirtualScreen.getCurrentVirtualScreen()
+        val currentVirtualScreen = giuliaVirtualScreenPreferences.getCurrentVirtualScreen()
         setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
         setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
         setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")

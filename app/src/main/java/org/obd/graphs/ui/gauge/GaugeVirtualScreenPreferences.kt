@@ -17,14 +17,23 @@
 package org.obd.graphs.ui.gauge
 
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.updateString
 
-data class GaugePreferences(
-    val commandRateEnabled: Boolean,
-)
+private const val VIRTUAL_SCREEN_SELECTION = "pref.gauge.virtual.selected"
+const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
 
-fun getGaugePreferences(): GaugePreferences {
-    val commandRateEnabled = Prefs.isEnabled("pref.gauge_display_command_rate")
+class GaugeVirtualScreenPreferences {
+    fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
-    return GaugePreferences(commandRateEnabled)
+    fun getVirtualScreenPrefKey(screenId: String = getCurrentVirtualScreen()): String = "$PREF_GAUGE_DIALOG.$screenId"
+
+    fun updateVirtualScreen(screenId: String) {
+        Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
+    }
+
+    fun getMaxItemsInColumn(): Int = Prefs.getS("pref.gauge.max_pids_in_column.${getCurrentVirtualScreen()}", "2").toInt()
+    fun getFontSize(): Int = Prefs.getS("pref.gauge.screen_font_size.${getCurrentVirtualScreen()}", "52").toInt()
 }
+
+val gaugeVirtualScreenPreferences = GaugeVirtualScreenPreferences()

@@ -14,24 +14,24 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.giulia
+package org.obd.graphs.ui.gauge
 
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.GiuliaRendererSettings
+import org.obd.graphs.renderer.GaugeRendererSettings
 import org.obd.graphs.renderer.ScreenSettings
 
-class GiuliaSettings(
+class GaugeSettings(
     private val query: Query,
 ) : ScreenSettings {
-    private val giuliaRendererSettings =
-        object : GiuliaRendererSettings() {
-            override fun getFontSize(): Int = giuliaVirtualScreenPreferences.getFontSize()
+    private val gaugeRendererSettings =
+        object : GaugeRendererSettings() {
+            override fun getFontSize(): Int = gaugeVirtualScreenPreferences.getFontSize()
         }
 
-    override fun getGiuliaRendererSetting(): GiuliaRendererSettings =
-        giuliaRendererSettings.apply {
+    override fun getGaugeRendererSetting(): GaugeRendererSettings =
+        gaugeRendererSettings.apply {
             selectedPIDs = query.getIDs()
         }
 
@@ -39,7 +39,7 @@ class GiuliaSettings(
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
-    override fun getMaxColumns(): Int = giuliaVirtualScreenPreferences.getMaxItemsInColumn()
+    override fun getMaxColumns(): Int = gaugeVirtualScreenPreferences.getMaxItemsInColumn()
 
     override fun isStatisticsEnabled(): Boolean = true
 

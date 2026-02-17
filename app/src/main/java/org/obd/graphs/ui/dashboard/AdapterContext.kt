@@ -14,22 +14,10 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.gauge
+package org.obd.graphs.ui.dashboard
 
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.updateString
-
-private const val VIRTUAL_SCREEN_SELECTION = "pref.gauge.virtual.selected"
-const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
-
-class GaugeVirtualScreen {
-    fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
-
-    fun getVirtualScreenPrefKey(screenId: String = getCurrentVirtualScreen()): String = "$PREF_GAUGE_DIALOG.$screenId"
-
-    fun updateVirtualScreen(screenId: String) {
-        Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
-    }
-}
-
-val gaugeVirtualScreen = GaugeVirtualScreen()
+data class AdapterContext(
+    val layoutId: Int,
+    val spanCount: Int,
+    val height: Int? = null,
+)

@@ -5,14 +5,6 @@
     android:layout_height="fill_parent"
     tools:context="org.obd.graphs.ui.gauge.GaugeFragment">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0.5"
-        android:scaleType="center"
-        android:src="@drawable/background"
-        tools:ignore="ContentDescription" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,77 +19,71 @@
                 android:id="@+id/virtual_view_1"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
-                android:text="@string/virtual_screen_1"
                 android:layout_marginEnd="4dp"
-                />
+                android:text="@string/virtual_screen_1"
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/virtual_view_2"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
                 android:text="@string/virtual_screen_2"
-                />
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/virtual_view_3"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
                 android:text="@string/virtual_screen_3"
-                />
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/virtual_view_4"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
                 android:text="@string/virtual_screen_4"
-                />
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/virtual_view_5"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
                 android:text="@string/virtual_screen_5"
-                />
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/virtual_view_6"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_6" />
+                android:text="@string/virtual_screen_6"
+                android:textSize="11sp" />
 
 
             <Button
                 android:id="@+id/virtual_view_7"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_7" />
+                android:text="@string/virtual_screen_7"
+                android:textSize="11sp" />
 
             <Button
                 android:id="@+id/virtual_view_8"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:textSize="11sp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_8" />
+                android:text="@string/virtual_screen_8"
+                android:textSize="11sp" />
 
         </LinearLayout>
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <SurfaceView
+            android:id="@+id/surface_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
