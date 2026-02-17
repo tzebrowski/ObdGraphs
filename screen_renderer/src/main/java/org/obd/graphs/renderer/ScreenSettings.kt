@@ -105,8 +105,6 @@ data class RoutinesScreenSettings(
 
 interface ScreenSettings {
 
-    fun isMobile(): Boolean =  false
-
     fun isAA(): Boolean = true
 
     fun handleProfileChanged(){}

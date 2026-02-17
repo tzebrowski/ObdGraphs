@@ -35,7 +35,7 @@ class GaugeSettings(
             selectedPIDs = query.getIDs()
         }
 
-    override fun isMobile(): Boolean = true
+    override fun isAA(): Boolean = false
 
     override fun getMaxItems(): Int = Prefs.getS("pref.gauge.max_items", "6").toInt()
 
