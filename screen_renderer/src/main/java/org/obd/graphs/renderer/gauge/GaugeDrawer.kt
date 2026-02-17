@@ -47,7 +47,6 @@ import kotlin.math.sin
 private const val MIN_TEXT_VALUE_HEIGHT = 30
 private const val NUMERALS_RADIUS_SCALE_FACTOR = 0.75f
 private const val CACHE_SCALE = 2f
-private const val BITMAP_PADDING = 20f
 
 data class DrawerSettings(
     val gaugeProgressWidth: Float = 1.5f,
@@ -132,19 +131,21 @@ internal class GaugeDrawer(
     ) {
         paint.shader = null
 
-        val rect = calculateRect(left, width, top)
-        val scaleFactor = calculateScaleRatio(rect)
-        val arcTopOffset = 8 * scaleFactor
-        val strokeWidth = 8f * scaleFactor
+        val dynamicPadding = max(drawerSettings.padding, width * 0.035f)
+
+        val rect = calculateRect(left, width, top, dynamicPadding)
+        val radius = calculateRadius(width, dynamicPadding)
+
+        val strokeWidth = rect.width() * 0.027f
 
         val arcTopRect = RectF()
         arcTopRect[
-            rect.left - arcTopOffset,
-            rect.top - arcTopOffset,
-            rect.right + arcTopOffset,
-        ] = rect.bottom + arcTopOffset
+            rect.left - strokeWidth,
+            rect.top - strokeWidth,
+            rect.right + strokeWidth,
+        ] = rect.bottom + strokeWidth
 
-        drawGaugeBackground(canvas, rect, arcTopRect, arcTopOffset, strokeWidth, metric)
+        drawGaugeBackground(canvas, rect, arcTopRect, strokeWidth, strokeWidth, metric)
 
         drawScale(
             canvas,
@@ -152,14 +153,15 @@ internal class GaugeDrawer(
             arcTopRect,
             metric,
             scaleEnabled,
-            calculateRadius(width),
+            radius,
+            dynamicPadding,
         )
 
         drawStatistics(
             canvas,
             area = rect,
             metric = metric,
-            radius = calculateRadius(width),
+            radius = radius,
             labelCenterYPadding = labelCenterYPadding,
             fontSize = fontSize,
             statsEnabled = statsEnabled,
@@ -380,6 +382,7 @@ internal class GaugeDrawer(
         metric: Metric,
         scaleEnabled: Boolean,
         radius: Float,
+        bitmapPadding: Float,
     ) {
         val targetWidth = ceil(rect.width()).toInt()
         val targetHeight = ceil(rect.height()).toInt()
@@ -395,13 +398,14 @@ internal class GaugeDrawer(
 
         if (isValid && currentCache != null) {
             val destRect = RectF(rect)
-            destRect.inset(-BITMAP_PADDING, -BITMAP_PADDING)
+            destRect.inset(-bitmapPadding, -bitmapPadding)
             canvas.drawBitmap(currentCache.bitmap, null, destRect, bitmapPaint)
         } else {
             if (targetWidth <= 0 || targetHeight <= 0) return
 
-            val paddedWidth = targetWidth + (BITMAP_PADDING * 2).toInt()
-            val paddedHeight = targetHeight + (BITMAP_PADDING * 2).toInt()
+            // Use the dynamic padding for the bitmap too, ensuring glow fits inside
+            val paddedWidth = targetWidth + (bitmapPadding * 2).toInt()
+            val paddedHeight = targetHeight + (bitmapPadding * 2).toInt()
             val scaledWidth = (paddedWidth * CACHE_SCALE).toInt()
             val scaledHeight = (paddedHeight * CACHE_SCALE).toInt()
 
@@ -409,7 +413,7 @@ internal class GaugeDrawer(
             val cacheCanvas = Canvas(cachedBitmap)
 
             cacheCanvas.scale(CACHE_SCALE, CACHE_SCALE)
-            cacheCanvas.translate(-rect.left + BITMAP_PADDING, -rect.top + BITMAP_PADDING)
+            cacheCanvas.translate(-rect.left + bitmapPadding, -rect.top + bitmapPadding)
 
             if (scaleEnabled && metric.source.isNumber()) {
                 drawNumbers(cacheCanvas, arcTopRect, metric, radius)
@@ -427,7 +431,7 @@ internal class GaugeDrawer(
                 )
 
             val destRect = RectF(rect)
-            destRect.inset(-BITMAP_PADDING, -BITMAP_PADDING)
+            destRect.inset(-bitmapPadding, -bitmapPadding)
             canvas.drawBitmap(cachedBitmap, null, destRect, bitmapPaint)
         }
     }
@@ -598,16 +602,17 @@ internal class GaugeDrawer(
         left: Float,
         width: Float,
         top: Float,
+        padding: Float,
     ): RectF {
-        val height = width - 2 * drawerSettings.padding
+        val height = width - 2 * padding
         val calculatedHeight = if (width > height) width else height
-        val calculatedWidth = width - 2 * drawerSettings.padding
-        val radius = calculateRadius(width)
+        val calculatedWidth = width - 2 * padding
+        val radius = calculateRadius(width, padding)
 
-        val rectLeft = left + (width - 2 * drawerSettings.padding) / 2 - radius + drawerSettings.padding
-        val rectTop = top + (calculatedHeight - 2 * drawerSettings.padding) / 2 - radius + drawerSettings.padding
-        val rectRight = left + (width - 2 * drawerSettings.padding) / 2 - radius + drawerSettings.padding + calculatedWidth
-        val rectBottom = top + (height - 2 * drawerSettings.padding) / 2 - radius + drawerSettings.padding + height
+        val rectLeft = left + (width - 2 * padding) / 2 - radius + padding
+        val rectTop = top + (calculatedHeight - 2 * padding) / 2 - radius + padding
+        val rectRight = left + (width - 2 * padding) / 2 - radius + padding + calculatedWidth
+        val rectBottom = top + (height - 2 * padding) / 2 - radius + padding + height
         val rect = RectF()
         rect[rectLeft, rectTop, rectRight] = rectBottom
         return rect
@@ -634,9 +639,12 @@ internal class GaugeDrawer(
             targetMax,
         )
 
-    private fun calculateRadius(width: Float): Float {
-        val calculatedWidth = width - 2 * drawerSettings.padding
-        val height = width - 2 * drawerSettings.padding
+    private fun calculateRadius(
+        width: Float,
+        padding: Float,
+    ): Float {
+        val calculatedWidth = width - 2 * padding
+        val height = width - 2 * padding
         return if (calculatedWidth < height) calculatedWidth / 2 else height / 2
     }
 
