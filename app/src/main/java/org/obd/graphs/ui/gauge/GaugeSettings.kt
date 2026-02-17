@@ -35,7 +35,9 @@ class GaugeSettings(
             selectedPIDs = query.getIDs()
         }
 
-    override fun getMaxItems(): Int = Prefs.getS("pref.giulia.max_items", "6").toInt()
+    override fun isMobile(): Boolean = true
+
+    override fun getMaxItems(): Int = Prefs.getS("pref.gauge.max_items", "6").toInt()
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
@@ -45,7 +47,7 @@ class GaugeSettings(
 
     override fun isFpsCounterEnabled(): Boolean = true
 
-    override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.giulia.fps", "5").toInt()
+    override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.gauge.fps", "5").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
 

@@ -54,8 +54,7 @@ open class GaugeRendererSettings (
 
     open fun getVirtualScreen(): Int = 0
     open fun isPIDsSortOrderEnabled(): Boolean = false
-    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
-
+    open fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
     open fun setVirtualScreen(id: Int) {}
     open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
 }
@@ -105,6 +104,8 @@ data class RoutinesScreenSettings(
 )
 
 interface ScreenSettings {
+
+    fun isMobile(): Boolean =  false
 
     fun isAA(): Boolean = true
 

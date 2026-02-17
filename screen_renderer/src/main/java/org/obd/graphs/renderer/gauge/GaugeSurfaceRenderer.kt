@@ -85,48 +85,54 @@ internal class GaugeSurfaceRenderer(
             )
 
             val metrics = metricsCollector.getMetrics()
+            if (settings.isMobile()){
+                drawMobile(canvas, area, metrics, top = top, labelCenterYPadding = 20f, maxItems = maxItems)
+            }else {
+                when (maxItems) {
+                    0 -> {}
+                    1 -> {
+                        gaugeDrawer.drawGauge(
+                            canvas = canvas,
+                            left = area.left + area.width() / 6f,
+                            top = top + 6f,
+                            width = area.width() * widthScaleRatio(maxItems),
+                            metric = metrics[0],
+                            labelCenterYPadding = 22f
+                        )
+                    }
 
-            when (maxItems) {
-                0 -> {}
-                1 -> {
-                    gaugeDrawer.drawGauge(
-                        canvas = canvas,
-                        left = area.left + area.width() / 6f,
-                        top = top + 6f,
-                        width = area.width() * widthScaleRatio(maxItems),
-                        metric = metrics[0],
-                        labelCenterYPadding = 22f
-                    )
-                }
+                    2 -> {
 
-                2 -> {
+                        gaugeDrawer.drawGauge(
+                            canvas = canvas,
+                            left = area.left.toFloat(),
+                            top = top + area.height() / 7,
+                            width = area.width() / 2 * widthScaleRatio(maxItems),
+                            metric = metrics[0],
+                            labelCenterYPadding = 22f
+                        )
 
-                    gaugeDrawer.drawGauge(
-                        canvas = canvas,
-                        left = area.left.toFloat(),
-                        top = top + area.height() / 7,
-                        width = area.width() / 2 * widthScaleRatio(maxItems),
-                        metric = metrics[0],
-                        labelCenterYPadding = 22f
-                    )
+                        gaugeDrawer.drawGauge(
+                            canvas = canvas,
+                            left = (area.left + area.width() / 2f) - 10,
+                            top = top + area.height() / 7,
+                            width = area.width() / 2 * widthScaleRatio(maxItems),
+                            metric = metrics[1],
+                            labelCenterYPadding = 22f
+                        )
+                    }
 
-                    gaugeDrawer.drawGauge(
-                        canvas = canvas,
-                        left = (area.left + area.width() / 2f) - 10,
-                        top = top + area.height() / 7,
-                        width = area.width() / 2 * widthScaleRatio(maxItems),
-                        metric = metrics[1],
-                        labelCenterYPadding = 22f
-                    )
-                }
-                4 -> {
-                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
-                }
-                3 -> {
-                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
-                }
-                else -> {
-                    draw(canvas, area, metrics, top = top,labelCenterYPadding = 20f, maxItems = maxItems)
+                    4 -> {
+                        draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
+                    }
+
+                    3 -> {
+                        draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
+                    }
+
+                    else -> {
+                        draw(canvas, area, metrics, top = top, labelCenterYPadding = 20f, maxItems = maxItems)
+                    }
                 }
             }
         }
@@ -184,6 +190,46 @@ internal class GaugeSurfaceRenderer(
                 )
                 left += width - padding
             }
+        }
+    }
+
+
+    private fun drawMobile(
+        canvas: Canvas,
+        area: Rect,
+        metrics: List<Metric>,
+        marginLeft: Float = 5f,
+        top: Float,
+        labelCenterYPadding: Float = 0f,
+        maxItems: Int,
+    ) {
+        if (metrics.isEmpty()) return
+
+        val columns = 2
+
+        val gaugeWidth = area.width() / columns.toFloat()
+
+        val gaugeHeight = gaugeWidth - 20f
+
+        val count = min(metrics.size, maxItems)
+
+        for (i in 0 until count) {
+            val metric = metrics[i]
+
+            val row = i / columns
+            val col = i % columns
+
+            val itemLeft = area.left + (col * gaugeWidth)
+            val itemTop = top + (row * gaugeHeight)
+
+            gaugeDrawer.drawGauge(
+                canvas = canvas,
+                left = itemLeft,
+                top = itemTop,
+                width = gaugeWidth,
+                metric = metric,
+                labelCenterYPadding = labelCenterYPadding
+            )
         }
     }
 
