@@ -17,12 +17,27 @@
 package org.obd.graphs.renderer
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Rect
 
 const val MARGIN_TOP = 8
 
 internal abstract class CoreSurfaceRenderer : SurfaceRenderer {
+
+    protected var scrollOffset: Float = 0f
+    protected val scrollBarWidth = 10f
+    protected val scrollBarPaint = android.graphics.Paint().apply {
+        color = Color.LTGRAY
+        alpha = 160
+        style = android.graphics.Paint.Style.FILL
+        isAntiAlias = true
+    }
+
     open fun getTop(area: Rect): Float = area.top + getDefaultTopMargin()
+
+    override fun updateScrollOffset(scrollOffset: Float) {
+        this.scrollOffset += scrollOffset
+    }
 
     fun getDefaultTopMargin(): Float = 20f
 

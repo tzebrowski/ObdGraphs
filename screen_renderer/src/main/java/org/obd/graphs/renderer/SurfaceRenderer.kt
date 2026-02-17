@@ -50,6 +50,7 @@ interface SurfaceRenderer {
     fun applyMetricsFilter(query: Query)
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
+    fun updateScrollOffset(scrollOffset: Float)
 
     companion object {
         fun allocate(

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,6 +21,7 @@ import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.RectF
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
@@ -33,19 +34,19 @@ import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.max
 import kotlin.math.min
 
-
 @Suppress("NOTHING_TO_INLINE")
 internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps
+    private val fps: Fps,
 ) : CoreSurfaceRenderer() {
-
-    private val gaugeDrawer = GaugeDrawer(
-        settings = settings, context = context,
-        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
-    )
+    private val gaugeDrawer =
+        GaugeDrawer(
+            settings = settings,
+            context = context,
+            drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType),
+        )
 
     override fun applyMetricsFilter(query: Query) {
         val gaugeSettings = settings.getGaugeRendererSetting()
@@ -58,14 +59,17 @@ internal class GaugeSurfaceRenderer(
         }
     }
 
-    override fun getTop(area: Rect): Float = if (settings.isStatusPanelEnabled()) {
-        area.top + getDefaultTopMargin()
-    } else {
-        area.top.toFloat()
-    }
+    override fun getTop(area: Rect): Float =
+        if (settings.isStatusPanelEnabled()) {
+            area.top + getDefaultTopMargin()
+        } else {
+            area.top.toFloat()
+        }
 
-    override fun onDraw(canvas: Canvas, drawArea: Rect?) {
-
+    override fun onDraw(
+        canvas: Canvas,
+        drawArea: Rect?,
+    ) {
         drawArea?.let { area ->
 
             if (area.isEmpty) {
@@ -88,20 +92,21 @@ internal class GaugeSurfaceRenderer(
             val metrics = metricsCollector.getMetrics()
 
             if (settings.isAA()) {
-
                 if (maxItems == 0) return
 
-                val marginLeft = when (maxItems) {
-                    1 -> area.width() / 6f
-                    3, 4 -> area.width() / 8f
-                    else -> 5f
-                }
+                val marginLeft =
+                    when (maxItems) {
+                        1 -> area.width() / 6f
+                        3, 4 -> area.width() / 8f
+                        else -> 5f
+                    }
 
-                val topOffset = when (maxItems) {
-                    1 -> 6f
-                    2 -> area.height() / 7f
-                    else -> 0f
-                }
+                val topOffset =
+                    when (maxItems) {
+                        1 -> 6f
+                        2 -> area.height() / 7f
+                        else -> 0f
+                    }
 
                 val labelCenterYPadding = if (maxItems <= 2) 22f else 20f
 
@@ -115,9 +120,8 @@ internal class GaugeSurfaceRenderer(
                     top = top + topOffset,
                     labelCenterYPadding = labelCenterYPadding,
                     maxItems = maxItems,
-                    partitionIndex = partitionIndex
+                    partitionIndex = partitionIndex,
                 )
-
             } else {
                 drawMobile(canvas, area, metrics, top = top, labelCenterYPadding = 20f, maxItems = maxItems)
             }
@@ -136,17 +140,18 @@ internal class GaugeSurfaceRenderer(
         top: Float,
         labelCenterYPadding: Float = 0f,
         maxItems: Int,
-        partitionIndex: Int
+        partitionIndex: Int,
     ) {
         val firstHalf = metrics.subList(0, partitionIndex)
         val secondHalf = metrics.subList(partitionIndex, maxItems)
         val height = (area.height() / 2)
 
-        val widthDivider = when (maxItems) {
-            1 -> 1
-            2 -> 2
-            else -> max(firstHalf.size, secondHalf.size)
-        }
+        val widthDivider =
+            when (maxItems) {
+                1 -> 1
+                2 -> 2
+                else -> max(firstHalf.size, secondHalf.size)
+            }
 
         val width = ((area.width()) / widthDivider).toFloat() * widthScaleRatio(maxItems)
         val padding = 10f
@@ -159,7 +164,7 @@ internal class GaugeSurfaceRenderer(
                 top = top,
                 width = width,
                 metric = it,
-                labelCenterYPadding = labelCenterYPadding
+                labelCenterYPadding = labelCenterYPadding,
             )
             left += width - padding
         }
@@ -173,7 +178,7 @@ internal class GaugeSurfaceRenderer(
                     top = top + height - 8f,
                     width = width,
                     metric = it,
-                    labelCenterYPadding = labelCenterYPadding
+                    labelCenterYPadding = labelCenterYPadding,
                 )
                 left += width - padding
             }
@@ -185,12 +190,11 @@ internal class GaugeSurfaceRenderer(
         area: Rect,
         metrics: List<Metric>,
         top: Float,
+        labelCenterYPadding: Float = 0f,
         maxItems: Int,
-        labelCenterYPadding: Float
     ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
-
         val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         if (count == 1) {
@@ -205,21 +209,32 @@ internal class GaugeSurfaceRenderer(
                 top = top,
                 width = drawSize,
                 metric = metrics[0],
-                labelCenterYPadding = labelCenterYPadding
+                labelCenterYPadding = labelCenterYPadding,
             )
         } else {
-            val columns = 2
-            val scaleFactor = 1
-            val cellWidth = area.width() / columns.toFloat()
+            val scaleFactor = if (isLandscape) 1.0f else 1.0f
 
-            val drawWidth = cellWidth * scaleFactor
+            val columns = 2
+            val cellWidth = area.width() / columns.toFloat()
 
             val availableHeight = area.height().toFloat()
             val cellHeight = min(cellWidth, availableHeight)
 
+            val drawWidth = cellWidth * scaleFactor
+
+            val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
+            val contentHeight = totalRows * cellHeight
+            val viewportHeight = area.height().toFloat()
+
+            val maxScroll = max(0f, contentHeight - viewportHeight)
+            scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
+
+            canvas.save()
+            canvas.clipRect(area)
+            canvas.translate(0f, -scrollOffset)
+
             for (i in 0 until count) {
                 val metric = metrics[i]
-
                 val row = i / columns
                 val col = i % columns
 
@@ -234,17 +249,51 @@ internal class GaugeSurfaceRenderer(
                     top = cellTop,
                     width = drawWidth,
                     metric = metric,
-                    labelCenterYPadding = labelCenterYPadding
+                    labelCenterYPadding = labelCenterYPadding,
                 )
             }
+
+            canvas.restore()
+
+            drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
         }
     }
 
+    private fun drawScrollbar(
+        contentHeight: Float,
+        viewportHeight: Float,
+        maxScroll: Float,
+        area: Rect,
+        canvas: Canvas,
+    ) {
+        if (contentHeight > viewportHeight) {
+            val verticalMargin = 30f
+            val trackHeight = viewportHeight - (2 * verticalMargin)
 
-    private fun widthScaleRatio(maxItems: Int): Float = when {
-        maxItems <= 1 -> 0.65f
-        maxItems == 2 -> 1.0f
-        maxItems <= 4 -> 0.8f
-        else -> 1.02f
+            val calculatedBarHeight = (viewportHeight / contentHeight) * trackHeight
+            val barHeight = max(calculatedBarHeight, 50f)
+
+            val scrollPercentage = scrollOffset / maxScroll
+            val availableTravel = trackHeight - barHeight
+            val barTop = area.top + verticalMargin + (scrollPercentage * availableTravel)
+
+            val barRect =
+                RectF(
+                    area.left + 5f,
+                    barTop,
+                    area.left + 5f + scrollBarWidth,
+                    barTop + barHeight,
+                )
+
+            canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
+        }
     }
+
+    private fun widthScaleRatio(maxItems: Int): Float =
+        when {
+            maxItems <= 1 -> 0.65f
+            maxItems == 2 -> 1.0f
+            maxItems <= 4 -> 0.8f
+            else -> 1.02f
+        }
 }

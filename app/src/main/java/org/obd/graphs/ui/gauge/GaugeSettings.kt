@@ -37,7 +37,7 @@ class GaugeSettings(
 
     override fun isAA(): Boolean = false
 
-    override fun getMaxItems(): Int = Prefs.getS("pref.gauge.max_items", "6").toInt()
+    override fun getMaxItems(): Int = Prefs.getS("pref.gauge.max_items", "22").toInt()
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
@@ -50,6 +50,4 @@ class GaugeSettings(
     override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.gauge.fps", "5").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
-
-    override fun getMaxAllowedItemsInColumn(): Int = 8
 }
