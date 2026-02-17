@@ -34,9 +34,8 @@ internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
-    viewSettings: ViewSettings
-) : CoreSurfaceRenderer(viewSettings) {
+    private val fps: Fps
+) : CoreSurfaceRenderer() {
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
@@ -55,9 +54,9 @@ internal class GaugeSurfaceRenderer(
     }
 
     override fun getTop(area: Rect): Float   = if (settings.isStatusPanelEnabled()) {
-        area.top + viewSettings.marginTop.toFloat() + getDefaultTopMargin()
+        area.top +  getDefaultTopMargin()
     } else {
-        area.top + viewSettings.marginTop.toFloat()
+        area.top.toFloat()
     }
 
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {

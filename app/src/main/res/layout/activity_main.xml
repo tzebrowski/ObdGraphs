@@ -14,105 +14,110 @@
         android:layout_height="match_parent"
         android:background="@color/black">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/content_container"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
 
-            <TextView
-                android:id="@+id/connection_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
-                android:padding="2dp"
-                android:text="@string/status_panel.adapter_connection_type"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/status_panel_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/connection_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="2dp"
+                    android:text="@string/status_panel.adapter_connection_type"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/trip_profile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:padding="2dp"
-                android:text="@string/status_panel.vehicle_profile"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
-                app:layout_constraintStart_toEndOf="@id/connection_status" />
+                <TextView
+                    android:id="@+id/trip_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:padding="2dp"
+                    android:text="@string/status_panel.vehicle_profile"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
+                    app:layout_constraintStart_toEndOf="@id/connection_status" />
 
-            <TextView
-                android:id="@+id/vehicle_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:padding="2dp"
-                android:text="@string/status_panel.vehicle_status"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
-                app:layout_constraintStart_toEndOf="@id/trip_profile" />
+                <TextView
+                    android:id="@+id/vehicle_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:padding="2dp"
+                    android:text="@string/status_panel.vehicle_status"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
+                    app:layout_constraintStart_toEndOf="@id/trip_profile" />
 
-            <Chronometer
-                android:id="@+id/timer"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:padding="2dp"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
-                app:layout_constraintEnd_toStartOf="@id/toggle_fullscreen"
-                app:layout_constraintStart_toEndOf="@id/vehicle_status" />
+                <Chronometer
+                    android:id="@+id/timer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:padding="2dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
+                    app:layout_constraintEnd_toStartOf="@id/toggle_fullscreen"
+                    app:layout_constraintStart_toEndOf="@id/vehicle_status" />
 
-            <ImageView
-                android:id="@+id/toggle_fullscreen"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/main_activity.toggle_toolbar"
-                android:focusable="true"
-                android:padding="12dp"
-                android:scaleType="centerInside"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="?attr/actionModeCopyDrawable" />
+                <ImageView
+                    android:id="@+id/toggle_fullscreen"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/main_activity.toggle_toolbar"
+                    android:focusable="true"
+                    android:padding="12dp"
+                    android:scaleType="centerInside"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="?attr/actionModeCopyDrawable" />
 
-            <ProgressBar
-                android:id="@+id/p_bar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:indeterminate="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/connection_status" />
+                <ProgressBar
+                    android:id="@+id/p_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:indeterminate="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/connection_status"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/nav_host_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/mobile_navigation"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/p_bar" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:navGraph="@navigation/mobile_navigation" />
 
         <com.google.android.material.bottomappbar.BottomAppBar
-            android:minHeight="72dp"
             android:id="@+id/bottom_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:minHeight="72dp"
+            android:theme="@style/AppTheme.CompactBottomBar"
             app:backgroundTint="#CCFFFFFF"
             app:fabAlignmentMode="center"
             app:fabCradleMargin="4dp"
@@ -120,8 +125,7 @@
             app:fabCradleVerticalOffset="2dp"
             app:hideOnScroll="true"
             app:menu="@menu/bottom_nav_menu"
-            app:navigationIconTint="@color/black"
-            android:theme="@style/AppTheme.CompactBottomBar" />
+            app:navigationIconTint="@color/black" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/connect_btn"

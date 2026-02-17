@@ -32,7 +32,6 @@ import org.obd.graphs.renderer.CoreSurfaceRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.ViewSettings
 
 private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
@@ -50,8 +49,7 @@ internal class DragRacingSurfaceRenderer(
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-    viewSettings: ViewSettings,
-) : CoreSurfaceRenderer(viewSettings) {
+) : CoreSurfaceRenderer() {
     private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
 

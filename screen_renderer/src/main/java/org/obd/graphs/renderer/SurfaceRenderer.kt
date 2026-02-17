@@ -46,8 +46,6 @@ enum class SurfaceRendererType(private val code: Int) : Identity {
     }
 }
 
-data class ViewSettings(var marginTop: Int = 0)
-
 interface SurfaceRenderer {
     fun applyMetricsFilter(query: Query)
     fun onDraw(canvas: Canvas, drawArea: Rect?)
@@ -59,15 +57,14 @@ interface SurfaceRenderer {
             settings: ScreenSettings,
             metricsCollector: MetricsCollector,
             fps: Fps,
-            surfaceRendererType: SurfaceRendererType = SurfaceRendererType.GIULIA,
-            viewSettings: ViewSettings = ViewSettings()
+            surfaceRendererType: SurfaceRendererType = SurfaceRendererType.GIULIA
         ): SurfaceRenderer =
             when (surfaceRendererType) {
-                SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
-                SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
-                SurfaceRendererType.DRAG_RACING -> DragRacingSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
-                SurfaceRendererType.TRIP_INFO -> TripInfoSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
-                SurfaceRendererType.PERFORMANCE -> PerformanceSurfaceRenderer(context, settings, metricsCollector, fps, viewSettings)
+                SurfaceRendererType.GAUGE -> GaugeSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.GIULIA -> GiuliaSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.DRAG_RACING -> DragRacingSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.TRIP_INFO -> TripInfoSurfaceRenderer(context, settings, metricsCollector, fps)
+                SurfaceRendererType.PERFORMANCE -> PerformanceSurfaceRenderer(context, settings, metricsCollector, fps)
             }
     }
 }

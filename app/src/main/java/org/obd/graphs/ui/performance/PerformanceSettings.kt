@@ -28,6 +28,7 @@ class PerformanceSettings : ScreenSettings {
         settings.apply {
             fontSize = Prefs.getS("pref.performance.screen_font_size", "30").toInt()
             labelCenterYPadding = Prefs.getS("pref.performance.screen_label_y_padding", "22").toFloat()
+
         }
 
     override fun isBreakLabelTextEnabled(): Boolean = true

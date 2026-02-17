@@ -3,6 +3,7 @@
     <string name="nav_close">Close</string>
 
     <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> label top offset</string>
+    <string name="pref.performance.screen_top_margin">Top margin</string>
 
     <string name="dialog.screen.lock.message">Please wait. This may take a while....</string>
     <string name="pref.experimental_switch_network_enabled">This is an EXPERIMENTAL feature, controlled by the FF_SWITCH_NETWORK_ENABLED feature flag</string>

@@ -29,7 +29,6 @@ import org.obd.graphs.renderer.CoreSurfaceRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.ViewSettings
 import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 
 private const val LOG_TAG = "PerformanceSurfaceRenderer"
@@ -39,8 +38,7 @@ internal class PerformanceSurfaceRenderer(
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-    viewSettings: ViewSettings,
-) : CoreSurfaceRenderer(viewSettings) {
+) : CoreSurfaceRenderer() {
     private val performanceInfoDetails = PerformanceInfoDetails()
     private val performanceDrawer = PerformanceDrawer(context, settings)
     private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)

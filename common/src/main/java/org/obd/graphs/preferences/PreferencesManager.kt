@@ -78,8 +78,8 @@ abstract class AbstractPreferencesManager<T> : PreferencesManager<T> {
 
                     cacheValue.field.javaField?.set(cacheValue.obj, newValue)
 
-                    if (Log.isLoggable(TAG, Log.INFO)) {
-                        Log.i(TAG, "Preference $key is updated with new value=$newValue")
+                    if (Log.isLoggable(TAG, Log.DEBUG)) {
+                        Log.d(TAG, "Preference $key is updated with new value=$newValue")
                     }
                 }
             } catch (e: Exception) {
