@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -31,15 +31,16 @@ import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.withDataLogger
 
-internal class GaugeRendererFragment : SurfaceRendererFragment(
-    R.layout.fragment_gauge,
-    SurfaceRendererType.GAUGE,
-) {
-
+internal class GaugeRendererFragment :
+    SurfaceRendererFragment(
+        R.layout.fragment_gauge,
+        SurfaceRendererType.GAUGE,
+    ) {
     private val query: Query = Query.instance()
     private val settings = GaugeSettings(query)
 
     override fun getScreenSettings(): ScreenSettings = settings
+
     override fun query() = query.apply(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey())
 
     override fun updateInsets() {}
@@ -83,7 +84,6 @@ internal class GaugeRendererFragment : SurfaceRendererFragment(
     }
 
     private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()))
-
 
     private fun setupVirtualViewPanel() {
         val currentVirtualScreen = gaugeVirtualScreenPreferences.getCurrentVirtualScreen()

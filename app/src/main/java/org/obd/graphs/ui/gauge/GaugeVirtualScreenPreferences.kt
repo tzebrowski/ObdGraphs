@@ -32,7 +32,6 @@ class GaugeVirtualScreenPreferences {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
     }
 
-    fun getMaxItemsInColumn(): Int = Prefs.getS("pref.gauge.max_pids_in_column.${getCurrentVirtualScreen()}", "2").toInt()
     fun getFontSize(): Int = Prefs.getS("pref.gauge.screen_font_size.${getCurrentVirtualScreen()}", "52").toInt()
 }
 

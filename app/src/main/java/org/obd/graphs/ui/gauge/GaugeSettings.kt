@@ -41,7 +41,7 @@ class GaugeSettings(
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
-    override fun getMaxColumns(): Int = gaugeVirtualScreenPreferences.getMaxItemsInColumn()
+    override fun getMaxColumns(): Int = Prefs.getS("pref.gauge.max_columns", "2").toInt()
 
     override fun isStatisticsEnabled(): Boolean = true
 

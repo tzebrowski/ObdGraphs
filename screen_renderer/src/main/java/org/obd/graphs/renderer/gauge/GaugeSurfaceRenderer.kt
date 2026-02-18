@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,7 +22,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.RectF
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
@@ -35,15 +34,12 @@ import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.max
 import kotlin.math.min
 
-private const val TAG = "GSV"
-
 internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
 ) : CoreSurfaceRenderer() {
-
     private val gaugeDrawer =
         GaugeDrawer(
             settings = settings,
@@ -55,11 +51,12 @@ internal class GaugeSurfaceRenderer(
         GaugeDrawer(
             settings = settings,
             context = context,
-            drawerSettings = DrawerSettings(
-                startAngle = 200f,
-                sweepAngle = 200f,
-                gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType
-            ),
+            drawerSettings =
+                DrawerSettings(
+                    startAngle = 200f,
+                    sweepAngle = 200f,
+                    gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType,
+                ),
         )
 
     override fun applyMetricsFilter(query: Query) {
@@ -207,101 +204,100 @@ internal class GaugeSurfaceRenderer(
         labelCenterYPadding: Float = 0f,
         maxItems: Int,
         drawBorder: Boolean = true,
-        drawScroll: Boolean = true
+        drawScroll: Boolean = false,
+        columns: Int = settings.getMaxColumns(),
     ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
+
         val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        val safeColumns = if (count == 1) 1 else columns
 
-        if (count == 1) {
-            val scaleFactor = if (isLandscape) 1.5f else 1.0f
-            val baseSize = min(area.width(), area.height()).toFloat()
-            val drawSize = baseSize * scaleFactor
-            val leftOffset = (area.width() - drawSize) / 2f
+        val cellWidth = area.width() / safeColumns.toFloat()
+        val availableHeight = area.height().toFloat()
+        val itemMargin = 6f
 
-            gaugeDrawer.drawGauge(
-                canvas = canvas,
-                left = area.left + leftOffset,
-                top = top,
-                width = drawSize,
-                metric = metrics[0],
-                labelCenterYPadding = labelCenterYPadding,
-                drawBorder = drawBorder
-            )
-        } else {
-            val columns = 2
-            val cellWidth = area.width() / columns.toFloat()
-            val availableHeight = area.height().toFloat()
-            val itemMargin = 6f
-
-            val borderBoxSize = if (isLandscape) {
-                RectF(0f, 0f, cellWidth - (2*itemMargin), availableHeight - (2*itemMargin))
+        val gaugeWidth =
+            if (isLandscape) {
+                if (safeColumns == 1) {
+                    availableHeight - (2 * itemMargin)
+                } else {
+                    cellWidth - (2 * itemMargin)
+                }
             } else {
-                val size = cellWidth - (2*itemMargin)
-                RectF(0f, 0f, size, size)
+                cellWidth - (2 * itemMargin)
             }
 
-            val gaugeWidth = if (isLandscape) cellWidth - (2*itemMargin) else borderBoxSize.width()
+        val totalRows = kotlin.math.ceil(count / safeColumns.toDouble()).toInt()
 
-            val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
-            val cellHeight = borderBoxSize.height() + (2 * itemMargin)
-
-            val contentHeight = totalRows * cellHeight
-            val viewportHeight = area.height().toFloat()
-            val maxScroll = max(0f, contentHeight - viewportHeight)
-            scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
-
-            val startRow = kotlin.math.floor(scrollOffset / cellHeight).toInt()
-
-            val endRow = kotlin.math.floor((scrollOffset + viewportHeight - 1f) / cellHeight).toInt()
-
-            val safeStartRow = startRow.coerceAtLeast(0)
-            val safeEndRow = endRow.coerceAtMost(totalRows - 1)
-
-            val startIndex = safeStartRow * columns
-            val endIndex = min(count - 1, (safeEndRow * columns) + (columns - 1))
-
-            if (Log.isLoggable(TAG,Log.VERBOSE)) {
-                Log.v(TAG, "startRow=$safeStartRow endRow=$safeEndRow startIndex=$startIndex endIndex=$endIndex")
+        val rowHeight =
+            if (isLandscape && safeColumns == 1) {
+                availableHeight
+            } else {
+                gaugeWidth + (2 * itemMargin)
             }
 
-            canvas.save()
-            canvas.clipRect(area)
-            canvas.translate(0f, -scrollOffset)
+        val contentHeight = totalRows * rowHeight
+        val viewportHeight = area.height().toFloat()
+        val maxScroll = max(0f, contentHeight - viewportHeight)
 
+        scrollOffset = if (count == 1) 0f else scrollOffset.coerceIn(0f, maxScroll)
 
-            for (i in startIndex..endIndex) {
-                val metric = metrics[i]
-                val row = i / columns
-                val col = i % columns
+        val startRow = kotlin.math.floor(scrollOffset / rowHeight).toInt()
+        val endRow = kotlin.math.floor((scrollOffset + viewportHeight - 1f) / rowHeight).toInt()
 
-                val cellLeft = area.left + (col * cellWidth) + itemMargin
-                val cellTop = top + (row * cellHeight) + itemMargin
+        val safeStartRow = startRow.coerceAtLeast(0)
+        val safeEndRow = endRow.coerceAtMost(totalRows - 1)
 
-                val itemBorderRect = RectF(
-                    cellLeft,
-                    cellTop,
-                    cellLeft + borderBoxSize.width(),
-                    cellTop + borderBoxSize.height()
+        val startIndex = safeStartRow * safeColumns
+        val endIndex = min(count - 1, (safeEndRow * safeColumns) + (safeColumns - 1))
+
+        canvas.save()
+        canvas.clipRect(area)
+        canvas.translate(0f, -scrollOffset)
+
+        for (i in startIndex..endIndex) {
+            val metric = metrics[i]
+            val row = i / safeColumns
+            val col = i % safeColumns
+
+            val cellLeft = area.left + (col * cellWidth)
+            val cellTop = top + (row * rowHeight)
+
+            val currentCellWidth = if (safeColumns == 1) area.width().toFloat() else cellWidth
+            val centeredLeft = cellLeft + (currentCellWidth - gaugeWidth) / 2f
+
+            val centeredTop =
+                if (count == 1 && isLandscape) {
+                    cellTop + (availableHeight - gaugeWidth) / 2f
+                } else {
+                    cellTop + itemMargin
+                }
+
+            val borderRect =
+                RectF(
+                    centeredLeft,
+                    centeredTop,
+                    centeredLeft + gaugeWidth,
+                    centeredTop + gaugeWidth,
                 )
 
-                gaugeDrawer.drawGauge(
-                    canvas = canvas,
-                    left = cellLeft,
-                    top = cellTop,
-                    width = gaugeWidth,
-                    metric = metric,
-                    labelCenterYPadding = labelCenterYPadding,
-                    drawBorder = drawBorder,
-                    borderArea = itemBorderRect
-                )
-            }
+            mobileDrawer.drawGauge(
+                canvas = canvas,
+                left = centeredLeft,
+                top = centeredTop,
+                width = gaugeWidth,
+                metric = metric,
+                labelCenterYPadding = labelCenterYPadding,
+                drawBorder = drawBorder,
+                borderArea = borderRect,
+            )
+        }
 
-            canvas.restore()
+        canvas.restore()
 
-            if (contentHeight > viewportHeight && drawScroll) {
-                drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
-            }
+        if (drawScroll && contentHeight > viewportHeight) {
+            drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
         }
     }
 
