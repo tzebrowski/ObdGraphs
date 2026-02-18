@@ -369,7 +369,10 @@ internal class GaugeDrawer(
         }
 
         val verticalShift = if (statsEnabled) 14 else 1
-        val centerY = (area.centerY() + labelCenterYPadding - verticalShift * calculateScaleRatio(area))
+
+        val dynamicTopOffset = area.height() * 0.06f
+
+        val centerY = (area.centerY() + dynamicTopOffset + labelCenterYPadding - verticalShift * calculateScaleRatio(area))
 
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
         val valueY = centerY - valueHeight
@@ -382,7 +385,6 @@ internal class GaugeDrawer(
         if (unitText != null) {
             valuePaint.textSize = calculatedFontSize * 0.32f
             valuePaint.color = color(R.color.gray)
-
             val unitX = valueX + textRect.width() + unitPadding
             canvas.drawText(unitText, unitX, unitY, valuePaint)
         }
