@@ -17,7 +17,6 @@
 package org.obd.graphs.ui.gauge
 
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.updateString
 
 private const val VIRTUAL_SCREEN_SELECTION = "pref.gauge.virtual.selected"
