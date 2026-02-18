@@ -659,12 +659,6 @@
 
                     <CheckBoxPreference
                         android:defaultValue="false"
-                        android:key="pref.gauge.swipe_to_delete"
-                        android:title="@string/pref.dash_swipe_to_delete"
-                        app:singleLineTitle="false" />
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
                         android:key="pref.gauge_display_command_rate"
                         android:title="@string/pref.gauge_display_refresh_rate"
                         app:singleLineTitle="false" />
