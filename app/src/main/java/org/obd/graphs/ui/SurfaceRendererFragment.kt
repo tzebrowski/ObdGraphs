@@ -98,7 +98,7 @@ internal abstract class SurfaceRendererFragment(
                     distanceY: Float,
                 ): Boolean {
                     val currentTime = System.currentTimeMillis()
-                    
+
                     if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
                         if (distanceY > 0) {
                             sendBroadcastEvent(TOOLBAR_HIDE)

@@ -108,7 +108,6 @@
 
     <string name="pref.gauge_display_refresh_rate">Display refresh rate (PIDs/second)</string>
     <string name="pref.gauge_display_scale">Display OBD2 PIDs/Sensors scale</string>
-    <string name="pref.gauge_display_background">Enable custom background color</string>
     <string name="pref.gauge_background_color">Background color</string>
     <string name="pref.toolbar.toggle_double_click">Toggle toolbar on double click</string>
 

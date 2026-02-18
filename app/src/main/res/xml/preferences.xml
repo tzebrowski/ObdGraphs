@@ -704,13 +704,9 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.theme">
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="pref.gauge_display_background"
-                        android:title="@string/pref.gauge_display_background"
-                        app:singleLineTitle="false" />
-
                     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+
+                        app:colorChoices="@array/gauge_colors"
                         android:defaultValue="@android:color/holo_red_light"
                         android:key="pref.gauge_background_color"
                         android:title="@string/pref.gauge_background_color" />
