@@ -211,7 +211,7 @@ internal class GaugeSurfaceRenderer(
         val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         if (count == 1) {
-            val scaleFactor = if (isLandscape) 1.5f else 1.0f
+            val scaleFactor = if (isLandscape) 1.2f else 1.0f
             val baseSize = min(area.width(), area.height()).toFloat()
             val drawSize = baseSize * scaleFactor
             val leftOffset = (area.width() - drawSize) / 2f
