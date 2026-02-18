@@ -31,8 +31,6 @@ class GaugeVirtualScreenPreferences {
     fun updateVirtualScreen(screenId: String) {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
     }
-
-    fun getFontSize(): Int = Prefs.getS("pref.gauge.screen_font_size.${getCurrentVirtualScreen()}", "52").toInt()
 }
 
 val gaugeVirtualScreenPreferences = GaugeVirtualScreenPreferences()

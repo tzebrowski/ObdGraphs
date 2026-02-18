@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -135,12 +135,12 @@ internal abstract class AbstractDrawer(
         fontSize: Int,
     ): Float =
         multiplier *
-                fontSize.mapRange(
-                    CURRENT_MIN,
-                    CURRENT_MAX,
-                    NEW_MIN,
-                    NEW_MAX,
-                )
+            fontSize.mapRange(
+                CURRENT_MIN,
+                CURRENT_MAX,
+                NEW_MIN,
+                NEW_MAX,
+            )
 
     fun drawDivider(
         canvas: Canvas,
@@ -181,12 +181,13 @@ internal abstract class AbstractDrawer(
             val dx = (viewWidth - scaledWidth) / 2f
             val dy = (viewHeight - scaledHeight) / 2f
 
-            val destRect = RectF(
-                rect.left + dx,
-                rect.top + dy,
-                rect.left + dx + scaledWidth,
-                rect.top + dy + scaledHeight
-            )
+            val destRect =
+                RectF(
+                    rect.left + dx,
+                    rect.top + dy,
+                    rect.left + dx + scaledWidth,
+                    rect.top + dy + scaledHeight,
+                )
 
             backgroundPaint.alpha = 90
 

@@ -668,6 +668,17 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
+                    <org.obd.graphs.preferences.components.ExtendedSeekBar
+                        android:defaultValue="42"
+                        android:dialogTitle="@string/pref.gauge.font_size"
+                        android:key="pref.gauge.font_size"
+                        android:max="60"
+                        android:title="@string/pref.gauge.font_size"
+                        app:min="10"
+                        app:showSeekBarValue="true"
+                        app:singleLineTitle="false"
+                        app:useSimpleSummaryProvider="true" />
+
                     <CheckBoxPreference
                         android:defaultValue="false"
                         android:key="pref.gauge_display_command_rate"

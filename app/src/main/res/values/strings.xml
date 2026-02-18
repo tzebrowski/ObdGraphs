@@ -102,6 +102,9 @@
 
     <string name="pref.adapter_id">Available bluetooth devices</string>
     <string name="pref.gauge.number_of_columns">Number of columns</string>
+    <string name="pref.gauge.font_size">Font size</string>
+
+
 
     <string name="pref.gauge_display_refresh_rate">Display refresh rate (PIDs/second)</string>
     <string name="pref.gauge_display_scale">Display OBD2 PIDs/Sensors scale</string>

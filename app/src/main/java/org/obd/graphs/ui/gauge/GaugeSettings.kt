@@ -27,7 +27,7 @@ class GaugeSettings(
 ) : ScreenSettings {
     private val gaugeRendererSettings =
         object : GaugeRendererSettings() {
-            override fun getFontSize(): Int = gaugeVirtualScreenPreferences.getFontSize()
+            override fun getFontSize(): Int =  Prefs.getS("pref.gauge.font_size", "42").toInt()
         }
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings =
@@ -37,7 +37,7 @@ class GaugeSettings(
 
     override fun isAA(): Boolean = false
 
-    override fun getMaxItems(): Int = Prefs.getS("pref.gauge.max_items", "22").toInt()
+    override fun getMaxItems(): Int = Prefs.getS("pref.gauge.max_items", "40").toInt()
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 

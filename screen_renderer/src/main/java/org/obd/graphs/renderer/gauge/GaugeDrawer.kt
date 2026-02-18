@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -115,13 +115,14 @@ internal class GaugeDrawer(
             strokeCap = Paint.Cap.BUTT
         }
 
-    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.DKGRAY
-        style = Paint.Style.STROKE
-        strokeWidth = 2f * context.resources.displayMetrics.density
-        strokeCap = Paint.Cap.ROUND
-        strokeJoin = Paint.Join.ROUND
-    }
+    private val borderPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.DKGRAY
+            style = Paint.Style.STROKE
+            strokeWidth = 2f * context.resources.displayMetrics.density
+            strokeCap = Paint.Cap.ROUND
+            strokeJoin = Paint.Join.ROUND
+        }
 
     private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private var scaleBitmapCache: ScaleBitmapCache? = null
@@ -484,11 +485,11 @@ internal class GaugeDrawer(
         val currentCache = scaleBitmapCache
         val isValid =
             currentCache != null &&
-                    currentCache.scaleEnabled == scaleEnabled &&
-                    currentCache.progressColor == settings.getColorTheme().progressColor &&
-                    currentCache.width == targetWidth &&
-                    currentCache.height == targetHeight &&
-                    currentCache.dividerCount == drawerSettings.dividersCount
+                currentCache.scaleEnabled == scaleEnabled &&
+                currentCache.progressColor == settings.getColorTheme().progressColor &&
+                currentCache.width == targetWidth &&
+                currentCache.height == targetHeight &&
+                currentCache.dividerCount == drawerSettings.dividersCount
 
         if (isValid && currentCache != null) {
             val destRect = RectF(rect)
@@ -618,7 +619,7 @@ internal class GaugeDrawer(
 
         val widthArc =
             (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
-                    (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
+                (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
 
         paint.color = settings.getColorTheme().progressColor
         canvas.drawArc(
