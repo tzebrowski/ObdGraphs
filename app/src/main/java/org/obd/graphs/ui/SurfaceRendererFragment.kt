@@ -176,11 +176,7 @@ internal abstract class SurfaceRendererFragment(
         surfaceView.holder.addCallback(surfaceController)
         surfaceView.setOnTouchListener(this)
 
-        val statusLayout = requireActivity().findViewById<ConstraintLayout>(R.id.status_panel_header)
-        statusLayout.post {
-            val density = resources.displayMetrics.density
-            surfaceController.updateInsets(((statusLayout.height / density).toInt()) + 8)
-        }
+        updateInsets()
 
         metricsCollector.applyFilter(
             enabled = query().getIDs(),
@@ -201,5 +197,13 @@ internal abstract class SurfaceRendererFragment(
 
         configureActionButton(query())
         return root
+    }
+
+    protected open fun updateInsets() {
+        val statusLayout = requireActivity().findViewById<ConstraintLayout>(R.id.status_panel_header)
+        statusLayout.post {
+            val density = resources.displayMetrics.density
+            surfaceController.updateInsets(((statusLayout.height / density).toInt()) + 8)
+        }
     }
 }

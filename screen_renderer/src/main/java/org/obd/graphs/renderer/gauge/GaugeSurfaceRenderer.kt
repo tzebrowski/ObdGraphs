@@ -212,22 +212,28 @@ internal class GaugeSurfaceRenderer(
                 width = drawSize,
                 metric = metrics[0],
                 labelCenterYPadding = labelCenterYPadding,
-                drawBorder  = drawBorder
+                drawBorder = drawBorder
             )
         } else {
-            val scaleFactor = if (isLandscape) 1.0f else 1.0f
-
             val columns = 2
             val cellWidth = area.width() / columns.toFloat()
 
+            // FIX: Enforce a margin between items so borders don't touch
+            val itemMargin = 6f
+
+            // FIX: Ensure drawing fits strictly within the cell minus margin
+            // This prevents the border overlap seen in the screenshot
+            val drawWidth = cellWidth - (2 * itemMargin)
+
             val availableHeight = area.height().toFloat()
-            val cellHeight = min(cellWidth, availableHeight)
-
-            val drawWidth = cellWidth * scaleFactor
-            val drawHeight = cellHeight * scaleFactor
-
+            // Height matches width (Square) but clamped to screen
+            val drawHeight = min(drawWidth, availableHeight - (2 * itemMargin))
 
             val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
+
+            // Cell height includes the margin for the grid structure
+            val cellHeight = drawHeight + (2 * itemMargin)
+
             val contentHeight = totalRows * cellHeight
             val viewportHeight = area.height().toFloat()
 
@@ -243,20 +249,21 @@ internal class GaugeSurfaceRenderer(
                 val row = i / columns
                 val col = i % columns
 
-                val cellLeft = area.left + (col * cellWidth)
-                val cellTop = top + (row * cellHeight)
+                // Position calculated including margin
+                val cellLeft = area.left + (col * cellWidth) + itemMargin
+                val cellTop = top + (row * cellHeight) + itemMargin
 
-                val offsetX = (drawWidth - cellWidth) / 2f
-                val offsetY = (drawHeight - cellHeight) / 2f
+                // We draw starting exactly at cellLeft/cellTop because we already subtracted margins from drawWidth/drawHeight
+                // No extra centering offsets needed relative to the cell, as we centered it via margin logic.
 
                 gaugeDrawer.drawGauge(
                     canvas = canvas,
-                    left = cellLeft - offsetX,
-                    top = cellTop - offsetY,
-                    width = drawWidth,
+                    left = cellLeft,
+                    top = cellTop,
+                    width = drawWidth, // Passing the constrained width
                     metric = metric,
                     labelCenterYPadding = labelCenterYPadding,
-                    drawBorder  = drawBorder
+                    drawBorder = drawBorder
                 )
             }
 

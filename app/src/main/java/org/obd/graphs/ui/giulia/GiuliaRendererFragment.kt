@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -41,6 +41,7 @@ internal class GiuliaRendererFragment :
     override fun query() = query.apply(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey())
 
     override fun getScreenSettings(): ScreenSettings = settings
+    override fun updateInsets() {}
 
     override fun onCreateView(
         inflater: LayoutInflater,
