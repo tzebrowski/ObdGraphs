@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
+import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
@@ -46,6 +47,7 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
 
 internal abstract class SurfaceRendererFragment(
@@ -77,6 +79,11 @@ internal abstract class SurfaceRendererFragment(
         GestureDetector(
             context,
             object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
+                    return true
+                }
+
                 override fun onScroll(
                     e1: MotionEvent?,
                     e2: MotionEvent,

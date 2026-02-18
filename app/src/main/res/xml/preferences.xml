@@ -691,12 +691,6 @@
                         android:title="@string/pref.gauge_display_scale"
                         app:singleLineTitle="false" />
 
-                    <CheckBoxPreference
-                        android:defaultValue="true"
-                        android:key="pref.gauge.toggle_virtual_screens_double_click"
-                        android:title="@string/pref.gauge_toggle_virtual_screens"
-                        app:singleLineTitle="false" />
-
                     <ListPreference
                         android:defaultValue="10"
                         android:dialogTitle="@string/pref.screen.fps"
@@ -1908,7 +1902,7 @@
                     <CheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.graph.toggle_virtual_screens_double_click"
-                        android:title="@string/pref.gauge_toggle_virtual_screens"
+                        android:title="@string/pref.toolbar.toggle_double_click"
                         app:singleLineTitle="false" />
 
 

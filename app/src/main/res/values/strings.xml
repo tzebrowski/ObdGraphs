@@ -110,7 +110,7 @@
     <string name="pref.gauge_display_scale">Display OBD2 PIDs/Sensors scale</string>
     <string name="pref.gauge_display_background">Enable custom background color</string>
     <string name="pref.gauge_background_color">Background color</string>
-    <string name="pref.gauge_toggle_virtual_screens">Toggle Virtual Screens on double click</string>
+    <string name="pref.toolbar.toggle_double_click">Toggle toolbar on double click</string>
 
     <string name="pref.adapter.diagnostic_request_id.mapping.category">Configure Diagnostic Request ID mapping</string>
     <string name="pref.adapter.diagnostic_request_id.select_key">Select Diagnostic Request ID key</string>
