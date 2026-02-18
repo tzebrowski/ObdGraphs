@@ -339,36 +339,55 @@ internal class GaugeDrawer(
         fontSize: Int,
         statsEnabled: Boolean,
     ) {
-        val calculatedFontSize = calculateFontSize(multiplier = area.width() / 22f, fontSize = fontSize) * 3.4f
+        val calculatedFontSize = calculateFontSize(multiplier = area.width() / 22f, fontSize = fontSize) * 3.8f
         val value = metric.source.format(castToInt = false)
+
         valuePaint.textSize = calculatedFontSize
-        valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
-        valuePaint.color = valueColorScheme(metric)
 
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
+
+        val pid = metric.pid()
+        val unitText = pid.units
+        var unitWidth = 0f
+        val unitRect = Rect()
+
+        if (unitText != null) {
+            valuePaint.textSize = calculatedFontSize * 0.32f
+            valuePaint.getTextBounds(unitText, 0, unitText.length, unitRect)
+            unitWidth = unitRect.width().toFloat()
+            valuePaint.textSize = calculatedFontSize
+        }
+
+        val unitPadding = calculatedFontSize * 0.3f
+
+        var valueX = area.centerX() - (textRect.width() / 2f)
+
+        if (value.length >= 4 && unitText != null) {
+            val totalWidth = textRect.width() + unitPadding + unitWidth
+            valueX = area.centerX() - (totalWidth / 2f)
+        }
 
         val verticalShift = if (statsEnabled) 14 else 1
         val centerY = (area.centerY() + labelCenterYPadding - verticalShift * calculateScaleRatio(area))
 
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
         val valueY = centerY - valueHeight
-        canvas.drawText(value, area.centerX() - (textRect.width() / 2), valueY, valuePaint)
 
-        valuePaint.textSize = calculatedFontSize * 0.4f
-        valuePaint.color = color(R.color.gray)
+        valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
+        valuePaint.color = valueColorScheme(metric)
+        canvas.drawText(value, valueX, valueY, valuePaint)
 
-        val unitRect = Rect()
-        val pid = metric.pid()
         val unitY = centerY - valueHeight
+        if (unitText != null) {
+            valuePaint.textSize = calculatedFontSize * 0.32f
+            valuePaint.color = color(R.color.gray)
 
-        pid.units?.let {
-            valuePaint.getTextBounds(it, 0, it.length, unitRect)
-            val unitPadding = calculatedFontSize * 0.3f
-            canvas.drawText(it, area.centerX() + textRect.width() / 2 + unitPadding, unitY, valuePaint)
+            val unitX = valueX + textRect.width() + unitPadding
+            canvas.drawText(unitText, unitX, unitY, valuePaint)
         }
 
-        labelPaint.textSize = calculatedFontSize * 0.6f
+        labelPaint.textSize = calculatedFontSize * 0.42f
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
         val verticalGap = calculatedFontSize * 0.2f
