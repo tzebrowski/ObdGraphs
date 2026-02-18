@@ -7,31 +7,31 @@
 
     <fragment
         android:id="@+id/nav_gauge"
-        android:name="org.obd.graphs.ui.gauge.GaugeFragment"
+        android:name="org.obd.graphs.ui.gauge.GaugeRendererFragment"
         android:label="@string/navigation.title_gauge"
         tools:layout="@layout/fragment_gauge" />
 
     <fragment
         android:id="@+id/nav_drag_racing"
-        android:name="org.obd.graphs.ui.drag_racing.DragRacingFragment"
+        android:name="org.obd.graphs.ui.drag_racing.DragRacingRendererFragment"
         android:label="@string/navigation.title_drag_racing"
         tools:layout="@layout/fragment_surface_renderer" />
 
     <fragment
         android:id="@+id/nav_trip_info"
-        android:name="org.obd.graphs.ui.trip_info.TripInfoFragment"
+        android:name="org.obd.graphs.ui.trip_info.TripInfoRendererFragment"
         android:label="@string/navigation.title_trip_info"
         tools:layout="@layout/fragment_trip_info" />
 
     <fragment
         android:id="@+id/nav_performance"
-        android:name="org.obd.graphs.ui.performance.PerformanceFragment"
+        android:name="org.obd.graphs.ui.performance.PerformanceRendererFragment"
         android:label="@string/navigation.title_performance"
         tools:layout="@layout/fragment_performance" />
 
     <fragment
         android:id="@+id/nav_giulia"
-        android:name="org.obd.graphs.ui.giulia.GiuliaFragment"
+        android:name="org.obd.graphs.ui.giulia.GiuliaRendererFragment"
         android:label="@string/navigation.title_giulia"
         tools:layout="@layout/fragment_giulia" />
 

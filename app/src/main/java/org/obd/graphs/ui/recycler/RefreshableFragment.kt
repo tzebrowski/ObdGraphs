@@ -59,15 +59,6 @@ open class RefreshableFragment : Fragment() {
         }
     }
 
-    protected fun prepareMetrics(
-        metricsIdsPref: String,
-        metricsSerializerPref: String,
-    ): MutableList<Metric> {
-        val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
-        val metricsIds = query.filterBy(metricsIdsPref)
-        return MetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     protected fun configureView(
         configureChangeEventId: String,

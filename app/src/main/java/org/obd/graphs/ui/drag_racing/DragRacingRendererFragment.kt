@@ -14,22 +14,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.performance
+package org.obd.graphs.ui.drag_racing
 
 import org.obd.graphs.R
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRendererType
-import org.obd.graphs.ui.SurfaceFragment
+import org.obd.graphs.ui.SurfaceRendererFragment
 
-internal class PerformanceFragment : SurfaceFragment(
-    R.layout.fragment_performance,
-    SurfaceRendererType.PERFORMANCE) {
+internal class DragRacingRendererFragment : SurfaceRendererFragment(
+    R.layout.fragment_surface_renderer,
+    SurfaceRendererType.DRAG_RACING
+) {
 
-    private val query: Query = Query.instance(QueryStrategyType.PERFORMANCE_QUERY)
-    private val settings = PerformanceSettings()
+    private val query = Query.instance(QueryStrategyType.DRAG_RACING_QUERY)
+    private val settings = DragRacingSettings()
 
-    override fun query(): Query  = query
+    override fun query(): Query = query
     override fun getScreenSettings(): ScreenSettings = settings
 }

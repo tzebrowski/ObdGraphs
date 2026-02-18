@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -48,12 +48,12 @@ import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.ui.common.SurfaceController
 
-internal abstract class SurfaceFragment (
+internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
     private val surfaceRendererType: SurfaceRendererType,
-) : Fragment() , View.OnTouchListener{
-    protected lateinit var root: View
+) : Fragment(), View.OnTouchListener {
 
+    protected lateinit var root: View
     protected val metricsCollector = MetricsCollector.instance()
     protected val fps = Fps()
 
@@ -72,11 +72,26 @@ internal abstract class SurfaceFragment (
                 getScreenSettings().getSurfaceFrameRate()
             },
         )
-    private lateinit var gestureDetector: GestureDetector
+
+    private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+        override fun onScroll(
+            e1: MotionEvent?,
+            e2: MotionEvent,
+            distanceX: Float,
+            distanceY: Float
+        ): Boolean {
+            if (::surfaceController.isInitialized) {
+                surfaceController.updateScrollOffset(distanceY)
+                surfaceController.renderFrame()
+            }
+            return true
+        }
+
+        override fun onDown(e: MotionEvent): Boolean = true
+    })
 
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
-        // Delegate the raw event to the gesture detector
         return gestureDetector.onTouchEvent(event)
     }
 
@@ -156,22 +171,6 @@ internal abstract class SurfaceFragment (
                 fps,
                 surfaceRendererType = surfaceRendererType,
             )
-
-
-        gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent,
-                distanceX: Float,
-                distanceY: Float
-            ): Boolean {
-                renderer.updateScrollOffset(distanceY)
-                surfaceController.renderFrame()
-                return true
-            }
-
-            override fun onDown(e: MotionEvent): Boolean = true
-        })
 
         surfaceController = SurfaceController(renderer)
         surfaceView.holder.addCallback(surfaceController)

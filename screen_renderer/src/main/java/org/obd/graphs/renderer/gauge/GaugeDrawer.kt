@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -115,6 +115,13 @@ internal class GaugeDrawer(
             strokeCap = Paint.Cap.BUTT
         }
 
+    private val borderPaint = Paint().apply {
+        color = Color.LTGRAY
+        style = Paint.Style.STROKE
+        strokeWidth = 4f
+        isAntiAlias = true
+    }
+
     private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private var scaleBitmapCache: ScaleBitmapCache? = null
 
@@ -128,6 +135,7 @@ internal class GaugeDrawer(
         labelCenterYPadding: Float = 0f,
         scaleEnabled: Boolean = settings.isScaleEnabled(),
         statsEnabled: Boolean = settings.isStatisticsEnabled(),
+        drawBorder: Boolean = false
     ) {
         paint.shader = null
 
@@ -145,7 +153,11 @@ internal class GaugeDrawer(
             rect.right + strokeWidth,
         ] = rect.bottom + strokeWidth
 
-        drawGaugeBackground(canvas, rect, arcTopRect, strokeWidth, strokeWidth, metric)
+        if (drawBorder) {
+            drawBorder(width, left, top, canvas)
+        }
+
+        drawBackground(canvas, rect, arcTopRect, strokeWidth, strokeWidth, metric)
 
         drawScale(
             canvas,
@@ -168,7 +180,21 @@ internal class GaugeDrawer(
         )
     }
 
-    private fun drawGaugeBackground(
+    private fun drawBorder(width: Float, left: Float, top: Float, canvas: Canvas) {
+
+        val borderPadding = width * 0.02f
+        val borderRect = RectF(
+            left + borderPadding,
+            top + borderPadding,
+            left + width - borderPadding,
+            top + width - borderPadding
+        )
+        val cornerRadius = width * 0.04f
+        canvas.drawRoundRect(borderRect, cornerRadius, cornerRadius, borderPaint)
+
+    }
+
+    private fun drawBackground(
         canvas: Canvas,
         rect: RectF,
         arcTopRect: RectF,
@@ -390,11 +416,11 @@ internal class GaugeDrawer(
         val currentCache = scaleBitmapCache
         val isValid =
             currentCache != null &&
-                currentCache.scaleEnabled == scaleEnabled &&
-                currentCache.progressColor == settings.getColorTheme().progressColor &&
-                currentCache.width == targetWidth &&
-                currentCache.height == targetHeight &&
-                currentCache.dividerCount == drawerSettings.dividersCount
+                    currentCache.scaleEnabled == scaleEnabled &&
+                    currentCache.progressColor == settings.getColorTheme().progressColor &&
+                    currentCache.width == targetWidth &&
+                    currentCache.height == targetHeight &&
+                    currentCache.dividerCount == drawerSettings.dividersCount
 
         if (isValid && currentCache != null) {
             val destRect = RectF(rect)
@@ -525,7 +551,7 @@ internal class GaugeDrawer(
 
         val widthArc =
             (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
-                (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
+                    (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
 
         paint.color = settings.getColorTheme().progressColor
         canvas.drawArc(

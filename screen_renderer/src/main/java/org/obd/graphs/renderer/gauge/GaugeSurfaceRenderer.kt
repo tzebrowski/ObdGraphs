@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,7 +34,6 @@ import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.max
 import kotlin.math.min
 
-@Suppress("NOTHING_TO_INLINE")
 internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
@@ -192,7 +191,10 @@ internal class GaugeSurfaceRenderer(
         top: Float,
         labelCenterYPadding: Float = 0f,
         maxItems: Int,
-    ) {
+        drawBorder: Boolean = true,
+        drawScrollbar: Boolean = false,
+
+        ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
         val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -210,6 +212,7 @@ internal class GaugeSurfaceRenderer(
                 width = drawSize,
                 metric = metrics[0],
                 labelCenterYPadding = labelCenterYPadding,
+                drawBorder  = drawBorder
             )
         } else {
             val scaleFactor = if (isLandscape) 1.0f else 1.0f
@@ -221,6 +224,8 @@ internal class GaugeSurfaceRenderer(
             val cellHeight = min(cellWidth, availableHeight)
 
             val drawWidth = cellWidth * scaleFactor
+            val drawHeight = cellHeight * scaleFactor
+
 
             val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
             val contentHeight = totalRows * cellHeight
@@ -242,20 +247,24 @@ internal class GaugeSurfaceRenderer(
                 val cellTop = top + (row * cellHeight)
 
                 val offsetX = (drawWidth - cellWidth) / 2f
+                val offsetY = (drawHeight - cellHeight) / 2f
 
                 gaugeDrawer.drawGauge(
                     canvas = canvas,
                     left = cellLeft - offsetX,
-                    top = cellTop,
+                    top = cellTop - offsetY,
                     width = drawWidth,
                     metric = metric,
                     labelCenterYPadding = labelCenterYPadding,
+                    drawBorder  = drawBorder
                 )
             }
 
             canvas.restore()
 
-            drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
+            if (contentHeight > viewportHeight && drawScrollbar) {
+                drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
+            }
         }
     }
 
@@ -266,27 +275,27 @@ internal class GaugeSurfaceRenderer(
         area: Rect,
         canvas: Canvas,
     ) {
-        if (contentHeight > viewportHeight) {
-            val verticalMargin = 30f
-            val trackHeight = viewportHeight - (2 * verticalMargin)
 
-            val calculatedBarHeight = (viewportHeight / contentHeight) * trackHeight
-            val barHeight = max(calculatedBarHeight, 50f)
+        val verticalMargin = 30f
+        val trackHeight = viewportHeight - (2 * verticalMargin)
 
-            val scrollPercentage = scrollOffset / maxScroll
-            val availableTravel = trackHeight - barHeight
-            val barTop = area.top + verticalMargin + (scrollPercentage * availableTravel)
+        val calculatedBarHeight = (viewportHeight / contentHeight) * trackHeight
+        val barHeight = max(calculatedBarHeight, 50f)
 
-            val barRect =
-                RectF(
-                    area.left + 5f,
-                    barTop,
-                    area.left + 5f + scrollBarWidth,
-                    barTop + barHeight,
-                )
+        val scrollPercentage = scrollOffset / maxScroll
+        val availableTravel = trackHeight - barHeight
+        val barTop = area.top + verticalMargin + (scrollPercentage * availableTravel)
 
-            canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
-        }
+        val barRect =
+            RectF(
+                area.left + 5f,
+                barTop,
+                area.left + 5f + scrollBarWidth,
+                barTop + barHeight,
+            )
+
+        canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
+
     }
 
     private fun widthScaleRatio(maxItems: Int): Float =

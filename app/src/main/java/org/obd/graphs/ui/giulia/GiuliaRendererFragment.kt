@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.gauge
+package org.obd.graphs.ui.giulia
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,25 +22,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRendererType
-import org.obd.graphs.ui.SurfaceFragment
+import org.obd.graphs.ui.SurfaceRendererFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.withDataLogger
 
- internal class GaugeFragment : SurfaceFragment(
-    R.layout.fragment_gauge,
-    SurfaceRendererType.GAUGE,
-) {
-
+internal class GiuliaRendererFragment :
+    SurfaceRendererFragment(
+        R.layout.fragment_giulia,
+        SurfaceRendererType.GIULIA,
+    ) {
     private val query: Query = Query.instance()
-    private val settings = GaugeSettings(query)
+    private val settings = GiuliaSettings(query)
+
+    override fun query() = query.apply(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey())
 
     override fun getScreenSettings(): ScreenSettings = settings
-    override fun query() = query.apply(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,12 +65,9 @@ import org.obd.graphs.ui.withDataLogger
             }
 
             it.setOnClickListener {
-                gaugeVirtualScreenPreferences.updateVirtualScreen(viewId)
-
-                if (DataLoggerRepository.isRunning()) {
-                    withDataLogger {
-                        updateQuery(query())
-                    }
+                giuliaVirtualScreenPreferences.updateVirtualScreen(viewId)
+                withDataLogger {
+                    updateQuery(query())
                 }
 
                 applyFilter()
@@ -80,11 +77,10 @@ import org.obd.graphs.ui.withDataLogger
         }
     }
 
-     private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()))
+    private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()))
 
-
-     private fun setupVirtualViewPanel() {
-        val currentVirtualScreen = gaugeVirtualScreenPreferences.getCurrentVirtualScreen()
+    private fun setupVirtualViewPanel() {
+        val currentVirtualScreen = giuliaVirtualScreenPreferences.getCurrentVirtualScreen()
         setVirtualViewBtn(R.id.virtual_view_1, currentVirtualScreen, "1")
         setVirtualViewBtn(R.id.virtual_view_2, currentVirtualScreen, "2")
         setVirtualViewBtn(R.id.virtual_view_3, currentVirtualScreen, "3")
@@ -92,6 +88,5 @@ import org.obd.graphs.ui.withDataLogger
         setVirtualViewBtn(R.id.virtual_view_5, currentVirtualScreen, "5")
         setVirtualViewBtn(R.id.virtual_view_6, currentVirtualScreen, "6")
         setVirtualViewBtn(R.id.virtual_view_7, currentVirtualScreen, "7")
-        setVirtualViewBtn(R.id.virtual_view_8, currentVirtualScreen, "8")
     }
 }

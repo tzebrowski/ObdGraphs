@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="2sp"
-    tools:context="org.obd.graphs.ui.gauge.GaugeFragment">
+    tools:context="org.obd.graphs.ui.gauge.GaugeRendererFragment">
 
     <ImageView
         android:contentDescription="@string/gauge_item_bg_content_description"

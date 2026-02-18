@@ -21,9 +21,9 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRendererType
-import org.obd.graphs.ui.SurfaceFragment
+import org.obd.graphs.ui.SurfaceRendererFragment
 
-internal class TripInfoFragment : SurfaceFragment(
+internal class TripInfoRendererFragment : SurfaceRendererFragment(
     R.layout.fragment_trip_info,
     SurfaceRendererType.TRIP_INFO
 ) {
