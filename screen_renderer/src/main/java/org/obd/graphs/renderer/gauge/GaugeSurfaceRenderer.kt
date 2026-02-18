@@ -22,6 +22,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.RectF
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
@@ -33,6 +34,8 @@ import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.ScreenSettings
 import kotlin.math.max
 import kotlin.math.min
+
+private const val TAG = "GSV"
 
 internal class GaugeSurfaceRenderer(
     context: Context,
@@ -204,26 +207,26 @@ internal class GaugeSurfaceRenderer(
         labelCenterYPadding: Float = 0f,
         maxItems: Int,
         drawBorder: Boolean = true,
-        drawScrollbar: Boolean = false,
+        drawScroll: Boolean = true
     ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
         val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         if (count == 1) {
-            val scaleFactor = if (isLandscape) 1.2f else 1.0f
+            val scaleFactor = if (isLandscape) 1.5f else 1.0f
             val baseSize = min(area.width(), area.height()).toFloat()
             val drawSize = baseSize * scaleFactor
             val leftOffset = (area.width() - drawSize) / 2f
 
-            mobileDrawer.drawGauge(
+            gaugeDrawer.drawGauge(
                 canvas = canvas,
                 left = area.left + leftOffset,
                 top = top,
                 width = drawSize,
                 metric = metrics[0],
                 labelCenterYPadding = labelCenterYPadding,
-                drawBorder = drawBorder,
+                drawBorder = drawBorder
             )
         } else {
             val columns = 2
@@ -231,15 +234,15 @@ internal class GaugeSurfaceRenderer(
             val availableHeight = area.height().toFloat()
             val itemMargin = 6f
 
-            val borderBoxSize =
-                if (isLandscape) {
-                    RectF(0f, 0f, cellWidth - (2 * itemMargin), availableHeight - (2 * itemMargin))
-                } else {
-                    val size = cellWidth - (2 * itemMargin)
-                    RectF(0f, 0f, size, size)
-                }
+            val borderBoxSize = if (isLandscape) {
+                RectF(0f, 0f, cellWidth - (2*itemMargin), availableHeight - (2*itemMargin))
+            } else {
+                val size = cellWidth - (2*itemMargin)
+                RectF(0f, 0f, size, size)
+            }
 
-            val gaugeWidth = if (isLandscape) cellWidth - (2 * itemMargin) else borderBoxSize.width()
+            val gaugeWidth = if (isLandscape) cellWidth - (2*itemMargin) else borderBoxSize.width()
+
             val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
             val cellHeight = borderBoxSize.height() + (2 * itemMargin)
 
@@ -248,11 +251,26 @@ internal class GaugeSurfaceRenderer(
             val maxScroll = max(0f, contentHeight - viewportHeight)
             scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
 
+            val startRow = kotlin.math.floor(scrollOffset / cellHeight).toInt()
+
+            val endRow = kotlin.math.floor((scrollOffset + viewportHeight - 1f) / cellHeight).toInt()
+
+            val safeStartRow = startRow.coerceAtLeast(0)
+            val safeEndRow = endRow.coerceAtMost(totalRows - 1)
+
+            val startIndex = safeStartRow * columns
+            val endIndex = min(count - 1, (safeEndRow * columns) + (columns - 1))
+
+            if (Log.isLoggable(TAG,Log.VERBOSE)) {
+                Log.v(TAG, "startRow=$safeStartRow endRow=$safeEndRow startIndex=$startIndex endIndex=$endIndex")
+            }
+
             canvas.save()
             canvas.clipRect(area)
             canvas.translate(0f, -scrollOffset)
 
-            for (i in 0 until count) {
+
+            for (i in startIndex..endIndex) {
                 val metric = metrics[i]
                 val row = i / columns
                 val col = i % columns
@@ -260,15 +278,14 @@ internal class GaugeSurfaceRenderer(
                 val cellLeft = area.left + (col * cellWidth) + itemMargin
                 val cellTop = top + (row * cellHeight) + itemMargin
 
-                val itemBorderRect =
-                    RectF(
-                        cellLeft,
-                        cellTop,
-                        cellLeft + borderBoxSize.width(),
-                        cellTop + borderBoxSize.height(),
-                    )
+                val itemBorderRect = RectF(
+                    cellLeft,
+                    cellTop,
+                    cellLeft + borderBoxSize.width(),
+                    cellTop + borderBoxSize.height()
+                )
 
-                mobileDrawer.drawGauge(
+                gaugeDrawer.drawGauge(
                     canvas = canvas,
                     left = cellLeft,
                     top = cellTop,
@@ -276,13 +293,13 @@ internal class GaugeSurfaceRenderer(
                     metric = metric,
                     labelCenterYPadding = labelCenterYPadding,
                     drawBorder = drawBorder,
-                    borderArea = itemBorderRect,
+                    borderArea = itemBorderRect
                 )
             }
 
             canvas.restore()
 
-            if (contentHeight > viewportHeight && drawScrollbar) {
+            if (contentHeight > viewportHeight && drawScroll) {
                 drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
             }
         }
