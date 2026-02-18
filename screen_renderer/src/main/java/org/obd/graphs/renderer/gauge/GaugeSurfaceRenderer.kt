@@ -190,6 +190,7 @@ internal class GaugeSurfaceRenderer(
                     width = width,
                     metric = it,
                     labelCenterYPadding = labelCenterYPadding,
+                    drawBorder = false
                 )
                 left += width - padding
             }

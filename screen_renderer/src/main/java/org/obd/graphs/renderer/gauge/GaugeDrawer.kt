@@ -23,12 +23,15 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.RadialGradient
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.SweepGradient
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
+import org.obd.graphs.getContext
 import org.obd.graphs.isNumber
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
@@ -42,6 +45,7 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sin
 
 private const val MIN_TEXT_VALUE_HEIGHT = 30
@@ -110,9 +114,9 @@ internal class GaugeDrawer(
             maskFilter = BlurMaskFilter(20f, BlurMaskFilter.Blur.NORMAL)
         }
 
-    private val backgroundPaint =
+    private val backgroundGradientPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            strokeCap = Paint.Cap.BUTT
+            style = Paint.Style.FILL
         }
 
     private val borderPaint =
@@ -157,8 +161,10 @@ internal class GaugeDrawer(
         ] = rect.bottom + strokeWidth
 
         if (drawBorder) {
-            drawBorder(width, left, top, canvas, borderArea)
+            drawBorder(canvas, width, left, top, borderArea)
         }
+
+        drawContainerBackground(canvas, width, left, top, borderArea)
 
         drawBackground(canvas, rect, arcTopRect, strokeWidth, strokeWidth, metric)
 
@@ -180,14 +186,54 @@ internal class GaugeDrawer(
             labelCenterYPadding = labelCenterYPadding,
             fontSize = fontSize,
             statsEnabled = statsEnabled,
+            borderArea = borderArea,
         )
     }
 
-    private fun drawBorder(
+    private fun drawContainerBackground(
+        canvas: Canvas,
         width: Float,
         left: Float,
         top: Float,
+        area: RectF?,
+        gradientColor: Int = settings.getGaugeRendererSetting().getGaugeContainerColor(),
+    ) {
+        val destRect =
+            area ?: run {
+                val borderPadding = width * 0.01f
+                RectF(
+                    left + borderPadding,
+                    top + borderPadding,
+                    left + width - borderPadding,
+                    top + width - borderPadding,
+                )
+            }
+
+        val gradientRadius = min(destRect.width(), destRect.height()) * 0.45f
+
+        val centerColor = gradientColor
+        val edgeColor = Color.TRANSPARENT
+
+        val gradient =
+            RadialGradient(
+                destRect.centerX(),
+                destRect.centerY(),
+                gradientRadius,
+                intArrayOf(centerColor, edgeColor),
+                floatArrayOf(0.0f, 1.0f),
+                Shader.TileMode.CLAMP,
+            )
+
+        backgroundGradientPaint.shader = gradient
+        val cornerRadius = 8f * getContext()!!.resources.displayMetrics.density
+        canvas.drawRoundRect(destRect, cornerRadius, cornerRadius, backgroundGradientPaint)
+    }
+
+    private fun drawBorder(
         canvas: Canvas,
+        width: Float,
+        left: Float,
+        top: Float,
         area: RectF?,
     ) {
         val borderRect =
@@ -230,9 +276,6 @@ internal class GaugeDrawer(
             rect.top + r2Offset,
             rect.right - r2Offset,
         ] = rect.bottom - r2Offset
-
-        backgroundPaint.color = color(R.color.black)
-        canvas.drawArc(backgroundArcRect, drawerSettings.startAngle, drawerSettings.sweepAngle, false, backgroundPaint)
 
         val arcBottomRect = RectF()
         val r3Offset = arcTopOffset + 4
@@ -362,7 +405,6 @@ internal class GaugeDrawer(
         }
 
         val unitPadding = calculatedFontSize * 0.3f
-
         var valueX = area.centerX() - (textRect.width() / 2f)
 
         if (value.length >= 4 && unitText != null) {
@@ -385,7 +427,7 @@ internal class GaugeDrawer(
             val valueLineH = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
 
             val labelRect = Rect()
-            labelPaint.getTextBounds("Ty", 0, 2, labelRect) // Sample height
+            labelPaint.getTextBounds("Ty", 0, 2, labelRect)
             val labelLineH = labelRect.height()
 
             val histsRect = Rect()
@@ -396,8 +438,8 @@ internal class GaugeDrawer(
             val labelY = unitY + labelLineH + verticalGap
             val statsY = labelY + statsLineH + verticalGap
 
-            val predictedBottom = statsY + (statsLineH * 0.5f) // Add a bit for descenders
-            val bottomLimit = borderArea.bottom - (borderArea.height() * 0.02f) // 2% padding from border
+            val predictedBottom = statsY + (statsLineH * 0.5f)
+            val bottomLimit = borderArea.bottom - (borderArea.height() * 0.02f)
 
             if (predictedBottom > bottomLimit) {
                 val overflow = predictedBottom - bottomLimit
@@ -417,16 +459,16 @@ internal class GaugeDrawer(
             valuePaint.textSize = calculatedFontSize * 0.32f
             valuePaint.color = color(R.color.gray)
             val unitX = valueX + textRect.width() + unitPadding
-            canvas.drawText(unitText!!, unitX, unitY, valuePaint)
+            canvas.drawText(unitText, unitX, unitY, valuePaint)
         }
 
         labelPaint.textSize = calculatedFontSize * 0.42f
         labelPaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
 
         val verticalGap = calculatedFontSize * 0.2f
-
         var labelY = 0f
         val text = pid.description.split("\n")
+
         if (settings.isBreakLabelTextEnabled() && text.size > 1) {
             labelPaint.textSize *= 0.95f
             text.forEachIndexed { i, it ->
@@ -736,11 +778,7 @@ internal class GaugeDrawer(
     private fun calculateRadius(
         width: Float,
         padding: Float,
-    ): Float {
-        val calculatedWidth = width - 2 * padding
-        val height = width - 2 * padding
-        return if (calculatedWidth < height) calculatedWidth / 2 else height / 2
-    }
+    ): Float = (width - 2 * padding) / 2
 
     private inline fun getScaleColor(j: Int): Int =
         if (j == drawerSettings.dividerHighlightStart || j == drawerSettings.dividersCount) {

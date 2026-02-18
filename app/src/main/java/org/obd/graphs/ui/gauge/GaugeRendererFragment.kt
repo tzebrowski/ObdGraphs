@@ -39,7 +39,7 @@ internal class GaugeRendererFragment :
     private val query: Query = Query.instance()
     private val settings = GaugeSettings(query)
 
-    override fun getScreenSettings(): ScreenSettings = settings
+    override fun getScreenSettings(): GaugeSettings = settings
 
     override fun query() = query.apply(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey())
 

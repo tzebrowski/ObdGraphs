@@ -21,13 +21,16 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.GaugeRendererSettings
 import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
 class GaugeSettings(
     private val query: Query,
 ) : ScreenSettings {
     private val gaugeRendererSettings =
         object : GaugeRendererSettings() {
-            override fun getFontSize(): Int =  Prefs.getS("pref.gauge.font_size", "42").toInt()
+            override fun getFontSize(): Int = Prefs.getS("pref.gauge.font_size", "42").toInt()
+
+            override fun getGaugeContainerColor(): Int = Prefs.getInt("pref.gauge_background_color", COLOR_RAINBOW_INDIGO)
         }
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings =
