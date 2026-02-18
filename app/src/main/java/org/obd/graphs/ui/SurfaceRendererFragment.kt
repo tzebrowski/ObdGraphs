@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -34,6 +34,8 @@ import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
+import org.obd.graphs.activity.TOOLBAR_HIDE
+import org.obd.graphs.activity.TOOLBAR_SHOW
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
@@ -49,6 +51,8 @@ import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
+
+private const val EVENT_THROTTLE_MS = 350L
 
 internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
@@ -75,6 +79,9 @@ internal abstract class SurfaceRendererFragment(
             },
         )
 
+
+    private var lastEventTime = 0L
+
     private val gestureDetector =
         GestureDetector(
             context,
@@ -90,6 +97,18 @@ internal abstract class SurfaceRendererFragment(
                     distanceX: Float,
                     distanceY: Float,
                 ): Boolean {
+                    val currentTime = System.currentTimeMillis()
+                    
+                    if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
+                        if (distanceY > 0) {
+                            sendBroadcastEvent(TOOLBAR_HIDE)
+                            lastEventTime = currentTime
+                        } else if (distanceY < 0) {
+                            sendBroadcastEvent(TOOLBAR_SHOW)
+                            lastEventTime = currentTime
+                        }
+                    }
+
                     if (::surfaceController.isInitialized) {
                         surfaceController.updateScrollOffset(distanceY)
                         surfaceController.renderFrame()
