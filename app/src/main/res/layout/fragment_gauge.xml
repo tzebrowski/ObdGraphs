@@ -11,7 +11,6 @@
         android:id="@+id/button_scroll_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/cardview_light_background"
         android:scrollbars="none"
         android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,13 +25,13 @@
             android:paddingStart="4dp"
             android:paddingTop="4dp"
             android:paddingEnd="4dp"
-            android:paddingBottom="0dp">
+            android:paddingBottom="4dp">
 
             <Button
                 android:id="@+id/virtual_view_1"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -46,8 +45,8 @@
             <Button
                 android:id="@+id/virtual_view_2"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -61,8 +60,8 @@
             <Button
                 android:id="@+id/virtual_view_3"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -76,8 +75,8 @@
             <Button
                 android:id="@+id/virtual_view_4"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -91,8 +90,8 @@
             <Button
                 android:id="@+id/virtual_view_5"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -106,8 +105,8 @@
             <Button
                 android:id="@+id/virtual_view_6"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -121,8 +120,8 @@
             <Button
                 android:id="@+id/virtual_view_7"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
@@ -136,8 +135,8 @@
             <Button
                 android:id="@+id/virtual_view_8"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
