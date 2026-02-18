@@ -40,11 +40,23 @@ internal class GaugeSurfaceRenderer(
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
 ) : CoreSurfaceRenderer() {
+
     private val gaugeDrawer =
         GaugeDrawer(
             settings = settings,
             context = context,
             drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType),
+        )
+
+    private val mobileDrawer =
+        GaugeDrawer(
+            settings = settings,
+            context = context,
+            drawerSettings = DrawerSettings(
+                startAngle = 200f,
+                sweepAngle = 200f,
+                gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType
+            ),
         )
 
     override fun applyMetricsFilter(query: Query) {
@@ -193,8 +205,7 @@ internal class GaugeSurfaceRenderer(
         maxItems: Int,
         drawBorder: Boolean = true,
         drawScrollbar: Boolean = false,
-
-        ) {
+    ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
         val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -205,38 +216,35 @@ internal class GaugeSurfaceRenderer(
             val drawSize = baseSize * scaleFactor
             val leftOffset = (area.width() - drawSize) / 2f
 
-            gaugeDrawer.drawGauge(
+            mobileDrawer.drawGauge(
                 canvas = canvas,
                 left = area.left + leftOffset,
                 top = top,
                 width = drawSize,
                 metric = metrics[0],
                 labelCenterYPadding = labelCenterYPadding,
-                drawBorder = drawBorder
+                drawBorder = drawBorder,
             )
         } else {
             val columns = 2
             val cellWidth = area.width() / columns.toFloat()
-
-            // FIX: Enforce a margin between items so borders don't touch
+            val availableHeight = area.height().toFloat()
             val itemMargin = 6f
 
-            // FIX: Ensure drawing fits strictly within the cell minus margin
-            // This prevents the border overlap seen in the screenshot
-            val drawWidth = cellWidth - (2 * itemMargin)
+            val borderBoxSize =
+                if (isLandscape) {
+                    RectF(0f, 0f, cellWidth - (2 * itemMargin), availableHeight - (2 * itemMargin))
+                } else {
+                    val size = cellWidth - (2 * itemMargin)
+                    RectF(0f, 0f, size, size)
+                }
 
-            val availableHeight = area.height().toFloat()
-            // Height matches width (Square) but clamped to screen
-            val drawHeight = min(drawWidth, availableHeight - (2 * itemMargin))
-
+            val gaugeWidth = if (isLandscape) cellWidth - (2 * itemMargin) else borderBoxSize.width()
             val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
-
-            // Cell height includes the margin for the grid structure
-            val cellHeight = drawHeight + (2 * itemMargin)
+            val cellHeight = borderBoxSize.height() + (2 * itemMargin)
 
             val contentHeight = totalRows * cellHeight
             val viewportHeight = area.height().toFloat()
-
             val maxScroll = max(0f, contentHeight - viewportHeight)
             scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
 
@@ -249,21 +257,26 @@ internal class GaugeSurfaceRenderer(
                 val row = i / columns
                 val col = i % columns
 
-                // Position calculated including margin
                 val cellLeft = area.left + (col * cellWidth) + itemMargin
                 val cellTop = top + (row * cellHeight) + itemMargin
 
-                // We draw starting exactly at cellLeft/cellTop because we already subtracted margins from drawWidth/drawHeight
-                // No extra centering offsets needed relative to the cell, as we centered it via margin logic.
+                val itemBorderRect =
+                    RectF(
+                        cellLeft,
+                        cellTop,
+                        cellLeft + borderBoxSize.width(),
+                        cellTop + borderBoxSize.height(),
+                    )
 
-                gaugeDrawer.drawGauge(
+                mobileDrawer.drawGauge(
                     canvas = canvas,
                     left = cellLeft,
                     top = cellTop,
-                    width = drawWidth, // Passing the constrained width
+                    width = gaugeWidth,
                     metric = metric,
                     labelCenterYPadding = labelCenterYPadding,
-                    drawBorder = drawBorder
+                    drawBorder = drawBorder,
+                    borderArea = itemBorderRect,
                 )
             }
 
@@ -282,7 +295,6 @@ internal class GaugeSurfaceRenderer(
         area: Rect,
         canvas: Canvas,
     ) {
-
         val verticalMargin = 30f
         val trackHeight = viewportHeight - (2 * verticalMargin)
 
@@ -302,7 +314,6 @@ internal class GaugeSurfaceRenderer(
             )
 
         canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
-
     }
 
     private fun widthScaleRatio(maxItems: Int): Float =

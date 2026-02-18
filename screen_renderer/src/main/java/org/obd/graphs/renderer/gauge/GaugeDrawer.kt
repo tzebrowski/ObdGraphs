@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,6 +26,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.SweepGradient
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
@@ -115,12 +116,13 @@ internal class GaugeDrawer(
             strokeCap = Paint.Cap.BUTT
         }
 
-    private val borderPaint = Paint().apply {
-        color = Color.LTGRAY
-        style = Paint.Style.STROKE
-        strokeWidth = 4f
-        isAntiAlias = true
-    }
+    private val borderPaint =
+        Paint().apply {
+            color = Color.LTGRAY
+            style = Paint.Style.STROKE
+            strokeWidth = 4f
+            isAntiAlias = true
+        }
 
     private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private var scaleBitmapCache: ScaleBitmapCache? = null
@@ -135,16 +137,17 @@ internal class GaugeDrawer(
         labelCenterYPadding: Float = 0f,
         scaleEnabled: Boolean = settings.isScaleEnabled(),
         statsEnabled: Boolean = settings.isStatisticsEnabled(),
-        drawBorder: Boolean = false
+        drawBorder: Boolean = false,
+        borderArea: RectF? = null,
     ) {
         paint.shader = null
 
-        val dynamicPadding = max(drawerSettings.padding, width * 0.035f)
+        val dynamicPadding = max(drawerSettings.padding, width * 0.055f)
 
         val rect = calculateRect(left, width, top, dynamicPadding)
         val radius = calculateRadius(width, dynamicPadding)
 
-        val strokeWidth = rect.width() * 0.027f
+        val strokeWidth = rect.width() * 0.037f
 
         val arcTopRect = RectF()
         arcTopRect[
@@ -154,7 +157,7 @@ internal class GaugeDrawer(
         ] = rect.bottom + strokeWidth
 
         if (drawBorder) {
-            drawBorder(width, left, top, canvas)
+            drawBorder(width, left, top, canvas, borderArea)
         }
 
         drawBackground(canvas, rect, arcTopRect, strokeWidth, strokeWidth, metric)
@@ -180,18 +183,27 @@ internal class GaugeDrawer(
         )
     }
 
-    private fun drawBorder(width: Float, left: Float, top: Float, canvas: Canvas) {
-
-        val borderPadding = width * 0.02f
-        val borderRect = RectF(
-            left + borderPadding,
-            top + borderPadding,
-            left + width - borderPadding,
-            top + width - borderPadding
-        )
+    private fun drawBorder(
+        width: Float,
+        left: Float,
+        top: Float,
+        canvas: Canvas,
+        area: RectF?,
+    ) {
+        val borderRect =
+            if (area != null) {
+                area
+            } else {
+                val borderPadding = width * 0.01f
+                RectF(
+                    left + borderPadding,
+                    top + borderPadding,
+                    left + width - borderPadding,
+                    top + width - borderPadding,
+                )
+            }
         val cornerRadius = width * 0.04f
         canvas.drawRoundRect(borderRect, cornerRadius, cornerRadius, borderPaint)
-
     }
 
     private fun drawBackground(
@@ -416,11 +428,11 @@ internal class GaugeDrawer(
         val currentCache = scaleBitmapCache
         val isValid =
             currentCache != null &&
-                    currentCache.scaleEnabled == scaleEnabled &&
-                    currentCache.progressColor == settings.getColorTheme().progressColor &&
-                    currentCache.width == targetWidth &&
-                    currentCache.height == targetHeight &&
-                    currentCache.dividerCount == drawerSettings.dividersCount
+                currentCache.scaleEnabled == scaleEnabled &&
+                currentCache.progressColor == settings.getColorTheme().progressColor &&
+                currentCache.width == targetWidth &&
+                currentCache.height == targetHeight &&
+                currentCache.dividerCount == drawerSettings.dividersCount
 
         if (isValid && currentCache != null) {
             val destRect = RectF(rect)
@@ -551,7 +563,7 @@ internal class GaugeDrawer(
 
         val widthArc =
             (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 1)) -
-                    (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
+                (drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 3))
 
         paint.color = settings.getColorTheme().progressColor
         canvas.drawArc(
