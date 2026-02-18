@@ -26,7 +26,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.SweepGradient
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
@@ -116,13 +115,13 @@ internal class GaugeDrawer(
             strokeCap = Paint.Cap.BUTT
         }
 
-    private val borderPaint =
-        Paint().apply {
-            color = Color.LTGRAY
-            style = Paint.Style.STROKE
-            strokeWidth = 4f
-            isAntiAlias = true
-        }
+    private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.DKGRAY
+        style = Paint.Style.STROKE
+        strokeWidth = 2f * context.resources.displayMetrics.density
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
 
     private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private var scaleBitmapCache: ScaleBitmapCache? = null
