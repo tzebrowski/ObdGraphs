@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,6 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -33,6 +34,7 @@ import org.obd.graphs.commons.R
 import org.obd.graphs.format
 import org.obd.graphs.mapRange
 import org.obd.graphs.profile.profile
+import kotlin.math.max
 
 private const val STATUS_KEY_FONT_SIZE = 12f
 private const val STATUS_VALUE_FONT_SIZE = 18f
@@ -133,12 +135,12 @@ internal abstract class AbstractDrawer(
         fontSize: Int,
     ): Float =
         multiplier *
-            fontSize.mapRange(
-                CURRENT_MIN,
-                CURRENT_MAX,
-                NEW_MIN,
-                NEW_MAX,
-            )
+                fontSize.mapRange(
+                    CURRENT_MIN,
+                    CURRENT_MAX,
+                    NEW_MIN,
+                    NEW_MAX,
+                )
 
     fun drawDivider(
         canvas: Canvas,
@@ -163,10 +165,32 @@ internal abstract class AbstractDrawer(
         rect: Rect,
         color: Int = settings.getBackgroundColor(),
     ) {
-        canvas.drawRect(rect, paint)
         canvas.drawColor(color)
         if (settings.isBackgroundDrawingEnabled()) {
-            canvas.drawBitmap(getBackground(), rect.left.toFloat(), rect.top.toFloat(), backgroundPaint)
+            val bitmap = getBackground()
+            val bitmapWidth = bitmap.width.toFloat()
+            val bitmapHeight = bitmap.height.toFloat()
+            val viewWidth = rect.width().toFloat()
+            val viewHeight = rect.height().toFloat()
+
+            val scale = max(viewWidth / bitmapWidth, viewHeight / bitmapHeight)
+
+            val scaledWidth = bitmapWidth * scale
+            val scaledHeight = bitmapHeight * scale
+
+            val dx = (viewWidth - scaledWidth) / 2f
+            val dy = (viewHeight - scaledHeight) / 2f
+
+            val destRect = RectF(
+                rect.left + dx,
+                rect.top + dy,
+                rect.left + dx + scaledWidth,
+                rect.top + dy + scaledHeight
+            )
+
+            backgroundPaint.alpha = 90
+
+            canvas.drawBitmap(bitmap, null, destRect, backgroundPaint)
         }
     }
 
