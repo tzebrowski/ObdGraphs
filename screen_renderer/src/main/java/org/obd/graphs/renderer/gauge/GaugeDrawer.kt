@@ -338,6 +338,7 @@ internal class GaugeDrawer(
         labelCenterYPadding: Float = 0f,
         fontSize: Int,
         statsEnabled: Boolean,
+        borderArea: RectF? = null,
     ) {
         val calculatedFontSize = calculateFontSize(multiplier = area.width() / 22f, fontSize = fontSize) * 3.8f
         val value = metric.source.format(castToInt = false)
@@ -370,9 +371,38 @@ internal class GaugeDrawer(
 
         val verticalShift = if (statsEnabled) 14 else 1
 
-        val dynamicTopOffset = area.height() * 0.06f
+        val relativeFontSize = calculatedFontSize / area.height()
+        val dynamicTopOffset = area.height() * (0.10f - relativeFontSize * 0.2f)
 
-        val centerY = (area.centerY() + dynamicTopOffset + labelCenterYPadding - verticalShift * calculateScaleRatio(area))
+        var centerY = (area.centerY() + dynamicTopOffset + labelCenterYPadding - verticalShift * calculateScaleRatio(area))
+
+        if (statsEnabled && borderArea != null) {
+            labelPaint.textSize = calculatedFontSize * 0.42f
+            histogramPaint.textSize = calculatedFontSize * 0.4f
+
+            val verticalGap = calculatedFontSize * 0.2f
+            val valueLineH = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
+
+            val labelRect = Rect()
+            labelPaint.getTextBounds("Ty", 0, 2, labelRect) // Sample height
+            val labelLineH = labelRect.height()
+
+            val histsRect = Rect()
+            histogramPaint.getTextBounds("0000", 0, 4, histsRect)
+            val statsLineH = histsRect.height()
+
+            val unitY = centerY - valueLineH
+            val labelY = unitY + labelLineH + verticalGap
+            val statsY = labelY + statsLineH + verticalGap
+
+            val predictedBottom = statsY + (statsLineH * 0.5f) // Add a bit for descenders
+            val bottomLimit = borderArea.bottom - (borderArea.height() * 0.02f) // 2% padding from border
+
+            if (predictedBottom > bottomLimit) {
+                val overflow = predictedBottom - bottomLimit
+                centerY -= overflow
+            }
+        }
 
         val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
         val valueY = centerY - valueHeight
@@ -386,7 +416,7 @@ internal class GaugeDrawer(
             valuePaint.textSize = calculatedFontSize * 0.32f
             valuePaint.color = color(R.color.gray)
             val unitX = valueX + textRect.width() + unitPadding
-            canvas.drawText(unitText, unitX, unitY, valuePaint)
+            canvas.drawText(unitText!!, unitX, unitY, valuePaint)
         }
 
         labelPaint.textSize = calculatedFontSize * 0.42f
