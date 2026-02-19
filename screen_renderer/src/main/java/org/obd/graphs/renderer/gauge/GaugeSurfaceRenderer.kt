@@ -26,8 +26,7 @@ import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.getContext
-import org.obd.graphs.renderer.CoreSurfaceRenderer
+import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.ScreenSettings
@@ -39,7 +38,22 @@ internal class GaugeSurfaceRenderer(
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-) : CoreSurfaceRenderer() {
+) : AbstractSurfaceRenderer(context) {
+    private var lastAreaWidth = 0
+    private var lastAreaHeight = 0
+    private var lastItemCount = 0
+
+    private var cachedColumns = 1
+    private var cachedGaugeWidth = 0f
+    private var cachedRowHeight = 0f
+    private var cachedStartX = 0f
+    private var cachedContentHeight = 0f
+    private var cachedMaxScroll = 0f
+
+    private val cachedBorderRects = mutableMapOf<Int, RectF>()
+    private val cachedCenteredLefts = mutableMapOf<Int, Float>()
+    private val cachedCenteredTops = mutableMapOf<Int, Float>()
+
     private val gaugeDrawer =
         GaugeDrawer(
             settings = settings,
@@ -104,6 +118,9 @@ internal class GaugeSurfaceRenderer(
 
     override fun recycle() {
         gaugeDrawer.recycle()
+        cachedBorderRects.clear()
+        cachedCenteredTops.clear()
+        cachedCenteredLefts.clear()
     }
 
     private fun drawGrid(
@@ -119,90 +136,46 @@ internal class GaugeSurfaceRenderer(
         if (count <= 0) return
 
         val isAA = settings.isAA()
-        val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        val isLandscape = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+        updateCacheIfNeeded(area, count, isAA, isLandscape, topOffset)
+
+        scrollOffset = scrollOffset.coerceIn(0f, cachedMaxScroll)
+        val viewportHeight = area.height().toFloat()
+
+        val startRow =
+            kotlin.math
+                .floor(scrollOffset / cachedRowHeight)
+                .toInt()
+                .coerceAtLeast(0)
+        val endRow =
+            kotlin.math.floor((scrollOffset + viewportHeight - 1f) / cachedRowHeight).toInt().coerceAtMost(
+                kotlin.math.ceil(count / cachedColumns.toDouble()).toInt() - 1,
+            )
+
+        val startIndex = startRow * cachedColumns
+        val endIndex = min(count - 1, (endRow * cachedColumns) + (cachedColumns - 1))
 
         val drawer = if (isAA) gaugeDrawer else mobileDrawer
         val drawBorder = !isAA
         val labelCenterYPadding = if (isAA && count <= 2) 22f else 20f
 
-        val columns = columns(isAA, count)
-
-        val cellWidth = area.width() / columns.toFloat()
-        val availableHeight = area.height().toFloat()
-        val itemMargin = 6f
-
-        var gaugeWidth = gaugeWidth(isAA, cellWidth, count, isLandscape, columns, availableHeight, itemMargin)
-        val rowHeight = rowHeight(isAA, availableHeight, isLandscape, columns, gaugeWidth, itemMargin)
-        val startX = startX(area, isAA, count)
-
-        val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
-        val contentHeight = totalRows * rowHeight
-        val viewportHeight = area.height().toFloat()
-
-        val maxScroll = max(0f, contentHeight - viewportHeight)
-        scrollOffset = if (count <= 1 || isAA) 0f else scrollOffset.coerceIn(0f, maxScroll)
-
-        val startRow =
-            kotlin.math
-                .floor(scrollOffset / rowHeight)
-                .toInt()
-                .coerceAtLeast(0)
-
-        val endRow =
-            kotlin.math
-                .floor((scrollOffset + viewportHeight - 1f) / rowHeight)
-                .toInt()
-                .coerceAtMost(totalRows - 1)
-
-        val startIndex = startRow * columns
-        val endIndex = min(count - 1, (endRow * columns) + (columns - 1))
-
         canvas.save()
         canvas.clipRect(area)
         canvas.translate(0f, -scrollOffset)
 
-        val displayScrollbar = drawScrollbar && contentHeight > viewportHeight
-
         for (i in startIndex..endIndex) {
             val metric = metrics[i]
-            val row = i / columns
-            val col = i % columns
-
-            val aaLeftPadding = if (isAA) col * (gaugeWidth - 10f) else 0f
-            val cellLeft = if (isAA) startX + aaLeftPadding else startX + (col * cellWidth)
-
-            val aaTopOffset = if (isAA && row > 0) -8f else 0f
-            val cellTop = topOffset + (row * rowHeight) + aaTopOffset
-
-            val currentCellWidth = if (columns == 1 && !isAA) area.width().toFloat() else cellWidth
-
-            var centeredLeft = if (isAA) cellLeft else cellLeft + (currentCellWidth - gaugeWidth) / 2f
-            if (displayScrollbar){
-                centeredLeft += scrollBarWidth
-                gaugeWidth -= scrollBarWidth/2
-            }
-            val centeredTop =
-                if (!isAA &&
-                    count == 1 &&
-                    isLandscape
-                ) {
-                    cellTop + (availableHeight - gaugeWidth) / 2f
-                } else if (isAA) {
-                    cellTop
-                } else {
-                    cellTop + itemMargin
-                }
-            val borderRect = RectF(centeredLeft, centeredTop, centeredLeft + gaugeWidth, centeredTop + gaugeWidth)
 
             drawer.drawGauge(
                 canvas = canvas,
-                left = centeredLeft,
-                top = centeredTop,
-                width = gaugeWidth,
+                left = cachedCenteredLefts[i]!!,
+                top = cachedCenteredTops[i]!!,
+                width = cachedGaugeWidth,
                 metric = metric,
                 labelCenterYPadding = labelCenterYPadding,
                 drawBorder = drawBorder,
-                borderArea = borderRect,
+                borderArea = cachedBorderRects[i]!!,
                 drawModule = !isAA,
                 drawMetricRate = drawMetricsRate,
             )
@@ -210,8 +183,8 @@ internal class GaugeSurfaceRenderer(
 
         canvas.restore()
 
-        if (displayScrollbar) {
-            drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
+        if (drawScrollbar && cachedContentHeight > viewportHeight) {
+            drawScrollbar(cachedContentHeight, viewportHeight, cachedMaxScroll, area, canvas)
         }
     }
 
@@ -316,4 +289,65 @@ internal class GaugeSurfaceRenderer(
             maxItems <= 4 -> 0.75f
             else -> 1.02f
         }
+
+    private fun updateCacheIfNeeded(
+        area: Rect,
+        count: Int,
+        isAA: Boolean,
+        isLandscape: Boolean,
+        topOffset: Float,
+    ) {
+        if (lastAreaWidth == area.width() && lastAreaHeight == area.height() && lastItemCount == count) {
+            return
+        }
+
+        lastAreaWidth = area.width()
+        lastAreaHeight = area.height()
+        lastItemCount = count
+
+        cachedColumns = columns(isAA, count)
+        val cellWidth = area.width() / cachedColumns.toFloat()
+        val availableHeight = area.height().toFloat()
+        val itemMargin = 6f
+
+        cachedGaugeWidth = gaugeWidth(isAA, cellWidth, count, isLandscape, cachedColumns, availableHeight, itemMargin)
+        cachedRowHeight = rowHeight(isAA, availableHeight, isLandscape, cachedColumns, cachedGaugeWidth, itemMargin)
+        cachedStartX = startX(area, isAA, count)
+
+        val totalRows = kotlin.math.ceil(count / cachedColumns.toDouble()).toInt()
+        cachedContentHeight = topOffset + (totalRows * cachedRowHeight) + 20f
+        cachedMaxScroll = max(0f, cachedContentHeight - availableHeight)
+
+        cachedBorderRects.clear()
+        cachedCenteredLefts.clear()
+        cachedCenteredTops.clear()
+
+        for (i in 0 until count) {
+            val row = i / cachedColumns
+            val col = i % cachedColumns
+
+            val aaLeftPadding = if (isAA) col * (cachedGaugeWidth - 10f) else 0f
+            val cellLeft = if (isAA) cachedStartX + aaLeftPadding else cachedStartX + (col * cellWidth)
+            val cellTop = topOffset + (row * cachedRowHeight)
+
+            val currentCellWidth = if (cachedColumns == 1 && !isAA) area.width().toFloat() else cellWidth
+
+            val centeredLeft = if (isAA) cellLeft else cellLeft + (currentCellWidth - cachedGaugeWidth) / 2f
+            val centeredTop =
+                if (!isAA &&
+                    count == 1 &&
+                    isLandscape
+                ) {
+                    cellTop + (availableHeight - cachedGaugeWidth) / 2f
+                } else if (isAA) {
+                    cellTop
+                } else {
+                    cellTop + itemMargin
+                }
+
+            cachedCenteredLefts[i] = centeredLeft
+            cachedCenteredTops[i] = centeredTop
+            cachedBorderRects[i] = RectF(centeredLeft, centeredTop, centeredLeft + cachedGaugeWidth, centeredTop + cachedGaugeWidth)
+        }
+    }
 }
