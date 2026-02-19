@@ -105,7 +105,7 @@
     <string name="pref.gauge.font_size">Font size</string>
 
 
-
+    <string name="pref.gauge_display_scrollbar">Display scrollbar</string>
     <string name="pref.gauge_display_refresh_rate">Display refresh rate (PIDs/second)</string>
     <string name="pref.gauge_display_scale">Display OBD2 PIDs/Sensors scale</string>
     <string name="pref.gauge_background_color">Background color</string>

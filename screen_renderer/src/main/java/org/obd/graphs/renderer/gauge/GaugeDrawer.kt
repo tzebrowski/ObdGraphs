@@ -30,7 +30,6 @@ import android.graphics.Shader
 import android.graphics.SweepGradient
 import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
 import org.obd.graphs.getContext
@@ -43,7 +42,6 @@ import org.obd.graphs.round
 import org.obd.graphs.toFloat
 import org.obd.graphs.ui.common.COLOR_WHITE
 import org.obd.graphs.ui.common.color
-import org.obd.metrics.diagnostic.RateType
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.cos

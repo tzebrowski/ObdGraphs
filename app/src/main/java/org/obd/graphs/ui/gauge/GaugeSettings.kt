@@ -39,6 +39,8 @@ class GaugeSettings(
             selectedPIDs = query.getIDs()
         }
 
+    override fun isScrollbarEnabled(): Boolean  = Prefs.isEnabled("pref.gauge_scrollbar_enabled")
+
     override fun isAA(): Boolean = false
 
     override fun getMaxItems(): Int = Prefs.getS("pref.gauge.max_items", "40").toInt()

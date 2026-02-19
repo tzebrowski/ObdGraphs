@@ -681,6 +681,12 @@
 
                     <CheckBoxPreference
                         android:defaultValue="false"
+                        android:key="pref.gauge_scrollbar_enabled"
+                        android:title="@string/pref.gauge_display_scrollbar"
+                        app:singleLineTitle="false" />
+
+                    <CheckBoxPreference
+                        android:defaultValue="false"
                         android:key="pref.gauge_display_command_rate"
                         android:title="@string/pref.gauge_display_refresh_rate"
                         app:singleLineTitle="false" />

@@ -98,13 +98,7 @@ internal class GaugeSurfaceRenderer(
                 top += 10
             }
 
-            drawGrid(
-                canvas = canvas,
-                area = area,
-                metrics = metricsCollector.getMetrics(),
-                topOffset = top,
-                maxItems = settings.getMaxItems(),
-            )
+            drawGrid(canvas = canvas, area = area, topOffset = top)
         }
     }
 
@@ -115,10 +109,11 @@ internal class GaugeSurfaceRenderer(
     private fun drawGrid(
         canvas: Canvas,
         area: Rect,
-        metrics: List<Metric>,
         topOffset: Float,
-        maxItems: Int,
-        drawScrollbar: Boolean = true,
+        metrics: List<Metric> = metricsCollector.getMetrics(),
+        maxItems: Int = settings.getMaxItems(),
+        drawScrollbar: Boolean = settings.isScrollbarEnabled(),
+        drawMetricsRate: Boolean = settings.isFpsCounterEnabled(),
     ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
@@ -136,7 +131,7 @@ internal class GaugeSurfaceRenderer(
         val availableHeight = area.height().toFloat()
         val itemMargin = 6f
 
-        val gaugeWidth = gaugeWidth(isAA, cellWidth, count, isLandscape, columns, availableHeight, itemMargin)
+        var gaugeWidth = gaugeWidth(isAA, cellWidth, count, isLandscape, columns, availableHeight, itemMargin)
         val rowHeight = rowHeight(isAA, availableHeight, isLandscape, columns, gaugeWidth, itemMargin)
         val startX = startX(area, isAA, count)
 
@@ -152,6 +147,7 @@ internal class GaugeSurfaceRenderer(
                 .floor(scrollOffset / rowHeight)
                 .toInt()
                 .coerceAtLeast(0)
+
         val endRow =
             kotlin.math
                 .floor((scrollOffset + viewportHeight - 1f) / rowHeight)
@@ -164,6 +160,8 @@ internal class GaugeSurfaceRenderer(
         canvas.save()
         canvas.clipRect(area)
         canvas.translate(0f, -scrollOffset)
+
+        val displayScrollbar = drawScrollbar && contentHeight > viewportHeight
 
         for (i in startIndex..endIndex) {
             val metric = metrics[i]
@@ -178,7 +176,11 @@ internal class GaugeSurfaceRenderer(
 
             val currentCellWidth = if (columns == 1 && !isAA) area.width().toFloat() else cellWidth
 
-            val centeredLeft = if (isAA) cellLeft else cellLeft + (currentCellWidth - gaugeWidth) / 2f
+            var centeredLeft = if (isAA) cellLeft else cellLeft + (currentCellWidth - gaugeWidth) / 2f
+            if (displayScrollbar){
+                centeredLeft += scrollBarWidth
+                gaugeWidth -= scrollBarWidth/2
+            }
             val centeredTop =
                 if (!isAA &&
                     count == 1 &&
@@ -190,7 +192,6 @@ internal class GaugeSurfaceRenderer(
                 } else {
                     cellTop + itemMargin
                 }
-
             val borderRect = RectF(centeredLeft, centeredTop, centeredLeft + gaugeWidth, centeredTop + gaugeWidth)
 
             drawer.drawGauge(
@@ -203,13 +204,13 @@ internal class GaugeSurfaceRenderer(
                 drawBorder = drawBorder,
                 borderArea = borderRect,
                 drawModule = !isAA,
-                drawMetricRate = settings.isFpsCounterEnabled(),
+                drawMetricRate = drawMetricsRate,
             )
         }
 
         canvas.restore()
 
-        if (drawScrollbar && contentHeight > viewportHeight) {
+        if (displayScrollbar) {
             drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
         }
     }

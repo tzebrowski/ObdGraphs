@@ -124,6 +124,8 @@ interface ScreenSettings {
 
     fun getGiuliaRendererSetting(): GiuliaRendererSettings = GiuliaRendererSettings()
 
+    fun isScrollbarEnabled(): Boolean = false
+
     fun isScaleEnabled(): Boolean = true
 
     fun getHeightPixels(): Int = getContext()!!.resources.displayMetrics.heightPixels
