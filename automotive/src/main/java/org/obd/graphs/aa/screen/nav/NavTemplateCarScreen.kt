@@ -23,31 +23,60 @@ import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.car.app.CarContext
 import androidx.car.app.connection.CarConnection
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.Pane
+import androidx.car.app.model.PaneTemplate
+import androidx.car.app.model.Template
 import androidx.car.app.navigation.NavigationManager
 import androidx.car.app.navigation.NavigationManagerCallback
 import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.car.app.navigation.model.RoutingInfo
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.*
+import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
+import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.aa.CarSettings
-import org.obd.graphs.aa.screen.*
+import org.obd.graphs.aa.screen.CarScreen
+import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_ECO
+import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_NORMAL
+import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_RACE
+import org.obd.graphs.aa.screen.EVENT_DYNAMIC_SELECTOR_MODE_SPORT
+import org.obd.graphs.aa.screen.dynamicSelectorModeEventBroadcaster
+import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.*
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_NO_NETWORK_EVENT
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.bl.datalogger.WorkflowStatus
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
-import org.obd.graphs.bl.extra.*
+import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_IGNITION_OFF
+import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_IGNITION_ON
+import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING
+import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING
+import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_IDLING
+import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_RUNNING
+import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
 import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
+import org.obd.graphs.commons.R
+import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.DynamicSelectorMode
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.Identity
-import org.obd.graphs.commons.R
 
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
 const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 const val CHANGE_SCREEN_EVENT = "car.event.screen.change.event"
+const val GOTO_LAST_VSITED_SCREEN_EVENT = "car.event.goto_screen.event"
+const val START_DATA_LOGGING_EVENT = "car.event.start_data_logging.event"
 
 private const val LOG_TAG = "NavTemplateCarScreen"
 
@@ -55,155 +84,165 @@ internal class NavTemplateCarScreen(
     carContext: CarContext,
     settings: CarSettings,
     metricsCollector: MetricsCollector,
-    fps: Fps
+    fps: Fps,
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
-
     private val surfaceRendererScreen = SurfaceRendererScreen(carContext, settings, metricsCollector, fps, parent = this)
 
-    private var broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+    private var broadcastReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
+                    Log.v(LOG_TAG, "Received ${intent?.action} event")
+                }
 
-            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                Log.v(LOG_TAG, "Received ${intent?.action} event")
-            }
+                when (intent?.action) {
+                    START_DATA_LOGGING_EVENT -> {
+                        Log.i(LOG_TAG, "Auto connection enabled. Auto start data logging.....")
+                        actionStartDataLogging()
+                    }
 
-            when (intent?.action) {
-                CHANGE_SCREEN_EVENT -> {
-                    screenManager.popToRoot()
+                    GOTO_LAST_VSITED_SCREEN_EVENT -> {
+                        Log.i(LOG_TAG, "Loading last visited screen flag is enabled. Loading last visited screen....")
+                        gotoScreen(settings.getLastVisitedScreen())
+                    }
 
-                    screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures())) {
-                        Log.d(LOG_TAG, "Going to the new screen id=$it")
-                        it?.let {
-                            val newScreen: Identity = it as Identity
+                    CHANGE_SCREEN_EVENT -> {
+                        screenManager.popToRoot()
 
-                            if (surfaceRendererScreen.isSurfaceRendererScreen(newScreen)) {
-                                updateLastVisitedScreen(newScreen)
+                        screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures())) {
+                            Log.d(LOG_TAG, "Going to the new screen id=$it")
+                            it?.let {
+                                val newScreen: Identity = it as Identity
+
+                                if (surfaceRendererScreen.isSurfaceRendererScreen(newScreen)) {
+                                    updateLastVisitedScreen(newScreen)
+                                }
+
+                                gotoScreen(newScreen)
                             }
-
-                            gotoScreen(newScreen)
                         }
-                   }
-                }
-
-                EVENT_DYNAMIC_SELECTOR_MODE_NORMAL -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.NORMAL)
-                EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
-                EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
-                EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
-                SCREEN_REFRESH_EVENT -> invalidate()
-
-                SURFACE_BROKEN_EVENT -> {
-                    Log.d(LOG_TAG, "Received event about ")
-                    cancelRenderingTask()
-                    carContext.finishCarApp()
-                }
-
-                MAIN_ACTIVITY_EVENT_DESTROYED -> {
-                    Log.v(LOG_TAG, "Main activity has been destroyed.")
-                    invalidate()
-                }
-
-                MAIN_ACTIVITY_EVENT_PAUSE -> {
-                    Log.v(LOG_TAG, "Main activity is going to the background.")
-                    invalidate()
-                }
-
-                SURFACE_DESTROYED_EVENT -> cancelRenderingTask()
-
-                SURFACE_AREA_CHANGED_EVENT -> {
-                    Log.v(LOG_TAG,"Surface area changed")
-                    try {
-                        invalidate()
-                        submitRenderingTask()
-                    }catch (e: Exception){
-                        Log.w(LOG_TAG,"Failed when received SURFACE_AREA_CHANGED_EVENT event",e)
                     }
-                }
 
-                DATA_LOGGER_CONNECTING_EVENT -> {
-                    surfaceRendererScreen.renderFrame()
-                    try {
-                        metricsCollector.reset()
-                        invalidate()
-                    } catch (e: Exception){
-                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_CONNECTING_EVENT event",e)
-                    }
-                }
+                    EVENT_DYNAMIC_SELECTOR_MODE_NORMAL -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.NORMAL)
+                    EVENT_DYNAMIC_SELECTOR_MODE_RACE -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.RACE)
+                    EVENT_DYNAMIC_SELECTOR_MODE_ECO -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.ECO)
+                    EVENT_DYNAMIC_SELECTOR_MODE_SPORT -> settings.dynamicSelectorChangedEvent(DynamicSelectorMode.SPORT)
+                    SCREEN_REFRESH_EVENT -> invalidate()
 
-                DATA_LOGGER_NO_NETWORK_EVENT -> toast.show(carContext, R.string.main_activity_toast_connection_no_network)
-
-                DATA_LOGGER_ERROR_EVENT -> {
-                    try {
-                        invalidate()
-                        toast.show(carContext, R.string.main_activity_toast_connection_error)
-                    } catch (e: Exception){
-                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ERROR_EVENT event",e)
-                    }
-                }
-
-                DATA_LOGGER_STOPPED_EVENT -> {
-
-                    try {
+                    SURFACE_BROKEN_EVENT -> {
+                        Log.d(LOG_TAG, "Received event about ")
                         cancelRenderingTask()
+                        carContext.finishCarApp()
+                    }
+
+                    MAIN_ACTIVITY_EVENT_DESTROYED -> {
+                        Log.v(LOG_TAG, "Main activity has been destroyed.")
                         invalidate()
+                    }
+
+                    MAIN_ACTIVITY_EVENT_PAUSE -> {
+                        Log.v(LOG_TAG, "Main activity is going to the background.")
+                        invalidate()
+                    }
+
+                    SURFACE_DESTROYED_EVENT -> cancelRenderingTask()
+
+                    SURFACE_AREA_CHANGED_EVENT -> {
+                        Log.v(LOG_TAG, "Surface area changed")
+                        try {
+                            invalidate()
+                            submitRenderingTask()
+                        } catch (e: Exception) {
+                            Log.w(LOG_TAG, "Failed when received SURFACE_AREA_CHANGED_EVENT event", e)
+                        }
+                    }
+
+                    DATA_LOGGER_CONNECTING_EVENT -> {
                         surfaceRendererScreen.renderFrame()
-                        navigationManager().navigationEnded()
-                        toast.show(carContext, R.string.main_activity_toast_connection_stopped)
-
-                    } catch (e: Exception){
-                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_STOPPED_EVENT event",e)
+                        try {
+                            metricsCollector.reset()
+                            invalidate()
+                        } catch (e: Exception) {
+                            Log.w(LOG_TAG, "Failed when received DATA_LOGGER_CONNECTING_EVENT event", e)
+                        }
                     }
-                }
 
-                DATA_LOGGER_CONNECTED_EVENT -> {
-                    try {
-                        renderingThread.start()
-                        fps.start()
-                        navigationManager().navigationStarted()
-                        toast.show(carContext, R.string.main_activity_toast_connection_established)
-                        invalidate()
+                    DATA_LOGGER_NO_NETWORK_EVENT -> toast.show(carContext, R.string.main_activity_toast_connection_no_network)
 
-                    }catch (e: Exception){
-                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
+                    DATA_LOGGER_ERROR_EVENT -> {
+                        try {
+                            invalidate()
+                            toast.show(carContext, R.string.main_activity_toast_connection_error)
+                        } catch (e: Exception) {
+                            Log.w(LOG_TAG, "Failed when received DATA_LOGGER_ERROR_EVENT event", e)
+                        }
                     }
-                }
 
-                DATA_LOGGER_ERROR_CONNECT_EVENT -> {
-                    try {
-                        invalidate()
-                        toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
-                    }catch (e: Exception){
-                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event",e)
+                    DATA_LOGGER_STOPPED_EVENT -> {
+                        try {
+                            cancelRenderingTask()
+                            invalidate()
+                            surfaceRendererScreen.renderFrame()
+                            navigationManager().navigationEnded()
+                            toast.show(carContext, R.string.main_activity_toast_connection_stopped)
+                        } catch (e: Exception) {
+                            Log.w(LOG_TAG, "Failed when received DATA_LOGGER_STOPPED_EVENT event", e)
+                        }
                     }
-                }
 
-                DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
-                    try {
-                        invalidate()
-                        toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
-                    }catch (e: Exception){
-                        Log.w(LOG_TAG,"Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event",e)
+                    DATA_LOGGER_CONNECTED_EVENT -> {
+                        try {
+                            renderingThread.start()
+                            fps.start()
+                            navigationManager().navigationStarted()
+                            toast.show(carContext, R.string.main_activity_toast_connection_established)
+                            invalidate()
+                        } catch (e: Exception) {
+                            Log.w(LOG_TAG, "Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event", e)
+                        }
                     }
-                }
 
-                EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
-                    if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff){
-                        Log.i(LOG_TAG,"Received vehicle status OFF event. Closing the session.")
-                        withDataLogger {
-                            stop()
+                    DATA_LOGGER_ERROR_CONNECT_EVENT -> {
+                        try {
+                            invalidate()
+                            toast.show(carContext, R.string.main_activity_toast_connection_connect_error)
+                        } catch (e: Exception) {
+                            Log.w(LOG_TAG, "Failed when received DATA_LOGGER_ERROR_CONNECT_EVENT event", e)
+                        }
+                    }
+
+                    DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
+                        try {
+                            invalidate()
+                            toast.show(carContext, R.string.main_activity_toast_adapter_is_not_selected)
+                        } catch (e: Exception) {
+                            Log.w(LOG_TAG, "Failed when received DATA_LOGGER_ADAPTER_NOT_SET_EVENT event", e)
+                        }
+                    }
+
+                    EVENT_VEHICLE_STATUS_IGNITION_OFF -> {
+                        if (dataLoggerSettings.instance().vehicleStatusDisconnectWhenOff) {
+                            Log.i(LOG_TAG, "Received vehicle status OFF event. Closing the session.")
+                            withDataLogger {
+                                stop()
+                            }
                         }
                     }
                 }
             }
+
+            private inline fun availableFeatures(): MutableList<FeatureDescription> =
+                mutableListOf<FeatureDescription>().apply {
+                    addAll(surfaceRendererScreen.getFeatureDescription())
+                    addAll(RoutinesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
+                }
         }
 
-        private inline fun availableFeatures(): MutableList<FeatureDescription>  = mutableListOf<FeatureDescription>().apply {
-                addAll(surfaceRendererScreen.getFeatureDescription())
-                addAll(RoutinesScreen(carContext, settings, metricsCollector, fps).getFeatureDescription())
-        }
-    }
-
-    override fun gotoScreen(identity: Identity) {
-        Log.i("renderer_allocation", "Goto screen: $identity")
+    fun gotoScreen(identity: Identity) {
+        Log.d(LOG_TAG, "Goto screen: $identity")
         if (surfaceRendererScreen.isSurfaceRendererScreen(identity)) {
             surfaceRendererScreen.switchSurfaceRenderer(identity)
             invalidate()
@@ -250,6 +289,8 @@ internal class NavTemplateCarScreen(
             it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_ACCELERATING)
             it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING)
             it.addAction(EVENT_VEHICLE_STATUS_IGNITION_ON)
+            it.addAction(GOTO_LAST_VSITED_SCREEN_EVENT)
+            it.addAction(START_DATA_LOGGING_EVENT)
         }
     }
 
@@ -272,7 +313,7 @@ internal class NavTemplateCarScreen(
         super.onPause(owner)
         lifecycle.removeObserver(surfaceRendererScreen.getLifecycleObserver())
         surfaceRendererScreen.onPause(owner)
-   }
+    }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
@@ -284,31 +325,38 @@ internal class NavTemplateCarScreen(
     override fun renderAction() {
         surfaceRendererScreen.renderFrame()
     }
-    override fun onGetTemplate(): Template  = try {
-        settings.initItemsSortOrder()
 
-        if (settings.isConnectionDialogEnabled() && DataLoggerRepository.status() == WorkflowStatus.Connecting) {
-            NavigationTemplate.Builder()
-                .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
-                .setActionStrip(getHorizontalActionStrip())
+    override fun onGetTemplate(): Template =
+        try {
+            settings.initItemsSortOrder()
+
+            if (settings.isConnectionDialogEnabled() && DataLoggerRepository.status() == WorkflowStatus.Connecting) {
+                NavigationTemplate
+                    .Builder()
+                    .setNavigationInfo(RoutingInfo.Builder().setLoading(true).build())
+                    .setActionStrip(getHorizontalActionStrip())
+                    .build()
+            } else {
+                surfaceRendererScreen.onGetTemplate()
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed to build template", e)
+            PaneTemplate
+                .Builder(Pane.Builder().setLoading(true).build())
+                .setHeaderAction(Action.BACK)
+                .setTitle(carContext.getString(org.obd.graphs.aa.R.string.pref_aa_car_error))
                 .build()
-        } else {
-            surfaceRendererScreen.onGetTemplate()
         }
-    } catch (e: Exception) {
-        Log.e(LOG_TAG, "Failed to build template", e)
-        PaneTemplate.Builder(Pane.Builder().setLoading(true).build())
-            .setHeaderAction(Action.BACK)
-            .setTitle(carContext.getString(org.obd.graphs.aa.R.string.pref_aa_car_error))
-            .build()
-    }
 
     init {
-        carContext.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                screenManager.pop()
-            }
-        })
+        carContext.onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    screenManager.pop()
+                }
+            },
+        )
 
         lifecycle.addObserver(this)
 
@@ -331,7 +379,6 @@ internal class NavTemplateCarScreen(
         navigationManager().setNavigationManagerCallback(
             object : NavigationManagerCallback {
                 override fun onStopNavigation() {
-
                     try {
                         renderingThread.stop()
                         surfaceRendererScreen.renderFrame()
@@ -341,9 +388,8 @@ internal class NavTemplateCarScreen(
                         Log.e(LOG_TAG, "Failed to stop DL threads", e)
                     }
                 }
-            })
-
-        registerConnectionStateReceiver()
+            },
+        )
     }
 
     private fun navigationManager() = carContext.getCarService(NavigationManager::class.java)

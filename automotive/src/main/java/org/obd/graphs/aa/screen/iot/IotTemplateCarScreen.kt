@@ -319,6 +319,5 @@ internal class IotTemplateCarScreen(
         }
         DataLoggerRepository.observe(dynamicSelectorModeEventBroadcaster)
         submitRenderingTask()
-        registerConnectionStateReceiver()
     }
 }

@@ -20,16 +20,20 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.car.app.Screen
 import androidx.car.app.Session
+import androidx.car.app.connection.CarConnection
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.CarScreenFactory
+import org.obd.graphs.aa.screen.nav.GOTO_LAST_VSITED_SCREEN_EVENT
+import org.obd.graphs.aa.screen.nav.START_DATA_LOGGING_EVENT
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.preferences.initPrefs
 import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setCarContext
 
 internal class CarSession : Session() {
-
-    private val settings by lazy {  CarSettings(carContext) }
+    private val settings by lazy { CarSettings(carContext) }
     private val metricsCollector = MetricsCollector.instance()
     private val fps: Fps = Fps()
     private lateinit var screen: CarScreen
@@ -38,11 +42,26 @@ internal class CarSession : Session() {
         setCarContext(carContext)
         initPrefs(carContext)
         screen = CarScreenFactory.instance(carContext, settings, metricsCollector, fps)
+        CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
         return screen
     }
 
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
         super.onCarConfigurationChanged(newConfiguration)
         screen.onCarConfigurationChanged()
+    }
+
+    private fun onConnectionStateUpdated(connectionState: Int) {
+        when (connectionState) {
+            CarConnection.CONNECTION_TYPE_PROJECTION -> {
+                if (settings.isLoadLastVisitedScreenEnabled()) {
+                    sendBroadcastEvent(GOTO_LAST_VSITED_SCREEN_EVENT)
+                }
+
+                if (settings.isAutomaticConnectEnabled() && !DataLoggerRepository.isRunning()) {
+                    sendBroadcastEvent(START_DATA_LOGGING_EVENT)
+                }
+            }
+        }
     }
 }

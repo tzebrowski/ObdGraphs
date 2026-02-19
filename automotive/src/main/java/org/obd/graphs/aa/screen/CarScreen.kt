@@ -19,7 +19,6 @@ package org.obd.graphs.aa.screen
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
-import androidx.car.app.connection.CarConnection
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarColor
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -56,8 +55,6 @@ internal abstract class CarScreen(
 
     abstract fun actionStartDataLogging()
 
-    protected open fun gotoScreen(identity: Identity) {}
-
     protected open fun updateLastVisitedScreen(identity: Identity) {
         settings.setLastVisitedScreen(identity)
     }
@@ -76,10 +73,6 @@ internal abstract class CarScreen(
                 settings.getSurfaceFrameRate()
             },
         )
-
-    protected fun registerConnectionStateReceiver() {
-        CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
-    }
 
     protected fun actionStopDataLogging() {
         Log.i(LOG_TAG, "Stopping data logging process")
@@ -165,22 +158,6 @@ internal abstract class CarScreen(
         if (!renderingThread.isRunning() && DataLoggerRepository.status() == WorkflowStatus.Connected) {
             renderingThread.start()
             fps.start()
-        }
-    }
-
-    private fun onConnectionStateUpdated(connectionState: Int) {
-        when (connectionState) {
-            CarConnection.CONNECTION_TYPE_PROJECTION -> {
-                if (settings.isLoadLastVisitedScreenEnabled()) {
-                    Log.i(LOG_TAG, "Load last visited screen flag is enabled. Loading last visited screen....")
-                    gotoScreen(settings.getLastVisitedScreen())
-                }
-
-                if (settings.isAutomaticConnectEnabled() && !DataLoggerRepository.isRunning()) {
-                    Log.i(LOG_TAG, "Auto connection enabled. Auto start data logging.....")
-                    actionStartDataLogging()
-                }
-            }
         }
     }
 }
