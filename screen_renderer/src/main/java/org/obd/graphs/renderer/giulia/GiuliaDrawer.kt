@@ -26,7 +26,7 @@ import org.obd.graphs.format
 import org.obd.graphs.isNumber
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.toFloat
 
 private const val FOOTER_SIZE_RATIO = 1.3f

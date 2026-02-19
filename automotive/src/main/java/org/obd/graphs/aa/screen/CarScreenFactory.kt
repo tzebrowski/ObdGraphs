@@ -22,7 +22,7 @@ import org.obd.graphs.aa.ScreenTemplateType
 import org.obd.graphs.aa.screen.iot.IotTemplateCarScreen
 import org.obd.graphs.aa.screen.nav.NavTemplateCarScreen
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.api.Fps
 
 internal interface CarScreenFactory {
 

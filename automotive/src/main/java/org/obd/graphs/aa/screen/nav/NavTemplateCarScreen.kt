@@ -39,9 +39,9 @@ import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.*
 import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
-import org.obd.graphs.renderer.DynamicSelectorMode
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.Identity
+import org.obd.graphs.renderer.api.DynamicSelectorMode
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.commons.R
 
 const val SURFACE_DESTROYED_EVENT = "car.event.surface.destroyed"
@@ -74,7 +74,7 @@ internal class NavTemplateCarScreen(
                     screenManager.pushForResult(AvailableFeaturesScreen(carContext, availableFeatures())) {
                         Log.d(LOG_TAG, "Going to the new screen id=$it")
                         it?.let {
-                            val newScreen:Identity = it as Identity
+                            val newScreen: Identity = it as Identity
 
                             if (surfaceRendererScreen.isSurfaceRendererScreen(newScreen)) {
                                 updateLastVisitedScreen(newScreen)

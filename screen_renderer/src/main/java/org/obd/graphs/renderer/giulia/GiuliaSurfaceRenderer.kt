@@ -27,9 +27,9 @@ import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
-import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.ScreenSettings
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round

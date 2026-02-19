@@ -18,14 +18,14 @@ package org.obd.graphs.ui.drag_racing
 
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.DragRacingScreenSettings
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.DragRacingScreenSettings
+import org.obd.graphs.renderer.api.ScreenSettings
 
 class DragRacingSettings: ScreenSettings {
 
     private val dragRacingScreenSettings = DragRacingScreenSettings()
 
-    override fun getDragRacingScreenSettings(): DragRacingScreenSettings  = dragRacingScreenSettings.apply {
+    override fun getDragRacingScreenSettings(): DragRacingScreenSettings = dragRacingScreenSettings.apply {
         metricsFrequencyReadEnabled = Prefs.getBoolean("pref.drag_racing.metrics_reading.display_frequency.enabled", true)
         vehicleSpeedDisplayDebugEnabled = Prefs.getBoolean("pref.drag_racing.debug.vehicle_speed_measurement", false)
         displayMetricsExtendedEnabled= Prefs.getBoolean("pref.profile.2_0_GME_extension.enabled", false)

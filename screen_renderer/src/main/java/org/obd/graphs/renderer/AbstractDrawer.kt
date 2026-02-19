@@ -35,6 +35,9 @@ import org.obd.graphs.commons.R
 import org.obd.graphs.format
 import org.obd.graphs.mapRange
 import org.obd.graphs.profile.profile
+import org.obd.graphs.renderer.api.ColorTheme
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.ScreenSettings
 import kotlin.math.max
 
 private const val STATUS_KEY_FONT_SIZE = 12f

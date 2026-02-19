@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer
+package org.obd.graphs.renderer.api
 
 import android.graphics.Color
 import org.obd.graphs.ui.common.COLOR_CARDINAL

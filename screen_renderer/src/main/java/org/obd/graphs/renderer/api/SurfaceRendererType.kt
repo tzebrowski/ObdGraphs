@@ -14,44 +14,21 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer
+package org.obd.graphs.renderer.api
 
-import org.obd.graphs.round
-import java.util.*
+enum class SurfaceRendererType(
+    private val code: Int,
+) : Identity {
+    GIULIA(0),
+    GAUGE(4),
+    DRAG_RACING(1),
+    TRIP_INFO(3),
+    PERFORMANCE(5),
+    ;
 
+    override fun id(): Int = this.code
 
-private const val MAX_SIZE = 100
-private const val NANOS = 1000000000.0
-
-class Fps {
-    var times: LinkedList<Long> = LinkedList<Long>()
-
-    fun start() {
-        times.clear()
-        times.add(System.nanoTime())
-    }
-
-    fun stop() {
-        times.clear()
-    }
-
-    fun get(): Double {
-
-        if (times.size == 0) {
-            times.clear()
-            return 0.0
-        }
-
-        val lastTime = System.nanoTime()
-        val difference = (lastTime - times.first) / NANOS
-
-        times.add(lastTime)
-
-        val size = times.size
-        if (size > MAX_SIZE) {
-            times.removeFirst()
-        }
-
-        return if (difference > 0) (times.size / difference).round(3) else 0.0
+    companion object {
+        fun fromInt(value: Int) = SurfaceRendererType.values().first { it.code == value }
     }
 }

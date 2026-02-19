@@ -46,9 +46,9 @@ import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.Identity
-import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.Identity
+import org.obd.graphs.renderer.api.SurfaceRendererType
 
 const val GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_1.event.changed"
 const val GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_2.event.changed"

@@ -25,8 +25,10 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.query.*
 import org.obd.graphs.renderer.*
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.ScreenSettings
 
-private const val LOG_TAG = "TripInfoSurfaceRenderer"
+ private const val LOG_TAG = "TripInfoSurfaceRenderer"
 
 internal class TripInfoSurfaceRenderer(
     context: Context,

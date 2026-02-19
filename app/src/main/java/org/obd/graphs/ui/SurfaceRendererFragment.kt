@@ -45,10 +45,10 @@ import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.SurfaceRenderer
-import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.ScreenSettings
+import org.obd.graphs.renderer.api.SurfaceRenderer
+import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
 

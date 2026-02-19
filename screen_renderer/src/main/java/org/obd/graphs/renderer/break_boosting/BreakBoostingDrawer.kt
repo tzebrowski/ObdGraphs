@@ -24,9 +24,9 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.renderer.AbstractDrawer
-import org.obd.graphs.renderer.BreakBoostingSettings
-import org.obd.graphs.renderer.GaugeProgressBarType
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.BreakBoostingSettings
+import org.obd.graphs.renderer.api.GaugeProgressBarType
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 
@@ -54,7 +54,7 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
         drawGaugesBreakBoosting(area, canvas, pTop - 30, gas = gas, torque = torque)
     }
 
-    fun isBreakBoosting(breakBoostingSettings: BreakBoostingSettings, gas: Metric?,torque: Metric?) =
+    fun isBreakBoosting(breakBoostingSettings: BreakBoostingSettings, gas: Metric?, torque: Metric?) =
         breakBoostingSettings.viewEnabled &&
         DragRacingService.registry.getResult().readyToRace &&
                 settings.getDragRacingScreenSettings().displayMetricsEnabled &&

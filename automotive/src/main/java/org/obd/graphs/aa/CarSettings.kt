@@ -25,7 +25,18 @@ import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.preferences.*
-import org.obd.graphs.renderer.*
+import org.obd.graphs.renderer.api.ColorTheme
+import org.obd.graphs.renderer.api.DragRacingScreenSettings
+import org.obd.graphs.renderer.api.DynamicSelectorMode
+import org.obd.graphs.renderer.api.GaugeProgressBarType
+import org.obd.graphs.renderer.api.GaugeRendererSettings
+import org.obd.graphs.renderer.api.GiuliaRendererSettings
+import org.obd.graphs.renderer.api.Identity
+import org.obd.graphs.renderer.api.PerformanceScreenSettings
+import org.obd.graphs.renderer.api.RoutinesScreenSettings
+import org.obd.graphs.renderer.api.ScreenSettings
+import org.obd.graphs.renderer.api.SurfaceRendererType
+import org.obd.graphs.renderer.api.TripInfoScreenSettings
 import org.obd.graphs.runAsync
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_ECO
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_NORMAL
@@ -124,7 +135,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     }
 
 
-    override fun getRoutinesScreenSettings(): RoutinesScreenSettings  = routinesScreenSettings.apply {
+    override fun getRoutinesScreenSettings(): RoutinesScreenSettings = routinesScreenSettings.apply {
         viewEnabled = Prefs.getBoolean("pref.aa.routines.enabled", true)
     }
 

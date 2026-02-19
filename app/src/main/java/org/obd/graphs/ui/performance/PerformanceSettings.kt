@@ -18,8 +18,8 @@ package org.obd.graphs.ui.performance
 
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.PerformanceScreenSettings
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.PerformanceScreenSettings
+import org.obd.graphs.renderer.api.ScreenSettings
 
 class PerformanceSettings : ScreenSettings {
     private val settings = PerformanceScreenSettings()

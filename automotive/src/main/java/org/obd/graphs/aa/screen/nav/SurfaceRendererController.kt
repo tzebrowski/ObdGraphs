@@ -31,9 +31,9 @@ import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.SurfaceRenderer
-import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.SurfaceRenderer
+import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"

@@ -24,7 +24,7 @@ import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.CarScreenFactory
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.preferences.initPrefs
-import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.setCarContext
 
 internal class CarSession : Session() {

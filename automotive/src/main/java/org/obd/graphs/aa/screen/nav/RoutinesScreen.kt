@@ -59,8 +59,8 @@ import org.obd.graphs.bl.datalogger.WorkflowStatus
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.Identity
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.Identity
 import org.obd.metrics.pid.PIDsGroup
 import org.obd.metrics.pid.PidDefinition
 

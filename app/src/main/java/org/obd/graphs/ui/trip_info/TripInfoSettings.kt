@@ -18,8 +18,8 @@ package org.obd.graphs.ui.trip_info
 
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.TripInfoScreenSettings
+import org.obd.graphs.renderer.api.ScreenSettings
+import org.obd.graphs.renderer.api.TripInfoScreenSettings
 
  class TripInfoSettings: ScreenSettings {
 

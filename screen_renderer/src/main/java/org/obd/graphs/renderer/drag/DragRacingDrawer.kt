@@ -31,8 +31,8 @@ import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
-import org.obd.graphs.renderer.GaugeProgressBarType
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.GaugeProgressBarType
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer

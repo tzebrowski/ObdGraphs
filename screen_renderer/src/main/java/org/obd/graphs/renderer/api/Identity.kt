@@ -14,23 +14,8 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.trip_info
+package org.obd.graphs.renderer.api
 
-import org.obd.graphs.R
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.renderer.api.ScreenSettings
-import org.obd.graphs.renderer.api.SurfaceRendererType
-import org.obd.graphs.ui.SurfaceRendererFragment
-
-internal class TripInfoRendererFragment : SurfaceRendererFragment(
-    R.layout.fragment_trip_info,
-    SurfaceRendererType.TRIP_INFO
-) {
-
-    private val query = Query.instance(QueryStrategyType.TRIP_INFO_QUERY)
-    private val settings = TripInfoSettings()
-
-    override fun query(): Query = query
-    override fun getScreenSettings(): ScreenSettings = settings
+interface Identity {
+    fun id(): Int
 }

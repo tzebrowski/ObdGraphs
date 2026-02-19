@@ -34,8 +34,8 @@ import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.WorkflowStatus
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.Identity
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.sendBroadcastEvent
 
 const val GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.pids.profile_1.event.changed"

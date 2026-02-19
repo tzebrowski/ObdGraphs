@@ -26,9 +26,9 @@ import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
-import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 
 private const val LOG_TAG = "PerformanceSurfaceRenderer"
