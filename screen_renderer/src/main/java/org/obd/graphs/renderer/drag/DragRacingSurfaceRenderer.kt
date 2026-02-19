@@ -20,20 +20,15 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.drag.DragRacingService
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.ScreenSettings
-
-private const val LOG_TAG = "DragRacingSurfaceRenderer"
 
 internal data class DragRaceDetails(
     var ambientTemp: Metric? = null,
@@ -53,11 +48,6 @@ internal class DragRacingSurfaceRenderer(
     private val dragRaceDetails = DragRaceDetails()
     private val dragRacingDrawer = DragRacingDrawer(context, settings)
 
-    override fun applyMetricsFilter(query: Query) {
-        metricsCollector.applyFilter(
-            enabled = query.getIDs(),
-        )
-    }
 
     override fun onDraw(
         canvas: Canvas,
@@ -126,8 +116,4 @@ internal class DragRacingSurfaceRenderer(
         dragRacingDrawer.recycle()
     }
 
-    init {
-        Log.i(LOG_TAG, "Init Drag Racing Surface Renderer")
-        applyMetricsFilter(Query.instance(QueryStrategyType.DRAG_RACING_QUERY))
-    }
 }

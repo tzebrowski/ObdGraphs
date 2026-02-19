@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,12 +23,10 @@ import android.graphics.Rect
 import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerSettings
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
-import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
+import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import kotlin.math.max
 import kotlin.math.min
@@ -49,17 +47,6 @@ internal class GiuliaSurfaceRenderer(
     private val fps: Fps
 ) : AbstractSurfaceRenderer(context) {
     private val giuliaDrawer = GiuliaDrawer(context, settings)
-
-    override fun applyMetricsFilter(query: Query) {
-        val giuliaSettings = settings.getGiuliaRendererSetting()
-        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
-            metricsCollector.applyFilter(enabled = giuliaSettings.selectedPIDs, order = giuliaSettings.getPIDsSortOrder())
-        } else {
-            val ids = query.getIDs()
-            val intersection = giuliaSettings.selectedPIDs.filter { ids.contains(it) }.toSet()
-            metricsCollector.applyFilter(enabled = intersection, order = giuliaSettings.getPIDsSortOrder())
-        }
-    }
 
     override fun onDraw(
         canvas: Canvas,
@@ -96,7 +83,7 @@ internal class GiuliaSurfaceRenderer(
                 Log.v(
                     LOG_TAG,
                     "metricsCount=${metricsCollector.getMetrics().size}," +
-                        "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize",
+                            "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize",
                 )
             }
 

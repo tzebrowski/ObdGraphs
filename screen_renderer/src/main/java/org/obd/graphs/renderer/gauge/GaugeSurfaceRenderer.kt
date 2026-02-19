@@ -24,8 +24,6 @@ import android.graphics.Rect
 import android.graphics.RectF
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerSettings
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.MARGIN_TOP
@@ -73,16 +71,6 @@ internal class GaugeSurfaceRenderer(
                 ),
         )
 
-    override fun applyMetricsFilter(query: Query) {
-        val gaugeSettings = settings.getGaugeRendererSetting()
-        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
-            metricsCollector.applyFilter(enabled = gaugeSettings.selectedPIDs, order = gaugeSettings.getPIDsSortOrder())
-        } else {
-            val ids = query.getIDs()
-            val intersection = gaugeSettings.selectedPIDs.filter { ids.contains(it) }.toSet()
-            metricsCollector.applyFilter(enabled = intersection, order = gaugeSettings.getPIDsSortOrder())
-        }
-    }
 
     override fun getTop(area: Rect): Float =
         if (settings.isStatusPanelEnabled()) {

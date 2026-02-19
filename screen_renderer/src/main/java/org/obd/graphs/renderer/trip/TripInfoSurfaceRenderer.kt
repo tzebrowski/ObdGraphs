@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,15 +20,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.query.*
-import org.obd.graphs.renderer.*
+import org.obd.graphs.renderer.AbstractSurfaceRenderer
+import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 
- private const val LOG_TAG = "TripInfoSurfaceRenderer"
 
 internal class TripInfoSurfaceRenderer(
     context: Context,
@@ -41,13 +39,7 @@ internal class TripInfoSurfaceRenderer(
 
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
 
-    override fun applyMetricsFilter(query: Query) {
-        Log.d(LOG_TAG,"Query strategy ${query.getStrategy()}, selected ids: ${query.getIDs()}")
 
-        metricsCollector.applyFilter(
-            enabled = query.getIDs()
-        )
-    }
     override fun onDraw(canvas: Canvas, drawArea: Rect?) {
 
         drawArea?.let {
@@ -96,13 +88,7 @@ internal class TripInfoSurfaceRenderer(
         }
     }
 
-
     override fun recycle() {
         tripInfoDrawer.recycle()
-    }
-
-    init {
-        Log.i(LOG_TAG,"Init Trip Info Surface renderer")
-        applyMetricsFilter(Query.instance(QueryStrategyType.TRIP_INFO_QUERY))
     }
 }

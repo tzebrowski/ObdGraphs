@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -30,14 +30,15 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.SurfaceRenderer
 import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_KEY = "SurfaceController"
-
 
 class SurfaceRendererController(
     private val carContext: CarContext,
@@ -47,8 +48,8 @@ class SurfaceRendererController(
     private val query: Query
 ) : DefaultLifecycleObserver {
 
-    private var surfaceRenderer: SurfaceRenderer =
-        SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, SurfaceRendererType.GIULIA)
+    private var surfaceRenderer: SurfaceRenderer? = allocateSurfaceRenderer(SurfaceRendererType.GIULIA)
+
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -65,7 +66,6 @@ class SurfaceRendererController(
                     Log.i(LOG_KEY, "Setting surface Frame Rate to=$frameRate")
                     surface?.setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT)
                 }
-                surfaceRenderer.applyMetricsFilter(query)
             }
         }
 
@@ -100,48 +100,90 @@ class SurfaceRendererController(
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         Log.i(LOG_KEY, "SurfaceRenderer created")
-        surface?.release()
-        surface = null
         try {
             carContext.getCarService(AppManager::class.java).setSurfaceCallback(surfaceCallback)
-        } catch (e: androidx.car.app.HostException){
-            Log.w(LOG_KEY, "Failed to set surface callback",e)
+        } catch (e: androidx.car.app.HostException) {
+            Log.w(LOG_KEY, "Failed to set surface callback", e)
         }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
-        Log.d(LOG_KEY, "SurfaceRenderer destroyed (onDestroy) ")
-        surface?.release()
-        surface = null
+        Log.d(LOG_KEY, "SurfaceRenderer destroyed (onDestroy)")
+        synchronized(this) {
+            surface?.release()
+            surface = null
+        }
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        Log.d(LOG_KEY, "SurfaceRenderer destroyed (onPause)")
-        surface?.release()
-        surface = null
+        Log.d(LOG_KEY, "SurfaceRenderer paused (onPause)")
     }
 
+    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType): SurfaceRenderer? {
+        Log.e(LOG_KEY, "Allocating Surface renderer, type=$surfaceRendererType")
 
-    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType) {
-        Log.i(LOG_KEY, "Allocating Surface renderer, type=$surfaceRendererType")
-        surfaceRenderer.recycle()
-        surfaceRenderer  =
-            SurfaceRenderer.allocate(carContext, settings, metricsCollector, fps, surfaceRendererType = surfaceRendererType)
-        surfaceRenderer.applyMetricsFilter(query)
+        surfaceRenderer?.recycle()
+
+        surfaceRenderer = SurfaceRenderer.allocate(
+            carContext,
+            settings,
+            metricsCollector,
+            fps,
+            surfaceRendererType = surfaceRendererType
+        )
+
+        when (surfaceRendererType) {
+            SurfaceRendererType.GIULIA -> {
+                val giuliaSettings = settings.getGiuliaRendererSetting()
+                applySettingsFilter(giuliaSettings.selectedPIDs, giuliaSettings.getPIDsSortOrder())
+            }
+
+            SurfaceRendererType.GAUGE -> {
+                val gaugeSettings = settings.getGaugeRendererSetting()
+                applySettingsFilter(gaugeSettings.selectedPIDs, gaugeSettings.getPIDsSortOrder())
+            }
+
+            SurfaceRendererType.DRAG_RACING ->
+                metricsCollector.applyFilter(
+                    enabled = Query.instance(QueryStrategyType.DRAG_RACING_QUERY).getIDs(),
+                )
+
+            SurfaceRendererType.PERFORMANCE ->
+                metricsCollector.applyFilter(
+                    enabled = Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getIDs(),
+                )
+
+            SurfaceRendererType.TRIP_INFO ->
+                metricsCollector.applyFilter(
+                    enabled = Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getIDs(),
+                )
+        }
+
         renderFrame()
+        return surfaceRenderer
+    }
+
+    private fun applySettingsFilter(selectedPIDs: Set<Long>, sortOrder: Map<Long, Int>?) {
+        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
+            metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder)
+        } else {
+            val intersection = selectedPIDs intersect query.getIDs()
+            metricsCollector.applyFilter(enabled = intersection, order = sortOrder)
+        }
     }
 
     @MainThread
     fun renderFrame() {
+        synchronized(this) {
             surface?.let {
                 var canvas: Canvas? = null
                 if (it.isValid && !surfaceLocked) {
                     try {
                         canvas = it.lockHardwareCanvas()
                         surfaceLocked = true
-                        surfaceRenderer.onDraw(
+                        surfaceRenderer?.onDraw(
                             canvas = canvas,
                             drawArea = visibleArea
                         )
@@ -164,6 +206,6 @@ class SurfaceRendererController(
                     }
                 }
             }
-
+        }
     }
 }

@@ -203,6 +203,7 @@ internal class NavTemplateCarScreen(
     }
 
     override fun gotoScreen(identity: Identity) {
+        Log.i("renderer_allocation", "Goto screen: $identity")
         if (surfaceRendererScreen.isSurfaceRendererScreen(identity)) {
             surfaceRendererScreen.switchSurfaceRenderer(identity)
             invalidate()

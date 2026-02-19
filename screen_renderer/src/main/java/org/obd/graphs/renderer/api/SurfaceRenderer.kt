@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.performance.PerformanceSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
@@ -29,7 +28,6 @@ import org.obd.graphs.renderer.trip.TripInfoSurfaceRenderer
 
 
  interface SurfaceRenderer {
-    fun applyMetricsFilter(query: Query)
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
     fun updateScrollOffset(scrollOffset: Float)
