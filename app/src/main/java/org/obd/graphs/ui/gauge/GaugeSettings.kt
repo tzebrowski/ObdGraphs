@@ -19,6 +19,7 @@ package org.obd.graphs.ui.gauge
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.renderer.GaugeRendererSettings
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
@@ -48,7 +49,7 @@ class GaugeSettings(
 
     override fun isStatisticsEnabled(): Boolean = true
 
-    override fun isFpsCounterEnabled(): Boolean = true
+    override fun isFpsCounterEnabled(): Boolean = Prefs.isEnabled("pref.gauge_display_command_rate")
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.gauge.fps", "5").toInt()
 

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -52,11 +52,11 @@ internal class GaugeSurfaceRenderer(
             settings = settings,
             context = context,
             drawerSettings =
-            DrawerSettings(
-                startAngle = 200f,
-                sweepAngle = 200f,
-                gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType,
-            ),
+                DrawerSettings(
+                    startAngle = 200f,
+                    sweepAngle = 200f,
+                    gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType,
+                ),
         )
 
     override fun applyMetricsFilter(query: Query) {
@@ -103,7 +103,7 @@ internal class GaugeSurfaceRenderer(
                 area = area,
                 metrics = metricsCollector.getMetrics(),
                 topOffset = top,
-                maxItems = settings.getMaxItems()
+                maxItems = settings.getMaxItems(),
             )
         }
     }
@@ -118,7 +118,7 @@ internal class GaugeSurfaceRenderer(
         metrics: List<Metric>,
         topOffset: Float,
         maxItems: Int,
-        drawScrollbar: Boolean = true
+        drawScrollbar: Boolean = true,
     ) {
         val count = min(metrics.size, maxItems)
         if (count <= 0) return
@@ -147,8 +147,16 @@ internal class GaugeSurfaceRenderer(
         val maxScroll = max(0f, contentHeight - viewportHeight)
         scrollOffset = if (count <= 1 || isAA) 0f else scrollOffset.coerceIn(0f, maxScroll)
 
-        val startRow = kotlin.math.floor(scrollOffset / rowHeight).toInt().coerceAtLeast(0)
-        val endRow = kotlin.math.floor((scrollOffset + viewportHeight - 1f) / rowHeight).toInt().coerceAtMost(totalRows - 1)
+        val startRow =
+            kotlin.math
+                .floor(scrollOffset / rowHeight)
+                .toInt()
+                .coerceAtLeast(0)
+        val endRow =
+            kotlin.math
+                .floor((scrollOffset + viewportHeight - 1f) / rowHeight)
+                .toInt()
+                .coerceAtMost(totalRows - 1)
 
         val startIndex = startRow * columns
         val endIndex = min(count - 1, (endRow * columns) + (columns - 1))
@@ -172,7 +180,16 @@ internal class GaugeSurfaceRenderer(
 
             val centeredLeft = if (isAA) cellLeft else cellLeft + (currentCellWidth - gaugeWidth) / 2f
             val centeredTop =
-                if (!isAA && count == 1 && isLandscape) cellTop + (availableHeight - gaugeWidth) / 2f else if (isAA) cellTop else cellTop + itemMargin
+                if (!isAA &&
+                    count == 1 &&
+                    isLandscape
+                ) {
+                    cellTop + (availableHeight - gaugeWidth) / 2f
+                } else if (isAA) {
+                    cellTop
+                } else {
+                    cellTop + itemMargin
+                }
 
             val borderRect = RectF(centeredLeft, centeredTop, centeredLeft + gaugeWidth, centeredTop + gaugeWidth)
 
@@ -185,7 +202,8 @@ internal class GaugeSurfaceRenderer(
                 labelCenterYPadding = labelCenterYPadding,
                 drawBorder = drawBorder,
                 borderArea = borderRect,
-                drawModule = !isAA
+                drawModule = !isAA,
+                drawMetricRate = settings.isFpsCounterEnabled(),
             )
         }
 
@@ -224,27 +242,38 @@ internal class GaugeSurfaceRenderer(
         canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
     }
 
-    private fun columns(isAA: Boolean, count: Int): Int {
-        val columns = if (isAA) {
-            when (count) {
-                1 -> 1
-                2 -> 2
-                else -> max(count / 2, count - count / 2)
+    private fun columns(
+        isAA: Boolean,
+        count: Int,
+    ): Int {
+        val columns =
+            if (isAA) {
+                when (count) {
+                    1 -> 1
+                    2 -> 2
+                    else -> max(count / 2, count - count / 2)
+                }
+            } else {
+                if (count == 1) 1 else settings.getMaxColumns()
             }
-        } else {
-            if (count == 1) 1 else settings.getMaxColumns()
-        }
         return columns
     }
 
-    private fun startX(area: Rect, isAA: Boolean, count: Int): Float =
-        area.left + if (isAA) {
-            when (count) {
-                1 -> area.width() / 6f
-                3, 4 -> area.width() / 8f
-                else -> 5f
+    private fun startX(
+        area: Rect,
+        isAA: Boolean,
+        count: Int,
+    ): Float =
+        area.left +
+            if (isAA) {
+                when (count) {
+                    1 -> area.width() / 6f
+                    3, 4 -> area.width() / 8f
+                    else -> 5f
+                }
+            } else {
+                0f
             }
-        } else 0f
 
     private fun rowHeight(
         isAA: Boolean,
@@ -252,7 +281,7 @@ internal class GaugeSurfaceRenderer(
         isLandscape: Boolean,
         columns: Int,
         gaugeWidth: Float,
-        itemMargin: Float
+        itemMargin: Float,
     ): Float =
         if (isAA) {
             availableHeight / 2f
@@ -269,7 +298,7 @@ internal class GaugeSurfaceRenderer(
         isLandscape: Boolean,
         columns: Int,
         availableHeight: Float,
-        itemMargin: Float
+        itemMargin: Float,
     ): Float =
         if (isAA) {
             cellWidth * widthScaleRatio(count)

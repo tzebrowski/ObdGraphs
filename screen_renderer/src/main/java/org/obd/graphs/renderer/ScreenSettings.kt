@@ -149,7 +149,7 @@ interface ScreenSettings {
 
     fun getMaxColumns(): Int = 1
     fun isStatisticsEnabled(): Boolean
-    fun isFpsCounterEnabled(): Boolean
+    fun isFpsCounterEnabled(): Boolean = false
     fun getSurfaceFrameRate(): Int
 
     fun isStatusPanelEnabled(): Boolean = true

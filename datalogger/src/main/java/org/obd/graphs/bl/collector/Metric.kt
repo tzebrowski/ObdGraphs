@@ -16,8 +16,10 @@
  */
 package org.obd.graphs.bl.collector
 
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.modules
 import org.obd.metrics.api.model.ObdMetric
+import org.obd.metrics.diagnostic.RateType
 import org.obd.metrics.pid.PidDefinition
 
 data class Metric(
@@ -32,6 +34,11 @@ data class Metric(
     var inUpperAlertRisedHist: Boolean = false,
     val pid: PidDefinition = source.command.pid,
     val moduleName: String? = modules.getDefaultModules()[source.command.pid.resourceFile]) {
+
+    fun rate() =  DataLoggerRepository
+        .getDiagnostics()
+        .rate()
+        .findBy(RateType.MEAN, pid)
 
     companion object {
         fun newInstance(source: ObdMetric, value: Any, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =

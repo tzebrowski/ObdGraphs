@@ -30,6 +30,7 @@ import android.graphics.Shader
 import android.graphics.SweepGradient
 import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
 import org.obd.graphs.getContext
@@ -42,6 +43,7 @@ import org.obd.graphs.round
 import org.obd.graphs.toFloat
 import org.obd.graphs.ui.common.COLOR_WHITE
 import org.obd.graphs.ui.common.color
+import org.obd.metrics.diagnostic.RateType
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.cos
@@ -149,7 +151,8 @@ internal class GaugeDrawer(
         statsEnabled: Boolean = settings.isStatisticsEnabled(),
         drawBorder: Boolean = false,
         borderArea: RectF? = null,
-        drawModule: Boolean = false
+        drawModule: Boolean = false,
+        drawMetricRate: Boolean = false
     ) {
         paint.shader = null
 
@@ -166,6 +169,10 @@ internal class GaugeDrawer(
             rect.top - strokeWidth,
             rect.right + strokeWidth,
         ] = rect.bottom + strokeWidth
+
+        if (drawMetricRate){
+            drawMetricRate(metric, rect, fontSize, width, left, top, canvas)
+        }
 
         if (drawModule) {
             drawModuleName(metric, rect, fontSize, width, left, top, canvas)
@@ -201,6 +208,25 @@ internal class GaugeDrawer(
         )
     }
 
+    private fun drawMetricRate(
+        metric: Metric,
+        rect: RectF,
+        fontSize: Int,
+        width: Float,
+        left: Float,
+        top: Float,
+        canvas: Canvas
+    ) {
+        val txt = "rate ${metric.rate?.round(2)}"
+        val baseFontSize = calculateFontSize(multiplier = rect.width() / 22f, fontSize = fontSize)
+        modulePaint.textSize = baseFontSize * 0.75f
+        val cornerOffset = width * 0.015f
+        val textWidth = modulePaint.measureText(txt)
+        val textX = left + width - cornerOffset - textWidth
+        val textY = top + cornerOffset + modulePaint.textSize
+        canvas.drawText(txt, textX, textY, modulePaint)
+    }
+
     private fun drawModuleName(
         metric: Metric,
         rect: RectF,
@@ -213,7 +239,7 @@ internal class GaugeDrawer(
 
         if (!metric.moduleName.isNullOrEmpty()) {
             val baseFontSize = calculateFontSize(multiplier = rect.width() / 22f, fontSize = fontSize)
-            modulePaint.textSize = baseFontSize * 0.6f
+            modulePaint.textSize = baseFontSize * 0.75f
 
             val cornerOffset = width * 0.015f
 
