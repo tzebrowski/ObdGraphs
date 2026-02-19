@@ -35,8 +35,8 @@ import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.updateInt
-import org.obd.graphs.ui.gauge.gaugeVirtualScreen
-import org.obd.graphs.ui.giulia.giuliaVirtualScreen
+import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
+import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
 
  internal object NavigationRouter {
     fun navigate(
@@ -110,7 +110,7 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreen
 
                     R.id.nav_giulia -> {
                         tripVirtualScreenManager.updateReservedVirtualScreen(
-                            Prefs.getStringSet(giuliaVirtualScreen.getVirtualScreenPrefKey()).toList(),
+                            Prefs.getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()).toList(),
                         )
                         tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
                         navigateToScreen(R.id.nav_graph)
@@ -178,8 +178,8 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreen
     private fun applyGraphViewFilter(screenId: Int): Boolean {
         val propertyId: String? =
             when (getGraphFilterSource()) {
-                "Giulia" -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
-                "Gauge" -> gaugeVirtualScreen.getVirtualScreenPrefKey("$screenId")
+                "Giulia" -> giuliaVirtualScreenPreferences.getVirtualScreenPrefKey("$screenId")
+                "Gauge" -> gaugeVirtualScreenPreferences.getVirtualScreenPrefKey("$screenId")
                 "AA" -> {
                     if (isAndroidAutoEnabled(getContext()!!)) {
                         "pref.aa.pids.profile_$screenId"
@@ -188,7 +188,7 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreen
                     }
                 }
 
-                else -> giuliaVirtualScreen.getVirtualScreenPrefKey("$screenId")
+                else -> giuliaVirtualScreenPreferences.getVirtualScreenPrefKey("$screenId")
             }
 
         Log.i(LOG_TAG, "Applying graph view filter for property.id=$propertyId")

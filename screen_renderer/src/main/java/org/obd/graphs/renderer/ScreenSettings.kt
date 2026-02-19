@@ -20,8 +20,9 @@ import android.graphics.Color
 import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
+import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
-const val DEFAULT_FONT_SIZE = "32"
+ const val DEFAULT_FONT_SIZE = "32"
 
 enum class GaugeProgressBarType {
     LONG, SHORT
@@ -45,19 +46,18 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
-
 open class GaugeRendererSettings (
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     var topOffset:Int = 0,
-    var selectedPIDs: Set<Long> = emptySet()
+    var selectedPIDs: Set<Long> = emptySet(),
 ){
 
     open fun getVirtualScreen(): Int = 0
     open fun isPIDsSortOrderEnabled(): Boolean = false
-    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
-
+    open fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
     open fun setVirtualScreen(id: Int) {}
     open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
+    open fun getGaugeContainerColor(): Int = COLOR_RAINBOW_INDIGO
 }
 
 open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
@@ -124,6 +124,8 @@ interface ScreenSettings {
 
     fun getGiuliaRendererSetting(): GiuliaRendererSettings = GiuliaRendererSettings()
 
+    fun isScrollbarEnabled(): Boolean = false
+
     fun isScaleEnabled(): Boolean = true
 
     fun getHeightPixels(): Int = getContext()!!.resources.displayMetrics.heightPixels
@@ -149,7 +151,7 @@ interface ScreenSettings {
 
     fun getMaxColumns(): Int = 1
     fun isStatisticsEnabled(): Boolean
-    fun isFpsCounterEnabled(): Boolean
+    fun isFpsCounterEnabled(): Boolean = false
     fun getSurfaceFrameRate(): Int
 
     fun isStatusPanelEnabled(): Boolean = true

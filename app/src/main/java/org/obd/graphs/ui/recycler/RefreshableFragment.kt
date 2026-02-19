@@ -34,7 +34,7 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.DragManageAdapter
 import org.obd.graphs.ui.common.SwappableAdapter
 import org.obd.graphs.ui.common.ToggleToolbarDoubleClickListener
-import org.obd.graphs.ui.gauge.AdapterContext
+import org.obd.graphs.ui.dashboard.AdapterContext
 
 open class RefreshableFragment : Fragment() {
     protected val query: Query = Query.instance()
@@ -57,15 +57,6 @@ open class RefreshableFragment : Fragment() {
                 }
             }
         }
-    }
-
-    protected fun prepareMetrics(
-        metricsIdsPref: String,
-        metricsSerializerPref: String,
-    ): MutableList<Metric> {
-        val viewPreferences = ViewPreferencesSerializer(metricsSerializerPref)
-        val metricsIds = query.filterBy(metricsIdsPref)
-        return MetricsBuilder().buildFor(metricsIds, viewPreferences.getItemsSortOrder())
     }
 
     @SuppressLint("NotifyDataSetChanged")

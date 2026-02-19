@@ -38,8 +38,8 @@ import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.preferences.trips.TripLogListDialogFragment
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
-import org.obd.graphs.ui.gauge.gaugeVirtualScreen
-import org.obd.graphs.ui.giulia.giuliaVirtualScreen
+import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
+import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
 
 const val PREFERENCE_SCREEN_KEY = "preferences.rootKey"
 const val PREFS_CONNECTION_TYPE_CHANGED_EVENT = "prefs.connection_type.changed.event"
@@ -92,12 +92,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GIULIA -> {
-                        openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(), preference.source)
+                        openPIDsDialog(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(), preference.source)
                         { navigateToScreen(R.id.nav_giulia) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GAUGE -> {
-                        openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), preference.source)
+                        openPIDsDialog(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(), preference.source)
                         { navigateToScreen(R.id.nav_gauge) }
                     }
 
@@ -264,11 +264,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 { navigateToScreen(R.id.nav_dashboard) }
 
             PREFERENCE_SCREEN_KEY_GAUGE ->
-                openPIDsDialog(gaugeVirtualScreen.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GAUGE)
+                openPIDsDialog(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GAUGE)
                 { navigateToScreen(R.id.nav_gauge) }
 
             PREFERENCE_SCREEN_KEY_GIULIA ->
-                openPIDsDialog(giuliaVirtualScreen.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GIULIA)
+                openPIDsDialog(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GIULIA)
                 { navigateToScreen(R.id.nav_giulia) }
 
             PREFERENCE_SCREEN_KEY_GRAPH ->

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="gauge_colors">
+        <item>-14926478</item>
+
+        <item>-4053450</item>
+
+        <item>-16678833</item>
+
+        <item>-16777216</item>
+
+        <item>-1</item>
+
+        <item>-1</item>
+
+        <item>-4473925</item>
+
+        <item>-7895161</item>
+
+        <item>-11119018</item>
+
+        <item>-2147483648</item>
+
+        <item>-48060</item>
+
+        <item>-6696960</item>
+
+        <item>-17549</item>
+
+        <item>-13388315</item>
+        <item>-6697984</item>
+    </integer-array>
+</resources>
+
+

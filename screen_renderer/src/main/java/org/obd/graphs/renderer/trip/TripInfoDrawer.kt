@@ -309,7 +309,7 @@ internal class TripInfoDrawer(
                 left1 =
                     drawText(
                         canvas,
-                        metric.min.format(pid = metric.pid()),
+                        metric.min.format(pid = metric.pid),
                         left1,
                         top1,
                         minValueColorScheme(metric),
@@ -330,7 +330,7 @@ internal class TripInfoDrawer(
                     )
                 drawText(
                     canvas,
-                    metric.max.format(metric.pid()),
+                    metric.max.format(metric.pid),
                     left1,
                     top1,
                     maxValueColorScheme(metric),
@@ -470,7 +470,7 @@ internal class TripInfoDrawer(
 
         if (settings.isStatisticsEnabled() && statsEnabled) {
             valuePaint.textSize = (textSize * 0.60).toFloat()
-            val pid = metric.pid()
+            val pid = metric.pid
             val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
             if (itemWidth <= maxItemWidth(area)) {
                 val min = metric.min.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)

@@ -14,23 +14,22 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.trip_info
+package org.obd.graphs.ui.gauge
 
-import org.obd.graphs.R
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.SurfaceRendererType
-import org.obd.graphs.ui.SurfaceFragment
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.updateString
 
-internal class TripInfoFragment : SurfaceFragment(
-    R.layout.fragment_trip_info,
-    SurfaceRendererType.TRIP_INFO
-) {
+private const val VIRTUAL_SCREEN_SELECTION = "pref.gauge.virtual.selected"
+const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
 
-    private val query = Query.instance(QueryStrategyType.TRIP_INFO_QUERY)
-    private val settings = TripInfoSettings()
+class GaugeVirtualScreenPreferences {
+    fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
 
-    override fun query(): Query = query
-    override fun getScreenSettings(): ScreenSettings = settings
+    fun getVirtualScreenPrefKey(screenId: String = getCurrentVirtualScreen()): String = "$PREF_GAUGE_DIALOG.$screenId"
+
+    fun updateVirtualScreen(screenId: String) {
+        Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
+    }
 }
+
+val gaugeVirtualScreenPreferences = GaugeVirtualScreenPreferences()

@@ -17,33 +17,50 @@
 package org.obd.graphs.renderer.gauge
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.RectF
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.renderer.*
+import org.obd.graphs.getContext
 import org.obd.graphs.renderer.CoreSurfaceRenderer
+import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.MARGIN_TOP
+import org.obd.graphs.renderer.ScreenSettings
+import kotlin.math.max
 import kotlin.math.min
 
-
-@Suppress("NOTHING_TO_INLINE")
 internal class GaugeSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps
+    private val fps: Fps,
 ) : CoreSurfaceRenderer() {
+    private val gaugeDrawer =
+        GaugeDrawer(
+            settings = settings,
+            context = context,
+            drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType),
+        )
 
-    private val gaugeDrawer = GaugeDrawer(
-        settings = settings, context = context,
-        drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType)
-    )
+    private val mobileDrawer =
+        GaugeDrawer(
+            settings = settings,
+            context = context,
+            drawerSettings =
+                DrawerSettings(
+                    startAngle = 200f,
+                    sweepAngle = 200f,
+                    gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType,
+                ),
+        )
 
     override fun applyMetricsFilter(query: Query) {
-        val gaugeSettings  = settings.getGaugeRendererSetting()
+        val gaugeSettings = settings.getGaugeRendererSetting()
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             metricsCollector.applyFilter(enabled = gaugeSettings.selectedPIDs, order = gaugeSettings.getPIDsSortOrder())
         } else {
@@ -53,16 +70,18 @@ internal class GaugeSurfaceRenderer(
         }
     }
 
-    override fun getTop(area: Rect): Float   = if (settings.isStatusPanelEnabled()) {
-        area.top +  getDefaultTopMargin()
-    } else {
-        area.top.toFloat()
-    }
+    override fun getTop(area: Rect): Float =
+        if (settings.isStatusPanelEnabled()) {
+            area.top + getDefaultTopMargin()
+        } else {
+            area.top.toFloat()
+        }
 
-    override fun onDraw(canvas: Canvas, drawArea: Rect?) {
-
+    override fun onDraw(
+        canvas: Canvas,
+        drawArea: Rect?,
+    ) {
         drawArea?.let { area ->
-
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
@@ -71,64 +90,15 @@ internal class GaugeSurfaceRenderer(
 
             var top = getTop(area)
 
-            if (settings.isStatusPanelEnabled()) {
+            if (settings.isAA() && settings.isStatusPanelEnabled()) {
                 val left = gaugeDrawer.getMarginLeft(area.left.toFloat())
-                gaugeDrawer.drawStatusPanel(canvas,top, left, fps)
+                gaugeDrawer.drawStatusPanel(canvas, top, left, fps)
                 top += MARGIN_TOP
                 gaugeDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
                 top += 10
             }
 
-            val maxItems = min(
-                metricsCollector.getMetrics().size,
-                settings.getMaxItems()
-            )
-
-            val metrics = metricsCollector.getMetrics()
-
-            when (maxItems) {
-                0 -> {}
-                1 -> {
-                    gaugeDrawer.drawGauge(
-                        canvas = canvas,
-                        left = area.left + area.width() / 6f,
-                        top = top + 6f,
-                        width = area.width() * widthScaleRatio(maxItems),
-                        metric = metrics[0],
-                        labelCenterYPadding = 22f
-                    )
-                }
-
-                2 -> {
-
-                    gaugeDrawer.drawGauge(
-                        canvas = canvas,
-                        left = area.left.toFloat(),
-                        top = top + area.height() / 7,
-                        width = area.width() / 2 * widthScaleRatio(maxItems),
-                        metric = metrics[0],
-                        labelCenterYPadding = 22f
-                    )
-
-                    gaugeDrawer.drawGauge(
-                        canvas = canvas,
-                        left = (area.left + area.width() / 2f) - 10,
-                        top = top + area.height() / 7,
-                        width = area.width() / 2 * widthScaleRatio(maxItems),
-                        metric = metrics[1],
-                        labelCenterYPadding = 22f
-                    )
-                }
-                4 -> {
-                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
-                }
-                3 -> {
-                    draw(canvas, area, metrics, marginLeft = area.width() / 8f, top = top, maxItems = maxItems)
-                }
-                else -> {
-                    draw(canvas, area, metrics, top = top,labelCenterYPadding = 20f, maxItems = maxItems)
-                }
-            }
+            drawGrid(canvas = canvas, area = area, topOffset = top)
         }
     }
 
@@ -136,66 +106,214 @@ internal class GaugeSurfaceRenderer(
         gaugeDrawer.recycle()
     }
 
-    private fun draw(
+    private fun drawGrid(
         canvas: Canvas,
         area: Rect,
-        metrics: List<Metric>,
-        marginLeft: Float = 5f,
-        top: Float,
-        labelCenterYPadding: Float = 0f,
-        maxItems: Int,
+        topOffset: Float,
+        metrics: List<Metric> = metricsCollector.getMetrics(),
+        maxItems: Int = settings.getMaxItems(),
+        drawScrollbar: Boolean = settings.isScrollbarEnabled(),
+        drawMetricsRate: Boolean = settings.isFpsCounterEnabled(),
     ) {
+        val count = min(metrics.size, maxItems)
+        if (count <= 0) return
 
-        val firstHalf = metrics.subList(0, maxItems / 2)
-        val secondHalf = metrics.subList(maxItems / 2, maxItems)
-        val height = (area.height() / 2)
+        val isAA = settings.isAA()
+        val isLandscape = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-        val widthDivider = when (maxItems) {
-            2 -> 2
-            1 -> 1
-            else -> secondHalf.size
-        }
+        val drawer = if (isAA) gaugeDrawer else mobileDrawer
+        val drawBorder = !isAA
+        val labelCenterYPadding = if (isAA && count <= 2) 22f else 20f
 
-        val width = ((area.width()) / widthDivider).toFloat() * widthScaleRatio(maxItems)
-        var left = marginLeft
-        val padding = 10f
-        firstHalf.forEach {
-            gaugeDrawer.drawGauge(
-                canvas = canvas,
-                left = area.left + left,
-                top = top,
-                width = width,
-                metric = it,
-                labelCenterYPadding = labelCenterYPadding
+        val columns = columns(isAA, count)
 
-            )
-            left += width - padding
-        }
-        if (maxItems > 1) {
-            left = marginLeft
-            secondHalf.forEach {
-                gaugeDrawer.drawGauge(
-                    canvas = canvas,
-                    left = area.left + left,
-                    top = top + height - 8f,
-                    width = width,
-                    metric = it,
-                    labelCenterYPadding = labelCenterYPadding
-                )
-                left += width - padding
+        val cellWidth = area.width() / columns.toFloat()
+        val availableHeight = area.height().toFloat()
+        val itemMargin = 6f
+
+        var gaugeWidth = gaugeWidth(isAA, cellWidth, count, isLandscape, columns, availableHeight, itemMargin)
+        val rowHeight = rowHeight(isAA, availableHeight, isLandscape, columns, gaugeWidth, itemMargin)
+        val startX = startX(area, isAA, count)
+
+        val totalRows = kotlin.math.ceil(count / columns.toDouble()).toInt()
+        val contentHeight = totalRows * rowHeight
+        val viewportHeight = area.height().toFloat()
+
+        val maxScroll = max(0f, contentHeight - viewportHeight)
+        scrollOffset = if (count <= 1 || isAA) 0f else scrollOffset.coerceIn(0f, maxScroll)
+
+        val startRow =
+            kotlin.math
+                .floor(scrollOffset / rowHeight)
+                .toInt()
+                .coerceAtLeast(0)
+
+        val endRow =
+            kotlin.math
+                .floor((scrollOffset + viewportHeight - 1f) / rowHeight)
+                .toInt()
+                .coerceAtMost(totalRows - 1)
+
+        val startIndex = startRow * columns
+        val endIndex = min(count - 1, (endRow * columns) + (columns - 1))
+
+        canvas.save()
+        canvas.clipRect(area)
+        canvas.translate(0f, -scrollOffset)
+
+        val displayScrollbar = drawScrollbar && contentHeight > viewportHeight
+
+        for (i in startIndex..endIndex) {
+            val metric = metrics[i]
+            val row = i / columns
+            val col = i % columns
+
+            val aaLeftPadding = if (isAA) col * (gaugeWidth - 10f) else 0f
+            val cellLeft = if (isAA) startX + aaLeftPadding else startX + (col * cellWidth)
+
+            val aaTopOffset = if (isAA && row > 0) -8f else 0f
+            val cellTop = topOffset + (row * rowHeight) + aaTopOffset
+
+            val currentCellWidth = if (columns == 1 && !isAA) area.width().toFloat() else cellWidth
+
+            var centeredLeft = if (isAA) cellLeft else cellLeft + (currentCellWidth - gaugeWidth) / 2f
+            if (displayScrollbar){
+                centeredLeft += scrollBarWidth
+                gaugeWidth -= scrollBarWidth/2
             }
+            val centeredTop =
+                if (!isAA &&
+                    count == 1 &&
+                    isLandscape
+                ) {
+                    cellTop + (availableHeight - gaugeWidth) / 2f
+                } else if (isAA) {
+                    cellTop
+                } else {
+                    cellTop + itemMargin
+                }
+            val borderRect = RectF(centeredLeft, centeredTop, centeredLeft + gaugeWidth, centeredTop + gaugeWidth)
+
+            drawer.drawGauge(
+                canvas = canvas,
+                left = centeredLeft,
+                top = centeredTop,
+                width = gaugeWidth,
+                metric = metric,
+                labelCenterYPadding = labelCenterYPadding,
+                drawBorder = drawBorder,
+                borderArea = borderRect,
+                drawModule = !isAA,
+                drawMetricRate = drawMetricsRate,
+            )
+        }
+
+        canvas.restore()
+
+        if (displayScrollbar) {
+            drawScrollbar(contentHeight, viewportHeight, maxScroll, area, canvas)
         }
     }
 
-    private inline fun widthScaleRatio(maxItems: Int): Float = when (maxItems) {
-        1 -> 0.65f
-        2 -> 1f
-        3 -> 0.8f
-        4 -> 0.8f
-        5 -> 1.02f
-        6 -> 1.02f
-        7 -> 1.02f
-        8 -> 1.02f
-        else -> 1f
+    private fun drawScrollbar(
+        contentHeight: Float,
+        viewportHeight: Float,
+        maxScroll: Float,
+        area: Rect,
+        canvas: Canvas,
+    ) {
+        val verticalMargin = 30f
+        val trackHeight = viewportHeight - (2 * verticalMargin)
+
+        val calculatedBarHeight = (viewportHeight / contentHeight) * trackHeight
+        val barHeight = max(calculatedBarHeight, 50f)
+
+        val scrollPercentage = scrollOffset / maxScroll
+        val availableTravel = trackHeight - barHeight
+        val barTop = area.top + verticalMargin + (scrollPercentage * availableTravel)
+
+        val barRect =
+            RectF(
+                area.left + 5f,
+                barTop,
+                area.left + 5f + scrollBarWidth,
+                barTop + barHeight,
+            )
+
+        canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
     }
+
+    private fun columns(
+        isAA: Boolean,
+        count: Int,
+    ): Int {
+        val columns =
+            if (isAA) {
+                when (count) {
+                    1 -> 1
+                    2 -> 2
+                    else -> max(count / 2, count - count / 2)
+                }
+            } else {
+                if (count == 1) 1 else settings.getMaxColumns()
+            }
+        return columns
+    }
+
+    private fun startX(
+        area: Rect,
+        isAA: Boolean,
+        count: Int,
+    ): Float =
+        area.left +
+            if (isAA) {
+                when (count) {
+                    1 -> area.width() / 6f
+                    3, 4 -> area.width() / 8f
+                    else -> 5f
+                }
+            } else {
+                0f
+            }
+
+    private fun rowHeight(
+        isAA: Boolean,
+        availableHeight: Float,
+        isLandscape: Boolean,
+        columns: Int,
+        gaugeWidth: Float,
+        itemMargin: Float,
+    ): Float =
+        if (isAA) {
+            availableHeight / 2f
+        } else if (isLandscape && columns == 1) {
+            availableHeight
+        } else {
+            gaugeWidth + (2 * itemMargin)
+        }
+
+    private fun gaugeWidth(
+        isAA: Boolean,
+        cellWidth: Float,
+        count: Int,
+        isLandscape: Boolean,
+        columns: Int,
+        availableHeight: Float,
+        itemMargin: Float,
+    ): Float =
+        if (isAA) {
+            cellWidth * widthScaleRatio(count)
+        } else if (isLandscape) {
+            if (columns == 1) availableHeight - (2 * itemMargin) else cellWidth - (2 * itemMargin)
+        } else {
+            cellWidth - (2 * itemMargin)
+        }
+
+    private fun widthScaleRatio(maxItems: Int): Float =
+        when {
+            maxItems <= 1 -> 0.65f
+            maxItems == 2 -> 1.0f
+            maxItems <= 4 -> 0.75f
+            else -> 1.02f
+        }
 }

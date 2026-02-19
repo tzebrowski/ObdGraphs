@@ -26,7 +26,7 @@ import org.obd.graphs.renderer.SurfaceRenderer
 
 private const val LOG_KEY = "SurfaceController"
 
-class SurfaceController(
+internal class SurfaceController(
     private val renderer: SurfaceRenderer,
 ) : SurfaceHolder.Callback {
     private lateinit var surfaceHolder: SurfaceHolder
@@ -36,9 +36,15 @@ class SurfaceController(
 
     private var topInset = 0
 
+    fun updateScrollOffset(scrollOffset: Float) {
+        if (::surfaceHolder.isInitialized && surface?.isValid == true) {
+            renderer.updateScrollOffset(scrollOffset)
+        }
+    }
+
     fun updateInsets(top: Int) {
         topInset = top
-        // If surface already exists, update area and redraw immediately
+
         if (::surfaceHolder.isInitialized && surface?.isValid == true) {
             val frame = surfaceHolder.surfaceFrame
             updateVisibleArea(frame.width(), frame.height())

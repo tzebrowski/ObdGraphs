@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.collector
 
+import org.obd.graphs.modules
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
@@ -28,14 +29,14 @@ data class Metric(
     var enabled: Boolean = true,
     var rate: Double?,
     var inLowerAlertRisedHist: Boolean = false,
-    var inUpperAlertRisedHist: Boolean = false) {
+    var inUpperAlertRisedHist: Boolean = false,
+    val pid: PidDefinition = source.command.pid,
+    val moduleName: String? = modules.getDefaultModules()[source.command.pid.resourceFile]) {
 
     companion object {
         fun newInstance(source: ObdMetric, value: Any, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =
             Metric(source, value = value, min = min, max = max, mean = mean, enabled = true, rate = 0.0)
     }
-
-    fun pid(): PidDefinition = source.command.pid
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

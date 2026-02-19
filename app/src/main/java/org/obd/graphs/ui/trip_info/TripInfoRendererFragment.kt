@@ -14,17 +14,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.gauge
+package org.obd.graphs.ui.trip_info
 
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.R
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.ui.SurfaceRendererFragment
 
-data class GaugePreferences(
-    val commandRateEnabled: Boolean,
-)
+internal class TripInfoRendererFragment : SurfaceRendererFragment(
+    R.layout.fragment_trip_info,
+    SurfaceRendererType.TRIP_INFO
+) {
 
-fun getGaugePreferences(): GaugePreferences {
-    val commandRateEnabled = Prefs.isEnabled("pref.gauge_display_command_rate")
+    private val query = Query.instance(QueryStrategyType.TRIP_INFO_QUERY)
+    private val settings = TripInfoSettings()
 
-    return GaugePreferences(commandRateEnabled)
+    override fun query(): Query = query
+    override fun getScreenSettings(): ScreenSettings = settings
 }

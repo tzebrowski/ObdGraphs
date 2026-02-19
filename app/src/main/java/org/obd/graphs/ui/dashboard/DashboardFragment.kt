@@ -25,7 +25,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.bl.collector.Metric
@@ -38,7 +37,6 @@ import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.configureActionButton
-import org.obd.graphs.ui.gauge.AdapterContext
 import org.obd.graphs.ui.recycler.RefreshableFragment
 import org.obd.graphs.ui.withDataLogger
 
@@ -133,7 +131,7 @@ class DashboardFragment : RefreshableFragment() {
     private fun setupDashboardRecyclerView(enableOnTouchListener: Boolean) {
         configureView(
             configureChangeEventId = CONFIGURATION_CHANGE_EVENT_DASH,
-            recyclerView = root.findViewById<RecyclerView>(R.id.dashboard_recycler_view)!!,
+            recyclerView = root.findViewById(R.id.dashboard_recycler_view)!!,
             metricsIdsPref = dashboardPreferences.dashboardSelectedMetrics.first,
             adapterContext =
                 AdapterContext(

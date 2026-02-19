@@ -27,7 +27,7 @@ class GiuliaSettings(
 ) : ScreenSettings {
     private val giuliaRendererSettings =
         object : GiuliaRendererSettings() {
-            override fun getFontSize(): Int = giuliaVirtualScreen.getFontSize()
+            override fun getFontSize(): Int = giuliaVirtualScreenPreferences.getFontSize()
         }
 
     override fun getGiuliaRendererSetting(): GiuliaRendererSettings =
@@ -39,7 +39,7 @@ class GiuliaSettings(
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
-    override fun getMaxColumns(): Int = giuliaVirtualScreen.getMaxItemsInColumn()
+    override fun getMaxColumns(): Int = giuliaVirtualScreenPreferences.getMaxItemsInColumn()
 
     override fun isStatisticsEnabled(): Boolean = true
 

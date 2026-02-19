@@ -178,6 +178,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
 
         REQUEST_PERMISSIONS_BT -> Permissions.requestBluetoothPermissions(this)
+        TOOLBAR_HIDE -> toolbarHide(true)
         TOOLBAR_SHOW -> toolbarHide(false)
         TOOLBAR_TOGGLE_ACTION -> toolbarToggle()
 
@@ -349,7 +350,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(DATA_LOGGER_WIFI_NOT_CONNECTED)
         it.addAction(REQUEST_LOCATION_PERMISSIONS)
         it.addAction(TOOLBAR_SHOW)
-
+        it.addAction(TOOLBAR_HIDE)
         it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_RUNNING)
         it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_IDLING)
         it.addAction(EVENT_VEHICLE_STATUS_IGNITION_OFF)

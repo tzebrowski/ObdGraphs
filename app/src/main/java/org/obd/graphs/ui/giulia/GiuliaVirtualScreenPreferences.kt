@@ -37,4 +37,4 @@ class GiuliaVirtualScreenPreferences {
     fun getFontSize(): Int = Prefs.getS("pref.giulia.screen_font_size.${getCurrentVirtualScreen()}", "52").toInt()
 }
 
-val giuliaVirtualScreen = GiuliaVirtualScreenPreferences()
+val giuliaVirtualScreenPreferences = GiuliaVirtualScreenPreferences()

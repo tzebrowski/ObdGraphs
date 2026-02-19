@@ -23,7 +23,9 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +34,9 @@ import androidx.fragment.app.Fragment
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
+import org.obd.graphs.activity.TOOLBAR_HIDE
+import org.obd.graphs.activity.TOOLBAR_SHOW
+import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
@@ -44,14 +49,17 @@ import org.obd.graphs.renderer.Fps
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRenderer
 import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
 
-internal abstract class SurfaceFragment(
+private const val EVENT_THROTTLE_MS = 350L
+
+internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
     private val surfaceRendererType: SurfaceRendererType,
-) : Fragment() {
+) : Fragment(),
+    View.OnTouchListener {
     protected lateinit var root: View
-
     protected val metricsCollector = MetricsCollector.instance()
     protected val fps = Fps()
 
@@ -70,6 +78,51 @@ internal abstract class SurfaceFragment(
                 getScreenSettings().getSurfaceFrameRate()
             },
         )
+
+    private var lastEventTime = 0L
+
+    private val gestureDetector =
+        GestureDetector(
+            context,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    sendBroadcastEvent(TOOLBAR_TOGGLE_ACTION)
+                    return true
+                }
+
+                override fun onScroll(
+                    e1: MotionEvent?,
+                    e2: MotionEvent,
+                    distanceX: Float,
+                    distanceY: Float,
+                ): Boolean {
+                    val currentTime = System.currentTimeMillis()
+
+                    if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
+                        if (distanceY > 0) {
+                            sendBroadcastEvent(TOOLBAR_HIDE)
+                            lastEventTime = currentTime
+                        } else if (distanceY < 0) {
+                            sendBroadcastEvent(TOOLBAR_SHOW)
+                            lastEventTime = currentTime
+                        }
+                    }
+
+                    if (::surfaceController.isInitialized) {
+                        surfaceController.updateScrollOffset(distanceY)
+                        surfaceController.renderFrame()
+                    }
+                    return true
+                }
+
+                override fun onDown(e: MotionEvent): Boolean = true
+            },
+        )
+
+    override fun onTouch(
+        v: View,
+        event: MotionEvent,
+    ): Boolean = gestureDetector.onTouchEvent(event)
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
@@ -130,7 +183,7 @@ internal abstract class SurfaceFragment(
         renderingThread.stop()
     }
 
-    @SuppressLint("SourceLockedOrientationActivity")
+    @SuppressLint("SourceLockedOrientationActivity", "ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -150,12 +203,9 @@ internal abstract class SurfaceFragment(
 
         surfaceController = SurfaceController(renderer)
         surfaceView.holder.addCallback(surfaceController)
+        surfaceView.setOnTouchListener(this)
 
-        val statusLayout = requireActivity().findViewById<ConstraintLayout>(R.id.status_panel_header)
-        statusLayout.post {
-            val density = resources.displayMetrics.density
-            surfaceController.updateInsets(((statusLayout.height / density).toInt()) + 8)
-        }
+        updateInsets()
 
         metricsCollector.applyFilter(
             enabled = query().getIDs(),
@@ -176,5 +226,13 @@ internal abstract class SurfaceFragment(
 
         configureActionButton(query())
         return root
+    }
+
+    protected open fun updateInsets() {
+        val statusLayout = requireActivity().findViewById<ConstraintLayout>(R.id.status_panel_header)
+        statusLayout.post {
+            val density = resources.displayMetrics.density
+            surfaceController.updateInsets(((statusLayout.height / density).toInt()) + 8)
+        }
     }
 }

@@ -14,22 +14,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.gauge
+package org.obd.graphs.ui.drag_racing
 
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.updateString
+import org.obd.graphs.R
+import org.obd.graphs.bl.query.Query
+import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.ui.SurfaceRendererFragment
 
-private const val VIRTUAL_SCREEN_SELECTION = "pref.gauge.virtual.selected"
-const val PREF_GAUGE_DIALOG = "pref.gauge.pids.selected"
+internal class DragRacingRendererFragment : SurfaceRendererFragment(
+    R.layout.fragment_surface_renderer,
+    SurfaceRendererType.DRAG_RACING
+) {
 
-class GaugeVirtualScreen {
-    fun getCurrentVirtualScreen() = Prefs.getString(VIRTUAL_SCREEN_SELECTION, "1")!!
+    private val query = Query.instance(QueryStrategyType.DRAG_RACING_QUERY)
+    private val settings = DragRacingSettings()
 
-    fun getVirtualScreenPrefKey(screenId: String = getCurrentVirtualScreen()): String = "$PREF_GAUGE_DIALOG.$screenId"
-
-    fun updateVirtualScreen(screenId: String) {
-        Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
-    }
+    override fun query(): Query = query
+    override fun getScreenSettings(): ScreenSettings = settings
 }
-
-val gaugeVirtualScreen = GaugeVirtualScreen()

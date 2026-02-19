@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.activity
 
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -23,7 +24,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 
 const val TOOLBAR_TOGGLE_ACTION: String = "toolbar.toggle.event"
-const val TOOLBAR_SHOW: String = "toolbar.reset.animation"
+const val TOOLBAR_SHOW: String = "toolbar.show.event"
+const val TOOLBAR_HIDE: String = "toolbar.hide.event"
 
 private fun toolbarHide(
     bottomAppBar: BottomAppBar,
@@ -67,9 +69,24 @@ fun MainActivity.toolbarToggle() =
         toolbarHide(b, c, b.isVisible && c.isVisible)
     }
 
+private const val EVENT_THROTTLE_MS = 550L
+private var lastEventTime = 0L
+private const val TAG = "TB"
+
 fun MainActivity.toolbarHide(hide: Boolean) =
     toolbar { bottomAppBar, floatingActionButton ->
-        toolbarHide(bottomAppBar, floatingActionButton, hide)
+        val currentTime = System.currentTimeMillis()
+        val isBarHidden = bottomAppBar.translationY > 0
+        if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
+            if ((!isBarHidden && hide) || (isBarHidden && !hide)) {
+                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                    Log.v(TAG, "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}")
+                }
+
+                toolbarHide(bottomAppBar, floatingActionButton, hide)
+            }
+            lastEventTime = currentTime
+        }
     }
 
 private fun MainActivity.toolbar(func: (r: BottomAppBar, c: FloatingActionButton) -> Unit) {

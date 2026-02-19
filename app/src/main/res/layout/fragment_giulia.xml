@@ -1,80 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <HorizontalScrollView
+        android:id="@+id/button_scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/virtual_view_panel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp">
 
             <Button
                 android:id="@+id/virtual_view_1"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="11sp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
                 android:text="@string/virtual_screen_1"
-                android:layout_marginEnd="4dp" />
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
 
             <Button
                 android:id="@+id/virtual_view_2"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="11sp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_2" />
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/virtual_screen_2"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
 
             <Button
                 android:id="@+id/virtual_view_3"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="11sp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_3" />
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/virtual_screen_3"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
 
             <Button
                 android:id="@+id/virtual_view_4"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="11sp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_4" />
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/virtual_screen_4"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
 
             <Button
                 android:id="@+id/virtual_view_5"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="11sp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_5" />
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/virtual_screen_5"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
 
             <Button
                 android:id="@+id/virtual_view_6"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="11sp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_6" />
-
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/virtual_screen_6"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
 
             <Button
                 android:id="@+id/virtual_view_7"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:textSize="11sp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/virtual_screen_7" />
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/virtual_screen_7"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/virtual_view_8"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="32dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_virtual_button_selector"
+                android:includeFontPadding="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text="@string/virtual_screen_8"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                app:backgroundTint="@null" />
 
         </LinearLayout>
-        <SurfaceView
-            android:id="@+id/surface_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+    </HorizontalScrollView>
+
+    <SurfaceView
+        android:id="@+id/surface_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_scroll_view" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

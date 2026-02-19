@@ -21,9 +21,9 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.ScreenSettings
 import org.obd.graphs.renderer.SurfaceRendererType
-import org.obd.graphs.ui.SurfaceFragment
+import org.obd.graphs.ui.SurfaceRendererFragment
 
-internal class PerformanceFragment : SurfaceFragment(
+internal class PerformanceRendererFragment : SurfaceRendererFragment(
     R.layout.fragment_performance,
     SurfaceRendererType.PERFORMANCE) {
 
