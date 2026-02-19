@@ -211,17 +211,15 @@ internal class GaugeDrawer(
         canvas: Canvas
     ) {
 
-        val moduleName = metric.moduleName()
-
-        if (!moduleName.isNullOrEmpty()) {
+        if (!metric.moduleName.isNullOrEmpty()) {
             val baseFontSize = calculateFontSize(multiplier = rect.width() / 22f, fontSize = fontSize)
-            modulePaint.textSize = baseFontSize * 0.5f
+            modulePaint.textSize = baseFontSize * 0.6f
 
             val cornerOffset = width * 0.015f
 
             val textX = left + cornerOffset
             val textY = top + cornerOffset + modulePaint.textSize
-            canvas.drawText(moduleName, textX, textY, modulePaint)
+            canvas.drawText(metric.moduleName!!, textX, textY, modulePaint)
         }
     }
 

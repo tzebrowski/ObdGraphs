@@ -29,7 +29,8 @@ data class Metric(
     var enabled: Boolean = true,
     var rate: Double?,
     var inLowerAlertRisedHist: Boolean = false,
-    var inUpperAlertRisedHist: Boolean = false) {
+    var inUpperAlertRisedHist: Boolean = false,
+    val moduleName: String? = modules.getDefaultModules()[source.command.pid.resourceFile]) {
 
     companion object {
         fun newInstance(source: ObdMetric, value: Any, min: Double = 0.0, max: Double = 0.0, mean: Double = 0.0) =
@@ -37,8 +38,6 @@ data class Metric(
     }
 
     fun pid(): PidDefinition = source.command.pid
-
-    fun moduleName(): String? =  modules.getDefaultModules()[pid().resourceFile]
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
