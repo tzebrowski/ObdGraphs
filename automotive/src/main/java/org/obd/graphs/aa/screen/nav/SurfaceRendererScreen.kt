@@ -140,7 +140,7 @@ internal class SurfaceRendererScreen(
 
     fun switchSurfaceRenderer(newScreenId: Identity) {
         this.screenId = newScreenId
-        Log.i("renderer_allocation", "Switch to new surface renderer screen: ${this.screenId} and updating query...")
+        Log.d(LOG_TAG, "Switch to new surface renderer screen: ${this.screenId} and updating query...")
 
         if (newScreenId is SurfaceRendererType) {
             surfaceRendererController.allocateSurfaceRenderer(newScreenId)
