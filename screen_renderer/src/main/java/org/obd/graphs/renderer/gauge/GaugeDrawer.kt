@@ -445,7 +445,8 @@ internal class GaugeDrawer(
         val verticalShift = if (statsEnabled) 14 else 1
 
         val relativeFontSize = calculatedFontSize / area.height()
-        val dynamicTopOffset = area.height() * (0.10f - relativeFontSize * 0.2f)
+        val offset  = if (settings.isAA()) 0.02f else 0.1f
+        val dynamicTopOffset = area.height() * ( offset - relativeFontSize * 0.2f)
 
         var centerY = (area.centerY() + dynamicTopOffset + labelCenterYPadding - verticalShift * calculateScaleRatio(area))
 

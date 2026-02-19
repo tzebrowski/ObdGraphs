@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -26,7 +26,6 @@ import org.obd.graphs.R
 const val TOOLBAR_TOGGLE_ACTION: String = "toolbar.toggle.event"
 const val TOOLBAR_SHOW: String = "toolbar.show.event"
 const val TOOLBAR_HIDE: String = "toolbar.hide.event"
-
 
 private fun toolbarHide(
     bottomAppBar: BottomAppBar,
@@ -80,7 +79,6 @@ fun MainActivity.toolbarHide(hide: Boolean) =
         val isBarHidden = bottomAppBar.translationY > 0
         if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
             if ((!isBarHidden && hide) || (isBarHidden && !hide)) {
-
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
                     Log.v(TAG, "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}")
                 }
