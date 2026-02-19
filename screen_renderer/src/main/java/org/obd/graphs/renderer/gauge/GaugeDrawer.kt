@@ -28,6 +28,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.SweepGradient
+import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
@@ -128,6 +129,11 @@ internal class GaugeDrawer(
             strokeJoin = Paint.Join.ROUND
         }
 
+    private val modulePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = color(R.color.gray)
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+    }
+
     private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private var scaleBitmapCache: ScaleBitmapCache? = null
 
@@ -143,6 +149,7 @@ internal class GaugeDrawer(
         statsEnabled: Boolean = settings.isStatisticsEnabled(),
         drawBorder: Boolean = false,
         borderArea: RectF? = null,
+        drawModule: Boolean = false
     ) {
         paint.shader = null
 
@@ -159,6 +166,10 @@ internal class GaugeDrawer(
             rect.top - strokeWidth,
             rect.right + strokeWidth,
         ] = rect.bottom + strokeWidth
+
+        if (drawModule) {
+            drawModuleName(metric, rect, fontSize, width, left, top, canvas)
+        }
 
         if (drawBorder) {
             drawBorder(canvas, width, left, top, borderArea)
@@ -190,6 +201,30 @@ internal class GaugeDrawer(
         )
     }
 
+    private fun drawModuleName(
+        metric: Metric,
+        rect: RectF,
+        fontSize: Int,
+        width: Float,
+        left: Float,
+        top: Float,
+        canvas: Canvas
+    ) {
+
+        val moduleName = metric.moduleName()
+
+        if (!moduleName.isNullOrEmpty()) {
+            val baseFontSize = calculateFontSize(multiplier = rect.width() / 22f, fontSize = fontSize)
+            modulePaint.textSize = baseFontSize * 0.5f
+
+            val cornerOffset = width * 0.015f
+
+            val textX = left + cornerOffset
+            val textY = top + cornerOffset + modulePaint.textSize
+            canvas.drawText(moduleName, textX, textY, modulePaint)
+        }
+    }
+
     private fun drawContainerBackground(
         canvas: Canvas,
         width: Float,
@@ -210,16 +245,13 @@ internal class GaugeDrawer(
             }
 
         val gradientRadius = min(destRect.width(), destRect.height()) * 0.45f
-
-        val centerColor = gradientColor
         val edgeColor = Color.TRANSPARENT
-
         val gradient =
             RadialGradient(
                 destRect.centerX(),
                 destRect.centerY(),
                 gradientRadius,
-                intArrayOf(centerColor, edgeColor),
+                intArrayOf(gradientColor, edgeColor),
                 floatArrayOf(0.0f, 1.0f),
                 Shader.TileMode.CLAMP,
             )

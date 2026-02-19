@@ -123,7 +123,7 @@ internal class GaugeSurfaceRenderer(
 
                 val partitionIndex = if (maxItems <= 2) maxItems else maxItems / 2
 
-                draw(
+                drawAA(
                     canvas = canvas,
                     area = area,
                     metrics = metrics,
@@ -143,7 +143,7 @@ internal class GaugeSurfaceRenderer(
         gaugeDrawer.recycle()
     }
 
-    private fun draw(
+    private fun drawAA(
         canvas: Canvas,
         area: Rect,
         metrics: List<Metric>,
@@ -292,6 +292,7 @@ internal class GaugeSurfaceRenderer(
                 labelCenterYPadding = labelCenterYPadding,
                 drawBorder = drawBorder,
                 borderArea = borderRect,
+                drawModule = true
             )
         }
 

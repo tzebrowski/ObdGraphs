@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.collector
 
+import org.obd.graphs.modules
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
 
@@ -36,6 +37,8 @@ data class Metric(
     }
 
     fun pid(): PidDefinition = source.command.pid
+
+    fun moduleName(): String? =  modules.getDefaultModules()[pid().resourceFile]
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
