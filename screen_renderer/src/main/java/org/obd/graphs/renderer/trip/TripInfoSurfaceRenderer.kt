@@ -33,7 +33,7 @@ internal class TripInfoSurfaceRenderer(
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-) : CoreSurfaceRenderer() {
+) : AbstractSurfaceRenderer(context) {
 
     private val tripInfo = TripInfoDetails()
 

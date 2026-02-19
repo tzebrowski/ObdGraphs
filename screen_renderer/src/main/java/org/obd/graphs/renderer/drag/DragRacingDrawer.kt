@@ -17,7 +17,6 @@
 package org.obd.graphs.renderer.drag
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -30,7 +29,6 @@ import org.obd.graphs.bl.drag.DragRacingEntry
 import org.obd.graphs.bl.drag.DragRacingResults
 import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.bl.drag.VALUE_NOT_SET
-import org.obd.graphs.getContext
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -371,8 +369,6 @@ internal class DragRacingDrawer(
             )
         }
     }
-
-    private fun isLandscape() = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     private fun drawGauge(
         drawer: GaugeDrawer,

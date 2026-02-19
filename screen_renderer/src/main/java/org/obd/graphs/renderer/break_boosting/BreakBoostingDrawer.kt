@@ -17,14 +17,12 @@
 package org.obd.graphs.renderer.break_boosting
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingService
-import org.obd.graphs.getContext
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.BreakBoostingSettings
 import org.obd.graphs.renderer.GaugeProgressBarType
@@ -101,9 +99,6 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
             )
         }
     }
-
-
-    private fun isLandscape() = getContext()!!.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     private fun drawGauge(
         metric: Metric?,

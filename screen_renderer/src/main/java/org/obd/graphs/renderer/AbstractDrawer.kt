@@ -17,6 +17,7 @@
 package org.obd.graphs.renderer
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -47,7 +48,7 @@ const val MARGIN_END = 30
 
 @Suppress("NOTHING_TO_INLINE")
 internal abstract class AbstractDrawer(
-    context: Context,
+    protected val context: Context,
     protected val settings: ScreenSettings,
 ) {
     private val statusPaint = Paint()
@@ -58,6 +59,10 @@ internal abstract class AbstractDrawer(
             style = Paint.Style.FILL
             strokeCap = Paint.Cap.BUTT
         }
+
+
+
+    protected fun isLandscape() = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     protected val alertingLegendPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     protected val valuePaint = Paint(Paint.ANTI_ALIAS_FLAG)

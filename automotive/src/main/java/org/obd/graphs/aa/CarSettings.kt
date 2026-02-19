@@ -190,9 +190,6 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     override fun isScaleEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.scale.enabled", true)
 
-    override fun getHeightPixels(): Int = carContext.resources.displayMetrics.heightPixels
-    override fun getWidthPixels(): Int = carContext.resources.displayMetrics.widthPixels
-
     override fun getMaxColumns(): Int =
         Prefs.getS("pref.aa.max_pids_in_column.${getCurrentVirtualScreenId(giuliaRendererSettings.dataPrefs)}", DEFAULT_ITEMS_IN_COLUMN).toInt()
 
