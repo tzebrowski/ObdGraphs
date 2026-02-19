@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -44,7 +44,7 @@ internal class GiuliaSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
-    private val fps: Fps
+    private val fps: Fps,
 ) : AbstractSurfaceRenderer(context) {
     private val giuliaDrawer = GiuliaDrawer(context, settings)
 
@@ -83,7 +83,7 @@ internal class GiuliaSurfaceRenderer(
                 Log.v(
                     LOG_TAG,
                     "metricsCount=${metricsCollector.getMetrics().size}," +
-                            "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize",
+                        "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize",
                 )
             }
 

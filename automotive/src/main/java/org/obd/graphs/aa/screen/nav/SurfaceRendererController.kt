@@ -30,8 +30,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.SurfaceRenderer
 import org.obd.graphs.renderer.api.SurfaceRendererType
@@ -44,11 +42,12 @@ class SurfaceRendererController(
     private val settings: CarSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-    private val query: Query,
 ) : DefaultLifecycleObserver {
-    private var surfaceRenderer: SurfaceRenderer? =
-        allocateSurfaceRenderer(SurfaceRendererType.GIULIA).apply {
-        }
+
+    private val renderersCache = mutableMapOf<SurfaceRendererType, SurfaceRenderer>()
+
+    private var activeSurfaceRenderer: SurfaceRenderer? =
+        switchSurfaceRenderer(SurfaceRendererType.GIULIA)
 
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
@@ -113,6 +112,10 @@ class SurfaceRendererController(
         synchronized(this) {
             surface?.release()
             surface = null
+
+            renderersCache.values.forEach { it.recycle() }
+            renderersCache.clear()
+            activeSurfaceRenderer = null
         }
     }
 
@@ -121,12 +124,9 @@ class SurfaceRendererController(
         Log.d(LOG_TAG, "SurfaceRenderer paused (onPause)")
     }
 
-    fun allocateSurfaceRenderer(surfaceRendererType: SurfaceRendererType): SurfaceRenderer? {
-        Log.d(LOG_TAG, "Allocating Surface renderer, type=$surfaceRendererType")
-
-        surfaceRenderer?.recycle()
-
-        surfaceRenderer =
+    fun switchSurfaceRenderer(surfaceRendererType: SurfaceRendererType): SurfaceRenderer? {
+        activeSurfaceRenderer = renderersCache.getOrPut(surfaceRendererType) {
+            Log.d(LOG_TAG, "Renderer not in cache. Allocating new: $surfaceRendererType")
             SurfaceRenderer.allocate(
                 carContext,
                 settings,
@@ -134,36 +134,9 @@ class SurfaceRendererController(
                 fps,
                 surfaceRendererType = surfaceRendererType,
             )
-
-        when (surfaceRendererType) {
-            SurfaceRendererType.GIULIA -> {
-                val giuliaSettings = settings.getGiuliaRendererSetting()
-                metricsCollector.applyFilter(giuliaSettings.selectedPIDs, query, giuliaSettings.getPIDsSortOrder())
-            }
-
-            SurfaceRendererType.GAUGE -> {
-                val gaugeSettings = settings.getGaugeRendererSetting()
-                metricsCollector.applyFilter(gaugeSettings.selectedPIDs, query, gaugeSettings.getPIDsSortOrder())
-            }
-
-            SurfaceRendererType.DRAG_RACING ->
-                metricsCollector.applyFilter(
-                    enabled = Query.instance(QueryStrategyType.DRAG_RACING_QUERY).getIDs(),
-                )
-
-            SurfaceRendererType.PERFORMANCE ->
-                metricsCollector.applyFilter(
-                    enabled = Query.instance(QueryStrategyType.PERFORMANCE_QUERY).getIDs(),
-                )
-
-            SurfaceRendererType.TRIP_INFO ->
-                metricsCollector.applyFilter(
-                    enabled = Query.instance(QueryStrategyType.TRIP_INFO_QUERY).getIDs(),
-                )
         }
 
-        renderFrame()
-        return surfaceRenderer
+        return activeSurfaceRenderer
     }
 
     @MainThread
@@ -175,7 +148,7 @@ class SurfaceRendererController(
                     try {
                         canvas = it.lockHardwareCanvas()
                         surfaceLocked = true
-                        surfaceRenderer?.onDraw(
+                        activeSurfaceRenderer?.onDraw(
                             canvas = canvas,
                             drawArea = visibleArea,
                         )
