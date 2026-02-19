@@ -17,6 +17,7 @@
 package org.obd.graphs.bl.collector
 
 import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.bl.query.Query
 import org.obd.metrics.api.model.ObdMetric
 
 interface MetricsCollector {
@@ -25,6 +26,8 @@ interface MetricsCollector {
     fun getMetric(id: Pid, enabled: Boolean = true): Metric?
 
     fun getMetrics(enabled: Boolean = true): List<Metric>
+
+    fun applyFilter(selectedPIDs: Set<Long>, query: Query, order: Map<Long, Int>?)
 
     fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
 
