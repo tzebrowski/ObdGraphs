@@ -50,7 +50,6 @@ import kotlin.math.min
 import kotlin.math.sin
 
 private const val MIN_TEXT_VALUE_HEIGHT = 30
-private const val NUMERALS_RADIUS_SCALE_FACTOR = 0.75f
 private const val CACHE_SCALE = 2f
 
 data class DrawerSettings(
@@ -135,7 +134,13 @@ internal class GaugeDrawer(
     }
 
     private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
-    private var scaleBitmapCache: ScaleBitmapCache? = null
+    private val scaleBitmapCache = mutableMapOf<Long, ScaleBitmapCache>()
+
+    override fun recycle() {
+        super.recycle()
+        scaleBitmapCache.values.forEach { it.bitmap.recycle() }
+        scaleBitmapCache.clear()
+    }
 
     fun drawGauge(
         canvas: Canvas,
@@ -579,14 +584,16 @@ internal class GaugeDrawer(
         val targetWidth = ceil(rect.width()).toInt()
         val targetHeight = ceil(rect.height()).toInt()
 
-        val currentCache = scaleBitmapCache
+        val pidId = metric.pid.id
+        val currentCache = scaleBitmapCache[pidId]
+
         val isValid =
             currentCache != null &&
-                currentCache.scaleEnabled == scaleEnabled &&
-                currentCache.progressColor == settings.getColorTheme().progressColor &&
-                currentCache.width == targetWidth &&
-                currentCache.height == targetHeight &&
-                currentCache.dividerCount == drawerSettings.dividersCount
+                    currentCache.scaleEnabled == scaleEnabled &&
+                    currentCache.progressColor == settings.getColorTheme().progressColor &&
+                    currentCache.width == targetWidth &&
+                    currentCache.height == targetHeight &&
+                    currentCache.dividerCount == drawerSettings.dividersCount
 
         if (isValid && currentCache != null) {
             val destRect = RectF(rect)
@@ -611,7 +618,7 @@ internal class GaugeDrawer(
             }
             drawTicks(cacheCanvas, rect)
 
-            scaleBitmapCache =
+            scaleBitmapCache[pidId] =
                 ScaleBitmapCache(
                     cachedBitmap,
                     targetWidth,
@@ -636,19 +643,22 @@ internal class GaugeDrawer(
         val pid = metric.pid
         val startValue = pid.min.toDouble()
         val endValue = pid.max.toDouble()
-        val scaleRatio = calculateScaleRatio(area, targetMin = 0.4f, targetMax = 1.9f)
         val numberOfItems = (drawerSettings.dividersCount / drawerSettings.scaleStep)
         val stepValue = (endValue - startValue) / numberOfItems
-        val baseRadius = radius * NUMERALS_RADIUS_SCALE_FACTOR
+
+        val baseRadius = radius * 0.75f
+
         val start = 0
         val end = drawerSettings.dividersCount + 1
+
+        numbersPaint.textSize = area.width() * 0.055f
 
         for (j in start..end step drawerSettings.scaleStep) {
             val angle = (drawerSettings.startAngle + j * drawerSettings.dividersStepAngle) * (Math.PI / 180)
             val text = valueAsString(metric, value = (startValue + stepValue * j / drawerSettings.scaleStep).round(1))
+
             val textRect = Rect()
             numbersPaint.getTextBounds(text, 0, text.length, textRect)
-            numbersPaint.textSize = drawerSettings.scaleNumbersTextSize * scaleRatio
 
             val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - textRect.width() / 2).toFloat()
             val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + textRect.height() / 2).toFloat()

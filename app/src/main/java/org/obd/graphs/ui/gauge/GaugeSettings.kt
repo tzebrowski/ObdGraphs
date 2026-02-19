@@ -51,6 +51,8 @@ class GaugeSettings(
 
     override fun isStatisticsEnabled(): Boolean = true
 
+    override fun isScaleEnabled(): Boolean = Prefs.isEnabled("pref.gauge_display_scale")
+
     override fun isFpsCounterEnabled(): Boolean = Prefs.isEnabled("pref.gauge_display_command_rate")
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.gauge.fps", "5").toInt()
