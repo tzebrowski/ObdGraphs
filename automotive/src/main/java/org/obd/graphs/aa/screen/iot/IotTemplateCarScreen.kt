@@ -306,7 +306,7 @@ internal class IotTemplateCarScreen(
                 .replace("\n", ""),
         )
         title.append("\n")
-        val pid = metric.pid()
+        val pid = metric.pid
         title.append("· min:${metric.min.format(pid)} avg: ${metric.mean.format(pid)} max: ${metric.max.format(pid)}")
         return SpannableString(title)
     }

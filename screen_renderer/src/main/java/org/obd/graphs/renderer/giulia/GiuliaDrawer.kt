@@ -86,7 +86,7 @@ internal class GiuliaDrawer(
                 left1 =
                     drawText(
                         canvas,
-                        metric.min.format(pid = metric.pid()),
+                        metric.min.format(pid = metric.pid),
                         left1,
                         top1,
                         minValueColorScheme(metric),
@@ -107,7 +107,7 @@ internal class GiuliaDrawer(
                 left1 =
                     drawText(
                         canvas,
-                        metric.max.format(pid = metric.pid()),
+                        metric.max.format(pid = metric.pid),
                         left1,
                         top1,
                         maxValueColorScheme(metric),
@@ -129,7 +129,7 @@ internal class GiuliaDrawer(
                 left1 =
                     drawText(
                         canvas,
-                        metric.mean.format(pid = metric.pid()),
+                        metric.mean.format(pid = metric.pid),
                         left1,
                         top1,
                         Color.LTGRAY,

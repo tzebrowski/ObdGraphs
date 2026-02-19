@@ -343,8 +343,8 @@ internal class GaugeDrawer(
             }
 
             val value = metric.source.toFloat()
-            val startValue = metric.pid().min.toFloat()
-            val endValue = metric.pid().max.toFloat()
+            val startValue = metric.pid.min.toFloat()
+            val endValue = metric.pid.max.toFloat()
 
             if (value == startValue) {
                 canvas.drawArc(
@@ -422,7 +422,7 @@ internal class GaugeDrawer(
         val textRect = Rect()
         valuePaint.getTextBounds(value, 0, value.length, textRect)
 
-        val pid = metric.pid()
+        val pid = metric.pid
         val unitText = pid.units
         var unitWidth = 0f
         val unitRect = Rect()
@@ -608,7 +608,7 @@ internal class GaugeDrawer(
         metric: Metric,
         radius: Float,
     ) {
-        val pid = metric.pid()
+        val pid = metric.pid
         val startValue = pid.min.toDouble()
         val endValue = pid.max.toDouble()
         val scaleRatio = calculateScaleRatio(area, targetMin = 0.4f, targetMax = 1.9f)

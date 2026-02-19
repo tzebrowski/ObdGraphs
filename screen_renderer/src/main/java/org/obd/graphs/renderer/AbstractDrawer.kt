@@ -303,7 +303,7 @@ internal abstract class AbstractDrawer(
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.source.format(castToInt = false)}${it.pid().units ?: ""}",
+                        "${it.source.format(castToInt = false)}${it.pid.units ?: ""}",
                         marginLeft,
                         top,
                         Color.WHITE,
@@ -328,7 +328,7 @@ internal abstract class AbstractDrawer(
                     marginLeft += getTextWidth(text, statusPaint) + 4F
                     drawText(
                         canvas,
-                        "${it.source.format(castToInt = false)}${it.pid().units ?: ""}",
+                        "${it.source.format(castToInt = false)}${it.pid.units ?: ""}",
                         marginLeft,
                         top,
                         Color.WHITE,
