@@ -56,7 +56,7 @@ private const val EVENT_THROTTLE_MS = 350L
 internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
     protected val surfaceRendererType: SurfaceRendererType,
-    protected val screenSettings: ScreenSettings,
+    private val screenSettings: ScreenSettings,
 ) : Fragment(),
     View.OnTouchListener {
     protected val metricsCollector = MetricsCollector.instance()
@@ -74,8 +74,7 @@ internal abstract class SurfaceRendererFragment(
                 }
             },
             perfFrameRate = {
-                val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)
-                screenBehavior?.settings()?.getSurfaceFrameRate() ?: 0
+                screenSettings.getSurfaceFrameRate()
             },
         )
 
@@ -181,6 +180,7 @@ internal abstract class SurfaceRendererFragment(
     override fun onDestroy() {
         super.onDestroy()
         renderingThread.stop()
+        screenBehaviorController.recycle()
     }
 
     override fun onDetach() {

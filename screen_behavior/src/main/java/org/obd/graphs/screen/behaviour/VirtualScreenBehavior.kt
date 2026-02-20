@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,7 +32,6 @@ abstract class VirtualScreenBehavior(
     fps: Fps,
     surfaceRendererType: SurfaceRendererType,
 ) : ScreenBehavior(context, metricsCollector, settings, fps, surfaceRendererType) {
-
     protected abstract val virtualScreenConfig: VirtualScreenConfig
 
     override fun getCurrentVirtualScreen(): Int = virtualScreenConfig.getVirtualScreen()

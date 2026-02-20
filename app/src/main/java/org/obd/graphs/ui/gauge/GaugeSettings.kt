@@ -16,7 +16,6 @@
  */
 package org.obd.graphs.ui.gauge
 
-import android.util.Log
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
@@ -25,7 +24,7 @@ import org.obd.graphs.renderer.api.GaugeRendererSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
- class GaugeSettings: ScreenSettings {
+class GaugeSettings : ScreenSettings {
     private val gaugeRendererSettings =
         object : GaugeRendererSettings() {
             override fun getFontSize(): Int = Prefs.getS("pref.gauge.font_size", "42").toInt()
@@ -33,11 +32,12 @@ import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
             override fun getGaugeContainerColor(): Int = Prefs.getInt("pref.gauge_background_color", COLOR_RAINBOW_INDIGO)
         }
 
-    override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
-        updateSelectedPIDs(Prefs.getStringSet(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()).map { s -> s.toLong() }.toSet())
-    }
+    override fun getGaugeRendererSetting(): GaugeRendererSettings =
+        gaugeRendererSettings.apply {
+            updateSelectedPIDs(Prefs.getStringSet(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()).map { s -> s.toLong() }.toSet())
+        }
 
-    override fun isScrollbarEnabled(): Boolean  = Prefs.isEnabled("pref.gauge_scrollbar_enabled")
+    override fun isScrollbarEnabled(): Boolean = Prefs.isEnabled("pref.gauge_scrollbar_enabled")
 
     override fun isAA(): Boolean = false
 

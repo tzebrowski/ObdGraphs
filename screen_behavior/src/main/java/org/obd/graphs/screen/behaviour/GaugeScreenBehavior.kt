@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,13 +29,12 @@ internal class GaugeScreenBehavior(
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
 ) : VirtualScreenBehavior(
-    context,
-    metricsCollector,
-    settings[SurfaceRendererType.GAUGE] ?: throw IllegalArgumentException("Missing GAUGE settings"),
-    fps,
-    SurfaceRendererType.GAUGE,
-) {
-
+        context,
+        metricsCollector,
+        settings[SurfaceRendererType.GAUGE] ?: throw IllegalArgumentException("Missing GAUGE settings"),
+        fps,
+        SurfaceRendererType.GAUGE,
+    ) {
     override val virtualScreenConfig: VirtualScreenConfig
         get() = settings.getGaugeRendererSetting()
 }

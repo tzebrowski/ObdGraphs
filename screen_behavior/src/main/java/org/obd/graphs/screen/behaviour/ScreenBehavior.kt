@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -43,16 +43,14 @@ abstract class ScreenBehavior(
 
     protected val query = Query.instance()
 
+    protected abstract fun queryStrategyType(): QueryStrategyType
+
     fun getQuery(metricsCollector: MetricsCollector): Query {
         applyFilters(metricsCollector)
         return query
     }
 
-    fun settings(): ScreenSettings = settings
-
     fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
-
-    abstract fun queryStrategyType(): QueryStrategyType
 
     open fun getCurrentVirtualScreen(): Int = -1
 
