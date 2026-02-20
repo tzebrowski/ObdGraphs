@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,7 +21,15 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
- const val DEFAULT_FONT_SIZE = "32"
+
+interface VirtualScreenConfig {
+    val selectedPIDs: Set<Long>
+    fun getPIDsSortOrder(): Map<Long, Int>?
+    fun getVirtualScreen(): Int
+    fun setVirtualScreen(id: Int)
+}
+
+const val DEFAULT_FONT_SIZE = "32"
 
 enum class GaugeProgressBarType {
     LONG, SHORT
@@ -45,29 +53,28 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE
 )
 
-open class GaugeRendererSettings (
+open class GaugeRendererSettings(
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
-    var topOffset:Int = 0,
-    var selectedPIDs: Set<Long> = emptySet(),
-){
+    var topOffset: Int = 0,
+    override var selectedPIDs: Set<Long> = emptySet(),
+) : VirtualScreenConfig {
 
-    open fun getVirtualScreen(): Int = 0
+    override fun getVirtualScreen(): Int = 0
+    override fun setVirtualScreen(id: Int) {}
+    override fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
+
     open fun isPIDsSortOrderEnabled(): Boolean = false
-    open fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
-    open fun setVirtualScreen(id: Int) {}
-    open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
+    open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
     open fun getGaugeContainerColor(): Int = COLOR_RAINBOW_INDIGO
 }
 
-open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
+open class GiuliaRendererSettings(override var selectedPIDs: Set<Long> = emptySet()) : VirtualScreenConfig {
+    override fun getVirtualScreen(): Int = 0
+    override fun setVirtualScreen(id: Int) {}
+    override fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     open fun isPIDsSortOrderEnabled(): Boolean = false
-    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
-
-    open fun getVirtualScreen(): Int = 0
-
-    open fun setVirtualScreen(id: Int) {}
-    open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
+    open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
 }
 
 
@@ -93,7 +100,7 @@ data class BreakBoostingSettings(
 )
 
 data class PerformanceScreenSettings(
-    var labelCenterYPadding:Float = 22f,
+    var labelCenterYPadding: Float = 22f,
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
     var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()
@@ -107,7 +114,7 @@ interface ScreenSettings {
 
     fun isAA(): Boolean = true
 
-    fun handleProfileChanged(){}
+    fun handleProfileChanged() {}
 
     fun getRoutinesScreenSettings(): RoutinesScreenSettings = RoutinesScreenSettings()
 
@@ -117,7 +124,7 @@ interface ScreenSettings {
 
     fun getPerformanceScreenSettings(): PerformanceScreenSettings = PerformanceScreenSettings()
 
-    fun getMaxItems (): Int = 6
+    fun getMaxItems(): Int = 6
 
     fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
 

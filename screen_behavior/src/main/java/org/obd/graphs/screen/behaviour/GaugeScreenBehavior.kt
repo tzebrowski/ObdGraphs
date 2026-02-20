@@ -23,13 +23,14 @@ import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
+import org.obd.graphs.renderer.api.VirtualScreenConfig
 
 internal class GaugeScreenBehavior(
     context: Context,
     metricsCollector: MetricsCollector,
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
-) : ScreenBehavior(
+) : VirtualScreenBehavior(
     context, metricsCollector, settings[SurfaceRendererType.GAUGE] ?: throw IllegalArgumentException("Missing GAUGE settings"),
     fps, SurfaceRendererType.GAUGE
 ) {
@@ -41,17 +42,6 @@ internal class GaugeScreenBehavior(
             QueryStrategyType.SHARED_QUERY
         }
 
-    override fun getSelectedPIDs(): Set<Long> = rendererSettings(settings).selectedPIDs
-
-    override fun getSortOrder(): Map<Long, Int>? = rendererSettings(settings).getPIDsSortOrder()
-
-    override fun getCurrentVirtualScreen(): Int = rendererSettings(settings).getVirtualScreen()
-
-    override fun setCurrentVirtualScreen(
-        id: Int,
-    ) {
-        rendererSettings(settings).setVirtualScreen(id)
-    }
-
-    private fun rendererSettings(settings: ScreenSettings) = settings.getGaugeRendererSetting()
+    override val virtualScreenConfig: VirtualScreenConfig
+        get() = settings.getGiuliaRendererSetting()
 }

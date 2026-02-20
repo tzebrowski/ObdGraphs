@@ -171,6 +171,7 @@ dependencies {
     implementation project(':profile')
     implementation project(':ext')
     implementation project(':integrations')
+    implementation project(':screen_behavior')
 
     debugImplementation project(":automotive")
     releaseImplementation project(":automotive")
