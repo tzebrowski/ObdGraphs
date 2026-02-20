@@ -60,8 +60,7 @@ private const val AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT = "pref.aa.performa
 private enum class DefaultScreen(
     private val code: Int,
 ) : Identity {
-    NOT_SET(-1),
-    ;
+    NOT_SET(-1);
 
     override fun id(): Int = this.code
 }
@@ -142,7 +141,9 @@ internal class SurfaceRendererScreen(
 
     fun switchSurfaceRenderer(newScreenId: Identity) {
         this.screenId = newScreenId
-        Log.d(LOG_TAG, "Switch to new surface renderer screen: ${this.screenId} and updating query...")
+        if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+            Log.d(LOG_TAG, "[${Thread.currentThread()}] Switch to new surface renderer screen: ${this.screenId} and updating query...")
+        }
 
         if (newScreenId is SurfaceRendererType) {
             surfaceRendererController.switchSurfaceRenderer(newScreenId)
@@ -158,14 +159,13 @@ internal class SurfaceRendererScreen(
     }
 
     private fun updateQuery() {
-        if (!isSurfaceRendererScreen(screenId)) {
-            Log.i(LOG_TAG, "Do not update the query. It's not surface renderer screen.")
-            return
-        }
 
         val behavior = ScreenBehavior.getScreenBehavior(screenId) ?: return
         behavior.applyFilters(carSettings = settings, metricsCollector, query)
-        Log.d(LOG_TAG, "[${Thread.currentThread()}] updateQuery ($screenId):  ${query.getIDs()}")
+
+        if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+            Log.d(LOG_TAG, "[${Thread.currentThread()}] Update Query ($screenId):  ${query.getIDs()}")
+        }
 
         withDataLogger {
             updateQuery(query)

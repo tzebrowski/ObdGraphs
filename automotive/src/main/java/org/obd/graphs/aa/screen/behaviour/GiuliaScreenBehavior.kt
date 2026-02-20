@@ -20,14 +20,13 @@ import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.QueryStrategyType
 
-internal object GiuliaScreenBehavior : ScreenBehavior {
-    override val queryStrategyType: QueryStrategyType
-        get() =
-            if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
-                QueryStrategyType.INDIVIDUAL_QUERY
-            } else {
-                QueryStrategyType.SHARED_QUERY
-            }
+internal object GiuliaScreenBehavior : ScreenBehavior() {
+    override fun queryStrategyType(): QueryStrategyType =
+        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
+            QueryStrategyType.INDIVIDUAL_QUERY
+        } else {
+            QueryStrategyType.SHARED_QUERY
+        }
 
     override fun getSelectedPIDs(carSettings: CarSettings): Set<Long> = rendererSettings(carSettings).selectedPIDs
 

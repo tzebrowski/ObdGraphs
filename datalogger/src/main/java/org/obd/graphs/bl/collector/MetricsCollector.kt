@@ -17,7 +17,6 @@
 package org.obd.graphs.bl.collector
 
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.query.Query
 import org.obd.metrics.api.model.ObdMetric
 
 interface MetricsCollector {

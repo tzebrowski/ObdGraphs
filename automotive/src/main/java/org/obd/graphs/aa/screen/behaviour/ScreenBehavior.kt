@@ -23,40 +23,40 @@ import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
-interface ScreenBehavior {
-    val queryStrategyType: QueryStrategyType
+abstract class ScreenBehavior {
+    abstract fun queryStrategyType(): QueryStrategyType
 
-    fun getSelectedPIDs(carSettings: CarSettings): Set<Long> = emptySet()
+    protected open fun getSelectedPIDs(carSettings: CarSettings): Set<Long> = emptySet()
 
-    fun getSortOrder(carSettings: CarSettings): Map<Long, Int>? = null
+    protected open fun getSortOrder(carSettings: CarSettings): Map<Long, Int>? = null
 
-    fun getCurrentVirtualScreen(carSettings: CarSettings): Int = -1
+    open fun getCurrentVirtualScreen(carSettings: CarSettings): Int = -1
 
-    fun setCurrentVirtualScreen(
+    open fun setCurrentVirtualScreen(
         carSettings: CarSettings,
         id: Int,
     ) {
     }
 
-    fun applyFilters(
+    open  fun applyFilters(
         carSettings: CarSettings,
         metricsCollector: MetricsCollector,
         query: Query,
     ) {
-        query.setStrategy(queryStrategyType)
+        query.setStrategy(queryStrategyType())
+        val selectedPIDs = getSelectedPIDs(carSettings)
+        val sortOrder = getSortOrder(carSettings)
 
-        when (queryStrategyType) {
+        when (queryStrategyType()) {
             QueryStrategyType.INDIVIDUAL_QUERY -> {
-                val selectedPIDs = getSelectedPIDs(carSettings)
-                metricsCollector.applyFilter(enabled = selectedPIDs, order = getSortOrder(carSettings))
+                metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder)
                 query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
             }
 
             QueryStrategyType.SHARED_QUERY -> {
-                val selectedPIDs = getSelectedPIDs(carSettings)
                 val queryIds = query.getIDs()
                 val intersection = selectedPIDs.filter { queryIds.contains(it) }.toSet()
-                metricsCollector.applyFilter(enabled = intersection, order = getSortOrder(carSettings))
+                metricsCollector.applyFilter(enabled = intersection, order = sortOrder)
             }
 
             else -> {}

@@ -21,15 +21,15 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 
-internal object DragRacingScreenBehavior : ScreenBehavior {
-    override val queryStrategyType = QueryStrategyType.DRAG_RACING_QUERY
+internal object DragRacingScreenBehavior : ScreenBehavior() {
+    override fun queryStrategyType() = QueryStrategyType.DRAG_RACING_QUERY
 
     override fun applyFilters(
         carSettings: CarSettings,
         metricsCollector: MetricsCollector,
         query: Query,
     ) {
-        query.setStrategy(queryStrategyType)
+        query.setStrategy(queryStrategyType())
         metricsCollector.applyFilter(enabled = query.getIDs())
         query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
     }
