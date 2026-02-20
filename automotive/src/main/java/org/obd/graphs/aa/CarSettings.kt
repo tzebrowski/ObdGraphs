@@ -188,11 +188,11 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
         gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.LONG.name))
         topOffset = Prefs.getS("pref.aa.virtual_screens.gauge.top_offset.${getCurrentVirtualScreenId(dataPrefs = this.dataPrefs)}","0").toInt()
-        selectedPIDs = Prefs.getStringSet(dataPrefs.selectedPIDsKey).map { s -> s.toLong() }.toSet()
+        updateSelectedPIDs(Prefs.getStringSet(dataPrefs.selectedPIDsKey).map { s -> s.toLong() }.toSet())
     }
 
     override fun getGiuliaRendererSetting(): GiuliaRendererSettings = giuliaRendererSettings.apply {
-        selectedPIDs = Prefs.getStringSet(dataPrefs.selectedPIDsKey).map { s -> s.toLong() }.toSet()
+        updateSelectedPIDs(Prefs.getStringSet(dataPrefs.selectedPIDsKey).map { s -> s.toLong() }.toSet())
     }
 
     override fun getMaxItems(): Int  =  Prefs.getS("pref.aa.virtual_screens.screen.max_items","6").toInt()

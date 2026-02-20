@@ -27,6 +27,7 @@ interface VirtualScreenConfig {
     fun getPIDsSortOrder(): Map<Long, Int>?
     fun getVirtualScreen(): Int
     fun setVirtualScreen(id: Int)
+    fun updateSelectedPIDs(pids: Set<Long>)
 }
 
 const val DEFAULT_FONT_SIZE = "32"
@@ -56,8 +57,8 @@ data class ColorTheme(
 open class GaugeRendererSettings(
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     var topOffset: Int = 0,
-    override var selectedPIDs: Set<Long> = emptySet(),
 ) : VirtualScreenConfig {
+    private var internalSelectedPIDs: Set<Long> = emptySet()
 
     override fun getVirtualScreen(): Int = 0
     override fun setVirtualScreen(id: Int) {}
@@ -66,15 +67,31 @@ open class GaugeRendererSettings(
     open fun isPIDsSortOrderEnabled(): Boolean = false
     open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
     open fun getGaugeContainerColor(): Int = COLOR_RAINBOW_INDIGO
+
+    override val selectedPIDs: Set<Long>
+        get() = internalSelectedPIDs
+
+    override fun updateSelectedPIDs(pids: Set<Long>) {
+        internalSelectedPIDs = pids
+    }
 }
 
-open class GiuliaRendererSettings(override var selectedPIDs: Set<Long> = emptySet()) : VirtualScreenConfig {
+open class GiuliaRendererSettings: VirtualScreenConfig {
+    private var internalSelectedPIDs: Set<Long> = emptySet()
+
     override fun getVirtualScreen(): Int = 0
     override fun setVirtualScreen(id: Int) {}
     override fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     open fun isPIDsSortOrderEnabled(): Boolean = false
     open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
+
+    override val selectedPIDs: Set<Long>
+        get() = internalSelectedPIDs
+
+    override fun updateSelectedPIDs(pids: Set<Long>) {
+        internalSelectedPIDs = pids
+    }
 }
 
 

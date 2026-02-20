@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -48,13 +48,11 @@ abstract class ScreenBehavior(
         return query
     }
 
+    fun settings(): ScreenSettings = settings
+
     fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
 
     abstract fun queryStrategyType(): QueryStrategyType
-
-    protected open fun getSelectedPIDs(): Set<Long> = emptySet()
-
-    protected open fun getSortOrder(): Map<Long, Int>? = null
 
     open fun getCurrentVirtualScreen(): Int = -1
 

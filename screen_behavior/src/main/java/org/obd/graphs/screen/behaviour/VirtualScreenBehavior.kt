@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -18,6 +18,7 @@ package org.obd.graphs.screen.behaviour
 
 import android.content.Context
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
@@ -31,20 +32,24 @@ abstract class VirtualScreenBehavior(
     fps: Fps,
     surfaceRendererType: SurfaceRendererType,
 ) : ScreenBehavior(context, metricsCollector, settings, fps, surfaceRendererType) {
+
     protected abstract val virtualScreenConfig: VirtualScreenConfig
 
     override fun getCurrentVirtualScreen(): Int = virtualScreenConfig.getVirtualScreen()
 
     override fun setCurrentVirtualScreen(id: Int) = virtualScreenConfig.setVirtualScreen(id)
 
-    override fun getSelectedPIDs(): Set<Long> = virtualScreenConfig.selectedPIDs
-
-    override fun getSortOrder(): Map<Long, Int>? = virtualScreenConfig.getPIDsSortOrder()
+    override fun queryStrategyType(): QueryStrategyType =
+        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
+            QueryStrategyType.INDIVIDUAL_QUERY
+        } else {
+            QueryStrategyType.SHARED_QUERY
+        }
 
     override fun applyFilters(metricsCollector: MetricsCollector) {
         query.setStrategy(queryStrategyType())
-        val selectedPIDs = getSelectedPIDs()
-        val sortOrder = getSortOrder()
+        val selectedPIDs = virtualScreenConfig.selectedPIDs
+        val sortOrder = virtualScreenConfig.getPIDsSortOrder()
 
         when (queryStrategyType()) {
             QueryStrategyType.INDIVIDUAL_QUERY -> {

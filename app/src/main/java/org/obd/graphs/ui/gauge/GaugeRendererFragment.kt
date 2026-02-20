@@ -23,7 +23,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.ui.SurfaceRendererFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -34,13 +33,8 @@ internal class GaugeRendererFragment :
     SurfaceRendererFragment(
         R.layout.fragment_gauge,
         SurfaceRendererType.GAUGE,
+        GaugeSettings()
     ) {
-    private val query: Query = Query.instance()
-    private val settings = GaugeSettings(query)
-
-    override fun getScreenSettings(): GaugeSettings = settings
-
-    override fun query() = query.apply(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey())
 
     override fun updateInsets() {}
 
@@ -68,21 +62,20 @@ internal class GaugeRendererFragment :
 
             it.setOnClickListener {
                 gaugeVirtualScreenPreferences.updateVirtualScreen(viewId)
+                val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)!!
+                val query = screenBehavior.getQuery(metricsCollector)
 
                 if (DataLoggerRepository.isRunning()) {
                     withDataLogger {
-                        updateQuery(query())
+                        updateQuery(query)
                     }
                 }
 
-                applyFilter()
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
             }
         }
     }
-
-    private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()))
 
     private fun setupVirtualViewPanel() {
         val currentVirtualScreen = gaugeVirtualScreenPreferences.getCurrentVirtualScreen()

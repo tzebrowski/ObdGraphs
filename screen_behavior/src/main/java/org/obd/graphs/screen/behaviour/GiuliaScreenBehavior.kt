@@ -18,8 +18,6 @@ package org.obd.graphs.screen.behaviour
 
 import android.content.Context
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerSettings
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
@@ -37,12 +35,6 @@ internal class GiuliaScreenBehavior(
         fps,
         SurfaceRendererType.GIULIA,
     ) {
-    override fun queryStrategyType(): QueryStrategyType =
-        if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
-            QueryStrategyType.INDIVIDUAL_QUERY
-        } else {
-            QueryStrategyType.SHARED_QUERY
-        }
 
     override val virtualScreenConfig: VirtualScreenConfig
         get() = settings.getGiuliaRendererSetting()

@@ -22,8 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import org.obd.graphs.R
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.ui.SurfaceRendererFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -34,14 +32,8 @@ internal class GiuliaRendererFragment :
     SurfaceRendererFragment(
         R.layout.fragment_giulia,
         SurfaceRendererType.GIULIA,
+        GiuliaSettings()
     ) {
-    private val query: Query = Query.instance()
-    private val settings = GiuliaSettings(query)
-
-    override fun query() = query.apply(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey())
-
-    override fun getScreenSettings(): ScreenSettings = settings
-
     override fun updateInsets() {}
 
     override fun onCreateView(
@@ -68,18 +60,19 @@ internal class GiuliaRendererFragment :
 
             it.setOnClickListener {
                 giuliaVirtualScreenPreferences.updateVirtualScreen(viewId)
+                val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)!!
+                val query = screenBehavior.getQuery(metricsCollector)
+
                 withDataLogger {
-                    updateQuery(query())
+                    updateQuery(query)
                 }
 
-                applyFilter()
+
                 setupVirtualViewPanel()
                 surfaceController.renderFrame()
             }
         }
     }
-
-    private fun applyFilter() = metricsCollector.applyFilter(query.filterBy(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()))
 
     private fun setupVirtualViewPanel() {
         val currentVirtualScreen = giuliaVirtualScreenPreferences.getCurrentVirtualScreen()
