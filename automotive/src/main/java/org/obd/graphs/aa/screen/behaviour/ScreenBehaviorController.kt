@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,30 +17,30 @@
 package org.obd.graphs.aa.screen.behaviour
 
 import android.content.Context
-import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.Identity
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 class ScreenBehaviorController(
-    carContext: Context,
+    context: Context,
     metricsCollector: MetricsCollector,
-    carSettings: CarSettings,
+    settings: ScreenSettings,
     fps: Fps,
 ) {
 
-    private val gaugeScreenBehavior: GaugeScreenBehavior = GaugeScreenBehavior(carContext, metricsCollector, carSettings, fps)
+    private val gaugeScreenBehavior: GaugeScreenBehavior = GaugeScreenBehavior(context, metricsCollector, settings, fps)
 
-    private val tripInfoScreenBehavior: TripInfoScreenBehavior = TripInfoScreenBehavior(carContext, metricsCollector, carSettings, fps)
+    private val tripInfoScreenBehavior: TripInfoScreenBehavior = TripInfoScreenBehavior(context, metricsCollector, settings, fps)
 
-    private val giuliaScreenBehavior: GiuliaScreenBehavior = GiuliaScreenBehavior(carContext, metricsCollector, carSettings, fps)
+    private val giuliaScreenBehavior: GiuliaScreenBehavior = GiuliaScreenBehavior(context, metricsCollector, settings, fps)
 
     private val dragRacingScreenBehavior: DragRacingScreenBehavior =
-        DragRacingScreenBehavior(carContext, metricsCollector, carSettings, fps)
+        DragRacingScreenBehavior(context, metricsCollector, settings, fps)
 
     private val performanceScreenBehavior: PerformanceScreenBehavior =
-        PerformanceScreenBehavior(carContext, metricsCollector, carSettings, fps)
+        PerformanceScreenBehavior(context, metricsCollector, settings, fps)
 
     fun recycle() {
         gaugeScreenBehavior.getSurfaceRenderer().recycle()

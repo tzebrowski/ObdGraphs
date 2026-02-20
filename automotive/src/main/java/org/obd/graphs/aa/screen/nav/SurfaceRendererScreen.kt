@@ -126,8 +126,8 @@ internal class SurfaceRendererScreen(
             private fun handlePIDsListChangedEvent(id: Int) {
                 val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
 
-                if (behavior.getCurrentVirtualScreen(carSettings = settings) == id) {
-                    behavior.setCurrentVirtualScreen(carSettings = settings, id = id)
+                if (behavior.getCurrentVirtualScreen() == id) {
+                    behavior.setCurrentVirtualScreen(id = id)
                 }
 
                 updateQuery()
@@ -143,16 +143,17 @@ internal class SurfaceRendererScreen(
 
     fun switchSurfaceRenderer(newScreenId: Identity) {
         this.screenId = newScreenId
-        if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
-            Log.d(LOG_TAG, "[${Thread.currentThread()}] Switch to new surface renderer screen: ${this.screenId} and updating query...")
-        }
-
         if (newScreenId is SurfaceRendererType) {
+
+            if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+                Log.d(LOG_TAG, "[${Thread.currentThread()}] Switch to new surface renderer screen: ${this.screenId} and updating query...")
+            }
+
             val surfaceRenderer = screenBehaviorController.getScreenBehavior(newScreenId)?.getSurfaceRenderer()
             surfaceRendererController.updateSurfaceRenderer(surfaceRenderer)
 
             val behavior = screenBehaviorController.getScreenBehavior(newScreenId) ?: return
-            val query = behavior.getQuery(carSettings = settings, metricsCollector)
+            val query = behavior.getQuery(metricsCollector)
 
             withDataLogger {
                 updateQuery(query = query)
@@ -164,7 +165,7 @@ internal class SurfaceRendererScreen(
     private fun updateQuery() {
 
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
-        val query = behavior.getQuery(carSettings = settings, metricsCollector)
+        val query = behavior.getQuery(metricsCollector)
 
         if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
             Log.d(LOG_TAG, "[${Thread.currentThread()}] Update Query ($screenId):  ${query.getIDs()}")
@@ -177,7 +178,7 @@ internal class SurfaceRendererScreen(
 
     override fun startDataLogging() {
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
-        val query = behavior.getQuery(carSettings = settings, metricsCollector)
+        val query = behavior.getQuery(metricsCollector)
 
         withDataLogger {
             start(query)
@@ -290,7 +291,7 @@ internal class SurfaceRendererScreen(
                 val behavior = screenBehaviorController.getScreenBehavior(screenId)
 
                 val color =
-                    if (behavior?.getCurrentVirtualScreen(carSettings = settings) == k) {
+                    if (behavior?.getCurrentVirtualScreen() == k) {
                         CarColor.GREEN
                     } else {
                         mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
@@ -300,7 +301,7 @@ internal class SurfaceRendererScreen(
                     builder.addAction(
                         createAction(carContext, v, color) {
                             parent.invalidate()
-                            behavior?.setCurrentVirtualScreen(carSettings = settings, id = k)
+                            behavior?.setCurrentVirtualScreen(id = k)
                             updateQuery()
                             renderFrame()
                         },

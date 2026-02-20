@@ -17,30 +17,20 @@
 package org.obd.graphs.aa.screen.behaviour
 
 import android.content.Context
-import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Fps
-import org.obd.graphs.renderer.api.SurfaceRenderer
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 internal class GaugeScreenBehavior(
-    carContext: Context,
+    context: Context,
     metricsCollector: MetricsCollector,
-    carSettings: CarSettings,
+    settings: ScreenSettings,
     fps: Fps,
-) : ScreenBehavior() {
-    private val surfaceRenderer =
-        SurfaceRenderer.allocate(
-            carContext,
-            carSettings,
-            metricsCollector,
-            fps,
-            surfaceRendererType = SurfaceRendererType.GAUGE,
-        )
+) : ScreenBehavior(context, metricsCollector, settings, fps, SurfaceRendererType.GAUGE) {
 
-    override fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
 
     override fun queryStrategyType(): QueryStrategyType =
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
@@ -49,18 +39,17 @@ internal class GaugeScreenBehavior(
             QueryStrategyType.SHARED_QUERY
         }
 
-    override fun getSelectedPIDs(carSettings: CarSettings): Set<Long> = rendererSettings(carSettings).selectedPIDs
+    override fun getSelectedPIDs(): Set<Long> = rendererSettings(settings).selectedPIDs
 
-    override fun getSortOrder(carSettings: CarSettings): Map<Long, Int>? = rendererSettings(carSettings).getPIDsSortOrder()
+    override fun getSortOrder(): Map<Long, Int>? = rendererSettings(settings).getPIDsSortOrder()
 
-    override fun getCurrentVirtualScreen(carSettings: CarSettings): Int = rendererSettings(carSettings).getVirtualScreen()
+    override fun getCurrentVirtualScreen(): Int = rendererSettings(settings).getVirtualScreen()
 
     override fun setCurrentVirtualScreen(
-        carSettings: CarSettings,
         id: Int,
     ) {
-        rendererSettings(carSettings).setVirtualScreen(id)
+        rendererSettings(settings).setVirtualScreen(id)
     }
 
-    private fun rendererSettings(settings: CarSettings) = settings.getGaugeRendererSetting()
+    private fun rendererSettings(settings: ScreenSettings) = settings.getGaugeRendererSetting()
 }

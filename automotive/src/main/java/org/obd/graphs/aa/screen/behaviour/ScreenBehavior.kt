@@ -16,46 +16,55 @@
  */
 package org.obd.graphs.aa.screen.behaviour
 
-import org.obd.graphs.aa.CarSettings
+import android.content.Context
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRenderer
+import org.obd.graphs.renderer.api.SurfaceRendererType
 
-abstract class ScreenBehavior {
+abstract class ScreenBehavior(
+    context: Context,
+    metricsCollector: MetricsCollector,
+    protected val settings: ScreenSettings,
+    fps: Fps,
+    surfaceRendererType: SurfaceRendererType,
+) {
+    private val surfaceRenderer =
+        SurfaceRenderer.allocate(
+            context,
+            settings,
+            metricsCollector,
+            fps,
+            surfaceRendererType = surfaceRendererType,
+        )
+
     protected val query = Query.instance()
 
-    fun getQuery(
-        carSettings: CarSettings,
-        metricsCollector: MetricsCollector,
-    ): Query {
-        applyFilters(carSettings = carSettings, metricsCollector)
+    fun getQuery(metricsCollector: MetricsCollector): Query {
+        applyFilters(metricsCollector)
         return query
     }
 
-    abstract fun getSurfaceRenderer(): SurfaceRenderer
+    fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
 
     abstract fun queryStrategyType(): QueryStrategyType
 
-    protected open fun getSelectedPIDs(carSettings: CarSettings): Set<Long> = emptySet()
+    protected open fun getSelectedPIDs(): Set<Long> = emptySet()
 
-    protected open fun getSortOrder(carSettings: CarSettings): Map<Long, Int>? = null
+    protected open fun getSortOrder(): Map<Long, Int>? = null
 
-    open fun getCurrentVirtualScreen(carSettings: CarSettings): Int = -1
+    open fun getCurrentVirtualScreen(): Int = -1
 
-    open fun setCurrentVirtualScreen(
-        carSettings: CarSettings,
-        id: Int,
-    ) {
+    open fun setCurrentVirtualScreen(id: Int) {
     }
 
-    protected open fun applyFilters(
-        carSettings: CarSettings,
-        metricsCollector: MetricsCollector,
-    ) {
+    protected open fun applyFilters(metricsCollector: MetricsCollector) {
         query.setStrategy(queryStrategyType())
-        val selectedPIDs = getSelectedPIDs(carSettings)
-        val sortOrder = getSortOrder(carSettings)
+        val selectedPIDs = getSelectedPIDs()
+        val sortOrder = getSortOrder()
 
         when (queryStrategyType()) {
             QueryStrategyType.INDIVIDUAL_QUERY -> {

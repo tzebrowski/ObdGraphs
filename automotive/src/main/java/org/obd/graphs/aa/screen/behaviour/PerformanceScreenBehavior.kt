@@ -17,36 +17,21 @@
 package org.obd.graphs.aa.screen.behaviour
 
 import android.content.Context
-import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.renderer.api.Fps
-import org.obd.graphs.renderer.api.SurfaceRenderer
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 internal class PerformanceScreenBehavior(
-    carContext: Context,
+    context: Context,
     metricsCollector: MetricsCollector,
-    carSettings: CarSettings,
+    settings: ScreenSettings,
     fps: Fps,
-) : ScreenBehavior() {
+) : ScreenBehavior(context, metricsCollector, settings, fps, SurfaceRendererType.PERFORMANCE) {
     override fun queryStrategyType() = QueryStrategyType.PERFORMANCE_QUERY
 
-    private val surfaceRenderer =
-        SurfaceRenderer.allocate(
-            carContext,
-            carSettings,
-            metricsCollector,
-            fps,
-            surfaceRendererType = SurfaceRendererType.PERFORMANCE,
-        )
-
-    override fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
-
-    override fun applyFilters(
-        carSettings: CarSettings,
-        metricsCollector: MetricsCollector,
-    ) {
+    override fun applyFilters(metricsCollector: MetricsCollector) {
         query.setStrategy(queryStrategyType())
         metricsCollector.applyFilter(enabled = query.getIDs())
         query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
