@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,17 +29,13 @@ class ScreenBehaviorController(
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
 ) {
-    private val gaugeScreenBehavior: GaugeScreenBehavior = GaugeScreenBehavior(context, metricsCollector, settings, fps)
 
-    private val tripInfoScreenBehavior: TripInfoScreenBehavior = TripInfoScreenBehavior(context, metricsCollector, settings, fps)
+    private val gaugeScreenBehavior by lazy { GaugeScreenBehavior(context, metricsCollector, settings, fps) }
+    private val tripInfoScreenBehavior by lazy { TripInfoScreenBehavior(context, metricsCollector, settings, fps) }
+    private val giuliaScreenBehavior by lazy { GiuliaScreenBehavior(context, metricsCollector, settings, fps) }
+    private val dragRacingScreenBehavior by lazy { DragRacingScreenBehavior(context, metricsCollector, settings, fps) }
+    private val performanceScreenBehavior by lazy { PerformanceScreenBehavior(context, metricsCollector, settings, fps) }
 
-    private val giuliaScreenBehavior: GiuliaScreenBehavior = GiuliaScreenBehavior(context, metricsCollector, settings, fps)
-
-    private val dragRacingScreenBehavior: DragRacingScreenBehavior =
-        DragRacingScreenBehavior(context, metricsCollector, settings, fps)
-
-    private val performanceScreenBehavior: PerformanceScreenBehavior =
-        PerformanceScreenBehavior(context, metricsCollector, settings, fps)
 
     fun recycle() {
         gaugeScreenBehavior.getSurfaceRenderer().recycle()
