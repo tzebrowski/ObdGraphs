@@ -24,34 +24,40 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 class ScreenBehaviorController(
-    context: Context,
-    metricsCollector: MetricsCollector,
-    settings: Map<SurfaceRendererType, ScreenSettings>,
-    fps: Fps,
+    private val context: Context,
+    private val metricsCollector: MetricsCollector,
+    private val settings: Map<SurfaceRendererType, ScreenSettings>,
+    private val fps: Fps,
 ) {
 
-    private val gaugeScreenBehavior by lazy { GaugeScreenBehavior(context, metricsCollector, settings, fps) }
-    private val tripInfoScreenBehavior by lazy { TripInfoScreenBehavior(context, metricsCollector, settings, fps) }
-    private val giuliaScreenBehavior by lazy { GiuliaScreenBehavior(context, metricsCollector, settings, fps) }
-    private val dragRacingScreenBehavior by lazy { DragRacingScreenBehavior(context, metricsCollector, settings, fps) }
-    private val performanceScreenBehavior by lazy { PerformanceScreenBehavior(context, metricsCollector, settings, fps) }
-
+    private val behaviorsCache = mutableMapOf<SurfaceRendererType, ScreenBehavior>()
 
     fun recycle() {
-        gaugeScreenBehavior.getSurfaceRenderer().recycle()
-        tripInfoScreenBehavior.getSurfaceRenderer().recycle()
-        giuliaScreenBehavior.getSurfaceRenderer().recycle()
-        dragRacingScreenBehavior.getSurfaceRenderer().recycle()
-        performanceScreenBehavior.getSurfaceRenderer().recycle()
+        behaviorsCache.values.forEach { it.getSurfaceRenderer().recycle() }
+        behaviorsCache.clear()
     }
 
-    fun getScreenBehavior(screenId: Identity): ScreenBehavior? =
-        when (screenId) {
-            SurfaceRendererType.GIULIA -> giuliaScreenBehavior
-            SurfaceRendererType.GAUGE -> gaugeScreenBehavior
-            SurfaceRendererType.DRAG_RACING -> dragRacingScreenBehavior
-            SurfaceRendererType.PERFORMANCE -> performanceScreenBehavior
-            SurfaceRendererType.TRIP_INFO -> tripInfoScreenBehavior
-            else -> null
+    fun getScreenBehavior(screenId: Identity): ScreenBehavior? {
+        if (screenId !is SurfaceRendererType) return null
+
+        return behaviorsCache.getOrPut(screenId) {
+            when (screenId) {
+
+                SurfaceRendererType.GIULIA ->
+                    GiuliaScreenBehavior(context, metricsCollector, settings, fps)
+
+                SurfaceRendererType.GAUGE ->
+                    GaugeScreenBehavior(context, metricsCollector, settings, fps)
+
+                SurfaceRendererType.DRAG_RACING ->
+                    DragRacingScreenBehavior(context, metricsCollector, settings, fps)
+
+                SurfaceRendererType.PERFORMANCE ->
+                    PerformanceScreenBehavior(context, metricsCollector, settings, fps)
+
+                SurfaceRendererType.TRIP_INFO ->
+                    TripInfoScreenBehavior(context, metricsCollector, settings, fps)
+            }
         }
+    }
 }

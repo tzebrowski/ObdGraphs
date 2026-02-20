@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,7 +28,13 @@ internal class DragRacingScreenBehavior(
     metricsCollector: MetricsCollector,
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.DRAG_RACING]!!, fps, SurfaceRendererType.DRAG_RACING) {
+) : ScreenBehavior(
+    context,
+    metricsCollector,
+    settings[SurfaceRendererType.DRAG_RACING] ?: throw IllegalArgumentException("Missing DRAG_RACING settings"),
+    fps,
+    SurfaceRendererType.DRAG_RACING
+) {
 
     override fun queryStrategyType() = QueryStrategyType.DRAG_RACING_QUERY
 

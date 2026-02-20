@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,7 +28,13 @@ internal class TripInfoScreenBehavior(
     metricsCollector: MetricsCollector,
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.TRIP_INFO]!!, fps, SurfaceRendererType.TRIP_INFO) {
+) : ScreenBehavior(
+    context,
+    metricsCollector,
+    settings[SurfaceRendererType.TRIP_INFO] ?: throw IllegalArgumentException("Missing TRIP_INFO settings"),
+    fps,
+    SurfaceRendererType.TRIP_INFO
+) {
 
     override fun queryStrategyType() = QueryStrategyType.TRIP_INFO_QUERY
 }
