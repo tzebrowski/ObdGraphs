@@ -14,10 +14,9 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer
+package org.obd.graphs.renderer.api
 
 import android.graphics.Color
-import org.obd.graphs.getContext
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
@@ -127,10 +126,6 @@ interface ScreenSettings {
     fun isScrollbarEnabled(): Boolean = false
 
     fun isScaleEnabled(): Boolean = true
-
-    fun getHeightPixels(): Int = getContext()!!.resources.displayMetrics.heightPixels
-
-    fun getWidthPixels(): Int = getContext()!!.resources.displayMetrics.widthPixels
 
     fun isProgressGradientEnabled(): Boolean = false
 

@@ -19,8 +19,8 @@ package org.obd.graphs.ui.giulia
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.GiuliaRendererSettings
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.GiuliaRendererSettings
+import org.obd.graphs.renderer.api.ScreenSettings
 
 class GiuliaSettings(
     private val query: Query,

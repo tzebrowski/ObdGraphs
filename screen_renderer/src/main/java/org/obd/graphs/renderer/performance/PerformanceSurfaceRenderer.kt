@@ -20,36 +20,23 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.renderer.CoreSurfaceRenderer
-import org.obd.graphs.renderer.Fps
+import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
-
-private const val LOG_TAG = "PerformanceSurfaceRenderer"
 
 internal class PerformanceSurfaceRenderer(
     context: Context,
     private val settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
-) : CoreSurfaceRenderer() {
+) : AbstractSurfaceRenderer(context) {
     private val performanceInfoDetails = PerformanceInfoDetails()
     private val performanceDrawer = PerformanceDrawer(context, settings)
     private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)
-
-    override fun applyMetricsFilter(query: Query) {
-        Log.d(LOG_TAG, "Query strategy ${query.getStrategy()}, selected id's: ${query.getIDs()}")
-
-        metricsCollector.applyFilter(
-            enabled = query.getIDs(),
-        )
-    }
 
     override fun onDraw(
         canvas: Canvas,
@@ -116,10 +103,5 @@ internal class PerformanceSurfaceRenderer(
 
     override fun recycle() {
         performanceDrawer.recycle()
-    }
-
-    init {
-        Log.i(LOG_TAG, "Init Performance Surface renderer")
-        applyMetricsFilter(Query.instance(QueryStrategyType.PERFORMANCE_QUERY))
     }
 }

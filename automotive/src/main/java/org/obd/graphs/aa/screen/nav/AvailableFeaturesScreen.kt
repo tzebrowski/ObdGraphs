@@ -24,7 +24,7 @@ import androidx.core.graphics.drawable.IconCompat
 import org.obd.graphs.aa.R
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.bl.datalogger.*
-import org.obd.graphs.renderer.Identity
+import org.obd.graphs.renderer.api.Identity
 
 private const val LOG_TAG = "AvailableFeaturesScreen"
 

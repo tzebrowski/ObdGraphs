@@ -24,7 +24,7 @@ import android.widget.Button
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.ui.SurfaceRendererFragment
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT

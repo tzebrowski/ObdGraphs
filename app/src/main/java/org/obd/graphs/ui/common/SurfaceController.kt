@@ -22,7 +22,7 @@ import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.annotation.MainThread
-import org.obd.graphs.renderer.SurfaceRenderer
+import org.obd.graphs.renderer.api.SurfaceRenderer
 
 private const val LOG_KEY = "SurfaceController"
 

@@ -32,12 +32,11 @@ import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
-import org.obd.graphs.getContext
 import org.obd.graphs.isNumber
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
-import org.obd.graphs.renderer.GaugeProgressBarType
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.GaugeProgressBarType
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.round
 import org.obd.graphs.toFloat
 import org.obd.graphs.ui.common.COLOR_WHITE
@@ -284,7 +283,7 @@ internal class GaugeDrawer(
             )
 
         backgroundGradientPaint.shader = gradient
-        val cornerRadius = 8f * getContext()!!.resources.displayMetrics.density
+        val cornerRadius = 8f * context.resources.displayMetrics.density
         canvas.drawRoundRect(destRect, cornerRadius, cornerRadius, backgroundGradientPaint)
     }
 
@@ -835,7 +834,7 @@ internal class GaugeDrawer(
     ): Float =
         (area.width() * area.height()).mapRange(
             8875f,
-            (settings.getHeightPixels() * settings.getWidthPixels()) * 0.9f,
+            (getHeightPixels() * getWidthPixels()) * 0.9f,
             targetMin,
             targetMax,
         )
@@ -863,4 +862,9 @@ internal class GaugeDrawer(
         } else {
             value.toString()
         }
+
+
+    private fun getHeightPixels(): Int = context.resources.displayMetrics.heightPixels
+    private fun getWidthPixels(): Int = context.resources.displayMetrics.widthPixels
+
 }

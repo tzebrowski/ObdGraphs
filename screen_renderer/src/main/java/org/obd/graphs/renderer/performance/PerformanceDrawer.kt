@@ -20,8 +20,8 @@ import android.content.Context
 import android.graphics.*
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.renderer.AbstractDrawer
-import org.obd.graphs.renderer.GaugeProgressBarType
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.GaugeProgressBarType
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer

@@ -67,7 +67,7 @@ import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.format
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.renderer.DynamicSelectorMode
+import org.obd.graphs.renderer.api.DynamicSelectorMode
 
 private const val LOG_TAG = "IotTemplateCarScreen"
 
@@ -207,7 +207,7 @@ internal class IotTemplateCarScreen(
         }
     }
 
-    override fun actionStartDataLogging() {
+    override fun startDataLogging() {
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
@@ -319,6 +319,5 @@ internal class IotTemplateCarScreen(
         }
         DataLoggerRepository.observe(dynamicSelectorModeEventBroadcaster)
         submitRenderingTask()
-        registerConnectionStateReceiver()
     }
 }

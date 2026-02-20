@@ -37,18 +37,16 @@ import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED
+import org.obd.graphs.aa.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.dataLoggerSettings
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.renderer.Fps
-import org.obd.graphs.renderer.Identity
-import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.Identity
+import org.obd.graphs.renderer.api.SurfaceRendererType
 
 const val GAUGE_VIRTUAL_SCREEN_1_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_1.event.changed"
 const val GAUGE_VIRTUAL_SCREEN_2_SETTINGS_CHANGED = "pref.aa.gauge.pids.profile_2.event.changed"
@@ -61,8 +59,7 @@ private const val AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT = "pref.aa.performa
 private enum class DefaultScreen(
     private val code: Int,
 ) : Identity {
-    NOT_SET(-1),
-    ;
+    NOT_SET(-1);
 
     override fun id(): Int = this.code
 }
@@ -77,10 +74,21 @@ internal class SurfaceRendererScreen(
     fps: Fps,
     private val parent: NavTemplateCarScreen,
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
-    private val query = Query.instance()
+
+    private val screenBehaviorController = ScreenBehaviorController(
+        carContext,
+        metricsCollector,
+        mapOf(SurfaceRendererType.GAUGE to settings,
+            SurfaceRendererType.GIULIA to settings,
+            SurfaceRendererType.TRIP_INFO to settings,
+            SurfaceRendererType.DRAG_RACING to settings,
+            SurfaceRendererType.PERFORMANCE to settings),
+        fps)
 
     private var screenId: Identity = SurfaceRendererType.GIULIA
-    private val surfaceRendererController = SurfaceRendererController(carContext, settings, metricsCollector, fps, query)
+    private val surfaceRendererController = SurfaceRendererController(carContext,
+        settings,
+        screenBehaviorController.getScreenBehavior(SurfaceRendererType.GIULIA)?.getSurfaceRenderer())
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
@@ -89,24 +97,16 @@ internal class SurfaceRendererScreen(
                 intent: Intent?,
             ) {
                 when (intent?.action) {
-                    AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
-
-                    SCREEN_REFRESH_EVENT -> {
-                        updateQuery()
-                        renderFrame()
+                    AA_VIRTUAL_SCREEN_RENDERER_CHANGED_EVENT -> {
+                        switchSurfaceRenderer(getSurfaceRendererType())
                     }
 
-                    AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT, AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT -> {
-                        updateQuery()
-                        renderFrame()
-                    }
-
-                    AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT -> {
-                        updateQuery()
-                        renderFrame()
-                    }
-
-                    LOW_FREQ_PID_SELECTION_CHANGED_EVENT -> {
+                    SCREEN_REFRESH_EVENT,
+                    AA_TRIP_INFO_PID_SELECTION_CHANGED_EVENT,
+                    AA_PERFORMANCE_PID_SELECTION_CHANGED_EVENT,
+                    AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT,
+                    LOW_FREQ_PID_SELECTION_CHANGED_EVENT,
+                    -> {
                         updateQuery()
                         renderFrame()
                     }
@@ -119,22 +119,25 @@ internal class SurfaceRendererScreen(
                     PROFILE_CHANGED_EVENT -> {
                         settings.handleProfileChanged()
                         updateQuery()
-                        surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
+                        switchSurfaceRenderer(getSurfaceRendererType())
                         renderFrame()
                     }
 
                     PROFILE_RESET_EVENT -> {
                         updateQuery()
-                        surfaceRendererController.allocateSurfaceRenderer(getSurfaceRendererType())
+                        switchSurfaceRenderer(getSurfaceRendererType())
                         renderFrame()
                     }
                 }
             }
 
             private fun handlePIDsListChangedEvent(id: Int) {
-                if (getCurrentVirtualScreen() == id) {
-                    setCurrentVirtualScreen(id)
+                val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
+
+                if (behavior.getCurrentVirtualScreen() == id) {
+                    behavior.setCurrentVirtualScreen(id = id)
                 }
+
                 updateQuery()
                 renderFrame()
             }
@@ -146,107 +149,47 @@ internal class SurfaceRendererScreen(
         screenId = DefaultScreen.NOT_SET
     }
 
-    fun switchSurfaceRenderer(screenId: Identity) {
-        this.screenId = screenId
-        Log.i(LOG_TAG, "Switch to new surface renderer screen: ${this.screenId} and updating query...")
+    fun switchSurfaceRenderer(newScreenId: Identity) {
+        this.screenId = newScreenId
+        if (newScreenId is SurfaceRendererType) {
 
-        when (this.screenId as SurfaceRendererType) {
-            SurfaceRendererType.GIULIA, SurfaceRendererType.GAUGE -> {
-                metricsCollector.applyFilter(enabled = getSelectedPIDs())
-
-                if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
-                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
-                    query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-                } else {
-                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
-                }
-                withDataLogger {
-                    updateQuery(query = query)
-                }
-                surfaceRendererController.allocateSurfaceRenderer(screenId as SurfaceRendererType)
+            if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+                Log.d(LOG_TAG, "[${Thread.currentThread()}] Switch to new surface renderer screen: ${this.screenId} and updating query...")
             }
 
-            SurfaceRendererType.DRAG_RACING -> {
-                withDataLogger {
-                    updateQuery(
-                        query =
-                            query.apply {
-                                setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                            },
-                    )
-                }
+            val surfaceRenderer = screenBehaviorController.getScreenBehavior(newScreenId)?.getSurfaceRenderer()
+            surfaceRendererController.updateSurfaceRenderer(surfaceRenderer)
 
-                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.DRAG_RACING)
-            }
+            val behavior = screenBehaviorController.getScreenBehavior(newScreenId) ?: return
+            val query = behavior.getQuery(metricsCollector)
 
-            SurfaceRendererType.TRIP_INFO -> {
-                withDataLogger {
-                    updateQuery(
-                        query =
-                            query.apply {
-                                setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-                            },
-                    )
-                }
-                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.TRIP_INFO)
-            }
-
-            SurfaceRendererType.PERFORMANCE -> {
-                withDataLogger {
-                    updateQuery(
-                        query =
-                            query.apply {
-                                setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
-                            },
-                    )
-                }
-                surfaceRendererController.allocateSurfaceRenderer(surfaceRendererType = SurfaceRendererType.PERFORMANCE)
+            withDataLogger {
+                updateQuery(query = query)
             }
         }
-
         renderFrame()
     }
 
-    override fun actionStartDataLogging() {
-        when (screenId) {
-            SurfaceRendererType.GIULIA, SurfaceRendererType.GAUGE -> {
-                if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
-                    query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
-                    query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-                } else {
-                    query.setStrategy(QueryStrategyType.SHARED_QUERY)
-                }
-                withDataLogger {
-                    start(query)
-                }
-            }
+    private fun updateQuery() {
 
-            SurfaceRendererType.DRAG_RACING ->
-                withDataLogger {
-                    start(
-                        query.apply {
-                            setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                        },
-                    )
-                }
+        val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
+        val query = behavior.getQuery(metricsCollector)
 
-            SurfaceRendererType.TRIP_INFO ->
-                withDataLogger {
-                    start(
-                        query.apply {
-                            setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-                        },
-                    )
-                }
+        if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
+            Log.d(LOG_TAG, "[${Thread.currentThread()}] Update Query ($screenId):  ${query.getIDs()}")
+        }
 
-            SurfaceRendererType.PERFORMANCE ->
-                withDataLogger {
-                    start(
-                        query.apply {
-                            setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
-                        },
-                    )
-                }
+        withDataLogger {
+            updateQuery(query)
+        }
+    }
+
+    override fun startDataLogging() {
+        val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
+        val query = behavior.getQuery(metricsCollector)
+
+        withDataLogger {
+            start(query)
         }
     }
 
@@ -338,88 +281,8 @@ internal class SurfaceRendererScreen(
 
     override fun onDestroy(owner: LifecycleOwner) {
         carContext.unregisterReceiver(broadcastReceiver)
+        screenBehaviorController.recycle()
     }
-
-    private fun updateQuery() {
-        if (isSurfaceRendererScreen(screenId)) {
-            val selectedPIDs = getSelectedPIDs()
-
-            metricsCollector.applyFilter(enabled = selectedPIDs)
-
-            if (screenId == SurfaceRendererType.DRAG_RACING) {
-                Log.i(LOG_TAG, "Updating query for  DRAG_RACING_SCREEN_ID screen")
-
-                query.setStrategy(QueryStrategyType.DRAG_RACING_QUERY)
-                metricsCollector.applyFilter(enabled = query.getIDs())
-                Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-                withDataLogger {
-                    updateQuery(query)
-                }
-            } else if (screenId == SurfaceRendererType.TRIP_INFO) {
-                Log.i(LOG_TAG, "Updating query for  TRIP_INFO_SCREEN_ID screen")
-
-                query.setStrategy(QueryStrategyType.TRIP_INFO_QUERY)
-                metricsCollector.applyFilter(enabled = query.getIDs())
-                Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-                withDataLogger {
-                    updateQuery(query)
-                }
-            } else if (screenId == SurfaceRendererType.PERFORMANCE) {
-                Log.i(LOG_TAG, "Updating query for  DYNAMIC_SCREEN_ID screen")
-
-                query.setStrategy(QueryStrategyType.PERFORMANCE_QUERY)
-                metricsCollector.applyFilter(enabled = query.getIDs())
-                Log.i(LOG_TAG, "User selection PIDs=${query.getIDs()}")
-                withDataLogger {
-                    updateQuery(query)
-                }
-            } else if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
-                Log.i(LOG_TAG, "Updating query for  individualQueryStrategyEnabled")
-
-                metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder())
-
-                query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
-                query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-                Log.i(LOG_TAG, "User selection PIDs=$selectedPIDs")
-                withDataLogger {
-                    updateQuery(query)
-                }
-            } else {
-                Log.i(LOG_TAG, "Updating query to SHARED_QUERY strategy")
-
-                query.setStrategy(QueryStrategyType.SHARED_QUERY)
-                val query = query.getIDs()
-                val intersection = selectedPIDs.filter { query.contains(it) }.toSet()
-
-                Log.i(LOG_TAG, "Query=$query,user selection=$selectedPIDs, intersection=$intersection")
-
-                metricsCollector.applyFilter(enabled = intersection, order = sortOrder())
-            }
-        } else {
-            Log.i(LOG_TAG, "Do not update the query. It's not surface renderer screen.")
-        }
-    }
-
-    private fun setCurrentVirtualScreen(id: Int) =
-        when (screenId) {
-            SurfaceRendererType.GIULIA -> settings.getGiuliaRendererSetting().setVirtualScreen(id)
-            SurfaceRendererType.GAUGE -> settings.getGaugeRendererSetting().setVirtualScreen(id)
-            else -> {}
-        }
-
-    private fun getCurrentVirtualScreen() =
-        when (screenId) {
-            SurfaceRendererType.GIULIA -> settings.getGiuliaRendererSetting().getVirtualScreen()
-            SurfaceRendererType.GAUGE -> settings.getGaugeRendererSetting().getVirtualScreen()
-            else -> -1
-        }
-
-    private fun getSelectedPIDs(): Set<Long> =
-        if (screenId == SurfaceRendererType.GIULIA) {
-            settings.getGiuliaRendererSetting().selectedPIDs
-        } else {
-            settings.getGaugeRendererSetting().selectedPIDs
-        }
 
     private fun getVerticalActionStrip(): ActionStrip? {
         var added = false
@@ -433,9 +296,10 @@ internal class SurfaceRendererScreen(
         ).forEach { (k, v) ->
             if (settings.isVirtualScreenEnabled(k)) {
                 added = true
+                val behavior = screenBehaviorController.getScreenBehavior(screenId)
 
                 val color =
-                    if (getCurrentVirtualScreen() == k) {
+                    if (behavior?.getCurrentVirtualScreen() == k) {
                         CarColor.GREEN
                     } else {
                         mapColor(settings.getColorTheme().actionsBtnVirtualScreensColor)
@@ -445,7 +309,7 @@ internal class SurfaceRendererScreen(
                     builder.addAction(
                         createAction(carContext, v, color) {
                             parent.invalidate()
-                            setCurrentVirtualScreen(k)
+                            behavior?.setCurrentVirtualScreen(id = k)
                             updateQuery()
                             renderFrame()
                         },
@@ -462,11 +326,4 @@ internal class SurfaceRendererScreen(
 
     private fun getSurfaceRendererType(): SurfaceRendererType =
         if (screenId is SurfaceRendererType) screenId as SurfaceRendererType else SurfaceRendererType.GIULIA
-
-    private fun sortOrder(): Map<Long, Int>? =
-        if (this.screenId == SurfaceRendererType.GIULIA) {
-            settings.getGiuliaRendererSetting().getPIDsSortOrder()
-        } else {
-            settings.getGaugeRendererSetting().getPIDsSortOrder()
-        }
 }

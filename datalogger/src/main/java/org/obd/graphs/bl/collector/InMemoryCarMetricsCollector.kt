@@ -20,111 +20,116 @@ import android.util.Log
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.metrics.api.model.ObdMetric
-import java.util.*
-import kotlin.Comparator
+import java.util.concurrent.ConcurrentHashMap
 
-private const val LOG_KEY = "InMemoryCollector"
+private const val LOG_TAG = "InMemoryCollector"
 
 internal class InMemoryCarMetricsCollector : MetricsCollector {
+    private val metrics = ConcurrentHashMap<Long, Metric>()
 
-    private var metrics: SortedMap<Long, Metric> = TreeMap()
+    @Volatile
+    private var visibleMetrics: List<Metric> = emptyList()
+
     private val metricBuilder = MetricsBuilder()
 
-    override fun getMetrics(enabled: Boolean): List<Metric> = metrics.values.filter { it.enabled == enabled }
+    override fun getMetrics(enabled: Boolean): List<Metric> = if (enabled) visibleMetrics else metrics.values.filter { !it.enabled }
 
     override fun reset() {
-        metrics.forEach { (_, v) ->
-            v.inLowerAlertRisedHist = false
-            v.inUpperAlertRisedHist = false
+        metrics.values.forEach {
+            it.inLowerAlertRisedHist = false
+            it.inUpperAlertRisedHist = false
         }
     }
 
-    override fun getMetric(id: Pid, enabled: Boolean): Metric?   =
-        if (metrics.containsKey(id.id) && metrics[id.id]!!.enabled) {
-            metrics[id.id]
-        } else {
-            null
-        }
+    override fun getMetric(
+        id: Pid,
+        enabled: Boolean,
+    ): Metric? {
+        val metric = metrics[id.id]
+        return if (metric != null && metric.enabled == enabled) metric else null
+    }
 
-    override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
-        Log.i(LOG_KEY, "Updating visible PIDs=$enabled with order=$order")
+    @Synchronized
+    override fun applyFilter(
+        enabled: Set<Long>,
+        order: Map<Long, Int>?,
+    ) {
+        Log.i(LOG_TAG, "Updating visible PIDs=$enabled with order=$order")
 
-        if (metrics.isEmpty() || !metrics.keys.containsAll(enabled)) {
+        val missingPids = enabled.filter { !metrics.containsKey(it) }
 
-            if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
-                Log.d(LOG_KEY, "Rebuilding metrics configuration for: $enabled != ${metrics.keys}")
+        if (missingPids.isNotEmpty()) {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                Log.d(LOG_TAG, "Rebuilding metrics configuration for missing PIDs: $missingPids")
             }
-            metricBuilder.buildFor(enabled).forEach {
-                val key = it.pid.id
-
-                if (metrics.keys.indexOf(key)  ==-1) {
-                    Log.i(LOG_KEY, "Adding PID($key = ${it.pid.description}) to metrics map.")
-                    metrics[key] = it
-                }
+            metricBuilder.buildFor(missingPids.toSet()).forEach {
+                Log.i(LOG_TAG, "Adding PID(${it.pid.id} = ${it.pid.description}) to metrics map.")
+                metrics[it.pid.id] = it
             }
-        } else {
-            if (Log.isLoggable(LOG_KEY, Log.DEBUG)) {
-                Log.d(LOG_KEY, "Its okay. All PIDs are available. Metrics ${metrics.keys} contains $enabled")
-            }
-        }
-
-        if (order != null && order.isNotEmpty()) {
-            metrics = metrics.toSortedMap(comparator(order))
         }
 
         metrics.forEach { (k, v) ->
             v.enabled = enabled.contains(k)
         }
+
+        val comparator =
+            Comparator<Metric> { m1, m2 ->
+                if (order != null) {
+                    val order1 = order[m1.pid.id] ?: Int.MAX_VALUE
+                    val order2 = order[m2.pid.id] ?: Int.MAX_VALUE
+
+                    if (order1 != Int.MAX_VALUE || order2 != Int.MAX_VALUE) {
+                        return@Comparator order1.compareTo(order2)
+                    }
+                }
+                m1.pid.id.compareTo(m2.pid.id)
+            }
+
+        visibleMetrics =
+            metrics.values
+                .filter { it.enabled }
+                .sortedWith(comparator)
+
+        Log.d(LOG_TAG, "[${Thread.currentThread().id}] Updating visible PIDs: ${visibleMetrics.map { it.pid.id }}")
     }
 
-    override fun append(input: ObdMetric?, forceAppend: Boolean) {
+    override fun append(
+        input: ObdMetric?,
+        forceAppend: Boolean,
+    ) {
+        if (input == null) return
 
-        input?.let { metric ->
-            val key = metric.command.pid.id
+        val key = input.command.pid.id
 
-            if (forceAppend && !metrics.containsKey(key)) {
-                metrics[key] = metricBuilder.buildFor(metric)
-                Log.i(LOG_KEY, "Adding PID($key = ${metric.command.pid.description}) to metrics map.")
-            }
-
-            metrics[metric.command.pid.id]?.let {
-                it.source = metric
-
-                it.value = metric.value
-                val hist = DataLoggerRepository.findHistogramFor(metric)
-                val rate = DataLoggerRepository.findRateFor(metric)
-
-                if (metric.isLowerAlert) {
-                    it.inLowerAlertRisedHist = metric.isLowerAlert
-                }
-
-                if (metric.isUpperAlert) {
-                    it.inUpperAlertRisedHist = metric.isUpperAlert
-                }
-
-                rate.ifPresent { r ->
-                    it.rate = r.value
-                }
-
-                hist.mean?.let { mean ->
-                    it.mean = mean
-                }
-
-                hist.max.let { max ->
-                    it.max = max
-                }
-
-                hist.min.let { min ->
-                    it.min = min
-                }
-            }
+        // Fast O(1) lookup
+        if (forceAppend && !metrics.containsKey(key)) {
+            metrics[key] = metricBuilder.buildFor(input)
+            Log.i(LOG_TAG, "Adding PID($key = ${input.command.pid.description}) to metrics map.")
         }
-    }
-    private fun comparator(order: Map<Long, Int>): Comparator<Long> = Comparator { m1, m2 ->
-        if (order.containsKey(m1) && order.containsKey(m2)) {
-            order[m1]!!.compareTo(order[m2]!!)
-        } else {
-            m1.compareTo(m2)
+
+        // Update the metric properties in place
+        metrics[key]?.let { metric ->
+            metric.source = input
+            metric.value = input.value
+
+            if (input.isLowerAlert) {
+                metric.inLowerAlertRisedHist = true
+            }
+
+            if (input.isUpperAlert) {
+                metric.inUpperAlertRisedHist = true
+            }
+
+            DataLoggerRepository.findRateFor(input).ifPresent { r ->
+                metric.rate = r.value
+            }
+
+            val hist = DataLoggerRepository.findHistogramFor(input)
+            hist.mean?.let { mean ->
+                metric.mean = mean
+            }
+            metric.max = hist.max
+            metric.min = hist.min
         }
     }
 }

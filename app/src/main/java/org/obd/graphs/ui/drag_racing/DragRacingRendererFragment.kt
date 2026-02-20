@@ -19,8 +19,8 @@ package org.obd.graphs.ui.drag_racing
 import org.obd.graphs.R
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.renderer.ScreenSettings
-import org.obd.graphs.renderer.SurfaceRendererType
+import org.obd.graphs.renderer.api.ScreenSettings
+import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.ui.SurfaceRendererFragment
 
 internal class DragRacingRendererFragment : SurfaceRendererFragment(

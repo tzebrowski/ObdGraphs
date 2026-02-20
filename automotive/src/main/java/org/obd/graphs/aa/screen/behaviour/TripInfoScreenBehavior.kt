@@ -14,23 +14,26 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.trip_info
+package org.obd.graphs.aa.screen.behaviour
 
-import org.obd.graphs.R
-import org.obd.graphs.bl.query.Query
+import android.content.Context
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
-import org.obd.graphs.ui.SurfaceRendererFragment
 
-internal class TripInfoRendererFragment : SurfaceRendererFragment(
-    R.layout.fragment_trip_info,
-    SurfaceRendererType.TRIP_INFO
-) {
+internal class TripInfoScreenBehavior(
+    context: Context,
+    metricsCollector: MetricsCollector,
+    settings: Map<SurfaceRendererType, ScreenSettings>,
+    fps: Fps,
+) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.TRIP_INFO]!!, fps, SurfaceRendererType.TRIP_INFO) {
+    override fun queryStrategyType() = QueryStrategyType.TRIP_INFO_QUERY
 
-    private val query = Query.instance(QueryStrategyType.TRIP_INFO_QUERY)
-    private val settings = TripInfoSettings()
-
-    override fun query(): Query = query
-    override fun getScreenSettings(): ScreenSettings = settings
+    override fun applyFilters(metricsCollector: MetricsCollector) {
+        query.setStrategy(queryStrategyType())
+        metricsCollector.applyFilter(enabled = query.getIDs())
+        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+    }
 }

@@ -14,13 +14,12 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer
+package org.obd.graphs.renderer.api
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.renderer.drag.DragRacingSurfaceRenderer
 import org.obd.graphs.renderer.performance.PerformanceSurfaceRenderer
 import org.obd.graphs.renderer.gauge.GaugeSurfaceRenderer
@@ -28,26 +27,7 @@ import org.obd.graphs.renderer.giulia.GiuliaSurfaceRenderer
 import org.obd.graphs.renderer.trip.TripInfoSurfaceRenderer
 
 
-interface Identity {
-    fun id(): Int
-}
-
-enum class SurfaceRendererType(private val code: Int) : Identity {
-    GIULIA(0),
-    GAUGE(4),
-    DRAG_RACING(1),
-    TRIP_INFO(3),
-    PERFORMANCE(5);
-
-    override fun id(): Int  = this.code
-
-    companion object {
-        fun fromInt(value: Int) = SurfaceRendererType.values().first { it.code == value }
-    }
-}
-
-interface SurfaceRenderer {
-    fun applyMetricsFilter(query: Query)
+ interface SurfaceRenderer {
     fun onDraw(canvas: Canvas, drawArea: Rect?)
     fun recycle()
     fun updateScrollOffset(scrollOffset: Float)

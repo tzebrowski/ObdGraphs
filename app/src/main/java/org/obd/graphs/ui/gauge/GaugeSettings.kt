@@ -20,8 +20,8 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.isEnabled
-import org.obd.graphs.renderer.GaugeRendererSettings
-import org.obd.graphs.renderer.ScreenSettings
+import org.obd.graphs.renderer.api.GaugeRendererSettings
+import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
 class GaugeSettings(
