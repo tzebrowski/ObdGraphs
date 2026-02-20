@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,11 +24,11 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 internal class DragRacingScreenBehavior(
-    context: Map<SurfaceRendererType, Context>,
+    context: Context,
     metricsCollector: MetricsCollector,
-    settings: ScreenSettings,
+    settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
-) : ScreenBehavior(context[SurfaceRendererType.DRAG_RACING]!!, metricsCollector, settings, fps, SurfaceRendererType.DRAG_RACING) {
+) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.DRAG_RACING]!!, fps, SurfaceRendererType.DRAG_RACING) {
     override fun queryStrategyType() = QueryStrategyType.DRAG_RACING_QUERY
 
     override fun applyFilters(metricsCollector: MetricsCollector) {
