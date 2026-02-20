@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -31,12 +31,12 @@ internal class GiuliaScreenBehavior(
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
 ) : VirtualScreenBehavior(
-    context,
-    metricsCollector,
-    settings[SurfaceRendererType.GIULIA] ?: throw IllegalArgumentException("Missing GIULIA settings"),
-    fps,
-    SurfaceRendererType.GIULIA
-) {
+        context,
+        metricsCollector,
+        settings[SurfaceRendererType.GIULIA] ?: throw IllegalArgumentException("Missing GIULIA settings"),
+        fps,
+        SurfaceRendererType.GIULIA,
+    ) {
     override fun queryStrategyType(): QueryStrategyType =
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             QueryStrategyType.INDIVIDUAL_QUERY

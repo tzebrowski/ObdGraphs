@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -29,12 +29,11 @@ internal class PerformanceScreenBehavior(
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
 ) : ScreenBehavior(
-    context,
-    metricsCollector,
-    settings[SurfaceRendererType.PERFORMANCE] ?: throw IllegalArgumentException("Missing PERFORMANCE settings"),
-    fps,
-    SurfaceRendererType.PERFORMANCE
-) {
-
+        context,
+        metricsCollector,
+        settings[SurfaceRendererType.PERFORMANCE] ?: throw IllegalArgumentException("Missing PERFORMANCE settings"),
+        fps,
+        SurfaceRendererType.PERFORMANCE,
+    ) {
     override fun queryStrategyType() = QueryStrategyType.PERFORMANCE_QUERY
 }
