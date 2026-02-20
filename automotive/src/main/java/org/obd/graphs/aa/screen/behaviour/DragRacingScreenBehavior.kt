@@ -14,24 +14,23 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.bl.collector
+package org.obd.graphs.aa.screen.behaviour
 
-import org.obd.graphs.bl.datalogger.Pid
+import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
-import org.obd.metrics.api.model.ObdMetric
+import org.obd.graphs.bl.query.QueryStrategyType
 
-interface MetricsCollector {
-    fun reset()
+internal object DragRacingScreenBehavior : ScreenBehavior {
+    override val queryStrategyType = QueryStrategyType.DRAG_RACING_QUERY
 
-    fun getMetric(id: Pid, enabled: Boolean = true): Metric?
-
-    fun getMetrics(enabled: Boolean = true): List<Metric>
-
-    fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>? = null)
-
-    fun append(input: ObdMetric?, forceAppend:Boolean = true)
-
-    companion object {
-        fun instance(): MetricsCollector = InMemoryCarMetricsCollector()
+    override fun applyFilters(
+        carSettings: CarSettings,
+        metricsCollector: MetricsCollector,
+        query: Query,
+    ) {
+        query.setStrategy(queryStrategyType)
+        metricsCollector.applyFilter(enabled = query.getIDs())
+        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
     }
 }

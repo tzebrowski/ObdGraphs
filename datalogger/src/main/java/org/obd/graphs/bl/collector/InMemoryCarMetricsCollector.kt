@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -19,15 +19,12 @@ package org.obd.graphs.bl.collector
 import android.util.Log
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.Pid
-import org.obd.graphs.bl.datalogger.dataLoggerSettings
-import org.obd.graphs.bl.query.Query
 import org.obd.metrics.api.model.ObdMetric
 import java.util.concurrent.ConcurrentHashMap
 
 private const val LOG_TAG = "InMemoryCollector"
 
 internal class InMemoryCarMetricsCollector : MetricsCollector {
-
     private val metrics = ConcurrentHashMap<Long, Metric>()
 
     @Volatile
@@ -35,8 +32,7 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
 
     private val metricBuilder = MetricsBuilder()
 
-    override fun getMetrics(enabled: Boolean): List<Metric> =
-        if (enabled) visibleMetrics else metrics.values.filter { !it.enabled }
+    override fun getMetrics(enabled: Boolean): List<Metric> = if (enabled) visibleMetrics else metrics.values.filter { !it.enabled }
 
     override fun reset() {
         metrics.values.forEach {
@@ -45,25 +41,19 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
         }
     }
 
-    override fun getMetric(id: Pid, enabled: Boolean): Metric? {
+    override fun getMetric(
+        id: Pid,
+        enabled: Boolean,
+    ): Metric? {
         val metric = metrics[id.id]
         return if (metric != null && metric.enabled == enabled) metric else null
     }
 
-    override fun applyFilter(selectedPIDs: Set<Long>, query: Query, order: Map<Long, Int>?) {
-        val isIndividualQuery = dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled
-
-        val finalPids = if (isIndividualQuery) {
-            selectedPIDs
-        } else {
-            selectedPIDs intersect query.getIDs()
-        }
-        applyFilter(enabled = finalPids, order = order)
-    }
-
-
     @Synchronized
-    override fun applyFilter(enabled: Set<Long>, order: Map<Long, Int>?) {
+    override fun applyFilter(
+        enabled: Set<Long>,
+        order: Map<Long, Int>?,
+    ) {
         Log.i(LOG_TAG, "Updating visible PIDs=$enabled with order=$order")
 
         val missingPids = enabled.filter { !metrics.containsKey(it) }
@@ -82,22 +72,31 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
             v.enabled = enabled.contains(k)
         }
 
-        val comparator = Comparator<Metric> { m1, m2 ->
-            if (order != null && order.containsKey(m1.pid.id) && order.containsKey(m2.pid.id)) {
-                order[m1.pid.id]!!.compareTo(order[m2.pid.id]!!)
-            } else {
+        val comparator =
+            Comparator<Metric> { m1, m2 ->
+                if (order != null) {
+                    val order1 = order[m1.pid.id] ?: Int.MAX_VALUE
+                    val order2 = order[m2.pid.id] ?: Int.MAX_VALUE
+
+                    if (order1 != Int.MAX_VALUE || order2 != Int.MAX_VALUE) {
+                        return@Comparator order1.compareTo(order2)
+                    }
+                }
                 m1.pid.id.compareTo(m2.pid.id)
             }
-        }
 
-        visibleMetrics = metrics.values
-            .filter { it.enabled }
-            .sortedWith(comparator)
+        visibleMetrics =
+            metrics.values
+                .filter { it.enabled }
+                .sortedWith(comparator)
 
-        Log.i(LOG_TAG,"Updating visible PIDs: ${visibleMetrics.map { it.pid.pid }}")
+        Log.d(LOG_TAG, "[${Thread.currentThread().id}] Updating visible PIDs: ${visibleMetrics.map { it.pid.id }}")
     }
 
-    override fun append(input: ObdMetric?, forceAppend: Boolean) {
+    override fun append(
+        input: ObdMetric?,
+        forceAppend: Boolean,
+    ) {
         if (input == null) return
 
         val key = input.command.pid.id

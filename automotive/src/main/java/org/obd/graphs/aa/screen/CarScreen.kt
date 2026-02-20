@@ -53,7 +53,7 @@ internal abstract class CarScreen(
     DefaultLifecycleObserver {
     open fun getFeatureDescription(): List<FeatureDescription> = emptyList()
 
-    abstract fun actionStartDataLogging()
+    abstract fun startDataLogging()
 
     protected open fun updateLastVisitedScreen(identity: Identity) {
         settings.setLastVisitedScreen(identity)
@@ -108,7 +108,7 @@ internal abstract class CarScreen(
                         R.drawable.actions_connect,
                         mapColor(settings.getColorTheme().actionsBtnConnectColor),
                     ) {
-                        actionStartDataLogging()
+                        startDataLogging()
                     },
                 )
             }
