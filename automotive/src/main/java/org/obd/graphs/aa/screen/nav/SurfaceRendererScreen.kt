@@ -37,7 +37,7 @@ import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED
-import org.obd.graphs.aa.screen.behaviour.ScreenBehaviorController
+import org.obd.graphs.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.bl.collector.MetricsCollector

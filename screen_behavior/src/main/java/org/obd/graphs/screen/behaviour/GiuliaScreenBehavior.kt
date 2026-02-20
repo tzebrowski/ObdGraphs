@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.aa.screen.behaviour
+package org.obd.graphs.screen.behaviour
 
 import android.content.Context
 import org.obd.graphs.bl.collector.MetricsCollector

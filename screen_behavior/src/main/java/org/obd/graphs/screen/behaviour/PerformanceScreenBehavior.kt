@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.aa.screen.behaviour
+package org.obd.graphs.screen.behaviour
 
 import android.content.Context
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -23,13 +23,13 @@ import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
-internal class DragRacingScreenBehavior(
+internal class PerformanceScreenBehavior(
     context: Context,
     metricsCollector: MetricsCollector,
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.DRAG_RACING]!!, fps, SurfaceRendererType.DRAG_RACING) {
-    override fun queryStrategyType() = QueryStrategyType.DRAG_RACING_QUERY
+) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.PERFORMANCE]!!, fps, SurfaceRendererType.PERFORMANCE) {
+    override fun queryStrategyType() = QueryStrategyType.PERFORMANCE_QUERY
 
     override fun applyFilters(metricsCollector: MetricsCollector) {
         query.setStrategy(queryStrategyType())
