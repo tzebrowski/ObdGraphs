@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,16 +20,20 @@ import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.renderer.api.Identity
-import org.obd.graphs.renderer.api.SurfaceRendererType
+import org.obd.graphs.renderer.api.SurfaceRenderer
 
 abstract class ScreenBehavior {
     protected val query = Query.instance()
 
-    fun getQuery(carSettings: CarSettings, metricsCollector: MetricsCollector): Query {
+    fun getQuery(
+        carSettings: CarSettings,
+        metricsCollector: MetricsCollector,
+    ): Query {
         applyFilters(carSettings = carSettings, metricsCollector)
         return query
     }
+
+    abstract fun getSurfaceRenderer(): SurfaceRenderer
 
     abstract fun queryStrategyType(): QueryStrategyType
 
@@ -47,7 +51,7 @@ abstract class ScreenBehavior {
 
     protected open fun applyFilters(
         carSettings: CarSettings,
-        metricsCollector: MetricsCollector
+        metricsCollector: MetricsCollector,
     ) {
         query.setStrategy(queryStrategyType())
         val selectedPIDs = getSelectedPIDs(carSettings)
@@ -67,23 +71,5 @@ abstract class ScreenBehavior {
 
             else -> {}
         }
-    }
-
-    companion object {
-        private val gaugeScreenBehavior = GaugeScreenBehavior()
-        private val tripInfoScreenBehavior = TripInfoScreenBehavior()
-        private val giuliaScreenBehavior = GiuliaScreenBehavior()
-        private val dragRacingScreenBehavior = DragRacingScreenBehavior()
-        private val performanceScreenBehavior = PerformanceScreenBehavior()
-
-        fun getScreenBehavior(screenId: Identity): ScreenBehavior? =
-            when (screenId) {
-                SurfaceRendererType.GIULIA -> giuliaScreenBehavior
-                SurfaceRendererType.GAUGE -> gaugeScreenBehavior
-                SurfaceRendererType.DRAG_RACING -> dragRacingScreenBehavior
-                SurfaceRendererType.PERFORMANCE -> performanceScreenBehavior
-                SurfaceRendererType.TRIP_INFO -> tripInfoScreenBehavior
-                else -> null
-            }
     }
 }

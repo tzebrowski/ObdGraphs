@@ -29,10 +29,7 @@ import androidx.car.app.SurfaceContainer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.aa.CarSettings
-import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.SurfaceRenderer
-import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.sendBroadcastEvent
 
 private const val LOG_TAG = "SurfaceController"
@@ -40,15 +37,10 @@ private const val LOG_TAG = "SurfaceController"
 class SurfaceRendererController(
     private val carContext: CarContext,
     private val settings: CarSettings,
-    private val metricsCollector: MetricsCollector,
-    private val fps: Fps,
+    surfaceRenderer: SurfaceRenderer?,
 ) : DefaultLifecycleObserver {
 
-    private val renderersCache = mutableMapOf<SurfaceRendererType, SurfaceRenderer>()
-
-    private var activeSurfaceRenderer: SurfaceRenderer? =
-        switchSurfaceRenderer(SurfaceRendererType.GIULIA)
-
+    private var activeSurfaceRenderer: SurfaceRenderer? = surfaceRenderer
     private var surface: Surface? = null
     private var visibleArea: Rect? = null
     private var surfaceLocked = false
@@ -112,9 +104,6 @@ class SurfaceRendererController(
         synchronized(this) {
             surface?.release()
             surface = null
-
-            renderersCache.values.forEach { it.recycle() }
-            renderersCache.clear()
             activeSurfaceRenderer = null
         }
     }
@@ -124,19 +113,8 @@ class SurfaceRendererController(
         Log.d(LOG_TAG, "SurfaceRenderer paused (onPause)")
     }
 
-    fun switchSurfaceRenderer(surfaceRendererType: SurfaceRendererType): SurfaceRenderer? {
-        activeSurfaceRenderer = renderersCache.getOrPut(surfaceRendererType) {
-            Log.d(LOG_TAG, "Renderer not in cache. Allocating new: $surfaceRendererType")
-            SurfaceRenderer.allocate(
-                carContext,
-                settings,
-                metricsCollector,
-                fps,
-                surfaceRendererType = surfaceRendererType,
-            )
-        }
-
-        return activeSurfaceRenderer
+    fun updateSurfaceRenderer(surfaceRenderer: SurfaceRenderer?) {
+        activeSurfaceRenderer = surfaceRenderer
     }
 
     @MainThread

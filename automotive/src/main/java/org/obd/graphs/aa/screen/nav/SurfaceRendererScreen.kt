@@ -37,7 +37,7 @@ import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED
-import org.obd.graphs.aa.screen.behaviour.ScreenBehavior
+import org.obd.graphs.aa.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -75,9 +75,12 @@ internal class SurfaceRendererScreen(
     private val parent: NavTemplateCarScreen,
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
+    private val screenBehaviorController = ScreenBehaviorController(carContext, metricsCollector, settings, fps)
 
     private var screenId: Identity = SurfaceRendererType.GIULIA
-    private val surfaceRendererController = SurfaceRendererController(carContext, settings, metricsCollector, fps)
+    private val surfaceRendererController = SurfaceRendererController(carContext,
+        settings,
+        screenBehaviorController.getScreenBehavior(SurfaceRendererType.GIULIA)?.getSurfaceRenderer())
 
     private var broadcastReceiver =
         object : BroadcastReceiver() {
@@ -121,7 +124,7 @@ internal class SurfaceRendererScreen(
             }
 
             private fun handlePIDsListChangedEvent(id: Int) {
-                val behavior = ScreenBehavior.getScreenBehavior(screenId) ?: return
+                val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
 
                 if (behavior.getCurrentVirtualScreen(carSettings = settings) == id) {
                     behavior.setCurrentVirtualScreen(carSettings = settings, id = id)
@@ -145,9 +148,10 @@ internal class SurfaceRendererScreen(
         }
 
         if (newScreenId is SurfaceRendererType) {
-            surfaceRendererController.switchSurfaceRenderer(newScreenId)
+            val surfaceRenderer = screenBehaviorController.getScreenBehavior(newScreenId)?.getSurfaceRenderer()
+            surfaceRendererController.updateSurfaceRenderer(surfaceRenderer)
 
-            val behavior = ScreenBehavior.getScreenBehavior(newScreenId) ?: return
+            val behavior = screenBehaviorController.getScreenBehavior(newScreenId) ?: return
             val query = behavior.getQuery(carSettings = settings, metricsCollector)
 
             withDataLogger {
@@ -159,7 +163,7 @@ internal class SurfaceRendererScreen(
 
     private fun updateQuery() {
 
-        val behavior = ScreenBehavior.getScreenBehavior(screenId) ?: return
+        val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
         val query = behavior.getQuery(carSettings = settings, metricsCollector)
 
         if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
@@ -172,7 +176,7 @@ internal class SurfaceRendererScreen(
     }
 
     override fun startDataLogging() {
-        val behavior = ScreenBehavior.getScreenBehavior(screenId) ?: return
+        val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
         val query = behavior.getQuery(carSettings = settings, metricsCollector)
 
         withDataLogger {
@@ -268,6 +272,7 @@ internal class SurfaceRendererScreen(
 
     override fun onDestroy(owner: LifecycleOwner) {
         carContext.unregisterReceiver(broadcastReceiver)
+        screenBehaviorController.recycle()
     }
 
     private fun getVerticalActionStrip(): ActionStrip? {
@@ -282,7 +287,7 @@ internal class SurfaceRendererScreen(
         ).forEach { (k, v) ->
             if (settings.isVirtualScreenEnabled(k)) {
                 added = true
-                val behavior = ScreenBehavior.getScreenBehavior(screenId)
+                val behavior = screenBehaviorController.getScreenBehavior(screenId)
 
                 val color =
                     if (behavior?.getCurrentVirtualScreen(carSettings = settings) == k) {

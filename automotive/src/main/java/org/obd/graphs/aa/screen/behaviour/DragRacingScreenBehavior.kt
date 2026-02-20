@@ -16,12 +16,29 @@
  */
 package org.obd.graphs.aa.screen.behaviour
 
+import android.content.Context
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.SurfaceRenderer
+import org.obd.graphs.renderer.api.SurfaceRendererType
 
-internal class DragRacingScreenBehavior : ScreenBehavior() {
+ internal class DragRacingScreenBehavior(carContext: Context,
+                                         metricsCollector: MetricsCollector,
+                                         carSettings: CarSettings,
+                                         fps: Fps) : ScreenBehavior() {
     override fun queryStrategyType() = QueryStrategyType.DRAG_RACING_QUERY
+
+    private val surfaceRenderer = SurfaceRenderer.allocate(
+        carContext,
+        carSettings,
+        metricsCollector,
+        fps,
+        surfaceRendererType = SurfaceRendererType.DRAG_RACING
+    )
+
+    override fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
 
     override fun applyFilters(
         carSettings: CarSettings,

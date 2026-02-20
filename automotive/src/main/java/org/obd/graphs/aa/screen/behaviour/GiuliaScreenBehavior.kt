@@ -16,11 +16,31 @@
  */
 package org.obd.graphs.aa.screen.behaviour
 
+import android.content.Context
 import org.obd.graphs.aa.CarSettings
+import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.query.QueryStrategyType
+import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.SurfaceRenderer
+import org.obd.graphs.renderer.api.SurfaceRendererType
 
-internal class GiuliaScreenBehavior : ScreenBehavior() {
+internal class GiuliaScreenBehavior(
+    carContext: Context,
+    metricsCollector: MetricsCollector,
+    carSettings: CarSettings,
+    fps: Fps,
+) : ScreenBehavior() {
+    private val surfaceRenderer =
+        SurfaceRenderer.allocate(
+            carContext,
+            carSettings,
+            metricsCollector,
+            fps,
+            surfaceRendererType = SurfaceRendererType.GIULIA,
+        )
+
+    override fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
 
     override fun queryStrategyType(): QueryStrategyType =
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
