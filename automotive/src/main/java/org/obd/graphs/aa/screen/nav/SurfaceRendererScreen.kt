@@ -41,7 +41,6 @@ import org.obd.graphs.aa.screen.behaviour.ScreenBehavior
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.registerReceiver
@@ -75,7 +74,7 @@ internal class SurfaceRendererScreen(
     fps: Fps,
     private val parent: NavTemplateCarScreen,
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
-    private val query = Query.instance()
+
 
     private var screenId: Identity = SurfaceRendererType.GIULIA
     private val surfaceRendererController = SurfaceRendererController(carContext, settings, metricsCollector, fps)
@@ -149,7 +148,7 @@ internal class SurfaceRendererScreen(
             surfaceRendererController.switchSurfaceRenderer(newScreenId)
 
             val behavior = ScreenBehavior.getScreenBehavior(newScreenId) ?: return
-            behavior.applyFilters(carSettings = settings, metricsCollector, query)
+            val query = behavior.getQuery(carSettings = settings, metricsCollector)
 
             withDataLogger {
                 updateQuery(query = query)
@@ -161,7 +160,7 @@ internal class SurfaceRendererScreen(
     private fun updateQuery() {
 
         val behavior = ScreenBehavior.getScreenBehavior(screenId) ?: return
-        behavior.applyFilters(carSettings = settings, metricsCollector, query)
+        val query = behavior.getQuery(carSettings = settings, metricsCollector)
 
         if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
             Log.d(LOG_TAG, "[${Thread.currentThread()}] Update Query ($screenId):  ${query.getIDs()}")
@@ -174,7 +173,7 @@ internal class SurfaceRendererScreen(
 
     override fun startDataLogging() {
         val behavior = ScreenBehavior.getScreenBehavior(screenId) ?: return
-        behavior.applyFilters(carSettings = settings, metricsCollector = metricsCollector, query = query)
+        val query = behavior.getQuery(carSettings = settings, metricsCollector)
 
         withDataLogger {
             start(query)

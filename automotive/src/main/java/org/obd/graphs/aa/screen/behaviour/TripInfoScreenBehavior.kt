@@ -18,16 +18,15 @@ package org.obd.graphs.aa.screen.behaviour
 
 import org.obd.graphs.aa.CarSettings
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 
-object TripInfoScreenBehavior : ScreenBehavior() {
+internal class TripInfoScreenBehavior : ScreenBehavior() {
     override fun queryStrategyType() = QueryStrategyType.TRIP_INFO_QUERY
 
     override fun applyFilters(
         carSettings: CarSettings,
         metricsCollector: MetricsCollector,
-        query: Query,
+
     ) {
         query.setStrategy(queryStrategyType())
         metricsCollector.applyFilter(enabled = query.getIDs())
