@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,23 +21,30 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
-
 interface VirtualScreenConfig {
     val selectedPIDs: Set<Long>
+
     fun getPIDsSortOrder(): Map<Long, Int>?
+
     fun getVirtualScreen(): Int
+
     fun setVirtualScreen(id: Int)
+
     fun updateSelectedPIDs(pids: Set<Long>)
 }
 
 const val DEFAULT_FONT_SIZE = "32"
 
 enum class GaugeProgressBarType {
-    LONG, SHORT
+    LONG,
+    SHORT,
 }
 
 enum class DynamicSelectorMode {
-    NORMAL, ECO, SPORT, RACE
+    NORMAL,
+    ECO,
+    SPORT,
+    RACE,
 }
 
 data class ColorTheme(
@@ -51,7 +58,7 @@ data class ColorTheme(
     var currentProfileColor: Int = Color.WHITE,
     var actionsBtnConnectColor: Int = Color.GREEN,
     var actionsBtnDisconnectColor: Int = Color.RED,
-    var actionsBtnVirtualScreensColor: Int = Color.WHITE
+    var actionsBtnVirtualScreensColor: Int = Color.WHITE,
 )
 
 open class GaugeRendererSettings(
@@ -61,11 +68,15 @@ open class GaugeRendererSettings(
     private var internalSelectedPIDs: Set<Long> = emptySet()
 
     override fun getVirtualScreen(): Int = 0
+
     override fun setVirtualScreen(id: Int) {}
+
     override fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     open fun isPIDsSortOrderEnabled(): Boolean = false
+
     open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
+
     open fun getGaugeContainerColor(): Int = COLOR_RAINBOW_INDIGO
 
     override val selectedPIDs: Set<Long>
@@ -76,14 +87,17 @@ open class GaugeRendererSettings(
     }
 }
 
-open class GiuliaRendererSettings: VirtualScreenConfig {
+open class GiuliaRendererSettings : VirtualScreenConfig {
     private var internalSelectedPIDs: Set<Long> = emptySet()
 
     override fun getVirtualScreen(): Int = 0
+
     override fun setVirtualScreen(id: Int) {}
+
     override fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     open fun isPIDsSortOrderEnabled(): Boolean = false
+
     open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
 
     override val selectedPIDs: Set<Long>
@@ -94,7 +108,6 @@ open class GiuliaRendererSettings: VirtualScreenConfig {
     }
 }
 
-
 data class DragRacingScreenSettings(
     var shiftLightsRevThreshold: Int = 5000,
     var shiftLightsEnabled: Boolean = true,
@@ -103,32 +116,30 @@ data class DragRacingScreenSettings(
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var displayMetricsExtendedEnabled: Boolean = false,
     var fontSize: Int = 32,
-    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()
+    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
 )
-
 
 data class TripInfoScreenSettings(
     var fontSize: Int = 24,
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
 )
 
 data class BreakBoostingSettings(
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
 )
 
 data class PerformanceScreenSettings(
     var labelCenterYPadding: Float = 22f,
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
-    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()
+    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
 )
 
 data class RoutinesScreenSettings(
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
 )
 
 interface ScreenSettings {
-
     fun isAA(): Boolean = true
 
     fun handleProfileChanged() {}
@@ -164,13 +175,17 @@ interface ScreenSettings {
     fun isDynamicSelectorThemeEnabled(): Boolean = false
 
     fun isAlertLegendEnabled(): Boolean = false
+
     fun isAlertingEnabled(): Boolean = false
 
     fun getColorTheme(): ColorTheme = ColorTheme()
 
     fun getMaxColumns(): Int = 1
+
     fun isStatisticsEnabled(): Boolean
+
     fun isFpsCounterEnabled(): Boolean = false
+
     fun getSurfaceFrameRate(): Int
 
     fun isStatusPanelEnabled(): Boolean = true
