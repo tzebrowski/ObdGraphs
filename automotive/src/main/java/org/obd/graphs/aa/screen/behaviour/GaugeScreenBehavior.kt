@@ -25,12 +25,11 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 internal class GaugeScreenBehavior(
-    context: Context,
+    context: Map<SurfaceRendererType,Context>,
     metricsCollector: MetricsCollector,
     settings: ScreenSettings,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings, fps, SurfaceRendererType.GAUGE) {
-
+) : ScreenBehavior(context[SurfaceRendererType.GAUGE]!!, metricsCollector, settings, fps, SurfaceRendererType.GAUGE) {
 
     override fun queryStrategyType(): QueryStrategyType =
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {

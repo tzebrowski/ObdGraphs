@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,11 +24,11 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 internal class TripInfoScreenBehavior(
-    context: Context,
+    context: Map<SurfaceRendererType, Context>,
     metricsCollector: MetricsCollector,
     settings: ScreenSettings,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings, fps, SurfaceRendererType.TRIP_INFO) {
+) : ScreenBehavior(context[SurfaceRendererType.TRIP_INFO]!!, metricsCollector, settings, fps, SurfaceRendererType.TRIP_INFO) {
     override fun queryStrategyType() = QueryStrategyType.TRIP_INFO_QUERY
 
     override fun applyFilters(metricsCollector: MetricsCollector) {

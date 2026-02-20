@@ -24,7 +24,7 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 class ScreenBehaviorController(
-    context: Context,
+    context: Map<SurfaceRendererType,Context>,
     metricsCollector: MetricsCollector,
     settings: ScreenSettings,
     fps: Fps,

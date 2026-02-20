@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -24,11 +24,11 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 internal class PerformanceScreenBehavior(
-    context: Context,
+    context: Map<SurfaceRendererType, Context>,
     metricsCollector: MetricsCollector,
     settings: ScreenSettings,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings, fps, SurfaceRendererType.PERFORMANCE) {
+) : ScreenBehavior(context[SurfaceRendererType.PERFORMANCE]!!, metricsCollector, settings, fps, SurfaceRendererType.PERFORMANCE) {
     override fun queryStrategyType() = QueryStrategyType.PERFORMANCE_QUERY
 
     override fun applyFilters(metricsCollector: MetricsCollector) {

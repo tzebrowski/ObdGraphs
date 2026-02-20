@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -25,11 +25,11 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 
 internal class GiuliaScreenBehavior(
-    context: Context,
+    context: Map<SurfaceRendererType, Context>,
     metricsCollector: MetricsCollector,
     settings: ScreenSettings,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings, fps, SurfaceRendererType.GIULIA) {
+) : ScreenBehavior(context[SurfaceRendererType.GIULIA]!!, metricsCollector, settings, fps, SurfaceRendererType.GIULIA) {
     override fun queryStrategyType(): QueryStrategyType =
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             QueryStrategyType.INDIVIDUAL_QUERY

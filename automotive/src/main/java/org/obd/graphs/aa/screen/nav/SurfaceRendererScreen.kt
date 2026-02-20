@@ -75,7 +75,13 @@ internal class SurfaceRendererScreen(
     private val parent: NavTemplateCarScreen,
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
-    private val screenBehaviorController = ScreenBehaviorController(carContext, metricsCollector, settings, fps)
+    private val screenBehaviorController = ScreenBehaviorController(
+        mapOf(SurfaceRendererType.GAUGE to carContext,
+            SurfaceRendererType.GIULIA to carContext,
+            SurfaceRendererType.TRIP_INFO to carContext,
+            SurfaceRendererType.DRAG_RACING to carContext,
+            SurfaceRendererType.PERFORMANCE to carContext),
+        metricsCollector, settings, fps)
 
     private var screenId: Identity = SurfaceRendererType.GIULIA
     private val surfaceRendererController = SurfaceRendererController(carContext,
