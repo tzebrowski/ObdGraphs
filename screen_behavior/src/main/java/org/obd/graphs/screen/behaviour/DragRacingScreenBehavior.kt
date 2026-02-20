@@ -29,11 +29,7 @@ internal class DragRacingScreenBehavior(
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
 ) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.DRAG_RACING]!!, fps, SurfaceRendererType.DRAG_RACING) {
+
     override fun queryStrategyType() = QueryStrategyType.DRAG_RACING_QUERY
 
-    override fun applyFilters(metricsCollector: MetricsCollector) {
-        query.setStrategy(queryStrategyType())
-        metricsCollector.applyFilter(enabled = query.getIDs())
-        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-    }
 }

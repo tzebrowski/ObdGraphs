@@ -29,11 +29,6 @@ internal class PerformanceScreenBehavior(
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
 ) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.PERFORMANCE]!!, fps, SurfaceRendererType.PERFORMANCE) {
-    override fun queryStrategyType() = QueryStrategyType.PERFORMANCE_QUERY
 
-    override fun applyFilters(metricsCollector: MetricsCollector) {
-        query.setStrategy(queryStrategyType())
-        metricsCollector.applyFilter(enabled = query.getIDs())
-        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-    }
+    override fun queryStrategyType() = QueryStrategyType.PERFORMANCE_QUERY
 }

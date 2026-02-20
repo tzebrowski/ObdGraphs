@@ -75,6 +75,8 @@ internal class SurfaceRendererScreen(
     private val parent: NavTemplateCarScreen,
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
+    private var screenId: Identity = SurfaceRendererType.GIULIA
+
     private val screenBehaviorController = ScreenBehaviorController(
         carContext,
         metricsCollector,
@@ -85,7 +87,6 @@ internal class SurfaceRendererScreen(
             SurfaceRendererType.PERFORMANCE to settings),
         fps)
 
-    private var screenId: Identity = SurfaceRendererType.GIULIA
     private val surfaceRendererController = SurfaceRendererController(carContext,
         settings,
         screenBehaviorController.getScreenBehavior(SurfaceRendererType.GIULIA)?.getSurfaceRenderer())
@@ -326,4 +327,8 @@ internal class SurfaceRendererScreen(
 
     private fun getSurfaceRendererType(): SurfaceRendererType =
         if (screenId is SurfaceRendererType) screenId as SurfaceRendererType else SurfaceRendererType.GIULIA
+
+    init {
+        renderFrame()
+    }
 }

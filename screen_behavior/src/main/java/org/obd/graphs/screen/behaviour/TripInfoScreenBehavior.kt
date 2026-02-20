@@ -29,11 +29,6 @@ internal class TripInfoScreenBehavior(
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
 ) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.TRIP_INFO]!!, fps, SurfaceRendererType.TRIP_INFO) {
-    override fun queryStrategyType() = QueryStrategyType.TRIP_INFO_QUERY
 
-    override fun applyFilters(metricsCollector: MetricsCollector) {
-        query.setStrategy(queryStrategyType())
-        metricsCollector.applyFilter(enabled = query.getIDs())
-        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-    }
+    override fun queryStrategyType() = QueryStrategyType.TRIP_INFO_QUERY
 }
