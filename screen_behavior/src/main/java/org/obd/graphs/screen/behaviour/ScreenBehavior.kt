@@ -62,25 +62,7 @@ abstract class ScreenBehavior(
 
     protected open fun applyFilters(metricsCollector: MetricsCollector) {
         query.setStrategy(queryStrategyType())
-        val selectedPIDs = getSelectedPIDs()
-        val sortOrder = getSortOrder()
-
-        when (queryStrategyType()) {
-            QueryStrategyType.INDIVIDUAL_QUERY -> {
-                metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder)
-                query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-            }
-
-            QueryStrategyType.SHARED_QUERY -> {
-                val queryIds = query.getIDs()
-                val intersection = selectedPIDs.filter { queryIds.contains(it) }.toSet()
-                metricsCollector.applyFilter(enabled = intersection, order = sortOrder)
-            }
-
-            else -> {
-                metricsCollector.applyFilter(enabled = query.getIDs())
-                query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-            }
-        }
+        metricsCollector.applyFilter(enabled = query.getIDs())
+        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
     }
 }
