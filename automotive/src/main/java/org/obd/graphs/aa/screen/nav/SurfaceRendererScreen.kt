@@ -162,7 +162,7 @@ internal class SurfaceRendererScreen(
             surfaceRendererController.updateSurfaceRenderer(surfaceRenderer)
 
             val behavior = screenBehaviorController.getScreenBehavior(newScreenId) ?: return
-            val query = behavior.getQuery(metricsCollector)
+            val query = behavior.query()
 
             withDataLogger {
                 updateQuery(query = query)
@@ -174,7 +174,7 @@ internal class SurfaceRendererScreen(
     private fun updateQuery() {
 
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
-        val query = behavior.getQuery(metricsCollector)
+        val query = behavior.query()
 
         if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
             Log.d(LOG_TAG, "[${Thread.currentThread()}] Update Query ($screenId):  ${query.getIDs()}")
@@ -187,10 +187,8 @@ internal class SurfaceRendererScreen(
 
     override fun startDataLogging() {
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
-        val query = behavior.getQuery(metricsCollector)
-
         withDataLogger {
-            start(query)
+            start(behavior.query())
         }
     }
 

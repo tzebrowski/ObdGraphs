@@ -61,7 +61,7 @@ internal class GiuliaRendererFragment :
             it.setOnClickListener {
                 giuliaVirtualScreenPreferences.updateVirtualScreen(viewId)
                 val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)!!
-                val query = screenBehavior.getQuery(metricsCollector)
+                val query = screenBehavior.query()
 
                 withDataLogger {
                     updateQuery(query)

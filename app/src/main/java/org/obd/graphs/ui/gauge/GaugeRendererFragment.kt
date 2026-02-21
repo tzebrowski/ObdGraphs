@@ -63,7 +63,7 @@ internal class GaugeRendererFragment :
             it.setOnClickListener {
                 gaugeVirtualScreenPreferences.updateVirtualScreen(viewId)
                 val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)!!
-                val query = screenBehavior.getQuery(metricsCollector)
+                val query = screenBehavior.query()
 
                 if (DataLoggerRepository.isRunning()) {
                     withDataLogger {

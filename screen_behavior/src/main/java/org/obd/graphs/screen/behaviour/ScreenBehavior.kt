@@ -27,7 +27,7 @@ import org.obd.graphs.renderer.api.SurfaceRendererType
 
 abstract class ScreenBehavior(
     context: Context,
-    metricsCollector: MetricsCollector,
+    private val metricsCollector: MetricsCollector,
     protected val settings: ScreenSettings,
     fps: Fps,
     surfaceRendererType: SurfaceRendererType,
@@ -45,7 +45,7 @@ abstract class ScreenBehavior(
 
     protected abstract fun queryStrategyType(): QueryStrategyType
 
-    fun getQuery(metricsCollector: MetricsCollector): Query {
+    fun query(): Query {
         applyFilters(metricsCollector)
         return query
     }
