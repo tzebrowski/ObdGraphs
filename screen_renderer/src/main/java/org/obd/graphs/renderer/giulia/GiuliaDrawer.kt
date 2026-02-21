@@ -36,7 +36,8 @@ import kotlin.math.max
 private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 private const val METRIC_TOP_NUDGE = 0.02f
-private const val SINGLE_LINE_VALUE_NUDGE = 0.12f
+private const val SINGLE_LINE_VALUE_TOP_OFFSET = 0.35f
+private const val DOUBLE_LINE_VALUE_TOP_OFFSET = 0.5f
 private const val SINGLE_LINE_STATS_GAP = 0.30f
 private const val TWO_LINE_STATS_GAP = 0.30f
 private const val SINGLE_LINE_POST_STATS_GAP = 0.35f
@@ -86,7 +87,7 @@ internal class GiuliaDrawer(
         val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, top1, safeTextSizeBase)
         val isTwoLines = secondLineTop != null
 
-        val valueNudge = if (isTwoLines) 0f else (safeTextSizeBase * SINGLE_LINE_VALUE_NUDGE)
+        val valueNudge = if (isTwoLines) (safeTextSizeBase * DOUBLE_LINE_VALUE_TOP_OFFSET) else (safeTextSizeBase * SINGLE_LINE_VALUE_TOP_OFFSET)
         val valueDrawingTop = (secondLineTop ?: top1) + valueNudge
 
         drawValue(canvas, metric, valueLeft, valueDrawingTop, safeValueTextSize, valueCastToInt)
