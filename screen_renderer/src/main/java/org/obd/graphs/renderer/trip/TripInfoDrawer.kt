@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -37,14 +37,13 @@ private const val NEW_MIN = 0.6f
 
 const val MAX_ITEM_IN_THE_ROW = 6
 
-
 internal data class TripMetricConfig(
     val metric: Metric,
     val castToInt: Boolean = false,
     val statsEnabled: Boolean = true,
     val unitEnabled: Boolean = true,
     val valueDoublePrecision: Int = 2,
-    val statsDoublePrecision: Int = 2
+    val statsDoublePrecision: Int = 2,
 )
 
 @Suppress("NOTHING_TO_INLINE")
@@ -68,24 +67,25 @@ internal class TripInfoDrawer(
         val dynamicPadding = textSizeBase * 0.1f
         val x = maxItemWidth(area) + dynamicPadding
 
-        val topMetrics = listOfNotNull(
-            tripInfo.airTemp?.let { TripMetricConfig(it, castToInt = true) },
-            tripInfo.coolantTemp?.let { TripMetricConfig(it, castToInt = true) },
-            tripInfo.oilTemp?.let { TripMetricConfig(it, castToInt = true) },
-            tripInfo.exhaustTemp?.let { TripMetricConfig(it, castToInt = true) },
-            tripInfo.gearboxOilTemp?.let { TripMetricConfig(it, castToInt = true) },
-            tripInfo.distance?.let { TripMetricConfig(metricBuilder.buildDiff(it), statsEnabled = false) },
-            tripInfo.fuellevel?.let { TripMetricConfig(it, valueDoublePrecision = 1, statsDoublePrecision = 1) },
-            tripInfo.fuelConsumption?.let { TripMetricConfig(it, unitEnabled = false, statsDoublePrecision = 1) },
-            tripInfo.batteryVoltage?.let { TripMetricConfig(it) },
-            tripInfo.ibs?.let { TripMetricConfig(it, castToInt = true) },
-            tripInfo.oilLevel?.let { TripMetricConfig(it) },
-            tripInfo.totalMisfires?.let { TripMetricConfig(it, castToInt = true, unitEnabled = false) },
-            tripInfo.oilDegradation?.let { TripMetricConfig(it, unitEnabled = false) },
-            tripInfo.engineSpeed?.let { TripMetricConfig(it, unitEnabled = false) },
-            tripInfo.vehicleSpeed?.let { TripMetricConfig(it, unitEnabled = false) },
-            tripInfo.gearEngaged?.let { TripMetricConfig(it, unitEnabled = false) },
-        )
+        val topMetrics =
+            listOfNotNull(
+                tripInfo.airTemp?.let { TripMetricConfig(it, castToInt = true) },
+                tripInfo.coolantTemp?.let { TripMetricConfig(it, castToInt = true) },
+                tripInfo.oilTemp?.let { TripMetricConfig(it, castToInt = true) },
+                tripInfo.exhaustTemp?.let { TripMetricConfig(it, castToInt = true) },
+                tripInfo.gearboxOilTemp?.let { TripMetricConfig(it, castToInt = true) },
+                tripInfo.distance?.let { TripMetricConfig(metricBuilder.buildDiff(it), statsEnabled = false) },
+                tripInfo.fuellevel?.let { TripMetricConfig(it, valueDoublePrecision = 1, statsDoublePrecision = 1) },
+                tripInfo.fuelConsumption?.let { TripMetricConfig(it, unitEnabled = false, statsDoublePrecision = 1) },
+                tripInfo.batteryVoltage?.let { TripMetricConfig(it) },
+                tripInfo.ibs?.let { TripMetricConfig(it, castToInt = true) },
+                tripInfo.oilLevel?.let { TripMetricConfig(it) },
+                tripInfo.totalMisfires?.let { TripMetricConfig(it, castToInt = true, unitEnabled = false) },
+                tripInfo.oilDegradation?.let { TripMetricConfig(it, unitEnabled = false) },
+                tripInfo.engineSpeed?.let { TripMetricConfig(it, unitEnabled = false) },
+                tripInfo.vehicleSpeed?.let { TripMetricConfig(it, unitEnabled = false) },
+                tripInfo.gearEngaged?.let { TripMetricConfig(it, unitEnabled = false) },
+            )
 
         var rowTop = top + (textSizeBase * 0.3f)
         var colIndex = 0
@@ -107,7 +107,7 @@ internal class TripInfoDrawer(
                 area = area,
                 valueDoublePrecision = config.valueDoublePrecision,
                 statsDoublePrecision = config.statsDoublePrecision,
-                castToInt = config.castToInt
+                castToInt = config.castToInt,
             )
             colIndex++
         }
@@ -119,7 +119,7 @@ internal class TripInfoDrawer(
             left = left,
             width = area.width().toFloat(),
             top = rowTop - (textSizeBase * 0.8f),
-            color = Color.DKGRAY
+            color = Color.DKGRAY,
         )
 
         rowTop += 6
