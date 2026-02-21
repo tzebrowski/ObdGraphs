@@ -32,11 +32,11 @@ class GiuliaSettings : ScreenSettings {
         updateSelectedPIDs(Prefs.getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()).map { s -> s.toLong() }.toSet())
     }
 
-    override fun getMaxItems(): Int = Prefs.getS("pref.giulia.max_items", "6").toInt()
+    override fun getMaxItems(): Int = 50
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
-    override fun getMaxColumns(): Int = giuliaVirtualScreenPreferences.getMaxItemsInColumn()
+    override fun getMaxColumns(): Int = giuliaVirtualScreenPreferences.getMaxColumns()
 
     override fun isStatisticsEnabled(): Boolean = true
 
@@ -47,4 +47,6 @@ class GiuliaSettings : ScreenSettings {
     override fun isStatusPanelEnabled(): Boolean = false
 
     override fun getMaxAllowedItemsInColumn(): Int = 8
+
+    override fun isScrollbarEnabled(): Boolean = false
 }

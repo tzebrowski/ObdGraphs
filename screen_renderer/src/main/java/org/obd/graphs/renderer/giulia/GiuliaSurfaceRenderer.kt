@@ -20,19 +20,17 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
-import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.round
 
-private const val LOG_TAG = "GiuliaScreenRenderer"
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
 private const val NEW_MAX = 1.6f
@@ -53,55 +51,94 @@ internal class GiuliaSurfaceRenderer(
         drawArea: Rect?,
     ) {
         drawArea?.let { area ->
-
             if (area.isEmpty) {
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
             val (valueTextSize, textSizeBase) = calculateFontSize(area)
-
             giuliaDrawer.drawBackground(canvas, area)
 
             var top = getTop(area)
-            var left = giuliaDrawer.getMarginLeft(area.left.toFloat())
+            val leftMargin = giuliaDrawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                giuliaDrawer.drawStatusPanel(canvas, top, left, fps)
+                giuliaDrawer.drawStatusPanel(canvas, top, leftMargin, fps)
                 top += MARGIN_TOP
-                giuliaDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                giuliaDrawer.drawDivider(canvas, leftMargin, area.width().toFloat(), top, Color.DKGRAY)
                 top += valueTextSize
             } else {
-                top += MARGIN_TOP
-            }
-
-            val topCpy = top
-            var initialLeft = initialLeft(area)
-            val metricsCount = min(settings.getMaxItems(), metricsCollector.getMetrics().size)
-            val pageSize = max(min(metricsCount, round(metricsCount / settings.getMaxColumns().toFloat()).toInt()), 1)
-
-            if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-                Log.v(
-                    LOG_TAG,
-                    "metricsCount=${metricsCollector.getMetrics().size}," +
-                        "metricsLimit=$${settings.getMaxItems()}  pageSize=$pageSize",
-                )
+                top += 3 * MARGIN_TOP
             }
 
             val metrics = metricsCollector.getMetrics()
-            if (pageSize > 0 && metrics.isNotEmpty()) {
-                for (i in 0 until pageSize) {
-                    top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
-                }
+            val metricsCount = min(settings.getMaxItems(), metrics.size)
 
-                if (settings.getMaxColumns() > 1 && metricsCount > pageSize) {
-                    initialLeft += area.width() / 2 - 18
-                    left += calculateLeftMargin(area)
-                    top = calculateTop(textSizeBase, top, topCpy)
+            val columns = max(1, settings.getMaxColumns())
+            val columnWidth = area.width().toFloat() / columns
+            val pageSize = max(1, ceil(metricsCount / columns.toDouble()).toInt())
 
-                    for (i in pageSize until metricsCount) {
-                        top = draw(canvas, area, metrics[i], textSizeBase, valueTextSize, left, top, initialLeft)
-                    }
+            var heightMultiplier = if (settings.isStatisticsEnabled()) 3.8f else 3.4f
+            if (settings.isBreakLabelTextEnabled()) heightMultiplier += 1.0f
+            val approxMetricHeight = textSizeBase * heightMultiplier
+
+            val viewportTop = top
+            val viewportHeight = (area.bottom - viewportTop).toFloat()
+
+            val contentHeight = (pageSize * approxMetricHeight) + 20f
+            val maxScroll = max(0f, contentHeight - viewportHeight)
+            scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
+
+            val skippedItems = floor(scrollOffset / approxMetricHeight).toInt().coerceAtLeast(0)
+            val visibleItemsCount = ceil(viewportHeight / approxMetricHeight).toInt() + 2
+
+            canvas.save()
+            canvas.clipRect(area)
+            canvas.translate(0f, -scrollOffset)
+
+            for (col in 0 until columns) {
+                val colLeft = leftMargin + (col * columnWidth)
+                val valueLeftOffset = if (columns == 1) 42f else 32f
+                val valueLeft = area.left + ((col + 1) * columnWidth) - valueLeftOffset
+
+                val columnArea = Rect(colLeft.toInt(), area.top, (colLeft + columnWidth).toInt(), area.bottom)
+
+                val colStartIndex = col * pageSize
+                val colEndIndex = min(colStartIndex + pageSize, metricsCount)
+
+                if (colStartIndex >= metricsCount) break
+
+                val visibleStartIndex = min(colStartIndex + skippedItems, colEndIndex)
+                val visibleEndIndex = min(visibleStartIndex + visibleItemsCount, colEndIndex)
+
+                var currentTop = viewportTop + ((visibleStartIndex - colStartIndex) * approxMetricHeight)
+
+                for (i in visibleStartIndex until visibleEndIndex) {
+                    currentTop =
+                        giuliaDrawer.drawMetric(
+                            canvas = canvas,
+                            area = columnArea,
+                            metric = metrics[i],
+                            textSizeBase = textSizeBase,
+                            valueTextSize = valueTextSize,
+                            left = colLeft,
+                            top = currentTop,
+                            valueLeft = valueLeft,
+                            valueCastToInt = false,
+                        )
                 }
+            }
+
+            canvas.restore()
+
+            if (settings.isScrollbarEnabled() && contentHeight > viewportHeight) {
+                drawScrollbar(
+                    canvas = canvas,
+                    area = area,
+                    contentHeight = contentHeight,
+                    viewportHeight = viewportHeight,
+                    topOffset = viewportTop,
+                    verticalMargin = 10f,
+                )
             }
         }
     }
@@ -112,67 +149,9 @@ internal class GiuliaSurfaceRenderer(
 
     private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
         val scaleRatio = settings.getGiuliaRendererSetting().getFontSize().mapRange(CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        val columns = max(1, settings.getMaxColumns())
+        val areaWidth = min(area.width() / columns, AREA_MAX_WIDTH)
 
-        val areaWidth =
-            min(
-                when (settings.getMaxColumns()) {
-                    1 -> area.width()
-                    else -> area.width() / 2
-                },
-                AREA_MAX_WIDTH,
-            )
-
-        val valueTextSize = (areaWidth / 10f) * scaleRatio
-        val textSizeBase = (areaWidth / 16f) * scaleRatio
-
-        if (Log.isLoggable(LOG_TAG, Log.VERBOSE)) {
-            Log.v(
-                LOG_TAG,
-                "areaWidth=$areaWidth valueTextSize=$valueTextSize textSizeBase=$textSizeBase scaleRatio=$scaleRatio",
-            )
-        }
-        return Pair(valueTextSize, textSizeBase)
+        return Pair((areaWidth / 10f) * scaleRatio, (areaWidth / 16f) * scaleRatio)
     }
-
-    private inline fun calculateTop(
-        textHeight: Float,
-        top: Float,
-        topCpy: Float,
-    ): Float =
-        when (settings.getMaxColumns()) {
-            1 -> top + (textHeight / 3) - 10
-            else -> topCpy
-        }
-
-    private inline fun calculateLeftMargin(area: Rect): Int =
-        when (settings.getMaxColumns()) {
-            1 -> 0
-            else -> (area.width() / 2)
-        }
-
-    private inline fun initialLeft(area: Rect): Float =
-        when (settings.getMaxColumns()) {
-            1 -> area.left + ((area.width()) - 42).toFloat()
-            else -> area.left + ((area.width() / 2) - 32).toFloat()
-        }
-
-    private fun draw(
-        canvas: Canvas,
-        area: Rect,
-        metric: Metric,
-        textSizeBase: Float,
-        valueTextSize: Float,
-        left: Float,
-        top: Float,
-        valueLeft: Float,
-    ) = giuliaDrawer.drawMetric(
-        canvas = canvas,
-        area = area,
-        metric = metric,
-        textSizeBase = textSizeBase,
-        valueTextSize = valueTextSize,
-        left = left,
-        top = top,
-        valueLeft = valueLeft,
-    )
 }

@@ -17,10 +17,13 @@
 package org.obd.graphs.renderer.giulia
 
 import android.content.Context
+import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.Shader
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.format
 import org.obd.graphs.isNumber
@@ -28,15 +31,37 @@ import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.toFloat
+import kotlin.math.max
 
 private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
+private const val METRIC_TOP_NUDGE = 0.02f
+private const val SINGLE_LINE_VALUE_TOP_OFFSET = 0.35f
+private const val DOUBLE_LINE_VALUE_TOP_OFFSET = 0.5f
+private const val SINGLE_LINE_STATS_GAP = 0.30f
+private const val TWO_LINE_STATS_GAP = 0.30f
+private const val SINGLE_LINE_POST_STATS_GAP = 0.35f
+private const val TWO_LINE_POST_STATS_GAP = 0.35f
+private const val SINGLE_LINE_DIVIDER_GAP = 0.20f
+private const val TWO_LINE_DIVIDER_GAP = 0.15f
+private const val TOTAL_AREA_HEIGHT_MULTIPLIER = 1.55f
+private const val PROGRESS_BAR_H_1_COL = 0.28f
+private const val PROGRESS_BAR_H_2_COL = 0.18f
+private const val GLOW_RADIUS = 12f
 
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaDrawer(
     context: Context,
     settings: ScreenSettings,
 ) : AbstractDrawer(context, settings) {
+    private val density = context.resources.displayMetrics.density
+
+    private val glowPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            maskFilter = BlurMaskFilter(GLOW_RADIUS * density, BlurMaskFilter.Blur.NORMAL)
+        }
+
     inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
@@ -46,133 +71,76 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         valueLeft: Float,
+        valueCastToInt: Boolean = false,
     ): Float {
-        var top1 = top
+
+        var top1 = top + (textSizeBase * METRIC_TOP_NUDGE)
+
+        titlePaint.textSize = textSizeBase
         val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        val (t1, t2) =
-            drawTitle(
-                canvas,
-                metric,
-                left1,
-                top1,
-                textSizeBase,
-            )
+        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, top1, textSizeBase)
+        val isTwoLines = secondLineTop != null
 
-        top1 = t1
+        val valueNudge =
+            if (isTwoLines) (textSizeBase * DOUBLE_LINE_VALUE_TOP_OFFSET) else (textSizeBase * SINGLE_LINE_VALUE_TOP_OFFSET)
+        val valueDrawingTop = (secondLineTop ?: top1) + valueNudge
 
-        top1 +=
-            drawValue(
-                canvas = canvas,
-                metric = metric,
-                left = valueLeft,
-                top = t2 ?: t1,
-                textSize = valueTextSize,
-            )
+        drawValue(canvas, metric, valueLeft, valueDrawingTop, valueTextSize, valueCastToInt)
+
+        top1 =
+            if (isTwoLines) {
+                newTop + (textSizeBase * TWO_LINE_STATS_GAP)
+            } else {
+                newTop + (textSizeBase * SINGLE_LINE_STATS_GAP)
+            }
 
         if (settings.isStatisticsEnabled()) {
+            top1 += (2f * density)
+
             if (metric.source.command.pid.historgam.isMinEnabled) {
-                left1 =
-                    drawText(
-                        canvas,
-                        "min",
-                        left,
-                        top1,
-                        Color.DKGRAY,
-                        footerTitleTextSize,
-                    )
-                left1 =
-                    drawText(
-                        canvas,
-                        metric.min.format(pid = metric.pid),
-                        left1,
-                        top1,
-                        minValueColorScheme(metric),
-                        footerValueTextSize,
-                    )
+                left1 = drawText(canvas, "min", left, top1, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(canvas, metric.min.format(pid = metric.pid), left1, top1, minValueColorScheme(metric), footerValueTextSize)
             }
 
             if (metric.source.command.pid.historgam.isMaxEnabled) {
-                left1 =
-                    drawText(
-                        canvas,
-                        "max",
-                        left1,
-                        top1,
-                        Color.DKGRAY,
-                        footerTitleTextSize,
-                    )
-                left1 =
-                    drawText(
-                        canvas,
-                        metric.max.format(pid = metric.pid),
-                        left1,
-                        top1,
-                        maxValueColorScheme(metric),
-                        footerValueTextSize,
-                    )
+                left1 = drawText(canvas, "max", left1, top1, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(canvas, metric.max.format(pid = metric.pid), left1, top1, maxValueColorScheme(metric), footerValueTextSize)
             }
 
             if (metric.source.command.pid.historgam.isAvgEnabled) {
-                left1 =
-                    drawText(
-                        canvas,
-                        "avg",
-                        left1,
-                        top1,
-                        Color.DKGRAY,
-                        footerTitleTextSize,
-                    )
-
-                left1 =
-                    drawText(
-                        canvas,
-                        metric.mean.format(pid = metric.pid),
-                        left1,
-                        top1,
-                        Color.LTGRAY,
-                        footerValueTextSize,
-                    )
+                left1 = drawText(canvas, "avg", left1, top1, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(canvas, metric.mean.format(pid = metric.pid), left1, top1, Color.LTGRAY, footerValueTextSize)
             }
             drawAlertingLegend(canvas, metric, left1, top1)
-            top1 += getTextHeight("min", paint) / 2
+
+            top1 += if (isTwoLines) (textSizeBase * TWO_LINE_POST_STATS_GAP) else (textSizeBase * SINGLE_LINE_POST_STATS_GAP)
+        } else {
+            top1 += if (isTwoLines) (textSizeBase * 0.15f) else (textSizeBase * 0.40f)
         }
 
-        drawProgressBar(
-            canvas,
-            left,
-            itemWidth(area).toFloat(),
-            top1,
-            metric,
-            color = settings.getColorTheme().progressColor,
-        )
+        drawProgressBar(canvas, left, itemWidth(area).toFloat(), top1, metric, settings.getColorTheme().progressColor, textSizeBase)
 
-        top1 += calculateDividerSpacing()
+        top1 += calculateDividerSpacing(textSizeBase, isTwoLines)
+        drawDivider(canvas, left, itemWidth(area).toFloat(), top1, settings.getColorTheme().dividerColor)
 
-        drawDivider(
-            canvas,
-            left,
-            itemWidth(area).toFloat(),
-            top1,
-            color = settings.getColorTheme().dividerColor,
-        )
-
-        top1 += (textSizeBase * 1.3).toInt()
-
-        if (top1 > area.height()) {
-            return top1
-        }
+        top1 += (textSizeBase * TOTAL_AREA_HEIGHT_MULTIPLIER).toInt()
 
         return top1
     }
 
-    private inline fun calculateDividerSpacing() =
-        when (settings.getMaxColumns()) {
-            1 -> 14
-            else -> 8
+    private inline fun calculateDividerSpacing(
+        textSizeBase: Float,
+        isTwoLines: Boolean,
+    ): Int {
+        val multiplier = if (isTwoLines) TWO_LINE_DIVIDER_GAP else SINGLE_LINE_DIVIDER_GAP
+        return when (settings.getMaxColumns()) {
+            1 -> max((textSizeBase * multiplier * 1.2f).toInt(), (10 * density).toInt())
+            else -> max((textSizeBase * multiplier).toInt(), (6 * density).toInt())
         }
+    }
 
     fun drawText(
         canvas: Canvas,
@@ -181,7 +149,12 @@ internal class GiuliaDrawer(
         top: Float,
         color: Int,
         textSize: Float,
-    ): Float = drawText(canvas, text, left, top, color, textSize, paint)
+    ): Float {
+        paint.color = color
+        paint.textSize = textSize
+        canvas.drawText(text, left, top, paint)
+        return left + getTextWidth(text, paint) + (4f * density)
+    }
 
     fun drawProgressBar(
         canvas: Canvas,
@@ -190,9 +163,9 @@ internal class GiuliaDrawer(
         top: Float,
         it: Metric,
         color: Int,
+        textSizeBase: Float,
     ) {
         if (it.source.isNumber()) {
-            paint.color = color
             val progress =
                 it.source.toFloat().mapRange(
                     it.source.command.pid.min
@@ -200,16 +173,32 @@ internal class GiuliaDrawer(
                     it.source.command.pid.max
                         .toFloat(),
                     left,
-                    left + width - MARGIN_END,
+                    left + width - (MARGIN_END * density),
                 )
 
-            canvas.drawRect(
-                left - 6,
-                top + 4,
-                progress,
-                top + calculateProgressBarHeight(),
-                paint,
-            )
+            val rectLeft = left - (3f * density)
+            val rectTop = top + (1f * density)
+            val rectRight = progress
+            val rectBottom = top + calculateProgressBarHeight(textSizeBase)
+
+            val maxRight = left + width - (MARGIN_END * density)
+
+            paint.shader = null
+            paint.color = Color.parseColor("#33FFFFFF")
+            canvas.drawRect(rectLeft, rectTop, maxRight, rectBottom, paint)
+
+            val glowExpansion = (rectBottom - rectTop) * 0.6f
+            glowPaint.color = color
+            canvas.drawRect(rectLeft, rectTop - glowExpansion, rectRight, rectBottom + glowExpansion, glowPaint)
+
+            paint.color = color
+            if (settings.isProgressGradientEnabled()) {
+                val colors = intArrayOf(Color.WHITE, color)
+                paint.shader = LinearGradient(rectLeft, rectTop, maxRight, rectTop, colors, null, Shader.TileMode.CLAMP)
+            }
+
+            canvas.drawRect(rectLeft, rectTop, rectRight, rectBottom, paint)
+            paint.shader = null
         }
     }
 
@@ -220,42 +209,17 @@ internal class GiuliaDrawer(
         top: Float,
     ) {
         if (settings.isAlertLegendEnabled() &&
-            (
-                metric.source.command.pid.alert.lowerThreshold != null ||
-                    metric.source.command.pid.alert.upperThreshold != null
-            )
+            (metric.source.command.pid.alert.lowerThreshold != null || metric.source.command.pid.alert.upperThreshold != null)
         ) {
             val text = "  alerting "
-            drawText(
-                canvas,
-                text,
-                left,
-                top,
-                Color.LTGRAY,
-                12f,
-                alertingLegendPaint,
-            )
-
-            val hPos = left + getTextWidth(text, alertingLegendPaint) + 2f
+            drawText(canvas, text, left, top, Color.LTGRAY, 9f * density, alertingLegendPaint)
+            val hPos = left + getTextWidth(text, alertingLegendPaint) + (1f * density)
 
             var label = ""
-            if (metric.source.command.pid.alert.lowerThreshold != null) {
-                label += "X<${metric.source.command.pid.alert.lowerThreshold}"
-            }
+            if (metric.source.command.pid.alert.lowerThreshold != null) label += "X<${metric.source.command.pid.alert.lowerThreshold}"
+            if (metric.source.command.pid.alert.upperThreshold != null) label += " X>${metric.source.command.pid.alert.upperThreshold}"
 
-            if (metric.source.command.pid.alert.upperThreshold != null) {
-                label += " X>${metric.source.command.pid.alert.upperThreshold}"
-            }
-
-            drawText(
-                canvas,
-                label,
-                hPos + 4,
-                top,
-                Color.YELLOW,
-                14f,
-                alertingLegendPaint,
-            )
+            drawText(canvas, label, hPos + (1 * density), top, Color.YELLOW, 11f * density, alertingLegendPaint)
         }
     }
 
@@ -265,25 +229,25 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         textSize: Float,
+        castToInt: Boolean = false,
     ): Float {
         valuePaint.color = valueColorScheme(metric)
-
-        val left1 = left - getTextWidth(metric.source.command.pid.units, valuePaint)
-        valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
+        val units = metric.source.command.pid.units ?: ""
+        val left1 = left - getTextWidth(units, valuePaint)
+        valuePaint.setShadowLayer(30f * density, 0f, 0f, Color.WHITE)
 
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
-        val value = metric.source.valueToString()
+        val value = metric.source.format(castToInt = castToInt)
         canvas.drawText(value, left1, top, valuePaint)
 
         metric.source.command.pid.units?.let {
             valuePaint.color = Color.LTGRAY
             valuePaint.textAlign = Paint.Align.LEFT
             valuePaint.textSize = (textSize * 0.4).toFloat()
-            canvas.drawText(it, (left1 + 2), top, valuePaint)
+            canvas.drawText(it, (left1 + (1f * density)), top, valuePaint)
         }
-
-        return getTextHeight(value, valuePaint) - 1f
+        return getTextHeight(value, valuePaint).toFloat()
     }
 
     fun drawTitle(
@@ -293,66 +257,47 @@ internal class GiuliaDrawer(
         top: Float,
         textSize: Float,
     ): Pair<Float, Float?> {
-        val topMargin = 12
-        var top1 = top
+        val topMargin = max((textSize * 0.22f).toInt(), (8 * density).toInt())
         titlePaint.textSize = textSize
 
         val description =
-            if (metric.source.command.pid.longDescription == null ||
-                metric.source.command.pid.longDescription
-                    .isEmpty()
+            if (metric.source.command.pid.longDescription
+                    .isNullOrEmpty()
             ) {
                 metric.source.command.pid.description
             } else {
                 metric.source.command.pid.longDescription
             }
+        val safeDescription = description ?: ""
 
         if (settings.isBreakLabelTextEnabled()) {
-            val text = description.split("\n")
+            val text = safeDescription.split("\n")
             if (text.size == 1) {
-                canvas.drawText(
-                    text[0],
-                    left,
-                    top,
-                    titlePaint,
-                )
-                return Pair(top1 + topMargin, null)
+                canvas.drawText(text[0], left, top, titlePaint)
+                return Pair(top + topMargin, null)
             } else {
-                titlePaint.textSize = textSize
                 var vPos = top
-                text.forEach {
-                    canvas.drawText(
-                        it,
-                        left,
-                        vPos,
-                        titlePaint,
-                    )
+                var secondLineTop: Float? = null
+                text.forEachIndexed { index, s ->
+                    canvas.drawText(s.trim(), left, vPos, titlePaint)
+                    if (index == 1) {
+                        secondLineTop = vPos
+                    }
                     vPos += titlePaint.textSize
                 }
-                top1 += titlePaint.textSize
-                return Pair(top1 + topMargin, top + topMargin)
+                return Pair(vPos + (topMargin / 2), secondLineTop)
             }
         } else {
-            val text = description.replace("\n", " ")
-            canvas.drawText(
-                text,
-                left,
-                top,
-                titlePaint,
-            )
-            return Pair(top1 + topMargin, null)
+            canvas.drawText(safeDescription.replace("\n", " "), left, top, titlePaint)
+            return Pair(top + topMargin, null)
         }
     }
 
-    private fun calculateProgressBarHeight() =
+    private fun calculateProgressBarHeight(textSizeBase: Float): Int =
         when (settings.getMaxColumns()) {
-            1 -> 16
-            else -> 10
+            1 -> max((textSizeBase * PROGRESS_BAR_H_1_COL).toInt(), (10 * density).toInt())
+            else -> max((textSizeBase * PROGRESS_BAR_H_2_COL).toInt(), (7 * density).toInt())
         }
 
-    private inline fun itemWidth(area: Rect): Int =
-        when (settings.getMaxColumns()) {
-            1 -> area.width()
-            else -> area.width() / 2
-        }
+    private inline fun itemWidth(area: Rect): Int = area.width()
 }
