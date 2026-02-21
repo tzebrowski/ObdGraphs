@@ -101,7 +101,7 @@ internal class NavTemplateCarScreen(
                 when (intent?.action) {
                     START_DATA_LOGGING_EVENT -> {
                         Log.i(LOG_TAG, "Auto connection enabled. Auto start data logging.....")
-                        startDataLogging()
+                        dataLoggerStart()
                     }
 
                     GOTO_LAST_VSITED_SCREEN_EVENT -> {
@@ -294,8 +294,8 @@ internal class NavTemplateCarScreen(
         }
     }
 
-    override fun startDataLogging() {
-        surfaceRendererScreen.startDataLogging()
+    override fun dataLoggerStart() {
+        surfaceRendererScreen.dataLoggerStart()
     }
 
     override fun onCarConfigurationChanged() {

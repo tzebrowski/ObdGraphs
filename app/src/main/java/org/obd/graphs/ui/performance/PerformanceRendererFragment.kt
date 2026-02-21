@@ -17,19 +17,10 @@
 package org.obd.graphs.ui.performance
 
 import org.obd.graphs.R
-import org.obd.graphs.bl.query.Query
-import org.obd.graphs.bl.query.QueryStrategyType
-import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.ui.SurfaceRendererFragment
 
 internal class PerformanceRendererFragment : SurfaceRendererFragment(
     R.layout.fragment_performance,
-    SurfaceRendererType.PERFORMANCE) {
-
-    private val query: Query = Query.instance(QueryStrategyType.PERFORMANCE_QUERY)
-    private val settings = PerformanceSettings()
-
-    override fun query(): Query  = query
-    override fun getScreenSettings(): ScreenSettings = settings
-}
+    SurfaceRendererType.PERFORMANCE,
+    PerformanceSettings())

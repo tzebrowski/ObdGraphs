@@ -21,14 +21,30 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
- const val DEFAULT_FONT_SIZE = "32"
+interface VirtualScreenConfig {
+    val selectedPIDs: Set<Long>
+
+    fun getPIDsSortOrder(): Map<Long, Int>?
+
+    fun getVirtualScreen(): Int
+
+    fun setVirtualScreen(id: Int)
+
+    fun updateSelectedPIDs(pids: Set<Long>)
+}
+
+const val DEFAULT_FONT_SIZE = "32"
 
 enum class GaugeProgressBarType {
-    LONG, SHORT
+    LONG,
+    SHORT,
 }
 
 enum class DynamicSelectorMode {
-    NORMAL, ECO, SPORT, RACE
+    NORMAL,
+    ECO,
+    SPORT,
+    RACE,
 }
 
 data class ColorTheme(
@@ -42,34 +58,55 @@ data class ColorTheme(
     var currentProfileColor: Int = Color.WHITE,
     var actionsBtnConnectColor: Int = Color.GREEN,
     var actionsBtnDisconnectColor: Int = Color.RED,
-    var actionsBtnVirtualScreensColor: Int = Color.WHITE
+    var actionsBtnVirtualScreensColor: Int = Color.WHITE,
 )
 
-open class GaugeRendererSettings (
+open class GaugeRendererSettings(
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
-    var topOffset:Int = 0,
-    var selectedPIDs: Set<Long> = emptySet(),
-){
+    var topOffset: Int = 0,
+) : VirtualScreenConfig {
+    private var internalSelectedPIDs: Set<Long> = emptySet()
 
-    open fun getVirtualScreen(): Int = 0
+    override fun getVirtualScreen(): Int = 0
+
+    override fun setVirtualScreen(id: Int) {}
+
+    override fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
+
     open fun isPIDsSortOrderEnabled(): Boolean = false
-    open fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
-    open fun setVirtualScreen(id: Int) {}
-    open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
+
+    open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
+
     open fun getGaugeContainerColor(): Int = COLOR_RAINBOW_INDIGO
+
+    override val selectedPIDs: Set<Long>
+        get() = internalSelectedPIDs
+
+    override fun updateSelectedPIDs(pids: Set<Long>) {
+        internalSelectedPIDs = pids
+    }
 }
 
-open class GiuliaRendererSettings (var selectedPIDs: Set<Long>  = emptySet()){
+open class GiuliaRendererSettings : VirtualScreenConfig {
+    private var internalSelectedPIDs: Set<Long> = emptySet()
+
+    override fun getVirtualScreen(): Int = 0
+
+    override fun setVirtualScreen(id: Int) {}
+
+    override fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
     open fun isPIDsSortOrderEnabled(): Boolean = false
-    open  fun getPIDsSortOrder(): Map<Long, Int>? = emptyMap()
 
-    open fun getVirtualScreen(): Int = 0
+    open fun getFontSize(): Int = DEFAULT_FONT_SIZE.toInt()
 
-    open fun setVirtualScreen(id: Int) {}
-    open fun getFontSize(): Int =  DEFAULT_FONT_SIZE.toInt()
+    override val selectedPIDs: Set<Long>
+        get() = internalSelectedPIDs
+
+    override fun updateSelectedPIDs(pids: Set<Long>) {
+        internalSelectedPIDs = pids
+    }
 }
-
 
 data class DragRacingScreenSettings(
     var shiftLightsRevThreshold: Int = 5000,
@@ -79,35 +116,33 @@ data class DragRacingScreenSettings(
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var displayMetricsExtendedEnabled: Boolean = false,
     var fontSize: Int = 32,
-    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()
+    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
 )
-
 
 data class TripInfoScreenSettings(
     var fontSize: Int = 24,
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
 )
 
 data class BreakBoostingSettings(
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
 )
 
 data class PerformanceScreenSettings(
-    var labelCenterYPadding:Float = 22f,
+    var labelCenterYPadding: Float = 22f,
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
-    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings()
+    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
 )
 
 data class RoutinesScreenSettings(
-    var viewEnabled: Boolean = true
+    var viewEnabled: Boolean = true,
 )
 
 interface ScreenSettings {
-
     fun isAA(): Boolean = true
 
-    fun handleProfileChanged(){}
+    fun handleProfileChanged() {}
 
     fun getRoutinesScreenSettings(): RoutinesScreenSettings = RoutinesScreenSettings()
 
@@ -117,7 +152,7 @@ interface ScreenSettings {
 
     fun getPerformanceScreenSettings(): PerformanceScreenSettings = PerformanceScreenSettings()
 
-    fun getMaxItems (): Int = 6
+    fun getMaxItems(): Int = 6
 
     fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
 
@@ -140,13 +175,17 @@ interface ScreenSettings {
     fun isDynamicSelectorThemeEnabled(): Boolean = false
 
     fun isAlertLegendEnabled(): Boolean = false
+
     fun isAlertingEnabled(): Boolean = false
 
     fun getColorTheme(): ColorTheme = ColorTheme()
 
     fun getMaxColumns(): Int = 1
+
     fun isStatisticsEnabled(): Boolean
+
     fun isFpsCounterEnabled(): Boolean = false
+
     fun getSurfaceFrameRate(): Int
 
     fun isStatusPanelEnabled(): Boolean = true

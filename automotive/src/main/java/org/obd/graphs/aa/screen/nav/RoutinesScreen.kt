@@ -207,7 +207,7 @@ internal class RoutinesScreen(
         carContext.unregisterReceiver(broadcastReceiver)
     }
 
-    override fun startDataLogging() {
+    override fun dataLoggerStart() {
         withDataLogger {
             start(query)
         }

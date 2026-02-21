@@ -207,7 +207,7 @@ internal class IotTemplateCarScreen(
         }
     }
 
-    override fun startDataLogging() {
+    override fun dataLoggerStart() {
         if (dataLoggerSettings.instance().adapter.individualQueryStrategyEnabled) {
             query.setStrategy(QueryStrategyType.INDIVIDUAL_QUERY)
             query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())

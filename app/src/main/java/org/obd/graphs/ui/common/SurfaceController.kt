@@ -27,7 +27,7 @@ import org.obd.graphs.renderer.api.SurfaceRenderer
 private const val LOG_KEY = "SurfaceController"
 
 internal class SurfaceController(
-    private val renderer: SurfaceRenderer,
+    private val renderer: SurfaceRenderer?,
 ) : SurfaceHolder.Callback {
     private lateinit var surfaceHolder: SurfaceHolder
     private var surface: Surface? = null
@@ -38,7 +38,7 @@ internal class SurfaceController(
 
     fun updateScrollOffset(scrollOffset: Float) {
         if (::surfaceHolder.isInitialized && surface?.isValid == true) {
-            renderer.updateScrollOffset(scrollOffset)
+            renderer?.updateScrollOffset(scrollOffset)
         }
     }
 
@@ -100,7 +100,7 @@ internal class SurfaceController(
                 try {
                     canvas = it.lockHardwareCanvas()
                     surfaceLocked = true
-                    renderer.onDraw(
+                    renderer?.onDraw(
                         canvas = canvas,
                         drawArea = visibleArea,
                     )

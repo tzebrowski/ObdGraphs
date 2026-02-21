@@ -16,17 +16,15 @@
  */
 package org.obd.graphs.ui.gauge
 
-import org.obd.graphs.bl.query.Query
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.renderer.api.GaugeRendererSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
-class GaugeSettings(
-    private val query: Query,
-) : ScreenSettings {
+class GaugeSettings : ScreenSettings {
     private val gaugeRendererSettings =
         object : GaugeRendererSettings() {
             override fun getFontSize(): Int = Prefs.getS("pref.gauge.font_size", "42").toInt()
@@ -36,10 +34,10 @@ class GaugeSettings(
 
     override fun getGaugeRendererSetting(): GaugeRendererSettings =
         gaugeRendererSettings.apply {
-            selectedPIDs = query.getIDs()
+            updateSelectedPIDs(Prefs.getStringSet(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey()).map { s -> s.toLong() }.toSet())
         }
 
-    override fun isScrollbarEnabled(): Boolean  = Prefs.isEnabled("pref.gauge_scrollbar_enabled")
+    override fun isScrollbarEnabled(): Boolean = Prefs.isEnabled("pref.gauge_scrollbar_enabled")
 
     override fun isAA(): Boolean = false
 

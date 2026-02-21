@@ -37,7 +37,7 @@ import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_1_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_2_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_3_SETTINGS_CHANGED
 import org.obd.graphs.aa.screen.GIULIA_VIRTUAL_SCREEN_4_SETTINGS_CHANGED
-import org.obd.graphs.aa.screen.behaviour.ScreenBehaviorController
+import org.obd.graphs.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.aa.screen.createAction
 import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -75,6 +75,8 @@ internal class SurfaceRendererScreen(
     private val parent: NavTemplateCarScreen,
 ) : CarScreen(carContext, settings, metricsCollector, fps) {
 
+    private var screenId: Identity = SurfaceRendererType.GIULIA
+
     private val screenBehaviorController = ScreenBehaviorController(
         carContext,
         metricsCollector,
@@ -85,7 +87,6 @@ internal class SurfaceRendererScreen(
             SurfaceRendererType.PERFORMANCE to settings),
         fps)
 
-    private var screenId: Identity = SurfaceRendererType.GIULIA
     private val surfaceRendererController = SurfaceRendererController(carContext,
         settings,
         screenBehaviorController.getScreenBehavior(SurfaceRendererType.GIULIA)?.getSurfaceRenderer())
@@ -107,7 +108,7 @@ internal class SurfaceRendererScreen(
                     AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT,
                     LOW_FREQ_PID_SELECTION_CHANGED_EVENT,
                     -> {
-                        updateQuery()
+                        dataLoggerUpdateQuery()
                         renderFrame()
                     }
 
@@ -118,13 +119,13 @@ internal class SurfaceRendererScreen(
 
                     PROFILE_CHANGED_EVENT -> {
                         settings.handleProfileChanged()
-                        updateQuery()
+                        dataLoggerUpdateQuery()
                         switchSurfaceRenderer(getSurfaceRendererType())
                         renderFrame()
                     }
 
                     PROFILE_RESET_EVENT -> {
-                        updateQuery()
+                        dataLoggerUpdateQuery()
                         switchSurfaceRenderer(getSurfaceRendererType())
                         renderFrame()
                     }
@@ -138,7 +139,7 @@ internal class SurfaceRendererScreen(
                     behavior.setCurrentVirtualScreen(id = id)
                 }
 
-                updateQuery()
+                dataLoggerUpdateQuery()
                 renderFrame()
             }
         }
@@ -161,35 +162,25 @@ internal class SurfaceRendererScreen(
             surfaceRendererController.updateSurfaceRenderer(surfaceRenderer)
 
             val behavior = screenBehaviorController.getScreenBehavior(newScreenId) ?: return
-            val query = behavior.getQuery(metricsCollector)
 
             withDataLogger {
-                updateQuery(query = query)
+                updateQuery(behavior.query())
             }
         }
         renderFrame()
     }
 
-    private fun updateQuery() {
-
+    private fun dataLoggerUpdateQuery() {
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
-        val query = behavior.getQuery(metricsCollector)
-
-        if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
-            Log.d(LOG_TAG, "[${Thread.currentThread()}] Update Query ($screenId):  ${query.getIDs()}")
-        }
-
         withDataLogger {
-            updateQuery(query)
+            updateQuery(behavior.query())
         }
     }
 
-    override fun startDataLogging() {
+    override fun dataLoggerStart() {
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
-        val query = behavior.getQuery(metricsCollector)
-
         withDataLogger {
-            start(query)
+            start(behavior.query())
         }
     }
 
@@ -310,7 +301,7 @@ internal class SurfaceRendererScreen(
                         createAction(carContext, v, color) {
                             parent.invalidate()
                             behavior?.setCurrentVirtualScreen(id = k)
-                            updateQuery()
+                            dataLoggerUpdateQuery()
                             renderFrame()
                         },
                     )
@@ -326,4 +317,8 @@ internal class SurfaceRendererScreen(
 
     private fun getSurfaceRendererType(): SurfaceRendererType =
         if (screenId is SurfaceRendererType) screenId as SurfaceRendererType else SurfaceRendererType.GIULIA
+
+    init {
+        renderFrame()
+    }
 }

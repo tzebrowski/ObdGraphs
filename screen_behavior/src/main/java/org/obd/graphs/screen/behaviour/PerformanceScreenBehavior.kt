@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.aa.screen.behaviour
+package org.obd.graphs.screen.behaviour
 
 import android.content.Context
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -28,12 +28,12 @@ internal class PerformanceScreenBehavior(
     metricsCollector: MetricsCollector,
     settings: Map<SurfaceRendererType, ScreenSettings>,
     fps: Fps,
-) : ScreenBehavior(context, metricsCollector, settings[SurfaceRendererType.PERFORMANCE]!!, fps, SurfaceRendererType.PERFORMANCE) {
+) : ScreenBehavior(
+        context,
+        metricsCollector,
+        settings[SurfaceRendererType.PERFORMANCE] ?: throw IllegalArgumentException("Missing PERFORMANCE settings"),
+        fps,
+        SurfaceRendererType.PERFORMANCE,
+    ) {
     override fun queryStrategyType() = QueryStrategyType.PERFORMANCE_QUERY
-
-    override fun applyFilters(metricsCollector: MetricsCollector) {
-        query.setStrategy(queryStrategyType())
-        metricsCollector.applyFilter(enabled = query.getIDs())
-        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-    }
 }

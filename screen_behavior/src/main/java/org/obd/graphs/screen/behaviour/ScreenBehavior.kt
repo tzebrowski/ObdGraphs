@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.aa.screen.behaviour
+package org.obd.graphs.screen.behaviour
 
 import android.content.Context
 import org.obd.graphs.bl.collector.MetricsCollector
@@ -27,7 +27,7 @@ import org.obd.graphs.renderer.api.SurfaceRendererType
 
 abstract class ScreenBehavior(
     context: Context,
-    metricsCollector: MetricsCollector,
+    protected val metricsCollector: MetricsCollector,
     protected val settings: ScreenSettings,
     fps: Fps,
     surfaceRendererType: SurfaceRendererType,
@@ -43,42 +43,22 @@ abstract class ScreenBehavior(
 
     protected val query = Query.instance()
 
-    fun getQuery(metricsCollector: MetricsCollector): Query {
-        applyFilters(metricsCollector)
+    protected abstract fun queryStrategyType(): QueryStrategyType
+
+    fun query(): Query {
+        applyFilters()
         return query
     }
 
     fun getSurfaceRenderer(): SurfaceRenderer = surfaceRenderer
 
-    abstract fun queryStrategyType(): QueryStrategyType
-
-    protected open fun getSelectedPIDs(): Set<Long> = emptySet()
-
-    protected open fun getSortOrder(): Map<Long, Int>? = null
-
     open fun getCurrentVirtualScreen(): Int = -1
 
-    open fun setCurrentVirtualScreen(id: Int) {
-    }
+    open fun setCurrentVirtualScreen(id: Int) {}
 
-    protected open fun applyFilters(metricsCollector: MetricsCollector) {
+    protected open fun applyFilters() {
         query.setStrategy(queryStrategyType())
-        val selectedPIDs = getSelectedPIDs()
-        val sortOrder = getSortOrder()
-
-        when (queryStrategyType()) {
-            QueryStrategyType.INDIVIDUAL_QUERY -> {
-                metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder)
-                query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
-            }
-
-            QueryStrategyType.SHARED_QUERY -> {
-                val queryIds = query.getIDs()
-                val intersection = selectedPIDs.filter { queryIds.contains(it) }.toSet()
-                metricsCollector.applyFilter(enabled = intersection, order = sortOrder)
-            }
-
-            else -> {}
-        }
+        metricsCollector.applyFilter(enabled = query.getIDs())
+        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
     }
 }
