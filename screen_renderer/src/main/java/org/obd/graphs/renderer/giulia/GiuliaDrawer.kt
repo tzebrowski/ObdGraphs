@@ -36,8 +36,8 @@ import kotlin.math.max
 private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 private const val METRIC_TOP_NUDGE = 0.02f
-private const val SINGLE_LINE_VALUE_TOP_OFFSET = 0.35f
-private const val DOUBLE_LINE_VALUE_TOP_OFFSET = 0.5f
+private const val SINGLE_LINE_VALUE_TOP_OFFSET = 0.4f
+private const val DOUBLE_LINE_VALUE_TOP_OFFSET = 0.55f
 private const val SINGLE_LINE_STATS_GAP = 0.30f
 private const val TWO_LINE_STATS_GAP = 0.30f
 private const val SINGLE_LINE_POST_STATS_GAP = 0.35f
@@ -72,25 +72,25 @@ internal class GiuliaDrawer(
         top: Float,
         valueLeft: Float,
         valueCastToInt: Boolean = false,
-    ): Float {
+    ) {
 
-        var top1 = top + (textSizeBase * METRIC_TOP_NUDGE)
+        var viewportTop = top + (textSizeBase * METRIC_TOP_NUDGE)
 
         titlePaint.textSize = textSizeBase
         val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, top1, textSizeBase)
+        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, viewportTop, textSizeBase)
         val isTwoLines = secondLineTop != null
 
         val valueNudge =
             if (isTwoLines) (textSizeBase * DOUBLE_LINE_VALUE_TOP_OFFSET) else (textSizeBase * SINGLE_LINE_VALUE_TOP_OFFSET)
-        val valueDrawingTop = (secondLineTop ?: top1) + valueNudge
+        val valueDrawingTop = (secondLineTop ?: viewportTop) + valueNudge
 
         drawValue(canvas, metric, valueLeft, valueDrawingTop, valueTextSize, valueCastToInt)
 
-        top1 =
+        viewportTop =
             if (isTwoLines) {
                 newTop + (textSizeBase * TWO_LINE_STATS_GAP)
             } else {
@@ -98,37 +98,84 @@ internal class GiuliaDrawer(
             }
 
         if (settings.isStatisticsEnabled()) {
-            top1 += (2f * density)
+            viewportTop += (2f * density)
 
             if (metric.source.command.pid.historgam.isMinEnabled) {
-                left1 = drawText(canvas, "min", left, top1, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.min.format(pid = metric.pid), left1, top1, minValueColorScheme(metric), footerValueTextSize)
+                left1 = drawText(canvas, "min", left, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(canvas, metric.min.format(pid = metric.pid), left1, viewportTop, minValueColorScheme(metric), footerValueTextSize)
             }
 
             if (metric.source.command.pid.historgam.isMaxEnabled) {
-                left1 = drawText(canvas, "max", left1, top1, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.max.format(pid = metric.pid), left1, top1, maxValueColorScheme(metric), footerValueTextSize)
+                left1 = drawText(canvas, "max", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(canvas, metric.max.format(pid = metric.pid), left1, viewportTop, maxValueColorScheme(metric), footerValueTextSize)
             }
 
             if (metric.source.command.pid.historgam.isAvgEnabled) {
-                left1 = drawText(canvas, "avg", left1, top1, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.mean.format(pid = metric.pid), left1, top1, Color.LTGRAY, footerValueTextSize)
+                left1 = drawText(canvas, "avg", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(canvas, metric.mean.format(pid = metric.pid), left1, viewportTop, Color.LTGRAY, footerValueTextSize)
             }
-            drawAlertingLegend(canvas, metric, left1, top1)
+            drawAlertingLegend(canvas, metric, left1, viewportTop)
 
-            top1 += if (isTwoLines) (textSizeBase * TWO_LINE_POST_STATS_GAP) else (textSizeBase * SINGLE_LINE_POST_STATS_GAP)
+            viewportTop += if (isTwoLines) (textSizeBase * TWO_LINE_POST_STATS_GAP) else (textSizeBase * SINGLE_LINE_POST_STATS_GAP)
         } else {
-            top1 += if (isTwoLines) (textSizeBase * 0.15f) else (textSizeBase * 0.40f)
+            viewportTop += if (isTwoLines) (textSizeBase * 0.15f) else (textSizeBase * 0.40f)
         }
 
-        drawProgressBar(canvas, left, itemWidth(area).toFloat(), top1, metric, settings.getColorTheme().progressColor, textSizeBase)
+        drawProgressBar(canvas, left, itemWidth(area).toFloat(), viewportTop, metric, settings.getColorTheme().progressColor, textSizeBase)
 
-        top1 += calculateDividerSpacing(textSizeBase, isTwoLines)
-        drawDivider(canvas, left, itemWidth(area).toFloat(), top1, settings.getColorTheme().dividerColor)
+        viewportTop += calculateDividerSpacing(textSizeBase, isTwoLines)
+        drawDivider(canvas, left, itemWidth(area).toFloat(), viewportTop, settings.getColorTheme().dividerColor)
+    }
 
-        top1 += (textSizeBase * TOTAL_AREA_HEIGHT_MULTIPLIER).toInt()
+    fun calculateMetricHeight(metric: Metric, textSizeBase: Float): Float {
+        val topMargin = max((textSizeBase * 0.22f).toInt(), (8 * density).toInt()).toFloat()
 
-        return top1
+        val description = if (metric.source.command.pid.longDescription.isNullOrEmpty()) {
+            metric.source.command.pid.description
+        } else {
+            metric.source.command.pid.longDescription
+        }
+        val safeDescription = description ?: ""
+
+        var top = textSizeBase * METRIC_TOP_NUDGE
+
+        val newTop: Float
+        val isTwoLines: Boolean
+
+        if (settings.isBreakLabelTextEnabled()) {
+            val text = safeDescription.split("\n")
+            if (text.size == 1) {
+                newTop = top + topMargin
+                isTwoLines = false
+            } else {
+                var vPos = top
+                text.forEach { _ ->
+                    vPos += textSizeBase
+                }
+                newTop = vPos + (topMargin / 2)
+                isTwoLines = true
+            }
+        } else {
+            newTop = top + topMargin
+            isTwoLines = false
+        }
+
+        top = if (isTwoLines) {
+            newTop + (textSizeBase * TWO_LINE_STATS_GAP)
+        } else {
+            newTop + (textSizeBase * SINGLE_LINE_STATS_GAP)
+        }
+
+        if (settings.isStatisticsEnabled()) {
+            top += (2f * density)
+            top += if (isTwoLines) (textSizeBase * TWO_LINE_POST_STATS_GAP) else (textSizeBase * SINGLE_LINE_POST_STATS_GAP)
+        } else {
+            top += if (isTwoLines) (textSizeBase * 0.15f) else (textSizeBase * 0.40f)
+        }
+
+        top += calculateDividerSpacing(textSizeBase, isTwoLines)
+        top += (textSizeBase * TOTAL_AREA_HEIGHT_MULTIPLIER).toInt()
+        return top
     }
 
     private inline fun calculateDividerSpacing(

@@ -37,4 +37,7 @@ data class TripInfoDetails(
     var batteryVoltage: Metric? = null,
     var oilPressure: Metric? = null,
     var oilDegradation: Metric? = null,
+    var engineSpeed: Metric? = null,
+    var vehicleSpeed: Metric? = null,
+    var gearEngaged: Metric? = null,
 )

@@ -27,7 +27,6 @@ import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -45,6 +44,11 @@ internal class GiuliaSurfaceRenderer(
     private val fps: Fps,
 ) : AbstractSurfaceRenderer(context) {
     private val giuliaDrawer = GiuliaDrawer(context, settings)
+
+    // Reusable objects to prevent Garbage Collection stutter
+    private val columnArea = Rect()
+    private var metricTops = FloatArray(100)
+    private var metricHeights = FloatArray(100)
 
     override fun onDraw(
         canvas: Canvas,
@@ -73,23 +77,39 @@ internal class GiuliaSurfaceRenderer(
             val metrics = metricsCollector.getMetrics()
             val metricsCount = min(settings.getMaxItems(), metrics.size)
 
+            if (metricsCount > metricTops.size) {
+                metricTops = FloatArray(metricsCount)
+                metricHeights = FloatArray(metricsCount)
+            }
+
             val columns = max(1, settings.getMaxColumns())
             val columnWidth = area.width().toFloat() / columns
             val pageSize = max(1, ceil(metricsCount / columns.toDouble()).toInt())
 
-            var heightMultiplier = if (settings.isStatisticsEnabled()) 3.8f else 3.4f
-            if (settings.isBreakLabelTextEnabled()) heightMultiplier += 1.0f
-            val approxMetricHeight = textSizeBase * heightMultiplier
-
             val viewportTop = top
-            val viewportHeight = (area.bottom - viewportTop).toFloat()
+            var maxBottom = viewportTop
 
-            val contentHeight = (pageSize * approxMetricHeight) + 20f
+            for (col in 0 until columns) {
+                var currentTop = viewportTop
+                val colStartIndex = col * pageSize
+                val colEndIndex = min(colStartIndex + pageSize, metricsCount)
+
+                for (i in colStartIndex until colEndIndex) {
+                    metricTops[i] = currentTop
+                    val itemHeight = giuliaDrawer.calculateMetricHeight(metrics[i], textSizeBase)
+                    metricHeights[i] = itemHeight
+                    currentTop += itemHeight
+                }
+                maxBottom = max(maxBottom, currentTop)
+            }
+
+            val viewportHeight = area.bottom - viewportTop
+            val contentHeight = maxBottom - viewportTop + 20f
             val maxScroll = max(0f, contentHeight - viewportHeight)
             scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
 
-            val skippedItems = floor(scrollOffset / approxMetricHeight).toInt().coerceAtLeast(0)
-            val visibleItemsCount = ceil(viewportHeight / approxMetricHeight).toInt() + 2
+            val visibleTop = viewportTop + scrollOffset
+            val visibleBottom = visibleTop + viewportHeight
 
             canvas.save()
             canvas.clipRect(area)
@@ -100,20 +120,16 @@ internal class GiuliaSurfaceRenderer(
                 val valueLeftOffset = if (columns == 1) 42f else 32f
                 val valueLeft = area.left + ((col + 1) * columnWidth) - valueLeftOffset
 
-                val columnArea = Rect(colLeft.toInt(), area.top, (colLeft + columnWidth).toInt(), area.bottom)
+                columnArea.set(colLeft.toInt(), area.top, (colLeft + columnWidth).toInt(), area.bottom)
 
                 val colStartIndex = col * pageSize
                 val colEndIndex = min(colStartIndex + pageSize, metricsCount)
 
-                if (colStartIndex >= metricsCount) break
+                for (i in colStartIndex until colEndIndex) {
+                    val itemTop = metricTops[i]
+                    val itemBottom = itemTop + metricHeights[i]
 
-                val visibleStartIndex = min(colStartIndex + skippedItems, colEndIndex)
-                val visibleEndIndex = min(visibleStartIndex + visibleItemsCount, colEndIndex)
-
-                var currentTop = viewportTop + ((visibleStartIndex - colStartIndex) * approxMetricHeight)
-
-                for (i in visibleStartIndex until visibleEndIndex) {
-                    currentTop =
+                    if (itemBottom >= visibleTop && itemTop <= visibleBottom) {
                         giuliaDrawer.drawMetric(
                             canvas = canvas,
                             area = columnArea,
@@ -121,10 +137,11 @@ internal class GiuliaSurfaceRenderer(
                             textSizeBase = textSizeBase,
                             valueTextSize = valueTextSize,
                             left = colLeft,
-                            top = currentTop,
+                            top = itemTop,
                             valueLeft = valueLeft,
                             valueCastToInt = false,
                         )
+                    }
                 }
             }
 

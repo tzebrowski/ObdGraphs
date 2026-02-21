@@ -82,6 +82,9 @@ internal class TripInfoSurfaceRenderer(
                         batteryVoltage = metricsCollector.getMetric(Pid.BATTERY_VOLTAGE_PID_ID)
                         oilPressure = metricsCollector.getMetric(Pid.OIL_PRESSURE_PID_ID)
                         oilDegradation = metricsCollector.getMetric(Pid.OIL_DEGRADATION_PID_ID)
+                        vehicleSpeed = metricsCollector.getMetric(Pid.VEHICLE_SPEED_PID_ID)
+                        engineSpeed = metricsCollector.getMetric(Pid.ENGINE_SPEED_PID_ID)
+                        gearEngaged = metricsCollector.getMetric(Pid.GEAR_ENGAGED_PID_ID)
                     },
             )
         }
