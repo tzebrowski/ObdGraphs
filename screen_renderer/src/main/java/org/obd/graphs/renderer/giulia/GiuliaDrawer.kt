@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -38,12 +38,11 @@ internal class GiuliaDrawer(
     context: Context,
     settings: ScreenSettings,
 ) : AbstractDrawer(context, settings) {
-
-    private val glowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-        maskFilter = BlurMaskFilter(20f, BlurMaskFilter.Blur.NORMAL)
-    }
-
+    private val glowPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            maskFilter = BlurMaskFilter(20f, BlurMaskFilter.Blur.NORMAL)
+        }
 
     inline fun drawMetric(
         canvas: Canvas,
@@ -54,6 +53,7 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         valueLeft: Float,
+        valueCastToInt: Boolean = false
     ): Float {
         var top1 = top
         val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
@@ -78,6 +78,7 @@ internal class GiuliaDrawer(
                 left = valueLeft,
                 top = t2 ?: t1,
                 textSize = valueTextSize,
+                castToInt = valueCastToInt
             )
 
         if (settings.isStatisticsEnabled()) {
@@ -202,8 +203,10 @@ internal class GiuliaDrawer(
         if (it.source.isNumber()) {
             val progress =
                 it.source.toFloat().mapRange(
-                    it.source.command.pid.min.toFloat(),
-                    it.source.command.pid.max.toFloat(),
+                    it.source.command.pid.min
+                        .toFloat(),
+                    it.source.command.pid.max
+                        .toFloat(),
                     left,
                     left + width - MARGIN_END,
                 )
@@ -222,7 +225,7 @@ internal class GiuliaDrawer(
                 rectTop,
                 maxRight,
                 rectBottom,
-                paint
+                paint,
             )
 
             val glowExpansion = (rectBottom - rectTop) * 0.75f
@@ -232,19 +235,22 @@ internal class GiuliaDrawer(
                 rectTop - glowExpansion,
                 rectRight,
                 rectBottom + glowExpansion,
-                glowPaint
+                glowPaint,
             )
 
             paint.color = color
             if (settings.isProgressGradientEnabled()) {
                 val colors = intArrayOf(android.graphics.Color.WHITE, color)
-                paint.shader = android.graphics.LinearGradient(
-                    rectLeft, rectTop,
-                    maxRight, rectTop,
-                    colors,
-                    null,
-                    android.graphics.Shader.TileMode.CLAMP
-                )
+                paint.shader =
+                    android.graphics.LinearGradient(
+                        rectLeft,
+                        rectTop,
+                        maxRight,
+                        rectTop,
+                        colors,
+                        null,
+                        android.graphics.Shader.TileMode.CLAMP,
+                    )
             } else {
                 paint.shader = null
             }
@@ -269,9 +275,9 @@ internal class GiuliaDrawer(
     ) {
         if (settings.isAlertLegendEnabled() &&
             (
-                    metric.source.command.pid.alert.lowerThreshold != null ||
-                            metric.source.command.pid.alert.upperThreshold != null
-                    )
+                metric.source.command.pid.alert.lowerThreshold != null ||
+                    metric.source.command.pid.alert.upperThreshold != null
+            )
         ) {
             val text = "  alerting "
             drawText(
@@ -313,6 +319,7 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         textSize: Float,
+        castToInt: Boolean = false
     ): Float {
         valuePaint.color = valueColorScheme(metric)
 
@@ -321,7 +328,7 @@ internal class GiuliaDrawer(
 
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
-        val value = metric.source.valueToString()
+        val value = metric.source.format(castToInt = castToInt)
         canvas.drawText(value, left1, top, valuePaint)
 
         metric.source.command.pid.units?.let {

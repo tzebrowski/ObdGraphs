@@ -19,7 +19,6 @@ package org.obd.graphs.renderer.trip
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import org.obd.graphs.bl.collector.Metric
@@ -29,7 +28,7 @@ import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.MARGIN_END
 import org.obd.graphs.renderer.api.ScreenSettings
-import org.obd.graphs.toFloat
+import org.obd.graphs.renderer.giulia.GiuliaDrawer
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
@@ -44,6 +43,8 @@ internal class TripInfoDrawer(
     settings: ScreenSettings,
 ) : AbstractDrawer(context, settings) {
     private val metricBuilder = MetricsBuilder()
+
+    private val giuliaDrawer = GiuliaDrawer(context, settings)
 
     inline fun drawScreen(
         canvas: Canvas,
@@ -224,28 +225,18 @@ internal class TripInfoDrawer(
         rowTop += 2.2f * textSizeBase
         leftAlignment = 0
 
-        val bottomMetrics = mutableListOf<Metric>()
-
-        tripInfo.intakePressure?.let {
-            bottomMetrics.add(it)
-        }
-
-        tripInfo.oilPressure?.let {
-            bottomMetrics.add(it)
-        }
-
-        tripInfo.torque?.let {
-            bottomMetrics.add(it)
-        }
+        val bottomMetrics =
+            listOfNotNull(Pair(tripInfo.intakePressure, true), Pair(tripInfo.oilPressure, false), Pair(tripInfo.torque, true))
 
         bottomMetrics.forEachIndexed { index, metric ->
             drawMetric(
                 canvas,
                 area,
-                metric,
+                metric.first!!,
                 left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5),
                 rowTop,
                 bottomMetrics.size,
+                valueCastToInt = metric.second,
             )
         }
     }
@@ -266,105 +257,61 @@ internal class TripInfoDrawer(
         left: Float,
         top: Float,
         items: Int,
+        valueCastToInt: Boolean,
     ): Float {
-        val (valueTextSize, textSizeBase) = calculateFontSize(area)
+        val itemWidth = area.width() / items.toFloat()
 
-        var top1 = top
-        var left1 = left
+        var textSizeBase = itemWidth * 0.07f
+        var valueTextSize = itemWidth * 0.12f
 
-        drawTitle(
-            canvas,
-            metric,
-            left1,
-            top1,
-            textSizeBase * 0.75f,
-        )
+        val description =
+            metric.source.command.pid.longDescription
+                ?.takeIf { it.isNotEmpty() }
+                ?: metric.source.command.pid.description
 
-        val areaWidth = getAreaWidth(area, items = items)
-        drawValue(
-            canvas,
-            metric,
-            top1 + textSizeBase,
-            valueTextSize * 0.9f,
-            left = left + areaWidth - valueTextSize,
-        )
-        val scaleRatio = getScaleRatio()
+        val longestLine = description.split("\n").maxByOrNull { it.length } ?: description
 
-        // space between title and  statistic values
-        top1 += (area.width() / 11f) * scaleRatio
+        titlePaint.textSize = textSizeBase
+        val titleWidth = getTextWidth(longestLine, titlePaint)
+        val maxTitleWidth = itemWidth * 0.50f
 
-        if (settings.isStatisticsEnabled()) {
-            val tt = textSizeBase * 0.6f
-            if (metric.source.command.pid.historgam.isMinEnabled) {
-                left1 =
-                    drawText(
-                        canvas,
-                        "min",
-                        left,
-                        top1,
-                        Color.LTGRAY,
-                        tt * 0.8f,
-                        valuePaint,
-                    )
-                left1 =
-                    drawText(
-                        canvas,
-                        metric.min.format(pid = metric.pid),
-                        left1,
-                        top1,
-                        minValueColorScheme(metric),
-                        tt,
-                        valuePaint,
-                    )
-            }
-            if (metric.source.command.pid.historgam.isMaxEnabled) {
-                left1 =
-                    drawText(
-                        canvas,
-                        "max",
-                        left1,
-                        top1,
-                        Color.LTGRAY,
-                        tt * 0.8f,
-                        valuePaint,
-                    )
-                drawText(
-                    canvas,
-                    metric.max.format(metric.pid),
-                    left1,
-                    top1,
-                    maxValueColorScheme(metric),
-                    tt,
-                    valuePaint,
-                )
-            }
-
-            top1 += getTextHeight("min", paint) / 2
+        if (titleWidth > maxTitleWidth) {
+            textSizeBase *= (maxTitleWidth / titleWidth)
         }
 
-        top1 += 4f
+        val worstCaseValueText = "0000"
+        val unitText = metric.source.command.pid.units ?: ""
 
-        drawProgressBar(
-            canvas,
-            left,
-            areaWidth,
-            top1,
-            metric,
-            color = settings.getColorTheme().progressColor,
+        valuePaint.textSize = valueTextSize
+        val valueWidth = getTextWidth(worstCaseValueText, valuePaint)
+
+        valuePaint.textSize = valueTextSize * 0.4f
+        val unitWidth = getTextWidth(unitText, valuePaint)
+
+        val totalValueWidth = valueWidth + unitWidth
+        val maxValueWidth = itemWidth * 0.35f
+
+        if (totalValueWidth > maxValueWidth) {
+            valueTextSize *= (maxValueWidth / totalValueWidth)
+        }
+
+        val valueLeft = left + itemWidth - MARGIN_END
+
+        val giuliaInternalDivider = if (settings.getMaxColumns() == 1) 1 else 2
+        val fakeAreaWidth = (itemWidth * giuliaInternalDivider).toInt()
+        val boundedArea = Rect(area.left, area.top, area.left + fakeAreaWidth, area.bottom)
+
+        return giuliaDrawer.drawMetric(
+            canvas = canvas,
+            area = boundedArea,
+            metric = metric,
+            textSizeBase = textSizeBase,
+            valueTextSize = valueTextSize,
+            left = left,
+            top = top,
+            valueLeft = valueLeft,
+            valueCastToInt = valueCastToInt,
         )
-
-        top1 += calculateDividerSpacing()
-
-        drawDivider(
-            canvas,
-            left,
-            areaWidth,
-            top1,
-            color = settings.getColorTheme().dividerColor,
-        )
-
-        top1 += 10f + (textSizeBase).toInt()
-        return top1
     }
 
     private inline fun getScaleRatio() =
@@ -375,65 +322,10 @@ internal class TripInfoDrawer(
             NEW_MAX,
         )
 
-    private inline fun calculateDividerSpacing(): Int = 14
-
     private inline fun getAreaWidth(
         area: Rect,
         items: Int = 3,
     ): Float = area.width().toFloat() / items
-
-    private fun drawProgressBar(
-        canvas: Canvas,
-        left: Float,
-        width: Float,
-        top: Float,
-        it: Metric,
-        color: Int,
-    ) {
-        paint.color = color
-
-        val progress =
-            it.source.toFloat().mapRange(
-                it.source.command.pid.min
-                    .toFloat(),
-                it.source.command.pid.max
-                    .toFloat(),
-                left,
-                left + width - MARGIN_END,
-            )
-
-        canvas.drawRect(
-            left - MAX_ITEM_IN_THE_ROW,
-            top + 4,
-            progress,
-            top + calculateProgressBarHeight(),
-            paint,
-        )
-    }
-
-    private fun drawValue(
-        canvas: Canvas,
-        metric: Metric,
-        top: Float,
-        textSize: Float,
-        left: Float,
-    ) {
-        valuePaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        valuePaint.color = Color.WHITE
-
-        valuePaint.setShadowLayer(80f, 0f, 0f, Color.WHITE)
-        valuePaint.textSize = textSize
-        valuePaint.textAlign = Paint.Align.RIGHT
-        val text = metric.source.valueToString()
-        canvas.drawText(text, left, top, valuePaint)
-
-        metric.source.command.pid.units?.let {
-            valuePaint.color = Color.LTGRAY
-            valuePaint.textAlign = Paint.Align.LEFT
-            valuePaint.textSize = textSize * 0.4f
-            canvas.drawText(it, (left + 2), top, valuePaint)
-        }
-    }
 
     private fun drawValue(
         canvas: Canvas,
@@ -489,8 +381,6 @@ internal class TripInfoDrawer(
     }
 
     private inline fun maxItemWidth(area: Rect) = (area.width() / MAX_ITEM_IN_THE_ROW)
-
-    private fun calculateProgressBarHeight() = 16
 
     inline fun drawMetric(
         metric: Metric,
