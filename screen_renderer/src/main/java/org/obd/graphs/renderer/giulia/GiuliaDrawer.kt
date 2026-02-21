@@ -33,24 +33,22 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.toFloat
 import kotlin.math.max
 
-// --- ADJUSTABLE LAYOUT CONSTANTS ---
 private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 
-// Vertical Spacing Factors (Multipliers of safeTextSizeBase)
 private const val METRIC_TOP_NUDGE = 0.02f
-private const val SINGLE_LINE_VALUE_NUDGE = 0.55f // Value margin from top for single line
-private const val SINGLE_LINE_STATS_GAP = 0.50f // Space between label and stats for single line
-private const val TWO_LINE_STATS_GAP = 0.25f // Space between label and stats for broken labels
-private const val SINGLE_LINE_POST_STATS_GAP = 0.55f
-private const val TWO_LINE_POST_STATS_GAP = 0.25f
-private const val SINGLE_LINE_DIVIDER_GAP = 0.28f
-private const val TWO_LINE_DIVIDER_GAP = 0.12f
+private const val SINGLE_LINE_VALUE_NUDGE = 0.4f
+private const val TWO_LINES_VALUE_NUDGE = 0.55f
+private const val SINGLE_LINE_STATS_GAP = 0.30f
+private const val TWO_LINE_STATS_GAP = 0.30f
+private const val SINGLE_LINE_POST_STATS_GAP = 0.35f
+private const val TWO_LINE_POST_STATS_GAP = 0.35f
+private const val SINGLE_LINE_DIVIDER_GAP = 0.20f
+private const val TWO_LINE_DIVIDER_GAP = 0.15f
 private const val TOTAL_AREA_HEIGHT_MULTIPLIER = 1.55f
 
-// Progress Bar Scaling
 private const val PROGRESS_BAR_H_1_COL = 0.28f
-private const val PROGRESS_BAR_H_2_COL = 0.20f
+private const val PROGRESS_BAR_H_2_COL = 0.18f
 private const val GLOW_RADIUS = 12f
 
 @Suppress("NOTHING_TO_INLINE")
@@ -77,71 +75,33 @@ internal class GiuliaDrawer(
         valueLeft: Float,
         valueCastToInt: Boolean = false,
     ): Float {
-        val itemW = itemWidth(area).toFloat()
-
         var safeTextSizeBase = textSizeBase
         var safeValueTextSize = valueTextSize
 
         var top1 = top + (safeTextSizeBase * METRIC_TOP_NUDGE)
 
-        val description =
-            if (metric.source.command.pid.longDescription
-                    .isNullOrEmpty()
-            ) {
-                metric.source.command.pid.description
-            } else {
-                metric.source.command.pid.longDescription
-            }
-
-        val safeDescription = description ?: ""
-
-        val longestLine =
-            if (settings.isBreakLabelTextEnabled()) {
-                safeDescription.split("\n").maxByOrNull { it.length } ?: safeDescription
-            } else {
-                safeDescription.replace("\n", " ")
-            }
-
         titlePaint.textSize = safeTextSizeBase
-        val titleWidth = getTextWidth(longestLine, titlePaint)
-        val maxTitleWidth = itemW * 0.50f
-
-        if (titleWidth > maxTitleWidth && titleWidth > 0f) {
-            safeTextSizeBase *= (maxTitleWidth / titleWidth)
-        }
-
-        val worstCaseValueText = "-00000.0"
-        val unitText = metric.source.command.pid.units ?: ""
-
-        valuePaint.textSize = safeValueTextSize
-        val valueWidth = getTextWidth(worstCaseValueText, valuePaint)
-
-        valuePaint.textSize = safeValueTextSize * 0.4f
-        val unitWidth = getTextWidth(unitText, valuePaint)
-
-        val totalValueWidth = valueWidth + unitWidth
-        val maxValueWidth = itemW * 0.35f
-
-        if (totalValueWidth > maxValueWidth && totalValueWidth > 0f) {
-            safeValueTextSize *= (maxValueWidth / totalValueWidth)
-        }
-
         val footerValueTextSize = safeTextSizeBase / FOOTER_SIZE_RATIO
         val footerTitleTextSize = safeTextSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        //  Draw Title
+        // Draw Title
         val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, top1, safeTextSizeBase)
         val isTwoLines = secondLineTop != null
 
-        // Draw Value - Now properly using SINGLE_LINE_VALUE_NUDGE
-        val valueNudge = if (isTwoLines) 0f else (safeTextSizeBase * SINGLE_LINE_VALUE_NUDGE)
+        // Draw Value with adjustment
+        val valueNudge = if (isTwoLines) (safeTextSizeBase * TWO_LINES_VALUE_NUDGE) else (safeTextSizeBase * SINGLE_LINE_VALUE_NUDGE)
         val valueDrawingTop = (secondLineTop ?: top1) + valueNudge
 
         drawValue(canvas, metric, valueLeft, valueDrawingTop, safeValueTextSize, valueCastToInt)
 
-        // Margin between Label and Statistics - Now properly using TWO_LINE_STATS_GAP
-        top1 = if (isTwoLines) newTop + (safeTextSizeBase * TWO_LINE_STATS_GAP) else newTop + (safeTextSizeBase * SINGLE_LINE_STATS_GAP)
+        // Margin between Label and Statistics
+        top1 =
+            if (isTwoLines) {
+                newTop + (safeTextSizeBase * TWO_LINE_STATS_GAP)
+            } else {
+                newTop + (safeTextSizeBase * SINGLE_LINE_STATS_GAP)
+            }
 
         if (settings.isStatisticsEnabled()) {
             top1 += (2f * density)
@@ -195,7 +155,12 @@ internal class GiuliaDrawer(
         top: Float,
         color: Int,
         textSize: Float,
-    ): Float = drawText(canvas, text, left, top, color, textSize, paint)
+    ): Float {
+        paint.color = color
+        paint.textSize = textSize
+        canvas.drawText(text, left, top, paint)
+        return left + getTextWidth(text, paint) + (4f * density)
+    }
 
     fun drawProgressBar(
         canvas: Canvas,
@@ -320,7 +285,7 @@ internal class GiuliaDrawer(
                 var vPos = top
                 var secondLineTop: Float? = null
                 text.forEachIndexed { index, s ->
-                    canvas.drawText(s, left, vPos, titlePaint)
+                    canvas.drawText(s.trim(), left, vPos, titlePaint)
                     if (index == 1) {
                         secondLineTop = vPos
                     }

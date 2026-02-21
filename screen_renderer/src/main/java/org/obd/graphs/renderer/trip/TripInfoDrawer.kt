@@ -53,7 +53,7 @@ internal class TripInfoDrawer(
         top: Float,
         tripInfo: TripInfoDetails,
     ) {
-        val (textSizeBase) = calculateFontSize(area)
+        val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
         val dynamicPadding = textSizeBase * 0.1f
         val x = maxItemWidth(area) + dynamicPadding
@@ -221,25 +221,75 @@ internal class TripInfoDrawer(
             }
         }
 
-        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + dynamicPadding, Color.DKGRAY)
-
         rowTop += 2.2f * textSizeBase
-        leftAlignment = 0
-
         val bottomMetrics =
-            listOfNotNull(Pair(tripInfo.intakePressure, true), Pair(tripInfo.oilPressure, false), Pair(tripInfo.torque, true))
-
-        bottomMetrics.forEachIndexed { index, metric ->
-            drawMetric(
-                canvas,
-                area,
-                metric.first!!,
-                left + (index * getAreaWidth(area, items = bottomMetrics.size) + dynamicPadding),
-                rowTop,
-                bottomMetrics.size,
-                valueCastToInt = metric.second,
+            listOfNotNull(
+                tripInfo.intakePressure?.let { Pair(it, true) },
+                tripInfo.oilPressure?.let { Pair(it, false) },
+                tripInfo.torque?.let { Pair(it, true) },
             )
+
+        if (bottomMetrics.isNotEmpty()) {
+            val itemsCount = bottomMetrics.size
+            val colWidth = area.width() / itemsCount.toFloat()
+
+            var rowTextSizeBase = textSizeBase
+            bottomMetrics.forEach { (metric, _) ->
+                val description =
+                    metric.source.command.pid.longDescription
+                        ?.takeIf { it.isNotEmpty() } ?: metric.source.command.pid.description ?: ""
+
+                val longestLine = description.split("\n").maxByOrNull { it.length } ?: description
+                titlePaint.textSize = textSizeBase
+                val titleWidth = getTextWidth(longestLine, titlePaint)
+                val maxTitleWidth = colWidth * 0.75f
+
+                if (titleWidth > maxTitleWidth && titleWidth > 0f) {
+                    val scaleFactor = maxTitleWidth / titleWidth
+                    rowTextSizeBase = minOf(rowTextSizeBase, textSizeBase * scaleFactor)
+                }
+            }
+
+            bottomMetrics.forEachIndexed { index, paired ->
+                drawMetric(paired, left, index, area, itemsCount, dynamicPadding, colWidth, canvas, rowTextSizeBase, valueTextSize, rowTop)
+            }
         }
+    }
+
+    fun drawMetric(
+        paired: Pair<Metric, Boolean>,
+        left: Float,
+        index: Int,
+        area: Rect,
+        itemsCount: Int,
+        dynamicPadding: Float,
+        colWidth: Float,
+        canvas: Canvas,
+        rowTextSizeBase: Float,
+        valueTextSize: Float,
+        rowTop: Float,
+    ) {
+        val metric = paired.first
+        val castToInt = paired.second
+
+        val metricLeft = left + (index * (area.width() / itemsCount.toFloat()) + dynamicPadding)
+        val valueLeft = metricLeft + colWidth - MARGIN_END
+
+        val giuliaInternalDivider = if (settings.getMaxColumns() == 1) 1 else 2
+        val fakeAreaWidth = (colWidth * giuliaInternalDivider).toInt()
+
+        val boundedArea = Rect(area.left, area.top, area.left + fakeAreaWidth, area.bottom)
+        giuliaDrawer.drawMetric(
+            canvas = canvas,
+            area = boundedArea,
+            metric = metric,
+            textSizeBase = rowTextSizeBase * 0.8f,
+            valueTextSize = valueTextSize * 0.8f,
+            left = metricLeft,
+            top = rowTop,
+            valueLeft = valueLeft,
+            valueCastToInt = castToInt,
+        )
     }
 
     private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
@@ -251,70 +301,6 @@ internal class TripInfoDrawer(
         return Pair(valueTextSize, textSizeBase)
     }
 
-    private inline fun drawMetric(
-        canvas: Canvas,
-        area: Rect,
-        metric: Metric,
-        left: Float,
-        top: Float,
-        items: Int,
-        valueCastToInt: Boolean,
-    ): Float {
-        val itemWidth = area.width() / items.toFloat()
-
-        var textSizeBase = itemWidth * 0.07f
-        var valueTextSize = itemWidth * 0.12f
-
-        val description =
-            metric.source.command.pid.longDescription
-                ?.takeIf { it.isNotEmpty() }
-                ?: metric.source.command.pid.description
-
-        val longestLine = description.split("\n").maxByOrNull { it.length } ?: description
-
-        titlePaint.textSize = textSizeBase
-        val titleWidth = getTextWidth(longestLine, titlePaint)
-        val maxTitleWidth = itemWidth * 0.50f
-
-        if (titleWidth > maxTitleWidth) {
-            textSizeBase *= (maxTitleWidth / titleWidth)
-        }
-
-        val worstCaseValueText = "0000"
-        val unitText = metric.source.command.pid.units ?: ""
-
-        valuePaint.textSize = valueTextSize
-        val valueWidth = getTextWidth(worstCaseValueText, valuePaint)
-
-        valuePaint.textSize = valueTextSize * 0.4f
-        val unitWidth = getTextWidth(unitText, valuePaint)
-
-        val totalValueWidth = valueWidth + unitWidth
-        val maxValueWidth = itemWidth * 0.35f
-
-        if (totalValueWidth > maxValueWidth) {
-            valueTextSize *= (maxValueWidth / totalValueWidth)
-        }
-
-        val valueLeft = left + itemWidth - MARGIN_END
-
-        val giuliaInternalDivider = if (settings.getMaxColumns() == 1) 1 else 2
-        val fakeAreaWidth = (itemWidth * giuliaInternalDivider).toInt()
-        val boundedArea = Rect(area.left, area.top, area.left + fakeAreaWidth, area.bottom)
-
-        return giuliaDrawer.drawMetric(
-            canvas = canvas,
-            area = boundedArea,
-            metric = metric,
-            textSizeBase = textSizeBase,
-            valueTextSize = valueTextSize,
-            left = left,
-            top = top,
-            valueLeft = valueLeft,
-            valueCastToInt = valueCastToInt,
-        )
-    }
-
     private inline fun getScaleRatio() =
         settings.getTripInfoScreenSettings().fontSize.toFloat().mapRange(
             CURRENT_MIN,
@@ -322,11 +308,6 @@ internal class TripInfoDrawer(
             NEW_MIN,
             NEW_MAX,
         )
-
-    private inline fun getAreaWidth(
-        area: Rect,
-        items: Int = 3,
-    ): Float = area.width().toFloat() / items
 
     private fun drawValue(
         canvas: Canvas,
