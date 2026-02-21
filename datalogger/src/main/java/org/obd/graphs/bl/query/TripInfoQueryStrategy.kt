@@ -44,7 +44,11 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             Pid.IBS_PID_ID,
             Pid.OIL_PRESSURE_PID_ID,
             Pid.OIL_DEGRADATION_PID_ID,
-        ).map { it.id }.toSet()
+            Pid.ENGINE_SPEED_PID_ID,
+            Pid.VEHICLE_SPEED_PID_ID,
+            Pid.GEAR_ENGAGED_PID_ID,
+
+            ).map { it.id }.toSet()
 
     override fun getDefaults() = defaults
 

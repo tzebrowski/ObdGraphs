@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -21,22 +21,22 @@ import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.TripInfoScreenSettings
 
- class TripInfoSettings: ScreenSettings {
+class TripInfoSettings : ScreenSettings {
 
     private val settings = TripInfoScreenSettings()
 
     override fun getTripInfoScreenSettings() = settings.apply {
-         fontSize = Prefs.getS("pref.trip_info.screen_font_size","30").toInt()
+        fontSize = Prefs.getS("pref.trip_info.screen_font_size", "30").toInt()
     }
 
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
-    override fun isStatisticsEnabled(): Boolean  = true
-    override fun isFpsCounterEnabled(): Boolean  = true
-    override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.trip_info.fps","5").toInt()
+    override fun isStatisticsEnabled(): Boolean = true
+    override fun isFpsCounterEnabled(): Boolean = true
+    override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.trip_info.fps", "5").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
 
-    override fun getMaxAllowedItemsInColumn(): Int  = 8
+    override fun getMaxAllowedItemsInColumn(): Int = 8
 }
