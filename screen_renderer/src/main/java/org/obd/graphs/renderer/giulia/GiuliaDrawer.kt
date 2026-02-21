@@ -73,30 +73,28 @@ internal class GiuliaDrawer(
         valueLeft: Float,
         valueCastToInt: Boolean = false,
     ): Float {
-        val itemW = itemWidth(area).toFloat()
-        var safeTextSizeBase = textSizeBase
-        var safeValueTextSize = valueTextSize
 
-        var top1 = top + (safeTextSizeBase * METRIC_TOP_NUDGE)
+        var top1 = top + (textSizeBase * METRIC_TOP_NUDGE)
 
-        titlePaint.textSize = safeTextSizeBase
-        val footerValueTextSize = safeTextSizeBase / FOOTER_SIZE_RATIO
-        val footerTitleTextSize = safeTextSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
+        titlePaint.textSize = textSizeBase
+        val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
+        val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, top1, safeTextSizeBase)
+        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, top1, textSizeBase)
         val isTwoLines = secondLineTop != null
 
-        val valueNudge = if (isTwoLines) (safeTextSizeBase * DOUBLE_LINE_VALUE_TOP_OFFSET) else (safeTextSizeBase * SINGLE_LINE_VALUE_TOP_OFFSET)
+        val valueNudge =
+            if (isTwoLines) (textSizeBase * DOUBLE_LINE_VALUE_TOP_OFFSET) else (textSizeBase * SINGLE_LINE_VALUE_TOP_OFFSET)
         val valueDrawingTop = (secondLineTop ?: top1) + valueNudge
 
-        drawValue(canvas, metric, valueLeft, valueDrawingTop, safeValueTextSize, valueCastToInt)
+        drawValue(canvas, metric, valueLeft, valueDrawingTop, valueTextSize, valueCastToInt)
 
         top1 =
             if (isTwoLines) {
-                newTop + (safeTextSizeBase * TWO_LINE_STATS_GAP)
+                newTop + (textSizeBase * TWO_LINE_STATS_GAP)
             } else {
-                newTop + (safeTextSizeBase * SINGLE_LINE_STATS_GAP)
+                newTop + (textSizeBase * SINGLE_LINE_STATS_GAP)
             }
 
         if (settings.isStatisticsEnabled()) {
@@ -118,17 +116,17 @@ internal class GiuliaDrawer(
             }
             drawAlertingLegend(canvas, metric, left1, top1)
 
-            top1 += if (isTwoLines) (safeTextSizeBase * TWO_LINE_POST_STATS_GAP) else (safeTextSizeBase * SINGLE_LINE_POST_STATS_GAP)
+            top1 += if (isTwoLines) (textSizeBase * TWO_LINE_POST_STATS_GAP) else (textSizeBase * SINGLE_LINE_POST_STATS_GAP)
         } else {
-            top1 += if (isTwoLines) (safeTextSizeBase * 0.15f) else (safeTextSizeBase * 0.40f)
+            top1 += if (isTwoLines) (textSizeBase * 0.15f) else (textSizeBase * 0.40f)
         }
 
-        drawProgressBar(canvas, left, itemWidth(area).toFloat(), top1, metric, settings.getColorTheme().progressColor, safeTextSizeBase)
+        drawProgressBar(canvas, left, itemWidth(area).toFloat(), top1, metric, settings.getColorTheme().progressColor, textSizeBase)
 
-        top1 += calculateDividerSpacing(safeTextSizeBase, isTwoLines)
+        top1 += calculateDividerSpacing(textSizeBase, isTwoLines)
         drawDivider(canvas, left, itemWidth(area).toFloat(), top1, settings.getColorTheme().dividerColor)
 
-        top1 += (safeTextSizeBase * TOTAL_AREA_HEIGHT_MULTIPLIER).toInt()
+        top1 += (textSizeBase * TOTAL_AREA_HEIGHT_MULTIPLIER).toInt()
 
         return top1
     }

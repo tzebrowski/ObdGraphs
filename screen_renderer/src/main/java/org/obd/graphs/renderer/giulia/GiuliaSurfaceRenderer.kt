@@ -27,6 +27,7 @@ import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
@@ -76,34 +77,42 @@ internal class GiuliaSurfaceRenderer(
             val columnWidth = area.width().toFloat() / columns
             val pageSize = max(1, ceil(metricsCount / columns.toDouble()).toInt())
 
+            var heightMultiplier = if (settings.isStatisticsEnabled()) 3.8f else 3.4f
+            if (settings.isBreakLabelTextEnabled()) heightMultiplier += 1.0f
+            val approxMetricHeight = textSizeBase * heightMultiplier
+
+            val viewportTop = top
+            val viewportHeight = (area.bottom - viewportTop).toFloat()
+
+            val contentHeight = (pageSize * approxMetricHeight) + 20f
+            val maxScroll = max(0f, contentHeight - viewportHeight)
+            scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
+
+            val skippedItems = floor(scrollOffset / approxMetricHeight).toInt().coerceAtLeast(0)
+            val visibleItemsCount = ceil(viewportHeight / approxMetricHeight).toInt() + 2
+
             canvas.save()
             canvas.clipRect(area)
             canvas.translate(0f, -scrollOffset)
 
-            val viewportTop = top
-            var maxBottom = viewportTop
-
             for (col in 0 until columns) {
-                var currentTop = viewportTop
                 val colLeft = leftMargin + (col * columnWidth)
-
                 val valueLeftOffset = if (columns == 1) 42f else 32f
                 val valueLeft = area.left + ((col + 1) * columnWidth) - valueLeftOffset
 
-                val startIndex = col * pageSize
-                val endIndex = min(startIndex + pageSize, metricsCount)
+                val columnArea = Rect(colLeft.toInt(), area.top, (colLeft + columnWidth).toInt(), area.bottom)
 
-                if (startIndex >= metricsCount) break
+                val colStartIndex = col * pageSize
+                val colEndIndex = min(colStartIndex + pageSize, metricsCount)
 
-                val columnArea =
-                    Rect(
-                        colLeft.toInt(),
-                        area.top,
-                        (colLeft + columnWidth).toInt(),
-                        area.bottom,
-                    )
+                if (colStartIndex >= metricsCount) break
 
-                for (i in startIndex until endIndex) {
+                val visibleStartIndex = min(colStartIndex + skippedItems, colEndIndex)
+                val visibleEndIndex = min(visibleStartIndex + visibleItemsCount, colEndIndex)
+
+                var currentTop = viewportTop + ((visibleStartIndex - colStartIndex) * approxMetricHeight)
+
+                for (i in visibleStartIndex until visibleEndIndex) {
                     currentTop =
                         giuliaDrawer.drawMetric(
                             canvas = canvas,
@@ -117,14 +126,7 @@ internal class GiuliaSurfaceRenderer(
                             valueCastToInt = false,
                         )
                 }
-
-                maxBottom = max(maxBottom, currentTop)
             }
-
-            val contentHeight = maxBottom - viewportTop + 20f
-            val viewportHeight = (area.bottom - viewportTop).toFloat()
-            val maxScroll = max(0f, contentHeight - viewportHeight)
-            scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
 
             canvas.restore()
 
