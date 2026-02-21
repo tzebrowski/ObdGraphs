@@ -54,9 +54,11 @@ internal class TripInfoDrawer(
         tripInfo: TripInfoDetails,
     ) {
         val (textSizeBase) = calculateFontSize(area)
-        val x = maxItemWidth(area) + 4
 
-        var rowTop = top + 12f
+        val dynamicPadding = textSizeBase * 0.1f
+        val x = maxItemWidth(area) + dynamicPadding
+
+        var rowTop = top + (textSizeBase * 0.3f)
         var leftAlignment = 0
         tripInfo.airTemp?.let {
             drawMetric(
@@ -129,9 +131,9 @@ internal class TripInfoDrawer(
             )
         }
 
-        // second row
         leftAlignment = 0
-        rowTop = top + (textSizeBase) + 52f
+
+        rowTop = top + (textSizeBase * 2.5f)
         tripInfo.fuellevel?.let {
             drawMetric(
                 it,
@@ -219,9 +221,8 @@ internal class TripInfoDrawer(
             }
         }
 
-        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + 4, Color.DKGRAY)
+        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSizeBase + dynamicPadding, Color.DKGRAY)
 
-        // metrics
         rowTop += 2.2f * textSizeBase
         leftAlignment = 0
 
@@ -233,7 +234,7 @@ internal class TripInfoDrawer(
                 canvas,
                 area,
                 metric.first!!,
-                left + (index * getAreaWidth(area, items = bottomMetrics.size) + 5),
+                left + (index * getAreaWidth(area, items = bottomMetrics.size) + dynamicPadding),
                 rowTop,
                 bottomMetrics.size,
                 valueCastToInt = metric.second,
@@ -348,15 +349,17 @@ internal class TripInfoDrawer(
         valuePaint.textSize = textSize
         val text = metric.source.format(castToInt = castToInt, precision = valueDoublePrecision)
 
+        val textPadding = textSize * 0.05f
+
         canvas.drawText(text, left, top, valuePaint)
-        var textWidth = getTextWidth(text, valuePaint) + 2
+        var textWidth = getTextWidth(text, valuePaint) + textPadding
 
         if (unitEnabled) {
             metric.source.command.pid.units.let {
                 valuePaint.color = Color.LTGRAY
                 valuePaint.textSize = (textSize * 0.4).toFloat()
                 canvas.drawText(it, (left + textWidth), top, valuePaint)
-                textWidth += getTextWidth(it, valuePaint) + 2
+                textWidth += getTextWidth(it, valuePaint) + textPadding
             }
         }
 
