@@ -162,7 +162,7 @@ interface ScreenSettings {
 
     fun isScaleEnabled(): Boolean = true
 
-    fun isProgressGradientEnabled(): Boolean = false
+    fun isProgressGradientEnabled(): Boolean = true
 
     fun getBackgroundColor(): Int = Color.BLACK
 

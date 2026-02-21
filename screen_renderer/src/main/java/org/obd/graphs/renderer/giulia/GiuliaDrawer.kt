@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -17,6 +17,7 @@
 package org.obd.graphs.renderer.giulia
 
 import android.content.Context
+import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -37,6 +38,13 @@ internal class GiuliaDrawer(
     context: Context,
     settings: ScreenSettings,
 ) : AbstractDrawer(context, settings) {
+
+    private val glowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        maskFilter = BlurMaskFilter(20f, BlurMaskFilter.Blur.NORMAL)
+    }
+
+
     inline fun drawMetric(
         canvas: Canvas,
         area: Rect,
@@ -192,24 +200,64 @@ internal class GiuliaDrawer(
         color: Int,
     ) {
         if (it.source.isNumber()) {
-            paint.color = color
             val progress =
                 it.source.toFloat().mapRange(
-                    it.source.command.pid.min
-                        .toFloat(),
-                    it.source.command.pid.max
-                        .toFloat(),
+                    it.source.command.pid.min.toFloat(),
+                    it.source.command.pid.max.toFloat(),
                     left,
                     left + width - MARGIN_END,
                 )
 
+            val rectLeft = left - 6f
+            val rectTop = top + 4f
+            val rectRight = progress
+            val rectBottom = top + calculateProgressBarHeight()
+
+            val maxRight = left + width - MARGIN_END
+
+            paint.shader = null
+            paint.color = Color.parseColor("#33FFFFFF")
             canvas.drawRect(
-                left - 6,
-                top + 4,
-                progress,
-                top + calculateProgressBarHeight(),
+                rectLeft,
+                rectTop,
+                maxRight,
+                rectBottom,
+                paint
+            )
+
+            val glowExpansion = (rectBottom - rectTop) * 0.75f
+            glowPaint.color = color
+            canvas.drawRect(
+                rectLeft,
+                rectTop - glowExpansion,
+                rectRight,
+                rectBottom + glowExpansion,
+                glowPaint
+            )
+
+            paint.color = color
+            if (settings.isProgressGradientEnabled()) {
+                val colors = intArrayOf(android.graphics.Color.WHITE, color)
+                paint.shader = android.graphics.LinearGradient(
+                    rectLeft, rectTop,
+                    maxRight, rectTop,
+                    colors,
+                    null,
+                    android.graphics.Shader.TileMode.CLAMP
+                )
+            } else {
+                paint.shader = null
+            }
+
+            canvas.drawRect(
+                rectLeft,
+                rectTop,
+                rectRight,
+                rectBottom,
                 paint,
             )
+
+            paint.shader = null
         }
     }
 
@@ -221,9 +269,9 @@ internal class GiuliaDrawer(
     ) {
         if (settings.isAlertLegendEnabled() &&
             (
-                metric.source.command.pid.alert.lowerThreshold != null ||
-                    metric.source.command.pid.alert.upperThreshold != null
-            )
+                    metric.source.command.pid.alert.lowerThreshold != null ||
+                            metric.source.command.pid.alert.upperThreshold != null
+                    )
         ) {
             val text = "  alerting "
             drawText(
