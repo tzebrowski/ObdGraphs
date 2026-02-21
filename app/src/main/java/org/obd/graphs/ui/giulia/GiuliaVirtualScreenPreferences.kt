@@ -32,7 +32,7 @@ class GiuliaVirtualScreenPreferences {
         Prefs.updateString(VIRTUAL_SCREEN_SELECTION, screenId)
     }
 
-    fun getMaxItemsInColumn(): Int = Prefs.getS("pref.giulia.max_pids_in_column.${getCurrentVirtualScreen()}", "1").toInt()
+    fun getMaxColumns(): Int = Prefs.getS("pref.giulia.max_pids_in_column.${getCurrentVirtualScreen()}", "1").toInt()
 
     fun getFontSize(): Int = Prefs.getS("pref.giulia.screen_font_size.${getCurrentVirtualScreen()}", "52").toInt()
 }

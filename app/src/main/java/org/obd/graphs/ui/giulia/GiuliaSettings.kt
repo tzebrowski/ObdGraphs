@@ -36,7 +36,7 @@ class GiuliaSettings : ScreenSettings {
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
-    override fun getMaxColumns(): Int = giuliaVirtualScreenPreferences.getMaxItemsInColumn()
+    override fun getMaxColumns(): Int = giuliaVirtualScreenPreferences.getMaxColumns()
 
     override fun isStatisticsEnabled(): Boolean = true
 

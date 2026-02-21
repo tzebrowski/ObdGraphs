@@ -26,9 +26,9 @@ import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.round
 
 private const val CURRENT_MIN = 22f
 private const val CURRENT_MAX = 72f
@@ -66,51 +66,63 @@ internal class GiuliaSurfaceRenderer(
                 giuliaDrawer.drawDivider(canvas, leftMargin, area.width().toFloat(), top, Color.DKGRAY)
                 top += valueTextSize
             } else {
-                top += 2 * MARGIN_TOP
+                top += 3 * MARGIN_TOP
             }
 
             val metrics = metricsCollector.getMetrics()
             val metricsCount = min(settings.getMaxItems(), metrics.size)
-            val pageSize = max(min(metricsCount, round(metricsCount / settings.getMaxColumns().toFloat()).toInt()), 1)
+
+            val columns = max(1, settings.getMaxColumns())
+            val columnWidth = area.width().toFloat() / columns
+            val pageSize = max(1, ceil(metricsCount / columns.toDouble()).toInt())
 
             canvas.save()
             canvas.clipRect(area)
             canvas.translate(0f, -scrollOffset)
 
             val viewportTop = top
-            var currentTop = top
-            val initialLeft = initialLeft(area)
+            var maxBottom = viewportTop
 
-            for (i in 0 until pageSize) {
-                currentTop =
-                    giuliaDrawer.drawMetric(canvas, area, metrics[i], textSizeBase, valueTextSize, leftMargin, currentTop, initialLeft)
-            }
+            for (col in 0 until columns) {
+                var currentTop = viewportTop
+                val colLeft = leftMargin + (col * columnWidth)
 
-            val firstColumnBottom = currentTop
+                val valueLeftOffset = if (columns == 1) 42f else 32f
+                val valueLeft = area.left + ((col + 1) * columnWidth) - valueLeftOffset
 
-            if (settings.getMaxColumns() > 1 && metricsCount > pageSize) {
-                var secondColTop = calculateTop(textSizeBase, currentTop, top)
-                val secondColLeft = leftMargin + calculateLeftMargin(area)
-                val secondColValueLeft = initialLeft + (area.width() / 2) - 18
+                val startIndex = col * pageSize
+                val endIndex = min(startIndex + pageSize, metricsCount)
 
-                for (i in pageSize until metricsCount) {
-                    secondColTop =
+                if (startIndex >= metricsCount) break
+
+                val columnArea =
+                    Rect(
+                        colLeft.toInt(),
+                        area.top,
+                        (colLeft + columnWidth).toInt(),
+                        area.bottom,
+                    )
+
+                for (i in startIndex until endIndex) {
+                    currentTop =
                         giuliaDrawer.drawMetric(
-                            canvas,
-                            area,
-                            metrics[i],
-                            textSizeBase,
-                            valueTextSize,
-                            secondColLeft,
-                            secondColTop,
-                            secondColValueLeft,
+                            canvas = canvas,
+                            area = columnArea,
+                            metric = metrics[i],
+                            textSizeBase = textSizeBase,
+                            valueTextSize = valueTextSize,
+                            left = colLeft,
+                            top = currentTop,
+                            valueLeft = valueLeft,
+                            valueCastToInt = false,
                         )
                 }
-                currentTop = max(firstColumnBottom, secondColTop)
+
+                maxBottom = max(maxBottom, currentTop)
             }
 
-            val contentHeight = currentTop - viewportTop + 20f
-            val viewportHeight = (area.bottom - viewportTop)
+            val contentHeight = maxBottom - viewportTop + 20f
+            val viewportHeight = (area.bottom - viewportTop).toFloat()
             val maxScroll = max(0f, contentHeight - viewportHeight)
             scrollOffset = scrollOffset.coerceIn(0f, maxScroll)
 
@@ -135,37 +147,9 @@ internal class GiuliaSurfaceRenderer(
 
     private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
         val scaleRatio = settings.getGiuliaRendererSetting().getFontSize().mapRange(CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
-        val areaWidth =
-            min(
-                when (settings.getMaxColumns()) {
-                    1 -> area.width()
-                    else -> area.width() / 2
-                },
-                AREA_MAX_WIDTH,
-            )
+        val columns = max(1, settings.getMaxColumns())
+        val areaWidth = min(area.width() / columns, AREA_MAX_WIDTH)
 
         return Pair((areaWidth / 10f) * scaleRatio, (areaWidth / 16f) * scaleRatio)
     }
-
-    private inline fun calculateTop(
-        textHeight: Float,
-        top: Float,
-        topCpy: Float,
-    ): Float =
-        when (settings.getMaxColumns()) {
-            1 -> top + (textHeight / 3) - 10
-            else -> topCpy
-        }
-
-    private inline fun calculateLeftMargin(area: Rect): Int =
-        when (settings.getMaxColumns()) {
-            1 -> 0
-            else -> (area.width() / 2)
-        }
-
-    private inline fun initialLeft(area: Rect): Float =
-        when (settings.getMaxColumns()) {
-            1 -> area.left + ((area.width()) - 42).toFloat()
-            else -> area.left + ((area.width() / 2) - 32).toFloat()
-        }
 }
