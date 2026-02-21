@@ -237,7 +237,7 @@ internal class TripInfoDrawer(
             bottomMetrics.forEach { (metric, _) ->
                 val description =
                     metric.source.command.pid.longDescription
-                        ?.takeIf { it.isNotEmpty() } ?: metric.source.command.pid.description ?: ""
+                        ?.takeIf { it.isNotEmpty() } ?: metric.source.command.pid.description
 
                 val longestLine = description.split("\n").maxByOrNull { it.length } ?: description
                 titlePaint.textSize = textSizeBase
@@ -251,7 +251,7 @@ internal class TripInfoDrawer(
             }
 
             bottomMetrics.forEachIndexed { index, paired ->
-                drawMetric(paired, left, index, area, itemsCount, dynamicPadding, colWidth, canvas, rowTextSizeBase, valueTextSize, rowTop)
+                drawMetric(paired, left, index, area, dynamicPadding, colWidth, canvas, rowTextSizeBase, valueTextSize, rowTop)
             }
         }
     }
@@ -261,7 +261,6 @@ internal class TripInfoDrawer(
         left: Float,
         index: Int,
         area: Rect,
-        itemsCount: Int,
         dynamicPadding: Float,
         colWidth: Float,
         canvas: Canvas,
@@ -272,13 +271,13 @@ internal class TripInfoDrawer(
         val metric = paired.first
         val castToInt = paired.second
 
-        val metricLeft = left + (index * (area.width() / itemsCount.toFloat()) + dynamicPadding)
-        val valueLeft = metricLeft + colWidth - MARGIN_END
+        val metricLeft = left + (index * colWidth) + dynamicPadding
+        val metricRight = metricLeft + colWidth - dynamicPadding
 
-        val giuliaInternalDivider = if (settings.getMaxColumns() == 1) 1 else 2
-        val fakeAreaWidth = (colWidth * giuliaInternalDivider).toInt()
+        val valueLeft = metricRight - MARGIN_END
 
-        val boundedArea = Rect(area.left, area.top, area.left + fakeAreaWidth, area.bottom)
+        val boundedArea = Rect(metricLeft.toInt(), area.top, metricRight.toInt(), area.bottom)
+
         giuliaDrawer.drawMetric(
             canvas = canvas,
             area = boundedArea,
