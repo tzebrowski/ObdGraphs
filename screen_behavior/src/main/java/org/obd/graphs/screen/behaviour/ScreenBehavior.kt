@@ -27,7 +27,7 @@ import org.obd.graphs.renderer.api.SurfaceRendererType
 
 abstract class ScreenBehavior(
     context: Context,
-    private val metricsCollector: MetricsCollector,
+    protected val metricsCollector: MetricsCollector,
     protected val settings: ScreenSettings,
     fps: Fps,
     surfaceRendererType: SurfaceRendererType,
@@ -46,7 +46,7 @@ abstract class ScreenBehavior(
     protected abstract fun queryStrategyType(): QueryStrategyType
 
     fun query(): Query {
-        applyFilters(metricsCollector)
+        applyFilters()
         return query
     }
 
@@ -56,7 +56,7 @@ abstract class ScreenBehavior(
 
     open fun setCurrentVirtualScreen(id: Int) {}
 
-    protected open fun applyFilters(metricsCollector: MetricsCollector) {
+    protected open fun applyFilters() {
         query.setStrategy(queryStrategyType())
         metricsCollector.applyFilter(enabled = query.getIDs())
         query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())

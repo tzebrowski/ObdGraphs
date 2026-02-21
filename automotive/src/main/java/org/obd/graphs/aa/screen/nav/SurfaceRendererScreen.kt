@@ -108,7 +108,7 @@ internal class SurfaceRendererScreen(
                     AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT,
                     LOW_FREQ_PID_SELECTION_CHANGED_EVENT,
                     -> {
-                        updateQuery()
+                        dataLoggerUpdateQuery()
                         renderFrame()
                     }
 
@@ -119,13 +119,13 @@ internal class SurfaceRendererScreen(
 
                     PROFILE_CHANGED_EVENT -> {
                         settings.handleProfileChanged()
-                        updateQuery()
+                        dataLoggerUpdateQuery()
                         switchSurfaceRenderer(getSurfaceRendererType())
                         renderFrame()
                     }
 
                     PROFILE_RESET_EVENT -> {
-                        updateQuery()
+                        dataLoggerUpdateQuery()
                         switchSurfaceRenderer(getSurfaceRendererType())
                         renderFrame()
                     }
@@ -139,7 +139,7 @@ internal class SurfaceRendererScreen(
                     behavior.setCurrentVirtualScreen(id = id)
                 }
 
-                updateQuery()
+                dataLoggerUpdateQuery()
                 renderFrame()
             }
         }
@@ -162,30 +162,22 @@ internal class SurfaceRendererScreen(
             surfaceRendererController.updateSurfaceRenderer(surfaceRenderer)
 
             val behavior = screenBehaviorController.getScreenBehavior(newScreenId) ?: return
-            val query = behavior.query()
 
             withDataLogger {
-                updateQuery(query = query)
+                updateQuery(behavior.query())
             }
         }
         renderFrame()
     }
 
-    private fun updateQuery() {
-
+    private fun dataLoggerUpdateQuery() {
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
-        val query = behavior.query()
-
-        if (Log.isLoggable(LOG_TAG,Log.DEBUG)) {
-            Log.d(LOG_TAG, "[${Thread.currentThread()}] Update Query ($screenId):  ${query.getIDs()}")
-        }
-
         withDataLogger {
-            updateQuery(query)
+            updateQuery(behavior.query())
         }
     }
 
-    override fun startDataLogging() {
+    override fun dataLoggerStart() {
         val behavior = screenBehaviorController.getScreenBehavior(screenId) ?: return
         withDataLogger {
             start(behavior.query())
@@ -309,7 +301,7 @@ internal class SurfaceRendererScreen(
                         createAction(carContext, v, color) {
                             parent.invalidate()
                             behavior?.setCurrentVirtualScreen(id = k)
-                            updateQuery()
+                            dataLoggerUpdateQuery()
                             renderFrame()
                         },
                     )
