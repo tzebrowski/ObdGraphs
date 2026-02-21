@@ -129,6 +129,7 @@ internal class GaugeSurfaceRenderer(
         updateCacheIfNeeded(area, count, isAA, isLandscape, topOffset)
 
         scrollOffset = scrollOffset.coerceIn(0f, cachedMaxScroll)
+
         val viewportHeight = area.height().toFloat()
 
         val startRow =
@@ -172,37 +173,18 @@ internal class GaugeSurfaceRenderer(
         canvas.restore()
 
         if (drawScrollbar && cachedContentHeight > viewportHeight) {
-            drawScrollbar(cachedContentHeight, viewportHeight, cachedMaxScroll, area, canvas)
+            drawScrollbar(
+                canvas = canvas,
+                area = area,
+                contentHeight = cachedContentHeight,
+                viewportHeight = viewportHeight,
+                topOffset = area.top.toFloat(),
+                verticalMargin = 30f
+            )
         }
     }
 
-    private fun drawScrollbar(
-        contentHeight: Float,
-        viewportHeight: Float,
-        maxScroll: Float,
-        area: Rect,
-        canvas: Canvas,
-    ) {
-        val verticalMargin = 30f
-        val trackHeight = viewportHeight - (2 * verticalMargin)
 
-        val calculatedBarHeight = (viewportHeight / contentHeight) * trackHeight
-        val barHeight = max(calculatedBarHeight, 50f)
-
-        val scrollPercentage = scrollOffset / maxScroll
-        val availableTravel = trackHeight - barHeight
-        val barTop = area.top + verticalMargin + (scrollPercentage * availableTravel)
-
-        val barRect =
-            RectF(
-                area.left + 5f,
-                barTop,
-                area.left + 5f + scrollBarWidth,
-                barTop + barHeight,
-            )
-
-        canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
-    }
 
     private fun columns(
         isAA: Boolean,

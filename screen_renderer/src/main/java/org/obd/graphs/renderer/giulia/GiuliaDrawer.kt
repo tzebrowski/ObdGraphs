@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -75,66 +75,86 @@ internal class GiuliaDrawer(
         valueLeft: Float,
         valueCastToInt: Boolean = false,
     ): Float {
-        var safeTextSizeBase = textSizeBase
-        var safeValueTextSize = valueTextSize
 
-        var top1 = top + (safeTextSizeBase * METRIC_TOP_NUDGE)
+        var viewPortTop = top + (textSizeBase * METRIC_TOP_NUDGE)
 
-        titlePaint.textSize = safeTextSizeBase
-        val footerValueTextSize = safeTextSizeBase / FOOTER_SIZE_RATIO
-        val footerTitleTextSize = safeTextSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
+        titlePaint.textSize = textSizeBase
+        val footerValueTextSize = textSizeBase / FOOTER_SIZE_RATIO
+        val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
         // Draw Title
-        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, top1, safeTextSizeBase)
+        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, viewPortTop, textSizeBase)
         val isTwoLines = secondLineTop != null
 
         // Draw Value with adjustment
-        val valueNudge = if (isTwoLines) (safeTextSizeBase * TWO_LINES_VALUE_NUDGE) else (safeTextSizeBase * SINGLE_LINE_VALUE_NUDGE)
-        val valueDrawingTop = (secondLineTop ?: top1) + valueNudge
+        val valueNudge = if (isTwoLines) (textSizeBase * TWO_LINES_VALUE_NUDGE) else (textSizeBase * SINGLE_LINE_VALUE_NUDGE)
+        val valueDrawingTop = (secondLineTop ?: viewPortTop) + valueNudge
 
-        drawValue(canvas, metric, valueLeft, valueDrawingTop, safeValueTextSize, valueCastToInt)
+        drawValue(canvas, metric, valueLeft, valueDrawingTop, valueTextSize, valueCastToInt)
 
         // Margin between Label and Statistics
-        top1 =
+        viewPortTop =
             if (isTwoLines) {
-                newTop + (safeTextSizeBase * TWO_LINE_STATS_GAP)
+                newTop + (textSizeBase * TWO_LINE_STATS_GAP)
             } else {
-                newTop + (safeTextSizeBase * SINGLE_LINE_STATS_GAP)
+                newTop + (textSizeBase * SINGLE_LINE_STATS_GAP)
             }
 
         if (settings.isStatisticsEnabled()) {
-            top1 += (2f * density)
+            viewPortTop += (2f * density)
 
             if (metric.source.command.pid.historgam.isMinEnabled) {
-                left1 = drawText(canvas, "min", left, top1, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.min.format(pid = metric.pid), left1, top1, minValueColorScheme(metric), footerValueTextSize)
+                left1 = drawText(canvas, "min", left, viewPortTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(
+                    canvas,
+                    metric.min.format(pid = metric.pid),
+                    left1,
+                    viewPortTop,
+                    minValueColorScheme(metric),
+                    footerValueTextSize
+                )
             }
 
             if (metric.source.command.pid.historgam.isMaxEnabled) {
-                left1 = drawText(canvas, "max", left1, top1, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.max.format(pid = metric.pid), left1, top1, maxValueColorScheme(metric), footerValueTextSize)
+                left1 = drawText(canvas, "max", left1, viewPortTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(
+                    canvas,
+                    metric.max.format(pid = metric.pid),
+                    left1,
+                    viewPortTop,
+                    maxValueColorScheme(metric),
+                    footerValueTextSize
+                )
             }
 
             if (metric.source.command.pid.historgam.isAvgEnabled) {
-                left1 = drawText(canvas, "avg", left1, top1, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.mean.format(pid = metric.pid), left1, top1, Color.LTGRAY, footerValueTextSize)
+                left1 = drawText(canvas, "avg", left1, viewPortTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(canvas, metric.mean.format(pid = metric.pid), left1, viewPortTop, Color.LTGRAY, footerValueTextSize)
             }
-            drawAlertingLegend(canvas, metric, left1, top1)
+            drawAlertingLegend(canvas, metric, left1, viewPortTop)
 
-            top1 += if (isTwoLines) (safeTextSizeBase * TWO_LINE_POST_STATS_GAP) else (safeTextSizeBase * SINGLE_LINE_POST_STATS_GAP)
+            viewPortTop += if (isTwoLines) (textSizeBase * TWO_LINE_POST_STATS_GAP) else (textSizeBase * SINGLE_LINE_POST_STATS_GAP)
         } else {
-            top1 += if (isTwoLines) (safeTextSizeBase * 0.15f) else (safeTextSizeBase * 0.40f)
+            viewPortTop += if (isTwoLines) (textSizeBase * 0.15f) else (textSizeBase * 0.40f)
         }
 
-        drawProgressBar(canvas, left, itemWidth(area).toFloat(), top1, metric, settings.getColorTheme().progressColor, safeTextSizeBase)
+        drawProgressBar(
+            canvas,
+            left,
+            itemWidth(area).toFloat(),
+            viewPortTop,
+            metric,
+            settings.getColorTheme().progressColor,
+            textSizeBase
+        )
 
-        top1 += calculateDividerSpacing(safeTextSizeBase, isTwoLines)
-        drawDivider(canvas, left, itemWidth(area).toFloat(), top1, settings.getColorTheme().dividerColor)
+        viewPortTop += calculateDividerSpacing(textSizeBase, isTwoLines)
+        drawDivider(canvas, left, itemWidth(area).toFloat(), viewPortTop, settings.getColorTheme().dividerColor)
 
-        top1 += (safeTextSizeBase * TOTAL_AREA_HEIGHT_MULTIPLIER).toInt()
+        viewPortTop += (textSizeBase * TOTAL_AREA_HEIGHT_MULTIPLIER).toInt()
 
-        return top1
+        return viewPortTop
     }
 
     private inline fun calculateDividerSpacing(

@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,18 +22,18 @@ import org.obd.metrics.command.obd.ObdCommand
 import org.obd.metrics.pid.PidDefinitionRegistry
 
 class MetricsBuilder {
-
     fun buildDiff(metric: Metric): Metric =
         buildFor(
-            ObdMetric.builder()
+            ObdMetric
+                .builder()
                 .command(metric.source.command)
                 .value(
                     if (metric.source.value == null) {
                         null
                     } else {
                         metric.max - metric.min
-                    }
-                ).build()
+                    },
+                ).build(),
         )
 
     fun buildFor(obdMetric: ObdMetric): Metric {
@@ -45,13 +45,16 @@ class MetricsBuilder {
             max = histogram?.max ?: 0.0,
             mean = histogram?.mean ?: 0.0,
             value = histogram?.latestValue ?: 0,
-            source = obdMetric
+            source = obdMetric,
         )
     }
 
     fun buildFor(ids: Set<Long>) = buildFor(ids, emptyMap())
 
-    fun buildFor(ids: Set<Long>, sortOrder: Map<Long, Int>?): MutableList<Metric> {
+    fun buildFor(
+        ids: Set<Long>,
+        sortOrder: Map<Long, Int>?,
+    ): MutableList<Metric> {
         val metrics = buildMetrics(ids)
 
         sortOrder?.let { order ->
@@ -77,19 +80,23 @@ class MetricsBuilder {
         val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
         val histogramSupplier = DataLoggerRepository.getDiagnostics().histogram()
 
-        return ids.mapNotNull { id ->
-            pidRegistry.findBy(id)?.let { pid ->
-                val histogram = histogramSupplier.findBy(pid)
-                Metric.newInstance(
-                    min = histogram?.min ?: 0.0,
-                    max = histogram?.max ?: 0.0,
-                    mean = histogram?.mean ?: 0.0,
-                    value = histogram?.latestValue ?: 0,
-                    source = ObdMetric.builder()
-                        .command(ObdCommand(pid))
-                        .value(histogram?.latestValue).build()
-                )
-            }
-        }.toMutableList()
+        return ids
+            .mapNotNull { id ->
+                pidRegistry.findBy(id)?.let { pid ->
+                    val histogram = histogramSupplier.findBy(pid)
+                    Metric.newInstance(
+                        min = histogram?.min ?: 0.0,
+                        max = histogram?.max ?: 0.0,
+                        mean = histogram?.mean ?: 0.0,
+                        value = histogram?.latestValue ?: 0,
+                        source =
+                            ObdMetric
+                                .builder()
+                                .command(ObdCommand(pid))
+                                .value(histogram?.latestValue)
+                                .build(),
+                    )
+                }
+            }.toMutableList()
     }
 }

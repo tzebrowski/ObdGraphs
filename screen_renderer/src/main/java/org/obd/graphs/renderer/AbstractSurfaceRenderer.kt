@@ -20,9 +20,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.RectF
 import org.obd.graphs.renderer.api.SurfaceRenderer
+import kotlin.math.max
 
- const val MARGIN_TOP = 8
+const val MARGIN_TOP = 8
 
 internal abstract class AbstractSurfaceRenderer(protected val context: Context) : SurfaceRenderer {
 
@@ -41,6 +43,36 @@ internal abstract class AbstractSurfaceRenderer(protected val context: Context) 
         this.scrollOffset += scrollOffset
     }
 
+    protected fun drawScrollbar(
+        canvas: Canvas,
+        area: Rect,
+        contentHeight: Float,
+        viewportHeight: Float,
+        topOffset: Float = area.top.toFloat(),
+        verticalMargin: Float = 30f // Custom margin for AA vs Mobile feel
+    ) {
+        val maxScroll = max(0f, contentHeight - viewportHeight)
+
+        val trackHeight = viewportHeight - (2 * verticalMargin)
+
+        val calculatedBarHeight = (viewportHeight / contentHeight) * trackHeight
+        val barHeight = max(calculatedBarHeight, 50f)
+
+        val scrollPercentage = scrollOffset / maxScroll
+        val availableTravel = trackHeight - barHeight
+        val barTop = topOffset + verticalMargin + (scrollPercentage * availableTravel)
+
+        val barRect = RectF(
+            area.left + 5f,
+            barTop,
+            area.left + 5f + scrollBarWidth, // Uses protected scrollBarWidth
+            barTop + barHeight
+        )
+
+        canvas.drawRoundRect(barRect, 10f, 10f, scrollBarPaint)
+    }
+
+
     fun getDefaultTopMargin(): Float = 20f
 
     protected fun getArea(
@@ -51,6 +83,6 @@ internal abstract class AbstractSurfaceRenderer(protected val context: Context) 
         if (area.isEmpty) {
             Rect(0 + margin, 0, canvas.width - 1 - margin, canvas.height)
         } else {
-            Rect(area.left + margin, area.top , area.right - margin, area.bottom)
+            Rect(area.left + margin, area.top, area.right - margin, area.bottom)
         }
 }
