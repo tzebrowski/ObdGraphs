@@ -14,27 +14,18 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.ui.trip_info
+package org.obd.graphs.profile
 
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.api.ScreenSettings
-import org.obd.graphs.renderer.api.TripInfoScreenSettings
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
+import org.junit.runners.Suite.SuiteClasses
 
-class TripInfoSettings : ScreenSettings {
-
-    private val settings = TripInfoScreenSettings()
-
-    override fun getTripInfoScreenSettings() = settings.apply {
-        fontSize = Prefs.getS("pref.trip_info.screen_font_size", "30").toInt()
-    }
-
-
-    override fun isBreakLabelTextEnabled(): Boolean = true
-
-    override fun isStatisticsEnabled(): Boolean = true
-    override fun isFpsCounterEnabled(): Boolean = true
-    override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.trip_info.fps", "5").toInt()
-
-    override fun isStatusPanelEnabled(): Boolean = false
-}
+@RunWith(Suite::class)
+@SuiteClasses(
+    LoadProfilesTest::class,
+    BackupExportTest::class,
+    BackupRestoreTest::class,
+    ProfileServiceTest::class,
+    SetupProfilesTest::class,
+)
+class TestSuite
