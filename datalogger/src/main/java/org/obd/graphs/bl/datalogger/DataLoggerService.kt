@@ -29,13 +29,11 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.Permissions
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
-import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.sendBroadcastEvent
 
 private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
@@ -60,21 +58,6 @@ class DataLoggerService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder = binder
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(LOG_TAG, "Destroying DataLoggerService")
-        unregisterReceiver(DataLoggerRepository.workflowOrchestrator.eventsReceiver)
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        org.obd.graphs.registerReceiver(this, DataLoggerRepository.workflowOrchestrator.eventsReceiver) {
-            it.addAction(MODULES_LIST_CHANGED_EVENT)
-            it.addAction(PROFILE_CHANGED_EVENT)
-        }
-    }
 
     override fun onStartCommand(
         intent: Intent?,
