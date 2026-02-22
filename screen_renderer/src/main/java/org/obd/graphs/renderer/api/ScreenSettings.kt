@@ -189,6 +189,4 @@ interface ScreenSettings {
     fun getSurfaceFrameRate(): Int
 
     fun isStatusPanelEnabled(): Boolean = true
-
-    fun getMaxAllowedItemsInColumn(): Int = 5
 }

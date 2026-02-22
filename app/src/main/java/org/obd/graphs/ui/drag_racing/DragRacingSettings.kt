@@ -43,6 +43,4 @@ class DragRacingSettings: ScreenSettings {
     override fun getSurfaceFrameRate(): Int  = Prefs.getS("pref.drag_racing.fps","5").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
-
-    override fun getMaxAllowedItemsInColumn(): Int  = 8
 }

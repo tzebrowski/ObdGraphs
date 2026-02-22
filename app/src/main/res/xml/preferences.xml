@@ -853,18 +853,6 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
-                    <org.obd.graphs.preferences.components.ExtendedSeekBar
-                        android:defaultValue="10"
-                        android:dialogTitle="@string/pref.aa.virtual_screens.screen.max_items"
-                        android:key="pref.giulia.max_items"
-                        android:max="24"
-                        android:title="@string/pref.aa.virtual_screens.screen.max_items"
-                        app:min="1"
-                        app:showSeekBarValue="true"
-                        app:singleLineTitle="false"
-                        app:useSimpleSummaryProvider="true" />
-
-
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.pids_category">
