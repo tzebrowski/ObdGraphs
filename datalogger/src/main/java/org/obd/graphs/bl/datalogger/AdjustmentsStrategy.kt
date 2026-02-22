@@ -58,7 +58,7 @@ internal class AdjustmentsStrategy {
                     BatchPolicy
                         .builder()
                         .enabled(preferences.adapter.batchEnabled)
-                        .responseLengthEnabled(preferences.adapter.responseLengthEnabled)
+                        .calculateResponseFrames(preferences.adapter.calculateResponseFrames)
                         .mode01BatchSize(preferences.adapter.mode01BatchSize)
                         .otherModesBatchSize(preferences.adapter.otherModesBatchSize)
                         .build(),
@@ -134,7 +134,7 @@ internal class AdjustmentsStrategy {
                     .builder()
                     .enabled(preferences.adapter.batchEnabled)
                     .strictValidationEnabled(preferences.adapter.batchStrictValidationEnabled)
-                    .responseLengthEnabled(preferences.adapter.responseLengthEnabled)
+                    .calculateResponseFrames(preferences.adapter.calculateResponseFrames)
                     .mode01BatchSize(preferences.adapter.mode01BatchSize)
                     .otherModesBatchSize(preferences.adapter.otherModesBatchSize)
                     .build(),

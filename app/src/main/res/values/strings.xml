@@ -497,8 +497,8 @@
     <string name="pref.alerting.category_summary">In this section, you can find settings related to alerting</string>
 
 
-    <string name="pref.adapter_response_length_enabled">Set the number of lines to include in the query</string>
-    <string name="pref.adapter_response_length_enabled_summary">Enabling this option allows the firmware to inform the adapter of the expected number of response lines, eliminating the need for the adapter to wait for the final timeout. Enabling this feature improves performance.</string>
+    <string name="pref.adapter_calculation_response_frames_enabled">Calculate expected response frames</string>
+    <string name="pref.adapter_calculation_response_frame_enabled_summary">Automatically informs the adapter of the exact number of expected ISO-TP frames. This bypasses the hardware waiting timeout (P2), maximizing polling speed and data refresh rates.</string>
     <string name="pref.adapter_graceful_stop_enabled">Enable graceful stop</string>
     <string name="pref.adapter_graceful_stop_enabled_summary">Enabling this option ensures a graceful shutdown of the session between the ECU and the adapter. Please note that ending the session may take longer when this option is enabled.</string>
     <string name="pref.pids_display_only_ecu_supported">Display unsupported OBD2 PIDs/Sensors</string>
