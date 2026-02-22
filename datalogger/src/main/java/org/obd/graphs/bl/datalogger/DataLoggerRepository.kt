@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.bl.datalogger
 
+import android.content.BroadcastReceiver
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
@@ -44,6 +45,7 @@ object DataLoggerRepository {
         _workflowOrchestrator = mock
     }
 
+    fun broadcastReceivers(): BroadcastReceiver =  workflowOrchestrator.eventsReceiver
     fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
     fun isRunning(): Boolean = workflowOrchestrator.isRunning()
     fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
