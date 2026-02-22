@@ -56,9 +56,13 @@ abstract class ScreenBehavior(
 
     open fun setCurrentVirtualScreen(id: Int) {}
 
+    protected fun syncQueryWithMetrics() {
+        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+    }
+
     protected open fun applyFilters() {
         query.setStrategy(queryStrategyType())
         metricsCollector.applyFilter(enabled = query.getIDs())
-        query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+        syncQueryWithMetrics()
     }
 }

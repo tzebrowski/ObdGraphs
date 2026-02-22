@@ -22,14 +22,16 @@ import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
+import java.util.concurrent.ConcurrentHashMap
 
-class ScreenBehaviorController(
+ class ScreenBehaviorController(
     private val context: Context,
     private val metricsCollector: MetricsCollector,
     private val settings: Map<SurfaceRendererType, ScreenSettings>,
     private val fps: Fps,
 ) {
-    private val behaviorsCache = mutableMapOf<SurfaceRendererType, ScreenBehavior>()
+
+    private val behaviorsCache = ConcurrentHashMap<SurfaceRendererType, ScreenBehavior>()
 
     fun recycle() {
         behaviorsCache.values.forEach { it.getSurfaceRenderer().recycle() }

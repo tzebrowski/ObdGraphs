@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.profile
+package org.obd.graphs.screen.bahvior
 
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
@@ -22,10 +22,7 @@ import org.junit.runners.Suite.SuiteClasses
 
 @RunWith(Suite::class)
 @SuiteClasses(
-    LoadProfilesTest::class,
-    BackupExportTest::class,
-    BackupRestoreTest::class,
-    ProfileServiceTest::class,
-    SetupProfilesTest::class,
+    ScreenBehaviorControllerTest::class,
+    VirtualScreenBehaviorTest::class,
 )
-class ProfileTestSuite
+class TestSuite

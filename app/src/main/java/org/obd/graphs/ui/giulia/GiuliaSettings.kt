@@ -22,7 +22,9 @@ import org.obd.graphs.preferences.getStringSet
 import org.obd.graphs.renderer.api.GiuliaRendererSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 
-class GiuliaSettings : ScreenSettings {
+ private const val MAX_VISIBLE_ITEMS = 50
+
+ class GiuliaSettings : ScreenSettings {
     private val giuliaRendererSettings =
         object : GiuliaRendererSettings() {
             override fun getFontSize(): Int = giuliaVirtualScreenPreferences.getFontSize()
@@ -32,7 +34,7 @@ class GiuliaSettings : ScreenSettings {
         updateSelectedPIDs(Prefs.getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()).map { s -> s.toLong() }.toSet())
     }
 
-    override fun getMaxItems(): Int = 50
+    override fun getMaxItems(): Int = MAX_VISIBLE_ITEMS
 
     override fun isBreakLabelTextEnabled(): Boolean = true
 
@@ -45,8 +47,6 @@ class GiuliaSettings : ScreenSettings {
     override fun getSurfaceFrameRate(): Int = Prefs.getS("pref.giulia.fps", "5").toInt()
 
     override fun isStatusPanelEnabled(): Boolean = false
-
-    override fun getMaxAllowedItemsInColumn(): Int = 8
 
     override fun isScrollbarEnabled(): Boolean = false
 }

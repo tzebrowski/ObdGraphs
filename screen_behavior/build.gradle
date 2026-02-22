@@ -26,15 +26,19 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     lint {
         disable 'KtxExtensionAvailable', 'GradleDependency', 'ViewConstructor', 'IconLauncherShape'
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 
     namespace "org.obd.graphs.screen_behavior"
@@ -45,7 +49,6 @@ dependencies {
     implementation project(':screen_renderer')
     implementation project(":common")
     implementation project(":datalogger")
-
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.preference:preference:1.1.1'
@@ -63,4 +66,9 @@ dependencies {
     implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
     implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation "io.mockk:mockk:1.13.8"
 }

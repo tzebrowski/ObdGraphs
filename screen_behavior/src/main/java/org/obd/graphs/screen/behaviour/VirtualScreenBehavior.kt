@@ -46,14 +46,16 @@ abstract class VirtualScreenBehavior(
         }
 
     override fun applyFilters() {
-        query.setStrategy(queryStrategyType())
+
+        val strategy = queryStrategyType()
+        query.setStrategy(strategy)
         val selectedPIDs = virtualScreenConfig.selectedPIDs
         val sortOrder = virtualScreenConfig.getPIDsSortOrder()
 
-        when (queryStrategyType()) {
+        when (strategy) {
             QueryStrategyType.INDIVIDUAL_QUERY -> {
                 metricsCollector.applyFilter(enabled = selectedPIDs, order = sortOrder)
-                query.update(metricsCollector.getMetrics().map { p -> p.source.command.pid.id }.toSet())
+                syncQueryWithMetrics()
             }
 
             QueryStrategyType.SHARED_QUERY -> {
