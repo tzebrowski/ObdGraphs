@@ -112,7 +112,7 @@
     </item>
 
     <item
-        android:title="@string/navigation.title_drag_racing">
+        android:title="@string/navigation.title_drag_racing" android:id="@+id/left_nav_drag_racing">
         <menu>
             <item
                android:id="@+id/navigation_drag_racing"
@@ -131,7 +131,7 @@
     </item>
 
     <item
-        android:title="@string/navigation.title_trip_info">
+        android:title="@string/navigation.title_trip_info" android:id="@+id/left_nav_trip_info">
         <menu>
             <item
                 android:id="@+id/navigation_trip_info"
@@ -157,7 +157,7 @@
 
 
     <item
-        android:title="@string/navigation.title_performance">
+        android:title="@string/navigation.title_performance" android:id="@+id/left_nav_performance">
         <menu>
             <item
                 android:id="@+id/navigation_performance"
