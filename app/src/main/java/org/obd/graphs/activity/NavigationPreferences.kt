@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -19,7 +19,6 @@ package org.obd.graphs.activity
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 
-
 data class NavigationPreferences(
     var hideToolbarLandscape: Boolean = true,
     var dashViewEnabled: Boolean = true,
@@ -32,7 +31,6 @@ data class NavigationPreferences(
 )
 
 object Navigation {
-
     private val navigationPreferences = NavigationPreferences()
 
     fun getPreferences(): NavigationPreferences =
@@ -48,4 +46,3 @@ object Navigation {
             graphViewEnabled = Prefs.getBoolean("pref.graph.view.enabled", true)
         }
 }
-

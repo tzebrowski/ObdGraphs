@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -59,7 +59,6 @@ internal abstract class SurfaceRendererFragment(
     private val screenSettings: ScreenSettings,
 ) : Fragment(),
     View.OnTouchListener {
-
     private val metricsCollector = MetricsCollector.instance()
     protected lateinit var screenBehaviorController: ScreenBehaviorController
 
@@ -143,7 +142,6 @@ internal abstract class SurfaceRendererFragment(
                             }
                         }
 
-
                     DATA_LOGGER_CONNECTED_EVENT ->
                         if (isFragmentVisibleToTheUser()) {
                             val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType) ?: return
@@ -154,7 +152,6 @@ internal abstract class SurfaceRendererFragment(
                             renderingThread.start()
                         }
 
-
                     DATA_LOGGER_STOPPED_EVENT ->
                         if (isFragmentVisibleToTheUser()) {
                             renderingThread.stop()
@@ -162,13 +159,11 @@ internal abstract class SurfaceRendererFragment(
                             val query = screenBehavior.query()
                             configureActionButton(query)
                         }
-
                 }
             }
 
             private fun isFragmentVisibleToTheUser() = isAdded && isVisible
         }
-
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -206,14 +201,17 @@ internal abstract class SurfaceRendererFragment(
         root = inflater.inflate(fragmentId, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
 
-        screenBehaviorController = ScreenBehaviorController(
-            requireContext(),
-            metricsCollector,
-            mapOf(surfaceRendererType to screenSettings), Fps()
-        )
+        screenBehaviorController =
+            ScreenBehaviorController(
+                requireContext(),
+                metricsCollector,
+                mapOf(surfaceRendererType to screenSettings),
+                Fps(),
+            )
 
-        val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)
-            ?: throw IllegalArgumentException("No screen behavior available for given surfaceRenderer: $surfaceRendererType")
+        val screenBehavior =
+            screenBehaviorController.getScreenBehavior(surfaceRendererType)
+                ?: throw IllegalArgumentException("No screen behavior available for given surfaceRenderer: $surfaceRendererType")
 
         surfaceController = SurfaceController(screenBehavior.getSurfaceRenderer())
         surfaceView.holder.addCallback(surfaceController)

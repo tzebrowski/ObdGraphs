@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -79,7 +79,6 @@ internal fun MainActivity.setupNavigationBar() {
     val navPreferences = Navigation.getPreferences()
     leftAppBar { leftNav ->
         leftNav.menu.run {
-
             findItem(R.id.left_nav_trip_info)?.isVisible =
                 navPreferences.tripInfoViewEnabled
 
@@ -118,8 +117,8 @@ internal fun MainActivity.setupNavigationBar() {
 
                 findItem(R.id.ctx_menu_views)?.isVisible =
                     navPreferences.tripInfoViewEnabled ||
-                            navPreferences.performanceViewEnabled ||
-                            navPreferences.dragRacingViewEnabled
+                    navPreferences.performanceViewEnabled ||
+                    navPreferences.dragRacingViewEnabled
             }
         }
 
