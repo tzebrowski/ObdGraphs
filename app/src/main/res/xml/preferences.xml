@@ -723,7 +723,15 @@
             <PreferenceScreen
                 android:summary="@string/pref.performance_category"
                 android:title="@string/navigation.title_performance"
-                app:key="pref.title_performance_screen">
+                app:key="pref.performance.title">
+
+                <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.performance.view.enabled"
+                    android:summary="@string/pref.enable_view_summary"
+                    android:title="@string/pref.enable_view"
+                    app:broadcastEvent="navigation.buttons.changes.event"
+                    app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.components.ExtendedSeekBar
                     android:defaultValue="30"
@@ -752,7 +760,15 @@
             <PreferenceScreen
                 android:summary="@string/pref.trip_info_category"
                 android:title="@string/navigation.title_trip_info"
-                app:key="pref.title_trip_info">
+                app:key="pref.trip_info.title">
+
+                <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.trip_info.view.enabled"
+                    android:summary="@string/pref.enable_view_summary"
+                    android:title="@string/pref.enable_view"
+                    app:broadcastEvent="navigation.buttons.changes.event"
+                    app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.components.ExtendedSeekBar
                     android:defaultValue="30"
@@ -770,7 +786,15 @@
             <PreferenceScreen
                 android:summary="@string/pref.drag_racing_category"
                 android:title="@string/navigation.title_drag_racing"
-                app:key="pref.title_drag_racing">
+                app:key="pref.drag_racing.title">
+
+                <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.drag_racing.view.enabled"
+                    android:summary="@string/pref.enable_view_summary"
+                    android:title="@string/pref.enable_view"
+                    app:broadcastEvent="navigation.buttons.changes.event"
+                    app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.components.ExtendedSeekBar
                     android:defaultValue="30"

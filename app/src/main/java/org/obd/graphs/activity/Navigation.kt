@@ -76,72 +76,103 @@ internal fun MainActivity.setupNavigationViewNavigation() {
 }
 
 internal fun MainActivity.setupNavigationBar() {
+    val navPreferences = Navigation.getPreferences()
+    leftAppBar { leftNav ->
+        leftNav.menu.run {
+            findItem(R.id.left_nav_trip_info)?.isVisible =
+                navPreferences.tripInfoViewEnabled
+
+            findItem(R.id.left_nav_drag_racing)?.isVisible =
+                navPreferences.dragRacingViewEnabled
+
+            findItem(R.id.left_nav_performance)?.isVisible =
+                navPreferences.performanceViewEnabled
+        }
+    }
+
     navController { navController ->
         bottomAppBar {
             it.setOnApplyWindowInsetsListener(null)
             it.menu.run {
-                val mainActivityPreferences = getMainActivityPreferences()
                 findItem(R.id.navigation_giulia).isVisible =
-                    mainActivityPreferences.showGiuliaView
+                    navPreferences.giuliaViewEnabled
 
                 findItem(R.id.navigation_gauge).isVisible =
-                    mainActivityPreferences.showGaugeView
+                    navPreferences.gaugeViewEnabled
 
                 findItem(R.id.navigation_dashboard).isVisible =
-                    mainActivityPreferences.showDashView
+                    navPreferences.dashViewEnabled
 
                 findItem(R.id.navigation_graph).isVisible =
-                    mainActivityPreferences.showGraphView
+                    navPreferences.graphViewEnabled
+
+                findItem(R.id.ctx_menu_drag_racing_view)?.isVisible =
+                    navPreferences.dragRacingViewEnabled
+
+                findItem(R.id.ctx_menu_performance_view)?.isVisible =
+                    navPreferences.performanceViewEnabled
+
+                findItem(R.id.ctx_menu_trip_info_view)?.isVisible =
+                    navPreferences.tripInfoViewEnabled
+
+                findItem(R.id.ctx_menu_views)?.isVisible =
+                    navPreferences.tripInfoViewEnabled ||
+                    navPreferences.performanceViewEnabled ||
+                    navPreferences.dragRacingViewEnabled
             }
         }
+
+        val context = this
 
         NavigationUI.setupWithNavController(findViewById(R.id.bottom_app_bar), navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
             bottomAppBar {
-                it.menu.findItem(R.id.ctx_menu_dtc).isVisible = DataLoggerRepository.isDTCEnabled() ?: false
-                it.menu.findItem(R.id.ctx_menu_android_auto)?.let {
-                    if (NavigationRouter.isAndroidAutoEnabled(this)) {
-                        val spanString = SpannableString(it.title.toString())
-                        spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
+                it.menu.run {
+                    findItem(R.id.ctx_menu_dtc).isVisible = DataLoggerRepository.isDTCEnabled()
+                    findItem(R.id.ctx_menu_android_auto)?.let {
+                        if (NavigationRouter.isAndroidAutoEnabled(context)) {
+                            val spanString = SpannableString(it.title.toString())
+                            spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
+                            it.title = spanString
+                            it.isVisible = true
+                        } else {
+                            it.isVisible = false
+                        }
+                    }
+
+                    findItem(R.id.ctx_menu_views).let {
+                        val spanString = SpannableString(it.title.toString()).apply { }
+                        spanString.setSpan(ForegroundColorSpan(COLOR_CARDINAL), 0, spanString.length, 0)
                         it.title = spanString
-                        it.isVisible = true
-                    } else {
-                        it.isVisible = false
-                    }
-                }
-
-                it.menu.findItem(R.id.ctx_menu_views).let {
-                    val spanString = SpannableString(it.title.toString()).apply { }
-                    spanString.setSpan(ForegroundColorSpan(COLOR_CARDINAL), 0, spanString.length, 0)
-                    it.title = spanString
-                }
-
-                when (destination.label.toString()) {
-                    resources.getString(R.string.navigation_title_graph) -> {
-                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
-                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).title =
-                            resources.getString(R.string.pref_graph_trips_selected)
-
-                        it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = true
-
-                        val spanString =
-                            SpannableString(
-                                "${resources.getString(R.string.pref_graph_view_filters)} (${NavigationRouter.getGraphFilterSource()})",
-                            )
-                        spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
-                        it.menu.findItem(R.id.ctx_menu_submenu_filters).title = spanString
                     }
 
-                    resources.getString(R.string.navigation_title_giulia) -> {
-                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).title =
-                            resources.getString(R.string.pref_giulia_apply_graph_filter)
-                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
-                    }
+                    when (destination.label.toString()) {
+                        resources.getString(R.string.navigation_title_graph) -> {
+                            findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
+                            findItem(R.id.ctx_menu_view_custom_action_1).title =
+                                resources.getString(R.string.pref_graph_trips_selected)
 
-                    else -> {
-                        it.menu.findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
-                        it.menu.findItem(R.id.ctx_menu_submenu_filters).isVisible = false
+                            findItem(R.id.ctx_menu_submenu_filters).isVisible = true
+
+                            val spanString =
+                                SpannableString(
+                                    "${resources.getString(R.string.pref_graph_view_filters)} (${NavigationRouter.getGraphFilterSource()})",
+                                )
+                            spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
+                            findItem(R.id.ctx_menu_submenu_filters).title = spanString
+                        }
+
+                        resources.getString(R.string.navigation_title_giulia) -> {
+                            findItem(R.id.ctx_menu_view_custom_action_1).title =
+                                resources.getString(R.string.pref_giulia_apply_graph_filter)
+                            findItem(R.id.ctx_menu_view_custom_action_1).isVisible = true
+                        }
+
+                        else -> {
+                            findItem(R.id.ctx_menu_view_custom_action_1).isVisible = false
+                            findItem(R.id.ctx_menu_submenu_filters).isVisible = false
+                        }
                     }
                 }
             }

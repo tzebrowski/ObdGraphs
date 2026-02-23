@@ -101,7 +101,7 @@ class MainActivity :
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (getMainActivityPreferences().hideToolbarLandscape) {
+        if (Navigation.getPreferences().hideToolbarLandscape) {
             val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
             toolbarHide(hide)
         }
