@@ -27,11 +27,5 @@ internal class SharedQueryStrategy : QueryStrategy() {
     override fun getPIDs(): MutableSet<Long> = (fastPIDs() + slowPIDs()).toMutableSet()
 
     private fun fastPIDs() = Prefs.getStringSet(PREFERENCE_PID_FAST).map { s -> s.toLong() }
-    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull {
-        try {
-            it.toLong()
-        } catch (e: Exception) {
-            null
-        }
-    }
+    private fun slowPIDs() = Prefs.getStringSet(PREFERENCE_PID_SLOW).mapNotNull { it.toLongOrNull() }
 }

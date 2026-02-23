@@ -21,24 +21,20 @@ import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
-import org.obd.graphs.runAsync
 
-private const val LOG_TAG = "QueryOrchestrator"
+private const val TAG = "QueryOrchestrator"
 
 internal class QueryStrategyOrchestrator :
     java.io.Serializable,
     Query {
-    private val strategies: Map<QueryStrategyType, QueryStrategy> =
-        mutableMapOf<QueryStrategyType, QueryStrategy>().apply {
-            runAsync {
-                this[QueryStrategyType.SHARED_QUERY] = SharedQueryStrategy()
-                this[QueryStrategyType.DRAG_RACING_QUERY] = DragRacingQueryStrategy()
-                this[QueryStrategyType.INDIVIDUAL_QUERY] = IndividualQueryStrategy()
-                this[QueryStrategyType.ROUTINES_QUERY] = RoutinesQueryStrategy()
-                this[QueryStrategyType.TRIP_INFO_QUERY] = TripInfoQueryStrategy()
-                this[QueryStrategyType.PERFORMANCE_QUERY] = PerformanceQueryStrategy()
-            }
-        }
+    private val strategies: Map<QueryStrategyType, QueryStrategy> = mapOf(
+        QueryStrategyType.SHARED_QUERY to SharedQueryStrategy(),
+        QueryStrategyType.DRAG_RACING_QUERY to DragRacingQueryStrategy(),
+        QueryStrategyType.INDIVIDUAL_QUERY to IndividualQueryStrategy(),
+        QueryStrategyType.ROUTINES_QUERY to RoutinesQueryStrategy(),
+        QueryStrategyType.TRIP_INFO_QUERY to TripInfoQueryStrategy(),
+        QueryStrategyType.PERFORMANCE_QUERY to PerformanceQueryStrategy()
+    )
 
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
 
@@ -52,22 +48,28 @@ internal class QueryStrategyOrchestrator :
         ) {
             pids.add(Pid.VEHICLE_STATUS_PID_ID.id)
         }
-        if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
-            Log.d(LOG_TAG, "${Thread.currentThread().id}, ${hashCode()}] Gets PIDs '$pids' for current strategy $strategy")
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            Log.d(TAG, "${currentThread()} Gets PIDs '$pids' for current strategy $strategy")
         }
-        return pids
+
+        return pids.filter { it != Pid.GPS_LOCATION_PID_ID.id }.toMutableSet()
     }
 
     override fun getStrategy(): QueryStrategyType = strategy
 
     override fun setStrategy(queryStrategyType: QueryStrategyType): Query {
-        Log.d(LOG_TAG, "${Thread.currentThread().id}, ${hashCode()}] Sets new strategy $queryStrategyType")
+        if (Log.isLoggable(TAG,Log.DEBUG)) {
+            Log.d(TAG, "${currentThread()} Sets new strategy $queryStrategyType")
+        }
         this.strategy = queryStrategyType
         return this
     }
 
     override fun update(newPIDs: Set<Long>): Query {
-        Log.d(LOG_TAG, "[${Thread.currentThread().id}, ${hashCode()}] updateQuery $strategy: $newPIDs")
+        if (Log.isLoggable(TAG,Log.DEBUG)) {
+            Log.d(TAG, "${currentThread()} Updating query  for $strategy. New PIDs $newPIDs")
+        }
+
         strategies[strategy]?.update(newPIDs)
         return this
     }
@@ -75,22 +77,29 @@ internal class QueryStrategyOrchestrator :
     override fun filterBy(filter: String): Set<Long> {
         val query = getIDs()
         val selection = Prefs.getLongSet(filter)
-        val intersection = selection.filter { query.contains(it) }.toSet()
+        val intersection = selection.intersect(query)
 
-        Log.i(
-            LOG_TAG,
-            "${Thread.currentThread().id}, ${hashCode()}] Individual query enabled:${isIndividualQuerySelected()}, " +
-                " key:$filter, query=$query,selection=$selection, intersection=$intersection",
-        )
+        if (Log.isLoggable(TAG,Log.DEBUG)) {
+            Log.d(
+                TAG,
+                "${currentThread()} Individual query enabled:${isIndividualQuerySelected()}, " +
+                        " key:$filter, query=$query,selection=$selection, intersection=$intersection",
+            )
+        }
 
         return if (isIndividualQuerySelected()) {
-            Log.i(LOG_TAG, "Returning selection=$selection")
+            if (Log.isLoggable(TAG,Log.DEBUG)) {
+                Log.d(TAG, "${currentThread()} Returning selection=$selection")
+            }
+
             selection
         } else {
-            Log.i(LOG_TAG, "Returning intersection=$intersection")
+            Log.i(TAG, "${currentThread()} Returning intersection=$intersection")
             intersection
         }
     }
+
+    private fun currentThread() = "[${Thread.currentThread().id}, ${hashCode()}]"
 
     override fun apply(filter: String): Query =
         if (isIndividualQuerySelected()) {
