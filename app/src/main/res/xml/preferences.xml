@@ -434,6 +434,13 @@
                 app:experimental="true"
                 app:singleLineTitle="false" />
 
+            <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref.vehicle_settings.auto_connect_once_launched"
+                android:summary="@string/pref.vehicle_settings.auto_connect_once_launched_summary"
+                android:title="@string/pref.vehicle_settings.auto_connect_once_launched"
+                app:experimental="true"
+                app:singleLineTitle="false" />
         </PreferenceScreen>
     </PreferenceCategory>
 
