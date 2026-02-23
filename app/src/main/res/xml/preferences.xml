@@ -334,10 +334,10 @@
 
                 <CheckBoxPreference
                     android:defaultValue="false"
-                    android:dialogTitle="@string/pref.adapter_response_length_enabled"
+                    android:dialogTitle="@string/pref.adapter_calculation_response_frames_enabled"
                     android:key="pref.adapter.responseLength.enabled"
-                    android:summary="@string/pref.adapter_response_length_enabled_summary"
-                    android:title="@string/pref.adapter_response_length_enabled"
+                    android:summary="@string/pref.adapter_calculation_response_frame_enabled_summary"
+                    android:title="@string/pref.adapter_calculation_response_frames_enabled"
                     app:singleLineTitle="false" />
 
                 <CheckBoxPreference

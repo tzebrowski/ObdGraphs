@@ -69,7 +69,7 @@ data class Adapter(
     @XmlPreference("pref.adapter.init.cleanDTC", "false", Boolean::class)
     var vehicleDTCCleaningEnabled: Boolean = false,
     @XmlPreference("pref.adapter.responseLength.enabled", "false", Boolean::class)
-    var responseLengthEnabled: Boolean = false,
+    var calculateResponseFrames: Boolean = false,
     @XmlPreference("pref.adapter.graceful_stop.enabled", "true", Boolean::class)
     var gracefulStop: Boolean = true,
     @XmlPreference("pref.adapter.adaptive.enabled", "false", Boolean::class)
