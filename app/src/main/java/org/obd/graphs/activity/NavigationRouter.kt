@@ -45,12 +45,12 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
     ): Boolean =
         when (itemId) {
             R.id.navigation_preferences_alerts -> navigateToPreferencesScreen("pref.alerts.settings")
-            R.id.navigation_performance_prefs -> navigateToPreferencesScreen("pref.performance.title")
+            R.id.navigation_performance_prefs -> navigateToPreferencesScreen("pref.performance")
             R.id.navigation_performance_pids_list_prefs -> navigateToPreferencesScreen("pref.performance.displayed_parameter_ids")
 
-            R.id.navigation_trip_info_prefs -> navigateToPreferencesScreen("pref.trip_info.title")
+            R.id.navigation_trip_info_prefs -> navigateToPreferencesScreen("pref.trip_info")
             R.id.navigation_trip_info_pids_list_prefs -> navigateToPreferencesScreen("pref.trip_info.displayed_parameter_ids")
-            R.id.navigation_drag_racing_prefs -> navigateToPreferencesScreen("pref.drag_racing.title")
+            R.id.navigation_drag_racing_prefs -> navigateToPreferencesScreen("pref.drag_racing")
             R.id.navigation_graph_prefs -> navigateToPreferencesScreen("pref.graph")
             R.id.navigation_dashboard_prefs -> navigateToPreferencesScreen("pref.dashboard")
             R.id.navigation_giulia_prefs -> navigateToPreferencesScreen("pref.giulia")
@@ -143,6 +143,9 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
                         R.id.nav_gauge -> "pref.gauge"
                         R.id.nav_graph -> "pref.graph"
                         R.id.nav_dashboard -> "pref.dashboard"
+                        R.id.nav_drag_racing -> "pref.drag_racing"
+                        R.id.nav_performance -> "pref.performance"
+                        R.id.nav_trip_info -> "pref.trip_info"
                         else -> "pref.root"
                     },
                 )

@@ -52,7 +52,7 @@
     <string name="context_menu.drag_racing">Drag Racing View</string>
     <string name="context_menu.trip_info">Trip Info View</string>
     <string name="context_menu.performance">Performance View</string>
-    <string name="context_menu.jump_to_view">Jump to view</string>
+    <string name="context_menu.extra_views">Extra Views</string>
 
 
     <string name="pref.displayed_parameter_ids">Customize visible OBD2 PIDs</string>

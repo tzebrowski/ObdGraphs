@@ -16,8 +16,10 @@
  */
 package org.obd.graphs.activity
 
+import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -31,8 +33,9 @@ import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
+import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
-internal const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
+ internal const val NAVIGATION_BUTTONS_VISIBILITY_CHANGED = "navigation.buttons.changes.event"
 internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN = "pref.navigation.last_visited.screen"
 internal const val PREF_NAVIGATION_LAST_VISITED_SCREEN_ENABLED = "pref.views.navigation.navigate_last_visited_view"
 
@@ -129,12 +132,22 @@ internal fun MainActivity.setupNavigationBar() {
 
             bottomAppBar {
                 it.menu.run {
+
+                    listOf(R.id.ctx_menu_view_configuration, R.id.ctx_menu_pids_to_display).forEach { id ->
+                        findItem(id)?.let { item ->
+                            item.title = SpannableString(item.title.toString()).apply {
+                                setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, length, 0)
+                                setSpan(StyleSpan(Typeface.BOLD), 0, length, 0)
+                            }
+                        }
+                    }
+
                     findItem(R.id.ctx_menu_dtc).isVisible = DataLoggerRepository.isDTCEnabled()
                     findItem(R.id.ctx_menu_android_auto)?.let {
                         if (NavigationRouter.isAndroidAutoEnabled(context)) {
-                            val spanString = SpannableString(it.title.toString())
-                            spanString.setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, spanString.length, 0)
-                            it.title = spanString
+                            it.title = SpannableString(it.title.toString()).apply {
+                                setSpan(ForegroundColorSpan(COLOR_PHILIPPINE_GREEN), 0, length, 0)
+                            }
                             it.isVisible = true
                         } else {
                             it.isVisible = false
@@ -142,9 +155,9 @@ internal fun MainActivity.setupNavigationBar() {
                     }
 
                     findItem(R.id.ctx_menu_views).let {
-                        val spanString = SpannableString(it.title.toString()).apply { }
-                        spanString.setSpan(ForegroundColorSpan(COLOR_CARDINAL), 0, spanString.length, 0)
-                        it.title = spanString
+                        it.title = SpannableString(it.title.toString()).apply {
+                            setSpan(ForegroundColorSpan(COLOR_CARDINAL), 0, length, 0)
+                        }
                     }
 
                     when (destination.label.toString()) {

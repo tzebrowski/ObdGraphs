@@ -723,7 +723,7 @@
             <PreferenceScreen
                 android:summary="@string/pref.performance_category"
                 android:title="@string/navigation.title_performance"
-                app:key="pref.performance.title">
+                app:key="pref.performance">
 
                 <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                     android:defaultValue="true"
@@ -760,7 +760,7 @@
             <PreferenceScreen
                 android:summary="@string/pref.trip_info_category"
                 android:title="@string/navigation.title_trip_info"
-                app:key="pref.trip_info.title">
+                app:key="pref.trip_info">
 
                 <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                     android:defaultValue="true"
@@ -780,13 +780,12 @@
                     app:showSeekBarValue="true"
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
-
             </PreferenceScreen>
 
             <PreferenceScreen
                 android:summary="@string/pref.drag_racing_category"
                 android:title="@string/navigation.title_drag_racing"
-                app:key="pref.drag_racing.title">
+                app:key="pref.drag_racing">
 
                 <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
                     android:defaultValue="true"

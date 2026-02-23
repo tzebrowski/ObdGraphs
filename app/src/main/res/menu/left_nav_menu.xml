@@ -5,6 +5,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/ctx_menu_about"
+        android:checkable="true"
+        android:icon="@android:drawable/ic_dialog_info"
+        android:title="@string/context_menu.about" />
+
+    <item
         android:id="@+id/navigation_preferences_alerts"
         android:checkable="true"
         android:icon="@android:drawable/ic_dialog_alert"
@@ -26,12 +32,6 @@
         android:checkable="true"
         android:id="@+id/ctx_menu_vehicle_properties"
         android:title="@string/pref.vehicle.metadata_title" />
-
-    <item
-        android:id="@+id/ctx_menu_about"
-        android:checkable="true"
-        android:icon="@android:drawable/ic_dialog_info"
-        android:title="@string/context_menu.about" />
 
 
     <item

@@ -111,7 +111,7 @@
         android:icon="@drawable/ic_menu"
         app:showAsAction="always|withText"
         android:id="@+id/ctx_menu_views"
-        android:title="@string/context_menu.jump_to_view">
+        android:title="@string/context_menu.extra_views">
         <menu>
             <item
                 android:id="@+id/navigation_dashboard"
