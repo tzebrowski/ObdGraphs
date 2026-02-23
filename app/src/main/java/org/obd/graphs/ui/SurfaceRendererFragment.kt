@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -50,9 +50,8 @@ import org.obd.graphs.renderer.api.SurfaceRendererType
 import org.obd.graphs.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
-import java.lang.IllegalArgumentException
 
- private const val EVENT_THROTTLE_MS = 350L
+private const val EVENT_THROTTLE_MS = 350L
 
 internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
@@ -60,12 +59,14 @@ internal abstract class SurfaceRendererFragment(
     private val screenSettings: ScreenSettings,
 ) : Fragment(),
     View.OnTouchListener {
-    protected val metricsCollector = MetricsCollector.instance()
+
+    private val metricsCollector = MetricsCollector.instance()
     protected lateinit var screenBehaviorController: ScreenBehaviorController
 
     protected lateinit var root: View
 
     protected lateinit var surfaceController: SurfaceController
+
     private val renderingThread: RenderingThread =
         RenderingThread(
             id = "RenderingThread-$surfaceRendererType",
@@ -131,35 +132,41 @@ internal abstract class SurfaceRendererFragment(
                 intent: Intent?,
             ) {
                 when (intent?.action) {
-                    DATA_LOGGER_SCHEDULED_START_EVENT -> {
-                        if (isAdded && isVisible) {
-                            val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)?: return
+                    DATA_LOGGER_SCHEDULED_START_EVENT ->
+                        if (isFragmentVisibleToTheUser()) {
+                            val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType) ?: return
                             val query = screenBehavior.query()
 
-                            Log.i(LOG_TAG, "Scheduling data logger for=${query.getIDs()}")
+                            Log.i(LOG_TAG, "[$surfaceRendererType] Scheduling data logger for=${query.getIDs()}")
                             withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query)
                             }
                         }
-                    }
 
-                    DATA_LOGGER_CONNECTED_EVENT -> {
-                        val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)?: return
-                        withDataLogger {
-                            val query = screenBehavior.query()
-                            updateQuery(query)
+
+                    DATA_LOGGER_CONNECTED_EVENT ->
+                        if (isFragmentVisibleToTheUser()) {
+                            val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType) ?: return
+                            withDataLogger {
+                                val query = screenBehavior.query()
+                                updateQuery(query)
+                            }
+                            renderingThread.start()
                         }
-                        renderingThread.start()
-                    }
 
-                    DATA_LOGGER_STOPPED_EVENT -> {
-                        renderingThread.stop()
-                        val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)?: return
-                        val query = screenBehavior.query()
-                        configureActionButton(query)
-                    }
+
+                    DATA_LOGGER_STOPPED_EVENT ->
+                        if (isFragmentVisibleToTheUser()) {
+                            renderingThread.stop()
+                            val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType) ?: return
+                            val query = screenBehavior.query()
+                            configureActionButton(query)
+                        }
+
                 }
             }
+
+            private fun isFragmentVisibleToTheUser() = isAdded && isVisible
         }
 
 
@@ -199,12 +206,14 @@ internal abstract class SurfaceRendererFragment(
         root = inflater.inflate(fragmentId, container, false)
         val surfaceView = root.findViewById<SurfaceView>(R.id.surface_view)
 
-        screenBehaviorController = ScreenBehaviorController(requireContext(),
+        screenBehaviorController = ScreenBehaviorController(
+            requireContext(),
             metricsCollector,
-            mapOf(surfaceRendererType to screenSettings), Fps())
+            mapOf(surfaceRendererType to screenSettings), Fps()
+        )
 
-        val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)?:
-            throw IllegalArgumentException("No screen behavior available for given surfaceRenderer: $surfaceRendererType")
+        val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType)
+            ?: throw IllegalArgumentException("No screen behavior available for given surfaceRenderer: $surfaceRendererType")
 
         surfaceController = SurfaceController(screenBehavior.getSurfaceRenderer())
         surfaceView.holder.addCallback(surfaceController)
