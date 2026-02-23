@@ -296,6 +296,9 @@
     <string name="pref.vehicle_settings.disconnect_when_off">Auto-disconnect when vehicle is turned off</string>
     <string name="pref.vehicle_settings.disconnect_when_off_summary">This is an EXPERIMENTAL feature.\nWhen enabled, the session will automatically disconnect when the vehicle is turned off.</string>
 
+    <string name="pref.vehicle_settings.auto_connect_once_launched">Auto-connect when application is launched</string>
+    <string name="pref.vehicle_settings.auto_connect_once_launched_summary">This is an EXPERIMENTAL feature.\nWhen enabled, the session will automatically established during application startup.</string>
+
 
     <string name="pref.adapter_init_delay">Delay after init command</string>
     <string name="pref.adapter_delay_reset">Delay after reset command (ATZ)</string>

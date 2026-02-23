@@ -43,15 +43,20 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.getPowerPreferences
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
+import org.obd.graphs.screen.behaviour.ScreenBehavior
 import org.obd.graphs.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
 
 private const val EVENT_THROTTLE_MS = 350L
+
+private var triedConnectDuringStarup: Boolean = false
 
 internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
@@ -234,6 +239,8 @@ internal abstract class SurfaceRendererFragment(
 
         configureActionButton(screenBehavior.query())
 
+        autoConnectDuringStartup(screenBehavior)
+
         return root
     }
 
@@ -242,6 +249,19 @@ internal abstract class SurfaceRendererFragment(
         statusLayout.post {
             val density = resources.displayMetrics.density
             surfaceController.updateInsets(((statusLayout.height / density).toInt()) + 8)
+        }
+    }
+
+    private fun autoConnectDuringStartup(screenBehavior: ScreenBehavior) {
+        if (!triedConnectDuringStarup &&
+            !DataLoggerRepository.isRunning() &&
+            Prefs.isEnabled("pref.vehicle_settings.auto_connect_once_launched")
+        ) {
+            Log.e(LOG_TAG, "Automatically launching APP during startup")
+            withDataLogger {
+                start(query = screenBehavior.query())
+                triedConnectDuringStarup = true
+            }
         }
     }
 }
