@@ -142,6 +142,7 @@ internal class AdjustmentsStrategy {
             .stNxx(
                 STNxxExtensions
                     .builder()
+                    .stripWhitespaces(preferences.adapter.stnExtensionsEnabled)
                     .promoteSlowGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
                     .promoteAllGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
                     .enabled(preferences.adapter.stnExtensionsEnabled)
