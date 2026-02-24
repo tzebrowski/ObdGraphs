@@ -56,7 +56,10 @@ const val PREFERENCE_SCREEN_KEY_DASH = "pref.dash.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GAUGE = "pref.gauge.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GRAPH = "pref.graph.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GIULIA = "pref.giulia.displayed_parameter_ids"
-const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
+
+
+
+ const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
 const val PREFERENCE_SCREEN_SOURCE_PERFORMANCE = "performance"
 private const val PREFERENCE_SCREEN_SOURCE_GIULIA = "giulia"
 private const val PREFERENCE_SCREEN_SOURCE_GAUGE = "gauge"
@@ -253,11 +256,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
                 openPIDsDialog("pref.aa.trip_info.pids.selected", PREFERENCE_SCREEN_SOURCE_TRIP_INFO)
-                { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
+                { navigateToScreen(R.id.nav_trip_info) }
 
             PREFERENCE_SCREEN_KEY_PERFORMANCE ->
                 openPIDsDialog("pref.aa.performance.pids.selected", PREFERENCE_SCREEN_SOURCE_PERFORMANCE)
-                { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
+                { navigateToScreen(R.id.nav_performance) }
 
             PREFERENCE_SCREEN_KEY_DASH ->
                 openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD)
