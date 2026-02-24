@@ -142,9 +142,9 @@ internal class AdjustmentsStrategy {
             .stNxx(
                 STNxxExtensions
                     .builder()
-                        .promoteSlowGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
-                        .promoteSlowGroupsEnabled(preferences.adapter.stnDisablePIDsPriorities)
-                        .promoteAllGroupsEnabled(preferences.adapter.stnDisablePIDsPriorities)
+                        .promoteSlowGroupsEnabled(false)
+                        .stripWhitespaces(true)
+                        .promoteAllGroupsEnabled(preferences.adapter.stnIgnorePIDsPriorities)
                         .enabled(preferences.adapter.stnExtensionsEnabled)
                         .build(),
             ).vehicleMetadataReadingEnabled(preferences.adapter.vehicleMetadataReadingEnabled)

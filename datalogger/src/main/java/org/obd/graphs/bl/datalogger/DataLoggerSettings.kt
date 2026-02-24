@@ -32,8 +32,8 @@ data class Adapter(
     @XmlPreference("pref.adapter.connection.timeout", "2000", Int::class)
     var connectionTimeout: Int = 2000,
 
-    @XmlPreference("pref.adapter.stn.disable_pids_priorities", "false", Boolean::class)
-    var stnDisablePIDsPriorities: Boolean = false,
+    @XmlPreference("pref.adapter.stn.ignore_pids_priorities", "false", Boolean::class)
+    var stnIgnorePIDsPriorities: Boolean = false,
 
     @XmlPreference("pref.adapter.stn.enabled", "false", Boolean::class)
     var stnExtensionsEnabled: Boolean = false,

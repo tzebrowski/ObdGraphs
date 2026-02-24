@@ -333,10 +333,10 @@
                 <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:dependency="pref.adapter.stn.enabled"
                     android:defaultValue="false"
-                    android:dialogTitle="@string/pref.adapter_stn_disable_pids_priorities"
-                    android:key="pref.adapter.stn.disable_pids_priorities"
-                    android:summary="@string/pref.adapter_stn_disable_pids_priorities_summary"
-                    android:title="@string/pref.adapter_stn_disable_pids_priorities" />
+                    android:dialogTitle="@string/pref.adapter_stn_ignore_pids_priorities"
+                    android:key="pref.adapter.stn.ignore_pids_priorities"
+                    android:summary="@string/pref.adapter_stn_ignore_pids_priorities_summary"
+                    android:title="@string/pref.adapter_stn_ignore_pids_priorities" />
 
                 <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"
