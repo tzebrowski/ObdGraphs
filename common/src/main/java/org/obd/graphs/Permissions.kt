@@ -42,33 +42,6 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
 
 @SuppressLint("ObsoleteSdkInt")
 object Permissions {
-    fun isBLEScanPermissionsGranted(context: Context): Boolean {
-        val requiredPermissions =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                arrayOf(
-                    Manifest.permission.BLUETOOTH_SCAN,
-                    Manifest.permission.BLUETOOTH_CONNECT,
-                )
-            } else {
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                )
-            }
-
-        val missingPermissions =
-            requiredPermissions
-                .filter {
-                    ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
-                }.toTypedArray()
-
-        if (missingPermissions.isEmpty()) {
-            Log.i(TAG, "BLE Scan Permissions are there")
-            return true
-        } else {
-            Log.w(TAG, "Permissions are not there")
-            return false
-        }
-    }
 
     /**
      * Returns TRUE if any required permission is missing.

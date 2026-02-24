@@ -34,10 +34,6 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import pub.devrel.easypermissions.EasyPermissions
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
 
 private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
