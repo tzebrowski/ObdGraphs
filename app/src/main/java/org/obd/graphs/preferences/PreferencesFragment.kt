@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,19 +23,34 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.*
+import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceScreen
 import org.obd.graphs.R
-import org.obd.graphs.activity.*
+import org.obd.graphs.activity.DASH_VIEW_ID
+import org.obd.graphs.activity.GAUGE_VIEW_ID
+import org.obd.graphs.activity.GIULIA_VIEW_ID
+import org.obd.graphs.activity.GRAPH_VIEW_ID
+import org.obd.graphs.activity.NOTIFICATION_DASH_VIEW_TOGGLE
+import org.obd.graphs.activity.NOTIFICATION_GAUGE_VIEW_TOGGLE
+import org.obd.graphs.activity.NOTIFICATION_GIULIA_VIEW_TOGGLE
+import org.obd.graphs.activity.NOTIFICATION_GRAPH_VIEW_TOGGLE
+import org.obd.graphs.activity.TOOLBAR_SHOW
+import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
 import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragment
-import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
-import org.obd.graphs.preferences.trips.TripsListPreferences
+import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.trips.TripLogListDialogFragment
+import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
@@ -58,8 +73,7 @@ const val PREFERENCE_SCREEN_KEY_GRAPH = "pref.graph.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GIULIA = "pref.giulia.displayed_parameter_ids"
 
 
-
- const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
+const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
 const val PREFERENCE_SCREEN_SOURCE_PERFORMANCE = "performance"
 private const val PREFERENCE_SCREEN_SOURCE_GIULIA = "giulia"
 private const val PREFERENCE_SCREEN_SOURCE_GAUGE = "gauge"
