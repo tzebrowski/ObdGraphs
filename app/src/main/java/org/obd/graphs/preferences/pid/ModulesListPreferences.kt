@@ -19,7 +19,6 @@ package org.obd.graphs.preferences.pid
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import androidx.preference.CheckBoxPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.SwitchPreferenceCompat

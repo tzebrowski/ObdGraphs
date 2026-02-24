@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -32,7 +32,6 @@ import org.obd.metrics.codec.GeneratorPolicy
 import java.io.File
 
 internal class AdjustmentsStrategy {
-
     fun findAdjustmentFor(
         strategy: QueryStrategyType,
         preferences: DataLoggerSettings = dataLoggerSettings.instance(),
@@ -142,11 +141,11 @@ internal class AdjustmentsStrategy {
             .stNxx(
                 STNxxExtensions
                     .builder()
-                        .promoteSlowGroupsEnabled(false)
-                        .stripWhitespaces(true)
-                        .promoteAllGroupsEnabled(preferences.adapter.stnIgnorePIDsPriorities)
-                        .enabled(preferences.adapter.stnExtensionsEnabled)
-                        .build(),
+                    .promoteSlowGroupsEnabled(false)
+                    .stripWhitespaces(true)
+                    .promoteAllGroupsEnabled(preferences.adapter.stnIgnorePIDsPriorities)
+                    .enabled(preferences.adapter.stnExtensionsEnabled)
+                    .build(),
             ).vehicleMetadataReadingEnabled(preferences.adapter.vehicleMetadataReadingEnabled)
             .vehicleCapabilitiesReadingEnabled(preferences.adapter.vehicleCapabilitiesReadingEnabled)
             .vehicleDtcReadingEnabled(preferences.adapter.vehicleDTCReadingEnabled)
