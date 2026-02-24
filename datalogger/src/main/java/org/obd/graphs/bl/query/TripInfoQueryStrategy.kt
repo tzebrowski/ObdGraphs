@@ -25,30 +25,29 @@ private const val TRIP_INFO_QUERY_PREF_KEY = "pref.aa.trip_info.pids.selected"
 internal class TripInfoQueryStrategy : QueryStrategy() {
     private val defaults =
         setOf(
-            Pid.FUEL_CONSUMPTION_PID_ID,
-            Pid.FUEL_LEVEL_PID_ID,
-            Pid.ATM_PRESSURE_PID_ID,
-            Pid.AMBIENT_TEMP_PID_ID,
-            Pid.GEARBOX_OIL_TEMP_PID_ID,
-            Pid.OIL_TEMP_PID_ID,
-            Pid.COOLANT_TEMP_PID_ID,
-            Pid.EXHAUST_TEMP_PID_ID,
-            Pid.POST_IC_AIR_TEMP_PID_ID,
-            Pid.TOTAL_MISFIRES_PID_ID,
-            Pid.OIL_LEVEL_PID_ID,
-            Pid.ENGINE_TORQUE_PID_ID,
-            Pid.INTAKE_PRESSURE_PID_ID,
-            Pid.DYNAMIC_SELECTOR_PID_ID,
-            Pid.DISTANCE_PID_ID,
-            Pid.BATTERY_VOLTAGE_PID_ID,
-            Pid.IBS_PID_ID,
-            Pid.OIL_PRESSURE_PID_ID,
-            Pid.OIL_DEGRADATION_PID_ID,
-            Pid.ENGINE_SPEED_PID_ID,
-            Pid.VEHICLE_SPEED_PID_ID,
-            Pid.GEAR_ENGAGED_PID_ID,
-
-            ).map { it.id }.toSet()
+            Pid.FUEL_CONSUMPTION_PID_ID.id,
+            Pid.FUEL_LEVEL_PID_ID.id,
+            Pid.ATM_PRESSURE_PID_ID.id,
+            Pid.AMBIENT_TEMP_PID_ID.id,
+            Pid.GEARBOX_OIL_TEMP_PID_ID.id,
+            Pid.OIL_TEMP_PID_ID.id,
+            Pid.COOLANT_TEMP_PID_ID.id,
+            Pid.EXHAUST_TEMP_PID_ID.id,
+            Pid.POST_IC_AIR_TEMP_PID_ID.id,
+            Pid.TOTAL_MISFIRES_PID_ID.id,
+            Pid.OIL_LEVEL_PID_ID.id,
+            Pid.ENGINE_TORQUE_PID_ID.id,
+            Pid.INTAKE_PRESSURE_PID_ID.id,
+            Pid.DYNAMIC_SELECTOR_PID_ID.id,
+            Pid.DISTANCE_PID_ID.id,
+            Pid.BATTERY_VOLTAGE_PID_ID.id,
+            Pid.IBS_PID_ID.id,
+            Pid.OIL_PRESSURE_PID_ID.id,
+            Pid.OIL_DEGRADATION_PID_ID.id,
+            Pid.ENGINE_SPEED_PID_ID.id,
+            Pid.VEHICLE_SPEED_PID_ID.id,
+            Pid.GEAR_ENGAGED_PID_ID.id
+            ).toSet()
 
     override fun getDefaults() = defaults
 
