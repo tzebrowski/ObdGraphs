@@ -31,6 +31,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
 import org.obd.graphs.activity.LOG_TAG
@@ -43,20 +44,15 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.getPowerPreferences
-import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.api.SurfaceRendererType
-import org.obd.graphs.screen.behaviour.ScreenBehavior
 import org.obd.graphs.screen.behaviour.ScreenBehaviorController
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
 
 private const val EVENT_THROTTLE_MS = 350L
-
-private var triedConnectDuringStarup: Boolean = false
 
 internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
@@ -136,12 +132,33 @@ internal abstract class SurfaceRendererFragment(
                 intent: Intent?,
             ) {
                 when (intent?.action) {
-                    DATA_LOGGER_SCHEDULED_START_EVENT ->
-                        if (isFragmentVisibleToTheUser()) {
-                            val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType) ?: return
+                    DATA_LOGGER_AUTO_CONNECT_EVENT ->
+                        if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
+                            val screenBehavior =
+                                screenBehaviorController.getScreenBehavior(surfaceRendererType)
+                                    ?: return
                             val query = screenBehavior.query()
 
-                            Log.i(LOG_TAG, "[$surfaceRendererType] Scheduling data logger for=${query.getIDs()}")
+                            Log.i(
+                                LOG_TAG,
+                                "[$surfaceRendererType] Auto-connect data logger for=${query.getIDs()}",
+                            )
+                            withDataLogger {
+                                start(query)
+                            }
+                        }
+
+                    DATA_LOGGER_SCHEDULED_START_EVENT ->
+                        if (isFragmentVisibleToTheUser()) {
+                            val screenBehavior =
+                                screenBehaviorController.getScreenBehavior(surfaceRendererType)
+                                    ?: return
+                            val query = screenBehavior.query()
+
+                            Log.i(
+                                LOG_TAG,
+                                "[$surfaceRendererType] Scheduling data logger for=${query.getIDs()}",
+                            )
                             withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query)
                             }
@@ -149,7 +166,9 @@ internal abstract class SurfaceRendererFragment(
 
                     DATA_LOGGER_CONNECTED_EVENT ->
                         if (isFragmentVisibleToTheUser()) {
-                            val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType) ?: return
+                            val screenBehavior =
+                                screenBehaviorController.getScreenBehavior(surfaceRendererType)
+                                    ?: return
                             withDataLogger {
                                 val query = screenBehavior.query()
                                 updateQuery(query)
@@ -160,7 +179,9 @@ internal abstract class SurfaceRendererFragment(
                     DATA_LOGGER_STOPPED_EVENT ->
                         if (isFragmentVisibleToTheUser()) {
                             renderingThread.stop()
-                            val screenBehavior = screenBehaviorController.getScreenBehavior(surfaceRendererType) ?: return
+                            val screenBehavior =
+                                screenBehaviorController.getScreenBehavior(surfaceRendererType)
+                                    ?: return
                             val query = screenBehavior.query()
                             configureActionButton(query)
                         }
@@ -182,6 +203,7 @@ internal abstract class SurfaceRendererFragment(
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
+            it.addAction(DATA_LOGGER_AUTO_CONNECT_EVENT)
         }
     }
 
@@ -238,30 +260,15 @@ internal abstract class SurfaceRendererFragment(
         }
 
         configureActionButton(screenBehavior.query())
-
-        autoConnectDuringStartup(screenBehavior)
-
         return root
     }
 
     protected open fun updateInsets() {
-        val statusLayout = requireActivity().findViewById<ConstraintLayout>(R.id.status_panel_header)
+        val statusLayout =
+            requireActivity().findViewById<ConstraintLayout>(R.id.status_panel_header)
         statusLayout.post {
             val density = resources.displayMetrics.density
             surfaceController.updateInsets(((statusLayout.height / density).toInt()) + 8)
-        }
-    }
-
-    private fun autoConnectDuringStartup(screenBehavior: ScreenBehavior) {
-        if (!triedConnectDuringStarup &&
-            !DataLoggerRepository.isRunning() &&
-            Prefs.isEnabled("pref.vehicle_settings.auto_connect_once_launched")
-        ) {
-            Log.e(LOG_TAG, "Automatically launching APP during startup")
-            withDataLogger {
-                start(query = screenBehavior.query())
-                triedConnectDuringStarup = true
-            }
         }
     }
 }

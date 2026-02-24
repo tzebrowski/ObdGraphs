@@ -21,9 +21,9 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.ListPreference
+import org.obd.graphs.Network
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
-import org.obd.graphs.network
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
 import java.util.LinkedList
@@ -89,7 +89,7 @@ class WifiSSIDListPreferences(
     }
 
     private fun getDeviceList(handler: (device: SSID) -> Unit) {
-        network.findWifiSSID().forEach {
+        Network.findWifiSSID().forEach {
             handler(SSID(it))
         }
     }

@@ -32,6 +32,7 @@ import androidx.car.app.navigation.NavigationManagerCallback
 import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.car.app.navigation.model.RoutingInfo
 import androidx.lifecycle.LifecycleOwner
+import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.SCREEN_REFRESH_EVENT
@@ -45,6 +46,7 @@ import org.obd.graphs.aa.screen.dynamicSelectorModeEventBroadcaster
 import org.obd.graphs.aa.screen.withDataLogger
 import org.obd.graphs.aa.toast
 import org.obd.graphs.bl.collector.MetricsCollector
+import org.obd.graphs.bl.datalogger.AutoConnect
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
@@ -76,8 +78,6 @@ const val SURFACE_AREA_CHANGED_EVENT = "car.event.surface.area_changed"
 const val SURFACE_BROKEN_EVENT = "car.event.surface_broken.event"
 const val CHANGE_SCREEN_EVENT = "car.event.screen.change.event"
 const val GOTO_LAST_VSITED_SCREEN_EVENT = "car.event.goto_screen.event"
-const val START_DATA_LOGGING_EVENT = "car.event.start_data_logging.event"
-
 private const val LOG_TAG = "NavTemplateCarScreen"
 
 internal class NavTemplateCarScreen(
@@ -99,7 +99,7 @@ internal class NavTemplateCarScreen(
                 }
 
                 when (intent?.action) {
-                    START_DATA_LOGGING_EVENT -> {
+                    DATA_LOGGER_AUTO_CONNECT_EVENT -> {
                         Log.i(LOG_TAG, "Auto connection enabled. Auto start data logging.....")
                         dataLoggerStart()
                     }
@@ -290,7 +290,7 @@ internal class NavTemplateCarScreen(
             it.addAction(EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING)
             it.addAction(EVENT_VEHICLE_STATUS_IGNITION_ON)
             it.addAction(GOTO_LAST_VSITED_SCREEN_EVENT)
-            it.addAction(START_DATA_LOGGING_EVENT)
+            it.addAction(DATA_LOGGER_AUTO_CONNECT_EVENT)
         }
     }
 
@@ -375,6 +375,8 @@ internal class NavTemplateCarScreen(
             .observe(gpsMetricsEmitter)
 
         submitRenderingTask()
+
+        AutoConnect.setup(carContext)
 
         navigationManager().setNavigationManagerCallback(
             object : NavigationManagerCallback {

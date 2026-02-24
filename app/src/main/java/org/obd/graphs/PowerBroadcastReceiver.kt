@@ -44,8 +44,8 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
             if (powerPreferences.switchNetworkOffOn) {
                 true.run {
-                    network.bluetooth(this)
-                    network.wifi(this)
+                    Network.bluetooth(this)
+                    Network.wifi(this)
                     sendBroadcastEvent(DATA_LOGGER_SCHEDULED_START_EVENT)
                 }
             } else {
@@ -60,8 +60,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
             }
         } else if (intent.action === Intent.ACTION_POWER_DISCONNECTED) {
             if (powerPreferences.switchNetworkOffOn) {
-                network.bluetooth(false)
-                network.wifi(false)
+                Network.wifi(false)
             }
 
             if (powerPreferences.connectOnPower) {

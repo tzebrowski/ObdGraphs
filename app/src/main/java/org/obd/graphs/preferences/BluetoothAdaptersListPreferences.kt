@@ -25,8 +25,8 @@ import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.ListPreference
+import org.obd.graphs.Network
 import org.obd.graphs.activity.navigateToPreferencesScreen
-import org.obd.graphs.network
 import org.obd.graphs.runAsync
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.colorize
@@ -91,7 +91,7 @@ class BluetoothAdaptersListPreferences(
 
     private fun getDeviceList(handler: (device: Device) -> Unit)  =
         try {
-            network.bluetoothAdapter()?.run {
+            Network.bluetoothAdapter()?.run {
                 bondedDevices
                     .sortedBy { currentDevice -> currentDevice.name }
                     .forEach { currentDevice ->
@@ -100,7 +100,7 @@ class BluetoothAdaptersListPreferences(
             }
         } catch (e: SecurityException) {
             Log.e("BluetoothAdaptersListPreferences", "Failed to obtain BT Permissions", e)
-            network.requestBluetoothPermissions()
+            Network.requestBluetoothPermissions()
         }
 
     private fun format(text: String): Spanned {

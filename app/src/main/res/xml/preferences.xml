@@ -1126,12 +1126,6 @@
 
                     <CheckBoxPreference
                         android:defaultValue="false"
-                        android:key="pref.aa.connection.auto.enabled"
-                        android:title="@string/pref.aa.connection_auto"
-                        app:singleLineTitle="false" />
-
-                    <CheckBoxPreference
-                        android:defaultValue="false"
                         android:key="pref.aa.screen.load_last_visited.enabled"
                         android:title="@string/pref.aa.screen.load_last_visited.enabled"
                         app:singleLineTitle="false" />

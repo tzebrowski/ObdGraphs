@@ -42,6 +42,7 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
 
 @SuppressLint("ObsoleteSdkInt")
 object Permissions {
+
     /**
      * Returns TRUE if any required permission is missing.
      * Reuses your existing individual checks.
@@ -59,8 +60,12 @@ object Permissions {
         AlertDialog
             .Builder(activity)
             .setTitle(R.string.permission_onboarding_title)
-            .setMessage(HtmlCompat.fromHtml(activity.getString(R.string.permission_onboarding_message), HtmlCompat.FROM_HTML_MODE_LEGACY))
-            .setPositiveButton(R.string.permission_onboarding_btn_positive) { _, _ ->
+            .setMessage(
+                HtmlCompat.fromHtml(
+                    activity.getString(R.string.permission_onboarding_message),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY,
+                ),
+            ).setPositiveButton(R.string.permission_onboarding_btn_positive) { _, _ ->
                 requestAll(activity)
                 if (!isBatteryOptimizationEnabled(activity)) {
                     requestBatteryOptimization(activity)
@@ -92,7 +97,10 @@ object Permissions {
         if (coarsePermission == PackageManager.PERMISSION_GRANTED &&
             finePermission != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.w(TAG, "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid.")
+            Log.w(
+                TAG,
+                "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid.",
+            )
         }
 
         // Standard Strict Check: Returns true only if BOTH permissions are granted
@@ -118,7 +126,9 @@ object Permissions {
             context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
                 ?: return false
 
-        return LocationManagerCompat.isLocationEnabled(locationManager)
+        val locationEnabled = LocationManagerCompat.isLocationEnabled(locationManager)
+        Log.i(TAG, "Location is enabled=$locationEnabled")
+        return locationEnabled
     }
 
     fun requestNotificationPermissions(activity: Activity) {

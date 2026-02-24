@@ -45,6 +45,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
@@ -61,11 +62,11 @@ import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
@@ -84,9 +85,20 @@ class GraphFragment : Fragment() {
                 intent: Intent?,
             ) {
                 when (intent?.action) {
+                    DATA_LOGGER_AUTO_CONNECT_EVENT ->
+                        if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
+                            Log.i(
+                                LOG_TAG,
+                                "Auto-connect data logger for=${query().getIDs()}",
+                            )
+                            withDataLogger {
+                                start(query())
+                            }
+                        }
+
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
-                        if (isAdded && isVisible) {
-                            Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
+                        if (isFragmentVisibleToTheUser()) {
+                            Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
                             withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                             }
@@ -118,6 +130,8 @@ class GraphFragment : Fragment() {
                     }
                 }
             }
+
+            private fun isFragmentVisibleToTheUser(): Boolean = isAdded && isVisible
         }
 
     private class ReverseValueFormatter(
@@ -271,7 +285,8 @@ class GraphFragment : Fragment() {
         val colors = Colors().get()
         chart =
             buildChart(root).apply {
-                val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
+                val pidRegistry: PidDefinitionRegistry =
+                    DataLoggerRepository.getPidDefinitionRegistry()
                 val metrics =
                     preferences.metrics
                         .mapNotNull {
@@ -289,7 +304,11 @@ class GraphFragment : Fragment() {
                                     Log.d(LOG_TAG, "Created chart data-set for PID: ${it.id}")
                                     dataSet
                                 } catch (e: Throwable) {
-                                    Log.v(LOG_TAG, "Failed to create chart  data-set ${e.message} for PID: ${it.id}", e)
+                                    Log.v(
+                                        LOG_TAG,
+                                        "Failed to create chart  data-set ${e.message} for PID: ${it.id}",
+                                        e,
+                                    )
                                     null
                                 }
                             }.toList(),
