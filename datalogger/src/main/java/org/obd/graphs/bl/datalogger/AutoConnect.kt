@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -19,23 +19,59 @@ package org.obd.graphs.bl.datalogger
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.Network
+import org.obd.graphs.sendBroadcastEvent
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
+
+private const val SCHEDULE_DELAY_SEC = 2L
+
+private const val TAG = "AutoConnect"
 
 object AutoConnect {
+    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+    private var future: ScheduledFuture<*>? = null
+
     fun setup(context: Context) {
-        val autoConnect = dataLoggerSettings.instance().adapter.autoConnectEnabled
+        val autoConnectEnabled = dataLoggerSettings.instance().adapter.autoConnectEnabled
+
         val macAddress =
             dataLoggerSettings
                 .instance()
                 .adapter.deviceAddress
                 .uppercase()
-        Log.i("AutoConnect", "Auto connect is enabled=$autoConnect. MacAddress of device=$macAddress")
 
-        if (autoConnect && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && macAddress.isNotEmpty()) {
+        Log.i(
+            TAG,
+            "Auto connect is enabled=$autoConnectEnabled. MacAddress of device=$macAddress",
+        )
+
+        if (autoConnectEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && macAddress.isNotEmpty()) {
             Network.startBackgroundBleScanForMac(
                 context,
                 macAddress,
-            )
+            ) {
+                Log.i(
+                    TAG,
+                    "Found device=$macAddress. Scheduling data logger connection",
+                )
+
+                val task =
+                    Runnable {
+                        sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
+                    }
+                future?.cancel(true)
+
+                future =
+                    scheduleService.schedule(
+                        task,
+                        SCHEDULE_DELAY_SEC,
+                        TimeUnit.SECONDS,
+                    )
+            }
         }
     }
 }

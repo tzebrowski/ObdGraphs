@@ -44,27 +44,18 @@ const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
 const val REQUEST_LOCATION_PERMISSIONS = "REQUEST_LOCATION_PERMISSION"
 
 object Network {
-    private const val TAG: String = "Network"
 
-    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-    private var future: ScheduledFuture<*>? = null
-
-    var currentSSID: String? = ""
-
-    fun bluetoothAdapter(context: Context? = getContext()): BluetoothAdapter? =
-        (context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
-
-    private class AutoConnectBTReceiver(
+    private class BTReceiver(
         private val targetMacAddress: String,
+        private val func: () -> Unit
     ) : BroadcastReceiver() {
         override fun onReceive(
             context: Context,
             intent: Intent,
         ) {
-            val action = intent.action
             val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
-            when (action) {
+            when (intent.action) {
                 BluetoothDevice.ACTION_ACL_CONNECTED -> {
                     if (device?.address?.equals(targetMacAddress, ignoreCase = true) == true) {
                         Log.i(TAG, "Device $targetMacAddress connected at Link Level")
@@ -76,20 +67,27 @@ object Network {
                         intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
                     if (state == BluetoothAdapter.STATE_ON) {
                         Log.i(TAG, "Bluetooth Radio toggled ON, checking bonded devices...")
-                        checkBondedAndNotify(context, targetMacAddress)
+                        checkBondedAndNotify(context, targetMacAddress, func)
                     }
                 }
             }
         }
     }
 
+    private const val TAG: String = "Network"
+
+    var currentSSID: String? = ""
+
+    fun bluetoothAdapter(context: Context? = getContext()): BluetoothAdapter? =
+        (context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+
     private fun checkBondedAndNotify(
         context: Context,
         targetMacAddress: String,
+        func: () -> Unit
     ): Boolean =
         try {
-            val adapter =
-                (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+            val adapter = bluetoothAdapter(context)
             val device =
                 adapter?.bondedDevices?.find {
                     it.address.equals(
@@ -98,31 +96,19 @@ object Network {
                     )
                 }
 
-            if (device != null) {
-                Log.i(
-                    TAG,
-                    "Target OBD (${device.name}) found in bonded list. Triggering Connect Event.",
-                )
-
-                val task =
-                    Runnable {
-                        sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
-                    }
-                future?.cancel(true)
-
-                future =
-                    scheduleService.schedule(
-                        task,
-                        2,
-                        TimeUnit.SECONDS,
-                    )
-
-                true
-            } else {
+            if (device == null) {
                 Log.w(TAG, "Target MAC $targetMacAddress not found in bonded devices.")
                 false
+            } else {
+
+                Log.i(
+                    TAG,
+                    "Target BT (${device.name}) found in bonded list. Triggering Event.",
+                )
+                func()
+                true
             }
-        } catch (e: SecurityException) {
+        } catch (_: SecurityException) {
             requestBluetoothPermissions()
             false
         }
@@ -130,7 +116,7 @@ object Network {
     fun findBluetoothAdapterByName(deviceAddress: String): BluetoothDevice? {
         return try {
             bluetoothAdapter()?.bondedDevices?.find { deviceAddress == it.address }
-        } catch (e: SecurityException) {
+        } catch (_: SecurityException) {
             requestBluetoothPermissions()
             return null
         }
@@ -258,8 +244,9 @@ object Network {
     fun startBackgroundBleScanForMac(
         context: Context,
         targetMacAddress: String,
+        func: () -> Unit
     ) {
-        if (checkBondedAndNotify(context, targetMacAddress)) {
+        if (checkBondedAndNotify(context, targetMacAddress, func)) {
             return
         }
 
@@ -269,7 +256,7 @@ object Network {
                     addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
                     addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
                 }
-            context.registerReceiver(AutoConnectBTReceiver(targetMacAddress), filter)
+            context.registerReceiver(BTReceiver(targetMacAddress, func), filter)
             Log.i(TAG, "Passive monitor started for $targetMacAddress")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to register passive monitor", e)
