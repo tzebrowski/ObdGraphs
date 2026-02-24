@@ -36,7 +36,10 @@ import pub.devrel.easypermissions.EasyPermissions
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.annotation.RequiresPermission
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
@@ -46,41 +49,79 @@ object Network {
 
     private const val TAG: String = "Network"
 
-    private class AutoConnectBTReceiver(private val targetMacAddress: String) : BroadcastReceiver() {
-        @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
-        override fun onReceive(context: Context, intent: Intent) {
-
-            val action = intent.action
-            when (action) {
-                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    Log.i(TAG, "12-second scan finished. The radio is resting.")
-                    bluetoothAdapter(context)?.cancelDiscovery()
-                }
-
-                BluetoothDevice.ACTION_FOUND -> {
-                    val device: BluetoothDevice? =
-                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                    val macAddress = device?.address
-
-                    if (Log.isLoggable(TAG,Log.DEBUG)) {
-                        Log.d(TAG, "Found device: ${device?.name} at $macAddress")
-                    }
-                    if (macAddress == targetMacAddress) {
-                        Log.e(
-                            TAG,
-                            "Target (${device.name} ${device.address}) OBD adapter found via scan"
-                        )
-                        sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
-                    }
-                }
-            }
-
-        }
-    }
-
     var currentSSID: String? = ""
     fun bluetoothAdapter(context: Context? = getContext()): BluetoothAdapter? =
         (context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+
+
+    private class AutoConnectBTReceiver(private val targetMacAddress: String) :
+        BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+
+            when (action) {
+                BluetoothDevice.ACTION_ACL_CONNECTED -> {
+                    if (device?.address?.equals(targetMacAddress, ignoreCase = true) == true) {
+                        Log.i(TAG, "Device $targetMacAddress connected at Link Level")
+                    }
+                }
+
+                BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                    val state =
+                        intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
+                    if (state == BluetoothAdapter.STATE_ON) {
+                        Log.i(TAG, "Bluetooth Radio toggled ON, checking bonded devices...")
+                        checkBondedAndNotify(context, targetMacAddress)
+                    }
+                }
+            }
+        }
+    }
+
+    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+    private var future: ScheduledFuture<*>? = null
+
+    private fun checkBondedAndNotify(context: Context, targetMacAddress: String): Boolean {
+        return try {
+            val adapter =
+                (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+            val device = adapter?.bondedDevices?.find {
+                it.address.equals(
+                    targetMacAddress,
+                    ignoreCase = true
+                )
+            }
+
+            if (device != null) {
+                Log.i(
+                    TAG,
+                    "Target OBD (${device.name}) found in bonded list. Triggering Connect Event."
+                )
+
+                val task = Runnable {
+
+                    sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
+                }
+                future?.cancel(true)
+
+                future = scheduleService.schedule(
+                    task,
+                    2,
+                    TimeUnit.SECONDS
+                )
+
+                true
+            } else {
+                Log.w(TAG, "Target MAC $targetMacAddress not found in bonded devices.")
+                false
+            }
+        } catch (e: SecurityException) {
+            requestBluetoothPermissions()
+            false
+        }
+    }
+
 
     fun findBluetoothAdapterByName(deviceAddress: String): BluetoothDevice? {
         return try {
@@ -208,35 +249,21 @@ object Network {
         }
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.Q)
     fun startBackgroundBleScanForMac(context: Context, targetMacAddress: String) {
+
+        if (checkBondedAndNotify(context, targetMacAddress)) {
+            return
+        }
+
         try {
-
-            if (!Permissions.isBLEScanPermissionsGranted(context)) return
-            if (!Permissions.isLocationEnabled(context)) return
-
-            val bluetoothAdapter: BluetoothAdapter? = bluetoothAdapter(context)
-
-            if (bluetoothAdapter == null) {
-                Log.e(TAG, "Device doesn't support Bluetooth")
-                return
+            val filter = IntentFilter().apply {
+                addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+                addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
             }
-
-            val filter = IntentFilter()
-            filter.addAction(BluetoothDevice.ACTION_FOUND)
-            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
             context.registerReceiver(AutoConnectBTReceiver(targetMacAddress), filter)
-
-            if (bluetoothAdapter.isDiscovering) {
-                bluetoothAdapter.cancelDiscovery()
-            }
-
-            val scanStarted = bluetoothAdapter.startDiscovery()
-            Log.i(TAG, "Started scanning for Classic Bluetooth device = $scanStarted")
-
-        } catch (_: SecurityException) {
-            requestBluetoothPermissions()
+            Log.i(TAG, "Passive monitor started for $targetMacAddress")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to register passive monitor", e)
         }
     }
 }

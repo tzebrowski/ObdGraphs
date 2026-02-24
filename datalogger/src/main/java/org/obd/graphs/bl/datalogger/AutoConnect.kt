@@ -9,13 +9,13 @@ object AutoConnect {
     fun setup(context: Context) {
 
         val autoConnect = dataLoggerSettings.instance().adapter.autoConnectEnabled
+        val macAddress = dataLoggerSettings.instance().adapter.deviceAddress.uppercase()
+        Log.i("AutoConnect", "Auto connect is enabled=$autoConnect. MacAddress of device=$macAddress")
 
-        Log.i("AutoConnect", "Auto connect is enabled=$autoConnect")
-
-        if (autoConnect && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (autoConnect && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && macAddress.isNotEmpty()) {
             Network.startBackgroundBleScanForMac(
                 context,
-                dataLoggerSettings.instance().adapter.deviceAddress.uppercase()
+                macAddress
             )
         }
     }
