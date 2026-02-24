@@ -45,14 +45,14 @@
         android:title="@string/pref.adapter_category">
         <menu>
             <item
-                android:id="@+id/navigation_preferences_adapter"
+                android:id="@+id/navigation_adapter_connection"
                 android:checkable="true"
                 android:title="@string/pref.connection.category" />
 
             <item
-                android:id="@+id/navigation_adapter_dri"
+                android:id="@+id/navigation_adapter_settings"
                 android:checkable="true"
-                android:title="@string/pref.adapter.diagnostic_request_id.mapping.category">
+                android:title="@string/pref.adapter_category">
             </item>
 
         </menu>

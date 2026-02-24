@@ -20,8 +20,6 @@ import org.obd.graphs.PREF_DYNAMIC_SELECTOR_ENABLED
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.preferences.Prefs
 
-
-
 internal class IndividualQueryStrategy : QueryStrategy() {
 
     override fun getPIDs(): MutableSet<Long> {

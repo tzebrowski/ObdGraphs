@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -142,11 +142,11 @@ internal class AdjustmentsStrategy {
             .stNxx(
                 STNxxExtensions
                     .builder()
-                    .stripWhitespaces(preferences.adapter.stnExtensionsEnabled)
-                    .promoteSlowGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
-                    .promoteAllGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
-                    .enabled(preferences.adapter.stnExtensionsEnabled)
-                    .build(),
+                        .promoteSlowGroupsEnabled(preferences.adapter.stnExtensionsEnabled)
+                        .promoteSlowGroupsEnabled(preferences.adapter.stnDisablePIDsPriorities)
+                        .promoteAllGroupsEnabled(preferences.adapter.stnDisablePIDsPriorities)
+                        .enabled(preferences.adapter.stnExtensionsEnabled)
+                        .build(),
             ).vehicleMetadataReadingEnabled(preferences.adapter.vehicleMetadataReadingEnabled)
             .vehicleCapabilitiesReadingEnabled(preferences.adapter.vehicleCapabilitiesReadingEnabled)
             .vehicleDtcReadingEnabled(preferences.adapter.vehicleDTCReadingEnabled)

@@ -77,8 +77,8 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
             R.id.navigation_graph_tripe -> navigateToPreferencesScreen(PREF_GAUGE_TRIPS)
             R.id.ctx_menu_pids_to_query -> navigateToPreferencesScreen("pref.registry")
             R.id.nav_preferences -> navigateToPreferencesScreen("pref.root")
-            R.id.navigation_preferences_adapter -> navigateToPreferencesScreen("pref.adapter.connection")
-            R.id.navigation_adapter_dri -> navigateToPreferencesScreen("pref.init")
+            R.id.navigation_adapter_connection -> navigateToPreferencesScreen("pref.adapter.connection")
+            R.id.navigation_adapter_settings -> navigateToPreferencesScreen("pref.adapter")
             R.id.navigation_trip_logs -> navigateToPreferencesScreen(PREF_LOGS)
 
             R.id.navigation_giulia -> navigateToScreen(R.id.nav_giulia)
