@@ -127,17 +127,11 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         when (gauges.size) {
             4 -> {
-                val topRowWidth = availableWidth / 2f
-                drawGauge(gauges[0], canvas, rowTop, areaLeft, topRowWidth, labelCenterYPadding)
-                drawGauge(gauges[1], canvas, rowTop, areaLeft + topRowWidth, topRowWidth, labelCenterYPadding)
-
-                val topRowHeight = topRowWidth * 0.8f
-                val bottomRowTop = rowTop + (topRowHeight * 0.45f)
-                val bottomRowWidth = availableWidth / 3.5f
-                val centerOffset = (availableWidth - (bottomRowWidth * 2)) / 2f
-
-                drawGauge(gauges[2], canvas, bottomRowTop, areaLeft + centerOffset - 10f, bottomRowWidth, labelCenterYPadding)
-                drawGauge(gauges[3], canvas, bottomRowTop, areaLeft + centerOffset + bottomRowWidth + 10f, bottomRowWidth, labelCenterYPadding)
+                val width = availableWidth / 4f
+                drawGauge(gauges[0], canvas, rowTop, areaLeft, width, labelCenterYPadding)
+                drawGauge(gauges[1], canvas, rowTop, areaLeft + width, width, labelCenterYPadding)
+                drawGauge(gauges[2], canvas, rowTop, areaLeft + (width * 2), width, labelCenterYPadding)
+                drawGauge(gauges[3], canvas, rowTop, areaLeft + (width * 3), width, labelCenterYPadding)
             }
 
             3 -> {
