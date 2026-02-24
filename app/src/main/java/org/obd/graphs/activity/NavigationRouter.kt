@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -182,7 +182,6 @@ internal object NavigationRouter {
 
     internal fun isAndroidAutoEnabled(context: Context) = context.resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)
 
-
     private fun applyGraphViewFilter(screenId: Int): Boolean {
         val propertyId: String? =
             when (getGraphFilterSource()) {
@@ -212,7 +211,6 @@ internal object NavigationRouter {
         }
         return false
     }
-
 
     private fun getCurrentScreenId(activity: MainActivity): Int {
         val navHostFragment =
