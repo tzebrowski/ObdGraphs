@@ -22,6 +22,7 @@ import android.util.Log
 import androidx.preference.CheckBoxPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference.OnPreferenceChangeListener
+import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.ACCESS_EXTERNAL_STORAGE_ENABLED
 import org.obd.graphs.MODULES_LIST_CHANGED_EVENT
 import org.obd.graphs.PREF_MODULE_LIST
@@ -50,7 +51,7 @@ class ModulesListPreferences(
     override fun onAttached() {
         super.onAttached()
 
-        findPreferenceInHierarchy<CheckBoxPreference>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run {
+        findPreferenceInHierarchy<SwitchPreferenceCompat>(ACCESS_EXTERNAL_STORAGE_ENABLED)?.run {
             onPreferenceChangeListener =
                 OnPreferenceChangeListener { _, new ->
                     initialize { modules.getExternalModules(context) { new.toString().toBoolean() } }

@@ -275,7 +275,7 @@
             </PreferenceCategory>
 
             <PreferenceCategory android:title="@string/pref.adapter.batch_settings">
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.adapter_batch_enabled"
                     android:key="pref.adapter.batch.enabled"
@@ -283,28 +283,35 @@
                     android:title="@string/pref.adapter_batch_enabled"
                     app:singleLineTitle="false" />
 
-                <ListPreference
-                    android:entries="@array/pref.numbers_1_20"
-                    android:entryValues="@array/pref.numbers_1_20"
-                    android:inputType="number"
+                <org.obd.graphs.preferences.components.ExtendedSeekBar
+                    app:dependency="pref.adapter.batch.enabled"
+                    android:defaultValue="8"
+                    android:dialogTitle="@string/prefs.adapter_batch_mode_22_batch_size"
                     android:key="pref.adapter.batch.size"
-                    android:summary="Batch Size for Mode 22"
+                    android:max="24"
                     android:title="@string/prefs.adapter_batch_mode_22_batch_size"
+                    android:summary="Batch Size for Mode 22"
+                    app:min="1"
+                    app:showSeekBarValue="true"
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
-                <ListPreference
-                    android:entries="@array/pref.numbers_1_20"
-                    android:entryValues="@array/pref.numbers_1_20"
-                    android:inputType="number"
+
+                <org.obd.graphs.preferences.components.ExtendedSeekBar
+                    app:dependency="pref.adapter.batch.enabled"
+                    android:defaultValue="3"
+                    android:dialogTitle="@string/prefs.adapter_batch_mode_01_batch_size"
                     android:key="pref.adapter.batch_01.size"
-                    android:summary="Batch Size for Mode 01"
+                    android:max="24"
                     android:title="@string/prefs.adapter_batch_mode_01_batch_size"
+                    android:summary="Batch Size for Mode 01"
+                    app:min="1"
+                    app:showSeekBarValue="true"
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_batch_strict_validation_enabled"
                     android:key="pref.adapter.batch.strict_validation.enabled"
@@ -324,10 +331,11 @@
                     android:title="@string/pref.adapter_stn_enabled" />
 
                 <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:dependency="pref.adapter.stn.enabled"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_stn_disable_pids_priorities"
                     android:key="pref.adapter.stn.disable_pids_priorities"
-                    android:summary="@string/pref.adapter_stn_enabled_summary"
+                    android:summary="@string/pref.adapter_stn_disable_pids_priorities_summary"
                     android:title="@string/pref.adapter_stn_disable_pids_priorities" />
 
                 <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
@@ -339,7 +347,7 @@
                     app:experimental="true"
                     app:enabled="@bool/FF_RESULT_CACHE_ENABLED" />
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_calculation_response_frames_enabled"
                     android:key="pref.adapter.responseLength.enabled"
@@ -347,7 +355,7 @@
                     android:title="@string/pref.adapter_calculation_response_frames_enabled"
                     app:singleLineTitle="false" />
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.adapter_graceful_stop_enabled"
                     android:key="pref.adapter.graceful_stop.enabled"
@@ -355,7 +363,7 @@
                     android:title="@string/pref.adapter_graceful_stop_enabled"
                     app:singleLineTitle="false" />
 
-                <CheckBoxPreference
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.adapter_adaptive_enabled"
                     android:summary="@string/pref.adapter_adaptive_enabled_summary"
