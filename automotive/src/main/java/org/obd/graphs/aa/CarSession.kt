@@ -27,7 +27,7 @@ import org.obd.graphs.aa.screen.nav.GOTO_LAST_VSITED_SCREEN_EVENT
 import org.obd.graphs.aa.screen.nav.START_DATA_LOGGING_EVENT
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.preferences.initPrefs
+import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.setCarContext
@@ -40,7 +40,7 @@ internal class CarSession : Session() {
 
     override fun onCreateScreen(intent: Intent): Screen {
         setCarContext(carContext)
-        initPrefs(carContext)
+        setPreferencesContext(carContext)
         screen = CarScreenFactory.instance(carContext, settings, metricsCollector, fps)
         CarConnection(carContext).type.observe(this, ::onConnectionStateUpdated)
         return screen

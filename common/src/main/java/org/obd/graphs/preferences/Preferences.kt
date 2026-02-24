@@ -24,7 +24,7 @@ import androidx.preference.PreferenceManager
 lateinit var Prefs: SharedPreferences
     private set
 
-fun initPrefs(context: Context) {
+fun setPreferencesContext(context: Context) {
     if (!::Prefs.isInitialized) {
         Prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
     }

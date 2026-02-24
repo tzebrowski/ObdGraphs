@@ -31,7 +31,7 @@ import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Before
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.initPrefs
+import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.runAsync
 import org.obd.graphs.sendBroadcastEvent
 import java.io.File
@@ -76,7 +76,7 @@ import java.util.Properties
         mockEnvironment()
         profileService = DefaultProfileService()
 
-        initPrefs(context)
+        setPreferencesContext(context)
     }
 
     protected fun mockPropertiesFiles(assetFilenames: List<String> = listOf("alfa_2_0_gme.properties")) {

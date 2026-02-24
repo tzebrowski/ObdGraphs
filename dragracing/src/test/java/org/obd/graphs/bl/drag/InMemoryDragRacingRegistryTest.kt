@@ -24,11 +24,10 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.initPrefs
+import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.preferences.updateString
-import java.lang.ref.WeakReference
 
-class InMemoryDragRacingRegistryTest {
+ class InMemoryDragRacingRegistryTest {
 
     private lateinit var registry: InMemoryDragRacingRegistry
     private val mockContext = mockk<ContextWrapper>(relaxed = true)
@@ -46,7 +45,7 @@ class InMemoryDragRacingRegistryTest {
         mockkStatic("org.obd.graphs.preferences.PreferencesKt")
         mockkStatic("org.obd.graphs.ContextKt")
 
-        initPrefs(mockContext)
+        setPreferencesContext(mockContext)
 
         mockkObject(Prefs)
         every { Prefs.getString(any(), any()) } returns null
