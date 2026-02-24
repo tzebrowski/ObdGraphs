@@ -71,19 +71,9 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         val itemWidth = area.width() / MAX_ITEMS_IN_ROW.toFloat()
         var rowTop = top + 2f
 
-        val metricsToDraw = listOfNotNull(
-            performanceInfoDetails.postICAirTemp,
-            performanceInfoDetails.coolantTemp,
-            performanceInfoDetails.oilTemp,
-            performanceInfoDetails.exhaustTemp,
-            performanceInfoDetails.gearboxOilTemp,
-            performanceInfoDetails.ambientTemp,
-            performanceInfoDetails.preICAirTemp,
-            performanceInfoDetails.wcacTemp,
-            performanceInfoDetails.gearEngaged
-        )
+        val topMetrics = performanceInfoDetails.topMetrics
 
-        metricsToDraw.take(MAX_ITEMS_IN_ROW).forEachIndexed { index, metric ->
+        topMetrics.take(MAX_ITEMS_IN_ROW).forEachIndexed { index, metric ->
             val itemLeft = left + (index * itemWidth)
 
             tripInfoDrawer.drawMetric(
@@ -97,7 +87,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                 castToInt = true
             )
 
-            if (index < metricsToDraw.take(MAX_ITEMS_IN_ROW).size - 1) {
+            if (index < topMetrics.take(MAX_ITEMS_IN_ROW).size - 1) {
                 val lineX = itemLeft + itemWidth
                 canvas.drawLine(
                     lineX,
@@ -116,22 +106,18 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         val availableWidth = area.width().toFloat()
         val areaLeft = area.left.toFloat()
 
-        val gauges = listOfNotNull(
-            performanceInfoDetails.torque,
-            performanceInfoDetails.intakePressure,
-            performanceInfoDetails.gas,
-            performanceInfoDetails.vehicleSpeed
-        )
-
         val labelCenterYPadding = settings.getPerformanceScreenSettings().labelCenterYPadding - 4
 
-        val count = gauges.size
+        val bottomMetrics = performanceInfoDetails.bottomMetrics
+
+        val count = bottomMetrics.size
+
         if (count > 0) {
             val width = if (count == 1) availableWidth / 2f else availableWidth / count.toFloat()
             val startLeft = if (count == 1) areaLeft + (availableWidth / 4f) else areaLeft
             val padding = if (count == 1) 6f else labelCenterYPadding
 
-            gauges.forEachIndexed { index, gauge ->
+            bottomMetrics.forEachIndexed { index, gauge ->
                 drawGauge(gauge, canvas, rowTop, startLeft + (width * index), width, padding)
             }
         }

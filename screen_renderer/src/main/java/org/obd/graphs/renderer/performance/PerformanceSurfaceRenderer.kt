@@ -50,9 +50,22 @@ internal class PerformanceSurfaceRenderer(
             val left = performanceDrawer.getMarginLeft(area.left.toFloat())
 
             if (settings.isStatusPanelEnabled()) {
-                performanceDrawer.drawStatusPanel(canvas, top, left, fps, metricsCollector, drawContextInfo = true)
+                performanceDrawer.drawStatusPanel(
+                    canvas,
+                    top,
+                    left,
+                    fps,
+                    metricsCollector,
+                    drawContextInfo = true,
+                )
                 top += MARGIN_TOP
-                performanceDrawer.drawDivider(canvas, left, area.width().toFloat(), top, Color.DKGRAY)
+                performanceDrawer.drawDivider(
+                    canvas,
+                    left,
+                    area.width().toFloat(),
+                    top,
+                    Color.DKGRAY,
+                )
                 top += 40
             } else {
                 top += MARGIN_TOP
@@ -81,20 +94,26 @@ internal class PerformanceSurfaceRenderer(
                     top = top,
                     performanceInfoDetails =
                         performanceInfoDetails.apply {
-                            gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
-                            postICAirTemp = metricsCollector.getMetric(Pid.POST_IC_AIR_TEMP_PID_ID)
-                            ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
-                            atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
-                            coolantTemp = metricsCollector.getMetric(Pid.COOLANT_TEMP_PID_ID)
-                            exhaustTemp = metricsCollector.getMetric(Pid.EXHAUST_TEMP_PID_ID)
-                            oilTemp = metricsCollector.getMetric(Pid.OIL_TEMP_PID_ID)
-                            gearboxOilTemp = metricsCollector.getMetric(Pid.GEARBOX_OIL_TEMP_PID_ID)
-                            torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
-                            intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                            preICAirTemp = metricsCollector.getMetric(Pid.PRE_IC_AIR_TEMP_PID_ID)
-                            wcacTemp = metricsCollector.getMetric(Pid.WCA_TEMP_PID_ID)
-                            vehicleSpeed = metricsCollector.getMetric(Pid.EXT_VEHICLE_SPEED_PID_ID)
-                            gearEngaged = metricsCollector.getMetric(Pid.GEAR_ENGAGED_PID_ID)
+                            bottomMetrics =
+                                listOfNotNull(
+                                    metricsCollector.getMetric(Pid.GAS_PID_ID),
+                                    metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID),
+                                    metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID),
+                                    metricsCollector.getMetric(Pid.EXT_VEHICLE_SPEED_PID_ID),
+                                )
+                            topMetrics =
+                                listOfNotNull(
+                                    metricsCollector.getMetric(Pid.POST_IC_AIR_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID),
+                                    metricsCollector.getMetric(Pid.COOLANT_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.EXHAUST_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.OIL_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.GEARBOX_OIL_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.PRE_IC_AIR_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.WCA_TEMP_PID_ID),
+                                    metricsCollector.getMetric(Pid.GEAR_ENGAGED_PID_ID),
+                                )
                         },
                 )
             }
