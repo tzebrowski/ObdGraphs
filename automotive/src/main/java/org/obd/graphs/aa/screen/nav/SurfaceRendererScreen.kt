@@ -268,6 +268,11 @@ internal class SurfaceRendererScreen(
             it.addAction(GAUGE_VIRTUAL_SCREEN_3_SETTINGS_CHANGED)
             it.addAction(GAUGE_VIRTUAL_SCREEN_4_SETTINGS_CHANGED)
         }
+
+        val screenBehavior = screenBehaviorController.getScreenBehavior(screenId)?: return
+        withDataLogger {
+            updateQuery(screenBehavior.query())
+        }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
