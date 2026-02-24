@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -42,22 +42,24 @@ private const val NOTIFICATION_REQUEST_CODE = 1003
 
 @SuppressLint("ObsoleteSdkInt")
 object Permissions {
-
     fun isBLEScanPermissionsGranted(context: Context): Boolean {
-        val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            arrayOf(
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_CONNECT
-            )
-        } else {
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        }
+        val requiredPermissions =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                )
+            } else {
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                )
+            }
 
-        val missingPermissions = requiredPermissions.filter {
-            ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
-        }.toTypedArray()
+        val missingPermissions =
+            requiredPermissions
+                .filter {
+                    ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
+                }.toTypedArray()
 
         if (missingPermissions.isEmpty()) {
             Log.i(TAG, "BLE Scan Permissions are there")
@@ -88,10 +90,9 @@ object Permissions {
             .setMessage(
                 HtmlCompat.fromHtml(
                     activity.getString(R.string.permission_onboarding_message),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
-            )
-            .setPositiveButton(R.string.permission_onboarding_btn_positive) { _, _ ->
+                    HtmlCompat.FROM_HTML_MODE_LEGACY,
+                ),
+            ).setPositiveButton(R.string.permission_onboarding_btn_positive) { _, _ ->
                 requestAll(activity)
                 if (!isBatteryOptimizationEnabled(activity)) {
                     requestBatteryOptimization(activity)
@@ -125,7 +126,7 @@ object Permissions {
         ) {
             Log.w(
                 TAG,
-                "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid."
+                "WARNING: User granted only APPROXIMATE location. GPS data will be snapped to a grid.",
             )
         }
 
@@ -153,7 +154,7 @@ object Permissions {
                 ?: return false
 
         val locationEnabled = LocationManagerCompat.isLocationEnabled(locationManager)
-        Log.i(TAG,"Location is enabled=$locationEnabled")
+        Log.i(TAG, "Location is enabled=$locationEnabled")
         return locationEnabled
     }
 

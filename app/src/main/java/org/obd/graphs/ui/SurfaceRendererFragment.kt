@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -53,7 +53,6 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.SurfaceController
 
 private const val EVENT_THROTTLE_MS = 350L
-
 
 internal abstract class SurfaceRendererFragment(
     private val fragmentId: Int,
@@ -142,13 +141,12 @@ internal abstract class SurfaceRendererFragment(
 
                             Log.i(
                                 LOG_TAG,
-                                "[$surfaceRendererType] Auto-connect data logger for=${query.getIDs()}"
+                                "[$surfaceRendererType] Auto-connect data logger for=${query.getIDs()}",
                             )
                             withDataLogger {
                                 start(query)
                             }
                         }
-
 
                     DATA_LOGGER_SCHEDULED_START_EVENT ->
                         if (isFragmentVisibleToTheUser()) {
@@ -159,7 +157,7 @@ internal abstract class SurfaceRendererFragment(
 
                             Log.i(
                                 LOG_TAG,
-                                "[$surfaceRendererType] Scheduling data logger for=${query.getIDs()}"
+                                "[$surfaceRendererType] Scheduling data logger for=${query.getIDs()}",
                             )
                             withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query)

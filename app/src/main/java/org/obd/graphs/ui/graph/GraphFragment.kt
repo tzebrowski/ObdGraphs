@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -63,11 +63,11 @@ import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.COLOR_TRANSPARENT
 import org.obd.graphs.ui.common.Colors
 import org.obd.graphs.ui.common.onDoubleClickListener
+import org.obd.graphs.ui.configureActionButton
 import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.pid.PidDefinition
@@ -86,12 +86,11 @@ class GraphFragment : Fragment() {
                 intent: Intent?,
             ) {
                 when (intent?.action) {
-
                     DATA_LOGGER_AUTO_CONNECT_EVENT ->
                         if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
                             Log.i(
                                 LOG_TAG,
-                                "Auto-connect data logger for=${query().getIDs()}"
+                                "Auto-connect data logger for=${query().getIDs()}",
                             )
                             withDataLogger {
                                 start(query())
@@ -144,8 +143,7 @@ class GraphFragment : Fragment() {
 
     private val xAxisFormatter =
         object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String =
-                simpleDateFormat.format(Date(tripStartTs + value.toLong()))
+            override fun getFormattedValue(value: Float): String = simpleDateFormat.format(Date(tripStartTs + value.toLong()))
         }
 
     private val onGestureListener =
@@ -310,7 +308,7 @@ class GraphFragment : Fragment() {
                                     Log.v(
                                         LOG_TAG,
                                         "Failed to create chart  data-set ${e.message} for PID: ${it.id}",
-                                        e
+                                        e,
                                     )
                                     null
                                 }

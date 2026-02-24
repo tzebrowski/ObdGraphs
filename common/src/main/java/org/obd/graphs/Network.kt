@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,7 +20,10 @@ import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -31,11 +34,6 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import pub.devrel.easypermissions.EasyPermissions
-
-
-import android.content.BroadcastReceiver
-import android.content.Intent
-import android.content.IntentFilter
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
@@ -46,17 +44,23 @@ const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
 const val REQUEST_LOCATION_PERMISSIONS = "REQUEST_LOCATION_PERMISSION"
 
 object Network {
-
     private const val TAG: String = "Network"
 
+    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+    private var future: ScheduledFuture<*>? = null
+
     var currentSSID: String? = ""
+
     fun bluetoothAdapter(context: Context? = getContext()): BluetoothAdapter? =
         (context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
 
-
-    private class AutoConnectBTReceiver(private val targetMacAddress: String) :
-        BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
+    private class AutoConnectBTReceiver(
+        private val targetMacAddress: String,
+    ) : BroadcastReceiver() {
+        override fun onReceive(
+            context: Context,
+            intent: Intent,
+        ) {
             val action = intent.action
             val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
@@ -79,37 +83,39 @@ object Network {
         }
     }
 
-    private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-    private var future: ScheduledFuture<*>? = null
-
-    private fun checkBondedAndNotify(context: Context, targetMacAddress: String): Boolean {
-        return try {
+    private fun checkBondedAndNotify(
+        context: Context,
+        targetMacAddress: String,
+    ): Boolean =
+        try {
             val adapter =
                 (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
-            val device = adapter?.bondedDevices?.find {
-                it.address.equals(
-                    targetMacAddress,
-                    ignoreCase = true
-                )
-            }
+            val device =
+                adapter?.bondedDevices?.find {
+                    it.address.equals(
+                        targetMacAddress,
+                        ignoreCase = true,
+                    )
+                }
 
             if (device != null) {
                 Log.i(
                     TAG,
-                    "Target OBD (${device.name}) found in bonded list. Triggering Connect Event."
+                    "Target OBD (${device.name}) found in bonded list. Triggering Connect Event.",
                 )
 
-                val task = Runnable {
-
-                    sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
-                }
+                val task =
+                    Runnable {
+                        sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
+                    }
                 future?.cancel(true)
 
-                future = scheduleService.schedule(
-                    task,
-                    2,
-                    TimeUnit.SECONDS
-                )
+                future =
+                    scheduleService.schedule(
+                        task,
+                        2,
+                        TimeUnit.SECONDS,
+                    )
 
                 true
             } else {
@@ -120,8 +126,6 @@ object Network {
             requestBluetoothPermissions()
             false
         }
-    }
-
 
     fun findBluetoothAdapterByName(deviceAddress: String): BluetoothDevice? {
         return try {
@@ -132,10 +136,11 @@ object Network {
         }
     }
 
-    fun findWifiSSID(): List<String> {
-        return if (EasyPermissions.hasPermissions(
-                getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+    fun findWifiSSID(): List<String> =
+        if (EasyPermissions.hasPermissions(
+                getContext()!!,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
             )
         ) {
             try {
@@ -158,43 +163,45 @@ object Network {
             sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
             emptyList()
         }
-    }
 
     fun setupConnectedNetworksCallback() {
         try {
             Log.i(LOG_LEVEL, "Starting network setup")
 
-            val wifiCallback = when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-                    object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
-                        override fun onCapabilitiesChanged(
-                            network: Network,
-                            networkCapabilities: NetworkCapabilities
-                        ) {
-                            currentSSID = readSSID(networkCapabilities)
+            val wifiCallback =
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                        object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
+                            override fun onCapabilitiesChanged(
+                                network: Network,
+                                networkCapabilities: NetworkCapabilities,
+                            ) {
+                                currentSSID = readSSID(networkCapabilities)
+                            }
                         }
                     }
-                }
 
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                    object : ConnectivityManager.NetworkCallback() {
-                        override fun onCapabilitiesChanged(
-                            network: Network,
-                            networkCapabilities: NetworkCapabilities
-                        ) {
-                            currentSSID = readSSID(networkCapabilities)
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                        object : ConnectivityManager.NetworkCallback() {
+                            override fun onCapabilitiesChanged(
+                                network: Network,
+                                networkCapabilities: NetworkCapabilities,
+                            ) {
+                                currentSSID = readSSID(networkCapabilities)
+                            }
                         }
                     }
-                }
 
-                else -> null
-            }
+                    else -> null
+                }
 
             wifiCallback?.let {
                 getContext()?.let { contextWrapper ->
-                    val request = NetworkRequest.Builder()
-                        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                        .build()
+                    val request =
+                        NetworkRequest
+                            .Builder()
+                            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                            .build()
                     val connectivityManager =
                         contextWrapper.getSystemService(ConnectivityManager::class.java)
                     connectivityManager.requestNetwork(request, it)
@@ -203,7 +210,6 @@ object Network {
             }
 
             Log.i(LOG_LEVEL, "Network setup completed")
-
         } catch (e: Exception) {
             Log.e(LOG_LEVEL, "Failed to complete network registration", e)
         }
@@ -249,17 +255,20 @@ object Network {
         }
     }
 
-    fun startBackgroundBleScanForMac(context: Context, targetMacAddress: String) {
-
+    fun startBackgroundBleScanForMac(
+        context: Context,
+        targetMacAddress: String,
+    ) {
         if (checkBondedAndNotify(context, targetMacAddress)) {
             return
         }
 
         try {
-            val filter = IntentFilter().apply {
-                addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
-                addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
-            }
+            val filter =
+                IntentFilter().apply {
+                    addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+                    addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+                }
             context.registerReceiver(AutoConnectBTReceiver(targetMacAddress), filter)
             Log.i(TAG, "Passive monitor started for $targetMacAddress")
         } catch (e: Exception) {
