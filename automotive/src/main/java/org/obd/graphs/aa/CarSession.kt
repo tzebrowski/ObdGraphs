@@ -24,9 +24,7 @@ import androidx.car.app.connection.CarConnection
 import org.obd.graphs.aa.screen.CarScreen
 import org.obd.graphs.aa.screen.CarScreenFactory
 import org.obd.graphs.aa.screen.nav.GOTO_LAST_VSITED_SCREEN_EVENT
-import org.obd.graphs.aa.screen.nav.START_DATA_LOGGING_EVENT
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.sendBroadcastEvent
@@ -56,10 +54,6 @@ internal class CarSession : Session() {
             CarConnection.CONNECTION_TYPE_PROJECTION -> {
                 if (settings.isLoadLastVisitedScreenEnabled()) {
                     sendBroadcastEvent(GOTO_LAST_VSITED_SCREEN_EVENT)
-                }
-
-                if (settings.isAutomaticConnectEnabled() && !DataLoggerRepository.isRunning()) {
-                    sendBroadcastEvent(START_DATA_LOGGING_EVENT)
                 }
             }
         }

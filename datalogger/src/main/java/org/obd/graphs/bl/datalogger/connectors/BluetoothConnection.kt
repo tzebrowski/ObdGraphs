@@ -18,7 +18,7 @@ package org.obd.graphs.bl.datalogger.connectors
 
 import android.bluetooth.BluetoothSocket
 import android.util.Log
-import org.obd.graphs.network
+import org.obd.graphs.Network
 import org.obd.metrics.transport.AdapterConnection
 import java.io.InputStream
 import java.io.OutputStream
@@ -28,22 +28,22 @@ import java.util.concurrent.TimeUnit
 private const val LOGGER_TAG = "BluetoothConnection"
 private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
- internal class BluetoothConnection(private val deviceName: String) : AdapterConnection {
+ internal class BluetoothConnection(private val deviceAddress: String) : AdapterConnection {
 
     private var input: InputStream? = null
     private var output: OutputStream? = null
     private lateinit var socket: BluetoothSocket
 
     init {
-        Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $deviceName")
+        Log.i(LOGGER_TAG, "Created instance of BluetoothConnection with devices: $deviceAddress")
     }
 
     override fun reconnect() {
-        Log.i(LOGGER_TAG, "Reconnecting to the device: $deviceName")
+        Log.i(LOGGER_TAG, "Reconnecting to the device: $deviceAddress")
         close()
         TimeUnit.MILLISECONDS.sleep(1000)
         connectToDevice()
-        Log.i(LOGGER_TAG, "Successfully reconnect to the device: $deviceName")
+        Log.i(LOGGER_TAG, "Successfully reconnect to the device: $deviceAddress")
     }
 
     override fun connect() {
@@ -65,7 +65,7 @@ private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"
                 socket.close()
         } catch (_: Throwable){}
 
-        Log.i(LOGGER_TAG, "Socket for the device: $deviceName is closed.")
+        Log.i(LOGGER_TAG, "Socket for the device: $deviceAddress is closed.")
     }
 
     override fun openOutputStream(): OutputStream? {
@@ -80,10 +80,10 @@ private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"
         try {
             Log.i(
                 LOGGER_TAG,
-                "Found bounded connections, size: ${network.bluetoothAdapter()?.bondedDevices?.size}"
+                "Found bounded connections, size: ${Network.bluetoothAdapter()?.bondedDevices?.size}"
             )
 
-            network.findBluetoothAdapterByName(deviceName)?.let { adapter ->
+            Network.findBluetoothAdapterByName(deviceAddress)?.let { adapter ->
                 Log.i(
                     LOGGER_TAG,
                     "Opening connection to bounded device: ${adapter.name}"
@@ -109,7 +109,7 @@ private val RFCOMM_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"
             }
         }catch (e: SecurityException){
             Log.e("BluetoothAdaptersListPreferences", "Failed to obtain BT Permissions", e)
-            network.requestBluetoothPermissions()
+            Network.requestBluetoothPermissions()
         }
     }
 }

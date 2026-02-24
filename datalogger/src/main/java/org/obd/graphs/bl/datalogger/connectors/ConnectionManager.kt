@@ -17,6 +17,7 @@
 package org.obd.graphs.bl.datalogger.connectors
 
 import android.util.Log
+import org.obd.graphs.Network
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
@@ -25,7 +26,6 @@ import org.obd.graphs.bl.datalogger.DataLoggerSettings
 import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
-import org.obd.graphs.network
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.transport.AdapterConnection
 
@@ -43,19 +43,19 @@ internal object ConnectionManager {
 
     private fun bluetoothConnection(): AdapterConnection? =
         try {
-            val deviceName = dataLoggerSettings.instance().adapter.adapterId
-            Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceName ...")
+            val deviceAddress = dataLoggerSettings.instance().adapter.deviceAddress
+            Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceAddress ...")
 
-            if (deviceName.isEmpty()) {
+            if (deviceAddress.isEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                 null
             } else {
-                if (network.findBluetoothAdapterByName(deviceName) == null) {
-                    Log.e(LOG_TAG, "Did not find Bluetooth Adapter: $deviceName")
+                if (Network.findBluetoothAdapterByName(deviceAddress) == null) {
+                    Log.e(LOG_TAG, "Did not find Bluetooth Adapter: $deviceAddress")
                     sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                     null
                 } else {
-                    BluetoothConnection(deviceName)
+                    BluetoothConnection(deviceAddress)
                 }
             }
         } catch (e: Exception) {
@@ -72,18 +72,18 @@ internal object ConnectionManager {
             )
 
             Log.i(LOG_TAG, "Selected WIFI SSID in preferences: ${preferences.adapter.wifiSSID}")
-            Log.i(LOG_TAG, "Current connected WIFI SSID ${network.currentSSID}")
+            Log.i(LOG_TAG, "Current connected WIFI SSID ${Network.currentSSID}")
 
             if (preferences.adapter.wifiSSID.isEmpty()) {
                 Log.d(LOG_TAG, "Target WIFI SSID is not specified in the prefs section. Connecting to the default one.")
-            } else if (network.currentSSID.isNullOrBlank()) {
+            } else if (Network.currentSSID.isNullOrBlank()) {
                 sendBroadcastEvent(DATA_LOGGER_WIFI_NOT_CONNECTED)
                 return null
-            } else if (preferences.adapter.wifiSSID != network.currentSSID) {
+            } else if (preferences.adapter.wifiSSID != Network.currentSSID) {
                 Log.w(
                     LOG_TAG,
                     "Preferences selected WIFI SSID ${preferences.adapter.wifiSSID} " +
-                        "is different than current connected ${network.currentSSID}",
+                        "is different than current connected ${Network.currentSSID}",
                 )
                 sendBroadcastEvent(DATA_LOGGER_WIFI_INCORRECT)
                 return null

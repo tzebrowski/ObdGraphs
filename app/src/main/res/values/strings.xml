@@ -221,7 +221,6 @@
     <string name="pref.aa.screen.load_last_visited.enabled">Automatically load the previously used screen.</string>
     <string name="pref.aa.display_status_panel">Display status panel</string>
     <string name="pref.aa.connect_dialog.enabled">Display the connection dialog while establishing a connection with the OBD2 adapter</string>
-    <string name="pref.aa.connection_auto">Auto-connect when AA mode is activated.</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled">Enable PIDs sort order</string>
     <string name="pref.aa.virtual_screens.sort_order.enabled_summary">This is an EXPERIMENTAL feature.\nIt allows you to define the order of PIDs on the screen using drag-and-drop within the PID selection list. An app restart is required after enabling this option.</string>
 

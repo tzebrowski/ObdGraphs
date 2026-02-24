@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -33,20 +33,58 @@ import androidx.annotation.RequiresApi
 import pub.devrel.easypermissions.EasyPermissions
 
 
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
+import androidx.annotation.RequiresPermission
+
 private const val LOG_LEVEL = "Network"
 const val REQUEST_PERMISSIONS_BT = "REQUEST_PERMISSIONS_BT_CONNECT"
 const val REQUEST_LOCATION_PERMISSIONS = "REQUEST_LOCATION_PERMISSION"
 
-val network = Network()
-class Network {
+object Network {
+
+    private const val TAG: String = "Network"
+
+    private class AutoConnectBTReceiver(private val targetMacAddress: String) : BroadcastReceiver() {
+        @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN])
+        override fun onReceive(context: Context, intent: Intent) {
+
+            val action = intent.action
+            when (action) {
+                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    Log.i(TAG, "12-second scan finished. The radio is resting.")
+                    bluetoothAdapter(context)?.cancelDiscovery()
+                }
+
+                BluetoothDevice.ACTION_FOUND -> {
+                    val device: BluetoothDevice? =
+                        intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                    val macAddress = device?.address
+
+                    if (Log.isLoggable(TAG,Log.DEBUG)) {
+                        Log.d(TAG, "Found device: ${device?.name} at $macAddress")
+                    }
+                    if (macAddress == targetMacAddress) {
+                        Log.e(
+                            TAG,
+                            "Target (${device.name} ${device.address}) OBD adapter found via scan"
+                        )
+                        sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
+                    }
+                }
+            }
+
+        }
+    }
 
     var currentSSID: String? = ""
-    fun bluetoothAdapter(): BluetoothAdapter? =
-        (getContext()?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+    fun bluetoothAdapter(context: Context? = getContext()): BluetoothAdapter? =
+        (context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
 
-    fun findBluetoothAdapterByName(deviceName: String): BluetoothDevice? {
+    fun findBluetoothAdapterByName(deviceAddress: String): BluetoothDevice? {
         return try {
-            bluetoothAdapter()?.bondedDevices?.find { deviceName == it.address}
+            bluetoothAdapter()?.bondedDevices?.find { deviceAddress == it.address }
         } catch (e: SecurityException) {
             requestBluetoothPermissions()
             return null
@@ -54,10 +92,14 @@ class Network {
     }
 
     fun findWifiSSID(): List<String> {
-        return if (EasyPermissions.hasPermissions(getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION)) {
+        return if (EasyPermissions.hasPermissions(
+                getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        ) {
             try {
-                val wifiManager = getContext()?.getSystemService(Context.WIFI_SERVICE) as WifiManager
+                val wifiManager =
+                    getContext()?.getSystemService(Context.WIFI_SERVICE) as WifiManager
                 wifiManager.startScan()
                 val ll = mutableListOf<String>()
                 wifiManager.scanResults.forEach {
@@ -65,13 +107,13 @@ class Network {
                     ll.add(it.SSID)
                 }
                 ll
-            }catch (e: SecurityException){
-                Log.e(LOG_LEVEL,"User does not has access to ACCESS_COARSE_LOCATION permission.")
+            } catch (e: SecurityException) {
+                Log.e(LOG_LEVEL, "User does not has access to ACCESS_COARSE_LOCATION permission.")
                 sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
                 emptyList()
             }
         } else {
-            Log.e(LOG_LEVEL,"User does not has access to ACCESS_COARSE_LOCATION permission.")
+            Log.e(LOG_LEVEL, "User does not has access to ACCESS_COARSE_LOCATION permission.")
             sendBroadcastEvent(REQUEST_LOCATION_PERMISSIONS)
             emptyList()
         }
@@ -84,27 +126,36 @@ class Network {
             val wifiCallback = when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                     object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
-                        override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                        override fun onCapabilitiesChanged(
+                            network: Network,
+                            networkCapabilities: NetworkCapabilities
+                        ) {
                             currentSSID = readSSID(networkCapabilities)
                         }
                     }
                 }
+
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                     object : ConnectivityManager.NetworkCallback() {
-                        override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                        override fun onCapabilitiesChanged(
+                            network: Network,
+                            networkCapabilities: NetworkCapabilities
+                        ) {
                             currentSSID = readSSID(networkCapabilities)
                         }
                     }
                 }
+
                 else -> null
             }
 
             wifiCallback?.let {
-                getContext()?.let {  contextWrapper ->
+                getContext()?.let { contextWrapper ->
                     val request = NetworkRequest.Builder()
                         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                         .build()
-                    val connectivityManager = contextWrapper.getSystemService(ConnectivityManager::class.java)
+                    val connectivityManager =
+                        contextWrapper.getSystemService(ConnectivityManager::class.java)
                     connectivityManager.requestNetwork(request, it)
                     connectivityManager.registerNetworkCallback(request, it)
                 }
@@ -113,7 +164,7 @@ class Network {
             Log.i(LOG_LEVEL, "Network setup completed")
 
         } catch (e: Exception) {
-            Log.e(LOG_LEVEL,"Failed to complete network registration",e)
+            Log.e(LOG_LEVEL, "Failed to complete network registration", e)
         }
     }
 
@@ -121,7 +172,7 @@ class Network {
     private fun readSSID(networkCapabilities: NetworkCapabilities): String? {
         val wifiInfo = networkCapabilities.transportInfo as WifiInfo?
         val ssid = wifiInfo?.ssid?.trim()?.replace("\"", "")
-        if (Log.isLoggable(LOG_LEVEL,Log.VERBOSE)) {
+        if (Log.isLoggable(LOG_LEVEL, Log.VERBOSE)) {
             Log.v(LOG_LEVEL, "Wifi state changed, current WIFI SSID: $ssid, $wifiInfo")
         }
         return ssid
@@ -154,6 +205,38 @@ class Network {
             (it.getSystemService(Context.WIFI_SERVICE) as? WifiManager)?.apply {
                 isWifiEnabled = enable
             }
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun startBackgroundBleScanForMac(context: Context, targetMacAddress: String) {
+        try {
+
+            if (!Permissions.isBLEScanPermissionsGranted(context)) return
+            if (!Permissions.isLocationEnabled(context)) return
+
+            val bluetoothAdapter: BluetoothAdapter? = bluetoothAdapter(context)
+
+            if (bluetoothAdapter == null) {
+                Log.e(TAG, "Device doesn't support Bluetooth")
+                return
+            }
+
+            val filter = IntentFilter()
+            filter.addAction(BluetoothDevice.ACTION_FOUND)
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+            context.registerReceiver(AutoConnectBTReceiver(targetMacAddress), filter)
+
+            if (bluetoothAdapter.isDiscovering) {
+                bluetoothAdapter.cancelDiscovery()
+            }
+
+            val scanStarted = bluetoothAdapter.startDiscovery()
+            Log.i(TAG, "Started scanning for Classic Bluetooth device = $scanStarted")
+
+        } catch (_: SecurityException) {
+            requestBluetoothPermissions()
         }
     }
 }

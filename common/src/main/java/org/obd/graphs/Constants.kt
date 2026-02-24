@@ -52,3 +52,5 @@ const val GOOGLE_SIGN_IN_NO_CREDENTIAL_FAILURE = "gdrive.authorization.no_creden
 const val REQUEST_NOTIFICATION_PERMISSIONS = "org.obd.graphs.logger.permissions.request_notifications"
 
 const val LOCATION_IS_DISABLED = "org.obd.graphs.logger.gps.LOCATION_IS_DISABLED.event"
+
+const val DATA_LOGGER_AUTO_CONNECT_EVENT = "data.logger.auto_connect.start"

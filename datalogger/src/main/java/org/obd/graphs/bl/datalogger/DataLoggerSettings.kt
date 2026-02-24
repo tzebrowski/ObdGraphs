@@ -20,11 +20,15 @@ import org.obd.graphs.modules
 import org.obd.graphs.preferences.XmlPreference
 
 data class Adapter(
+
+    @XmlPreference("pref.vehicle_settings.auto_connect_once_launched", "false", Boolean::class)
+    var autoConnectEnabled: Boolean = false,
+
     @XmlPreference("pref.adapter.gps.collect.enabled", "false", Boolean::class)
     var gpsCollecetingEnabled: Boolean = false,
 
     @XmlPreference("pref.adapter.id", "OBDII", String::class)
-    var adapterId: String = "OBDII",
+    var deviceAddress: String = "OBDII",
 
     @XmlPreference("pref.adapter.connection.type", "bluetooth", String::class)
     var connectionType: String = "bluetooth",

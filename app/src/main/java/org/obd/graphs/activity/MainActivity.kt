@@ -36,8 +36,10 @@ import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
+import org.obd.graphs.Network
 import org.obd.graphs.Permissions
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.AutoConnect
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
@@ -45,7 +47,6 @@ import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
-import org.obd.graphs.network
 import org.obd.graphs.preferences.setPreferencesContext
 import org.obd.graphs.profile.profile
 import org.obd.graphs.sendBroadcastEvent
@@ -151,7 +152,7 @@ class MainActivity :
         setupVehicleProfiles()
 
         setupStatusPanel()
-        network.setupConnectedNetworksCallback()
+        Network.setupConnectedNetworksCallback()
 
         progressBar {
             it.visibility = View.GONE
@@ -165,6 +166,7 @@ class MainActivity :
 
         navigateToLastVisitedScreen()
         validatePermissions()
+        AutoConnect.setup(this)
     }
 
     override fun onResume() {

@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -45,7 +45,9 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.ChartTouchListener.ChartGesture
 import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.github.mikephil.charting.utils.ColorTemplate
+import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
+import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
@@ -84,9 +86,21 @@ class GraphFragment : Fragment() {
                 intent: Intent?,
             ) {
                 when (intent?.action) {
+
+                    DATA_LOGGER_AUTO_CONNECT_EVENT ->
+                        if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
+                            Log.i(
+                                LOG_TAG,
+                                "Auto-connect data logger for=${query().getIDs()}"
+                            )
+                            withDataLogger {
+                                start(query())
+                            }
+                        }
+
                     DATA_LOGGER_SCHEDULED_START_EVENT -> {
-                        if (isAdded && isVisible) {
-                            Log.i(org.obd.graphs.activity.LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
+                        if (isFragmentVisibleToTheUser()) {
+                            Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
                             withDataLogger {
                                 scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
                             }
@@ -118,6 +132,8 @@ class GraphFragment : Fragment() {
                     }
                 }
             }
+
+            private fun isFragmentVisibleToTheUser(): Boolean = isAdded && isVisible
         }
 
     private class ReverseValueFormatter(
@@ -128,7 +144,8 @@ class GraphFragment : Fragment() {
 
     private val xAxisFormatter =
         object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String = simpleDateFormat.format(Date(tripStartTs + value.toLong()))
+            override fun getFormattedValue(value: Float): String =
+                simpleDateFormat.format(Date(tripStartTs + value.toLong()))
         }
 
     private val onGestureListener =
@@ -271,7 +288,8 @@ class GraphFragment : Fragment() {
         val colors = Colors().get()
         chart =
             buildChart(root).apply {
-                val pidRegistry: PidDefinitionRegistry = DataLoggerRepository.getPidDefinitionRegistry()
+                val pidRegistry: PidDefinitionRegistry =
+                    DataLoggerRepository.getPidDefinitionRegistry()
                 val metrics =
                     preferences.metrics
                         .mapNotNull {
@@ -289,7 +307,11 @@ class GraphFragment : Fragment() {
                                     Log.d(LOG_TAG, "Created chart data-set for PID: ${it.id}")
                                     dataSet
                                 } catch (e: Throwable) {
-                                    Log.v(LOG_TAG, "Failed to create chart  data-set ${e.message} for PID: ${it.id}", e)
+                                    Log.v(
+                                        LOG_TAG,
+                                        "Failed to create chart  data-set ${e.message} for PID: ${it.id}",
+                                        e
+                                    )
                                     null
                                 }
                             }.toList(),
