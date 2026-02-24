@@ -125,43 +125,14 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         val labelCenterYPadding = settings.getPerformanceScreenSettings().labelCenterYPadding - 4
 
-        when (gauges.size) {
-            4 -> {
-                val topRowWidth = availableWidth / 2f
-                drawGauge(gauges[0], canvas, rowTop, areaLeft, topRowWidth, labelCenterYPadding)
-                drawGauge(gauges[1], canvas, rowTop, areaLeft + topRowWidth, topRowWidth, labelCenterYPadding)
+        val count = gauges.size
+        if (count > 0) {
+            val width = if (count == 1) availableWidth / 2f else availableWidth / count.toFloat()
+            val startLeft = if (count == 1) areaLeft + (availableWidth / 4f) else areaLeft
+            val padding = if (count == 1) 6f else labelCenterYPadding
 
-                val topRowHeight = topRowWidth * 0.8f
-                val bottomRowTop = rowTop + (topRowHeight * 0.45f)
-                val bottomRowWidth = availableWidth / 3.5f
-                val centerOffset = (availableWidth - (bottomRowWidth * 2)) / 2f
-
-                drawGauge(gauges[2], canvas, bottomRowTop, areaLeft + centerOffset - 10f, bottomRowWidth, labelCenterYPadding)
-                drawGauge(gauges[3], canvas, bottomRowTop, areaLeft + centerOffset + bottomRowWidth + 10f, bottomRowWidth, labelCenterYPadding)
-            }
-
-            3 -> {
-                val width = availableWidth / 3f
-                drawGauge(gauges[0], canvas, rowTop, areaLeft, width, labelCenterYPadding)
-                drawGauge(gauges[1], canvas, rowTop, areaLeft + width, width, labelCenterYPadding)
-                drawGauge(gauges[2], canvas, rowTop, areaLeft + (width * 2), width, labelCenterYPadding)
-            }
-
-            2 -> {
-                val width = availableWidth / 2f
-                drawGauge(gauges[0], canvas, rowTop, areaLeft, width, labelCenterYPadding)
-                drawGauge(gauges[1], canvas, rowTop, areaLeft + width, width, labelCenterYPadding)
-            }
-
-            1 -> {
-                drawGauge(
-                    gauges[0],
-                    canvas,
-                    rowTop,
-                    areaLeft + (availableWidth / 4f),
-                    availableWidth / 2f,
-                    labelCenterYPadding = 6f
-                )
+            gauges.forEachIndexed { index, gauge ->
+                drawGauge(gauge, canvas, rowTop, startLeft + (width * index), width, padding)
             }
         }
     }

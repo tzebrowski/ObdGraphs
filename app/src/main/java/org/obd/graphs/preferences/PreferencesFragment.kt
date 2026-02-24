@@ -23,19 +23,34 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.*
+import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceScreen
 import org.obd.graphs.R
-import org.obd.graphs.activity.*
+import org.obd.graphs.activity.DASH_VIEW_ID
+import org.obd.graphs.activity.GAUGE_VIEW_ID
+import org.obd.graphs.activity.GIULIA_VIEW_ID
+import org.obd.graphs.activity.GRAPH_VIEW_ID
+import org.obd.graphs.activity.NOTIFICATION_DASH_VIEW_TOGGLE
+import org.obd.graphs.activity.NOTIFICATION_GAUGE_VIEW_TOGGLE
+import org.obd.graphs.activity.NOTIFICATION_GIULIA_VIEW_TOGGLE
+import org.obd.graphs.activity.NOTIFICATION_GRAPH_VIEW_TOGGLE
+import org.obd.graphs.activity.TOOLBAR_SHOW
+import org.obd.graphs.activity.navigateToPreferencesScreen
+import org.obd.graphs.activity.navigateToScreen
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
 import org.obd.graphs.preferences.dtc.DiagnosticTroubleCodePreferenceDialogFragment
 import org.obd.graphs.preferences.metadata.VehicleMetadataListPreferences
 import org.obd.graphs.preferences.metadata.VehicleMetadataPreferenceDialogFragment
-import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.pid.PidDefinitionListPreferences
-import org.obd.graphs.preferences.trips.TripsListPreferences
+import org.obd.graphs.preferences.pid.PidDefinitionPreferenceDialogFragment
 import org.obd.graphs.preferences.trips.TripLogListDialogFragment
+import org.obd.graphs.preferences.trips.TripsListPreferences
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.onDoubleClickListener
 import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
@@ -56,6 +71,7 @@ const val PREFERENCE_SCREEN_KEY_DASH = "pref.dash.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GAUGE = "pref.gauge.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GRAPH = "pref.graph.displayed_parameter_ids"
 const val PREFERENCE_SCREEN_KEY_GIULIA = "pref.giulia.displayed_parameter_ids"
+
 const val PREFERENCE_SCREEN_SOURCE_TRIP_INFO = "trip_info"
 const val PREFERENCE_SCREEN_SOURCE_PERFORMANCE = "performance"
 private const val PREFERENCE_SCREEN_SOURCE_GIULIA = "giulia"
@@ -66,10 +82,8 @@ private const val NAVIGATE_TO_PREF_KEY = "pref.aa"
 private const val PREFERENCE_SCREEN_SOURCE_DASHBOARD = "dashboard"
 
 class PreferencesFragment : PreferenceFragmentCompat() {
-
     override fun onDisplayPreferenceDialog(preference: Preference) {
         when (preference) {
-
             is TripsListPreferences -> {
                 TripLogListDialogFragment().show(parentFragmentManager, null)
             }
@@ -82,35 +96,40 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 openPreferenceDialogFor(preference.source)
                 when (preference.source) {
                     "dash" -> {
-                        openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD)
-                        { navigateToScreen(R.id.nav_dashboard) }
+                        openPIDsDialog(
+                            "pref.dash.pids.selected",
+                            PREFERENCE_SCREEN_SOURCE_DASHBOARD,
+                        ) { navigateToScreen(R.id.nav_dashboard) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GRAPH -> {
-                        openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(), preference.source)
-                        { navigateToScreen(R.id.nav_graph) }
+                        openPIDsDialog(
+                            tripVirtualScreenManager.getVirtualScreenPrefKey(),
+                            preference.source,
+                        ) { navigateToScreen(R.id.nav_graph) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GIULIA -> {
-                        openPIDsDialog(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(), preference.source)
-                        { navigateToScreen(R.id.nav_giulia) }
+                        openPIDsDialog(
+                            giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(),
+                            preference.source,
+                        ) { navigateToScreen(R.id.nav_giulia) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_GAUGE -> {
-                        openPIDsDialog(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(), preference.source)
-                        { navigateToScreen(R.id.nav_gauge) }
+                        openPIDsDialog(
+                            gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(),
+                            preference.source,
+                        ) { navigateToScreen(R.id.nav_gauge) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_TRIP_INFO -> {
-                        openPIDsDialog(preference.key, preference.source)
-                        { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
+                        openPIDsDialog(preference.key, preference.source) { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
                     }
 
                     PREFERENCE_SCREEN_SOURCE_PERFORMANCE -> {
-                        openPIDsDialog(preference.key, preference.source)
-                        { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
+                        openPIDsDialog(preference.key, preference.source) { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
                     }
-
 
                     else -> {
                         openPIDsDialog(preference.key, preference.source)
@@ -134,7 +153,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         navigateToPreferencesScreen(preferenceScreen.key)
     }
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?,
+    ) {
         if (arguments == null) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
         } else {
@@ -143,7 +165,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
                 setPreferencesFromResource(
                     R.xml.preferences,
-                    it
+                    it,
                 )
                 openPreferenceDialogFor(it)
             }
@@ -153,7 +175,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         sendBroadcastEvent(TOOLBAR_SHOW)
         val root = super.onCreateView(inflater, container, savedInstanceState)
@@ -187,13 +209,11 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         val p2 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.wifi")
         val p3 = findPreference<Preference>("$PREFERENCE_CONNECTION_TYPE.usb")
 
-
         when (Prefs.getString(PREFERENCE_CONNECTION_TYPE)) {
             bluetooth -> {
                 p1?.isVisible = true
                 p2?.isVisible = false
                 p3?.isVisible = false
-
             }
 
             "wifi" -> {
@@ -209,7 +229,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
 
             else -> {
-
             }
         }
 
@@ -221,7 +240,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         p1?.isVisible = true
                         p2?.isVisible = false
                         p3?.isVisible = false
-
                     }
 
                     "wifi" -> {
@@ -246,67 +264,80 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun openPreferenceDialogFor(preferenceKey: String) {
-
         when (preferenceKey) {
             PREF_GAUGE_TRIPS -> TripLogListDialogFragment(enableUploadCloudButton = false).show(parentFragmentManager, null)
             PREF_LOGS -> TripLogListDialogFragment(enableDeleteButtons = false).show(parentFragmentManager, null)
 
             PREFERENCE_SCREEN_KEY_TRIP_INFO ->
-                openPIDsDialog("pref.aa.trip_info.pids.selected", PREFERENCE_SCREEN_SOURCE_TRIP_INFO)
-                { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
+                openPIDsDialog(
+                    "pref.aa.trip_info.pids.selected",
+                    PREFERENCE_SCREEN_SOURCE_TRIP_INFO,
+                ) { navigateToScreen(R.id.nav_trip_info) }
 
             PREFERENCE_SCREEN_KEY_PERFORMANCE ->
-                openPIDsDialog("pref.aa.performance.pids.selected", PREFERENCE_SCREEN_SOURCE_PERFORMANCE)
-                { navigateToPreferencesScreen(NAVIGATE_TO_PREF_KEY) }
+                openPIDsDialog(
+                    "pref.aa.performance.pids.selected",
+                    PREFERENCE_SCREEN_SOURCE_PERFORMANCE,
+                ) { navigateToScreen(R.id.nav_performance) }
 
             PREFERENCE_SCREEN_KEY_DASH ->
-                openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD)
-                { navigateToScreen(R.id.nav_dashboard) }
+                openPIDsDialog("pref.dash.pids.selected", PREFERENCE_SCREEN_SOURCE_DASHBOARD) { navigateToScreen(R.id.nav_dashboard) }
 
             PREFERENCE_SCREEN_KEY_GAUGE ->
-                openPIDsDialog(gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GAUGE)
-                { navigateToScreen(R.id.nav_gauge) }
+                openPIDsDialog(
+                    gaugeVirtualScreenPreferences.getVirtualScreenPrefKey(),
+                    PREFERENCE_SCREEN_SOURCE_GAUGE,
+                ) { navigateToScreen(R.id.nav_gauge) }
 
             PREFERENCE_SCREEN_KEY_GIULIA ->
-                openPIDsDialog(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GIULIA)
-                { navigateToScreen(R.id.nav_giulia) }
+                openPIDsDialog(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GIULIA) {
+                    navigateToScreen(R.id.nav_giulia)
+                }
 
             PREFERENCE_SCREEN_KEY_GRAPH ->
-                openPIDsDialog(tripVirtualScreenManager.getVirtualScreenPrefKey(), PREFERENCE_SCREEN_SOURCE_GRAPH)
-                { navigateToScreen(R.id.nav_graph) }
+                openPIDsDialog(
+                    tripVirtualScreenManager.getVirtualScreenPrefKey(),
+                    PREFERENCE_SCREEN_SOURCE_GRAPH,
+                ) { navigateToScreen(R.id.nav_graph) }
         }
     }
 
-    private fun openPIDsDialog(key: String, source: String, onDialogCloseListener: (() -> Unit) = {}) {
+    private fun openPIDsDialog(
+        key: String,
+        source: String,
+        onDialogCloseListener: (() -> Unit) = {},
+    ) {
         PidDefinitionPreferenceDialogFragment(
-            key = key, source = source,
-            onDialogCloseListener = onDialogCloseListener
-        )
-            .show(parentFragmentManager, null)
+            key = key,
+            source = source,
+            onDialogCloseListener = onDialogCloseListener,
+        ).show(parentFragmentManager, null)
     }
-
 
     private fun registerViewsPreferenceChangeListeners() {
         registerCheckboxListener(
             GRAPH_VIEW_ID,
-            NOTIFICATION_GRAPH_VIEW_TOGGLE
+            NOTIFICATION_GRAPH_VIEW_TOGGLE,
         )
         registerCheckboxListener(
             GAUGE_VIEW_ID,
-            NOTIFICATION_GAUGE_VIEW_TOGGLE
+            NOTIFICATION_GAUGE_VIEW_TOGGLE,
         )
         registerCheckboxListener(
             DASH_VIEW_ID,
-            NOTIFICATION_DASH_VIEW_TOGGLE
+            NOTIFICATION_DASH_VIEW_TOGGLE,
         )
 
         registerCheckboxListener(
             GIULIA_VIEW_ID,
-            NOTIFICATION_GIULIA_VIEW_TOGGLE
+            NOTIFICATION_GIULIA_VIEW_TOGGLE,
         )
     }
 
-    private fun registerCheckboxListener(key: String, actionName: String) {
+    private fun registerCheckboxListener(
+        key: String,
+        actionName: String,
+    ) {
         val preference = findPreference<CheckBoxPreference>(key)
         preference?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, _ ->

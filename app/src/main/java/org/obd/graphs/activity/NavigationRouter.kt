@@ -29,6 +29,8 @@ import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_DASH
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GAUGE
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GIULIA
 import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_GRAPH
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_PERFORMANCE
+import org.obd.graphs.preferences.PREFERENCE_SCREEN_KEY_TRIP_INFO
 import org.obd.graphs.preferences.PREF_GAUGE_TRIPS
 import org.obd.graphs.preferences.PREF_LOGS
 import org.obd.graphs.preferences.Prefs
@@ -38,7 +40,7 @@ import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
 import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
 
- internal object NavigationRouter {
+internal object NavigationRouter {
     fun navigate(
         activity: MainActivity,
         itemId: Int,
@@ -115,6 +117,7 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
                         tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
                         navigateToScreen(R.id.nav_graph)
                     }
+
                     else -> false
                 }
 
@@ -125,6 +128,8 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
                         R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
                         R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
                         R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
+                        R.id.nav_performance -> PREFERENCE_SCREEN_KEY_PERFORMANCE
+                        R.id.nav_trip_info -> PREFERENCE_SCREEN_KEY_TRIP_INFO
                         else -> null
                     }
 
@@ -177,7 +182,6 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
 
     internal fun isAndroidAutoEnabled(context: Context) = context.resources.getBoolean(R.bool.MODULE_ANDROID_AUTO_ENABLED)
 
-
     private fun applyGraphViewFilter(screenId: Int): Boolean {
         val propertyId: String? =
             when (getGraphFilterSource()) {
@@ -207,7 +211,6 @@ import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
         }
         return false
     }
-
 
     private fun getCurrentScreenId(activity: MainActivity): Int {
         val navHostFragment =
