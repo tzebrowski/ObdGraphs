@@ -17,6 +17,12 @@
 package org.obd.graphs.renderer.api
 
 import android.graphics.Color
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
@@ -126,6 +132,8 @@ data class TripInfoScreenSettings(
 
 data class BreakBoostingSettings(
     var viewEnabled: Boolean = true,
+    var gasMetric: Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong(),
+    var torqueMetric: Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE, -1).toLong(),
 )
 
 data class PerformanceScreenSettings(
@@ -133,8 +141,8 @@ data class PerformanceScreenSettings(
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
     var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
-    var topMetrics: List<Long> = emptyList(),
-    var bottomMetrics: List<Long> = emptyList()
+    var topMetrics: List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP).toList(),
+    var bottomMetrics: List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM).toList(),
 )
 
 data class RoutinesScreenSettings(

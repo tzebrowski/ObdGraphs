@@ -24,6 +24,9 @@ internal class MetricsCache {
     val bottomMetrics = mutableListOf<Metric>()
     val topMetrics = mutableListOf<Metric>()
 
+    var gasMetric: Metric? = null
+    var torqueMetric: Metric? = null
+
     private val cachedMetrics = mutableListOf<Metric>()
     private var lastBottomIds: List<Long> = emptyList()
     private var lastTopIds: List<Long> = emptyList()
@@ -33,6 +36,8 @@ internal class MetricsCache {
         metricsCollector: MetricsCollector,
     ) {
         val allMetrics = metricsCollector.getMetrics(enabled = true)
+        gasMetric = metricsCollector.getMetric(settings.breakBoostingSettings.gasMetric)
+        torqueMetric = metricsCollector.getMetric(settings.breakBoostingSettings.torqueMetric)
 
         if (allMetrics.size == cachedMetrics.size &&
             settings.bottomMetrics == lastBottomIds &&

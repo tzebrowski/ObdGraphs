@@ -38,7 +38,7 @@ internal class QueryStrategyOrchestrator :
 
     private var strategy: QueryStrategyType = QueryStrategyType.SHARED_QUERY
 
-    override fun getDefaults(): Set<Long> = strategies[strategy]?.getDefaults() ?: emptySet()
+    override fun getDefaultPIDs(): Set<Long> = strategies[strategy]?.getDefaults() ?: emptySet()
 
     override fun getIDs(): MutableSet<Long> {
         val pids = strategies[strategy]?.getPIDs() ?: mutableSetOf()

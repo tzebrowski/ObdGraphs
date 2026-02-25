@@ -21,7 +21,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.MetricsCollector
-import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
@@ -74,13 +73,12 @@ internal class PerformanceSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
-            val gasMetric = metricsCollector.getMetric(Pid.GAS_PID_ID)
-            val torqueMetric = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+            metricsCache.update(performanceScreenSettings, metricsCollector)
 
             if (breakBoostingDrawer.isBreakBoosting(
                     breakBoostingSettings = performanceScreenSettings.breakBoostingSettings,
-                    gas = gasMetric,
-                    torque = torqueMetric,
+                    gas = metricsCache.gasMetric,
+                    torque = metricsCache.torqueMetric,
                 )
             ) {
                 top -= 30f
@@ -89,12 +87,11 @@ internal class PerformanceSurfaceRenderer(
                     canvas,
                     area,
                     top,
-                    gas = gasMetric,
-                    torque = torqueMetric,
+                    gas = metricsCache.gasMetric,
+                    torque = metricsCache.torqueMetric,
                 )
             } else {
 
-                metricsCache.update(performanceScreenSettings, metricsCollector)
 
                 performanceDrawer.drawScreen(
                     canvas = canvas,
