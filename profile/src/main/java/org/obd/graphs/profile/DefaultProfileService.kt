@@ -59,10 +59,9 @@ internal class DefaultProfileService :
     private var bulkActionEnabled = false
 
     override fun updateCurrentProfileName(newName: String) {
-        Prefs
-            .edit()
-            .putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newName)
-            .apply()
+        Prefs.edit {
+            putString("$PROFILE_NAME_PREFIX.${getCurrentProfile()}", newName)
+        }
     }
 
     override fun getAvailableProfiles() =

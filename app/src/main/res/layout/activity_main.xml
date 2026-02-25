@@ -40,7 +40,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/trip_profile"
+                    android:id="@+id/vehicle_profile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
@@ -48,6 +48,7 @@
                     android:text="@string/status_panel.vehicle_profile"
                     android:textColor="@color/white"
                     android:textSize="12sp"
+                    android:maxWidth="200dp"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
                     app:layout_constraintStart_toEndOf="@id/connection_status" />
 
@@ -61,7 +62,7 @@
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintBaseline_toBaselineOf="@id/connection_status"
-                    app:layout_constraintStart_toEndOf="@id/trip_profile" />
+                    app:layout_constraintStart_toEndOf="@id/vehicle_profile" />
 
                 <Chronometer
                     android:id="@+id/timer"

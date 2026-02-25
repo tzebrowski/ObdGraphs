@@ -20,10 +20,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import androidx.preference.EditTextPreference
-import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.profile.PROFILES_PREF
 import org.obd.graphs.profile.profile
+import org.obd.graphs.sendBroadcastEvent
+
+const val PROFILE_NAME_CHANGED_EVENT = "profile.name.changed.event"
 
 class ProfileNamePreference(
     context: Context,
@@ -33,10 +35,13 @@ class ProfileNamePreference(
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, newValue ->
 
-                Log.d("VehicleProfileNamePreference", "Updating profile value: ${profile.getCurrentProfile()}=$newValue")
+                Log.v(
+                    "ProfileNamePreference",
+                    "Updating profile value: ${profile.getCurrentProfile()}=$newValue",
+                )
 
                 profile.updateCurrentProfileName(newName = newValue.toString())
-
+                sendBroadcastEvent(PROFILE_NAME_CHANGED_EVENT)
                 navigateToPreferencesScreen(PROFILES_PREF)
                 true
             }

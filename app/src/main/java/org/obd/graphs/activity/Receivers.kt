@@ -77,6 +77,7 @@ import org.obd.graphs.getExtraParam
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.preferences.profile.PROFILE_NAME_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.COLOR_CARDINAL
@@ -182,6 +183,8 @@ internal fun MainActivity.receive(intent: Intent?) {
         TOOLBAR_HIDE -> toolbarHide(true)
         TOOLBAR_SHOW -> toolbarHide(false)
         TOOLBAR_TOGGLE_ACTION -> toolbarToggle()
+
+        PROFILE_NAME_CHANGED_EVENT -> updateVehicleProfile()
 
         PROFILE_CHANGED_EVENT -> {
             updateVehicleProfile()
@@ -378,6 +381,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(LOCATION_IS_DISABLED)
         it.addAction(NAVIGATION_BUTTONS_VISIBILITY_CHANGED)
         it.addAction(DATA_LOGGER_SCHEDULED_STOP_EVENT)
+        it.addAction(PROFILE_NAME_CHANGED_EVENT)
     }
 
    registerReceiver(this, DataLoggerRepository.broadcastReceivers()) {
