@@ -326,7 +326,7 @@ open class PidDefinitionPreferenceDialogFragment(
                 val list =
                     Query
                         .instance(QueryStrategyType.TRIP_INFO_QUERY)
-                        .getDefaults()
+                        .getDefaultPIDs()
                         .mapNotNull { pidRegistry.findBy(it) }
                         .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }
@@ -335,7 +335,7 @@ open class PidDefinitionPreferenceDialogFragment(
                 val list =
                     Query
                         .instance(QueryStrategyType.PERFORMANCE_QUERY)
-                        .getDefaults()
+                        .getDefaultPIDs()
                         .mapNotNull { pidRegistry.findBy(it) }
                         .toMutableList()
                 list.map { PidDefinitionDetails(it, checked = false, supported = true) }

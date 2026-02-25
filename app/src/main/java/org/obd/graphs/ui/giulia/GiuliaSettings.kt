@@ -19,18 +19,18 @@ package org.obd.graphs.ui.giulia
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
-import org.obd.graphs.renderer.api.GiuliaRendererSettings
+import org.obd.graphs.renderer.api.GiuliaScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 
  private const val MAX_VISIBLE_ITEMS = 50
 
  class GiuliaSettings : ScreenSettings {
-    private val giuliaRendererSettings =
-        object : GiuliaRendererSettings() {
+    private val giuliaScreenSettings =
+        object : GiuliaScreenSettings() {
             override fun getFontSize(): Int = giuliaVirtualScreenPreferences.getFontSize()
         }
 
-    override fun getGiuliaRendererSetting(): GiuliaRendererSettings = giuliaRendererSettings.apply {
+    override fun getGiuliaScreenSettings(): GiuliaScreenSettings = giuliaScreenSettings.apply {
         updateSelectedPIDs(Prefs.getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()).map { s -> s.toLong() }.toSet())
     }
 

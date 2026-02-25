@@ -49,7 +49,7 @@ internal class TripInfoQueryStrategy : QueryStrategy() {
             Pid.GEAR_ENGAGED_PID_ID.id
             ).toSet()
 
-    override fun getDefaults() = defaults
+    override fun getDefaultPIDs() = defaults
 
     override fun getPIDs() = Prefs.getLongSet(TRIP_INFO_QUERY_PREF_KEY).toMutableSet()
 }

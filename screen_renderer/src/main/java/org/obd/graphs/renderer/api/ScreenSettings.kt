@@ -17,6 +17,12 @@
 package org.obd.graphs.renderer.api
 
 import android.graphics.Color
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
+import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
@@ -61,7 +67,7 @@ data class ColorTheme(
     var actionsBtnVirtualScreensColor: Int = Color.WHITE,
 )
 
-open class GaugeRendererSettings(
+open class GaugeScreenSettings(
     var gaugeProgressBarType: GaugeProgressBarType = GaugeProgressBarType.LONG,
     var topOffset: Int = 0,
 ) : VirtualScreenConfig {
@@ -87,7 +93,7 @@ open class GaugeRendererSettings(
     }
 }
 
-open class GiuliaRendererSettings : VirtualScreenConfig {
+open class GiuliaScreenSettings : VirtualScreenConfig {
     private var internalSelectedPIDs: Set<Long> = emptySet()
 
     override fun getVirtualScreen(): Int = 0
@@ -126,6 +132,8 @@ data class TripInfoScreenSettings(
 
 data class BreakBoostingSettings(
     var viewEnabled: Boolean = true,
+    var gasMetric: Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong(),
+    var torqueMetric: Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE, -1).toLong(),
 )
 
 data class PerformanceScreenSettings(
@@ -133,6 +141,8 @@ data class PerformanceScreenSettings(
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
     var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
+    var topMetrics: List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP).toList(),
+    var bottomMetrics: List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM).toList(),
 )
 
 data class RoutinesScreenSettings(
@@ -154,9 +164,9 @@ interface ScreenSettings {
 
     fun getMaxItems(): Int = 6
 
-    fun getGaugeRendererSetting(): GaugeRendererSettings = GaugeRendererSettings()
+    fun getGaugeScreenSettings(): GaugeScreenSettings = GaugeScreenSettings()
 
-    fun getGiuliaRendererSetting(): GiuliaRendererSettings = GiuliaRendererSettings()
+    fun getGiuliaScreenSettings(): GiuliaScreenSettings = GiuliaScreenSettings()
 
     fun isScrollbarEnabled(): Boolean = false
 

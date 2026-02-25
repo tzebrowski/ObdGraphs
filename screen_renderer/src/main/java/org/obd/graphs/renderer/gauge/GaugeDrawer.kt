@@ -147,7 +147,7 @@ internal class GaugeDrawer(
         left: Float,
         top: Float,
         width: Float,
-        fontSize: Int = settings.getGaugeRendererSetting().getFontSize(),
+        fontSize: Int = settings.getGaugeScreenSettings().getFontSize(),
         labelCenterYPadding: Float = 0f,
         scaleEnabled: Boolean = settings.isScaleEnabled(),
         statsEnabled: Boolean = settings.isStatisticsEnabled(),
@@ -257,7 +257,7 @@ internal class GaugeDrawer(
         left: Float,
         top: Float,
         area: RectF?,
-        gradientColor: Int = settings.getGaugeRendererSetting().getGaugeContainerColor(),
+        gradientColor: Int = settings.getGaugeScreenSettings().getGaugeContainerColor(),
     ) {
         val destRect =
             area ?: run {
@@ -483,7 +483,7 @@ internal class GaugeDrawer(
             histogramPaint.textSize = calculatedFontSize * 0.4f
 
             val verticalGap = calculatedFontSize * 0.2f
-            val valueLineH = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
+            val valueLineH = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
 
             val labelRect = Rect()
             labelPaint.getTextBounds("Ty", 0, 2, labelRect)
@@ -506,7 +506,7 @@ internal class GaugeDrawer(
             }
         }
 
-        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeRendererSetting().topOffset
+        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
         val valueY = centerY - valueHeight
 
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)

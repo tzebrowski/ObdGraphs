@@ -19,18 +19,6 @@ package org.obd.graphs.renderer.performance
 import org.obd.graphs.bl.collector.Metric
 
 data class PerformanceInfoDetails(
-    var ambientTemp: Metric? = null,
-    var atmPressure: Metric? = null,
-    var oilTemp: Metric? = null,
-    var coolantTemp: Metric? = null,
-    var postICAirTemp: Metric? = null,
-    var exhaustTemp: Metric? = null,
-    var gearboxOilTemp: Metric? = null,
-    var intakePressure: Metric? = null,
-    var torque: Metric? = null,
-    var gas: Metric? = null,
-    var preICAirTemp: Metric? = null,
-    var wcacTemp: Metric? = null,
-    var vehicleSpeed: Metric? = null,
-    var gearEngaged: Metric? = null
+    var topMetrics: List<Metric> = emptyList(),
+    var bottomMetrics: List<Metric> = emptyList(),
 )

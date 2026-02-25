@@ -42,12 +42,17 @@ internal class InMemoryCarMetricsCollector : MetricsCollector {
     }
 
     override fun getMetric(
-        id: Pid,
+        id: Long,
         enabled: Boolean,
     ): Metric? {
-        val metric = metrics[id.id]
+        val metric = metrics[id]
         return if (metric != null && metric.enabled == enabled) metric else null
     }
+
+    override fun getMetric(
+        id: Pid,
+        enabled: Boolean,
+    ): Metric?  = getMetric(id.id,enabled)
 
     @Synchronized
     override fun applyFilter(

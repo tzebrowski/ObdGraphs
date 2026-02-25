@@ -56,7 +56,7 @@ internal class GaugeSurfaceRenderer(
         GaugeDrawer(
             settings = settings,
             context = context,
-            drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType),
+            drawerSettings = DrawerSettings(gaugeProgressBarType = settings.getGaugeScreenSettings().gaugeProgressBarType),
         )
 
     private val mobileDrawer =
@@ -67,7 +67,7 @@ internal class GaugeSurfaceRenderer(
                 DrawerSettings(
                     startAngle = 200f,
                     sweepAngle = 200f,
-                    gaugeProgressBarType = settings.getGaugeRendererSetting().gaugeProgressBarType,
+                    gaugeProgressBarType = settings.getGaugeScreenSettings().gaugeProgressBarType,
                 ),
         )
 

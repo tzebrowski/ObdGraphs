@@ -37,5 +37,5 @@ internal class GiuliaScreenBehavior(
     ) {
 
     override val virtualScreenConfig: VirtualScreenConfig
-        get() = settings.getGiuliaRendererSetting()
+        get() = settings.getGiuliaScreenSettings()
 }
