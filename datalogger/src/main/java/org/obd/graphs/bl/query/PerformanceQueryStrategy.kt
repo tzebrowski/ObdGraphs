@@ -16,36 +16,17 @@
  */
 package org.obd.graphs.bl.query
 
-import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongSet
 
 private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selected"
+const val PREF_QUERY_PERFORMANCE_TOP = "pref.query.performance.top"
+const val PREF_QUERY_PERFORMANCE_BOTTOM = "pref.query.performance.bottom"
 
 internal class PerformanceQueryStrategy : QueryStrategy() {
-    private val defaults =
-        setOf(
-            Pid.ATM_PRESSURE_PID_ID,
-            Pid.AMBIENT_TEMP_PID_ID,
-            Pid.GEARBOX_OIL_TEMP_PID_ID,
-            Pid.OIL_TEMP_PID_ID,
-            Pid.COOLANT_TEMP_PID_ID,
-            Pid.EXHAUST_TEMP_PID_ID,
-            Pid.POST_IC_AIR_TEMP_PID_ID,
-            Pid.ENGINE_TORQUE_PID_ID,
-            Pid.INTAKE_PRESSURE_PID_ID,
-            Pid.DYNAMIC_SELECTOR_PID_ID,
-            Pid.GAS_PID_ID,
-            Pid.WCA_TEMP_PID_ID,
-            Pid.PRE_IC_AIR_TEMP_PID_ID,
-            Pid.EXT_VEHICLE_SPEED_PID_ID,
-            Pid.GEAR_ENGAGED_PID_ID,
-            Pid.SPARK_ADVANCE_PID_ID,
-            Pid.EXT_ENGINE_SPEED_PID_ID,
-            Pid.CALCULATED_MAF_PID_ID
-        ).map { it.id }.toSet()
-
-    override fun getDefaults() = defaults
+    override fun getDefaults() =
+        Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP) +
+            Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM)
 
     override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY).toMutableSet()
 }

@@ -63,9 +63,11 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         top: Float,
         performanceInfoDetails: PerformanceInfoDetails
     ) {
+        val performanceScreenSettings = settings.getPerformanceScreenSettings()
+
         val textSize = calculateFontSize(
             multiplier = area.width() / 17f,
-            fontSize = settings.getPerformanceScreenSettings().fontSize
+            fontSize = performanceScreenSettings.fontSize
         )
 
         val itemWidth = area.width() / MAX_ITEMS_IN_ROW.toFloat()
@@ -106,7 +108,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         val availableWidth = area.width().toFloat()
         val areaLeft = area.left.toFloat()
 
-        val labelCenterYPadding = settings.getPerformanceScreenSettings().labelCenterYPadding - 4
+        val labelCenterYPadding = performanceScreenSettings.labelCenterYPadding - 4
 
         val bottomMetrics = performanceInfoDetails.bottomMetrics
 

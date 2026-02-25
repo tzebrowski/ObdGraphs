@@ -20,11 +20,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
+import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 
@@ -38,10 +40,14 @@ internal class PerformanceSurfaceRenderer(
     private val performanceDrawer = PerformanceDrawer(context, settings)
     private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)
 
+    private val cachedBottomMetrics = mutableListOf<Metric>()
+    private val cachedTopMetrics = mutableListOf<Metric>()
+
     override fun onDraw(
         canvas: Canvas,
         drawArea: Rect?,
     ) {
+        val performanceScreenSettings = settings.getPerformanceScreenSettings()
         drawArea?.let {
             performanceDrawer.drawBackground(canvas, it)
 
@@ -71,10 +77,13 @@ internal class PerformanceSurfaceRenderer(
                 top += MARGIN_TOP
             }
 
+            val gasMetric = metricsCollector.getMetric(Pid.GAS_PID_ID)
+            val torqueMetric = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+
             if (breakBoostingDrawer.isBreakBoosting(
-                    breakBoostingSettings = settings.getPerformanceScreenSettings().breakBoostingSettings,
-                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID),
-                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID),
+                    breakBoostingSettings = performanceScreenSettings.breakBoostingSettings,
+                    gas = gasMetric,
+                    torque = torqueMetric,
                 )
             ) {
                 top -= 30f
@@ -83,10 +92,13 @@ internal class PerformanceSurfaceRenderer(
                     canvas,
                     area,
                     top,
-                    gas = metricsCollector.getMetric(Pid.GAS_PID_ID),
-                    torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID),
+                    gas = gasMetric,
+                    torque = torqueMetric,
                 )
             } else {
+
+                updateMetrics(performanceScreenSettings)
+
                 performanceDrawer.drawScreen(
                     canvas = canvas,
                     area = area,
@@ -94,26 +106,8 @@ internal class PerformanceSurfaceRenderer(
                     top = top,
                     performanceInfoDetails =
                         performanceInfoDetails.apply {
-                            bottomMetrics =
-                                listOfNotNull(
-                                    metricsCollector.getMetric(Pid.GAS_PID_ID),
-                                    metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID),
-                                    metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID),
-                                    metricsCollector.getMetric(Pid.EXT_VEHICLE_SPEED_PID_ID),
-                                )
-                            topMetrics =
-                                listOfNotNull(
-                                    metricsCollector.getMetric(Pid.POST_IC_AIR_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID),
-                                    metricsCollector.getMetric(Pid.COOLANT_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.EXHAUST_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.OIL_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.GEARBOX_OIL_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.PRE_IC_AIR_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.WCA_TEMP_PID_ID),
-                                    metricsCollector.getMetric(Pid.GEAR_ENGAGED_PID_ID),
-                                )
+                            this.bottomMetrics = cachedBottomMetrics
+                            this.topMetrics = cachedTopMetrics
                         },
                 )
             }
@@ -122,5 +116,27 @@ internal class PerformanceSurfaceRenderer(
 
     override fun recycle() {
         performanceDrawer.recycle()
+    }
+
+    private fun updateMetrics(performanceScreenSettings: PerformanceScreenSettings) {
+        cachedBottomMetrics.clear()
+        val allMetrics = metricsCollector.getMetrics()
+
+        for (id in performanceScreenSettings.bottomMetrics) {
+            metricsCollector.getMetric(id)?.let { metric ->
+                if (allMetrics.contains(metric)) {
+                    cachedBottomMetrics.add(metric)
+                }
+            }
+        }
+
+        cachedTopMetrics.clear()
+        for (id in performanceScreenSettings.topMetrics) {
+            metricsCollector.getMetric(id)?.let { metric ->
+                if (allMetrics.contains(metric)) {
+                    cachedTopMetrics.add(metric)
+                }
+            }
+        }
     }
 }

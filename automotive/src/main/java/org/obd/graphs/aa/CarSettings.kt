@@ -29,8 +29,8 @@ import org.obd.graphs.renderer.api.ColorTheme
 import org.obd.graphs.renderer.api.DragRacingScreenSettings
 import org.obd.graphs.renderer.api.DynamicSelectorMode
 import org.obd.graphs.renderer.api.GaugeProgressBarType
-import org.obd.graphs.renderer.api.GaugeRendererSettings
-import org.obd.graphs.renderer.api.GiuliaRendererSettings
+import org.obd.graphs.renderer.api.GaugeScreenSettings
+import org.obd.graphs.renderer.api.GiuliaScreenSettings
 import org.obd.graphs.renderer.api.Identity
 import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.RoutinesScreenSettings
@@ -81,7 +81,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     private val dragRacingScreenSettings = DragRacingScreenSettings()
     private val colorTheme = ColorTheme()
 
-    private val gaugeRendererSettings = object: GaugeRendererSettings(){
+    private val gaugeScreenSettings = object: GaugeScreenSettings(){
         val dataPrefs = DataPrefs(
             virtualScreenPrefixKey="pref.aa.gauge.pids.profile_",
             currentVirtualScreenKey = "pref.aa.gauge.pids.vs.current",
@@ -96,7 +96,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         override fun getPIDsSortOrder(): Map<Long, Int>? = if (isPIDsSortOrderEnabled()) itemsSortOrder else null
     }
 
-    private val giuliaRendererSettings = object:  GiuliaRendererSettings(){
+    private val giuliaScreenSettings = object:  GiuliaScreenSettings(){
         val dataPrefs = DataPrefs(
             virtualScreenPrefixKey="pref.aa.pids.profile_",
             currentVirtualScreenKey = "pref.aa.pids.vs.current",
@@ -185,13 +185,13 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
         }
     }
 
-    override fun getGaugeRendererSetting(): GaugeRendererSettings = gaugeRendererSettings.apply {
+    override fun getGaugeScreenSettings(): GaugeScreenSettings = gaugeScreenSettings.apply {
         gaugeProgressBarType =  GaugeProgressBarType.valueOf(Prefs.getS("pref.aa.virtual_screens.screen.gauge.progress_type", GaugeProgressBarType.LONG.name))
         topOffset = Prefs.getS("pref.aa.virtual_screens.gauge.top_offset.${getCurrentVirtualScreenId(dataPrefs = this.dataPrefs)}","0").toInt()
         updateSelectedPIDs(Prefs.getStringSet(dataPrefs.selectedPIDsKey).map { s -> s.toLong() }.toSet())
     }
 
-    override fun getGiuliaRendererSetting(): GiuliaRendererSettings = giuliaRendererSettings.apply {
+    override fun getGiuliaScreenSettings(): GiuliaScreenSettings = giuliaScreenSettings.apply {
         updateSelectedPIDs(Prefs.getStringSet(dataPrefs.selectedPIDsKey).map { s -> s.toLong() }.toSet())
     }
 
@@ -202,7 +202,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     override fun isScaleEnabled(): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.scale.enabled", true)
 
     override fun getMaxColumns(): Int =
-        Prefs.getS("pref.aa.max_pids_in_column.${getCurrentVirtualScreenId(giuliaRendererSettings.dataPrefs)}", DEFAULT_ITEMS_IN_COLUMN).toInt()
+        Prefs.getS("pref.aa.max_pids_in_column.${getCurrentVirtualScreenId(giuliaScreenSettings.dataPrefs)}", DEFAULT_ITEMS_IN_COLUMN).toInt()
 
     override fun getBackgroundColor(): Int = if (carContext.isDarkMode) Color.BLACK else Color.BLACK
 
@@ -220,7 +220,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     override fun getSurfaceFrameRate(): Int = Prefs.getS(PREF_SURFACE_FRAME_RATE, DEFAULT_FRAME_RATE).toInt()
 
-    override fun isBreakLabelTextEnabled(): Boolean = Prefs.getBoolean("pref.aa.break_label.${getCurrentVirtualScreenId(giuliaRendererSettings.dataPrefs)}", true)
+    override fun isBreakLabelTextEnabled(): Boolean = Prefs.getBoolean("pref.aa.break_label.${getCurrentVirtualScreenId(giuliaScreenSettings.dataPrefs)}", true)
 
     private fun setVirtualScreenById( screenId: Int, dataPrefs: DataPrefs) {
         val value = "${dataPrefs.virtualScreenPrefixKey}${screenId}"
@@ -230,7 +230,7 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
     }
 
     fun initItemsSortOrder() {
-        itemsSortOrder = loadItemsSortOrder(getCurrentVirtualScreen(giuliaRendererSettings.dataPrefs))
+        itemsSortOrder = loadItemsSortOrder(getCurrentVirtualScreen(giuliaScreenSettings.dataPrefs))
     }
 
     fun isVirtualScreenEnabled(id: Int): Boolean = Prefs.getBoolean("pref.aa.virtual_screens.enabled.$id", true)
@@ -244,10 +244,10 @@ class CarSettings(private val carContext: CarContext) : ScreenSettings {
 
     private fun copyGiuliaSettings() {
         try {
-            val gauge = gaugeRendererSettings.dataPrefs
+            val gauge = gaugeScreenSettings.dataPrefs
             if (!Prefs.contains(gauge.selectedPIDsKey)) {
                 Log.i(LOG_TAG, "No Gauge settings found. Copy Giulia Settings...")
-                val giulia = giuliaRendererSettings.dataPrefs
+                val giulia = giuliaScreenSettings.dataPrefs
 
                 (1..4).forEach {
                     Prefs.getStringSet("${giulia.virtualScreenPrefixKey}$it").toList().let { list ->

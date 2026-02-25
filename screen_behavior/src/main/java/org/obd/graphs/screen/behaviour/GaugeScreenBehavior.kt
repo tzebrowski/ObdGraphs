@@ -36,5 +36,5 @@ internal class GaugeScreenBehavior(
         SurfaceRendererType.GAUGE,
     ) {
     override val virtualScreenConfig: VirtualScreenConfig
-        get() = settings.getGaugeRendererSetting()
+        get() = settings.getGaugeScreenSettings()
 }

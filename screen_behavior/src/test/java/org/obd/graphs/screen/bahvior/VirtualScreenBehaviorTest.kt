@@ -36,7 +36,7 @@ internal class VirtualScreenBehaviorTest : TestSetup() {
 
     private val giuliaSettings = mockk<ScreenSettings>(relaxed = true)
 
-    private val giuliaVirtualConfig = mockk<GiuliaRendererSettings>(relaxed = true)
+    private val giuliaVirtualConfig = mockk<GiuliaScreenSettings>(relaxed = true)
 
     private val mockQuery = mockk<Query>(relaxed = true)
     private val mockDataLoggerSettings = mockk<DataLoggerSettings>(relaxed = true)
@@ -57,7 +57,7 @@ internal class VirtualScreenBehaviorTest : TestSetup() {
         every { dataLoggerSettings.instance() } returns mockDataLoggerSettings
 
         // 3. Bridge the two mocks together. When the behavior asks for the config, give it giuliaVirtualConfig
-        every { giuliaSettings.getGiuliaRendererSetting() } returns giuliaVirtualConfig
+        every { giuliaSettings.getGiuliaScreenSettings() } returns giuliaVirtualConfig
 
         val settingsMap = mapOf(SurfaceRendererType.GIULIA to giuliaSettings)
         behavior = GiuliaScreenBehavior(context, metricsCollector, settingsMap, fps)

@@ -19,6 +19,6 @@ package org.obd.graphs.renderer.performance
 import org.obd.graphs.bl.collector.Metric
 
 data class PerformanceInfoDetails(
-    var topMetrics: List<Metric> = listOfNotNull(),
-    var bottomMetrics: List<Metric> = listOfNotNull(),
+    var topMetrics: List<Metric> = emptyList(),
+    var bottomMetrics: List<Metric> = emptyList(),
 )

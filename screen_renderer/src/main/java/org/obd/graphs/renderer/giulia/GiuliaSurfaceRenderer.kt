@@ -165,7 +165,7 @@ internal class GiuliaSurfaceRenderer(
     }
 
     private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
-        val scaleRatio = settings.getGiuliaRendererSetting().getFontSize().mapRange(CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
+        val scaleRatio = settings.getGiuliaScreenSettings().getFontSize().mapRange(CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
         val columns = max(1, settings.getMaxColumns())
         val areaWidth = min(area.width() / columns, AREA_MAX_WIDTH)
 

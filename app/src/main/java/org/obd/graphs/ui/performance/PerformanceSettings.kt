@@ -16,7 +16,10 @@
  */
 package org.obd.graphs.ui.performance
 
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
@@ -28,7 +31,8 @@ class PerformanceSettings : ScreenSettings {
         settings.apply {
             fontSize = Prefs.getS("pref.performance.screen_font_size", "30").toInt()
             labelCenterYPadding = Prefs.getS("pref.performance.screen_label_y_padding", "22").toFloat()
-
+            topMetrics = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP).toList()
+            bottomMetrics = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM).toList()
         }
 
     override fun isBreakLabelTextEnabled(): Boolean = true
