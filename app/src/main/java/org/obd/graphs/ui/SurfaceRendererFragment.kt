@@ -40,10 +40,8 @@ import org.obd.graphs.activity.TOOLBAR_SHOW
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
@@ -148,22 +146,6 @@ internal abstract class SurfaceRendererFragment(
                             }
                         }
 
-                    DATA_LOGGER_SCHEDULED_START_EVENT ->
-                        if (isFragmentVisibleToTheUser()) {
-                            val screenBehavior =
-                                screenBehaviorController.getScreenBehavior(surfaceRendererType)
-                                    ?: return
-                            val query = screenBehavior.query()
-
-                            Log.i(
-                                LOG_TAG,
-                                "[$surfaceRendererType] Scheduling data logger for=${query.getIDs()}",
-                            )
-                            withDataLogger {
-                                scheduleStart(getPowerPreferences().startDataLoggingAfter, query)
-                            }
-                        }
-
                     DATA_LOGGER_CONNECTED_EVENT ->
                         if (isFragmentVisibleToTheUser()) {
                             val screenBehavior =
@@ -202,7 +184,6 @@ internal abstract class SurfaceRendererFragment(
         registerReceiver(activity, broadcastReceiver) {
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
-            it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
             it.addAction(DATA_LOGGER_AUTO_CONNECT_EVENT)
         }
     }

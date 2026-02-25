@@ -35,9 +35,11 @@ object AutoConnect {
     private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var future: ScheduledFuture<*>? = null
 
-    fun setup(context: Context) {
-        val autoConnectEnabled = dataLoggerSettings.instance().adapter.autoConnectEnabled
-
+    fun setup(
+        context: Context,
+        autoConnectEnabled: Boolean = dataLoggerSettings.instance().adapter.autoConnectEnabled,
+        scheduleDelaySec: Long = SCHEDULE_DELAY_SEC,
+    ) {
         val macAddress =
             dataLoggerSettings
                 .instance()
@@ -68,7 +70,7 @@ object AutoConnect {
                 future =
                     scheduleService.schedule(
                         task,
-                        SCHEDULE_DELAY_SEC,
+                        scheduleDelaySec,
                         TimeUnit.SECONDS,
                     )
             }

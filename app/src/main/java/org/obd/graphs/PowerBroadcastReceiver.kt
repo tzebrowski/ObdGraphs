@@ -24,7 +24,7 @@ import android.content.Intent
 import android.util.Log
 import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.MainActivity
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
+import org.obd.graphs.bl.datalogger.AutoConnect
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_STOP_EVENT
 
 const val SCREEN_OFF_EVENT = "power.screen.off"
@@ -35,7 +35,7 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
         context: Context?,
         intent: Intent,
     ) {
-        val powerPreferences: PowerPreferences = getPowerPreferences()
+        val powerPreferences: PowerPreferences = Power.getPreferences()
         Log.d(
             LOG_TAG,
             "Received Power Event: ${intent.action}, powerPreferences.connectOnPower=${powerPreferences.connectOnPower}",
@@ -43,14 +43,16 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
 
         if (intent.action === Intent.ACTION_POWER_CONNECTED) {
             if (powerPreferences.switchNetworkOffOn) {
-                true.run {
-                    Network.bluetooth(this)
-                    Network.wifi(this)
-                    sendBroadcastEvent(DATA_LOGGER_SCHEDULED_START_EVENT)
+                Network.bluetooth(true)
+                Network.wifi(true)
+                context?.let {
+                    AutoConnect.setup(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
                 }
-            } else {
+           } else {
                 if (powerPreferences.connectOnPower) {
-                    sendBroadcastEvent(DATA_LOGGER_SCHEDULED_START_EVENT)
+                    context?.let {
+                        AutoConnect.setup(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
+                    }
                 }
             }
 

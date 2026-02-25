@@ -36,11 +36,9 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
 import org.obd.graphs.sendBroadcastEvent
 
-private const val SCHEDULED_ACTION_START = "org.obd.graphs.logger.scheduled.START"
 private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
 private const val ACTION_START = "org.obd.graphs.logger.START"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
-private const val SCHEDULED_START_DELAY = "org.obd.graphs.logger.scheduled.delay"
 
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
@@ -103,11 +101,6 @@ class DataLoggerService : Service() {
             }
 
             SCHEDULED_ACTION_STOP -> jobScheduler.stop()
-            SCHEDULED_ACTION_START -> {
-                val delay = intent.extras?.getLong(SCHEDULED_START_DELAY) ?: 0L
-                val query = intent.extras?.get(QUERY) as? Query
-                query?.let { jobScheduler.schedule(delay, it) }
-            }
         }
 
         return START_STICKY
@@ -125,16 +118,6 @@ class DataLoggerService : Service() {
             }
         } else {
             Log.w(LOG_TAG, "No workflow is currently running. Query won't be updated.")
-        }
-    }
-
-    fun scheduleStart(
-        delay: Long,
-        query: Query,
-    ) {
-        enqueueWork(SCHEDULED_ACTION_START) {
-            it.putExtra(SCHEDULED_START_DELAY, delay)
-            it.putExtra(QUERY, query)
         }
     }
 

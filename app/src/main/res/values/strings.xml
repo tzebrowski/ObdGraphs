@@ -361,7 +361,7 @@
     <string name="pref.adapter_power_screen_off_summary">When enabled, the application assumes control of screen brightness management</string>
 
     <string name="pref.adapter_power_bt_off">Switch network Off/On</string>
-    <string name="pref.adapter_power_start_data_logging_after">Start data logging after a set time delay (seconds).</string>
+    <string name="pref.adapter_power_start_data_logging_after">The time delay in seconds after connecting to the adapter starts.</string>
 
     <string name="pref.power_category">Power</string>
     <string name="pref.toolbar_hide_landscape">Auto-Hide toolbar in Landscape Mode</string>

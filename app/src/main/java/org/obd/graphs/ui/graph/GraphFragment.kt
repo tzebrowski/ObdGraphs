@@ -50,7 +50,6 @@ import org.obd.graphs.R
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_SCHEDULED_START_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.scaleToRange
@@ -59,7 +58,6 @@ import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.bl.trip.SensorData
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.bl.trip.tripVirtualScreenManager
-import org.obd.graphs.getPowerPreferences
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
@@ -95,15 +93,6 @@ class GraphFragment : Fragment() {
                                 start(query())
                             }
                         }
-
-                    DATA_LOGGER_SCHEDULED_START_EVENT -> {
-                        if (isFragmentVisibleToTheUser()) {
-                            Log.i(LOG_TAG, "Scheduling data logger for=${query().getIDs()}")
-                            withDataLogger {
-                                scheduleStart(getPowerPreferences().startDataLoggingAfter, query())
-                            }
-                        }
-                    }
 
                     DATA_LOGGER_CONNECTING_EVENT -> {
                         initializeChart(root)
@@ -384,7 +373,7 @@ class GraphFragment : Fragment() {
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_CONNECTING_EVENT)
             it.addAction(TOOLBAR_TOGGLE_ACTION)
-            it.addAction(DATA_LOGGER_SCHEDULED_START_EVENT)
+            it.addAction(DATA_LOGGER_AUTO_CONNECT_EVENT)
         }
     }
 

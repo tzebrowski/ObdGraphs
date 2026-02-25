@@ -22,7 +22,6 @@ const val DATA_LOGGER_ERROR_CONNECT_EVENT = "data.logger.error.connect"
 const val DATA_LOGGER_WIFI_INCORRECT = "data.logger.error.wifi.incorrect"
 const val DATA_LOGGER_WIFI_NOT_CONNECTED = "data.logger.error.wifi.not.connected"
 const val DATA_LOGGER_CONNECTED_EVENT = "data.logger.connected"
-const val DATA_LOGGER_SCHEDULED_START_EVENT = "data.logger.scheduled.start"
 const val DATA_LOGGER_SCHEDULED_STOP_EVENT = "data.logger.scheduled.stop"
 
 const val DATA_LOGGER_DTC_AVAILABLE = "data.logger.dtc.available"

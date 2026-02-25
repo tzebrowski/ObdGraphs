@@ -26,12 +26,15 @@ data class PowerPreferences(
     var startDataLoggingAfter: Long = 10,
 )
 
-private val powerPreferences = PowerPreferences()
+object Power {
+    private val powerPreferences = PowerPreferences()
 
-fun getPowerPreferences(): PowerPreferences =
-    powerPreferences.apply {
-        switchNetworkOffOn = Prefs.isEnabled("pref.adapter.power.switch_network_on_off")
-        screenOnOff = Prefs.isEnabled("pref.adapter.power.screen_off")
-        connectOnPower = Prefs.isEnabled("pref.adapter.power.connect_adapter")
-        startDataLoggingAfter = Prefs.getString("pref.adapter.power.start_data_logging.after", "10")!!.toLong()
-    }
+    fun getPreferences(): PowerPreferences =
+        powerPreferences.apply {
+            switchNetworkOffOn = Prefs.isEnabled("pref.adapter.power.switch_network_on_off")
+            screenOnOff = Prefs.isEnabled("pref.adapter.power.screen_off")
+            connectOnPower = Prefs.isEnabled("pref.adapter.power.connect_adapter")
+            startDataLoggingAfter =
+                Prefs.getString("pref.adapter.power.start_data_logging.after", "10")!!.toLong()
+        }
+}
