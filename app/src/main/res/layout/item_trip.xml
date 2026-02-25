@@ -35,7 +35,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/trip_profile"
+                android:id="@+id/vehicle_profile"
                 android:layout_width="0dp"
                 android:layout_weight="1.0"
                 android:gravity="start"

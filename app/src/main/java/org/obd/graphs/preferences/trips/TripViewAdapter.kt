@@ -109,7 +109,7 @@ class TripViewAdapter internal constructor(
         binding: View,
     ) : RecyclerView.ViewHolder(binding) {
         val selected: CheckBox = binding.findViewById(R.id.trip_selected)
-        val vehicleProfile: TextView = binding.findViewById(R.id.trip_profile)
+        val vehicleProfile: TextView = binding.findViewById(R.id.vehicle_profile)
         val tripStartDate: TextView = binding.findViewById(R.id.trip_start_date)
         val tripTime: TextView = binding.findViewById(R.id.trip_length)
         private val loadTrip: Button = binding.findViewById(R.id.trip_load)

@@ -62,7 +62,7 @@ internal fun MainActivity.setupStatusPanel() {
         }
     }
 
-    (findViewById<TextView>(R.id.trip_profile)).let {
+    (findViewById<TextView>(R.id.vehicle_profile)).let {
         it.setOnClickListener {
             navigateToPreferencesScreen("pref.profiles")
         }
@@ -77,7 +77,7 @@ internal fun MainActivity.setupStatusPanel() {
 
 internal fun MainActivity.updateVehicleProfile() {
     updateTextField(
-        R.id.trip_profile,
+        R.id.vehicle_profile,
         resources.getString(R.string.status_panel_vehicle_profile),
         profile.getCurrentProfileName(),
         COLOR_RAINBOW_INDIGO,
