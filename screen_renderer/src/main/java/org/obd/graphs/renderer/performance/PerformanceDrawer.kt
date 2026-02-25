@@ -27,7 +27,7 @@ import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 import org.obd.graphs.isNumber
 
-private const val MAX_ITEMS_IN_ROW = 6
+private const val MAX_ITEMS_IN_ROW = 5
 
 @Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
@@ -72,38 +72,38 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
 
         val itemWidth = area.width() / MAX_ITEMS_IN_ROW.toFloat()
         var rowTop = top + 2f
-
         val topMetrics = performanceInfoDetails.topMetrics
+        topMetrics.chunked(MAX_ITEMS_IN_ROW).forEach { rowMetrics ->
+            rowMetrics.forEachIndexed { columnIndex, metric ->
+                val itemLeft = left + (columnIndex * itemWidth)
 
-        topMetrics.take(MAX_ITEMS_IN_ROW).forEachIndexed { index, metric ->
-            val itemLeft = left + (index * itemWidth)
-
-            tripInfoDrawer.drawMetric(
-                metric,
-                rowTop,
-                itemLeft,
-                canvas,
-                textSize,
-                statsEnabled = metric.source.isNumber(),
-                area = area,
-                castToInt = true
-            )
-
-            if (index < topMetrics.take(MAX_ITEMS_IN_ROW).size - 1) {
-                val lineX = itemLeft + itemWidth
-                canvas.drawLine(
-                    lineX,
+                tripInfoDrawer.drawMetric(
+                    metric,
                     rowTop,
-                    lineX,
-                    rowTop + textSize + 10f,
-                    dividerPaint
+                    itemLeft,
+                    canvas,
+                    textSize,
+                    statsEnabled = metric.source.isNumber(),
+                    area = area,
+                    castToInt = true
                 )
+
+                if (columnIndex < rowMetrics.size - 1) {
+                    val lineX = itemLeft + itemWidth
+                    canvas.drawLine(
+                        lineX,
+                        rowTop,
+                        lineX,
+                        rowTop + textSize + 10f,
+                        dividerPaint
+                    )
+                }
             }
+            drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
+            rowTop += 2 * textSize
         }
 
-        drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
-
-        rowTop += textSize + 16
+        rowTop -= textSize * 0.7f
 
         val availableWidth = area.width().toFloat()
         val areaLeft = area.left.toFloat()
