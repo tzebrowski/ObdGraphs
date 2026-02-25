@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,14 +20,11 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
-import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
-import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 
@@ -41,14 +38,7 @@ internal class PerformanceSurfaceRenderer(
     private val performanceDrawer = PerformanceDrawer(context, settings)
     private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)
 
-    private val cachedBottomMetrics = mutableListOf<Metric>()
-    private val cachedTopMetrics = mutableListOf<Metric>()
-
-    private val cachedMetrics = mutableListOf<Metric>()
-
-    private var lastBottomMetricsIds: List<Long> = emptyList()
-    private var lastTopMetricsIds: List<Long> = emptyList()
-
+    private val metricsCache = MetricsCache()
 
     override fun onDraw(
         canvas: Canvas,
@@ -104,7 +94,7 @@ internal class PerformanceSurfaceRenderer(
                 )
             } else {
 
-                updateMetrics(performanceScreenSettings)
+                metricsCache.update(performanceScreenSettings, metricsCollector)
 
                 performanceDrawer.drawScreen(
                     canvas = canvas,
@@ -113,8 +103,8 @@ internal class PerformanceSurfaceRenderer(
                     top = top,
                     performanceInfoDetails =
                         performanceInfoDetails.apply {
-                            this.bottomMetrics = cachedBottomMetrics
-                            this.topMetrics = cachedTopMetrics
+                            this.bottomMetrics = metricsCache.bottomMetrics
+                            this.topMetrics = metricsCache.topMetrics
                         },
                 )
             }
@@ -123,37 +113,5 @@ internal class PerformanceSurfaceRenderer(
 
     override fun recycle() {
         performanceDrawer.recycle()
-    }
-
-
-    private fun updateMetrics(performanceScreenSettings: PerformanceScreenSettings) {
-        val allMetrics = metricsCollector.getMetrics(enabled = true)
-
-        if (allMetrics.size != cachedMetrics.size ||
-            performanceScreenSettings.bottomMetrics != lastBottomMetricsIds ||
-            performanceScreenSettings.topMetrics != lastTopMetricsIds
-        ) {
-
-            cachedMetrics.clear()
-            cachedMetrics.addAll(allMetrics)
-            lastBottomMetricsIds = performanceScreenSettings.bottomMetrics
-            lastTopMetricsIds = performanceScreenSettings.topMetrics
-
-            cachedBottomMetrics.clear()
-            for (id in performanceScreenSettings.bottomMetrics) {
-                val metric = metricsCollector.getMetric(id)
-                if (metric != null && allMetrics.contains(metric)) {
-                    cachedBottomMetrics.add(metric)
-                }
-            }
-
-            cachedTopMetrics.clear()
-            for (id in performanceScreenSettings.topMetrics) {
-                val metric = metricsCollector.getMetric(id)
-                if (metric != null && allMetrics.contains(metric)) {
-                    cachedTopMetrics.add(metric)
-                }
-            }
-        }
     }
 }
