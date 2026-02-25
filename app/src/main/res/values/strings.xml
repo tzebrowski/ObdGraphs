@@ -97,6 +97,7 @@
     <string name="pref.adapter.collect.gps.enabled.dialog_title">Enable GPS Logging?</string>
     <string name="pref.adapter.collect.gps.enabled.dialog_summary">Enabling GPS logging will consume significantly more battery. Are you sure you want to continue?</string>
 
+    <string name="pref.connection.auto_connect.category">Auto-connect</string>
     <string name="pref.connection.category">OBD2 Adapter Connection</string>
     <string name="pref.connection.category.summary">This section contains settings related to your adapter type. Here, you can configure the Wi-Fi or Bluetooth parameters of your adapter.</string>
 
@@ -299,7 +300,7 @@
     <string name="pref.vehicle_settings.disconnect_when_off_summary">This is an EXPERIMENTAL feature.\nWhen enabled, the session will automatically disconnect when the vehicle is turned off.</string>
 
     <string name="pref.vehicle_settings.auto_connect_once_launched">Auto-connect when application is launched</string>
-    <string name="pref.vehicle_settings.auto_connect_once_launched_summary">This is an EXPERIMENTAL feature.\nWhen enabled, the session will automatically established during application startup.</string>
+    <string name="pref.vehicle_settings.auto_connect_once_launched_summary">When enabled, the session will automatically established during application startup.</string>
 
 
     <string name="pref.adapter_init_delay">Delay after init command</string>
@@ -361,7 +362,7 @@
     <string name="pref.adapter_power_screen_off_summary">When enabled, the application assumes control of screen brightness management</string>
 
     <string name="pref.adapter_power_bt_off">Switch network Off/On</string>
-    <string name="pref.adapter_power_start_data_logging_after">Start data logging after a set time delay (seconds).</string>
+    <string name="pref.adapter_power_start_data_logging_after">The time delay in seconds after connecting to the adapter starts.</string>
 
     <string name="pref.power_category">Power</string>
     <string name="pref.toolbar_hide_landscape">Auto-Hide toolbar in Landscape Mode</string>

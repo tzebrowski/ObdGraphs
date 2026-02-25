@@ -23,12 +23,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
+import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.R
 import org.obd.graphs.activity.DASH_VIEW_ID
 import org.obd.graphs.activity.GAUGE_VIEW_ID
@@ -338,7 +338,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         key: String,
         actionName: String,
     ) {
-        val preference = findPreference<CheckBoxPreference>(key)
+        val preference = findPreference<SwitchPreferenceCompat>(key)
         preference?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, _ ->
                 sendBroadcastEvent(actionName)

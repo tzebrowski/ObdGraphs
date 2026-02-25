@@ -35,43 +35,49 @@ object AutoConnect {
     private val scheduleService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
     private var future: ScheduledFuture<*>? = null
 
-    fun setup(context: Context) {
-        val autoConnectEnabled = dataLoggerSettings.instance().adapter.autoConnectEnabled
+    fun schedule(
+        context: Context,
+        autoConnectEnabled: Boolean = dataLoggerSettings.instance().adapter.autoConnectEnabled,
+        scheduleDelaySec: Long = SCHEDULE_DELAY_SEC,
+    ) {
+        try {
+            val macAddress =
+                dataLoggerSettings
+                    .instance()
+                    .adapter.deviceAddress
+                    .uppercase()
 
-        val macAddress =
-            dataLoggerSettings
-                .instance()
-                .adapter.deviceAddress
-                .uppercase()
+            Log.i(
+                TAG,
+                "Auto connect is enabled=$autoConnectEnabled. MacAddress of device=$macAddress",
+            )
 
-        Log.i(
-            TAG,
-            "Auto connect is enabled=$autoConnectEnabled. MacAddress of device=$macAddress",
-        )
-
-        if (autoConnectEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && macAddress.isNotEmpty()) {
-            Network.startBackgroundBleScanForMac(
-                context,
-                macAddress,
-            ) {
-                Log.i(
-                    TAG,
-                    "Found device=$macAddress. Scheduling data logger connection",
-                )
-
-                val task =
-                    Runnable {
-                        sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
-                    }
-                future?.cancel(true)
-
-                future =
-                    scheduleService.schedule(
-                        task,
-                        SCHEDULE_DELAY_SEC,
-                        TimeUnit.SECONDS,
+            if (autoConnectEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && macAddress.isNotEmpty()) {
+                Network.startBackgroundBleScanForMac(
+                    context,
+                    macAddress,
+                ) {
+                    Log.i(
+                        TAG,
+                        "Found device=$macAddress. Scheduling data logger connection",
                     )
+
+                    val task =
+                        Runnable {
+                            sendBroadcastEvent(DATA_LOGGER_AUTO_CONNECT_EVENT)
+                        }
+                    future?.cancel(true)
+
+                    future =
+                        scheduleService.schedule(
+                            task,
+                            scheduleDelaySec,
+                            TimeUnit.SECONDS,
+                        )
+                }
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to schedule DataLogger connection", e)
         }
     }
 }

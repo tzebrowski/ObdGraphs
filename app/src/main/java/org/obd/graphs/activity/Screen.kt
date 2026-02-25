@@ -27,13 +27,13 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.obd.graphs.AdminReceiver
-import org.obd.graphs.getPowerPreferences
+import org.obd.graphs.Power
 
 internal val screen = Screen()
 
 internal class Screen {
     fun lockScreen(activity: Activity) {
-        if (getPowerPreferences().screenOnOff) {
+        if (Power.getPreferences().screenOnOff) {
             val pm = activity.getSystemService(AppCompatActivity.POWER_SERVICE) as PowerManager
             if (pm.isInteractive) {
                 val policy =
@@ -66,7 +66,7 @@ internal class Screen {
         value: Float,
     ) {
         Log.i(LOG_TAG, "Activating application.")
-        if (getPowerPreferences().screenOnOff) {
+        if (Power.getPreferences().screenOnOff) {
             val pm = activity.getSystemService(AppCompatActivity.POWER_SERVICE) as PowerManager
             val wl =
                 pm.newWakeLock(

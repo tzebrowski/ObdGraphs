@@ -105,7 +105,6 @@ internal fun MainActivity.receive(intent: Intent?) {
             )
             withDataLogger {
                 stop()
-                scheduledStop()
             }
         }
 

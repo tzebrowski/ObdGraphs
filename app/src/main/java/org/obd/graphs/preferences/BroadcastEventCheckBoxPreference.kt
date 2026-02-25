@@ -20,7 +20,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
-import androidx.preference.CheckBoxPreference
+import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.colorize
@@ -28,7 +28,7 @@ import org.obd.graphs.ui.common.colorize
 class BroadcastEventCheckBoxPreference(
     context: Context,
     private val attrs: AttributeSet?,
-) : CheckBoxPreference(context, attrs) {
+) : SwitchPreferenceCompat(context, attrs) {
     private val experimental = getAttribute("experimental").toBooleanStrictOrNull() ?: false
     private val broadcastEvent = getAttribute("broadcastEvent")
 

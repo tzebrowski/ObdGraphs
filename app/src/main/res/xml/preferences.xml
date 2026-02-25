@@ -94,6 +94,24 @@
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
 
+            <PreferenceCategory android:title="@string/pref.connection.auto_connect.category">
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.vehicle_settings.disconnect_when_off"
+                    android:summary="@string/pref.vehicle_settings.disconnect_when_off_summary"
+                    android:title="@string/pref.vehicle_settings.disconnect_when_off"
+                    app:experimental="true"
+                    app:singleLineTitle="false" />
+
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.vehicle_settings.auto_connect_once_launched"
+                    android:summary="@string/pref.vehicle_settings.auto_connect_once_launched_summary"
+                    android:title="@string/pref.vehicle_settings.auto_connect_once_launched"
+                    app:experimental="false"
+                    app:singleLineTitle="false" />
+            </PreferenceCategory>
+
             <PreferenceCategory android:title="@string/pref.connection.category">
                 <PreferenceScreen
                     android:key="pref.adapter.connection"
@@ -440,22 +458,6 @@
                 app:broadcastEvent="event.vehicle.status.CHANGED"
                 app:experimental="true"
                 app:singleLineTitle="false" />
-
-            <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.vehicle_settings.disconnect_when_off"
-                android:summary="@string/pref.vehicle_settings.disconnect_when_off_summary"
-                android:title="@string/pref.vehicle_settings.disconnect_when_off"
-                app:experimental="true"
-                app:singleLineTitle="false" />
-
-            <org.obd.graphs.preferences.BroadcastEventCheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.vehicle_settings.auto_connect_once_launched"
-                android:summary="@string/pref.vehicle_settings.auto_connect_once_launched_summary"
-                android:title="@string/pref.vehicle_settings.auto_connect_once_launched"
-                app:experimental="true"
-                app:singleLineTitle="false" />
         </PreferenceScreen>
     </PreferenceCategory>
 
@@ -597,21 +599,35 @@
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
 
-            <CheckBoxPreference
+            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.adapter.power.connect_adapter"
                 android:summary="@string/pref.adapter_power_connect_adapter_summary"
                 android:title="@string/pref.adapter_power_connect_adapter"
                 app:singleLineTitle="false" />
 
-            <CheckBoxPreference
+            <org.obd.graphs.preferences.components.ExtendedSeekBar
+                app:dependency="pref.adapter.power.connect_adapter"
+                android:defaultValue="3"
+                android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
+                android:key="pref.adapter.power.start_data_logging.after"
+                android:max="24"
+                android:title="@string/pref.adapter_power_start_data_logging_after"
+                android:summary="@string/pref.adapter_power_start_data_logging_after"
+                app:min="1"
+                app:showSeekBarValue="true"
+                app:singleLineTitle="false"
+                app:useSimpleSummaryProvider="true" />
+
+
+            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref.adapter.power.screen_off"
                 android:summary="@string/pref.adapter_power_screen_off_summary"
                 android:title="@string/pref.adapter_power_screen_off"
                 app:singleLineTitle="false" />
 
-            <CheckBoxPreference
+            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                 android:defaultValue="false"
                 android:dialogTitle="@string/pref.adapter_power_bt_off"
                 android:key="pref.adapter.power.switch_network_on_off"
@@ -619,16 +635,7 @@
                 android:title="@string/pref.adapter_power_bt_off"
                 app:enabled="@bool/FF_SWITCH_NETWORK_ENABLED" />
 
-            <ListPreference
-                android:defaultValue="5"
-                android:dialogTitle="@string/pref.adapter_power_start_data_logging_after"
-                android:entries="@array/pref.numbers_1_25"
-                android:entryValues="@array/pref.numbers_1_25"
-                android:inputType="number"
-                android:key="pref.adapter.power.start_data_logging.after"
-                android:title="@string/pref.adapter_power_start_data_logging_after"
-                app:singleLineTitle="false"
-                app:useSimpleSummaryProvider="true" />
+
         </PreferenceScreen>
     </PreferenceCategory>
 
