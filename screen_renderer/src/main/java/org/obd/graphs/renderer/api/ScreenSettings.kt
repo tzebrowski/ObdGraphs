@@ -132,18 +132,25 @@ data class TripInfoScreenSettings(
 
 data class BreakBoostingSettings(
     var viewEnabled: Boolean = true,
-    var gasMetric: Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong(),
-    var torqueMetric: Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE, -1).toLong(),
-)
+) {
+    fun getGasMetric(): Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong()
+
+    fun getTorqueMetric(): Long =
+        Prefs
+            .getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE, -1)
+            .toLong()
+}
 
 data class PerformanceScreenSettings(
     var labelCenterYPadding: Float = 22f,
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
     var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
-    var topMetrics: List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP).toList(),
-    var bottomMetrics: List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM).toList(),
-)
+) {
+    fun getBottomMetrics(): List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM).toList()
+
+    fun getTopMetrics(): List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP).toList()
+}
 
 data class RoutinesScreenSettings(
     var viewEnabled: Boolean = true,
