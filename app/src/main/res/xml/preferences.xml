@@ -94,6 +94,24 @@
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
 
+            <PreferenceCategory android:title="@string/pref.connection.auto_connect.category">
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.vehicle_settings.disconnect_when_off"
+                    android:summary="@string/pref.vehicle_settings.disconnect_when_off_summary"
+                    android:title="@string/pref.vehicle_settings.disconnect_when_off"
+                    app:experimental="true"
+                    app:singleLineTitle="false" />
+
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref.vehicle_settings.auto_connect_once_launched"
+                    android:summary="@string/pref.vehicle_settings.auto_connect_once_launched_summary"
+                    android:title="@string/pref.vehicle_settings.auto_connect_once_launched"
+                    app:experimental="false"
+                    app:singleLineTitle="false" />
+            </PreferenceCategory>
+
             <PreferenceCategory android:title="@string/pref.connection.category">
                 <PreferenceScreen
                     android:key="pref.adapter.connection"
@@ -438,22 +456,6 @@
                 android:summary="@string/pref.vehicle_settings.vehicleStatusPanel_summary"
                 android:title="@string/pref.vehicle_settings.vehicleStatusPanel"
                 app:broadcastEvent="event.vehicle.status.CHANGED"
-                app:experimental="true"
-                app:singleLineTitle="false" />
-
-            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.vehicle_settings.disconnect_when_off"
-                android:summary="@string/pref.vehicle_settings.disconnect_when_off_summary"
-                android:title="@string/pref.vehicle_settings.disconnect_when_off"
-                app:experimental="true"
-                app:singleLineTitle="false" />
-
-            <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref.vehicle_settings.auto_connect_once_launched"
-                android:summary="@string/pref.vehicle_settings.auto_connect_once_launched_summary"
-                android:title="@string/pref.vehicle_settings.auto_connect_once_launched"
                 app:experimental="true"
                 app:singleLineTitle="false" />
         </PreferenceScreen>
