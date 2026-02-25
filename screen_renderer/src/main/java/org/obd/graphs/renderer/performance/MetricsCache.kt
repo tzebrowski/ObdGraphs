@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -16,9 +16,12 @@
  */
 package org.obd.graphs.renderer.performance
 
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.api.PerformanceScreenSettings
+
+private const val TAG = "MetricCache"
 
 internal class MetricsCache {
     val bottomMetrics = mutableListOf<Metric>()
@@ -36,23 +39,35 @@ internal class MetricsCache {
         metricsCollector: MetricsCollector,
     ) {
         val allMetrics = metricsCollector.getMetrics(enabled = true)
-        gasMetric = metricsCollector.getMetric(settings.breakBoostingSettings.gasMetric)
-        torqueMetric = metricsCollector.getMetric(settings.breakBoostingSettings.torqueMetric)
+        gasMetric = metricsCollector.getMetric(settings.breakBoostingSettings.getGasMetric())
+        torqueMetric = metricsCollector.getMetric(settings.breakBoostingSettings.getTorqueMetric())
+
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            Log.v(TAG, "lastBottomIds=$lastBottomIds")
+            Log.v(TAG, "lastTopIds=$lastTopIds")
+            Log.v(TAG, "allMetrics=${allMetrics.map { it.pid.id }}")
+            Log.v(TAG, "topMetrics=${topMetrics.map { it.pid.id }}")
+            Log.v(TAG, "bottomMetrics=${bottomMetrics.map { it.pid.id }}")
+        }
+
+        val currentBottomMetrics = settings.getBottomMetrics()
+        val currentTopMetrics = settings.getTopMetrics()
 
         if (allMetrics.size == cachedMetrics.size &&
-            settings.bottomMetrics == lastBottomIds &&
-            settings.topMetrics == lastTopIds
+            currentBottomMetrics == lastBottomIds &&
+            currentTopMetrics == lastTopIds
         ) {
             return
         }
 
         cachedMetrics.clear()
         cachedMetrics.addAll(allMetrics)
-        lastBottomIds = settings.bottomMetrics
-        lastTopIds = settings.topMetrics
+        lastBottomIds = currentBottomMetrics
+        lastTopIds = currentTopMetrics
+
 
         bottomMetrics.clear()
-        for (id in settings.bottomMetrics) {
+        for (id in currentBottomMetrics) {
             val metric = metricsCollector.getMetric(id)
             if (metric != null && allMetrics.contains(metric)) {
                 bottomMetrics.add(metric)
@@ -60,7 +75,7 @@ internal class MetricsCache {
         }
 
         topMetrics.clear()
-        for (id in settings.topMetrics) {
+        for (id in currentTopMetrics) {
             val metric = metricsCollector.getMetric(id)
             if (metric != null && allMetrics.contains(metric)) {
                 topMetrics.add(metric)
