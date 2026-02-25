@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,6 +20,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.Pid
@@ -42,6 +43,12 @@ internal class PerformanceSurfaceRenderer(
 
     private val cachedBottomMetrics = mutableListOf<Metric>()
     private val cachedTopMetrics = mutableListOf<Metric>()
+
+    private val cachedMetrics = mutableListOf<Metric>()
+
+    private var lastBottomMetricsIds: List<Long> = emptyList()
+    private var lastTopMetricsIds: List<Long> = emptyList()
+
 
     override fun onDraw(
         canvas: Canvas,
@@ -118,22 +125,32 @@ internal class PerformanceSurfaceRenderer(
         performanceDrawer.recycle()
     }
 
-    private fun updateMetrics(performanceScreenSettings: PerformanceScreenSettings) {
-        cachedBottomMetrics.clear()
-        val allMetrics = metricsCollector.getMetrics()
 
-        for (id in performanceScreenSettings.bottomMetrics) {
-            metricsCollector.getMetric(id)?.let { metric ->
-                if (allMetrics.contains(metric)) {
+    private fun updateMetrics(performanceScreenSettings: PerformanceScreenSettings) {
+        val allMetrics = metricsCollector.getMetrics(enabled = true)
+
+        if (allMetrics.size != cachedMetrics.size ||
+            performanceScreenSettings.bottomMetrics != lastBottomMetricsIds ||
+            performanceScreenSettings.topMetrics != lastTopMetricsIds
+        ) {
+
+            cachedMetrics.clear()
+            cachedMetrics.addAll(allMetrics)
+            lastBottomMetricsIds = performanceScreenSettings.bottomMetrics
+            lastTopMetricsIds = performanceScreenSettings.topMetrics
+
+            cachedBottomMetrics.clear()
+            for (id in performanceScreenSettings.bottomMetrics) {
+                val metric = metricsCollector.getMetric(id)
+                if (metric != null && allMetrics.contains(metric)) {
                     cachedBottomMetrics.add(metric)
                 }
             }
-        }
 
-        cachedTopMetrics.clear()
-        for (id in performanceScreenSettings.topMetrics) {
-            metricsCollector.getMetric(id)?.let { metric ->
-                if (allMetrics.contains(metric)) {
+            cachedTopMetrics.clear()
+            for (id in performanceScreenSettings.topMetrics) {
+                val metric = metricsCollector.getMetric(id)
+                if (metric != null && allMetrics.contains(metric)) {
                     cachedTopMetrics.add(metric)
                 }
             }
