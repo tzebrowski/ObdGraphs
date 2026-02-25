@@ -376,7 +376,7 @@ internal class NavTemplateCarScreen(
 
         submitRenderingTask()
 
-        AutoConnect.setup(carContext)
+        AutoConnect.schedule(carContext)
 
         navigationManager().setNavigationManagerCallback(
             object : NavigationManagerCallback {

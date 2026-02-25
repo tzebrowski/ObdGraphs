@@ -46,12 +46,12 @@ internal class PowerBroadcastReceiver : BroadcastReceiver() {
                 Network.bluetooth(true)
                 Network.wifi(true)
                 context?.let {
-                    AutoConnect.setup(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
+                    AutoConnect.schedule(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
                 }
            } else {
                 if (powerPreferences.connectOnPower) {
                     context?.let {
-                        AutoConnect.setup(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
+                        AutoConnect.schedule(context, autoConnectEnabled = true, scheduleDelaySec = powerPreferences.startDataLoggingAfter)
                     }
                 }
             }

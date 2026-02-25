@@ -36,7 +36,6 @@ import org.obd.graphs.bl.query.Query
 import org.obd.graphs.datalogger.R
 import org.obd.graphs.sendBroadcastEvent
 
-private const val SCHEDULED_ACTION_STOP = "org.obd.graphs.logger.scheduled.STOP"
 private const val ACTION_START = "org.obd.graphs.logger.START"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 
@@ -48,7 +47,6 @@ private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
 private const val NOTIFICATION_ID = 12345
 
 class DataLoggerService : Service() {
-    private val jobScheduler = DataLoggerJobScheduler(this)
     private val binder = LocalBinder()
 
     internal inner class LocalBinder : Binder() {
@@ -99,8 +97,6 @@ class DataLoggerService : Service() {
                 DataLoggerRepository.workflowOrchestrator.stop()
                 serviceStop()
             }
-
-            SCHEDULED_ACTION_STOP -> jobScheduler.stop()
         }
 
         return START_STICKY
@@ -121,9 +117,6 @@ class DataLoggerService : Service() {
         }
     }
 
-    fun scheduledStop() {
-        enqueueWork(SCHEDULED_ACTION_STOP)
-    }
 
     fun executeRoutine(query: Query) {
         enqueueWork(EXECUTE_ROUTINE) { it.putExtra(QUERY, query) }

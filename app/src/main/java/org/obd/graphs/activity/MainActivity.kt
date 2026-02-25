@@ -166,7 +166,7 @@ class MainActivity :
 
         navigateToLastVisitedScreen()
         validatePermissions()
-        AutoConnect.setup(this)
+        AutoConnect.schedule(this)
     }
 
     override fun onResume() {
