@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -64,7 +64,6 @@ internal class MetricsCache {
         cachedMetrics.addAll(allMetrics)
         lastBottomIds = currentBottomMetrics
         lastTopIds = currentTopMetrics
-
 
         bottomMetrics.clear()
         for (id in currentBottomMetrics) {
