@@ -29,7 +29,7 @@ const val PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE =
     "pref.query.performance.break_boosting.torque_pid"
 
 internal class PerformanceQueryStrategy : QueryStrategy() {
-    override fun getDefaults() =
+    override fun getDefaultPIDs() =
         Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP) +
             Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM) +
             Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong() +
@@ -38,6 +38,6 @@ internal class PerformanceQueryStrategy : QueryStrategy() {
     override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY).toMutableSet()
 
     init {
-        Log.i("PerformanceQueryStrategy", "Read defaults=${getDefaults()}")
+        Log.i("PerformanceQueryStrategy", "Read defaults=${getDefaultPIDs()}")
     }
 }
