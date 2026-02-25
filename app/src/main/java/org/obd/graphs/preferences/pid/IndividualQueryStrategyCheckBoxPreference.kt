@@ -18,20 +18,17 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.preference.CheckBoxPreference
-import androidx.preference.Preference.OnPreferenceChangeListener
+import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT
-import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.sendBroadcastEvent
 
 class IndividualQueryStrategyCheckBoxPreference(
     context: Context,
     attrs: AttributeSet?,
-) : CheckBoxPreference(context, attrs) {
+) : SwitchPreferenceCompat(context, attrs) {
     init {
         onPreferenceChangeListener =
             OnPreferenceChangeListener { _, _ ->
-                navigateToPreferencesScreen("pref.registry")
                 sendBroadcastEvent(AA_HIGH_FREQ_PID_SELECTION_CHANGED_EVENT)
                 true
             }
