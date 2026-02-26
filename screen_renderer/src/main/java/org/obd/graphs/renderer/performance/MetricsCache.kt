@@ -42,22 +42,25 @@ internal class MetricsCache {
         gasMetric = metricsCollector.getMetric(settings.breakBoostingSettings.getGasMetric())
         torqueMetric = metricsCollector.getMetric(settings.breakBoostingSettings.getTorqueMetric())
 
-        if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "lastBottomIds=$lastBottomIds")
-            Log.v(TAG, "lastTopIds=$lastTopIds")
-            Log.v(TAG, "allMetrics=${allMetrics.map { it.pid.id }}")
-            Log.v(TAG, "topMetrics=${topMetrics.map { it.pid.id }}")
-            Log.v(TAG, "bottomMetrics=${bottomMetrics.map { it.pid.id }}")
-            Log.v(TAG, "hiddenMetrics=${settings.getHiddenMetrics()}")
-        }
-
         val currentBottomMetrics = settings.getBottomMetrics()
         val currentTopMetrics = settings.getTopMetrics()
 
-        if (allMetrics.size == cachedMetrics.size &&
-            currentBottomMetrics == lastBottomIds &&
-            currentTopMetrics == lastTopIds
-        ) {
+        val cacheHit =
+            allMetrics.size == cachedMetrics.size &&
+                currentBottomMetrics == lastBottomIds &&
+                currentTopMetrics == lastTopIds
+
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            Log.v(TAG, "LastBottomIds=$lastBottomIds")
+            Log.v(TAG, "LastTopIds=$lastTopIds")
+            Log.v(TAG, "AllMetrics=${allMetrics.map { it.pid.id }}")
+            Log.v(TAG, "TopMetrics=${topMetrics.map { it.pid.id }}")
+            Log.v(TAG, "BottomMetrics=${bottomMetrics.map { it.pid.id }}")
+            Log.v(TAG, "HiddenMetrics=${settings.getHiddenMetrics()}")
+            Log.v(TAG, "Cache hit=$cacheHit")
+        }
+
+        if (cacheHit) {
             return
         }
 
@@ -66,22 +69,27 @@ internal class MetricsCache {
         lastBottomIds = currentBottomMetrics
         lastTopIds = currentTopMetrics
 
-        val hidden = settings.getHiddenMetrics()
+        val hiddenSet = settings.getHiddenMetrics()
+        val allMetricsSet = allMetrics.toSet()
+
         bottomMetrics.clear()
-        for (id in currentBottomMetrics) {
-            if (!hidden.contains(id)) {
+
+        for (i in 0 until currentBottomMetrics.size) {
+            val id = currentBottomMetrics[i]
+            if (!hiddenSet.contains(id)) {
                 val metric = metricsCollector.getMetric(id)
-                if (metric != null && allMetrics.contains(metric)) {
+                if (metric != null && allMetricsSet.contains(metric)) {
                     bottomMetrics.add(metric)
                 }
             }
         }
 
         topMetrics.clear()
-        for (id in currentTopMetrics) {
-            if (!hidden.contains(id)) {
+        for (i in 0 until currentTopMetrics.size) {
+            val id = currentTopMetrics[i]
+            if (!hiddenSet.contains(id)) {
                 val metric = metricsCollector.getMetric(id)
-                if (metric != null && allMetrics.contains(metric)) {
+                if (metric != null && allMetricsSet.contains(metric)) {
                     topMetrics.add(metric)
                 }
             }

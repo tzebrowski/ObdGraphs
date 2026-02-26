@@ -23,6 +23,7 @@ import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongList
+import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
@@ -155,7 +156,7 @@ data class PerformanceScreenSettings(
 
     fun getTopMetrics(): List<Long> = Prefs.getLongList(PREF_QUERY_PERFORMANCE_TOP)
 
-    fun getHiddenMetrics(): List<Long> = Prefs.getLongList(PREF_QUERY_PERFORMANCE_HIDDEN)
+    fun getHiddenMetrics(): Set<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_HIDDEN)
 }
 
 data class RoutinesScreenSettings(

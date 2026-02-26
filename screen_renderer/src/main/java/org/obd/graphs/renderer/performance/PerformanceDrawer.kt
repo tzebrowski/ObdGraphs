@@ -30,7 +30,8 @@ import org.obd.graphs.isNumber
 private const val MAX_ITEMS_IN_ROW = 5
 
 @Suppress("NOTHING_TO_INLINE")
-internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
+    AbstractDrawer(context, settings) {
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
@@ -42,7 +43,10 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
     private val tripInfoDrawer = TripInfoDrawer(context, settings)
 
     private val background: Bitmap =
-        BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
+        BitmapFactory.decodeResource(
+            context.resources,
+            org.obd.graphs.renderer.R.drawable.drag_race_bg
+        )
 
     private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.DKGRAY
@@ -73,45 +77,65 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
         val itemWidth = area.width() / MAX_ITEMS_IN_ROW.toFloat()
         var rowTop = top + 2f
         val topMetrics = performanceInfoDetails.topMetrics
-        topMetrics.chunked(MAX_ITEMS_IN_ROW).forEach { rowMetrics ->
-            rowMetrics.forEachIndexed { columnIndex, metric ->
-                val itemLeft = left + (columnIndex * itemWidth)
+        val topMetricsSize = topMetrics.size
 
-                tripInfoDrawer.drawMetric(
-                    metric,
-                    rowTop,
-                    itemLeft,
+        for (i in 0 until topMetricsSize) {
+            val metric = topMetrics[i]
+            val columnIndex = i % MAX_ITEMS_IN_ROW
+
+            if (columnIndex == 0 && i > 0) {
+                drawDivider(
                     canvas,
-                    textSize,
-                    statsEnabled = metric.source.isNumber(),
-                    area = area,
-                    castToInt = true
+                    left,
+                    area.width().toFloat(),
+                    rowTop + textSize  * 0.8f,
+                    Color.DKGRAY
                 )
-
-                if (columnIndex < rowMetrics.size - 1) {
-                    val lineX = itemLeft + itemWidth
-                    canvas.drawLine(
-                        lineX,
-                        rowTop,
-                        lineX,
-                        rowTop + textSize + 10f,
-                        dividerPaint
-                    )
-                }
+                rowTop += 2 * textSize
             }
-            drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
-            rowTop += 2 * textSize
+
+            val itemLeft = left + (columnIndex * itemWidth)
+
+            tripInfoDrawer.drawMetric(
+                metric,
+                rowTop,
+                itemLeft,
+                canvas,
+                textSize,
+                statsEnabled = metric.source.isNumber(),
+                area = area,
+                castToInt = true
+            )
+
+            if (columnIndex < MAX_ITEMS_IN_ROW - 1 && i < topMetricsSize - 1) {
+                val lineX = itemLeft + itemWidth
+                canvas.drawLine(
+                    lineX,
+                    rowTop,
+                    lineX,
+                    rowTop + textSize * 0.8f,
+                    dividerPaint
+                )
+            }
+        }
+
+        if (topMetricsSize > 0) {
+            drawDivider(
+                canvas,
+                left,
+                area.width().toFloat(),
+                rowTop + textSize * 0.8f,
+                Color.DKGRAY
+            )
+            rowTop += 1.8f * textSize
         }
 
         rowTop -= textSize * 0.7f
 
         val availableWidth = area.width().toFloat()
         val areaLeft = area.left.toFloat()
-
         val labelCenterYPadding = performanceScreenSettings.labelCenterYPadding - 4
-
         val bottomMetrics = performanceInfoDetails.bottomMetrics
-
         val count = bottomMetrics.size
 
         if (count > 0) {
@@ -119,8 +143,9 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
             val startLeft = if (count == 1) areaLeft + (availableWidth / 4f) else areaLeft
             val padding = if (count == 1) 6f else labelCenterYPadding
 
-            bottomMetrics.forEachIndexed { index, gauge ->
-                drawGauge(gauge, canvas, rowTop, startLeft + (width * index), width, padding)
+            for (i in 0 until count) {
+                val gauge = bottomMetrics[i]
+                drawGauge(gauge, canvas, rowTop, startLeft + (width * i), width, padding)
             }
         }
     }
