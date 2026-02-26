@@ -27,15 +27,23 @@ import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
 
+internal class PerformanceScreenSettings(
+    original: ScreenSettings,
+) : ScreenSettings by original {
+    override fun isBreakLabelTextEnabled(): Boolean = true
+}
+
 internal class PerformanceSurfaceRenderer(
     context: Context,
-    private val settings: ScreenSettings,
+    settings: ScreenSettings,
     private val metricsCollector: MetricsCollector,
     private val fps: Fps,
 ) : AbstractSurfaceRenderer(context) {
+    private val screenSettings = PerformanceScreenSettings(settings)
     private val performanceInfoDetails = PerformanceInfoDetails()
-    private val performanceDrawer = PerformanceDrawer(context, settings)
-    private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)
+    private val performanceDrawer: PerformanceDrawer =
+        PerformanceDrawer(context, screenSettings)
+    private val breakBoostingDrawer = BreakBoostingDrawer(context, screenSettings)
 
     private val metricsCache = MetricsCache()
 
@@ -43,7 +51,7 @@ internal class PerformanceSurfaceRenderer(
         canvas: Canvas,
         drawArea: Rect?,
     ) {
-        val performanceScreenSettings = settings.getPerformanceScreenSettings()
+        val performanceScreenSettings = screenSettings.getPerformanceScreenSettings()
         drawArea?.let {
             performanceDrawer.drawBackground(canvas, it)
 
@@ -51,7 +59,7 @@ internal class PerformanceSurfaceRenderer(
             var top = getTop(area)
             val left = performanceDrawer.getMarginLeft(area.left.toFloat())
 
-            if (settings.isStatusPanelEnabled()) {
+            if (screenSettings.isStatusPanelEnabled()) {
                 performanceDrawer.drawStatusPanel(
                     canvas,
                     top,
@@ -91,8 +99,6 @@ internal class PerformanceSurfaceRenderer(
                     torque = metricsCache.torqueMetric,
                 )
             } else {
-
-
                 performanceDrawer.drawScreen(
                     canvas = canvas,
                     area = area,

@@ -48,6 +48,7 @@ internal class MetricsCache {
             Log.v(TAG, "allMetrics=${allMetrics.map { it.pid.id }}")
             Log.v(TAG, "topMetrics=${topMetrics.map { it.pid.id }}")
             Log.v(TAG, "bottomMetrics=${bottomMetrics.map { it.pid.id }}")
+            Log.v(TAG, "hiddenMetrics=${settings.getHiddenMetrics()}")
         }
 
         val currentBottomMetrics = settings.getBottomMetrics()
@@ -65,19 +66,24 @@ internal class MetricsCache {
         lastBottomIds = currentBottomMetrics
         lastTopIds = currentTopMetrics
 
+        val hidden = settings.getHiddenMetrics()
         bottomMetrics.clear()
         for (id in currentBottomMetrics) {
-            val metric = metricsCollector.getMetric(id)
-            if (metric != null && allMetrics.contains(metric)) {
-                bottomMetrics.add(metric)
+            if (!hidden.contains(id)) {
+                val metric = metricsCollector.getMetric(id)
+                if (metric != null && allMetrics.contains(metric)) {
+                    bottomMetrics.add(metric)
+                }
             }
         }
 
         topMetrics.clear()
         for (id in currentTopMetrics) {
-            val metric = metricsCollector.getMetric(id)
-            if (metric != null && allMetrics.contains(metric)) {
-                topMetrics.add(metric)
+            if (!hidden.contains(id)) {
+                val metric = metricsCollector.getMetric(id)
+                if (metric != null && allMetrics.contains(metric)) {
+                    topMetrics.add(metric)
+                }
             }
         }
     }

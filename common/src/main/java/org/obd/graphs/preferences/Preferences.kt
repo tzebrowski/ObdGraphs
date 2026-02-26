@@ -79,9 +79,20 @@ fun SharedPreferences.updateLongSet(key: String, list: List<Long>) {
     edit().putStringSet(key, list.map { l -> l.toString() }.toSet()).commit()
 }
 
-fun SharedPreferences.getLongSet(key: String, defaults: MutableSet<String> = mutableSetOf()): Set<Long> {
-    return getStringSet(key, defaults)?.map { s -> s.toLong() }?.toSet()!!
+fun SharedPreferences.getLongSet(
+    key: String,
+    defaults: MutableSet<String> = mutableSetOf()
+): MutableSet<Long> {
+    return getStringSet(key, defaults)?.map { s -> s.toLong() }?.toMutableSet()!!
 }
+
+fun SharedPreferences.getLongList(
+    key: String,
+    defaults: MutableSet<String> = mutableSetOf()
+): List<Long> {
+    return getStringSet(key, defaults)?.map { s -> s.toLong() }?.toList()!!
+}
+
 
 fun SharedPreferences.getStringSet(key: String): MutableSet<String> {
     return getStringSet(key, emptySet())!!

@@ -23,6 +23,7 @@ import org.obd.graphs.preferences.getLongSet
 private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selected"
 const val PREF_QUERY_PERFORMANCE_TOP = "pref.query.performance.top"
 const val PREF_QUERY_PERFORMANCE_BOTTOM = "pref.query.performance.bottom"
+
 const val PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS =
     "pref.query.performance.break_boosting.gas_pid"
 const val PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE =
@@ -35,7 +36,7 @@ internal class PerformanceQueryStrategy : QueryStrategy() {
             Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong() +
             Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE, -1).toLong()
 
-    override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY).toMutableSet()
+    override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY)
 
     init {
         Log.i("PerformanceQueryStrategy", "Read defaults=${getDefaultPIDs()}")
