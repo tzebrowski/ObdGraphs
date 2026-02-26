@@ -52,6 +52,8 @@ internal typealias AuthenticatedAction = suspend (accessToken: String) -> Unit
 
 private const val MAX_AUTHORIZE_ATTEMPTS = 4
 
+private const val DUMMY_WEB_CLIENT_ID = "no_key"
+
 internal abstract class AuthorizationManager(
     private val webClientId: String,
     protected val activity: Activity,
@@ -83,6 +85,12 @@ internal abstract class AuthorizationManager(
                 Log.i(TAG, "Attempting to authorize. $i attempt")
 
                 val credentialManager = CredentialManager.create(activity)
+                if (DUMMY_WEB_CLIENT_ID == webClientId) {
+                    throw Exception(
+                        "Application does not use real Google Play WEB CLIENT ID. " +
+                            "Authorization won't work. Please set the `ANDROID_WEB_CLIENT_ID` env variable.",
+                    )
+                }
 
                 val googleIdOption =
                     GetGoogleIdOption
@@ -136,7 +144,10 @@ internal abstract class AuthorizationManager(
         authenticatedAction: AuthenticatedAction,
     ) {
         val scopes = getScopes()
-        Log.i(TAG, "Checking permissions for scopes: $scopes and executing action: $authenticatedActionName")
+        Log.i(
+            TAG,
+            "Checking permissions for scopes: $scopes and executing action: $authenticatedActionName",
+        )
 
         val authorizationClient = Identity.getAuthorizationClient(activity)
         val request =
@@ -149,7 +160,11 @@ internal abstract class AuthorizationManager(
             .authorize(request)
             .addOnSuccessListener { result ->
                 if (result.hasResolution()) {
-                    launchConsentScreen(result.pendingIntent?.intentSender, authenticatedActionName, authenticatedAction)
+                    launchConsentScreen(
+                        result.pendingIntent?.intentSender,
+                        authenticatedActionName,
+                        authenticatedAction,
+                    )
                 } else {
                     val token = result.accessToken
                     if (token != null) {
@@ -159,7 +174,11 @@ internal abstract class AuthorizationManager(
                 }
             }.addOnFailureListener { e ->
                 if (e is ApiException && e.statusCode == CommonStatusCodes.RESOLUTION_REQUIRED) {
-                    launchConsentScreen(e.status.resolution?.intentSender, authenticatedActionName, authenticatedAction)
+                    launchConsentScreen(
+                        e.status.resolution?.intentSender,
+                        authenticatedActionName,
+                        authenticatedAction,
+                    )
                 } else {
                     Log.e(TAG, "Authorization failed", e)
                     sendBroadcastEvent(GOOGLE_SIGN_IN_GENERAL_FAILURE)

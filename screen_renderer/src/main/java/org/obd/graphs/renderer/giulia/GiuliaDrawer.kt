@@ -56,11 +56,25 @@ internal class GiuliaDrawer(
 ) : AbstractDrawer(context, settings) {
     private val density = context.resources.displayMetrics.density
 
+    private val labelSplitCache = mutableMapOf<Long, List<String>>()
+    private val labelReplaceCache = mutableMapOf<Long, String>()
+    private val alertLabelCache = mutableMapOf<Long, String>()
+    private val progressGradientColors = IntArray(2)
+
+    var currentSecondLineTop: Float = -1f
+
     private val glowPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
             maskFilter = BlurMaskFilter(GLOW_RADIUS * density, BlurMaskFilter.Blur.NORMAL)
         }
+
+    override fun recycle() {
+        super.recycle()
+        labelSplitCache.clear()
+        labelReplaceCache.clear()
+        alertLabelCache.clear()
+    }
 
     inline fun drawMetric(
         canvas: Canvas,
@@ -73,7 +87,6 @@ internal class GiuliaDrawer(
         valueLeft: Float,
         valueCastToInt: Boolean = false,
     ) {
-
         var viewportTop = top + (textSizeBase * METRIC_TOP_NUDGE)
 
         titlePaint.textSize = textSizeBase
@@ -81,12 +94,12 @@ internal class GiuliaDrawer(
         val footerTitleTextSize = textSizeBase / FOOTER_SIZE_RATIO / FOOTER_SIZE_RATIO
         var left1 = left
 
-        val (newTop, secondLineTop) = drawTitle(canvas, metric, left1, viewportTop, textSizeBase)
-        val isTwoLines = secondLineTop != null
+        val newTop = drawTitle(canvas, metric, left1, viewportTop, textSizeBase)
+        val isTwoLines = currentSecondLineTop != -1f
 
         val valueNudge =
             if (isTwoLines) (textSizeBase * DOUBLE_LINE_VALUE_TOP_OFFSET) else (textSizeBase * SINGLE_LINE_VALUE_TOP_OFFSET)
-        val valueDrawingTop = (secondLineTop ?: viewportTop) + valueNudge
+        val valueDrawingTop = (if (isTwoLines) currentSecondLineTop else viewportTop) + valueNudge
 
         drawValue(canvas, metric, valueLeft, valueDrawingTop, valueTextSize, valueCastToInt)
 
@@ -101,18 +114,42 @@ internal class GiuliaDrawer(
             viewportTop += (2f * density)
 
             if (metric.source.command.pid.historgam.isMinEnabled) {
-                left1 = drawText(canvas, "min", left, viewportTop, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.min.format(pid = metric.pid), left1, viewportTop, minValueColorScheme(metric), footerValueTextSize)
+                left1 =
+                    drawText(canvas, "min", left, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(
+                    canvas,
+                    metric.min.format(pid = metric.pid),
+                    left1,
+                    viewportTop,
+                    minValueColorScheme(metric),
+                    footerValueTextSize
+                )
             }
 
             if (metric.source.command.pid.historgam.isMaxEnabled) {
-                left1 = drawText(canvas, "max", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.max.format(pid = metric.pid), left1, viewportTop, maxValueColorScheme(metric), footerValueTextSize)
+                left1 =
+                    drawText(canvas, "max", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(
+                    canvas,
+                    metric.max.format(pid = metric.pid),
+                    left1,
+                    viewportTop,
+                    maxValueColorScheme(metric),
+                    footerValueTextSize
+                )
             }
 
             if (metric.source.command.pid.historgam.isAvgEnabled) {
-                left1 = drawText(canvas, "avg", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
-                left1 = drawText(canvas, metric.mean.format(pid = metric.pid), left1, viewportTop, Color.LTGRAY, footerValueTextSize)
+                left1 =
+                    drawText(canvas, "avg", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 = drawText(
+                    canvas,
+                    metric.mean.format(pid = metric.pid),
+                    left1,
+                    viewportTop,
+                    Color.LTGRAY,
+                    footerValueTextSize
+                )
             }
             drawAlertingLegend(canvas, metric, left1, viewportTop)
 
@@ -121,10 +158,24 @@ internal class GiuliaDrawer(
             viewportTop += if (isTwoLines) (textSizeBase * 0.15f) else (textSizeBase * 0.40f)
         }
 
-        drawProgressBar(canvas, left, itemWidth(area).toFloat(), viewportTop, metric, settings.getColorTheme().progressColor, textSizeBase)
+        drawProgressBar(
+            canvas,
+            left,
+            itemWidth(area).toFloat(),
+            viewportTop,
+            metric,
+            settings.getColorTheme().progressColor,
+            textSizeBase
+        )
 
         viewportTop += calculateDividerSpacing(textSizeBase, isTwoLines)
-        drawDivider(canvas, left, itemWidth(area).toFloat(), viewportTop, settings.getColorTheme().dividerColor)
+        drawDivider(
+            canvas,
+            left,
+            itemWidth(area).toFloat(),
+            viewportTop,
+            settings.getColorTheme().dividerColor
+        )
     }
 
     fun calculateMetricHeight(metric: Metric, textSizeBase: Float): Float {
@@ -143,7 +194,7 @@ internal class GiuliaDrawer(
         val isTwoLines: Boolean
 
         if (settings.isBreakLabelTextEnabled()) {
-            val text = safeDescription.split("\n")
+            val text = labelSplitCache.getOrPut(metric.pid.id) { safeDescription.split("\n") }
             if (text.size == 1) {
                 newTop = top + topMargin
                 isTwoLines = false
@@ -215,10 +266,8 @@ internal class GiuliaDrawer(
         if (it.source.isNumber()) {
             val progress =
                 it.source.toFloat().mapRange(
-                    it.source.command.pid.min
-                        .toFloat(),
-                    it.source.command.pid.max
-                        .toFloat(),
+                    it.source.command.pid.min.toFloat(),
+                    it.source.command.pid.max.toFloat(),
                     left,
                     left + width - (MARGIN_END * density),
                 )
@@ -236,12 +285,27 @@ internal class GiuliaDrawer(
 
             val glowExpansion = (rectBottom - rectTop) * 0.6f
             glowPaint.color = color
-            canvas.drawRect(rectLeft, rectTop - glowExpansion, rectRight, rectBottom + glowExpansion, glowPaint)
+            canvas.drawRect(
+                rectLeft,
+                rectTop - glowExpansion,
+                rectRight,
+                rectBottom + glowExpansion,
+                glowPaint
+            )
 
             paint.color = color
             if (settings.isProgressGradientEnabled()) {
-                val colors = intArrayOf(Color.WHITE, color)
-                paint.shader = LinearGradient(rectLeft, rectTop, maxRight, rectTop, colors, null, Shader.TileMode.CLAMP)
+                progressGradientColors[0] = Color.WHITE
+                progressGradientColors[1] = color
+                paint.shader = LinearGradient(
+                    rectLeft,
+                    rectTop,
+                    maxRight,
+                    rectTop,
+                    progressGradientColors,
+                    null,
+                    Shader.TileMode.CLAMP
+                )
             }
 
             canvas.drawRect(rectLeft, rectTop, rectRight, rectBottom, paint)
@@ -262,11 +326,22 @@ internal class GiuliaDrawer(
             drawText(canvas, text, left, top, Color.LTGRAY, 9f * density, alertingLegendPaint)
             val hPos = left + getTextWidth(text, alertingLegendPaint) + (1f * density)
 
-            var label = ""
-            if (metric.source.command.pid.alert.lowerThreshold != null) label += "X<${metric.source.command.pid.alert.lowerThreshold}"
-            if (metric.source.command.pid.alert.upperThreshold != null) label += " X>${metric.source.command.pid.alert.upperThreshold}"
+            val label = alertLabelCache.getOrPut(metric.pid.id) {
+                var temp = ""
+                if (metric.source.command.pid.alert.lowerThreshold != null) temp += "X<${metric.source.command.pid.alert.lowerThreshold}"
+                if (metric.source.command.pid.alert.upperThreshold != null) temp += " X>${metric.source.command.pid.alert.upperThreshold}"
+                temp
+            }
 
-            drawText(canvas, label, hPos + (1 * density), top, Color.YELLOW, 11f * density, alertingLegendPaint)
+            drawText(
+                canvas,
+                label,
+                hPos + (1 * density),
+                top,
+                Color.YELLOW,
+                11f * density,
+                alertingLegendPaint
+            )
         }
     }
 
@@ -303,14 +378,13 @@ internal class GiuliaDrawer(
         left: Float,
         top: Float,
         textSize: Float,
-    ): Pair<Float, Float?> {
+    ): Float {
+        currentSecondLineTop = -1f
         val topMargin = max((textSize * 0.22f).toInt(), (8 * density).toInt())
         titlePaint.textSize = textSize
 
         val description =
-            if (metric.source.command.pid.longDescription
-                    .isNullOrEmpty()
-            ) {
+            if (metric.source.command.pid.longDescription.isNullOrEmpty()) {
                 metric.source.command.pid.description
             } else {
                 metric.source.command.pid.longDescription
@@ -318,25 +392,26 @@ internal class GiuliaDrawer(
         val safeDescription = description ?: ""
 
         if (settings.isBreakLabelTextEnabled()) {
-            val text = safeDescription.split("\n")
+            val text = labelSplitCache.getOrPut(metric.pid.id) { safeDescription.split("\n") }
             if (text.size == 1) {
                 canvas.drawText(text[0], left, top, titlePaint)
-                return Pair(top + topMargin, null)
+                return top + topMargin
             } else {
                 var vPos = top
-                var secondLineTop: Float? = null
                 text.forEachIndexed { index, s ->
                     canvas.drawText(s.trim(), left, vPos, titlePaint)
                     if (index == 1) {
-                        secondLineTop = vPos
+                        currentSecondLineTop = vPos
                     }
                     vPos += titlePaint.textSize
                 }
-                return Pair(vPos + (topMargin / 2), secondLineTop)
+                return vPos + (topMargin / 2)
             }
         } else {
-            canvas.drawText(safeDescription.replace("\n", " "), left, top, titlePaint)
-            return Pair(top + topMargin, null)
+            val text =
+                labelReplaceCache.getOrPut(metric.pid.id) { safeDescription.replace("\n", " ") }
+            canvas.drawText(text, left, top, titlePaint)
+            return top + topMargin
         }
     }
 
