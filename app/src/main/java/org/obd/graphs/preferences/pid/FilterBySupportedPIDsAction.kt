@@ -18,13 +18,13 @@ package org.obd.graphs.preferences.pid
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.preference.CheckBoxPreference
+import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.activity.navigateToPreferencesScreen
 
 class FilterBySupportedPIDsAction(
     context: Context,
     attrs: AttributeSet?,
-) : CheckBoxPreference(context, attrs) {
+) : SwitchPreferenceCompat(context, attrs) {
     init {
         setOnPreferenceClickListener {
             navigateToPreferencesScreen("pref.registry")

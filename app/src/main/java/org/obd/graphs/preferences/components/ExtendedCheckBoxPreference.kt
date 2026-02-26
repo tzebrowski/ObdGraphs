@@ -19,7 +19,6 @@ package org.obd.graphs.preferences.components
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
-import androidx.preference.Preference.OnPreferenceChangeListener
 import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.SCREEN_REFRESH_EVENT
 import org.obd.graphs.sendBroadcastEvent

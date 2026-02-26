@@ -20,7 +20,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
-import androidx.preference.CheckBoxPreference
+import androidx.preference.SwitchPreferenceCompat
 import org.obd.graphs.Permissions
 import org.obd.graphs.R
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
@@ -31,7 +31,7 @@ private const val LOG_TAG = "GPSEnablerCheckBoxPreference"
 class GpsEnablerCheckBoxPreference(
     context: Context,
     attrs: AttributeSet?,
-) : CheckBoxPreference(context, attrs) {
+) : SwitchPreferenceCompat(context, attrs) {
     init {
         setOnPreferenceChangeListener { _, newValue ->
             val isEnabling = newValue as Boolean
@@ -42,7 +42,6 @@ class GpsEnablerCheckBoxPreference(
                     .setMessage(context.getString(R.string.pref_adapter_collect_gps_enabled_dialog_summary))
                     .setCancelable(false)
                     .setPositiveButton(context.getString(R.string.dialog_ask_question_yes)) { _, _ ->
-                        Log.e("AAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                         if (Permissions.hasLocationPermissions(context)) {
                             isChecked = true
                             Log.i(LOG_TAG, "Enabling collecting GPS data collection. All required permissions are granted.")

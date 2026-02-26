@@ -19,6 +19,7 @@
                     app:singleLineTitle="false" />
 
                 <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
+                    app:dependency="pref.adapter.query.individual.enabled"
                     android:dialogTitle="@string/pref.pids_generic_high"
                     android:key="pref.pids.generic.high"
                     android:summary="@string/pref.pids_generic_high_summary"
@@ -27,6 +28,7 @@
                     app:source="high" />
 
                 <org.obd.graphs.preferences.pid.PidDefinitionListPreferences
+                    app:dependency="pref.adapter.query.individual.enabled"
                     android:dialogTitle="@string/pref.pids_generic_low"
                     android:key="pref.pids.generic.low"
                     android:summary="@string/pref.pids_generic_low_summary"
@@ -41,7 +43,7 @@
                     android:title="@string/pref.adapter.collect.gps.enabled_title"
                     app:singleLineTitle="false" />
 
-                <CheckBoxPreference
+                <SwitchPreferenceCompat
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.pids.group.enableCapabilitiesReadings"
                     android:key="pref.adapter.init.fetchSupportedPids"
@@ -271,7 +273,7 @@
                     android:summary="@string/pref.adapter_error_handling_summary"
                     android:title="@string/pref.settings">
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="true"
                         android:dialogTitle="@string/pref.adapter_reconnect"
                         android:key="pref.adapter.reconnect"
@@ -536,7 +538,7 @@
                     android:title="@string/pref.vehicle.metadata_title"
                     app:singleLineTitle="false" />
 
-                <CheckBoxPreference
+                <SwitchPreferenceCompat
                     android:defaultValue="true"
                     android:dialogTitle="@string/pref.pids.group.enableMetadataReadings"
                     android:key="pref.adapter.init.fetchDeviceProperties"
@@ -564,7 +566,7 @@
                     android:title="@string/pref.dtc.title"
                     app:singleLineTitle="false" />
 
-                <CheckBoxPreference
+                <SwitchPreferenceCompat
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids.group.enableDTCCleanup"
                     android:key="pref.adapter.init.cleanDTC"
@@ -572,7 +574,7 @@
                     android:title="@string/pref.pids.group.enableDTCCleanup"
                     app:singleLineTitle="false" />
 
-                <CheckBoxPreference
+                <SwitchPreferenceCompat
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
                     android:key="pref.adapter.init.fetchDTC"
@@ -580,7 +582,7 @@
                     android:title="@string/pref.pids.group.enableDTCReadings"
                     app:singleLineTitle="false" />
 
-                <CheckBoxPreference
+                <SwitchPreferenceCompat
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.pids.group.show_notification"
                     android:key="pref.dtc.show_notification"
@@ -646,7 +648,7 @@
             android:summary="@string/pref.view_category_summary"
             android:title="@string/pref.settings">
 
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="true"
                 android:key="pref.views.navigation.navigate_last_visited_view"
                 android:summary="@string/pref.view.navigation.navigate_to_last_visited_view_summary"
@@ -708,19 +710,19 @@
                         app:singleLineTitle="false"
                         app:useSimpleSummaryProvider="true" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.gauge_scrollbar_enabled"
                         android:title="@string/pref.gauge_display_scrollbar"
                         app:singleLineTitle="false" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.gauge_display_command_rate"
                         android:title="@string/pref.gauge_display_refresh_rate"
                         app:singleLineTitle="false" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="true"
                         android:key="pref.gauge_display_scale"
                         android:title="@string/pref.gauge_display_scale"
@@ -1124,14 +1126,14 @@
                     android:title="@string/pref.aa.general_category"
                     app:singleLineTitle="false">
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="true"
                         android:key="pref.aa.connect_dialog.enabled"
                         android:title="@string/pref.aa.connect_dialog.enabled"
                         app:singleLineTitle="false" />
 
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.aa.screen.load_last_visited.enabled"
                         android:title="@string/pref.aa.screen.load_last_visited.enabled"
@@ -1847,7 +1849,7 @@
                 <PreferenceCategory
                     android:title="@string/pref.aa.debug_category"
                     app:singleLineTitle="false">
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.aa.status.fps.enabled"
                         android:title="@string/pref.aa.surface.fps.display_status"
@@ -1930,12 +1932,12 @@
                         app:broadcastEvent="navigation.buttons.changes.event"
                         app:singleLineTitle="false" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="true"
                         android:key="pref.graph.cache.enabled"
                         android:title="@string/pref.graph_cache_enabled" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="true"
                         android:key="pref.graph.toggle_virtual_screens_double_click"
                         android:title="@string/pref.toolbar.toggle_double_click"
@@ -1967,12 +1969,12 @@
                 </PreferenceCategory>
 
                 <PreferenceCategory android:title="@string/pref.trips_category">
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.trips.recordings.display_info"
                         android:title="@string/pref.graph.trips_recordings_display_info" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.trips.recordings.save.short.trip"
                         android:title="@string/pref.graph.trips_recordings_save_short_trip"
@@ -2012,22 +2014,22 @@
                         android:title="@string/pref.enable_view"
                         app:singleLineTitle="false" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.dash.top.values.blink"
                         android:title="@string/pref.dash_top_values_blink" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.dash.enable_drag"
                         android:title="@string/pref.dash_enable_drag_and_drop" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.dash.swipe.to.delete"
                         android:title="@string/pref.dash_swipe_to_delete" />
 
-                    <CheckBoxPreference
+                    <SwitchPreferenceCompat
                         android:defaultValue="false"
                         android:key="pref.dash.top.values.red.color"
                         android:title="@string/pref.dash_top_values_red_color" />
@@ -2055,19 +2057,19 @@
             android:summary="@string/pref.toolbar_category_summary"
             android:title="@string/pref.settings">
 
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="false"
                 android:key="pref.toolbar.hide.landscape"
                 android:title="@string/pref.toolbar_hide_landscape"
                 android:summary="@string/pref.toolbar_hide_landscape_summary"
                 app:singleLineTitle="false" />
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="true"
                 android:key="pref.toolbar.hide.doubleclick"
                 android:summary="@string/pref.toolbar_hide_doubleclick_summary"
                 android:title="@string/pref.toolbar_hide_doubleclick"
                 app:singleLineTitle="false" />
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="true"
                 android:key="pref.toolbar.hide.connected"
                 android:title="@string/pref.toolbar_hide_connected"
@@ -2083,22 +2085,22 @@
             android:key="pref.debug"
             android:title="@string/pref.settings">
 
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="false"
                 android:key="pref.debug.generator.broadcast_fake_metrics"
                 android:title="@string/pref.debug_broadcast_fake_metrics" />
 
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="false"
                 android:key="pref.debug.trip.save.connector_response"
                 android:title="@string/pref.debug_trip_save_connector_response" />
 
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="false"
                 android:key="pref.debug.logging.enabled"
                 android:title="@string/pref.debug_logging_enabled" />
 
-            <CheckBoxPreference
+            <SwitchPreferenceCompat
                 android:defaultValue="false"
                 android:key="pref.debug.generator.enabled"
                 android:title="@string/pref.debug_generator_enabled"
