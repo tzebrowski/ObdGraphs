@@ -67,9 +67,9 @@ Example for such use-case  can be found [here](https://github.com/tzebrowski/Obd
 * `Custom PID Integration:` Supports the addition of new PIDs through external JSON configurations, enabling adaptability to various vehicle models.
 
 
-### YouTube overview video (break boosting assistance)
+### YouTube overview video (brake-boosting assistance)
 
-[![MyGiulia AA on YouTube](https://img.youtube.com/vi/dYNOtf7SPDk/0.jpg)](https://youtube.com/shorts/dYNOtf7SPDk?feature=share "Break Boosting Assistance")
+[![MyGiulia AA on YouTube](https://img.youtube.com/vi/dYNOtf7SPDk/0.jpg)](https://youtube.com/shorts/dYNOtf7SPDk?feature=share "Brake-Boosting Assistance")
 
 ## Views
 

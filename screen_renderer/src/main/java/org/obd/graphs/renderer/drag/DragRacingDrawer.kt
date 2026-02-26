@@ -33,7 +33,7 @@ import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
-import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
+import org.obd.graphs.renderer.brake_boosting.BrakeBoostingDrawer
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.round
@@ -84,7 +84,7 @@ internal class DragRacingDrawer(
                 ),
         )
 
-    private val breakBoostingDrawer = BreakBoostingDrawer(context, settings)
+    private val brakeBoostingDrawer = BrakeBoostingDrawer(context, settings)
     private val shiftLightPaint = Paint()
     private var segmentCounter = SHIFT_LIGHTS_MAX_SEGMENTS
 
@@ -115,14 +115,14 @@ internal class DragRacingDrawer(
         if (dragRacingResults.readyToRace) {
             drawShiftLights(canvas, area, color = COLOR_DYNAMIC_SELECTOR_ECO, blinking = true)
 
-            if (breakBoostingDrawer.isBreakBoosting(
-                    breakBoostingSettings = settings.getDragRacingScreenSettings().breakBoostingSettings,
+            if (brakeBoostingDrawer.isBrakeBoosting(
+                    brakeBoostingSettings = settings.getDragRacingScreenSettings().brakeBoostingSettings,
                     gas = dragRaceDetails.gas,
                     torque = dragRaceDetails.torque,
                 )
             ) {
                 top -= 30f
-                breakBoostingDrawer.drawScreen(canvas, area, top, gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)
+                brakeBoostingDrawer.drawScreen(canvas, area, top, gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)
             } else {
                 top = drawGauges(top, dragRaceDetails, area, canvas, left)
 

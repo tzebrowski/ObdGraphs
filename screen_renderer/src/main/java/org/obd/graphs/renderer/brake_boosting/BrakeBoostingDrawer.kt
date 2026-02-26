@@ -14,7 +14,7 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.renderer.break_boosting
+package org.obd.graphs.renderer.brake_boosting
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -24,13 +24,13 @@ import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingService
 import org.obd.graphs.renderer.AbstractDrawer
-import org.obd.graphs.renderer.api.BreakBoostingSettings
+import org.obd.graphs.renderer.api.BrakeBoostingSettings
 import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 
-internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
@@ -51,18 +51,18 @@ internal class BreakBoostingDrawer(context: Context, settings: ScreenSettings) :
         gas: Metric?,
         torque: Metric?
     ) {
-        drawGaugesBreakBoosting(area, canvas, pTop - 30, gas = gas, torque = torque)
+        drawGaugesBrakeBoosting(area, canvas, pTop - 30, gas = gas, torque = torque)
     }
 
-    fun isBreakBoosting(breakBoostingSettings: BreakBoostingSettings, gas: Metric?, torque: Metric?) =
-        breakBoostingSettings.viewEnabled &&
+    fun isBrakeBoosting(brakeBoostingSettings: BrakeBoostingSettings, gas: Metric?, torque: Metric?) =
+        brakeBoostingSettings.viewEnabled &&
         DragRacingService.registry.getResult().readyToRace &&
                 settings.getDragRacingScreenSettings().displayMetricsEnabled &&
                 settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled &&
                 gas != null && torque != null && (gas.value as Number).toInt() > 0
 
 
-    private fun drawGaugesBreakBoosting(
+    private fun drawGaugesBrakeBoosting(
         area: Rect,
         canvas: Canvas,
         top: Float,

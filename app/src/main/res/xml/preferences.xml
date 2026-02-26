@@ -1694,8 +1694,8 @@
                     <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.performance.break_boosting.enabled"
-                        android:title="@string/pref.aa.performance.break_boosting.enabled"
-                        android:summary="@string/pref.aa.performance.break_boosting.enabled_summary"
+                        android:title="@string/pref.aa.performance.brake_boosting.enabled"
+                        android:summary="@string/pref.aa.performance.brake_boosting.enabled_summary"
                         app:singleLineTitle="false" />
 
 
@@ -1762,8 +1762,8 @@
                     <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                         android:defaultValue="true"
                         android:key="pref.aa.drag_race.break_boosting.enabled"
-                        android:title="@string/pref.aa.drag_race.break_boosting.enabled"
-                        android:summary="@string/pref.aa.drag_race.break_boosting.enabled_summary"
+                        android:title="@string/pref.aa.drag_race.brake_boosting.enabled"
+                        android:summary="@string/pref.aa.drag_race.brake_boosting.enabled_summary"
                         app:singleLineTitle="false" />
 
                     <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference

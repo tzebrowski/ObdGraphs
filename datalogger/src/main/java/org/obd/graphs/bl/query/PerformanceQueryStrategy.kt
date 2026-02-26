@@ -24,17 +24,17 @@ private const val PERFORMANCE_QUERY_PREF_KEY = "pref.aa.performance.pids.selecte
 const val PREF_QUERY_PERFORMANCE_TOP = "pref.query.performance.top"
 const val PREF_QUERY_PERFORMANCE_BOTTOM = "pref.query.performance.bottom"
 
-const val PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS =
+const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS =
     "pref.query.performance.break_boosting.gas_pid"
-const val PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE =
+const val PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_TORQUE =
     "pref.query.performance.break_boosting.torque_pid"
 
 internal class PerformanceQueryStrategy : QueryStrategy() {
     override fun getDefaultPIDs() =
         Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP) +
             Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM) +
-            Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong() +
-            Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE, -1).toLong()
+            Prefs.getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS, -1).toLong() +
+            Prefs.getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_TORQUE, -1).toLong()
 
     override fun getPIDs() = Prefs.getLongSet(PERFORMANCE_QUERY_PREF_KEY)
 

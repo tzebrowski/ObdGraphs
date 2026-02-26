@@ -25,7 +25,7 @@ import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
-import org.obd.graphs.renderer.break_boosting.BreakBoostingDrawer
+import org.obd.graphs.renderer.brake_boosting.BrakeBoostingDrawer
 
 internal class PerformanceScreenSettings(
     original: ScreenSettings,
@@ -43,7 +43,7 @@ internal class PerformanceSurfaceRenderer(
     private val performanceInfoDetails = PerformanceInfoDetails()
     private val performanceDrawer: PerformanceDrawer =
         PerformanceDrawer(context, screenSettings)
-    private val breakBoostingDrawer = BreakBoostingDrawer(context, screenSettings)
+    private val brakeBoostingDrawer = BrakeBoostingDrawer(context, screenSettings)
 
     private val metricsCache = MetricsCache()
 
@@ -83,15 +83,15 @@ internal class PerformanceSurfaceRenderer(
 
             metricsCache.update(performanceScreenSettings, metricsCollector)
 
-            if (breakBoostingDrawer.isBreakBoosting(
-                    breakBoostingSettings = performanceScreenSettings.breakBoostingSettings,
+            if (brakeBoostingDrawer.isBrakeBoosting(
+                    brakeBoostingSettings = performanceScreenSettings.brakeBoostingSettings,
                     gas = metricsCache.gasMetric,
                     torque = metricsCache.torqueMetric,
                 )
             ) {
                 top -= 30f
 
-                breakBoostingDrawer.drawScreen(
+                brakeBoostingDrawer.drawScreen(
                     canvas,
                     area,
                     top,

@@ -16,12 +16,8 @@
  */
 package org.obd.graphs.ui.performance
 
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getLongSet
 import org.obd.graphs.preferences.getS
-import org.obd.graphs.renderer.api.BreakBoostingSettings
 import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 
