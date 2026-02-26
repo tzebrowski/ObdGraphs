@@ -38,12 +38,12 @@ internal class MetricsCache {
         settings: PerformanceScreenSettings,
         metricsCollector: MetricsCollector,
     ) {
-        val allMetrics = metricsCollector.getMetrics(enabled = true)
+        val allMetrics = metricsCollector.getMetrics()
         gasMetric = metricsCollector.getMetric(settings.brakeBoostingSettings.getGasMetric())
         torqueMetric = metricsCollector.getMetric(settings.brakeBoostingSettings.getTorqueMetric())
 
-        val currentBottomMetrics = settings.getBottomMetrics()
-        val currentTopMetrics = settings.getTopMetrics()
+        val currentBottomMetrics = settings.bottomMetrics
+        val currentTopMetrics = settings.topMetrics
 
         val cacheHit =
             allMetrics.size == cachedMetrics.size &&
@@ -51,12 +51,13 @@ internal class MetricsCache {
                 currentTopMetrics == lastTopIds
 
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            Log.v(TAG, "--------------------------------------------------------------")
             Log.v(TAG, "LastBottomIds=$lastBottomIds")
             Log.v(TAG, "LastTopIds=$lastTopIds")
             Log.v(TAG, "AllMetrics=${allMetrics.map { it.pid.id }}")
             Log.v(TAG, "TopMetrics=${topMetrics.map { it.pid.id }}")
             Log.v(TAG, "BottomMetrics=${bottomMetrics.map { it.pid.id }}")
-            Log.v(TAG, "HiddenMetrics=${settings.getHiddenMetrics()}")
+            Log.v(TAG, "HiddenMetrics=${settings.hiddenMetrics}")
             Log.v(TAG, "Cache hit=$cacheHit")
         }
 
@@ -69,7 +70,7 @@ internal class MetricsCache {
         lastBottomIds = currentBottomMetrics
         lastTopIds = currentTopMetrics
 
-        val hiddenSet = settings.getHiddenMetrics()
+        val hiddenSet = settings.hiddenMetrics
         val allMetricsSet = allMetrics.toSet()
 
         bottomMetrics.clear()
