@@ -22,12 +22,16 @@ import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
-import org.obd.graphs.preferences.getLongSet
+import org.obd.graphs.preferences.getLongList
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_DYNAMIC_SELECTOR_SPORT
 import org.obd.graphs.ui.common.COLOR_RAINBOW_INDIGO
 
-interface VirtualScreenConfig {
+
+private const val PREF_QUERY_PERFORMANCE_HIDDEN = "pref.query.performance.hidden"
+
+
+ interface VirtualScreenConfig {
     val selectedPIDs: Set<Long>
 
     fun getPIDsSortOrder(): Map<Long, Int>?
@@ -147,9 +151,11 @@ data class PerformanceScreenSettings(
     var viewEnabled: Boolean = true,
     var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
 ) {
-    fun getBottomMetrics(): List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_BOTTOM).toList()
+    fun getBottomMetrics(): List<Long> = Prefs.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM)
 
-    fun getTopMetrics(): List<Long> = Prefs.getLongSet(PREF_QUERY_PERFORMANCE_TOP).toList()
+    fun getTopMetrics(): List<Long> = Prefs.getLongList(PREF_QUERY_PERFORMANCE_TOP)
+
+    fun getHiddenMetrics(): List<Long> = Prefs.getLongList(PREF_QUERY_PERFORMANCE_HIDDEN)
 }
 
 data class RoutinesScreenSettings(
@@ -185,7 +191,7 @@ interface ScreenSettings {
 
     fun dynamicSelectorChangedEvent(mode: DynamicSelectorMode) {}
 
-    fun isBreakLabelTextEnabled(): Boolean = true
+     open fun isBreakLabelTextEnabled(): Boolean = true
 
     fun isBackgroundDrawingEnabled(): Boolean = true
 
