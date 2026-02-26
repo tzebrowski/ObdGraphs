@@ -99,8 +99,8 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) : A
                     )
                 }
             }
-            drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize + 4, Color.DKGRAY)
-            rowTop += 2 * textSize
+            drawDivider(canvas, left, area.width().toFloat(), rowTop + textSize * 0.8f, Color.DKGRAY)
+            rowTop += 1.8f * textSize
         }
 
         rowTop -= textSize * 0.7f
