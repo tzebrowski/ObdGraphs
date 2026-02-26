@@ -39,8 +39,8 @@ internal class MetricsCache {
         metricsCollector: MetricsCollector,
     ) {
         val allMetrics = metricsCollector.getMetrics(enabled = true)
-        gasMetric = metricsCollector.getMetric(settings.breakBoostingSettings.getGasMetric())
-        torqueMetric = metricsCollector.getMetric(settings.breakBoostingSettings.getTorqueMetric())
+        gasMetric = metricsCollector.getMetric(settings.brakeBoostingSettings.getGasMetric())
+        torqueMetric = metricsCollector.getMetric(settings.brakeBoostingSettings.getTorqueMetric())
 
         val currentBottomMetrics = settings.getBottomMetrics()
         val currentTopMetrics = settings.getTopMetrics()

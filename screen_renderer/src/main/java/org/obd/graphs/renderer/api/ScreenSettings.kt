@@ -18,8 +18,8 @@ package org.obd.graphs.renderer.api
 
 import android.graphics.Color
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_TORQUE
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongList
@@ -127,7 +127,7 @@ data class DragRacingScreenSettings(
     var vehicleSpeedDisplayDebugEnabled: Boolean = true,
     var displayMetricsExtendedEnabled: Boolean = false,
     var fontSize: Int = 32,
-    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
+    var brakeBoostingSettings: BrakeBoostingSettings = BrakeBoostingSettings(),
 )
 
 data class TripInfoScreenSettings(
@@ -135,14 +135,14 @@ data class TripInfoScreenSettings(
     var viewEnabled: Boolean = true,
 )
 
-data class BreakBoostingSettings(
+data class BrakeBoostingSettings(
     var viewEnabled: Boolean = true,
 ) {
-    fun getGasMetric(): Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_GAS, -1).toLong()
+    fun getGasMetric(): Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS, -1).toLong()
 
     fun getTorqueMetric(): Long =
         Prefs
-            .getInt(PREF_QUERY_PERFORMANCE_BREAK_BOOSTING_TORQUE, -1)
+            .getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_TORQUE, -1)
             .toLong()
 }
 
@@ -150,7 +150,7 @@ data class PerformanceScreenSettings(
     var labelCenterYPadding: Float = 22f,
     var fontSize: Int = 24,
     var viewEnabled: Boolean = true,
-    var breakBoostingSettings: BreakBoostingSettings = BreakBoostingSettings(),
+    var brakeBoostingSettings: BrakeBoostingSettings = BrakeBoostingSettings(),
 ) {
     fun getBottomMetrics(): List<Long> = Prefs.getLongList(PREF_QUERY_PERFORMANCE_BOTTOM)
 
