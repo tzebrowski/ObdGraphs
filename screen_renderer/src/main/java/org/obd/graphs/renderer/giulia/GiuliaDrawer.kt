@@ -32,6 +32,7 @@ import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
+import kotlin.math.abs
 import kotlin.math.max
 
 private const val FOOTER_SIZE_RATIO = 1.3f
@@ -50,22 +51,32 @@ private const val PROGRESS_BAR_H_1_COL = 0.28f
 private const val PROGRESS_BAR_H_2_COL = 0.18f
 private const val GLOW_RADIUS = 12f
 
+
 internal class MetricStringCache(size: Int = 100) {
     private val pids = LongArray(size)
     private val values = DoubleArray(size)
     private val strings = Array<String?>(size) { null }
     private var count = 0
 
+    // Define a small epsilon for safe floating-point comparison
+    private val EPSILON = 0.0001
+
     inline fun get(pid: Long, value: Double, formatFallback: () -> String): String {
         for (i in 0 until count) {
             if (pids[i] == pid) {
-                if (values[i] == value && strings[i] != null) return strings[i]!!
+                if (abs(values[i] - value) < EPSILON && strings[i] != null) {
+                    return strings[i]!!
+                }
+
+                // Cache miss (value changed), update it
                 val newStr = formatFallback()
                 values[i] = value
                 strings[i] = newStr
                 return newStr
             }
         }
+
+        // PID not found in cache, add it if there's room
         if (count < pids.size) {
             pids[count] = pid
             values[count] = value
@@ -74,6 +85,8 @@ internal class MetricStringCache(size: Int = 100) {
             count++
             return newStr
         }
+
+        // Cache is full, just format and return without caching
         return formatFallback()
     }
 }
@@ -162,21 +175,40 @@ internal class GiuliaDrawer(
             val pid = metric.pid
 
             if (pid.historgam.isMinEnabled) {
-                left1 = drawText(canvas, "min", left, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 =
+                    drawText(canvas, "min", left, viewportTop, Color.DKGRAY, footerTitleTextSize)
                 val minStr = textCache.min.get(pid.id, metric.min) { metric.min.format(pid = pid) }
-                left1 = drawText(canvas, minStr, left1, viewportTop, minValueColorScheme(metric), footerValueTextSize)
+                left1 = drawText(
+                    canvas,
+                    minStr,
+                    left1,
+                    viewportTop,
+                    minValueColorScheme(metric),
+                    footerValueTextSize
+                )
             }
 
             if (pid.historgam.isMaxEnabled) {
-                left1 = drawText(canvas, "max", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                left1 =
+                    drawText(canvas, "max", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
                 val maxStr = textCache.max.get(pid.id, metric.max) { metric.max.format(pid = pid) }
-                left1 = drawText(canvas, maxStr, left1, viewportTop, maxValueColorScheme(metric), footerValueTextSize)
+                left1 = drawText(
+                    canvas,
+                    maxStr,
+                    left1,
+                    viewportTop,
+                    maxValueColorScheme(metric),
+                    footerValueTextSize
+                )
             }
 
             if (pid.historgam.isAvgEnabled) {
-                left1 = drawText(canvas, "avg", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
-                val avgStr = textCache.avg.get(pid.id, metric.mean) { metric.mean.format(pid = pid) }
-                left1 = drawText(canvas, avgStr, left1, viewportTop, Color.LTGRAY, footerValueTextSize)
+                left1 =
+                    drawText(canvas, "avg", left1, viewportTop, Color.DKGRAY, footerTitleTextSize)
+                val avgStr =
+                    textCache.avg.get(pid.id, metric.mean) { metric.mean.format(pid = pid) }
+                left1 =
+                    drawText(canvas, avgStr, left1, viewportTop, Color.LTGRAY, footerValueTextSize)
             }
             drawAlertingLegend(canvas, metric, left1, viewportTop)
 
@@ -439,7 +471,12 @@ internal class GiuliaDrawer(
                 return vPos + (topMargin / 2)
             }
         } else {
-            val text = textCache.labelReplace.getOrPut(metric.pid.id) { safeDescription.replace("\n", " ") }
+            val text = textCache.labelReplace.getOrPut(metric.pid.id) {
+                safeDescription.replace(
+                    "\n",
+                    " "
+                )
+            }
             canvas.drawText(text, left, top, titlePaint)
             return top + topMargin
         }
