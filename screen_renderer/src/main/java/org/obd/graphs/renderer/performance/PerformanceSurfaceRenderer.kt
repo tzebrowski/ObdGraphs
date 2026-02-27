@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
@@ -87,9 +86,10 @@ internal class PerformanceSurfaceRenderer(
 
             if (breakBoostingDrawer.isBrakeBoosting(
                     brakeBoostingSettings = performanceScreenSettings.brakeBoostingSettings,
-                    gas = metricsCache.gasMetric,
-                    torque = metricsCache.torqueMetric,
-                )
+                    gasMetric = metricsCache.brakeBoosting.gasMetric,
+                    arbitraryMetric = metricsCache.brakeBoosting.arbitraryMetric,
+                    vehicleSpeedMetric = metricsCache.brakeBoosting.vehicleSpeedMetric,
+                    )
             ) {
                 top -= 30f
 
@@ -97,8 +97,8 @@ internal class PerformanceSurfaceRenderer(
                     canvas,
                     area,
                     top,
-                    gas = metricsCache.gasMetric,
-                    torque = metricsCache.torqueMetric,
+                    gas = metricsCache.brakeBoosting.gasMetric,
+                    torque = metricsCache.brakeBoosting.arbitraryMetric,
                 )
             } else {
                 performanceDrawer.drawScreen(

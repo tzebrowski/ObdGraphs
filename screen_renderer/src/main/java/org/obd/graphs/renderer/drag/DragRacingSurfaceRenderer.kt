@@ -34,9 +34,9 @@ internal data class DragRaceDetails(
     var ambientTemp: Metric? = null,
     var atmPressure: Metric? = null,
     var intakePressure: Metric? = null,
-    var torque: Metric? = null,
-    var gas: Metric? = null,
-    var vehicleSpeed: Metric? = null,
+    var arbitraryMetric: Metric? = null,
+    var gasMetric: Metric? = null,
+    var vehicleSpeedMetric: Metric? = null,
 )
 
 internal class DragRacingSurfaceRenderer(
@@ -94,12 +94,12 @@ internal class DragRacingSurfaceRenderer(
                 dragRacingResults = dragRaceResults,
                 dragRaceDetails =
                     dragRaceDetails.apply {
-                        gas = metricsCollector.getMetric(Pid.GAS_PID_ID)
+                        gasMetric = metricsCollector.getMetric(Pid.GAS_PID_ID)
                         ambientTemp = metricsCollector.getMetric(Pid.AMBIENT_TEMP_PID_ID)
                         atmPressure = metricsCollector.getMetric(Pid.ATM_PRESSURE_PID_ID)
-                        torque = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
+                        arbitraryMetric = metricsCollector.getMetric(Pid.ENGINE_TORQUE_PID_ID)
                         intakePressure = metricsCollector.getMetric(Pid.INTAKE_PRESSURE_PID_ID)
-                        vehicleSpeed =
+                        vehicleSpeedMetric =
                             metricsCollector.getMetric(
                                 if (dataLoggerSettings.instance().gmeExtensionsEnabled) {
                                     Pid.EXT_VEHICLE_SPEED_PID_ID
