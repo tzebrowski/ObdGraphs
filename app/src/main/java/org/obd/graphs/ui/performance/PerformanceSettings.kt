@@ -18,6 +18,8 @@ package org.obd.graphs.ui.performance
 
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
+import org.obd.graphs.preferences.isEnabled
+import org.obd.graphs.renderer.api.BrakeBoostingSettings
 import org.obd.graphs.renderer.api.PerformanceScreenSettings
 import org.obd.graphs.renderer.api.ScreenSettings
 
@@ -28,6 +30,9 @@ class PerformanceSettings : ScreenSettings {
         performanceScreenSettings.apply {
             fontSize = Prefs.getS("pref.performance.screen_font_size", "30").toInt()
             labelCenterYPadding = Prefs.getS("pref.performance.screen_label_y_padding", "22").toFloat()
+            brakeBoostingSettings.apply {
+                viewEnabled = Prefs.isEnabled("pref.performance.brake_boosting.enabled")
+            }
         }
 
     override fun isBreakLabelTextEnabled(): Boolean = true

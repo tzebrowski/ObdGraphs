@@ -16,6 +16,8 @@
  */
 package org.obd.graphs
 
+import android.content.res.Resources
+
 const val NEW_RANGE_MIN_VAL = 0f
 const val NEW_RANGE_MAX_VAL = 3500f
 
@@ -36,3 +38,6 @@ fun Double.round(decimals: Int): Double {
     repeat(decimals) { multiplier *= 10 }
     return kotlin.math.round(this * multiplier) / multiplier
 }
+
+val Float.dpToPx: Float
+    get() = this * Resources.getSystem().displayMetrics.density

@@ -23,6 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.drag.DragRacingService
+import org.obd.graphs.dpToPx
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.BrakeBoostingSettings
 import org.obd.graphs.renderer.api.GaugeProgressBarType
@@ -35,7 +36,7 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
         drawerSettings = DrawerSettings(
-            gaugeProgressBarType = GaugeProgressBarType.LONG, startAngle = 180f, sweepAngle = 120f
+            gaugeProgressBarType = GaugeProgressBarType.LONG, startAngle = 180f, sweepAngle = 180f
         )
     )
 
@@ -62,6 +63,7 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
                 gas != null && torque != null && (gas.value as Number).toInt() > 0
 
 
+
     private fun drawGaugesBrakeBoosting(
         area: Rect,
         canvas: Canvas,
@@ -69,33 +71,57 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
         gas: Metric?,
         torque: Metric?
     ) {
-        val marginLeft = 20f
-        if (settings.isAA() || isLandscape()) {
-            val gaugeWidth = area.width() / 1.8f
+        val marginPx = 10f.dpToPx
 
+        val spacingPx = 10f.dpToPx
+
+        val labelPaddingPx = 18f.dpToPx
+
+        if (settings.isAA() || isLandscape()) {
+            val gaugeWidth = (area.width() - (2 * marginPx) - spacingPx) / 2f
             val marginTop = gaugeWidth / 8
 
+            val gasLeft = area.left + marginPx
+            val torqueLeft = gasLeft + gaugeWidth + spacingPx // Use spacingPx here
+
             drawGauge(
-                gas, canvas, top + marginTop, area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = gas,
+                canvas = canvas,
+                top = top + marginTop,
+                left = gasLeft,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
 
             drawGauge(
-                torque, canvas, top + marginTop, (area.left + marginLeft + gaugeWidth * 0.8f),
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = torque,
+                canvas = canvas,
+                top = top + marginTop,
+                left = torqueLeft,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
 
         } else {
-            val gaugeWidth = area.width().toFloat()
+            val gaugeWidth = area.width() - (2 * marginPx)
+            val leftPosition = area.left + marginPx
 
             drawGauge(
-                gas, canvas, top, area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = gas,
+                canvas = canvas,
+                top = top,
+                left = leftPosition,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
 
             drawGauge(
-                torque, canvas, top + gaugeWidth, area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = torque,
+                canvas = canvas,
+                top = top + gaugeWidth + spacingPx,
+                left = leftPosition,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
         }
     }
@@ -124,4 +150,5 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
             )
             true
         }
+
 }

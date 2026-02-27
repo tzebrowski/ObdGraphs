@@ -20,6 +20,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.util.Log
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.renderer.AbstractSurfaceRenderer
 import org.obd.graphs.renderer.MARGIN_TOP
@@ -51,6 +52,7 @@ internal class PerformanceSurfaceRenderer(
         canvas: Canvas,
         drawArea: Rect?,
     ) {
+
         val performanceScreenSettings = screenSettings.getPerformanceScreenSettings()
         drawArea?.let {
             performanceDrawer.drawBackground(canvas, it)
