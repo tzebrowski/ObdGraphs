@@ -236,7 +236,7 @@
     <string name="pref.aa.performance.category">Performance Screen</string>
 
     <string name="pref.aa.performance.brake_boosting.enabled">Enable Brake-Boosting assistance</string>
-    <string name="pref.aa.performance.brake_boosting.enabled_summary">When enabled, the brake boosting assistance feature displays full-screen gauges for gas pedal position and gearbox torque.</string>
+    <string name="pref.aa.performance.brake_boosting.enabled_summary">When enabled, brake boosting assistance displays full-screen gauges for gas pedal position and gearbox torque. Note: You must collect the Vehicle Speed PID for this feature to work.</string>
 
     <string name="pref.aa.performance.enabled">Enable performance screen</string>
     <string name="pref.aa.performance.enabled_summary">Activates the Performance screen, which displays a predefined set of metrics tailored for 2.0 GME engines.</string>

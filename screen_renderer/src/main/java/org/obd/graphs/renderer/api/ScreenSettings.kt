@@ -19,8 +19,9 @@ package org.obd.graphs.renderer.api
 import android.content.SharedPreferences
 import android.graphics.Color
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BOTTOM
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS
-import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_TORQUE
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_ARBITRARY_METRIC
+import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_VEHICLE_SPEED_METRIC
 import org.obd.graphs.bl.query.PREF_QUERY_PERFORMANCE_TOP
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getLongList
@@ -139,11 +140,16 @@ data class TripInfoScreenSettings(
 data class BrakeBoostingSettings(
     var viewEnabled: Boolean = true,
 ) {
-    fun getGasMetric(): Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS, -1).toLong()
+    fun getGasMetric(): Long = Prefs.getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_GAS_METRIC, -1).toLong()
 
-    fun getTorqueMetric(): Long =
+    fun getArbitraryMetric(): Long =
         Prefs
-            .getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_TORQUE, -1)
+            .getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_ARBITRARY_METRIC, -1)
+            .toLong()
+
+    fun getVehicleSpeedMetric(): Long =
+        Prefs
+            .getInt(PREF_QUERY_PERFORMANCE_BRAKE_BOOSTING_VEHICLE_SPEED_METRIC, -1)
             .toLong()
 }
 

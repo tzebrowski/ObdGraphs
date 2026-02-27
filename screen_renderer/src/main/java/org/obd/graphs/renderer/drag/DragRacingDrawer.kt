@@ -117,12 +117,13 @@ internal class DragRacingDrawer(
 
             if (brakeBoostingDrawer.isBrakeBoosting(
                     brakeBoostingSettings = settings.getDragRacingScreenSettings().brakeBoostingSettings,
-                    gas = dragRaceDetails.gas,
-                    torque = dragRaceDetails.torque,
+                    gasMetric = dragRaceDetails.gasMetric,
+                    arbitraryMetric = dragRaceDetails.arbitraryMetric,
+                    vehicleSpeedMetric = dragRaceDetails.vehicleSpeedMetric,
                 )
             ) {
                 top -= 30f
-                brakeBoostingDrawer.drawScreen(canvas, area, top, gas = dragRaceDetails.gas, torque = dragRaceDetails.torque)
+                brakeBoostingDrawer.drawScreen(canvas, area, top, gas = dragRaceDetails.gasMetric, torque = dragRaceDetails.arbitraryMetric)
             } else {
                 top = drawGauges(top, dragRaceDetails, area, canvas, left)
 
@@ -166,7 +167,7 @@ internal class DragRacingDrawer(
             top1 += area.height() / 2.2f
 
             if (settings.getDragRacingScreenSettings().metricsFrequencyReadEnabled) {
-                dragRaceDetails.vehicleSpeed?.let {
+                dragRaceDetails.vehicleSpeedMetric?.let {
                     val textSizeBase = calculateFontSize(area)
                     val frequencyTextSize = textSizeBase * 0.45f
                     val text = "Frequency: ${it.rate?.round(2)} read/sec"
@@ -187,9 +188,9 @@ internal class DragRacingDrawer(
     private fun numberOfGaugesVisible(dragRaceDetails: DragRaceDetails): Int {
         var numGauges = 4
         if (dragRaceDetails.intakePressure == null) numGauges--
-        if (dragRaceDetails.vehicleSpeed == null) numGauges--
-        if (dragRaceDetails.gas == null) numGauges--
-        if (dragRaceDetails.torque == null) numGauges--
+        if (dragRaceDetails.vehicleSpeedMetric == null) numGauges--
+        if (dragRaceDetails.gasMetric == null) numGauges--
+        if (dragRaceDetails.arbitraryMetric == null) numGauges--
         return numGauges
     }
 
@@ -205,7 +206,7 @@ internal class DragRacingDrawer(
             val top1 = calculateTopForMobileLandscape(top)
             drawGauge(
                 mainGaugeDrawer,
-                dragRaceDetails.vehicleSpeed,
+                dragRaceDetails.vehicleSpeedMetric,
                 canvas,
                 top1,
                 area.left.toFloat() + area.width() / 3,
@@ -214,7 +215,7 @@ internal class DragRacingDrawer(
         } else {
             drawGauge(
                 mainGaugeDrawer,
-                dragRaceDetails.vehicleSpeed,
+                dragRaceDetails.vehicleSpeedMetric,
                 canvas,
                 calculateTopForMobile(top),
                 area.left.toFloat(),
@@ -253,7 +254,7 @@ internal class DragRacingDrawer(
 
             drawGauge(
                 mainGaugeDrawer,
-                dragRaceDetails.vehicleSpeed,
+                dragRaceDetails.vehicleSpeedMetric,
                 canvas,
                 top1,
                 (area.left + 1.65f * gaugeWidth),
@@ -273,7 +274,7 @@ internal class DragRacingDrawer(
 
             drawGauge(
                 mainGaugeDrawer,
-                dragRaceDetails.vehicleSpeed,
+                dragRaceDetails.vehicleSpeedMetric,
                 canvas,
                 top1 + area.width().toFloat() / 2f,
                 area.left.toFloat() + area.width() / 5,
@@ -302,7 +303,7 @@ internal class DragRacingDrawer(
 
             drawGauge(
                 smallGaugeDrawer,
-                dragRaceDetails.gas,
+                dragRaceDetails.gasMetric,
                 canvas,
                 top1,
                 currentLeft,
@@ -325,7 +326,7 @@ internal class DragRacingDrawer(
 
             drawGauge(
                 mainGaugeDrawer,
-                dragRaceDetails.vehicleSpeed,
+                dragRaceDetails.vehicleSpeedMetric,
                 canvas,
                 top1,
                 currentLeft,
@@ -336,7 +337,7 @@ internal class DragRacingDrawer(
 
             drawGauge(
                 smallGaugeDrawer,
-                dragRaceDetails.torque,
+                dragRaceDetails.arbitraryMetric,
                 canvas,
                 top1,
                 currentLeft,
@@ -348,10 +349,10 @@ internal class DragRacingDrawer(
             val gaugeWidth = area.width() / 2.0f
 
             drawGauge(mainGaugeDrawer, dragRaceDetails.intakePressure, canvas, top1, (area.left) - 20f, gaugeWidth)
-            drawGauge(mainGaugeDrawer, dragRaceDetails.vehicleSpeed, canvas, top1, (area.left + gaugeWidth) - 30f, gaugeWidth)
+            drawGauge(mainGaugeDrawer, dragRaceDetails.vehicleSpeedMetric, canvas, top1, (area.left + gaugeWidth) - 30f, gaugeWidth)
             drawGauge(
                 mainGaugeDrawer,
-                dragRaceDetails.gas,
+                dragRaceDetails.gasMetric,
                 canvas,
                 top1 + gaugeWidth,
                 (area.left) - 20f,
@@ -360,7 +361,7 @@ internal class DragRacingDrawer(
             )
             drawGauge(
                 mainGaugeDrawer,
-                dragRaceDetails.torque,
+                dragRaceDetails.arbitraryMetric,
                 canvas,
                 top1 + gaugeWidth,
                 (area.left + gaugeWidth) - 30f,

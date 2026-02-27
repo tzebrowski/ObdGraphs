@@ -34,8 +34,9 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
 import kotlin.math.max
+import androidx.core.graphics.toColorInt
 
-private const val FOOTER_SIZE_RATIO = 1.3f
+ private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
 private const val METRIC_TOP_NUDGE = 0.02f
 private const val SINGLE_LINE_VALUE_TOP_OFFSET = 0.4f
@@ -283,7 +284,7 @@ internal class GiuliaDrawer(
             val maxRight = left + width - (MARGIN_END * density)
 
             paint.shader = null
-            paint.color = Color.parseColor("#33FFFFFF")
+            paint.color = "#33FFFFFF".toColorInt()
             canvas.drawRect(rectLeft, rectTop, maxRight, rectBottom, paint)
 
             val glowExpansion = (rectBottom - rectTop) * 0.6f

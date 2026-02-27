@@ -23,12 +23,17 @@ import org.obd.graphs.renderer.api.PerformanceScreenSettings
 
 private const val TAG = "MetricCache"
 
+internal class BrakeBoosting(
+    var gasMetric: Metric? = null,
+    var arbitraryMetric: Metric? = null,
+    var vehicleSpeedMetric: Metric? = null,
+)
+
 internal class MetricsCache {
     val bottomMetrics = mutableListOf<Metric>()
     val topMetrics = mutableListOf<Metric>()
 
-    var gasMetric: Metric? = null
-    var torqueMetric: Metric? = null
+    val brakeBoosting: BrakeBoosting = BrakeBoosting()
 
     private val cachedMetrics = mutableListOf<Metric>()
     private var lastBottomIds: List<Long> = emptyList()
@@ -39,8 +44,14 @@ internal class MetricsCache {
         metricsCollector: MetricsCollector,
     ) {
         val allMetrics = metricsCollector.getMetrics()
-        gasMetric = metricsCollector.getMetric(settings.brakeBoostingSettings.getGasMetric())
-        torqueMetric = metricsCollector.getMetric(settings.brakeBoostingSettings.getTorqueMetric())
+
+        brakeBoosting.apply {
+            gasMetric = metricsCollector.getMetric(settings.brakeBoostingSettings.getGasMetric())
+            arbitraryMetric =
+                metricsCollector.getMetric(settings.brakeBoostingSettings.getArbitraryMetric())
+            vehicleSpeedMetric =
+                metricsCollector.getMetric(settings.brakeBoostingSettings.getVehicleSpeedMetric())
+        }
 
         val currentBottomMetrics = settings.bottomMetrics
         val currentTopMetrics = settings.topMetrics

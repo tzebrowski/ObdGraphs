@@ -21,8 +21,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
-import org.obd.graphs.bl.drag.DragRacingService
+import org.obd.graphs.dpToPx
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.api.BrakeBoostingSettings
 import org.obd.graphs.renderer.api.GaugeProgressBarType
@@ -30,17 +31,23 @@ import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 
-internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) : AbstractDrawer(context, settings) {
+private const val TAG = "break_boosting"
+
+internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
+    AbstractDrawer(context, settings) {
 
     private val gaugeDrawer = GaugeDrawer(
         settings = settings, context = context,
         drawerSettings = DrawerSettings(
-            gaugeProgressBarType = GaugeProgressBarType.LONG, startAngle = 180f, sweepAngle = 120f
+            gaugeProgressBarType = GaugeProgressBarType.LONG, startAngle = 180f, sweepAngle = 180f
         )
     )
 
     private val background: Bitmap =
-        BitmapFactory.decodeResource(context.resources, org.obd.graphs.renderer.R.drawable.drag_race_bg)
+        BitmapFactory.decodeResource(
+            context.resources,
+            org.obd.graphs.renderer.R.drawable.drag_race_bg
+        )
 
     override fun getBackground(): Bitmap = background
 
@@ -51,51 +58,87 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
         gas: Metric?,
         torque: Metric?
     ) {
-        drawGaugesBrakeBoosting(area, canvas, pTop - 30, gas = gas, torque = torque)
+        drawGaugesBrakeBoosting(area, canvas, pTop - 30, gas = gas, arbitraryMetric = torque)
     }
 
-    fun isBrakeBoosting(brakeBoostingSettings: BrakeBoostingSettings, gas: Metric?, torque: Metric?) =
-        brakeBoostingSettings.viewEnabled &&
-        DragRacingService.registry.getResult().readyToRace &&
-                settings.getDragRacingScreenSettings().displayMetricsEnabled &&
-                settings.getDragRacingScreenSettings().displayMetricsExtendedEnabled &&
-                gas != null && torque != null && (gas.value as Number).toInt() > 0
+    fun isBrakeBoosting(
+        brakeBoostingSettings: BrakeBoostingSettings,
+        gasMetric: Metric?,
+        arbitraryMetric: Metric?,
+        vehicleSpeedMetric: Metric?,
+    ): Boolean {
 
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            Log.v(TAG, "-----------------------------------------------------------------")
+            Log.v(TAG, "View enabled: ${brakeBoostingSettings.viewEnabled}")
+            Log.v(TAG, "Arbitrary Metric != null: ${arbitraryMetric != null}")
+            Log.v(TAG, "Vehicle Speed Metric: ${vehicleSpeedMetric?.value}")
+            Log.v(TAG, "Gas Metric : ${gasMetric?.value}")
+        }
+
+        return brakeBoostingSettings.viewEnabled &&
+                vehicleSpeedMetric != null && (vehicleSpeedMetric.value as Number).toInt() == 0 &&
+                gasMetric != null && arbitraryMetric != null && (gasMetric.value as Number).toInt() > 0
+    }
 
     private fun drawGaugesBrakeBoosting(
         area: Rect,
         canvas: Canvas,
         top: Float,
         gas: Metric?,
-        torque: Metric?
+        arbitraryMetric: Metric?
     ) {
-        val marginLeft = 20f
-        if (settings.isAA() || isLandscape()) {
-            val gaugeWidth = area.width() / 1.8f
+        val marginPx = 10f.dpToPx
 
+        val spacingPx = 10f.dpToPx
+
+        val labelPaddingPx = 18f.dpToPx
+
+        if (settings.isAA() || isLandscape()) {
+            val gaugeWidth = (area.width() - (2 * marginPx) - spacingPx) / 2f
             val marginTop = gaugeWidth / 8
 
+            val gasLeft = area.left + marginPx
+            val torqueLeft = gasLeft + gaugeWidth + spacingPx // Use spacingPx here
+
             drawGauge(
-                gas, canvas, top + marginTop, area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = gas,
+                canvas = canvas,
+                top = top + marginTop,
+                left = gasLeft,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
 
             drawGauge(
-                torque, canvas, top + marginTop, (area.left + marginLeft + gaugeWidth * 0.8f),
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = arbitraryMetric,
+                canvas = canvas,
+                top = top + marginTop,
+                left = torqueLeft,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
 
         } else {
-            val gaugeWidth = area.width().toFloat()
+            val gaugeWidth = area.width() - (2 * marginPx)
+            val leftPosition = area.left + marginPx
 
             drawGauge(
-                gas, canvas, top, area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = gas,
+                canvas = canvas,
+                top = top,
+                left = leftPosition,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
 
             drawGauge(
-                torque, canvas, top + gaugeWidth, area.left.toFloat() + 2 * marginLeft,
-                gaugeWidth, labelCenterYPadding = 18f
+                metric = arbitraryMetric,
+                canvas = canvas,
+                top = top + gaugeWidth + spacingPx,
+                left = leftPosition,
+                width = gaugeWidth,
+                labelCenterYPadding = labelPaddingPx
             )
         }
     }
@@ -107,10 +150,8 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
         left: Float,
         width: Float,
         labelCenterYPadding: Float = 10f,
-    ): Boolean =
-        if (metric == null) {
-            false
-        } else {
+    ) {
+        metric?.let {
             gaugeDrawer.drawGauge(
                 canvas = canvas,
                 left = left,
@@ -122,6 +163,6 @@ internal class BrakeBoostingDrawer(context: Context, settings: ScreenSettings) :
                 scaleEnabled = false,
                 statsEnabled = false
             )
-            true
         }
+    }
 }

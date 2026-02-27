@@ -786,6 +786,14 @@
                     app:singleLineTitle="false"
                     app:useSimpleSummaryProvider="true" />
 
+                <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref.performance.brake_boosting.enabled"
+                    android:title="@string/pref.aa.performance.brake_boosting.enabled"
+                    android:summary="@string/pref.aa.performance.brake_boosting.enabled_summary"
+                    app:singleLineTitle="false" />
+
+
             </PreferenceScreen>
 
             <PreferenceScreen
