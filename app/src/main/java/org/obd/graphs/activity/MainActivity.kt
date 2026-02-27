@@ -167,6 +167,8 @@ class MainActivity :
         navigateToLastVisitedScreen()
         validatePermissions()
         AutoConnect.schedule(this)
+
+        FabButtons.setup(this)
     }
 
     override fun onResume() {
