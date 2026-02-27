@@ -86,7 +86,7 @@ internal class DefaultTripManager :
                 }
             }
         } catch (e: Throwable) {
-            Log.e(LOGGER_TAG, "Failed to add cache entry", e)
+            Log.e(LOGGER_TAG, "Failed to add cache entry for ${obdMetric.command.pid.pid}", e)
         }
     }
 

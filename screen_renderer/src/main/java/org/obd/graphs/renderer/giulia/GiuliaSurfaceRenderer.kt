@@ -36,6 +36,22 @@ private const val NEW_MAX = 1.6f
 private const val NEW_MIN = 0.6f
 private const val AREA_MAX_WIDTH = 500
 
+private class GiuliaLayoutCache {
+    val columnArea = Rect()
+    var metricTops = FloatArray(100)
+    var metricHeights = FloatArray(100)
+
+    var valueTextSize: Float = 0f
+    var textSizeBase: Float = 0f
+
+    fun resizeIfNeeded(count: Int) {
+        if (count > metricTops.size) {
+            metricTops = FloatArray(count)
+            metricHeights = FloatArray(count)
+        }
+    }
+}
+
 @Suppress("NOTHING_TO_INLINE")
 internal class GiuliaSurfaceRenderer(
     context: Context,
@@ -44,11 +60,7 @@ internal class GiuliaSurfaceRenderer(
     private val fps: Fps,
 ) : AbstractSurfaceRenderer(context) {
     private val giuliaDrawer = GiuliaDrawer(context, settings)
-
-    // Reusable objects to prevent Garbage Collection stutter
-    private val columnArea = Rect()
-    private var metricTops = FloatArray(100)
-    private var metricHeights = FloatArray(100)
+    private val layoutCache = GiuliaLayoutCache()
 
     override fun onDraw(
         canvas: Canvas,
@@ -59,7 +71,7 @@ internal class GiuliaSurfaceRenderer(
                 area[0, 0, canvas.width - 1] = canvas.height - 1
             }
 
-            val (valueTextSize, textSizeBase) = calculateFontSize(area)
+            calculateFontSize(area)
             giuliaDrawer.drawBackground(canvas, area)
 
             var top = getTop(area)
@@ -69,7 +81,7 @@ internal class GiuliaSurfaceRenderer(
                 giuliaDrawer.drawStatusPanel(canvas, top, leftMargin, fps)
                 top += MARGIN_TOP
                 giuliaDrawer.drawDivider(canvas, leftMargin, area.width().toFloat(), top, Color.DKGRAY)
-                top += valueTextSize
+                top += layoutCache.valueTextSize
             } else {
                 top += 3 * MARGIN_TOP
             }
@@ -77,10 +89,7 @@ internal class GiuliaSurfaceRenderer(
             val metrics = metricsCollector.getMetrics()
             val metricsCount = min(settings.getMaxItems(), metrics.size)
 
-            if (metricsCount > metricTops.size) {
-                metricTops = FloatArray(metricsCount)
-                metricHeights = FloatArray(metricsCount)
-            }
+            layoutCache.resizeIfNeeded(metricsCount)
 
             val columns = max(1, settings.getMaxColumns())
             val columnWidth = area.width().toFloat() / columns
@@ -95,9 +104,9 @@ internal class GiuliaSurfaceRenderer(
                 val colEndIndex = min(colStartIndex + pageSize, metricsCount)
 
                 for (i in colStartIndex until colEndIndex) {
-                    metricTops[i] = currentTop
-                    val itemHeight = giuliaDrawer.calculateMetricHeight(metrics[i], textSizeBase)
-                    metricHeights[i] = itemHeight
+                    layoutCache.metricTops[i] = currentTop
+                    val itemHeight = giuliaDrawer.calculateMetricHeight(metrics[i], layoutCache.textSizeBase)
+                    layoutCache.metricHeights[i] = itemHeight
                     currentTop += itemHeight
                 }
                 maxBottom = max(maxBottom, currentTop)
@@ -120,22 +129,22 @@ internal class GiuliaSurfaceRenderer(
                 val valueLeftOffset = if (columns == 1) 42f else 32f
                 val valueLeft = area.left + ((col + 1) * columnWidth) - valueLeftOffset
 
-                columnArea.set(colLeft.toInt(), area.top, (colLeft + columnWidth).toInt(), area.bottom)
+                layoutCache.columnArea.set(colLeft.toInt(), area.top, (colLeft + columnWidth).toInt(), area.bottom)
 
                 val colStartIndex = col * pageSize
                 val colEndIndex = min(colStartIndex + pageSize, metricsCount)
 
                 for (i in colStartIndex until colEndIndex) {
-                    val itemTop = metricTops[i]
-                    val itemBottom = itemTop + metricHeights[i]
+                    val itemTop = layoutCache.metricTops[i]
+                    val itemBottom = itemTop + layoutCache.metricHeights[i]
 
                     if (itemBottom >= visibleTop && itemTop <= visibleBottom) {
                         giuliaDrawer.drawMetric(
                             canvas = canvas,
-                            area = columnArea,
+                            area = layoutCache.columnArea,
                             metric = metrics[i],
-                            textSizeBase = textSizeBase,
-                            valueTextSize = valueTextSize,
+                            textSizeBase = layoutCache.textSizeBase,
+                            valueTextSize = layoutCache.valueTextSize,
                             left = colLeft,
                             top = itemTop,
                             valueLeft = valueLeft,
@@ -164,11 +173,12 @@ internal class GiuliaSurfaceRenderer(
         giuliaDrawer.recycle()
     }
 
-    private inline fun calculateFontSize(area: Rect): Pair<Float, Float> {
+    private inline fun calculateFontSize(area: Rect) {
         val scaleRatio = settings.getGiuliaScreenSettings().getFontSize().mapRange(CURRENT_MIN, CURRENT_MAX, NEW_MIN, NEW_MAX)
         val columns = max(1, settings.getMaxColumns())
         val areaWidth = min(area.width() / columns, AREA_MAX_WIDTH)
 
-        return Pair((areaWidth / 10f) * scaleRatio, (areaWidth / 16f) * scaleRatio)
+        layoutCache.valueTextSize = (areaWidth / 10f) * scaleRatio
+        layoutCache.textSizeBase = (areaWidth / 16f) * scaleRatio
     }
 }

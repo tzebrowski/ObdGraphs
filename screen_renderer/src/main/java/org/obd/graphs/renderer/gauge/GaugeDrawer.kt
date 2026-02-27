@@ -29,15 +29,19 @@ import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.SweepGradient
 import android.graphics.Typeface
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.toColorInt
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.commons.R
 import org.obd.graphs.format
 import org.obd.graphs.isNumber
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.cache.TextCache
 import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.round
+import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
 import org.obd.graphs.ui.common.COLOR_WHITE
 import org.obd.graphs.ui.common.color
@@ -78,12 +82,37 @@ private data class ScaleBitmapCache(
     val scaleEnabled: Boolean,
 )
 
+private class GaugeDrawingCache {
+    val workingRect = RectF()
+    val arcTopRect = RectF()
+    val backgroundArcRect = RectF()
+    val arcBottomRect = RectF()
+    val progressRect = RectF()
+    val destRectF = RectF()
+    val borderRect = RectF()
+    val scaleRect = RectF()
+    val alignedOuterRect = RectF()
+
+    val textRect = Rect()
+    val unitRect = Rect()
+    val labelRect = Rect()
+    val histsRect = Rect()
+    val numberTextRect = Rect()
+
+    val shaderMatrix = Matrix()
+    val gradientColors2 = IntArray(2)
+    val backgroundPositions = floatArrayOf(0.0f, 1.0f)
+}
+
 @Suppress("NOTHING_TO_INLINE")
 internal class GaugeDrawer(
     settings: ScreenSettings,
     context: Context,
     private val drawerSettings: DrawerSettings = DrawerSettings(),
 ) : AbstractDrawer(context, settings) {
+    private val textCache = TextCache()
+    private val drawingCache = GaugeDrawingCache()
+
     private val numbersPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = color(R.color.gray)
@@ -127,18 +156,26 @@ internal class GaugeDrawer(
             strokeJoin = Paint.Join.ROUND
         }
 
-    private val modulePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = color(R.color.gray)
-        typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-    }
+    private val modulePaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = color(R.color.gray)
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+        }
 
     private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private val scaleBitmapCache = mutableMapOf<Long, ScaleBitmapCache>()
+
+    private val linePaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeCap = Paint.Cap.BUTT
+        }
 
     override fun recycle() {
         super.recycle()
         scaleBitmapCache.values.forEach { it.bitmap.recycle() }
         scaleBitmapCache.clear()
+        textCache.clear()
     }
 
     fun drawGauge(
@@ -154,30 +191,30 @@ internal class GaugeDrawer(
         drawBorder: Boolean = false,
         borderArea: RectF? = null,
         drawModule: Boolean = false,
-        drawMetricRate: Boolean = false
+        drawMetricRate: Boolean = false,
     ) {
         paint.shader = null
 
         val dynamicPadding = max(drawerSettings.padding, width * 0.055f)
 
-        val rect = calculateRect(left, width, top, dynamicPadding)
+        calculateRect(left, width, top, dynamicPadding, drawingCache.workingRect)
         val radius = calculateRadius(width, dynamicPadding)
 
-        val strokeWidth = rect.width() * 0.037f
+        val strokeWidth = drawingCache.workingRect.width() * 0.037f
 
-        val arcTopRect = RectF()
-        arcTopRect[
-            rect.left - strokeWidth,
-            rect.top - strokeWidth,
-            rect.right + strokeWidth,
-        ] = rect.bottom + strokeWidth
+        drawingCache.arcTopRect.set(
+            drawingCache.workingRect.left - strokeWidth,
+            drawingCache.workingRect.top - strokeWidth,
+            drawingCache.workingRect.right + strokeWidth,
+            drawingCache.workingRect.bottom + strokeWidth,
+        )
 
-        if (drawMetricRate){
-            drawMetricRate(metric, rect, fontSize, width, left, top, canvas)
+        if (drawMetricRate) {
+            drawMetricRate(metric, drawingCache.workingRect, fontSize, width, left, top, canvas)
         }
 
         if (drawModule) {
-            drawModuleName(metric, rect, fontSize, width, left, top, canvas)
+            drawModuleName(metric, drawingCache.workingRect, fontSize, width, left, top, canvas)
         }
 
         if (drawBorder) {
@@ -186,12 +223,12 @@ internal class GaugeDrawer(
 
         drawContainerBackground(canvas, width, left, top, borderArea)
 
-        drawBackground(canvas, rect, arcTopRect, strokeWidth, strokeWidth, metric)
+        drawBackground(canvas, drawingCache.workingRect, drawingCache.arcTopRect, strokeWidth, strokeWidth, metric)
 
         drawScale(
             canvas,
-            rect,
-            arcTopRect,
+            drawingCache.workingRect,
+            drawingCache.arcTopRect,
             metric,
             scaleEnabled,
             radius,
@@ -200,7 +237,7 @@ internal class GaugeDrawer(
 
         drawStatistics(
             canvas,
-            area = rect,
+            area = drawingCache.workingRect,
             metric = metric,
             radius = radius,
             labelCenterYPadding = labelCenterYPadding,
@@ -217,9 +254,11 @@ internal class GaugeDrawer(
         width: Float,
         left: Float,
         top: Float,
-        canvas: Canvas
+        canvas: Canvas,
     ) {
-        val txt = "rate ${metric.rate?.round(2)}"
+        val rateValue = metric.rate ?: 0.0
+        val txt = textCache.rate.get(metric.pid.id, rateValue) { "rate ${rateValue.round(2)}" }
+
         val baseFontSize = calculateFontSize(multiplier = rect.width() / 22f, fontSize = fontSize)
         modulePaint.textSize = baseFontSize * 0.75f
         val cornerOffset = width * 0.015f
@@ -236,9 +275,8 @@ internal class GaugeDrawer(
         width: Float,
         left: Float,
         top: Float,
-        canvas: Canvas
+        canvas: Canvas,
     ) {
-
         if (!metric.moduleName.isNullOrEmpty()) {
             val baseFontSize = calculateFontSize(multiplier = rect.width() / 22f, fontSize = fontSize)
             modulePaint.textSize = baseFontSize * 0.75f
@@ -262,23 +300,27 @@ internal class GaugeDrawer(
         val destRect =
             area ?: run {
                 val borderPadding = width * 0.01f
-                RectF(
+                drawingCache.destRectF.set(
                     left + borderPadding,
                     top + borderPadding,
                     left + width - borderPadding,
                     top + width - borderPadding,
                 )
+                drawingCache.destRectF
             }
 
         val gradientRadius = min(destRect.width(), destRect.height()) * 0.45f
-        val edgeColor = Color.TRANSPARENT
+
+        drawingCache.gradientColors2[0] = gradientColor
+        drawingCache.gradientColors2[1] = Color.TRANSPARENT
+
         val gradient =
             RadialGradient(
                 destRect.centerX(),
                 destRect.centerY(),
                 gradientRadius,
-                intArrayOf(gradientColor, edgeColor),
-                floatArrayOf(0.0f, 1.0f),
+                drawingCache.gradientColors2,
+                drawingCache.backgroundPositions,
                 Shader.TileMode.CLAMP,
             )
 
@@ -294,20 +336,19 @@ internal class GaugeDrawer(
         top: Float,
         area: RectF?,
     ) {
-        val borderRect =
-            if (area != null) {
-                area
-            } else {
+        val rectToDraw =
+            area ?: run {
                 val borderPadding = width * 0.01f
-                RectF(
+                drawingCache.borderRect.set(
                     left + borderPadding,
                     top + borderPadding,
                     left + width - borderPadding,
                     top + width - borderPadding,
                 )
+                drawingCache.borderRect
             }
         val cornerRadius = width * 0.04f
-        canvas.drawRoundRect(borderRect, cornerRadius, cornerRadius, borderPaint)
+        canvas.drawRoundRect(rectToDraw, cornerRadius, cornerRadius, borderPaint)
     }
 
     private fun drawBackground(
@@ -319,33 +360,45 @@ internal class GaugeDrawer(
         metric: Metric,
     ) {
         paint.style = Paint.Style.STROKE
-        paint.color = Color.parseColor("#0D000000")
+        paint.color = "#0D000000".toColorInt()
         paint.strokeWidth = strokeWidth
         canvas.drawArc(rect, drawerSettings.startAngle, drawerSettings.sweepAngle, false, paint)
 
         paint.color = color(R.color.gray_dark)
         paint.strokeWidth = 2f
-        canvas.drawArc(arcTopRect, drawerSettings.startAngle, drawerSettings.sweepAngle, false, paint)
+        canvas.drawArc(
+            arcTopRect,
+            drawerSettings.startAngle,
+            drawerSettings.sweepAngle,
+            false,
+            paint,
+        )
 
-        val backgroundArcRect = RectF()
         val r2Offset = arcTopOffset * 3
-        backgroundArcRect[
+        drawingCache.backgroundArcRect.set(
             rect.left + r2Offset,
             rect.top + r2Offset,
             rect.right - r2Offset,
-        ] = rect.bottom - r2Offset
+            rect.bottom - r2Offset,
+        )
 
-        val arcBottomRect = RectF()
         val r3Offset = arcTopOffset + 4
-        arcBottomRect[
+        drawingCache.arcBottomRect.set(
             rect.left + r3Offset,
             rect.top + r3Offset,
             rect.right - r3Offset,
-        ] = rect.bottom - r3Offset
+            rect.bottom - r3Offset,
+        )
 
-        canvas.drawArc(arcBottomRect, drawerSettings.startAngle, drawerSettings.sweepAngle, false, paint)
+        canvas.drawArc(
+            drawingCache.arcBottomRect,
+            drawerSettings.startAngle,
+            drawerSettings.sweepAngle,
+            false,
+            paint,
+        )
 
-        val progressBarHeight = (arcBottomRect.top - arcTopRect.top - 2f)
+        val progressBarHeight = (drawingCache.arcBottomRect.top - arcTopRect.top - 2f)
         drawProgressBar(metric, canvas, rect, progressBarHeight)
 
         paint.strokeWidth = strokeWidth
@@ -358,13 +411,13 @@ internal class GaugeDrawer(
         strokeWidth: Float,
     ) {
         if (metric.source.isNumber()) {
-            val progressRect = RectF()
             val progressRectOffset = 2f
-            progressRect[
+            drawingCache.progressRect.set(
                 rect.left + progressRectOffset,
                 rect.top + progressRectOffset,
                 rect.right - progressRectOffset,
-            ] = rect.bottom - progressRectOffset
+                rect.bottom - progressRectOffset,
+            )
 
             if (settings.isProgressGradientEnabled()) {
                 setProgressGradient(rect)
@@ -376,7 +429,7 @@ internal class GaugeDrawer(
 
             if (value == startValue) {
                 canvas.drawArc(
-                    progressRect,
+                    drawingCache.progressRect,
                     drawerSettings.startAngle,
                     drawerSettings.longPointerSize,
                     false,
@@ -400,9 +453,7 @@ internal class GaugeDrawer(
                     }
 
                 val progressBarWidth =
-                    if (drawerSettings.gaugeProgressBarType ==
-                        GaugeProgressBarType.SHORT
-                    ) {
+                    if (drawerSettings.gaugeProgressBarType == GaugeProgressBarType.SHORT) {
                         strokeWidth
                     } else {
                         strokeWidth / 2f
@@ -412,7 +463,7 @@ internal class GaugeDrawer(
                 glowPaint.strokeWidth = progressBarWidth * 2.5f
 
                 canvas.drawArc(
-                    progressRect,
+                    drawingCache.progressRect,
                     startAngle,
                     currentSweep,
                     false,
@@ -421,7 +472,7 @@ internal class GaugeDrawer(
 
                 progressPaint.strokeWidth = progressBarWidth
                 canvas.drawArc(
-                    progressRect,
+                    drawingCache.progressRect,
                     startAngle,
                     currentSweep,
                     false,
@@ -443,38 +494,38 @@ internal class GaugeDrawer(
         borderArea: RectF? = null,
     ) {
         val calculatedFontSize = calculateFontSize(multiplier = area.width() / 22f, fontSize = fontSize) * 3.8f
-        val value = metric.source.format(castToInt = false)
+
+        val value =
+            textCache.value.get(metric.pid.id, metric.source.toDouble()) {
+                metric.source.format(castToInt = false)
+            }
 
         valuePaint.textSize = calculatedFontSize
-
-        val textRect = Rect()
-        valuePaint.getTextBounds(value, 0, value.length, textRect)
+        valuePaint.getTextBounds(value, 0, value.length, drawingCache.textRect)
 
         val pid = metric.pid
         val unitText = pid.units
         var unitWidth = 0f
-        val unitRect = Rect()
 
         if (unitText != null) {
             valuePaint.textSize = calculatedFontSize * 0.32f
-            valuePaint.getTextBounds(unitText, 0, unitText.length, unitRect)
-            unitWidth = unitRect.width().toFloat()
+            valuePaint.getTextBounds(unitText, 0, unitText.length, drawingCache.unitRect)
+            unitWidth = drawingCache.unitRect.width().toFloat()
             valuePaint.textSize = calculatedFontSize
         }
 
         val unitPadding = calculatedFontSize * 0.3f
-        var valueX = area.centerX() - (textRect.width() / 2f)
+        var valueX = area.centerX() - (drawingCache.textRect.width() / 2f)
 
         if (value.length >= 4 && unitText != null) {
-            val totalWidth = textRect.width() + unitPadding + unitWidth
+            val totalWidth = drawingCache.textRect.width() + unitPadding + unitWidth
             valueX = area.centerX() - (totalWidth / 2f)
         }
 
         val verticalShift = if (statsEnabled) 14 else 1
-
         val relativeFontSize = calculatedFontSize / area.height()
-        val offset  = if (settings.isAA()) 0.02f else 0.1f
-        val dynamicTopOffset = area.height() * ( offset - relativeFontSize * 0.2f)
+        val offset = if (settings.isAA()) 0.02f else 0.1f
+        val dynamicTopOffset = area.height() * (offset - relativeFontSize * 0.2f)
 
         var centerY = (area.centerY() + dynamicTopOffset + labelCenterYPadding - verticalShift * calculateScaleRatio(area))
 
@@ -483,15 +534,13 @@ internal class GaugeDrawer(
             histogramPaint.textSize = calculatedFontSize * 0.4f
 
             val verticalGap = calculatedFontSize * 0.2f
-            val valueLineH = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
+            val valueLineH = max(drawingCache.textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
 
-            val labelRect = Rect()
-            labelPaint.getTextBounds("Ty", 0, 2, labelRect)
-            val labelLineH = labelRect.height()
+            labelPaint.getTextBounds("Ty", 0, 2, drawingCache.labelRect)
+            val labelLineH = drawingCache.labelRect.height()
 
-            val histsRect = Rect()
-            histogramPaint.getTextBounds("0000", 0, 4, histsRect)
-            val statsLineH = histsRect.height()
+            histogramPaint.getTextBounds("0000", 0, 4, drawingCache.histsRect)
+            val statsLineH = drawingCache.histsRect.height()
 
             val unitY = centerY - valueLineH
             val labelY = unitY + labelLineH + verticalGap
@@ -506,7 +555,7 @@ internal class GaugeDrawer(
             }
         }
 
-        val valueHeight = max(textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
+        val valueHeight = max(drawingCache.textRect.height(), MIN_TEXT_VALUE_HEIGHT) + settings.getGaugeScreenSettings().topOffset
         val valueY = centerY - valueHeight
 
         valuePaint.setShadowLayer(radius / 4, 0f, 0f, Color.WHITE)
@@ -517,7 +566,7 @@ internal class GaugeDrawer(
         if (unitText != null) {
             valuePaint.textSize = calculatedFontSize * 0.32f
             valuePaint.color = color(R.color.gray)
-            val unitX = valueX + textRect.width() + unitPadding
+            val unitX = valueX + drawingCache.textRect.width() + unitPadding
             canvas.drawText(unitText, unitX, unitY, valuePaint)
         }
 
@@ -526,47 +575,51 @@ internal class GaugeDrawer(
 
         val verticalGap = calculatedFontSize * 0.2f
         var labelY = 0f
-        val text = pid.description.split("\n")
+
+        val text =
+            textCache.labelSplit.getOrPut(pid.id) {
+                pid.description.split("\n")
+            }
 
         if (settings.isBreakLabelTextEnabled() && text.size > 1) {
             labelPaint.textSize *= 0.95f
             text.forEachIndexed { i, it ->
-                val labelRect = Rect()
-                labelPaint.getTextBounds(it, 0, it.length, labelRect)
+                labelPaint.getTextBounds(it, 0, it.length, drawingCache.labelRect)
                 labelY = unitY + (i + 1) * labelPaint.textSize + verticalGap
-                canvas.drawText(it, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
+                canvas.drawText(it, area.centerX() - (drawingCache.labelRect.width() / 2), labelY, labelPaint)
             }
         } else {
             val label = pid.description
-            val labelRect = Rect()
-            labelPaint.getTextBounds(label, 0, label.length, labelRect)
-            labelY = unitY + labelRect.height() + verticalGap
-            canvas.drawText(label, area.centerX() - (labelRect.width() / 2), labelY, labelPaint)
+            labelPaint.getTextBounds(label, 0, label.length, drawingCache.labelRect)
+            labelY = unitY + drawingCache.labelRect.height() + verticalGap
+            canvas.drawText(label, area.centerX() - (drawingCache.labelRect.width() / 2), labelY, labelPaint)
         }
 
         if (statsEnabled) {
             histogramPaint.textSize = calculatedFontSize * 0.4f
-            val histsRect = Rect()
-            histogramPaint.getTextBounds("0000", 0, "0000".length, histsRect)
-            var left = area.centerX() - (histsRect.width() * 1.5f)
+            histogramPaint.getTextBounds("0000", 0, "0000".length, drawingCache.histsRect)
+            var left = area.centerX() - (drawingCache.histsRect.width() * 1.5f)
 
-            val statsY = labelY + histsRect.height() + verticalGap
+            val statsY = labelY + drawingCache.histsRect.height() + verticalGap
 
             if (pid.historgam.isMinEnabled) {
+                val minStr = textCache.min.get(pid.id, metric.min) { metric.min.format(pid) }
                 histogramPaint.color = minValueColorScheme(metric)
-                canvas.drawText(metric.min.format(pid), left, statsY, histogramPaint)
-                left += (histsRect.width() * 1.2f)
+                canvas.drawText(minStr, left, statsY, histogramPaint)
+                left += (drawingCache.histsRect.width() * 1.2f)
             }
 
             if (pid.historgam.isAvgEnabled) {
+                val avgStr = textCache.avg.get(pid.id, metric.mean) { metric.mean.format(pid) }
                 histogramPaint.color = settings.getColorTheme().valueColor
-                canvas.drawText(metric.mean.format(pid), left, statsY, histogramPaint)
-                left += (histsRect.width() * 1.5f)
+                canvas.drawText(avgStr, left, statsY, histogramPaint)
+                left += (drawingCache.histsRect.width() * 1.5f)
             }
 
             if (pid.historgam.isMaxEnabled) {
+                val maxStr = textCache.max.get(pid.id, metric.max) { metric.max.format(pid) }
                 histogramPaint.color = maxValueColorScheme(metric)
-                canvas.drawText(metric.max.format(pid), left, statsY, histogramPaint)
+                canvas.drawText(maxStr, left, statsY, histogramPaint)
             }
         }
     }
@@ -588,16 +641,17 @@ internal class GaugeDrawer(
 
         val isValid =
             currentCache != null &&
-                    currentCache.scaleEnabled == scaleEnabled &&
-                    currentCache.progressColor == settings.getColorTheme().progressColor &&
-                    currentCache.width == targetWidth &&
-                    currentCache.height == targetHeight &&
-                    currentCache.dividerCount == drawerSettings.dividersCount
+                currentCache.scaleEnabled == scaleEnabled &&
+                currentCache.progressColor == settings.getColorTheme().progressColor &&
+                currentCache.width == targetWidth &&
+                currentCache.height == targetHeight &&
+                currentCache.dividerCount == drawerSettings.dividersCount
+
+        drawingCache.destRectF.set(rect)
+        drawingCache.destRectF.inset(-bitmapPadding, -bitmapPadding)
 
         if (isValid && currentCache != null) {
-            val destRect = RectF(rect)
-            destRect.inset(-bitmapPadding, -bitmapPadding)
-            canvas.drawBitmap(currentCache.bitmap, null, destRect, bitmapPaint)
+            canvas.drawBitmap(currentCache.bitmap, null, drawingCache.destRectF, bitmapPaint)
         } else {
             if (targetWidth <= 0 || targetHeight <= 0) return
 
@@ -606,7 +660,7 @@ internal class GaugeDrawer(
             val scaledWidth = (paddedWidth * CACHE_SCALE).toInt()
             val scaledHeight = (paddedHeight * CACHE_SCALE).toInt()
 
-            val cachedBitmap = Bitmap.createBitmap(scaledWidth, scaledHeight, Bitmap.Config.ARGB_8888)
+            val cachedBitmap = createBitmap(scaledWidth, scaledHeight)
             val cacheCanvas = Canvas(cachedBitmap)
 
             cacheCanvas.scale(CACHE_SCALE, CACHE_SCALE)
@@ -627,9 +681,7 @@ internal class GaugeDrawer(
                     scaleEnabled,
                 )
 
-            val destRect = RectF(rect)
-            destRect.inset(-bitmapPadding, -bitmapPadding)
-            canvas.drawBitmap(cachedBitmap, null, destRect, bitmapPaint)
+            canvas.drawBitmap(cachedBitmap, null, drawingCache.destRectF, bitmapPaint)
         }
     }
 
@@ -656,11 +708,10 @@ internal class GaugeDrawer(
             val angle = (drawerSettings.startAngle + j * drawerSettings.dividersStepAngle) * (Math.PI / 180)
             val text = valueAsString(metric, value = (startValue + stepValue * j / drawerSettings.scaleStep).round(1))
 
-            val textRect = Rect()
-            numbersPaint.getTextBounds(text, 0, text.length, textRect)
+            numbersPaint.getTextBounds(text, 0, text.length, drawingCache.numberTextRect)
 
-            val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - textRect.width() / 2).toFloat()
-            val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + textRect.height() / 2).toFloat()
+            val x = area.left + (area.width() / 2.0f + cos(angle) * baseRadius - drawingCache.numberTextRect.width() / 2).toFloat()
+            val y = area.top + (area.height() / 2.0f + sin(angle) * baseRadius + drawingCache.numberTextRect.height() / 2).toFloat()
 
             numbersPaint.color =
                 if (j == (numberOfItems - 1) * drawerSettings.scaleStep || j == numberOfItems * drawerSettings.scaleStep) {
@@ -677,17 +728,17 @@ internal class GaugeDrawer(
         canvas: Canvas,
         rect: RectF,
     ) {
-        val scaleRect = RectF()
-        scaleRect[
+        drawingCache.scaleRect.set(
             rect.left + drawerSettings.lineOffset,
             rect.top + drawerSettings.lineOffset,
             rect.right - drawerSettings.lineOffset,
-        ] = rect.bottom - drawerSettings.lineOffset
+            rect.bottom - drawerSettings.lineOffset,
+        )
 
         val start = 0
         val end = drawerSettings.dividersCount + 1
 
-        drawArcTicks(canvas, scaleRect, start, end, paintColor = {
+        drawArcTicks(canvas, drawingCache.scaleRect, start, end, paintColor = {
             if (it == 10 || it == 12) {
                 settings.getColorTheme().progressColor
             } else {
@@ -697,15 +748,21 @@ internal class GaugeDrawer(
             drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
         }
 
-        drawArcTicks(canvas, scaleRect, start, drawerSettings.dividersCount + 2) {
+        drawArcTicks(canvas, drawingCache.scaleRect, start, drawerSettings.dividersCount + 2) {
             drawerSettings.startAngle + it * drawerSettings.dividersStepAngle * 0.5f
         }
 
-        val alignedOuterRect = RectF(rect)
-        alignedOuterRect.inset(2f, 2f)
+        drawingCache.alignedOuterRect.set(rect)
+        drawingCache.alignedOuterRect.inset(2f, 2f)
 
         val grayEndIndex = drawerSettings.dividerHighlightStart
-        drawArcTicks(canvas, alignedOuterRect, start, grayEndIndex, paintColor = { getScaleColor(it) }) {
+        drawArcTicks(
+            canvas,
+            drawingCache.alignedOuterRect,
+            start,
+            grayEndIndex,
+            paintColor = { getScaleColor(it) },
+        ) {
             drawerSettings.startAngle + it * drawerSettings.dividersStepAngle
         }
 
@@ -714,7 +771,7 @@ internal class GaugeDrawer(
 
         drawLineTicks(
             canvas,
-            alignedOuterRect,
+            drawingCache.alignedOuterRect,
             highlightStartDegrees,
             highlightEndDegrees,
             widthInDegrees = drawerSettings.dividerWidth,
@@ -729,7 +786,7 @@ internal class GaugeDrawer(
 
         paint.color = settings.getColorTheme().progressColor
         canvas.drawArc(
-            alignedOuterRect,
+            drawingCache.alignedOuterRect,
             drawerSettings.startAngle + drawerSettings.dividersCount * (drawerSettings.dividersStepAngle - 2),
             widthArc,
             false,
@@ -737,7 +794,7 @@ internal class GaugeDrawer(
         )
     }
 
-    private fun drawArcTicks(
+    private inline fun drawArcTicks(
         canvas: Canvas,
         rect: RectF,
         start: Int,
@@ -752,7 +809,7 @@ internal class GaugeDrawer(
         }
     }
 
-    private fun drawLineTicks(
+    private inline fun drawLineTicks(
         canvas: Canvas,
         rect: RectF,
         start: Int,
@@ -765,9 +822,6 @@ internal class GaugeDrawer(
         val circumference = 2 * Math.PI * radius
         val dashLength = (circumference * (widthInDegrees / 360f)).toFloat()
 
-        val linePaint = Paint(paint)
-        linePaint.style = Paint.Style.STROKE
-        linePaint.strokeCap = Paint.Cap.BUTT
         linePaint.strokeWidth = paint.strokeWidth
 
         val cx = rect.centerX()
@@ -803,7 +857,8 @@ internal class GaugeDrawer(
         width: Float,
         top: Float,
         padding: Float,
-    ): RectF {
+        outRect: RectF,
+    ) {
         val height = width - 2 * padding
         val calculatedHeight = if (width > height) width else height
         val calculatedWidth = width - 2 * padding
@@ -813,17 +868,20 @@ internal class GaugeDrawer(
         val rectTop = top + (calculatedHeight - 2 * padding) / 2 - radius + padding
         val rectRight = left + (width - 2 * padding) / 2 - radius + padding + calculatedWidth
         val rectBottom = top + (height - 2 * padding) / 2 - radius + padding + height
-        val rect = RectF()
-        rect[rectLeft, rectTop, rectRight] = rectBottom
-        return rect
+
+        outRect.set(rectLeft, rectTop, rectRight, rectBottom)
     }
 
     private fun setProgressGradient(rect: RectF) {
-        val colors = intArrayOf(COLOR_WHITE, settings.getColorTheme().progressColor)
-        val gradient = SweepGradient(rect.centerY(), rect.centerX(), colors, null)
-        val matrix = Matrix()
-        matrix.postRotate(90f, rect.centerY(), rect.centerX())
-        gradient.setLocalMatrix(matrix)
+        drawingCache.gradientColors2[0] = COLOR_WHITE
+        drawingCache.gradientColors2[1] = settings.getColorTheme().progressColor
+
+        val gradient = SweepGradient(rect.centerY(), rect.centerX(), drawingCache.gradientColors2, null)
+
+        drawingCache.shaderMatrix.reset()
+        drawingCache.shaderMatrix.postRotate(90f, rect.centerY(), rect.centerX())
+        gradient.setLocalMatrix(drawingCache.shaderMatrix)
+
         paint.shader = gradient
     }
 
@@ -863,8 +921,7 @@ internal class GaugeDrawer(
             value.toString()
         }
 
-
     private fun getHeightPixels(): Int = context.resources.displayMetrics.heightPixels
-    private fun getWidthPixels(): Int = context.resources.displayMetrics.widthPixels
 
+    private fun getWidthPixels(): Int = context.resources.displayMetrics.widthPixels
 }
