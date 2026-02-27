@@ -29,10 +29,10 @@ import org.obd.graphs.format
 import org.obd.graphs.isNumber
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.cache.TextCache
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
-import kotlin.math.abs
 import kotlin.math.max
 
 private const val FOOTER_SIZE_RATIO = 1.3f
@@ -52,63 +52,7 @@ private const val PROGRESS_BAR_H_2_COL = 0.18f
 private const val GLOW_RADIUS = 12f
 
 
-internal class MetricStringCache(size: Int = 100) {
-    private val pids = LongArray(size)
-    private val values = DoubleArray(size)
-    private val strings = Array<String?>(size) { null }
-    private var count = 0
-
-    // Define a small epsilon for safe floating-point comparison
-    private val EPSILON = 0.0001
-
-    inline fun get(pid: Long, value: Double, formatFallback: () -> String): String {
-        for (i in 0 until count) {
-            if (pids[i] == pid) {
-                if (abs(values[i] - value) < EPSILON && strings[i] != null) {
-                    return strings[i]!!
-                }
-
-                // Cache miss (value changed), update it
-                val newStr = formatFallback()
-                values[i] = value
-                strings[i] = newStr
-                return newStr
-            }
-        }
-
-        // PID not found in cache, add it if there's room
-        if (count < pids.size) {
-            pids[count] = pid
-            values[count] = value
-            val newStr = formatFallback()
-            strings[count] = newStr
-            count++
-            return newStr
-        }
-
-        // Cache is full, just format and return without caching
-        return formatFallback()
-    }
-}
-
-internal class GiuliaTextCache {
-    val labelSplit = mutableMapOf<Long, List<String>>()
-    val labelReplace = mutableMapOf<Long, String>()
-    val alertLabel = mutableMapOf<Long, String>()
-
-    val value = MetricStringCache()
-    val min = MetricStringCache()
-    val max = MetricStringCache()
-    val avg = MetricStringCache()
-
-    fun clear() {
-        labelSplit.clear()
-        labelReplace.clear()
-        alertLabel.clear()
-    }
-}
-
-private class GiuliaDrawingCache {
+ private class GiuliaDrawingCache {
     val progressGradientColors = IntArray(2)
 }
 
@@ -119,7 +63,7 @@ internal class GiuliaDrawer(
 ) : AbstractDrawer(context, settings) {
     private val density = context.resources.displayMetrics.density
 
-    private val textCache = GiuliaTextCache()
+    private val textCache = TextCache()
     private val drawingCache = GiuliaDrawingCache()
 
     // Replaces the need to return a Pair object from drawTitle

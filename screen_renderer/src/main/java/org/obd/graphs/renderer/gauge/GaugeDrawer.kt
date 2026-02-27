@@ -37,6 +37,7 @@ import org.obd.graphs.format
 import org.obd.graphs.isNumber
 import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
+import org.obd.graphs.renderer.cache.TextCache
 import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.round
@@ -81,53 +82,6 @@ private data class ScaleBitmapCache(
     val scaleEnabled: Boolean,
 )
 
-private class MetricStringCache(
-    size: Int = 100,
-) {
-    private val pids = LongArray(size)
-    private val values = DoubleArray(size)
-    private val strings = Array<String?>(size) { null }
-    private var count = 0
-
-    inline fun get(
-        pid: Long,
-        value: Double,
-        formatFallback: () -> String,
-    ): String {
-        for (i in 0 until count) {
-            if (pids[i] == pid) {
-                if (values[i] == value && strings[i] != null) return strings[i]!!
-                val newStr = formatFallback()
-                values[i] = value
-                strings[i] = newStr
-                return newStr
-            }
-        }
-        if (count < pids.size) {
-            pids[count] = pid
-            values[count] = value
-            val newStr = formatFallback()
-            strings[count] = newStr
-            count++
-            return newStr
-        }
-        return formatFallback()
-    }
-}
-
-private class GaugeTextCache {
-    val labelSplit = mutableMapOf<Long, List<String>>()
-    val value = MetricStringCache()
-    val min = MetricStringCache()
-    val max = MetricStringCache()
-    val avg = MetricStringCache()
-    val rate = MetricStringCache()
-
-    fun clear() {
-        labelSplit.clear()
-    }
-}
-
 private class GaugeDrawingCache {
     val workingRect = RectF()
     val arcTopRect = RectF()
@@ -156,7 +110,7 @@ internal class GaugeDrawer(
     context: Context,
     private val drawerSettings: DrawerSettings = DrawerSettings(),
 ) : AbstractDrawer(context, settings) {
-    private val textCache = GaugeTextCache()
+    private val textCache = TextCache()
     private val drawingCache = GaugeDrawingCache()
 
     private val numbersPaint =
