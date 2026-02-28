@@ -42,6 +42,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.profile.PROFILE_RESET_EVENT
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
@@ -130,6 +131,21 @@ internal abstract class SurfaceRendererFragment(
                 intent: Intent?,
             ) {
                 when (intent?.action) {
+                    PROFILE_RESET_EVENT -> {
+                        Log.e("PROFILE Update event","PROFILE Update event: ${isFragmentVisibleToTheUser()}")
+
+                        if (isFragmentVisibleToTheUser()) {
+                            val screenBehavior =
+                                screenBehaviorController.getScreenBehavior(surfaceRendererType)
+                                    ?: return
+                            withDataLogger {
+                                val query = screenBehavior.query()
+                                updateQuery(query)
+                            }
+                            renderingThread.start()
+                        }
+                    }
+
                     DATA_LOGGER_AUTO_CONNECT_EVENT ->
                         if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
                             val screenBehavior =
@@ -185,6 +201,7 @@ internal abstract class SurfaceRendererFragment(
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_AUTO_CONNECT_EVENT)
+            it.addAction(PROFILE_RESET_EVENT)
         }
     }
 

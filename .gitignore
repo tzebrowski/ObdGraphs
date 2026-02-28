@@ -30,3 +30,4 @@ local.properties
 /.idea/deploymentTargetSelector.xml
 .idea/AndroidProjectSystem.xml
 .idea/local.properties
+/.idea/deviceManager.xml
