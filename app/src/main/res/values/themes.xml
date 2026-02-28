@@ -20,6 +20,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:textColor">@color/gray_dark</item>
         <item name="android:textColorSecondary">@color/gray_light</item>
+        <item name="alertDialogTheme">@style/MyPreferenceDialogStyle</item>
     </style>
 
 
@@ -39,4 +40,8 @@
 
     </style>
 
+    <style name="MyPreferenceDialogStyle" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="colorControlActivated">@color/philippine_green</item>
+        <item name="textColorAlertDialogListItem">@color/list_item_text_selector</item>
+    </style>
 </resources>

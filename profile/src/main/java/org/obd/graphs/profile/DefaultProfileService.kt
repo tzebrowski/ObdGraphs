@@ -72,7 +72,9 @@ internal class DefaultProfileService :
                         "$PROFILE_NAME_PREFIX.profile_$it",
                         "Profile $it",
                     )
-            }
+            }.toList()
+            .sortedWith(compareBy({ it.second }, { it.first }))
+            .toMap()
 
     override fun getCurrentProfile(): String = Prefs.getS(PROFILE_ID_PREF, defaultProfile ?: DEFAULT_PROFILE)
 
@@ -163,7 +165,7 @@ internal class DefaultProfileService :
                 }
 
                 if (pref.startsWith("profile_") || pref == getInstallationVersion()) {
-                    if (Log.isLoggable(PROFILE_AUTO_SAVER_LOG_TAG,Log.VERBOSE)) {
+                    if (Log.isLoggable(PROFILE_AUTO_SAVER_LOG_TAG, Log.VERBOSE)) {
                         Log.v(PROFILE_AUTO_SAVER_LOG_TAG, "Skipping: $pref")
                     } else {
                         //
@@ -189,7 +191,10 @@ internal class DefaultProfileService :
         defaultProfile: String,
         versionName: String,
     ) {
-        Log.i(LOG_TAG, "Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName")
+        Log.i(
+            LOG_TAG,
+            "Profile init, versionCode: $versionCode, defaultProfile: $defaultProfile, versionName: $versionName",
+        )
         this.versionCode = versionCode
         this.defaultProfile = defaultProfile
         this.versionName = versionName
@@ -291,7 +296,10 @@ internal class DefaultProfileService :
 
                         pref.substring(profileName.length + 1).run {
                             if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
-                                Log.d(LOG_TAG, "Loading user preference for $profileName,  $pref =  $this = $value")
+                                Log.d(
+                                    LOG_TAG,
+                                    "Loading user preference for $profileName,  $pref =  $this = $value",
+                                )
                             }
                             it.updatePreference(this, value)
                         }
@@ -334,7 +342,6 @@ internal class DefaultProfileService :
         Log.i(LOG_TAG, "Setting $PROFILE_CURRENT_NAME_PREF=$prefName")
         Prefs.edit().putString(PROFILE_CURRENT_NAME_PREF, prefName).apply()
     }
-
 
     private fun findProfileFiles(): List<String>? = getContext()!!.assets.list("")?.filter { it.endsWith("properties") }
 
@@ -393,14 +400,25 @@ internal class DefaultProfileService :
                     val value = u.toString()
                     val key = t.toString()
 
-                    if (forceOverride || !allPrefs.keys.contains(key) || allowedToOverride().any { key.contains(it) }) {
+                    if (forceOverride ||
+                        !allPrefs.keys.contains(key) ||
+                        allowedToOverride().any {
+                            key.contains(
+                                it,
+                            )
+                        }
+                    ) {
                         Log.i(LOG_TAG, "Updating profile.key=`$key=$value`")
 
                         when {
                             value.isArray() -> {
                                 if (key.startsWith(getCurrentProfile())) {
-                                    val currentProfilePropName = key.substring(getCurrentProfile().length + 1, key.length)
-                                    Log.i(LOG_TAG, "Updating current profile value $currentProfilePropName=$value")
+                                    val currentProfilePropName =
+                                        key.substring(getCurrentProfile().length + 1, key.length)
+                                    Log.i(
+                                        LOG_TAG,
+                                        "Updating current profile value $currentProfilePropName=$value",
+                                    )
                                     editor.putStringSet(currentProfilePropName, value.toStringSet())
                                 }
                                 editor.putStringSet(key, value.toStringSet())
@@ -469,7 +487,8 @@ internal class DefaultProfileService :
 
     private fun updateBuildSettings() {
         runAsync {
-            val buildTime = "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(versionName)}"
+            val buildTime =
+                "${SimpleDateFormat("yyyyMMdd.HHmm", Locale.getDefault()).parse(versionName)}"
             Log.i(LOG_TAG, "Update build settings, build time=$buildTime, versionCode=$versionCode")
 
             Prefs.updateString("pref.about.build_time", buildTime).commit()
