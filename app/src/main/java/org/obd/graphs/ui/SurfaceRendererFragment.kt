@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -130,7 +130,6 @@ internal abstract class SurfaceRendererFragment(
                 intent: Intent?,
             ) {
                 when (intent?.action) {
-
                     DATA_LOGGER_AUTO_CONNECT_EVENT ->
                         if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
                             val screenBehavior =

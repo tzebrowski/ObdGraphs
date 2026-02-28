@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.preference.ListPreference
-import androidx.preference.Preference.OnPreferenceChangeListener
 import org.obd.graphs.activity.navigateToPreferencesScreen
 import org.obd.graphs.profile.PROFILES_PREF
 import org.obd.graphs.profile.profile
