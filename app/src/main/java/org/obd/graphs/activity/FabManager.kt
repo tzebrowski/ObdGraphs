@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -20,10 +20,10 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
-import androidx.core.view.isGone
 
 internal data class SpeedDialViews(
     val connectFab: FloatingActionButton,
@@ -76,7 +76,11 @@ internal class FabManager(
         }
     }
 
-    fun animateHideShow(hide: Boolean, barHeight: Float, duration: Long) {
+    fun animateHideShow(
+        hide: Boolean,
+        barHeight: Float,
+        duration: Long,
+    ) {
         val fabHeight = barHeight + views.connectFab.height.toFloat()
 
         if (hide) {
@@ -94,12 +98,13 @@ internal class FabManager(
                 if (hide) views.connectFab.visibility = View.GONE
             }.start()
 
-        val subViews = listOf(
-            views.configureViewFab,
-            views.configurePidsFab,
-            views.configureViewLabel,
-            views.configurePidsLabel,
-        )
+        val subViews =
+            listOf(
+                views.configureViewFab,
+                views.configurePidsFab,
+                views.configureViewLabel,
+                views.configurePidsLabel,
+            )
 
         subViews.forEach { view ->
             if (!hide && view.isGone) {
@@ -127,36 +132,82 @@ internal class FabManager(
         val offset1 = dpToPx(OFFSET_1_DP)
         val offset2 = dpToPx(OFFSET_2_DP)
 
-        views.configureViewFab.animate().translationY(offset1).alpha(1f).setDuration(ANIM_DURATION).start()
-        views.configurePidsFab.animate().translationY(offset2).alpha(1f).setDuration(ANIM_DURATION).start()
+        views.configureViewFab
+            .animate()
+            .translationY(offset1)
+            .alpha(1f)
+            .setDuration(ANIM_DURATION)
+            .start()
+        views.configurePidsFab
+            .animate()
+            .translationY(offset2)
+            .alpha(1f)
+            .setDuration(ANIM_DURATION)
+            .start()
 
-        views.configureViewLabel.animate().translationY(offset1).alpha(1f).setDuration(ANIM_DURATION).start()
-        views.configurePidsLabel.animate().translationY(offset2).alpha(1f).setDuration(ANIM_DURATION).start()
+        views.configureViewLabel
+            .animate()
+            .translationY(offset1)
+            .alpha(1f)
+            .setDuration(ANIM_DURATION)
+            .start()
+        views.configurePidsLabel
+            .animate()
+            .translationY(offset2)
+            .alpha(1f)
+            .setDuration(ANIM_DURATION)
+            .start()
 
-        views.connectFab.animate().rotation(FAB_ROTATION).setDuration(ANIM_DURATION).start()
+        views.connectFab
+            .animate()
+            .rotation(FAB_ROTATION)
+            .setDuration(ANIM_DURATION)
+            .start()
     }
 
     fun closeSpeedDial() {
         if (!isFabExpanded) return
         isFabExpanded = false
 
-        views.configureViewFab.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION).start()
+        views.configureViewFab
+            .animate()
+            .translationY(0f)
+            .alpha(0f)
+            .setDuration(ANIM_DURATION)
+            .start()
 
-        views.configurePidsFab.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION)
+        views.configurePidsFab
+            .animate()
+            .translationY(0f)
+            .alpha(0f)
+            .setDuration(ANIM_DURATION)
             .withEndAction {
                 views.configureViewFab.visibility = View.INVISIBLE
                 views.configurePidsFab.visibility = View.INVISIBLE
             }.start()
 
-        views.configureViewLabel.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION).start()
+        views.configureViewLabel
+            .animate()
+            .translationY(0f)
+            .alpha(0f)
+            .setDuration(ANIM_DURATION)
+            .start()
 
-        views.configurePidsLabel.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION)
+        views.configurePidsLabel
+            .animate()
+            .translationY(0f)
+            .alpha(0f)
+            .setDuration(ANIM_DURATION)
             .withEndAction {
                 views.configureViewLabel.visibility = View.INVISIBLE
                 views.configurePidsLabel.visibility = View.INVISIBLE
             }.start()
 
-        views.connectFab.animate().rotation(0f).setDuration(ANIM_DURATION).start()
+        views.connectFab
+            .animate()
+            .rotation(0f)
+            .setDuration(ANIM_DURATION)
+            .start()
     }
 
     private fun dpToPx(dp: Float): Float = dp * context.resources.displayMetrics.density
@@ -168,12 +219,17 @@ internal object FabButtons {
     fun setupSpeedDialView(activity: Activity) {
         val speedDialViews = view(activity)
 
-        manager = FabManager(
-            context = activity,
-            views = speedDialViews,
-            onConfigureViewClicked = { },
-            onConfigurePidsClicked = { },
-        )
+        manager =
+            FabManager(
+                context = activity,
+                views = speedDialViews,
+                onConfigureViewClicked = {
+                    NavigationRouter.navigateToPreferences(activity)
+                },
+                onConfigurePidsClicked = {
+                    NavigationRouter.navigateToPIDsPreferences(activity)
+                },
+            )
 
         manager?.setup()
     }
@@ -183,7 +239,7 @@ internal object FabButtons {
             connectFab = activity.findViewById(R.id.connect_btn),
             configureViewFab = activity.findViewById(R.id.configure_view_btn),
             configurePidsFab = activity.findViewById(R.id.configure_pids_btn),
-            configureViewLabel = activity.findViewById(R.id.secondary_action_label),
-            configurePidsLabel = activity.findViewById(R.id.third_action_label),
+            configureViewLabel = activity.findViewById(R.id.configure_view_action_label),
+            configurePidsLabel = activity.findViewById(R.id.configure_pids_action_label),
         )
 }

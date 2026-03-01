@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,7 +27,6 @@ const val TOOLBAR_SHOW: String = "toolbar.show.event"
 const val TOOLBAR_HIDE: String = "toolbar.hide.event"
 
 object Toolbar {
-
     private const val EVENT_THROTTLE_MS = 550L
     private var lastEventTime = 0L
     private const val TAG = "TB"
@@ -38,27 +37,29 @@ object Toolbar {
             hide(b, b.isVisible && isFabVisible)
         }
 
-    fun hide(activity: Activity, hide: Boolean) =
-        toolbar(activity) { bottomAppBar ->
-            val currentTime = System.currentTimeMillis()
-            val isBarHidden = bottomAppBar.translationY > 0
-            if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
-                if ((!isBarHidden && hide) || (isBarHidden && !hide)) {
-                    if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(
-                            TAG,
-                            "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}",
-                        )
-                    }
-                    hide(bottomAppBar, hide)
+    fun hide(
+        activity: Activity,
+        hide: Boolean,
+    ) = toolbar(activity) { bottomAppBar ->
+        val currentTime = System.currentTimeMillis()
+        val isBarHidden = bottomAppBar.translationY > 0
+        if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
+            if ((!isBarHidden && hide) || (isBarHidden && !hide)) {
+                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                    Log.v(
+                        TAG,
+                        "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}",
+                    )
                 }
-                lastEventTime = currentTime
+                hide(bottomAppBar, hide)
             }
+            lastEventTime = currentTime
         }
+    }
 
     private fun toolbar(
         activity: Activity,
-        func: (r: BottomAppBar) -> Unit
+        func: (r: BottomAppBar) -> Unit,
     ) {
         func(activity.findViewById(R.id.bottom_app_bar))
     }

@@ -134,7 +134,7 @@
             android:id="@+id/connect_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/main_activity.btn_start"
+            android:contentDescription="@string/main_activity.connect_btn_content_description"
             android:src="@android:drawable/ic_lock_idle_charging"
             app:backgroundTint="#01804F"
             app:fabSize="normal"
@@ -170,10 +170,10 @@
 
 
         <TextView
-            android:id="@+id/secondary_action_label"
+            android:id="@+id/configure_view_action_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Settings"
+            android:text="@string/main_activity.configure_view_action_label"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"
             android:paddingStart="12dp"
@@ -184,17 +184,16 @@
             android:visibility="invisible"
             app:layout_anchor="@id/connect_btn"
             app:layout_anchorGravity="end|center_vertical"
-            android:translationX="16dp"
+            android:translationX="36dp"
             app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
         <TextView
-            android:id="@+id/third_action_label"
+            android:id="@+id/configure_pids_action_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit"
+            android:text="@string/main_activity.configure_pids_action_label"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:paddingTop="6dp"
@@ -203,7 +202,7 @@
             android:visibility="invisible"
             app:layout_anchor="@id/connect_btn"
             app:layout_anchorGravity="end|center_vertical"
-            android:translationX="16dp"
+            android:translationX="36dp"
             app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

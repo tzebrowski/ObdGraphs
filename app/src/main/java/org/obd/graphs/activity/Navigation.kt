@@ -79,7 +79,7 @@ internal fun MainActivity.setupNavigationViewNavigation() {
 }
 
 internal fun MainActivity.setupNavigationBar() {
-    val navPreferences = Navigation.getPreferences()
+    val navPreferences = NavigationRouter.getPreferences()
     leftAppBar { leftNav ->
         leftNav.menu.run {
             findItem(R.id.left_nav_trip_info)?.isVisible =
