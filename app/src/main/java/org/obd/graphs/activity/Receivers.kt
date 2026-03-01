@@ -180,9 +180,9 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
 
         REQUEST_PERMISSIONS_BT -> Permissions.requestBluetoothPermissions(this)
-        TOOLBAR_HIDE -> toolbarHide(true)
-        TOOLBAR_SHOW -> toolbarHide(false)
-        TOOLBAR_TOGGLE_ACTION -> toolbarToggle()
+        TOOLBAR_HIDE -> Toolbar.hide(this,true)
+        TOOLBAR_SHOW -> Toolbar.hide(this,false)
+        TOOLBAR_TOGGLE_ACTION -> Toolbar.toggle(this)
 
         PROFILE_NAME_CHANGED_EVENT -> updateVehicleProfile()
 
@@ -260,7 +260,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.start()
             }
 
-            toolbarHide(true)
+            Toolbar.hide(this,true)
             updateAdapterConnectionType()
         }
 
@@ -301,7 +301,7 @@ private fun MainActivity.handleStop() {
             ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.philippine_green)
     }
 
-    toolbarHide(false)
+    Toolbar.hide(this,false)
 
     timer {
         it.stop()
