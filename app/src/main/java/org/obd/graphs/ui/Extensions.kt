@@ -20,8 +20,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import org.obd.graphs.R
+import org.obd.graphs.activity.FabButtons
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.query.Query
@@ -36,9 +35,9 @@ fun ComponentActivity.withDataLogger(action: DataLoggerService.() -> Unit) {
 
 fun Fragment.configureActionButton(query: Query) {
     activity?.let {
-        val btn = it.findViewById<FloatingActionButton>(R.id.connect_btn)
+        val connectBtn = FabButtons.view(it).connectFab
 
-        btn?.setOnClickListener {
+        connectBtn.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
                 withDataLogger {
                     Log.i("Fragment", "Stop data logging")
@@ -52,7 +51,7 @@ fun Fragment.configureActionButton(query: Query) {
             }
         }
 
-        btn?.backgroundTintList =
+        connectBtn.backgroundTintList =
             ContextCompat.getColorStateList(
                 it,
                 if (DataLoggerRepository.isRunning()) {

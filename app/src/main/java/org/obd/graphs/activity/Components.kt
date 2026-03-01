@@ -29,7 +29,7 @@ import com.google.android.material.navigation.NavigationView
 import org.obd.graphs.R
 
 fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
-    func(findViewById(R.id.connect_btn))
+    func(FabButtons.view(this).connectFab)
 }
 
 fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {

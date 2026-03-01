@@ -168,7 +168,7 @@ class MainActivity :
         validatePermissions()
         AutoConnect.schedule(this)
 
-        FabButtons.setup(this)
+        FabButtons.setupSpeedDialView(this)
     }
 
     override fun onResume() {

@@ -137,8 +137,73 @@
             android:contentDescription="@string/main_activity.btn_start"
             android:src="@android:drawable/ic_lock_idle_charging"
             app:backgroundTint="#01804F"
-            app:fabSize="mini"
+            app:fabSize="normal"
             app:layout_anchor="@id/bottom_app_bar"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/configure_view_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_add"
+            app:backgroundTint="@color/rainbow_indigo"
+            app:fabSize="mini"
+            app:layout_anchor="@id/connect_btn"
+            app:layout_anchorGravity="center"
+            android:visibility="invisible"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+            tools:ignore="ContentDescription" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            app:elevation="12dp"
+            android:id="@+id/configure_pids_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_edit"
+            app:backgroundTint="@color/rainbow_indigo"
+            app:fabSize="mini"
+            app:layout_anchor="@id/connect_btn"
+            app:layout_anchorGravity="center"
+            android:visibility="invisible"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+            tools:ignore="ContentDescription" />
+
+
+        <TextView
+            android:id="@+id/secondary_action_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:elevation="12dp"
+            android:visibility="invisible"
+            app:layout_anchor="@id/connect_btn"
+            app:layout_anchorGravity="end|center_vertical"
+            android:translationX="16dp"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+
+        <TextView
+            android:id="@+id/third_action_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:elevation="12dp"
+            android:visibility="invisible"
+            app:layout_anchor="@id/connect_btn"
+            app:layout_anchorGravity="end|center_vertical"
+            android:translationX="16dp"
             app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

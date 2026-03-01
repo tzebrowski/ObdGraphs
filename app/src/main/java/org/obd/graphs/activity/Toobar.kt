@@ -40,8 +40,9 @@ private fun toolbarHide(
 
         if (!hide) {
             bottomAppBar.translationY = barHeight
-            floatingActionButton.translationY = fabHeight
             bottomAppBar.isVisible = true
+
+            floatingActionButton.translationY = fabHeight
             floatingActionButton.visibility = View.VISIBLE
         }
 
@@ -90,5 +91,5 @@ fun MainActivity.toolbarHide(hide: Boolean) =
     }
 
 private fun MainActivity.toolbar(func: (r: BottomAppBar, c: FloatingActionButton) -> Unit) {
-    func(findViewById(R.id.bottom_app_bar), findViewById(R.id.connect_btn))
+    func(findViewById(R.id.bottom_app_bar), FabButtons.view(this).connectFab)
 }
