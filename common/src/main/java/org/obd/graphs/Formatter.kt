@@ -60,7 +60,7 @@ fun ObdMetric.toDouble(): Double = (toNumber() ?: 0).toDouble()
 
 fun ObdMetric.isNumber(): Boolean = this.value != null && this.value is Number
 
-private fun ObdMetric.toNumber(): Number? =
+fun ObdMetric.toNumber(): Number? =
     if (isNumber()) {
         value as Number
     } else {

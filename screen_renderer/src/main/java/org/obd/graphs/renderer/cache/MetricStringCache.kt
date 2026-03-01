@@ -20,6 +20,8 @@ import kotlin.math.abs
 
 internal class MetricStringCache(size: Int = 100) {
     private val pids = LongArray(size)
+
+    // Keep DoubleArray to prevent memory boxing and GC stuttering
     private val values = DoubleArray(size)
     private val strings = Array<String?>(size) { null }
     private var count = 0
@@ -27,16 +29,29 @@ internal class MetricStringCache(size: Int = 100) {
     // Define a small epsilon for safe floating-point comparison
     private val EPSILON = 0.0001
 
-    inline fun get(pid: Long, value: Double, formatFallback: () -> String): String {
+    // Signature updated to accept Number?
+    inline fun get(pid: Long, value: Number?, formatFallback: () -> String): String {
+        // Convert any Number (Int, Float, etc.) to Double. Null stays null.
+        val doubleVal = value?.toDouble()
+
         for (i in 0 until count) {
             if (pids[i] == pid) {
-                if (abs(values[i] - value) < EPSILON && strings[i] != null) {
+                val cachedVal = values[i]
+
+                // Safely compare nulls and converted doubles
+                val isMatch = if (doubleVal == null) {
+                    cachedVal.isNaN() // We use NaN internally to represent null
+                } else {
+                    !cachedVal.isNaN() && abs(cachedVal - doubleVal) < EPSILON
+                }
+
+                if (isMatch && strings[i] != null) {
                     return strings[i]!!
                 }
 
                 // Cache miss (value changed), update it
                 val newStr = formatFallback()
-                values[i] = value
+                values[i] = doubleVal ?: Double.NaN
                 strings[i] = newStr
                 return newStr
             }
@@ -45,7 +60,7 @@ internal class MetricStringCache(size: Int = 100) {
         // PID not found in cache, add it if there's room
         if (count < pids.size) {
             pids[count] = pid
-            values[count] = value
+            values[count] = doubleVal ?: Double.NaN
             val newStr = formatFallback()
             strings[count] = newStr
             count++
