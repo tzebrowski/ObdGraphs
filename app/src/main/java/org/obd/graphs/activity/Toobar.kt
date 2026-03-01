@@ -16,79 +16,77 @@
  */
 package org.obd.graphs.activity
 
+import android.app.Activity
 import android.util.Log
-import android.view.View
 import androidx.core.view.isVisible
 import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
 
 const val TOOLBAR_TOGGLE_ACTION: String = "toolbar.toggle.event"
 const val TOOLBAR_SHOW: String = "toolbar.show.event"
 const val TOOLBAR_HIDE: String = "toolbar.hide.event"
 
-private fun toolbarHide(
-    bottomAppBar: BottomAppBar,
-    floatingActionButton: FloatingActionButton,
-    hide: Boolean,
-) {
-    fun runAnim() {
-        val duration = 250L
+object Toolbar {
+    private const val EVENT_THROTTLE_MS = 550L
+    private var lastEventTime = 0L
+    private const val TAG = "TB"
 
-        val barHeight = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 500f
-        val fabHeight = barHeight + floatingActionButton.height.toFloat()
-
-        if (!hide) {
-            bottomAppBar.translationY = barHeight
-            floatingActionButton.translationY = fabHeight
-            bottomAppBar.isVisible = true
-            floatingActionButton.visibility = View.VISIBLE
+    fun toggle(activity: Activity) =
+        toolbar(activity) { b ->
+            val isFabVisible = FabButtons.isMainFabVisible() == true
+            hide(b, b.isVisible && isFabVisible)
         }
 
-        bottomAppBar
-            .animate()
-            .translationY(if (hide) barHeight else 0f)
-            .setDuration(duration)
-            .withEndAction { if (hide) bottomAppBar.isVisible = false }
-            .start()
-
-        floatingActionButton
-            .animate()
-            .translationY(if (hide) fabHeight else 0f)
-            .setDuration(duration)
-            .withEndAction {
-                if (hide) floatingActionButton.visibility = View.GONE
-            }.start()
-    }
-
-    bottomAppBar.post { runAnim() }
-}
-
-fun MainActivity.toolbarToggle() =
-    toolbar { b, c ->
-        toolbarHide(b, c, b.isVisible && c.isVisible)
-    }
-
-private const val EVENT_THROTTLE_MS = 550L
-private var lastEventTime = 0L
-private const val TAG = "TB"
-
-fun MainActivity.toolbarHide(hide: Boolean) =
-    toolbar { bottomAppBar, floatingActionButton ->
+    fun hide(
+        activity: Activity,
+        hide: Boolean,
+    ) = toolbar(activity) { bottomAppBar ->
         val currentTime = System.currentTimeMillis()
         val isBarHidden = bottomAppBar.translationY > 0
         if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
             if ((!isBarHidden && hide) || (isBarHidden && !hide)) {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}")
+                    Log.v(
+                        TAG,
+                        "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}",
+                    )
                 }
-
-                toolbarHide(bottomAppBar, floatingActionButton, hide)
+                hide(bottomAppBar, hide)
             }
             lastEventTime = currentTime
         }
     }
 
-private fun MainActivity.toolbar(func: (r: BottomAppBar, c: FloatingActionButton) -> Unit) {
-    func(findViewById(R.id.bottom_app_bar), findViewById(R.id.connect_btn))
+    private fun toolbar(
+        activity: Activity,
+        func: (r: BottomAppBar) -> Unit,
+    ) {
+        func(activity.findViewById(R.id.bottom_app_bar))
+    }
+
+    private fun hide(
+        bottomAppBar: BottomAppBar,
+        hide: Boolean,
+    ) {
+        fun runAnim() {
+            val duration = 250L
+            val barHeight = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 500f
+
+            if (!hide) {
+                bottomAppBar.translationY = barHeight
+                bottomAppBar.isVisible = true
+            }
+
+            bottomAppBar
+                .animate()
+                .translationY(if (hide) barHeight else 0f)
+                .setDuration(duration)
+                .withEndAction { if (hide) bottomAppBar.isVisible = false }
+                .start()
+
+            FabButtons.animateHideShow(hide, barHeight, duration)
+        }
+
+        bottomAppBar.post { runAnim() }
+    }
 }

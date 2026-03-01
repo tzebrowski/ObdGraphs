@@ -102,9 +102,9 @@ class MainActivity :
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (Navigation.getPreferences().hideToolbarLandscape) {
+        if (NavigationRouter.getPreferences().hideToolbarLandscape) {
             val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-            toolbarHide(hide)
+            Toolbar.hide(this,hide)
         }
     }
 
@@ -167,6 +167,8 @@ class MainActivity :
         navigateToLastVisitedScreen()
         validatePermissions()
         AutoConnect.schedule(this)
+
+        FabButtons.setupSpeedDialView(this)
     }
 
     override fun onResume() {

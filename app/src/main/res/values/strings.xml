@@ -421,7 +421,10 @@
     <string name="pref.init_category_summary">In this section, you can configure settings for the adapter initialization process, including CAN protocol and CAN headers.</string>
 
     <string name="main_activity.toggle_toolbar">Toggle toolbar</string>
-    <string name="main_activity.btn_start">Start/Stop session with the vehicle</string>
+    <string name="main_activity.connect_btn_content_description">Start/Stop session with the vehicle</string>
+    <string name="main_activity.configure_view_action_label">Configure current\nview settings</string>
+    <string name="main_activity.configure_pids_action_label">Configure view\nPIDs</string>
+
     <string name="data">Start/Stop session with the vehicle</string>
 
     <string-array name="pref.empty_array" />

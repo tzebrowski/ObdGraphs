@@ -16,6 +16,7 @@
  */
 package org.obd.graphs.activity
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.core.os.bundleOf
@@ -36,11 +37,38 @@ import org.obd.graphs.preferences.PREF_LOGS
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.getS
 import org.obd.graphs.preferences.getStringSet
+import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
 import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
 
+data class NavigationPreferences(
+    var hideToolbarLandscape: Boolean = true,
+    var dashViewEnabled: Boolean = true,
+    var giuliaViewEnabled: Boolean = true,
+    var gaugeViewEnabled: Boolean = true,
+    var graphViewEnabled: Boolean = true,
+    var tripInfoViewEnabled: Boolean = true,
+    var performanceViewEnabled: Boolean = true,
+    var dragRacingViewEnabled: Boolean = true,
+)
+
 internal object NavigationRouter {
+    private val navigationPreferences = NavigationPreferences()
+
+    fun getPreferences(): NavigationPreferences =
+        navigationPreferences.apply {
+            hideToolbarLandscape = Prefs.isEnabled("pref.toolbar.hide.landscape")
+            dashViewEnabled = Prefs.isEnabled("pref.dash.view.enabled")
+            performanceViewEnabled = Prefs.isEnabled("pref.performance.view.enabled")
+            dragRacingViewEnabled = Prefs.isEnabled("pref.drag_racing.view.enabled")
+            tripInfoViewEnabled = Prefs.isEnabled("pref.trip_info.view.enabled")
+
+            gaugeViewEnabled = Prefs.getBoolean("pref.gauge.view.enabled", true)
+            giuliaViewEnabled = Prefs.getBoolean("pref.giulia.view.enabled", true)
+            graphViewEnabled = Prefs.getBoolean("pref.graph.view.enabled", true)
+        }
+
     fun navigate(
         activity: MainActivity,
         itemId: Int,
@@ -112,7 +140,9 @@ internal object NavigationRouter {
 
                     R.id.nav_giulia -> {
                         tripVirtualScreenManager.updateReservedVirtualScreen(
-                            Prefs.getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()).toList(),
+                            Prefs
+                                .getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey())
+                                .toList(),
                         )
                         tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
                         navigateToScreen(R.id.nav_graph)
@@ -122,42 +152,54 @@ internal object NavigationRouter {
                 }
 
             R.id.ctx_menu_pids_to_display -> {
-                val screenId =
-                    when (getCurrentScreenId(activity)) {
-                        R.id.nav_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
-                        R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
-                        R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
-                        R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
-                        R.id.nav_performance -> PREFERENCE_SCREEN_KEY_PERFORMANCE
-                        R.id.nav_trip_info -> PREFERENCE_SCREEN_KEY_TRIP_INFO
-                        else -> null
-                    }
-
-                Log.d(LOG_TAG, "Jumping to preference screen for current screen $screenId  ${getCurrentScreenId(activity)}")
-                screenId?.apply {
-                    navigateToPreferencesScreen(this)
-                    return true
-                }
-                false
+                navigateToPIDsPreferences(activity)
             }
 
             R.id.ctx_menu_view_configuration -> {
-                navigateToPreferencesScreen(
-                    when (getCurrentScreenId(activity)) {
-                        R.id.nav_giulia -> "pref.giulia"
-                        R.id.nav_gauge -> "pref.gauge"
-                        R.id.nav_graph -> "pref.graph"
-                        R.id.nav_dashboard -> "pref.dashboard"
-                        R.id.nav_drag_racing -> "pref.drag_racing"
-                        R.id.nav_performance -> "pref.performance"
-                        R.id.nav_trip_info -> "pref.trip_info"
-                        else -> "pref.root"
-                    },
-                )
+                navigateToPreferences(activity)
             }
 
             else -> false
         }
+
+    fun navigateToPreferences(activity: Activity): Boolean =
+        navigateToPreferencesScreen(
+            when (getCurrentScreenId(activity)) {
+                R.id.nav_giulia -> "pref.giulia"
+                R.id.nav_gauge -> "pref.gauge"
+                R.id.nav_graph -> "pref.graph"
+                R.id.nav_dashboard -> "pref.dashboard"
+                R.id.nav_drag_racing -> "pref.drag_racing"
+                R.id.nav_performance -> "pref.performance"
+                R.id.nav_trip_info -> "pref.trip_info"
+                else -> "pref.root"
+            },
+        )
+
+    fun navigateToPIDsPreferences(activity: Activity): Boolean {
+        val screenId =
+            when (getCurrentScreenId(activity)) {
+                R.id.nav_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
+                R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
+                R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
+                R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
+                R.id.nav_performance -> PREFERENCE_SCREEN_KEY_PERFORMANCE
+                R.id.nav_trip_info -> PREFERENCE_SCREEN_KEY_TRIP_INFO
+                else -> null
+            }
+
+        Log.d(
+            LOG_TAG,
+            "Jumping to preference screen for current screen $screenId  ${
+                getCurrentScreenId(activity)
+            }",
+        )
+        screenId?.apply {
+            navigateToPreferencesScreen(this)
+            return true
+        }
+        return false
+    }
 
     fun navigateToPreferencesScreen(navigateToPrefKey: String): Boolean {
         (getContext() as MainActivity).navController {
@@ -212,9 +254,10 @@ internal object NavigationRouter {
         return false
     }
 
-    private fun getCurrentScreenId(activity: MainActivity): Int {
+    private fun getCurrentScreenId(activity: Activity): Int {
         val navHostFragment =
-            activity.supportFragmentManager
+            (activity as MainActivity)
+                .supportFragmentManager
                 .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
         return navHostFragment?.navController?.currentDestination?.id ?: -1
     }
