@@ -31,10 +31,10 @@ import org.obd.graphs.mapRange
 import org.obd.graphs.renderer.AbstractDrawer
 import org.obd.graphs.renderer.cache.TextCache
 import org.obd.graphs.renderer.api.ScreenSettings
-import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
 import kotlin.math.max
 import androidx.core.graphics.toColorInt
+import org.obd.graphs.toNumber
 
  private const val FOOTER_SIZE_RATIO = 1.3f
 const val MARGIN_END = 30
@@ -365,7 +365,7 @@ internal class GiuliaDrawer(
         valuePaint.textSize = textSize
         valuePaint.textAlign = Paint.Align.RIGHT
 
-        val value = textCache.value.get(metric.pid.id, metric.source.toDouble()) {
+        val value = textCache.value.get(metric.pid.id, metric.source.toNumber()) {
             metric.source.format(castToInt = castToInt)
         }
 
