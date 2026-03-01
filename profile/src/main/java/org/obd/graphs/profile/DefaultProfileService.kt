@@ -493,7 +493,6 @@ internal class DefaultProfileService :
 
             Prefs.updateString("pref.about.build_time", buildTime).commit()
             Prefs.updateString("pref.about.build_version", "$versionCode").commit()
-            Prefs.updateBoolean("pref.debug.logging.enabled", false).commit()
         }
     }
 }
