@@ -28,14 +28,13 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
-import org.obd.graphs.LOCATION_IS_DISABLED
+import org.obd.graphs.Notification
 import org.obd.graphs.Permissions
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.MetricsProcessor
 import org.obd.graphs.bl.datalogger.Pid
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
-import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.api.model.Reply
 import org.obd.metrics.api.model.ReplyObserver
@@ -82,10 +81,14 @@ internal class GpsMetricsEmitter : MetricsProcessor {
 
         // Guard Clauses
         if (!dataLoggerSettings.instance().adapter.gpsCollecetingEnabled) return
-        if (!Permissions.hasLocationPermissions(context)) return
+        if (!Permissions.hasLocationPermissions(context)){
+            Notification.sendBasicNotification(context,"Location permissions are not granted." +
+                    "GPS data won't be collected.")
+            return
+        }
         if (!Permissions.isLocationEnabled(context)) {
-            Log.w(TAG, "Location is disabled. Skipping")
-            sendBroadcastEvent(LOCATION_IS_DISABLED)
+            Notification.sendBasicNotification(context,"Location is not enabled. " +
+                    "GPS data won't be collected.")
             return
         }
 

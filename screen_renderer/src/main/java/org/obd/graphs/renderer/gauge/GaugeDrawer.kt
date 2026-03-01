@@ -41,8 +41,8 @@ import org.obd.graphs.renderer.cache.TextCache
 import org.obd.graphs.renderer.api.GaugeProgressBarType
 import org.obd.graphs.renderer.api.ScreenSettings
 import org.obd.graphs.round
-import org.obd.graphs.toDouble
 import org.obd.graphs.toFloat
+import org.obd.graphs.toNumber
 import org.obd.graphs.ui.common.COLOR_WHITE
 import org.obd.graphs.ui.common.color
 import kotlin.math.abs
@@ -496,7 +496,7 @@ internal class GaugeDrawer(
         val calculatedFontSize = calculateFontSize(multiplier = area.width() / 22f, fontSize = fontSize) * 3.8f
 
         val value =
-            textCache.value.get(metric.pid.id, metric.source.toDouble()) {
+            textCache.value.get(metric.pid.id, metric.source.toNumber()) {
                 metric.source.format(castToInt = false)
             }
 

@@ -28,12 +28,12 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.NotificationCompat
+import org.obd.graphs.NOTIFICATION_CHANNEL_ID
+import org.obd.graphs.NOTIFICATION_ID
 import org.obd.graphs.Permissions
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
-import org.obd.graphs.datalogger.R
 import org.obd.graphs.sendBroadcastEvent
 
 private const val ACTION_START = "org.obd.graphs.logger.START"
@@ -43,8 +43,6 @@ private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
 private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
 
-private const val NOTIFICATION_CHANNEL_ID = "data_logger_channel_v2"
-private const val NOTIFICATION_ID = 12345
 
 class DataLoggerService : Service() {
     private val binder = LocalBinder()
@@ -199,15 +197,9 @@ class DataLoggerService : Service() {
                 )
             }
 
-        return NotificationCompat
-            .Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("Vehicle Telemetry Service")
-            .setContentText("Logging OBD & GPS data in background...")
-            .setSmallIcon(R.drawable.ic_mygiulia_logo)
-            .apply {
-                contentIntent?.let { setContentIntent(it) }
-            }.setOngoing(true)
-            .build()
+        return org.obd.graphs.Notification.notification(this,
+            "Logging OBD data in background...",
+            contentIntent)
     }
 
     private fun createNotificationChannel() {
