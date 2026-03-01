@@ -42,21 +42,18 @@ import org.obd.graphs.preferences.updateInt
 import org.obd.graphs.ui.gauge.gaugeVirtualScreenPreferences
 import org.obd.graphs.ui.giulia.giuliaVirtualScreenPreferences
 
-
 data class NavigationPreferences(
-     var hideToolbarLandscape: Boolean = true,
-     var dashViewEnabled: Boolean = true,
-     var giuliaViewEnabled: Boolean = true,
-     var gaugeViewEnabled: Boolean = true,
-     var graphViewEnabled: Boolean = true,
-     var tripInfoViewEnabled: Boolean = true,
-     var performanceViewEnabled: Boolean = true,
-     var dragRacingViewEnabled: Boolean = true,
+    var hideToolbarLandscape: Boolean = true,
+    var dashViewEnabled: Boolean = true,
+    var giuliaViewEnabled: Boolean = true,
+    var gaugeViewEnabled: Boolean = true,
+    var graphViewEnabled: Boolean = true,
+    var tripInfoViewEnabled: Boolean = true,
+    var performanceViewEnabled: Boolean = true,
+    var dragRacingViewEnabled: Boolean = true,
 )
 
-
- internal object NavigationRouter {
-
+internal object NavigationRouter {
     private val navigationPreferences = NavigationPreferences()
 
     fun getPreferences(): NavigationPreferences =
@@ -143,7 +140,9 @@ data class NavigationPreferences(
 
                     R.id.nav_giulia -> {
                         tripVirtualScreenManager.updateReservedVirtualScreen(
-                            Prefs.getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey()).toList(),
+                            Prefs
+                                .getStringSet(giuliaVirtualScreenPreferences.getVirtualScreenPrefKey())
+                                .toList(),
                         )
                         tripVirtualScreenManager.updateScreenId(RESERVED_SCREEN_ID)
                         navigateToScreen(R.id.nav_graph)
@@ -163,46 +162,46 @@ data class NavigationPreferences(
             else -> false
         }
 
-     fun navigateToPreferences(activity: Activity): Boolean = navigateToPreferencesScreen(
-         when (getCurrentScreenId(activity)) {
-             R.id.nav_giulia -> "pref.giulia"
-             R.id.nav_gauge -> "pref.gauge"
-             R.id.nav_graph -> "pref.graph"
-             R.id.nav_dashboard -> "pref.dashboard"
-             R.id.nav_drag_racing -> "pref.drag_racing"
-             R.id.nav_performance -> "pref.performance"
-             R.id.nav_trip_info -> "pref.trip_info"
-             else -> "pref.root"
-         },
-     )
+    fun navigateToPreferences(activity: Activity): Boolean =
+        navigateToPreferencesScreen(
+            when (getCurrentScreenId(activity)) {
+                R.id.nav_giulia -> "pref.giulia"
+                R.id.nav_gauge -> "pref.gauge"
+                R.id.nav_graph -> "pref.graph"
+                R.id.nav_dashboard -> "pref.dashboard"
+                R.id.nav_drag_racing -> "pref.drag_racing"
+                R.id.nav_performance -> "pref.performance"
+                R.id.nav_trip_info -> "pref.trip_info"
+                else -> "pref.root"
+            },
+        )
 
+    fun navigateToPIDsPreferences(activity: Activity): Boolean {
+        val screenId =
+            when (getCurrentScreenId(activity)) {
+                R.id.nav_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
+                R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
+                R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
+                R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
+                R.id.nav_performance -> PREFERENCE_SCREEN_KEY_PERFORMANCE
+                R.id.nav_trip_info -> PREFERENCE_SCREEN_KEY_TRIP_INFO
+                else -> null
+            }
 
-     fun navigateToPIDsPreferences(activity: Activity): Boolean {
-         val screenId =
-             when (getCurrentScreenId(activity)) {
-                 R.id.nav_gauge -> PREFERENCE_SCREEN_KEY_GAUGE
-                 R.id.nav_graph -> PREFERENCE_SCREEN_KEY_GRAPH
-                 R.id.nav_giulia -> PREFERENCE_SCREEN_KEY_GIULIA
-                 R.id.nav_dashboard -> PREFERENCE_SCREEN_KEY_DASH
-                 R.id.nav_performance -> PREFERENCE_SCREEN_KEY_PERFORMANCE
-                 R.id.nav_trip_info -> PREFERENCE_SCREEN_KEY_TRIP_INFO
-                 else -> null
-             }
+        Log.d(
+            LOG_TAG,
+            "Jumping to preference screen for current screen $screenId  ${
+                getCurrentScreenId(activity)
+            }",
+        )
+        screenId?.apply {
+            navigateToPreferencesScreen(this)
+            return true
+        }
+        return false
+    }
 
-         Log.d(
-             LOG_TAG,
-             "Jumping to preference screen for current screen $screenId  ${
-                 NavigationRouter.getCurrentScreenId(activity)
-             }"
-         )
-         screenId?.apply {
-             NavigationRouter.navigateToPreferencesScreen(this)
-             return true
-         }
-         return false
-     }
-
-     fun navigateToPreferencesScreen(navigateToPrefKey: String): Boolean {
+    fun navigateToPreferencesScreen(navigateToPrefKey: String): Boolean {
         (getContext() as MainActivity).navController {
             it.navigate(R.id.nav_preferences, bundleOf(PREFERENCE_SCREEN_KEY to navigateToPrefKey))
         }
@@ -257,7 +256,8 @@ data class NavigationPreferences(
 
     private fun getCurrentScreenId(activity: Activity): Int {
         val navHostFragment =
-            (activity as MainActivity).supportFragmentManager
+            (activity as MainActivity)
+                .supportFragmentManager
                 .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
         return navHostFragment?.navController?.currentDestination?.id ?: -1
     }

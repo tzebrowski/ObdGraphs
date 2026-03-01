@@ -33,7 +33,7 @@ object Toolbar {
 
     fun toggle(activity: Activity) =
         toolbar(activity) { b ->
-            val isFabVisible = FabButtons.manager?.isMainFabVisible == true
+            val isFabVisible = FabButtons.isMainFabVisible() == true
             hide(b, b.isVisible && isFabVisible)
         }
 
@@ -84,7 +84,7 @@ object Toolbar {
                 .withEndAction { if (hide) bottomAppBar.isVisible = false }
                 .start()
 
-            FabButtons.manager?.animateHideShow(hide, barHeight, duration)
+            FabButtons.animateHideShow(hide, barHeight, duration)
         }
 
         bottomAppBar.post { runAnim() }

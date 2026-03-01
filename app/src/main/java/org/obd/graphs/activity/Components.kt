@@ -24,13 +24,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import org.obd.graphs.R
-
-fun MainActivity.floatingActionButton(func: (p: FloatingActionButton) -> Unit) {
-    func(FabButtons.view(this).connectFab)
-}
 
 fun MainActivity.progressBar(func: (p: ProgressBar) -> Unit) {
     func(findViewById(R.id.p_bar))

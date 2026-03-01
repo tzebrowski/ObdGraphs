@@ -34,7 +34,6 @@ internal data class SpeedDialViews(
 )
 
 internal class FabManager(
-    private val context: Context,
     private val views: SpeedDialViews,
     private val onConfigureViewClicked: () -> Unit,
     private val onConfigurePidsClicked: () -> Unit,
@@ -52,7 +51,7 @@ internal class FabManager(
         const val OFFSET_2_DP = -115f
     }
 
-    fun setup() {
+    fun setup(context: Context) {
         views.configureViewFab.alpha = 0f
         views.configurePidsFab.alpha = 0f
 
@@ -60,7 +59,7 @@ internal class FabManager(
             if (isFabExpanded) {
                 closeSpeedDial()
             } else {
-                openSpeedDial()
+                openSpeedDial(context)
             }
             true
         }
@@ -121,7 +120,7 @@ internal class FabManager(
         }
     }
 
-    private fun openSpeedDial() {
+    private fun openSpeedDial(context: Context) {
         isFabExpanded = true
 
         views.configureViewFab.visibility = View.VISIBLE
@@ -129,8 +128,8 @@ internal class FabManager(
         views.configureViewLabel.visibility = View.VISIBLE
         views.configurePidsLabel.visibility = View.VISIBLE
 
-        val offset1 = dpToPx(OFFSET_1_DP)
-        val offset2 = dpToPx(OFFSET_2_DP)
+        val offset1 = dpToPx(context,OFFSET_1_DP)
+        val offset2 = dpToPx(context,OFFSET_2_DP)
 
         views.configureViewFab
             .animate()
@@ -210,18 +209,25 @@ internal class FabManager(
             .start()
     }
 
-    private fun dpToPx(dp: Float): Float = dp * context.resources.displayMetrics.density
+    private fun dpToPx(context: Context, dp: Float): Float = dp * context.resources.displayMetrics.density
 }
 
 internal object FabButtons {
-    var manager: FabManager? = null
+    private var manager: FabManager? = null
+
+    fun isMainFabVisible(): Boolean? = manager?.isMainFabVisible
+
+    fun animateHideShow(
+        hide: Boolean,
+        barHeight: Float,
+        duration: Long,
+    ) = manager?.animateHideShow(hide, barHeight, duration)
 
     fun setupSpeedDialView(activity: Activity) {
         val speedDialViews = view(activity)
 
         manager =
             FabManager(
-                context = activity,
                 views = speedDialViews,
                 onConfigureViewClicked = {
                     NavigationRouter.navigateToPreferences(activity)
@@ -231,7 +237,7 @@ internal object FabButtons {
                 },
             )
 
-        manager?.setup()
+        manager?.setup(activity)
     }
 
     fun view(activity: Activity): SpeedDialViews =

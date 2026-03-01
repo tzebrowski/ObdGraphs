@@ -223,13 +223,13 @@ internal fun MainActivity.receive(intent: Intent?) {
                     )
             }
 
-            floatingActionButton {
+            FabButtons.view(this).connectFab.let{
                 it.backgroundTintList =
                     ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.cardinal)
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
                     withDataLogger {
-                       stop()
+                        stop()
                     }
                 }
                 it.refreshDrawableState()
@@ -296,7 +296,7 @@ private fun MainActivity.handleStop() {
         it.visibility = View.GONE
     }
 
-    floatingActionButton {
+    FabButtons.view(this).connectFab.let{
         it.backgroundTintList =
             ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.philippine_green)
     }
