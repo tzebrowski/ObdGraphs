@@ -18,7 +18,6 @@ package org.obd.graphs.activity
 
 import android.app.Activity
 import android.util.Log
-import android.view.View
 import androidx.core.view.isVisible
 import com.google.android.material.bottomappbar.BottomAppBar
 import org.obd.graphs.R
@@ -34,13 +33,13 @@ object Toolbar {
     private const val TAG = "TB"
 
     fun toggle(activity: Activity) =
-        toolbar(activity) { b, views ->
-            hide(b, views, b.isVisible && views.connectFab.isVisible)
+        toolbar(activity) { b ->
+            val isFabVisible = FabButtons.manager?.isMainFabVisible == true
+            hide(b, b.isVisible && isFabVisible)
         }
 
-
     fun hide(activity: Activity, hide: Boolean) =
-        toolbar(activity) { bottomAppBar, speedDialViews ->
+        toolbar(activity) { bottomAppBar ->
             val currentTime = System.currentTimeMillis()
             val isBarHidden = bottomAppBar.translationY > 0
             if (currentTime - lastEventTime > EVENT_THROTTLE_MS) {
@@ -51,7 +50,7 @@ object Toolbar {
                             "Toolbar.debug: isBarHidden=$isBarHidden request=$hide ts=${currentTime - lastEventTime}",
                         )
                     }
-                    hide(bottomAppBar, speedDialViews, hide)
+                    hide(bottomAppBar, hide)
                 }
                 lastEventTime = currentTime
             }
@@ -59,31 +58,22 @@ object Toolbar {
 
     private fun toolbar(
         activity: Activity,
-        func: (r: BottomAppBar, speedDialViews: SpeedDialViews) -> Unit
+        func: (r: BottomAppBar) -> Unit
     ) {
-        func(activity.findViewById(R.id.bottom_app_bar), FabButtons.view(activity))
+        func(activity.findViewById(R.id.bottom_app_bar))
     }
-
 
     private fun hide(
         bottomAppBar: BottomAppBar,
-        speedDialViews: SpeedDialViews,
         hide: Boolean,
     ) {
         fun runAnim() {
             val duration = 250L
-
             val barHeight = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 500f
-            val fabHeight = barHeight + speedDialViews.connectFab.height.toFloat()
 
-            if (hide) {
-                FabButtons.manager?.closeSpeedDial()
-            } else {
+            if (!hide) {
                 bottomAppBar.translationY = barHeight
                 bottomAppBar.isVisible = true
-
-                speedDialViews.connectFab.translationY = fabHeight
-                speedDialViews.connectFab.visibility = View.VISIBLE
             }
 
             bottomAppBar
@@ -93,39 +83,9 @@ object Toolbar {
                 .withEndAction { if (hide) bottomAppBar.isVisible = false }
                 .start()
 
-            speedDialViews.connectFab
-                .animate()
-                .translationY(if (hide) fabHeight else 0f)
-                .setDuration(duration)
-                .withEndAction {
-                    if (hide) speedDialViews.connectFab.visibility = View.GONE
-                }.start()
-
-            val subViews =
-                listOf(
-                    speedDialViews.configureViewFab,
-                    speedDialViews.configurePidsFab,
-                    speedDialViews.configureViewLabel,
-                    speedDialViews.configurePidsLabel,
-                )
-
-            // Animate Speed Dial Components along with the main FAB
-            subViews.forEach { view ->
-                if (!hide && view.visibility == View.GONE) {
-                    view.visibility = View.INVISIBLE
-                }
-
-                view
-                    .animate()
-                    .translationY(if (hide) fabHeight else 0f)
-                    .setDuration(duration)
-                    .withEndAction {
-                        if (hide) view.visibility = View.GONE
-                    }.start()
-            }
+            FabButtons.manager?.animateHideShow(hide, barHeight, duration)
         }
 
         bottomAppBar.post { runAnim() }
     }
-
 }

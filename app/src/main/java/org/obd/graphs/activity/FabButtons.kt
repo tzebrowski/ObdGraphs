@@ -20,8 +20,10 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.obd.graphs.R
+import androidx.core.view.isGone
 
 internal data class SpeedDialViews(
     val connectFab: FloatingActionButton,
@@ -37,8 +39,10 @@ internal class FabManager(
     private val onConfigureViewClicked: () -> Unit,
     private val onConfigurePidsClicked: () -> Unit,
 ) {
-    var isFabExpanded = false
-        private set
+    private var isFabExpanded = false
+
+    val isMainFabVisible: Boolean
+        get() = views.connectFab.isVisible
 
     private companion object {
         const val ANIM_DURATION = 300L
@@ -72,9 +76,48 @@ internal class FabManager(
         }
     }
 
+    fun animateHideShow(hide: Boolean, barHeight: Float, duration: Long) {
+        val fabHeight = barHeight + views.connectFab.height.toFloat()
+
+        if (hide) {
+            closeSpeedDial()
+        } else {
+            views.connectFab.translationY = fabHeight
+            views.connectFab.visibility = View.VISIBLE
+        }
+
+        views.connectFab
+            .animate()
+            .translationY(if (hide) fabHeight else 0f)
+            .setDuration(duration)
+            .withEndAction {
+                if (hide) views.connectFab.visibility = View.GONE
+            }.start()
+
+        val subViews = listOf(
+            views.configureViewFab,
+            views.configurePidsFab,
+            views.configureViewLabel,
+            views.configurePidsLabel,
+        )
+
+        subViews.forEach { view ->
+            if (!hide && view.isGone) {
+                view.visibility = View.INVISIBLE
+            }
+
+            view
+                .animate()
+                .translationY(if (hide) fabHeight else 0f)
+                .setDuration(duration)
+                .withEndAction {
+                    if (hide) view.visibility = View.GONE
+                }.start()
+        }
+    }
+
     private fun openSpeedDial() {
         isFabExpanded = true
-
 
         views.configureViewFab.visibility = View.VISIBLE
         views.configurePidsFab.visibility = View.VISIBLE
@@ -84,83 +127,36 @@ internal class FabManager(
         val offset1 = dpToPx(OFFSET_1_DP)
         val offset2 = dpToPx(OFFSET_2_DP)
 
-        views.configureViewFab
-            .animate()
-            .translationY(offset1)
-            .alpha(1f)
-            .setDuration(ANIM_DURATION)
-            .start()
-        views.configurePidsFab
-            .animate()
-            .translationY(offset2)
-            .alpha(1f)
-            .setDuration(ANIM_DURATION)
-            .start()
+        views.configureViewFab.animate().translationY(offset1).alpha(1f).setDuration(ANIM_DURATION).start()
+        views.configurePidsFab.animate().translationY(offset2).alpha(1f).setDuration(ANIM_DURATION).start()
 
-        views.configureViewLabel
-            .animate()
-            .translationY(offset1)
-            .alpha(1f)
-            .setDuration(ANIM_DURATION)
-            .start()
-        views.configurePidsLabel
-            .animate()
-            .translationY(offset2)
-            .alpha(1f)
-            .setDuration(ANIM_DURATION)
-            .start()
+        views.configureViewLabel.animate().translationY(offset1).alpha(1f).setDuration(ANIM_DURATION).start()
+        views.configurePidsLabel.animate().translationY(offset2).alpha(1f).setDuration(ANIM_DURATION).start()
 
-        views.connectFab
-            .animate()
-            .rotation(FAB_ROTATION)
-            .setDuration(ANIM_DURATION)
-            .start()
+        views.connectFab.animate().rotation(FAB_ROTATION).setDuration(ANIM_DURATION).start()
     }
 
     fun closeSpeedDial() {
         if (!isFabExpanded) return
-
         isFabExpanded = false
 
-        views.configureViewFab
-            .animate()
-            .translationY(0f)
-            .alpha(0f)
-            .setDuration(ANIM_DURATION)
-            .start()
+        views.configureViewFab.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION).start()
 
-        views.configurePidsFab
-            .animate()
-            .translationY(0f)
-            .alpha(0f)
-            .setDuration(ANIM_DURATION)
+        views.configurePidsFab.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION)
             .withEndAction {
                 views.configureViewFab.visibility = View.INVISIBLE
                 views.configurePidsFab.visibility = View.INVISIBLE
             }.start()
 
-        views.configureViewLabel
-            .animate()
-            .translationY(0f)
-            .alpha(0f)
-            .setDuration(ANIM_DURATION)
-            .start()
+        views.configureViewLabel.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION).start()
 
-        views.configurePidsLabel
-            .animate()
-            .translationY(0f)
-            .alpha(0f)
-            .setDuration(ANIM_DURATION)
+        views.configurePidsLabel.animate().translationY(0f).alpha(0f).setDuration(ANIM_DURATION)
             .withEndAction {
                 views.configureViewLabel.visibility = View.INVISIBLE
                 views.configurePidsLabel.visibility = View.INVISIBLE
             }.start()
 
-        views.connectFab
-            .animate()
-            .rotation(0f)
-            .setDuration(ANIM_DURATION)
-            .start()
+        views.connectFab.animate().rotation(0f).setDuration(ANIM_DURATION).start()
     }
 
     private fun dpToPx(dp: Float): Float = dp * context.resources.displayMetrics.density
@@ -168,23 +164,16 @@ internal class FabManager(
 
 internal object FabButtons {
     var manager: FabManager? = null
-        private set
 
     fun setupSpeedDialView(activity: Activity) {
         val speedDialViews = view(activity)
 
-        manager =
-            FabManager(
-                context = activity,
-                views = speedDialViews,
-
-                onConfigureViewClicked = {
-
-                },
-
-                onConfigurePidsClicked = {
-                },
-            )
+        manager = FabManager(
+            context = activity,
+            views = speedDialViews,
+            onConfigureViewClicked = { },
+            onConfigurePidsClicked = { },
+        )
 
         manager?.setup()
     }
