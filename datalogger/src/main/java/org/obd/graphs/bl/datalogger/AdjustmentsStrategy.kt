@@ -31,7 +31,8 @@ import org.obd.metrics.api.model.SniffingPolicy
 import org.obd.metrics.codec.GeneratorPolicy
 import java.io.File
 
-internal class AdjustmentsStrategy {
+
+ internal class AdjustmentsStrategy {
     fun findAdjustmentFor(
         strategy: QueryStrategyType,
         preferences: DataLoggerSettings = dataLoggerSettings.instance(),
@@ -154,6 +155,7 @@ internal class AdjustmentsStrategy {
                 CachePolicy
                     .builder()
                     .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
+                    .storeResultCacheOnDisk(false)
                     .resultCacheEnabled(preferences.adapter.resultsCacheEnabled)
                     .build(),
             ).producerPolicy(
