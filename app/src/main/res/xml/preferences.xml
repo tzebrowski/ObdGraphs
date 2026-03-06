@@ -2095,11 +2095,6 @@
 
             <SwitchPreferenceCompat
                 android:defaultValue="false"
-                android:key="pref.debug.generator.broadcast_fake_metrics"
-                android:title="@string/pref.debug_broadcast_fake_metrics" />
-
-            <SwitchPreferenceCompat
-                android:defaultValue="false"
                 android:key="pref.debug.trip.save.connector_response"
                 android:title="@string/pref.debug_trip_save_connector_response" />
 
