@@ -131,7 +131,7 @@
                         android:title="@string/pref.connection.connection_timeout"
                         app:useSimpleSummaryProvider="true" />
 
-                    <ListPreference
+                    <org.obd.graphs.preferences.ConnectionTypeListPreference
                         android:defaultValue="bluetooth"
                         android:dialogTitle="@string/pref.connection.connection_type_dialog"
                         android:entries="@array/pref.connection_type_array"
@@ -166,7 +166,6 @@
                             android:title="@string/pref.usb.baud_rate"
                             app:singleLineTitle="false"
                             app:useSimpleSummaryProvider="true" />
-
                     </PreferenceCategory>
 
                     <PreferenceCategory
