@@ -23,16 +23,24 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_NOT_CONNECTED
 import org.obd.graphs.bl.datalogger.DataLoggerSettings
+import org.obd.graphs.bl.datalogger.JS_ENGINE_NAME
 import org.obd.graphs.bl.datalogger.LOG_TAG
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.getContext
 import org.obd.graphs.sendBroadcastEvent
+import org.obd.metrics.api.model.Adjustments
+import org.obd.metrics.api.model.Init
+import org.obd.metrics.api.model.Query
+import org.obd.metrics.codec.generator.Strategy
+import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.transport.AdapterConnection
+import org.obd.metrics.transport.mock.SmartMockConnectionFactory
 
-internal object ConnectionManager {
+ internal object ConnectionManager {
 
-    fun obtain(): AdapterConnection? =
+    fun obtain(registry: PidDefinitionRegistry, query: Query, adjustments: Adjustments, init: Init): AdapterConnection? =
         when (dataLoggerSettings.instance().adapter.connectionType) {
+            "mock" -> mockConnection(registry,query,adjustments,init)
             "wifi" -> wifiConnection()
             "bluetooth" -> bluetoothConnection()
             "usb" -> getContext()?.let { UsbConnection.of(context = it) }
@@ -40,7 +48,17 @@ internal object ConnectionManager {
                 null
             }
         }
-
+    private fun mockConnection(registry: PidDefinitionRegistry, query: Query, adjustments: Adjustments, init: Init): AdapterConnection? =
+        SmartMockConnectionFactory
+            .smartBuilder()
+            .init(init)
+            .registry(registry)
+            .query(query)
+            .jsEngineName(JS_ENGINE_NAME)
+            .optional(adjustments)
+            .strategy(Strategy.SmartSawtooth)
+            .responseCount(500)
+            .build();
     private fun bluetoothConnection(): AdapterConnection? =
         try {
             val deviceAddress = dataLoggerSettings.instance().adapter.deviceAddress

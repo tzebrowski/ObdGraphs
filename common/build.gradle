@@ -58,4 +58,8 @@ dependencies {
     implementation("io.github.tzebrowski:obd-metrics:$obdMetricVersion") { changing = true }
     implementation 'com.github.mik3y:usb-serial-for-android:3.5.1'
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0'
 }

@@ -228,6 +228,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                 p3?.isVisible = true
             }
 
+            "mock" -> {
+                p1?.isVisible = false
+                p2?.isVisible = false
+                p3?.isVisible = false
+            }
+
             else -> {
             }
         }
@@ -252,6 +258,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         p1?.isVisible = false
                         p2?.isVisible = false
                         p3?.isVisible = true
+                    }
+
+                    "mock" -> {
+                        p1?.isVisible = false
+                        p2?.isVisible = false
+                        p3?.isVisible = false
                     }
 
                     else -> {

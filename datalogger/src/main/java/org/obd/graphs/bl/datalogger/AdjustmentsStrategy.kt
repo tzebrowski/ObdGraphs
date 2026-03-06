@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -28,11 +28,10 @@ import org.obd.metrics.api.model.PidDefinitionCustomization
 import org.obd.metrics.api.model.ProducerPolicy
 import org.obd.metrics.api.model.STNxxExtensions
 import org.obd.metrics.api.model.SniffingPolicy
-import org.obd.metrics.codec.GeneratorPolicy
+import org.obd.metrics.codec.generator.GeneratorPolicy
 import java.io.File
 
-
- internal class AdjustmentsStrategy {
+internal class AdjustmentsStrategy {
     fun findAdjustmentFor(
         strategy: QueryStrategyType,
         preferences: DataLoggerSettings = dataLoggerSettings.instance(),
@@ -91,7 +90,6 @@ import java.io.File
                     GeneratorPolicy
                         .builder()
                         .enabled(preferences.generatorEnabled)
-                        .increment(0.5)
                         .build(),
                 ).adaptiveTimeoutPolicy(
                     AdaptiveTimeoutPolicy
@@ -104,13 +102,17 @@ import java.io.File
                 )
 
         if (dataLoggerSettings.instance().adapter.stnExtensionsEnabled) {
-            val highPriorityOverridePolicy = PidDefinitionCustomization.builder().priority(0).build()
+            val highPriorityOverridePolicy =
+                PidDefinitionCustomization.builder().priority(0).build()
             builder =
                 builder
                     .override(Pid.ATM_PRESSURE_PID_ID.id, highPriorityOverridePolicy)
                     .override(Pid.AMBIENT_TEMP_PID_ID.id, highPriorityOverridePolicy)
                     .override(Pid.DYNAMIC_SELECTOR_PID_ID.id, highPriorityOverridePolicy)
-                    .override(Pid.ENGINE_TORQUE_PID_ID.id, PidDefinitionCustomization.builder().priority(4).build())
+                    .override(
+                        Pid.ENGINE_TORQUE_PID_ID.id,
+                        PidDefinitionCustomization.builder().priority(4).build()
+                    )
         }
 
         return builder.build()
@@ -121,8 +123,14 @@ import java.io.File
             .builder()
             .sniffing(SniffingPolicy.builder().enabled(false).build())
             .debugEnabled(preferences.debugLogging)
-            .override(Pid.DISTANCE_PID_ID.id, PidDefinitionCustomization.builder().lastInTheQuery(true).build())
-            .formulaExternalParams(FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize).build())
+            .override(
+                Pid.DISTANCE_PID_ID.id,
+                PidDefinitionCustomization.builder().lastInTheQuery(true).build()
+            )
+            .formulaExternalParams(
+                FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize)
+                    .build()
+            )
             .errorsPolicy(
                 ErrorsPolicy
                     .builder()
@@ -143,7 +151,7 @@ import java.io.File
                 STNxxExtensions
                     .builder()
                     .promoteSlowGroupsEnabled(false)
-                    .stripWhitespaces(true)
+                    .stripWhitespaces(dataLoggerSettings.instance().adapter.connectionType != "mock")
                     .promoteAllGroupsEnabled(preferences.adapter.stnIgnorePIDsPriorities)
                     .enabled(preferences.adapter.stnExtensionsEnabled)
                     .build(),
@@ -154,7 +162,12 @@ import java.io.File
             .cachePolicy(
                 CachePolicy
                     .builder()
-                    .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
+                    .resultCacheFilePath(
+                        File(
+                            getContext()?.cacheDir,
+                            "formula_cache.json"
+                        ).absolutePath
+                    )
                     .storeResultCacheOnDisk(false)
                     .resultCacheEnabled(preferences.adapter.resultsCacheEnabled)
                     .build(),
@@ -168,7 +181,6 @@ import java.io.File
                 GeneratorPolicy
                     .builder()
                     .enabled(preferences.generatorEnabled)
-                    .increment(0.5)
                     .build(),
             ).adaptiveTimeoutPolicy(
                 AdaptiveTimeoutPolicy

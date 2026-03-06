@@ -101,7 +101,8 @@
     <string name="pref.connection.category">OBD2 Adapter Connection</string>
     <string name="pref.connection.category.summary">This section contains settings related to your adapter type. Here, you can configure the Wi-Fi or Bluetooth parameters of your adapter.</string>
 
-    <string name="pref.connection.connection_type">Type of connection</string>
+    <string name="pref.connection.connection_type_dialog">Select OBD adapter connection type</string>
+    <string name="pref.connection.connection_type"><b><font color='#01804F'>OBD adapter connection type</font></b></string>
     <string name="pref.connection.connection_timeout">Connection timeout</string>
 
     <string name="pref.adapter_id">Available bluetooth devices</string>
@@ -431,9 +432,10 @@
     <string name="pref.theme">Theme</string>
 
     <string-array name="pref.connection_type_array">
-        <item name="connection.wifi">wifi</item>
         <item name="connection.bluetooth">bluetooth</item>
+        <item name="connection.wifi">wifi</item>
         <item name="connection.usb">usb</item>
+        <item name="connection.mock">mock</item>
     </string-array>
 
     <string name="pref.settings">Settings</string>

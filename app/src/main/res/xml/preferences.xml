@@ -133,7 +133,7 @@
 
                     <ListPreference
                         android:defaultValue="bluetooth"
-                        android:dialogTitle="@string/pref.connection.connection_type"
+                        android:dialogTitle="@string/pref.connection.connection_type_dialog"
                         android:entries="@array/pref.connection_type_array"
                         android:entryValues="@array/pref.connection_type_array"
                         android:key="pref.adapter.connection.type"
