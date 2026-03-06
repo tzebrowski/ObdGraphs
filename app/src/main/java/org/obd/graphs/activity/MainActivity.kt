@@ -43,7 +43,6 @@ import org.obd.graphs.bl.datalogger.AutoConnect
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.drag.dragRacingMetricsProcessor
 import org.obd.graphs.bl.extra.vehicleStatusMetricsProcessor
-import org.obd.graphs.bl.generator.MetricsGenerator
 import org.obd.graphs.bl.gps.gpsMetricsEmitter
 import org.obd.graphs.bl.trip.tripManager
 import org.obd.graphs.cacheManager
@@ -255,10 +254,6 @@ class MainActivity :
             .observe(tripManager)
             .observe(vehicleStatusMetricsProcessor)
             .observe(gpsMetricsEmitter)
-
-        if (BuildConfig.DEBUG) {
-            DataLoggerRepository.observe(MetricsGenerator(BuildConfig.DEBUG))
-        }
     }
 
     private fun validatePermissions() {
