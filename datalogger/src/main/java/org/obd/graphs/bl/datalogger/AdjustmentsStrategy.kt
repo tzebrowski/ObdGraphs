@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -84,7 +84,6 @@ internal class AdjustmentsStrategy {
                         .pidPriority(5, 10) // atm pressure, ambient temp
                         .pidPriority(4, 4) // atm pressure, ambient temp
                         .conditionalSleepEnabled(false)
-
                         .build(),
                 ).adaptiveTimeoutPolicy(
                     AdaptiveTimeoutPolicy
@@ -106,7 +105,7 @@ internal class AdjustmentsStrategy {
                     .override(Pid.DYNAMIC_SELECTOR_PID_ID.id, highPriorityOverridePolicy)
                     .override(
                         Pid.ENGINE_TORQUE_PID_ID.id,
-                        PidDefinitionCustomization.builder().priority(4).build()
+                        PidDefinitionCustomization.builder().priority(4).build(),
                     )
         }
 
@@ -120,13 +119,13 @@ internal class AdjustmentsStrategy {
             .debugEnabled(preferences.debugLogging)
             .override(
                 Pid.DISTANCE_PID_ID.id,
-                PidDefinitionCustomization.builder().lastInTheQuery(true).build()
-            )
-            .formulaExternalParams(
-                FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize)
-                    .build()
-            )
-            .errorsPolicy(
+                PidDefinitionCustomization.builder().lastInTheQuery(true).build(),
+            ).formulaExternalParams(
+                FormulaExternalParams
+                    .builder()
+                    .param("unit_tank_size", preferences.fuelTankSize)
+                    .build(),
+            ).errorsPolicy(
                 ErrorsPolicy
                     .builder()
                     .numberOfRetries(preferences.adapter.maxReconnectNum)
@@ -160,10 +159,9 @@ internal class AdjustmentsStrategy {
                     .resultCacheFilePath(
                         File(
                             getContext()?.cacheDir,
-                            "formula_cache.json"
-                        ).absolutePath
-                    )
-                    .storeResultCacheOnDisk(false)
+                            "formula_cache.json",
+                        ).absolutePath,
+                    ).storeResultCacheOnDisk(false)
                     .resultCacheEnabled(preferences.adapter.resultsCacheEnabled)
                     .build(),
             ).producerPolicy(
