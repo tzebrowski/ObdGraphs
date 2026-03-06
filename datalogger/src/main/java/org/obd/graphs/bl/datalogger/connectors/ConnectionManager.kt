@@ -31,10 +31,10 @@ import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.Adjustments
 import org.obd.metrics.api.model.Init
 import org.obd.metrics.api.model.Query
-import org.obd.metrics.codec.generator.Strategy
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.transport.AdapterConnection
 import org.obd.metrics.transport.mock.SmartMockConnectionFactory
+import org.obd.metrics.transport.mock.strategy.Strategy
 
  internal object ConnectionManager {
 

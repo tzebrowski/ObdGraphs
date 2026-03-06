@@ -253,6 +253,7 @@ internal class WorkflowOrchestrator internal constructor() {
             val dataLoggerQuery =
                 org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
             val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+
             val status = workflow.updateQuery(
                 dataLoggerQuery,
                 init(), adjustments

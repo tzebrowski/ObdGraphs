@@ -28,7 +28,6 @@ import org.obd.metrics.api.model.PidDefinitionCustomization
 import org.obd.metrics.api.model.ProducerPolicy
 import org.obd.metrics.api.model.STNxxExtensions
 import org.obd.metrics.api.model.SniffingPolicy
-import org.obd.metrics.codec.generator.GeneratorPolicy
 import java.io.File
 
 internal class AdjustmentsStrategy {
@@ -85,11 +84,7 @@ internal class AdjustmentsStrategy {
                         .pidPriority(5, 10) // atm pressure, ambient temp
                         .pidPriority(4, 4) // atm pressure, ambient temp
                         .conditionalSleepEnabled(false)
-                        .build(),
-                ).generatorPolicy(
-                    GeneratorPolicy
-                        .builder()
-                        .enabled(preferences.generatorEnabled)
+
                         .build(),
                 ).adaptiveTimeoutPolicy(
                     AdaptiveTimeoutPolicy
@@ -176,11 +171,6 @@ internal class AdjustmentsStrategy {
                     .builder()
                     .conditionalSleepEnabled(preferences.adapter.adaptiveConnectionEnabled)
                     .conditionalSleepSliceSize(10)
-                    .build(),
-            ).generatorPolicy(
-                GeneratorPolicy
-                    .builder()
-                    .enabled(preferences.generatorEnabled)
                     .build(),
             ).adaptiveTimeoutPolicy(
                 AdaptiveTimeoutPolicy
