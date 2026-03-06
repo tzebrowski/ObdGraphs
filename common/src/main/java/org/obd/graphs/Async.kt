@@ -18,20 +18,21 @@
 
 package org.obd.graphs
 
-import android.os.AsyncTask
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.runBlocking
 
+ private val backgroundScope = kotlinx.coroutines.CoroutineScope(Dispatchers.Default + kotlinx.coroutines.SupervisorJob())
 
-fun <T> runAsync(wait: Boolean = true, handler: () -> T) : T {
-    val asyncJob: AsyncTask<Void, Void, T> = object : AsyncTask<Void, Void, T>() {
-        @Deprecated("Deprecated in Java", ReplaceWith("handler()"))
-        override fun doInBackground(vararg params: Void?): T {
-            return handler()
-        }
-    }
-    return if (wait) {
-        asyncJob.execute().get()
-    } else {
-        asyncJob.execute()
-        null as T
-    }
-}
+ fun <T> runAsync(wait: Boolean = false, handler: () -> T): T? {
+     return if (wait) {
+         runBlocking(Dispatchers.Default) {
+             handler()
+         }
+     } else {
+         backgroundScope.launch {
+             handler()
+         }
+         null
+     }
+ }

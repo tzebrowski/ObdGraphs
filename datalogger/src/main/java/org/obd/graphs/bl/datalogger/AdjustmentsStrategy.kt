@@ -28,7 +28,6 @@ import org.obd.metrics.api.model.PidDefinitionCustomization
 import org.obd.metrics.api.model.ProducerPolicy
 import org.obd.metrics.api.model.STNxxExtensions
 import org.obd.metrics.api.model.SniffingPolicy
-import org.obd.metrics.codec.GeneratorPolicy
 import java.io.File
 
 internal class AdjustmentsStrategy {
@@ -86,12 +85,6 @@ internal class AdjustmentsStrategy {
                         .pidPriority(4, 4) // atm pressure, ambient temp
                         .conditionalSleepEnabled(false)
                         .build(),
-                ).generatorPolicy(
-                    GeneratorPolicy
-                        .builder()
-                        .enabled(preferences.generatorEnabled)
-                        .increment(0.5)
-                        .build(),
                 ).adaptiveTimeoutPolicy(
                     AdaptiveTimeoutPolicy
                         .builder()
@@ -103,13 +96,17 @@ internal class AdjustmentsStrategy {
                 )
 
         if (dataLoggerSettings.instance().adapter.stnExtensionsEnabled) {
-            val highPriorityOverridePolicy = PidDefinitionCustomization.builder().priority(0).build()
+            val highPriorityOverridePolicy =
+                PidDefinitionCustomization.builder().priority(0).build()
             builder =
                 builder
                     .override(Pid.ATM_PRESSURE_PID_ID.id, highPriorityOverridePolicy)
                     .override(Pid.AMBIENT_TEMP_PID_ID.id, highPriorityOverridePolicy)
                     .override(Pid.DYNAMIC_SELECTOR_PID_ID.id, highPriorityOverridePolicy)
-                    .override(Pid.ENGINE_TORQUE_PID_ID.id, PidDefinitionCustomization.builder().priority(4).build())
+                    .override(
+                        Pid.ENGINE_TORQUE_PID_ID.id,
+                        PidDefinitionCustomization.builder().priority(4).build(),
+                    )
         }
 
         return builder.build()
@@ -120,9 +117,15 @@ internal class AdjustmentsStrategy {
             .builder()
             .sniffing(SniffingPolicy.builder().enabled(false).build())
             .debugEnabled(preferences.debugLogging)
-            .override(Pid.DISTANCE_PID_ID.id, PidDefinitionCustomization.builder().lastInTheQuery(true).build())
-            .formulaExternalParams(FormulaExternalParams.builder().param("unit_tank_size", preferences.fuelTankSize).build())
-            .errorsPolicy(
+            .override(
+                Pid.DISTANCE_PID_ID.id,
+                PidDefinitionCustomization.builder().lastInTheQuery(true).build(),
+            ).formulaExternalParams(
+                FormulaExternalParams
+                    .builder()
+                    .param("unit_tank_size", preferences.fuelTankSize)
+                    .build(),
+            ).errorsPolicy(
                 ErrorsPolicy
                     .builder()
                     .numberOfRetries(preferences.adapter.maxReconnectNum)
@@ -142,7 +145,7 @@ internal class AdjustmentsStrategy {
                 STNxxExtensions
                     .builder()
                     .promoteSlowGroupsEnabled(false)
-                    .stripWhitespaces(true)
+                    .stripWhitespaces(dataLoggerSettings.instance().adapter.connectionType != "mock")
                     .promoteAllGroupsEnabled(preferences.adapter.stnIgnorePIDsPriorities)
                     .enabled(preferences.adapter.stnExtensionsEnabled)
                     .build(),
@@ -153,7 +156,12 @@ internal class AdjustmentsStrategy {
             .cachePolicy(
                 CachePolicy
                     .builder()
-                    .resultCacheFilePath(File(getContext()?.cacheDir, "formula_cache.json").absolutePath)
+                    .resultCacheFilePath(
+                        File(
+                            getContext()?.cacheDir,
+                            "formula_cache.json",
+                        ).absolutePath,
+                    ).storeResultCacheOnDisk(false)
                     .resultCacheEnabled(preferences.adapter.resultsCacheEnabled)
                     .build(),
             ).producerPolicy(
@@ -161,12 +169,6 @@ internal class AdjustmentsStrategy {
                     .builder()
                     .conditionalSleepEnabled(preferences.adapter.adaptiveConnectionEnabled)
                     .conditionalSleepSliceSize(10)
-                    .build(),
-            ).generatorPolicy(
-                GeneratorPolicy
-                    .builder()
-                    .enabled(preferences.generatorEnabled)
-                    .increment(0.5)
                     .build(),
             ).adaptiveTimeoutPolicy(
                 AdaptiveTimeoutPolicy

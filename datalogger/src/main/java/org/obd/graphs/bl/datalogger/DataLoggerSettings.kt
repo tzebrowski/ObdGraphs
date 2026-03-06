@@ -117,8 +117,6 @@ data class DataLoggerSettings(
     var dragRacingCommandFrequency: Long = 10,
     @XmlPreference("pref.mode", "Generic mode", String::class)
     var mode: String = "Generic mode",
-    @XmlPreference("pref.debug.generator.enabled", "false", Boolean::class)
-    var generatorEnabled: Boolean = false,
     @XmlPreference("pref.pids.registry.list", "", Set::class)
     var resources: Set<String> = modules.getDefaultModules().keys,
     @XmlPreference("pref.debug.trip.save.connector_response", "false", Boolean::class)

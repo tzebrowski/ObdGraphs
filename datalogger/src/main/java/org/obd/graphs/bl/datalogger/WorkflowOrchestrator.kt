@@ -21,6 +21,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.query.Query
@@ -44,7 +47,7 @@ import org.obd.metrics.pid.Urls
 import org.obd.metrics.pid.ValueType
 import java.util.*
 
-private const val JS_ENGINE_NAME = "rhino"
+const val JS_ENGINE_NAME = "rhino"
 
 /**
  * That's the wrapper interface on Workflow API.
@@ -75,9 +78,12 @@ internal class WorkflowOrchestrator internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
-        override fun onRoutineCompleted(routineCommand: RoutineCommand, status: RoutineExecutionStatus) {
-            Log.e(LOG_TAG, "Routine: ${routineCommand.pid.description}  execution status: $status")
-            val event = when (status){
+        override fun onRoutineCompleted(
+            routineCommand: RoutineCommand,
+            status: RoutineExecutionStatus
+        ) {
+            Log.i(LOG_TAG, "Routine: ${routineCommand.pid.description}  execution status: $status")
+            val event = when (status) {
                 RoutineExecutionStatus.ERROR -> ROUTINE_EXECUTION_FAILED_EVENT
                 RoutineExecutionStatus.NO_DATA -> ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT
                 RoutineExecutionStatus.SUCCESS -> ROUTINE_EXECUTED_SUCCESSFULLY_EVENT
@@ -138,10 +144,10 @@ internal class WorkflowOrchestrator internal constructor() {
     private val adjustmentsStrategy = AdjustmentsStrategy()
 
     fun observe(metricsProcessor: MetricsProcessor) {
-        if (metricsProcessorsRegistry.contains(metricsProcessor)){
-            Log.i(LOG_TAG,"Metrics processor is already registered: $metricsProcessor")
-        }else {
-            Log.i(LOG_TAG,"Registering: $metricsProcessor metrics processor")
+        if (metricsProcessorsRegistry.contains(metricsProcessor)) {
+            Log.i(LOG_TAG, "Metrics processor is already registered: $metricsProcessor")
+        } else {
+            Log.i(LOG_TAG, "Registering: $metricsProcessor metrics processor")
             metricsProcessorsRegistry.add(metricsProcessor)
             metricsObserver.observe(metricsProcessor)
         }
@@ -160,9 +166,11 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun diagnostics(): Diagnostics = workflow.diagnostics
 
-    fun findHistogramFor(metric: ObdMetric): Histogram = workflow.diagnostics.histogram().findBy(metric.command.pid)
+    fun findHistogramFor(metric: ObdMetric): Histogram =
+        workflow.diagnostics.histogram().findBy(metric.command.pid)
 
-    fun findRateFor(metric: ObdMetric): Optional<Rate> = workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
+    fun findRateFor(metric: ObdMetric): Optional<Rate> =
+        workflow.diagnostics.rate().findBy(RateType.MEAN, metric.command.pid)
 
     fun pidDefinitionRegistry(): PidDefinitionRegistry = workflow.pidRegistry
 
@@ -179,34 +187,54 @@ internal class WorkflowOrchestrator internal constructor() {
             Log.e(LOG_TAG, "Failed to stop the workflow", e)
         }
     }
-
     fun start(query: Query) {
-        currentQuery = query
+        runAsync (wait=false) {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND)
+            currentQuery = query
 
-        val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
-        Log.i(LOG_TAG, "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
-        ConnectionManager.obtain()?.run {
-            val status = workflow.start(
-                this, dataLoggerQuery, init(),
-                adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+            val dataLoggerQuery =
+                org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
+            Log.i(
+                LOG_TAG,
+                "Stating collecting process. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}"
             )
-            Log.i(LOG_TAG, "Collecting process started. Strategy: ${query.getStrategy()}. Status=$status")
+            val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+            val init = init()
+
+            ConnectionManager.obtain(pidDefinitionRegistry(), dataLoggerQuery, adjustments, init)
+                ?.run {
+                    val status = workflow.start(this, dataLoggerQuery, init, adjustments)
+                    Log.i(
+                        LOG_TAG,
+                        "Collecting process started. Strategy: ${query.getStrategy()}. Status=$status"
+                    )
+                }
         }
     }
 
     fun executeRoutine(query: Query) {
         currentQuery = query
+        val init = init()
+        val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
+        val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+        ConnectionManager.obtain(pidDefinitionRegistry(), dataLoggerQuery, adjustments, init)?.run {
+            Log.i(
+                LOG_TAG,
+                "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}"
+            )
 
-        ConnectionManager.obtain()?.run {
-            val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
-            Log.i(LOG_TAG, "Executing routine. Strategy: ${query.getStrategy()}. Selected PIDs: ${dataLoggerQuery.pids}")
-
-            val status = workflow.executeRoutine(dataLoggerQuery.pids.first(), init())
-            Log.i(LOG_TAG, "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status")
+            val status = workflow.executeRoutine(dataLoggerQuery.pids.first(), init)
+            Log.i(
+                LOG_TAG,
+                "Routines has been completed. Strategy: ${query.getStrategy()}. Status=$status"
+            )
 
             when (status) {
                 WorkflowExecutionStatus.REJECTED -> sendBroadcastEvent(ROUTINE_REJECTED_EVENT)
-                WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(ROUTINE_WORKFLOW_NOT_RUNNING_EVENT)
+                WorkflowExecutionStatus.NOT_RUNNING -> sendBroadcastEvent(
+                    ROUTINE_WORKFLOW_NOT_RUNNING_EVENT
+                )
+
                 else -> sendBroadcastEvent(ROUTINE_UNKNOWN_STATUS_EVENT)
             }
         }
@@ -215,41 +243,50 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private lateinit var currentQuery: Query
 
-    fun getCurrentQuery (): Query? = if (::currentQuery.isInitialized) currentQuery else null
+    fun getCurrentQuery(): Query? = if (::currentQuery.isInitialized) currentQuery else null
 
     fun updateQuery(query: Query) {
         if (isSameQuery(query)) {
             Log.w(LOG_TAG, "Received same query=${query.getIDs()}. Do not update.")
         } else {
 
-            val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
+            val dataLoggerQuery =
+                org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
             val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+
             val status = workflow.updateQuery(
                 dataLoggerQuery,
                 init(), adjustments
             )
 
-            Log.i(LOG_TAG, "Query update finished, strategy: ${query.getStrategy()}. Status=$status")
+            Log.i(
+                LOG_TAG,
+                "Query update finished, strategy: ${query.getStrategy()}. Status=$status"
+            )
         }
 
         currentQuery = query
     }
 
-    fun isSameQuery(query: Query) = ::currentQuery.isInitialized && query.getIDs() == currentQuery.getIDs()
+    fun isSameQuery(query: Query) =
+        ::currentQuery.isInitialized && query.getIDs() == currentQuery.getIDs()
 
     fun isDTCEnabled(): Boolean = workflow.pidRegistry.findBy(PIDsGroup.DTC_READ).isNotEmpty()
 
-    private fun init(preferences: DataLoggerSettings = dataLoggerSettings.instance()) = Init.builder()
-        .delayAfterInit(preferences.adapter.initDelay)
-        .delayAfterReset(preferences.adapter.delayAfterReset)
-        .headers(diagnosticRequestIDMapper.getMapping().map { entry ->
-            Init.Header.builder().mode(entry.key).header(entry.value).build()
-        }.toMutableList())
-        .protocol(Init.Protocol.valueOf(preferences.adapter.initProtocol))
-        .sequence(DefaultCommandGroup.INIT).build()
+    private fun init(preferences: DataLoggerSettings = dataLoggerSettings.instance()) =
+        Init.builder()
+            .delayAfterInit(preferences.adapter.initDelay)
+            .delayAfterReset(preferences.adapter.delayAfterReset)
+            .headers(diagnosticRequestIDMapper.getMapping().map { entry ->
+                Init.Header.builder().mode(entry.key).header(entry.value).build()
+            }.toMutableList())
+            .protocol(Init.Protocol.valueOf(preferences.adapter.initProtocol))
+            .sequence(DefaultCommandGroup.INIT).build()
 
     private fun workflow() = Workflow.instance()
-        .formulaEvaluatorConfig(FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build())
+        .formulaEvaluatorConfig(
+            FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build()
+        )
         .pids(
             pids()
         )
@@ -271,19 +308,33 @@ internal class WorkflowOrchestrator internal constructor() {
             }
         }
 
-       registerGPSPids(workflow.pidRegistry)
+        registerGPSPids(workflow.pidRegistry)
     }
 
     private fun registerGPSPids(pidRegistry: PidDefinitionRegistry) {
-        Log.d(LOG_TAG,"Registering GPS PIDs")
-        pidRegistry.register(PidDefinition(Pid.GPS_LOCATION_PID_ID.id, 2, "", "22", "Alt", "m", "GPS", -180, 10000, ValueType.DOUBLE))
+        Log.d(LOG_TAG, "Registering GPS PIDs")
+        pidRegistry.register(
+            PidDefinition(
+                Pid.GPS_LOCATION_PID_ID.id,
+                2,
+                "",
+                "22",
+                "Alt",
+                "m",
+                "GPS",
+                -180,
+                10000,
+                ValueType.DOUBLE
+            )
+        )
     }
 
-    private fun pids(): Pids? = Pids.builder().resources(dataLoggerSettings.instance().resources.map {
-        if (modules.isExternalStorageModule(it)) {
-            modules.externalModuleToURL(it)
-        } else {
-            Urls.resourceToUrl(it)
-        }
-    }.toMutableList()).build()
+    private fun pids(): Pids? =
+        Pids.builder().resources(dataLoggerSettings.instance().resources.map {
+            if (modules.isExternalStorageModule(it)) {
+                modules.externalModuleToURL(it)
+            } else {
+                Urls.resourceToUrl(it)
+            }
+        }.toMutableList()).build()
 }

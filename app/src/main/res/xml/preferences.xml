@@ -133,7 +133,7 @@
 
                     <ListPreference
                         android:defaultValue="bluetooth"
-                        android:dialogTitle="@string/pref.connection.connection_type"
+                        android:dialogTitle="@string/pref.connection.connection_type_dialog"
                         android:entries="@array/pref.connection_type_array"
                         android:entryValues="@array/pref.connection_type_array"
                         android:key="pref.adapter.connection.type"
@@ -2107,12 +2107,6 @@
                 android:defaultValue="false"
                 android:key="pref.debug.logging.enabled"
                 android:title="@string/pref.debug_logging_enabled" />
-
-            <SwitchPreferenceCompat
-                android:defaultValue="false"
-                android:key="pref.debug.generator.enabled"
-                android:title="@string/pref.debug_generator_enabled"
-                app:singleLineTitle="false" />
 
             <Preference
                 android:key="pref.adapter.gps"
