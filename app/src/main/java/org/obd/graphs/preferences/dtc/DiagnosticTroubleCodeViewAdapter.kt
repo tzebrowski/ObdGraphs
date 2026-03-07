@@ -27,10 +27,11 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
+import org.obd.metrics.api.model.DiagnosticTroubleCode
 
-class DiagnosticTroubleCodeViewAdapter internal constructor(
-    context: Context?,
-    private var data: MutableCollection<String>,
+ class DiagnosticTroubleCodeViewAdapter internal constructor(
+     context: Context?,
+     private var data: MutableCollection<DiagnosticTroubleCode>,
 ) : RecyclerView.Adapter<DiagnosticTroubleCodeViewAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -44,9 +45,9 @@ class DiagnosticTroubleCodeViewAdapter internal constructor(
         position: Int,
     ) {
         data.elementAt(position).run {
-            holder.code.setText(this, COLOR_CARDINAL, Typeface.NORMAL, 1f)
+            holder.code.setText("${this.standardCode}-${this.failureType.code}", COLOR_CARDINAL, Typeface.NORMAL, 1f)
+            holder.description.setText(this.description, Color.GRAY, Typeface.NORMAL, 1f)
         }
-        holder.description.setText("", Color.GRAY, Typeface.NORMAL, 1f)
     }
 
     override fun getItemCount(): Int = data.size

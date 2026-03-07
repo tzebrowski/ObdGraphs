@@ -65,9 +65,9 @@ class DataLoggerWifiTest {
 
         tcpTestRunner(
             assert = {
-                assertTrue(vehicleCapabilitiesManager.getDTC().contains("26E400"))
-                assertTrue(vehicleCapabilitiesManager.getDTC().contains("D00800"))
-                assertTrue(vehicleCapabilitiesManager.getDTC().contains("2BC100"))
+                assertTrue(vehicleCapabilitiesManager.getDiagnosticTroubleCodes().contains("26E400"))
+                assertTrue(vehicleCapabilitiesManager.getDiagnosticTroubleCodes().contains("D00800"))
+                assertTrue(vehicleCapabilitiesManager.getDiagnosticTroubleCodes().contains("2BC100"))
             },
             arrange = {
                 // arrange

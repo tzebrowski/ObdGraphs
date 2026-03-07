@@ -18,10 +18,13 @@ package org.obd.graphs.bl.datalogger
 
 import android.util.Log
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.obd.graphs.preferences.Prefs
+import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.VehicleCapabilities
 
 class VehicleMetadata(var name: String, var value: String)
@@ -36,6 +39,8 @@ class VehicleCapabilitiesManager {
         registerModule(KotlinModule())
         configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
         configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)
+        configure(JsonParser.Feature.IGNORE_UNDEFINED, true)
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
     internal fun updateCapabilities(vehicleCapabilities: VehicleCapabilities) {
@@ -57,8 +62,8 @@ class VehicleCapabilitiesManager {
             }
 
             putString(PREF_VEHICLE_METADATA, mapper.writeValueAsString(vehicleCapabilities.metadata))
-            putStringSet(PREF_DTC, vehicleCapabilities.dtc.map { it.code }.toHashSet())
-            apply()
+            putString(PREF_DTC, mapper.writeValueAsString(vehicleCapabilities.dtc))
+            commit()
         }
     }
 
@@ -68,14 +73,25 @@ class VehicleCapabilitiesManager {
             .sortedWith(compareBy { t -> pidList.firstOrNull { a -> a.pid == t.uppercase() } }).toMutableList()
     }
 
-    fun getDTC(): MutableList<String> {
-        return Prefs.getStringSet(PREF_DTC, emptySet())!!.toMutableList()
-    }
+    fun getDiagnosticTroubleCodes(): MutableList<DiagnosticTroubleCode>  =
+        try {
+            var preferences = Prefs.getString(PREF_DTC, "")!!
+            Log.e("DTC","$preferences")
+            preferences = preferences
+                .removeSurrounding("\"")
+                .replace("\\\"", "\"")
+
+            val typeRef = object : TypeReference<List<DiagnosticTroubleCode>>() {}
+            mapper.readValue(preferences, typeRef).toMutableList()
+        } catch (e: Throwable){
+            Log.e(LOG_TAG, "Failed to read Diagnostic Trouble Code from preferences",e)
+            mutableListOf()
+        }
 
     fun getVehicleCapabilities(): MutableList<VehicleMetadata> {
         val preferences = Prefs.getString(PREF_VEHICLE_METADATA, "")!!
-
         try {
+
             return if (preferences.isEmpty()) mutableListOf() else {
                 val map: Map<String, String> = mapper.readValue(preferences)
                 return map.map { (k, v) -> VehicleMetadata(k, v) }.toMutableList()

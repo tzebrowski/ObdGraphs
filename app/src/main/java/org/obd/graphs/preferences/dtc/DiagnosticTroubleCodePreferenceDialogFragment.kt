@@ -25,9 +25,13 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.command.dtc.DtcComponent
 
-class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
-    override fun onCreateView(
+ class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
+
+
+     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -35,10 +39,22 @@ class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
-        val dtc = vehicleCapabilitiesManager.getDTC()
-
+        val dtc = vehicleCapabilitiesManager.getDiagnosticTroubleCodes()
         if (dtc.isEmpty()) {
-            dtc.add(resources.getString(R.string.pref_dtc_no_dtc_found))
+            val noDTC = DiagnosticTroubleCode(
+                "",
+                "",
+                null,
+                resources.getString(R.string.pref_dtc_no_dtc_found),
+                0,
+                null,
+                null,
+                null,
+                null,
+                DtcComponent("","")
+            )
+
+            dtc.add(noDTC)
         }
 
         val adapter = DiagnosticTroubleCodeViewAdapter(context, dtc)
