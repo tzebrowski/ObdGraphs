@@ -31,12 +31,10 @@ class ConnectionTypeFragment : Fragment(R.layout.fragment_connection_type) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Find your MaterialCardViews from the XML layout
         val cardBluetooth = view.findViewById<MaterialCardView>(R.id.cardBluetooth)
         val cardWifi = view.findViewById<MaterialCardView>(R.id.cardWifi)
         val cardUsb = view.findViewById<MaterialCardView>(R.id.cardUsb)
 
-        // Set click listeners for each connection type
         cardBluetooth.setOnClickListener {
             saveConnectionType("BLUETOOTH")
             navigateToNextScreen()
@@ -54,14 +52,11 @@ class ConnectionTypeFragment : Fragment(R.layout.fragment_connection_type) {
     }
 
     private fun saveConnectionType(type: String) {
-        // Since you have the androidx.preference dependency,
-        // SharedPreferences is a great way to save this globally.
-        val sharedPrefs = requireActivity().getSharedPreferences("OBD_PREFS", Context.MODE_PRIVATE)
+       val sharedPrefs = requireActivity().getSharedPreferences("OBD_PREFS", Context.MODE_PRIVATE)
         sharedPrefs.edit().putString("CONNECTION_TYPE", type).apply()
     }
 
     private fun navigateToNextScreen() {
-        // Move to the Permissions Fragment using your Navigation Graph action
         findNavController().navigate(R.id.action_connectionType_to_permissions)
     }
 }

@@ -45,7 +45,6 @@ class ScanningFragment : Fragment(R.layout.fragment_scanning) {
         tvTitle = view.findViewById(R.id.tvTitle)
         val rvDevices = view.findViewById<RecyclerView>(R.id.rvDevices)
 
-        // Initialize the RecyclerView
         adapter =
             DeviceListAdapter { selectedDevice ->
                 onDeviceClicked(selectedDevice)
@@ -53,7 +52,6 @@ class ScanningFragment : Fragment(R.layout.fragment_scanning) {
         rvDevices.layoutManager = LinearLayoutManager(requireContext())
         rvDevices.adapter = adapter
 
-        // Retrieve the connection type selected in step 2
         val sharedPrefs = requireActivity().getSharedPreferences("OBD_PREFS", Context.MODE_PRIVATE)
         connectionType = sharedPrefs.getString("CONNECTION_TYPE", "BLUETOOTH")
 
@@ -63,13 +61,6 @@ class ScanningFragment : Fragment(R.layout.fragment_scanning) {
     private fun startScanning() {
         tvTitle.text = "Looking for $connectionType adapters..."
         progressBar.visibility = View.VISIBLE
-
-        // TODO: Replace this simulated delay with actual hardware scanning logic
-        // Examples:
-        // - BLUETOOTH: Use BluetoothAdapter.startDiscovery() or BluetoothLeScanner
-        // - USB: Use UsbManager.getDeviceList() via usb-serial-for-android
-        // - WIFI: Often requires the user to manually connect in OS settings,
-        //         but you can scan via WifiManager if needed.
 
         Handler(Looper.getMainLooper()).postDelayed({
             simulateDeviceFound()
@@ -96,7 +87,6 @@ class ScanningFragment : Fragment(R.layout.fragment_scanning) {
     }
 
     private fun onDeviceClicked(device: ObdDevice) {
-        // Save the selected device's address so the Testing step knows what to connect to
         val sharedPrefs = requireActivity().getSharedPreferences("OBD_PREFS", Context.MODE_PRIVATE)
         sharedPrefs
             .edit()
@@ -104,7 +94,6 @@ class ScanningFragment : Fragment(R.layout.fragment_scanning) {
             .putString("SELECTED_DEVICE_ADDRESS", device.address)
             .apply()
 
-        // Navigate to the connection testing screen
         findNavController().navigate(R.id.action_scanning_to_testing)
     }
 }

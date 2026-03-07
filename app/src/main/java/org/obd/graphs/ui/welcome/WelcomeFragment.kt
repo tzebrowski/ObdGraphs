@@ -33,7 +33,6 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
         val btnNext = view.findViewById<Button>(R.id.btnNext)
 
         btnNext.setOnClickListener {
-            // This safely navigates to the next screen in your XML graph
             findNavController().navigate(R.id.action_welcome_to_connectionType)
         }
     }

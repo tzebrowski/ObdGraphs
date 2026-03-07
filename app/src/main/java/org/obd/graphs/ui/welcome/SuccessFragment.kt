@@ -29,13 +29,9 @@ class SuccessFragment : Fragment(R.layout.fragment_success) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Find the finish button from fragment_success.xml
         val btnFinish = view.findViewById<Button>(R.id.btnFinish)
 
         btnFinish.setOnClickListener {
-            // Close the wizard Activity entirely.
-            // This will smoothly return the user to whatever screen
-            // originally launched the ObdWizardActivity.
             requireActivity().finish()
         }
     }

@@ -22,7 +22,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-// A simple data class to hold device info
 data class ObdDevice(
     val name: String,
     val address: String,
@@ -44,7 +43,6 @@ class DeviceListAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): ViewHolder {
-        // Using Android's built-in simple list item layout for convenience
         val view =
             LayoutInflater
                 .from(parent.context)

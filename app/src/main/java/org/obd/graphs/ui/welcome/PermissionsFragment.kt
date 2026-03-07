@@ -29,7 +29,6 @@ import org.obd.graphs.R // Make sure this matches your project's R file
 class PermissionsFragment : Fragment(R.layout.fragment_permissions), EasyPermissions.PermissionCallbacks {
 
     companion object {
-        // A unique request code to track this specific permission request
         private const val RC_OBD_PERMISSIONS = 123
     }
 
@@ -38,12 +37,10 @@ class PermissionsFragment : Fragment(R.layout.fragment_permissions), EasyPermiss
 
         val btnGrantPermissions = view.findViewById<Button>(R.id.btnGrantPermissions)
 
-        // 1. Check if we already have permissions when the screen loads
         if (hasRequiredPermissions()) {
             navigateToScanning()
         }
 
-        // 2. Request permissions when the user clicks the button
         btnGrantPermissions.setOnClickListener {
             requestObdPermissions()
         }
@@ -51,14 +48,12 @@ class PermissionsFragment : Fragment(R.layout.fragment_permissions), EasyPermiss
 
     private fun getRequiredPermissions(): Array<String> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // Android 12+ (API 31+): Requires specific Bluetooth permissions
             arrayOf(
                 Manifest.permission.BLUETOOTH_SCAN,
                 Manifest.permission.BLUETOOTH_CONNECT,
                 Manifest.permission.ACCESS_FINE_LOCATION // Often still needed for Wi-Fi scanning
             )
         } else {
-            // Android 11 and below: Requires Location to scan for Bluetooth/Wi-Fi devices
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
@@ -73,7 +68,6 @@ class PermissionsFragment : Fragment(R.layout.fragment_permissions), EasyPermiss
         if (hasRequiredPermissions()) {
             navigateToScanning()
         } else {
-            // This triggers the EasyPermissions dialog/system prompt
             EasyPermissions.requestPermissions(
                 this,
                 "To find and connect to your OBD adapter, this app needs Bluetooth and Location access.",
@@ -83,16 +77,13 @@ class PermissionsFragment : Fragment(R.layout.fragment_permissions), EasyPermiss
         }
     }
 
-    // --- EasyPermissions Callbacks ---
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // Forward the system's results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        // Success! Move to the scanning screen.
         navigateToScanning()
     }
 
