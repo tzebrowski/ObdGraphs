@@ -559,10 +559,11 @@
             app:singleLineTitle="false">
             <PreferenceCategory android:title="@string/pref.dtc.title">
                 <org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
+                    app:icon="@drawable/ic_action_execute"
                     android:dialogTitle="@string/pref.dtc.title"
                     android:key="pref.dtc.list"
                     android:summary="@string/pref_dtc_settings_summary"
-                    android:title="@string/pref.dtc.title"
+                    android:title="@string/pref_dtc_settings"
                     app:singleLineTitle="false" />
 
                 <SwitchPreferenceCompat
