@@ -95,7 +95,7 @@ internal class WorkflowOrchestrator internal constructor() {
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
             status = WorkflowStatus.Connected
             Log.i(LOG_TAG, "We are connected to the vehicle: $vehicleCapabilities")
-            vehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
+            VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
 
             // notify about DTC

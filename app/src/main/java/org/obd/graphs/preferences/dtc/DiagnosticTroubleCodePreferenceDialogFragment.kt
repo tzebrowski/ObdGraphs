@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
+import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.command.dtc.DtcComponent
@@ -39,7 +39,7 @@ import org.obd.metrics.command.dtc.DtcComponent
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
-        val dtc = vehicleCapabilitiesManager.getDiagnosticTroubleCodes()
+        val dtc = VehicleCapabilitiesManager.getDiagnosticTroubleCodes()
         if (dtc.isEmpty()) {
             val noDTC = DiagnosticTroubleCode(
                 "",
