@@ -62,7 +62,7 @@ class VehicleCapabilitiesManager {
             }
 
             putString(PREF_VEHICLE_METADATA, mapper.writeValueAsString(vehicleCapabilities.metadata))
-            putString(PREF_DTC, mapper.writeValueAsString(vehicleCapabilities.dtc))
+            putString(PREF_DTC,  mapper.writeValueAsString(vehicleCapabilities.dtc))
             commit()
         }
     }
@@ -76,13 +76,10 @@ class VehicleCapabilitiesManager {
     fun getDiagnosticTroubleCodes(): MutableList<DiagnosticTroubleCode>  =
         try {
             var preferences = Prefs.getString(PREF_DTC, "")!!
-            Log.e("DTC","$preferences")
-            preferences = preferences
-                .removeSurrounding("\"")
-                .replace("\\\"", "\"")
-
-            val typeRef = object : TypeReference<List<DiagnosticTroubleCode>>() {}
-            mapper.readValue(preferences, typeRef).toMutableList()
+            if (preferences.startsWith("\"") && preferences.endsWith("\"")) {
+                preferences = mapper.readValue<String>(preferences)
+            }
+            mapper.readValue<List<DiagnosticTroubleCode>>(preferences).toMutableList()
         } catch (e: Throwable){
             Log.e(LOG_TAG, "Failed to read Diagnostic Trouble Code from preferences",e)
             mutableListOf()
