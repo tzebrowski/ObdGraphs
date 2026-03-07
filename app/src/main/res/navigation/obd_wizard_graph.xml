@@ -12,6 +12,10 @@
         tools:layout="@layout/fragment_welcome">
         <action
             android:id="@+id/action_welcome_to_connectionType"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:destination="@id/connectionTypeFragment" />
     </fragment>
 
@@ -22,6 +26,10 @@
         tools:layout="@layout/fragment_connection_type">
         <action
             android:id="@+id/action_connectionType_to_permissions"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:destination="@id/permissionsFragment" />
     </fragment>
 
@@ -32,6 +40,10 @@
         tools:layout="@layout/fragment_permissions">
         <action
             android:id="@+id/action_permissions_to_scanning"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:destination="@id/scanningFragment" />
     </fragment>
 
@@ -42,6 +54,10 @@
         tools:layout="@layout/fragment_scanning">
         <action
             android:id="@+id/action_scanning_to_testing"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:destination="@id/testingFragment" />
     </fragment>
 
@@ -53,6 +69,10 @@
         tools:layout="@layout/fragment_testing">
         <action
             android:id="@+id/action_testing_to_success"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:destination="@id/successFragment" />
     </fragment>
 
