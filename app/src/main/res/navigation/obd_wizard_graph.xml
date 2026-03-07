@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/schemas/tools"
+    android:id="@+id/obd_wizard_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="org.obd.graphs.ui.welcome.WelcomeFragment"
+        android:label="Welcome"
+        tools:layout="@layout/fragment_welcome">
+        <action
+            android:id="@+id/action_welcome_to_connectionType"
+            app:destination="@id/connectionTypeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/connectionTypeFragment"
+        android:name="org.obd.graphs.ui.welcome.ConnectionTypeFragment"
+        android:label="Connection Type"
+        tools:layout="@layout/fragment_connection_type">
+        <action
+            android:id="@+id/action_connectionType_to_permissions"
+            app:destination="@id/permissionsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/permissionsFragment"
+        android:name="org.obd.graphs.ui.welcome.PermissionsFragment"
+        android:label="Permissions"
+        tools:layout="@layout/fragment_permissions">
+        <action
+            android:id="@+id/action_permissions_to_scanning"
+            app:destination="@id/scanningFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanningFragment"
+        android:name="org.obd.graphs.ui.welcome.ScanningFragment"
+        android:label="Scanning"
+        tools:layout="@layout/fragment_scanning">
+        <action
+            android:id="@+id/action_scanning_to_testing"
+            app:destination="@id/testingFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/testingFragment"
+        android:name="org.obd.graphs.ui.welcome.TestingFragment"
+        android:label="Testing Connection"
+        tools:layout="@layout/fragment_testing">
+        <action
+            android:id="@+id/action_testing_to_success"
+            app:destination="@id/successFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/successFragment"
+        android:name="org.obd.graphs.ui.welcome.SuccessFragment"
+        android:label="Success"
+        tools:layout="@layout/fragment_success" />
+
+</navigation>

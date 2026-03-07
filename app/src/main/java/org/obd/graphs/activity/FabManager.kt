@@ -18,6 +18,7 @@ package org.obd.graphs.activity
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.isGone
@@ -230,7 +231,10 @@ internal object FabButtons {
             FabManager(
                 views = speedDialViews,
                 onConfigureViewClicked = {
-                    NavigationRouter.navigateToPreferences(activity)
+//                    NavigationRouter.navigateToPreferences(activity)
+
+                    val intent = Intent(activity, ObdWizardActivity::class.java)
+                    activity.startActivity(intent)
                 },
                 onConfigurePidsClicked = {
                     NavigationRouter.navigateToPIDsPreferences(activity)

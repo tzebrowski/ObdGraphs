@@ -72,6 +72,10 @@
         </receiver>
 
         <activity
+            android:name=".activity.ObdWizardActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name="org.obd.graphs.activity.UsbEventReceiverActivity"
             android:label="@string/pref.usb_event_receiver_activity_label"
             android:noHistory="true"

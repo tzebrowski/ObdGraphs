@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Establishing Connection..."
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/step1Layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <ProgressBar android:id="@+id/progressStep1" android:layout_width="24dp" android:layout_height="24dp" />
+        <ImageView android:id="@+id/checkStep1" android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/checkbox_on_background" android:visibility="gone" app:tint="#4CAF50"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connecting to adapter..." android:layout_marginStart="16dp" android:textSize="16sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/step2Layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/step1Layout">
+
+        <ProgressBar android:id="@+id/progressStep2" android:layout_width="24dp" android:layout_height="24dp" />
+        <ImageView android:id="@+id/checkStep2" android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/checkbox_on_background" android:visibility="gone" app:tint="#4CAF50"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Initializing OBD protocol..." android:layout_marginStart="16dp" android:textSize="16sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/step3Layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/step2Layout">
+
+        <ProgressBar android:id="@+id/progressStep3" android:layout_width="24dp" android:layout_height="24dp" />
+        <ImageView android:id="@+id/checkStep3" android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/checkbox_on_background" android:visibility="gone" app:tint="#4CAF50"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Negotiating with Vehicle ECU..." android:layout_marginStart="16dp" android:textSize="16sp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
