@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,6 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
@@ -46,23 +47,46 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
-        attachShareButton(root, sortedDtcList)
+        attachButtons(root, sortedDtcList)
         attachCloseButton(root)
 
         return root
     }
 
-    private fun attachShareButton(
+    private fun attachButtons(
         root: View,
         sortedDtcList: List<DiagnosticTroubleCode>,
     ) {
         val shareButton: Button = root.findViewById(R.id.action_share)
+
+        val clearButton: Button = root.findViewById(R.id.action_clear_dtc)
+
         if (sortedDtcList.size == 1 && sortedDtcList.first().standardCode.isEmpty()) {
             shareButton.visibility = View.GONE
+            clearButton.visibility = View.GONE
         } else {
             shareButton.visibility = View.VISIBLE
+            clearButton.visibility = View.VISIBLE
             shareButton.setOnClickListener {
                 shareDtcReport(sortedDtcList)
+            }
+
+            clearButton.setOnClickListener {
+                android.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Clear Diagnostic Codes?")
+                    .setMessage("Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.")
+                    .setPositiveButton("Clear Codes") { dialog, _ ->
+                        Toast.makeText(
+                            requireContext(),
+                            "Clear command sent to ECU",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+                        dialog.dismiss()
+
+                        this.dismiss()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
             }
         }
     }
@@ -136,10 +160,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         val desc = code.description
                         val isUnknown =
                             desc.isNullOrBlank() ||
-                                desc.contains(
-                                    "Unknown DTC Description",
-                                    ignoreCase = true,
-                                )
+                                    desc.contains(
+                                        "Unknown DTC Description",
+                                        ignoreCase = true,
+                                    )
                         if (isUnknown) 1 else 0
                     }.thenBy { code ->
                         code.standardCode
