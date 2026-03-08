@@ -28,10 +28,8 @@ import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.command.dtc.DtcComponent
 
- class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
-
-
-     override fun onCreateView(
+internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -39,30 +37,54 @@ import org.obd.metrics.command.dtc.DtcComponent
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
-        val dtc = VehicleCapabilitiesManager.getDiagnosticTroubleCodes()
-        if (dtc.isEmpty()) {
-            val noDTC = DiagnosticTroubleCode(
-                "",
-                "",
-                null,
-                resources.getString(R.string.pref_dtc_no_dtc_found),
-                0,
-                null,
-                null,
-                null,
-                null,
-                DtcComponent("","")
-            )
+        val sortedDtcList = diagnosticTroubleCodes()
 
-            dtc.add(noDTC)
-        }
-
-        val adapter = DiagnosticTroubleCodeViewAdapter(context, dtc)
+        val adapter = DiagnosticTroubleCodeViewAdapter(context, sortedDtcList)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
         attachCloseButton(root)
         return root
+    }
+
+    private fun diagnosticTroubleCodes(): List<DiagnosticTroubleCode> {
+        val diagnosticTroubleCodes = VehicleCapabilitiesManager.getDiagnosticTroubleCodes()
+
+        if (diagnosticTroubleCodes.isEmpty()) {
+            val noDTC =
+                DiagnosticTroubleCode(
+                    "",
+                    "",
+                    null,
+                    resources.getString(R.string.pref_dtc_no_dtc_found),
+                    0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    DtcComponent("", ""),
+                )
+
+            diagnosticTroubleCodes.add(noDTC)
+        }
+
+        val sortedDtcList =
+            diagnosticTroubleCodes
+                .sortedWith(
+                    compareBy<DiagnosticTroubleCode> { code ->
+                        val desc = code.description
+                        val isUnknown =
+                            desc.isNullOrBlank() ||
+                                desc.contains(
+                                    "Unknown DTC Description",
+                                    ignoreCase = true,
+                                )
+                        if (isUnknown) 1 else 0
+                    }.thenBy { code ->
+                        code.standardCode
+                    },
+                ).toMutableList()
+        return sortedDtcList
     }
 }

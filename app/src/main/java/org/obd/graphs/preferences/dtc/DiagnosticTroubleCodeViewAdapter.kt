@@ -22,6 +22,7 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
@@ -29,11 +30,13 @@ import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 
- class DiagnosticTroubleCodeViewAdapter internal constructor(
-     context: Context?,
-     private var data: MutableCollection<DiagnosticTroubleCode>,
+internal class DiagnosticTroubleCodeViewAdapter internal constructor(
+    context: Context?,
+    private var data: List<DiagnosticTroubleCode>,
 ) : RecyclerView.Adapter<DiagnosticTroubleCodeViewAdapter.ViewHolder>() {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
+
+    private var expandedPosition = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -44,9 +47,79 @@ import org.obd.metrics.api.model.DiagnosticTroubleCode
         holder: ViewHolder,
         position: Int,
     ) {
-        data.elementAt(position).run {
-            holder.code.setText("${this.standardCode}-${this.failureType.code}", COLOR_CARDINAL, Typeface.NORMAL, 1f)
-            holder.description.setText(this.description, Color.GRAY, Typeface.NORMAL, 1f)
+        val item = data.elementAt(position)
+
+        val formattedCode =
+            if (!item.failureType?.code.isNullOrEmpty()) {
+                "${item.standardCode}-${item.failureType.code}"
+            } else {
+                item.standardCode
+            }
+
+        var finalDescription = item.description
+        var isUnknown = false
+
+        if (finalDescription.isNullOrBlank() ||
+            finalDescription.contains(
+                "Unknown DTC Description",
+                ignoreCase = true,
+            )
+        ) {
+            isUnknown = true
+            val fallbackParts =
+                listOfNotNull(
+                    item.system?.description,
+                    item.category?.description,
+                    item.subsystem?.description,
+                ).filter { it.isNotBlank() }
+
+            finalDescription =
+                if (fallbackParts.isNotEmpty()) {
+                    fallbackParts.joinToString(" → ") + " (Unknown specific fault)"
+                } else {
+                    "Unknown DTC Description"
+                }
+        }
+
+        if (item.standardCode.isEmpty()) {
+            holder.code.setText("", Color.GRAY, Typeface.NORMAL, 1f)
+            holder.description.setText(finalDescription, Color.DKGRAY, Typeface.NORMAL, 1f)
+            holder.expandedContainer.visibility = View.GONE
+            holder.itemView.setOnClickListener(null)
+            return
+        }
+
+        holder.code.setText(formattedCode, COLOR_CARDINAL, Typeface.BOLD, 1f)
+        if (isUnknown) {
+            holder.description.setText(finalDescription, Color.GRAY, Typeface.ITALIC, 1f)
+        } else {
+            holder.description.setText(finalDescription, Color.DKGRAY, Typeface.NORMAL, 1f)
+        }
+
+        val isExpanded = position == expandedPosition
+        holder.expandedContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
+
+        val systemTxt = item.system?.description ?: "N/A"
+        val categoryTxt = item.category?.description ?: "N/A"
+        holder.detailSystemInfo.text = "System: $systemTxt | Category: $categoryTxt"
+
+        val hex = item.rawHex ?: "N/A"
+        val statusMask = String.format("0x%02X", item.statusMask)
+        val activeStatuses = item.activeStatuses?.joinToString(", ") ?: "None"
+        holder.detailHexStatus.text = "Hex: $hex | Mask: $statusMask\nStatus: $activeStatuses"
+
+        holder.itemView.setOnClickListener {
+            val previousExpandedPosition = expandedPosition
+
+            expandedPosition =
+                if (isExpanded) {
+                    RecyclerView.NO_POSITION
+                } else {
+                    position
+                }
+
+            notifyItemChanged(previousExpandedPosition)
+            notifyItemChanged(expandedPosition)
         }
     }
 
@@ -55,7 +128,11 @@ import org.obd.metrics.api.model.DiagnosticTroubleCode
     inner class ViewHolder internal constructor(
         itemView: View,
     ) : RecyclerView.ViewHolder(itemView) {
-        var code: TextView = itemView.findViewById(R.id.metadata_value)
+        var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
+
+        var expandedContainer: LinearLayout = itemView.findViewById(R.id.dtc_expanded_details_container)
+        var detailSystemInfo: TextView = itemView.findViewById(R.id.dtc_detail_system_info)
+        var detailHexStatus: TextView = itemView.findViewById(R.id.dtc_detail_hex_status)
     }
 }

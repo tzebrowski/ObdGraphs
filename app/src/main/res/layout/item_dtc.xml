@@ -1,55 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+    <TextView
+        android:id="@+id/dtc_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="80dp"
+        android:padding="8dp"
+        android:text="@string/pref.dtc.code"
+        android:textColor="@color/gray_light"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TableLayout android:background="@color/white"
+    <TextView
+        android:id="@+id/dtc_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/pref.dtc.description"
+        android:textAllCaps="false"
+        android:textColor="@color/gray_light"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dtc_value"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/dtc_expanded_details_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dtc_value"
+        app:layout_constraintTop_toBottomOf="@+id/dtc_description">
+
+        <TextView
+            android:id="@+id/dtc_detail_system_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_dark"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/dtc_detail_hex_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_dark"
+            android:textSize="13sp"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/item_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#E0E0E0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/tablelayout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" android:paddingEnd="2dip"  android:paddingStart="0dp">
+        app:layout_constraintTop_toBottomOf="@+id/dtc_expanded_details_container" />
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:paddingStart="0dp"
-            android:paddingEnd="8dp">
-
-            <TextView
-                android:id="@+id/metadata_value"
-                android:layout_width="0dp"
-                android:layout_weight="1.0"
-                android:gravity="start"
-                android:paddingStart="4dp"
-                android:paddingEnd="0dp"
-                android:text="@string/pref.dtc.code"
-                android:textColor="@color/gray_light"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/dtc_description"
-                android:layout_width="0dp"
-                android:layout_weight="1.0"
-                android:gravity="start"
-                android:text="@string/pref.dtc.description"
-                android:textAllCaps="false"
-                android:textColor="@color/gray_light"
-                android:textSize="16sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:layout_weight="1"
-                android:background="#FF909090"
-                android:padding="2dip" />
-        </TableRow>
-    </TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
