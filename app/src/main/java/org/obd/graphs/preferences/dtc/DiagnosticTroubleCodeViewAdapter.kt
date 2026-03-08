@@ -22,6 +22,7 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -121,6 +122,23 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             notifyItemChanged(previousExpandedPosition)
             notifyItemChanged(expandedPosition)
         }
+
+
+        holder.actionSearchWeb.setOnClickListener {
+            val query = "OBD2 DTC $formattedCode ${item.description ?: ""}".trim()
+            val url = "https://www.google.com/search?q=${android.net.Uri.encode(query)}"
+            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+            holder.itemView.context.startActivity(intent)
+        }
+
+        holder.actionCopyCode.setOnClickListener {
+            val clipboard = holder.itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clipText = "DTC: $formattedCode\nDescription: ${item.description ?: "Unknown"}\nSystem: $systemTxt"
+            val clip = android.content.ClipData.newPlainText("DTC Info", clipText)
+            clipboard.setPrimaryClip(clip)
+
+            android.widget.Toast.makeText(holder.itemView.context, "Copied $formattedCode to clipboard", android.widget.Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun getItemCount(): Int = data.size
@@ -130,9 +148,10 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     ) : RecyclerView.ViewHolder(itemView) {
         var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
-
         var expandedContainer: LinearLayout = itemView.findViewById(R.id.dtc_expanded_details_container)
         var detailSystemInfo: TextView = itemView.findViewById(R.id.dtc_detail_system_info)
         var detailHexStatus: TextView = itemView.findViewById(R.id.dtc_detail_hex_status)
+        var actionSearchWeb: Button = itemView.findViewById(R.id.dtc_action_search_web)
+        var actionCopyCode: Button = itemView.findViewById(R.id.dtc_action_copy_code)
     }
 }

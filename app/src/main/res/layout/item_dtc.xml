@@ -63,6 +63,31 @@
             android:textSize="13sp"
             android:layout_marginTop="4dp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/dtc_action_search_web"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Google Issue"
+                android:textColor="@color/rainbow_indigo"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/dtc_action_copy_code"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Copy"
+                android:textColor="@color/gray_dark"
+                android:textSize="12sp" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <View
