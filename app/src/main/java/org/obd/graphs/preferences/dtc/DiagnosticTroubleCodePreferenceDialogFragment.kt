@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -40,7 +40,6 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
     private lateinit var clearButton: Button
     private lateinit var shareButton: Button
-
 
     private val dtcClearReceiver =
         object : android.content.BroadcastReceiver() {
@@ -185,10 +184,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         val desc = code.description
                         val isUnknown =
                             desc.isNullOrBlank() ||
-                                    desc.contains(
-                                        "Unknown DTC Description",
-                                        ignoreCase = true,
-                                    )
+                                desc.contains(
+                                    "Unknown DTC Description",
+                                    ignoreCase = true,
+                                )
                         if (isUnknown) 1 else 0
                     }.thenBy { code ->
                         code.standardCode
