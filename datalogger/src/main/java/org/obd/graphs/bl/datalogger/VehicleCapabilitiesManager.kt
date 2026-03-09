@@ -76,6 +76,18 @@ object VehicleCapabilitiesManager {
         }
     }
 
+
+    internal fun updateDTC(dtc: Set<DiagnosticTroubleCode>) {
+        Prefs.edit().apply {
+            Log.i(
+                LOG_TAG,
+                "Updating DTC",
+            )
+            putString(PREF_DTC, mapper.writeValueAsString(dtc))
+            commit()
+        }
+    }
+
     fun getSupportedPIDs(): MutableList<String> {
         val pidList = DataLoggerRepository.getPidDefinitionRegistry().findAll()
         return Prefs

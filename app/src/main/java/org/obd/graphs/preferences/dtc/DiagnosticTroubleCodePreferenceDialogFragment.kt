@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -22,12 +22,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_SCHEDULE
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.command.dtc.DtcComponent
 
@@ -72,20 +73,17 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             }
 
             clearButton.setOnClickListener {
-                android.app.AlertDialog.Builder(requireContext())
+                android.app.AlertDialog
+                    .Builder(requireContext())
                     .setTitle("Clear Diagnostic Codes?")
-                    .setMessage("Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.")
-                    .setPositiveButton("Clear Codes") { dialog, _ ->
-                        Toast.makeText(
-                            requireContext(),
-                            "Clear command sent to ECU",
-                            android.widget.Toast.LENGTH_LONG
-                        ).show()
-                        dialog.dismiss()
+                    .setMessage(
+                        "Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.",
+                    ).setPositiveButton("Clear Codes") { dialog, _ ->
 
+                        sendBroadcastEvent(DATA_LOGGER_DTC_SCHEDULE)
+                        dialog.dismiss()
                         this.dismiss()
-                    }
-                    .setNegativeButton("Cancel", null)
+                    }.setNegativeButton("Cancel", null)
                     .show()
             }
         }
@@ -160,10 +158,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         val desc = code.description
                         val isUnknown =
                             desc.isNullOrBlank() ||
-                                    desc.contains(
-                                        "Unknown DTC Description",
-                                        ignoreCase = true,
-                                    )
+                                desc.contains(
+                                    "Unknown DTC Description",
+                                    ignoreCase = true,
+                                )
                         if (isUnknown) 1 else 0
                     }.thenBy { code ->
                         code.standardCode

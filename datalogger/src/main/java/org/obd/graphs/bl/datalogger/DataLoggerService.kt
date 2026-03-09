@@ -36,13 +36,14 @@ import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.sendBroadcastEvent
 
+private const val ACTION_DTC_SCHEDULE = "org.obd.graphs.logger.DTC"
+
 private const val ACTION_START = "org.obd.graphs.logger.START"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
 
 private const val UPDATE_QUERY = "org.obd.graphs.logger.UPDATE_QUERY"
 private const val QUERY = "org.obd.graphs.logger.QUERY"
 private const val EXECUTE_ROUTINE = "org.obd.graphs.logger.EXECUTE_ROUTINE"
-
 
 class DataLoggerService : Service() {
     private val binder = LocalBinder()
@@ -86,6 +87,10 @@ class DataLoggerService : Service() {
                 query?.let { DataLoggerRepository.workflowOrchestrator.start(it) }
             }
 
+            ACTION_DTC_SCHEDULE -> {
+                DataLoggerRepository.workflowOrchestrator.scheduleDTCCleanup()
+            }
+
             EXECUTE_ROUTINE -> {
                 val query = intent.extras?.get(QUERY) as? Query
                 query?.let { DataLoggerRepository.workflowOrchestrator.executeRoutine(it) }
@@ -104,10 +109,16 @@ class DataLoggerService : Service() {
         if (DataLoggerRepository.isRunning()) {
             if (DataLoggerRepository.workflowOrchestrator.isSameQuery(query)) {
                 if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
-                    Log.d(LOG_TAG, "Do not update the query for strategy=${query.getStrategy()}. It is the same query that already running")
+                    Log.d(
+                        LOG_TAG,
+                        "Do not update the query for strategy=${query.getStrategy()}. It is the same query that already running",
+                    )
                 }
             } else {
-                Log.i(LOG_TAG, "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}")
+                Log.i(
+                    LOG_TAG,
+                    "Updating query for strategy=${query.getStrategy()}. PIDs=${query.getIDs()}",
+                )
                 enqueueWork(UPDATE_QUERY) { it.putExtra(QUERY, query) }
             }
         } else {
@@ -115,13 +126,16 @@ class DataLoggerService : Service() {
         }
     }
 
-
     fun executeRoutine(query: Query) {
         enqueueWork(EXECUTE_ROUTINE) { it.putExtra(QUERY, query) }
     }
 
     fun start(query: Query) {
         enqueueWork(ACTION_START) { it.putExtra(QUERY, query) }
+    }
+
+    fun scheduleDTCCleanup() {
+        enqueueWork(ACTION_DTC_SCHEDULE)
     }
 
     fun stop() {
@@ -138,7 +152,10 @@ class DataLoggerService : Service() {
                 if (Permissions.hasLocationPermissions(this)) {
                     serviceTypes = serviceTypes or ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
                 } else {
-                    Log.w(LOG_TAG, "Location permission missing. Starting Service without GPS capabilities.")
+                    Log.w(
+                        LOG_TAG,
+                        "Location permission missing. Starting Service without GPS capabilities.",
+                    )
                 }
 
                 startForeground(NOTIFICATION_ID, notification, serviceTypes)
@@ -197,9 +214,11 @@ class DataLoggerService : Service() {
                 )
             }
 
-        return org.obd.graphs.Notification.notification(this,
+        return org.obd.graphs.Notification.notification(
+            this,
             "Logging OBD data in background...",
-            contentIntent)
+            contentIntent,
+        )
     }
 
     private fun createNotificationChannel() {

@@ -33,6 +33,7 @@ import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
+import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.command.routine.RoutineCommand
 import org.obd.metrics.command.routine.RoutineExecutionStatus
@@ -76,6 +77,13 @@ internal class WorkflowOrchestrator internal constructor() {
             status = WorkflowStatus.Connecting
             Log.i(LOG_TAG, "Start collecting process")
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
+        }
+
+        override fun onDTCCompleted(
+            dtcss: Set<DiagnosticTroubleCode>,
+            status: DiagnosticTroubleCodeClearStatus?
+        ) {
+            VehicleCapabilitiesManager.updateDTC(dtcss)
         }
 
         override fun onRoutineCompleted(
@@ -211,6 +219,13 @@ internal class WorkflowOrchestrator internal constructor() {
                 }
         }
     }
+
+    fun scheduleDTCCleanup() {
+        Log.i(LOG_TAG,"Schedule DTC cleanup")
+        val result = workflow.scheduleDTCCleanup()
+        Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
+    }
+
 
     fun executeRoutine(query: Query) {
         currentQuery = query

@@ -25,6 +25,7 @@ import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -56,6 +57,7 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_AVAILABLE
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_SCHEDULE
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_NO_NETWORK_EVENT
@@ -170,6 +172,17 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> lockScreenDialog.dismiss()
+
+        DATA_LOGGER_DTC_SCHEDULE ->{
+            withDataLogger {
+                scheduleDTCCleanup()
+                Toast.makeText(
+                    applicationContext,
+                    "Clear command sent to ECU",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
 
         DATA_LOGGER_DTC_AVAILABLE ->
             if (Prefs.isEnabled("pref.dtc.show_notification")) {
@@ -378,6 +391,7 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(NAVIGATION_BUTTONS_VISIBILITY_CHANGED)
         it.addAction(DATA_LOGGER_SCHEDULED_STOP_EVENT)
         it.addAction(PROFILE_NAME_CHANGED_EVENT)
+        it.addAction(DATA_LOGGER_DTC_SCHEDULE)
     }
 
    registerReceiver(this, DataLoggerRepository.broadcastReceivers()) {
