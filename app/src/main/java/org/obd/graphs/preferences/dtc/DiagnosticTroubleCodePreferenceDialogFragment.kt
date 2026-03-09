@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -39,6 +39,8 @@ import org.obd.metrics.command.dtc.DtcComponent
 internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
     private lateinit var clearButton: Button
+    private lateinit var shareButton: Button
+
 
     private val dtcClearReceiver =
         object : android.content.BroadcastReceiver() {
@@ -47,7 +49,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 intent: Intent?,
             ) {
                 if (intent?.action == DATA_LOGGER_DTC_CLEANUP_COMPLETED) {
-                    handleClearResult()
+                    handleDTCChangedEvent()
                 }
             }
         }
@@ -78,13 +80,17 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         root: View,
         sortedDtcList: List<DiagnosticTroubleCode>,
     ) {
-        val shareButton: Button = root.findViewById(R.id.action_share)
         val refreshButton: Button = root.findViewById(R.id.action_refresh_dtc)
-
+        shareButton = root.findViewById(R.id.action_share)
         clearButton = root.findViewById(R.id.action_clear_dtc)
 
         shareButton.visibility = View.VISIBLE
         clearButton.visibility = View.VISIBLE
+
+        if (isDtcAvailable(sortedDtcList)) {
+            shareButton.isEnabled = false
+            clearButton.isEnabled = false
+        }
 
         shareButton.setOnClickListener {
             shareDtcReport(sortedDtcList)
@@ -179,10 +185,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                         val desc = code.description
                         val isUnknown =
                             desc.isNullOrBlank() ||
-                                desc.contains(
-                                    "Unknown DTC Description",
-                                    ignoreCase = true,
-                                )
+                                    desc.contains(
+                                        "Unknown DTC Description",
+                                        ignoreCase = true,
+                                    )
                         if (isUnknown) 1 else 0
                     }.thenBy { code ->
                         code.standardCode
@@ -204,11 +210,21 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun handleClearResult() {
+    private fun handleDTCChangedEvent() {
         val newCodes = diagnosticTroubleCodes()
         adapter.submitList(newCodes)
 
-        clearButton.isEnabled = true
+        if (isDtcAvailable(newCodes)) {
+            shareButton.isEnabled = false
+            clearButton.isEnabled = false
+        } else {
+            shareButton.isEnabled = true
+            clearButton.isEnabled = true
+        }
+
         clearButton.text = "Clear Codes"
     }
+
+    private fun isDtcAvailable(newCodes: List<DiagnosticTroubleCode>): Boolean =
+        newCodes.size == 1 && newCodes.first().standardCode.isEmpty()
 }
