@@ -84,6 +84,7 @@ internal class WorkflowOrchestrator internal constructor() {
             status: DiagnosticTroubleCodeClearStatus?
         ) {
             VehicleCapabilitiesManager.updateDTC(dtcss)
+            sendBroadcastEvent(DATA_LOGGER_DTC_CLEANUP_COMPLETED)
         }
 
         override fun onRoutineCompleted(
@@ -222,8 +223,14 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun scheduleDTCCleanup() {
         Log.i(LOG_TAG,"Schedule DTC cleanup")
-        val result = workflow.scheduleDTCCleanup()
+        val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR, DtcAction.READ))
         Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
+    }
+
+    fun scheduleDTCRead() {
+        Log.i(LOG_TAG,"Schedule DTC read")
+        val result = workflow.scheduleDTCAction(setOf(DtcAction.READ))
+        Log.i(LOG_TAG,"DTC read is scheduled: $result")
     }
 
 

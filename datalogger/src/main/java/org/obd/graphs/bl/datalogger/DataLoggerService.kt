@@ -36,7 +36,9 @@ import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.sendBroadcastEvent
 
-private const val ACTION_DTC_SCHEDULE = "org.obd.graphs.logger.DTC"
+private const val ACTION_DTC_CLEANUP = "org.obd.graphs.logger.DTC.cleanup"
+
+private const val ACTION_DTC_READ = "org.obd.graphs.logger.DTC.read"
 
 private const val ACTION_START = "org.obd.graphs.logger.START"
 private const val ACTION_STOP = "org.obd.graphs.logger.STOP"
@@ -87,8 +89,12 @@ class DataLoggerService : Service() {
                 query?.let { DataLoggerRepository.workflowOrchestrator.start(it) }
             }
 
-            ACTION_DTC_SCHEDULE -> {
+            ACTION_DTC_CLEANUP -> {
                 DataLoggerRepository.workflowOrchestrator.scheduleDTCCleanup()
+            }
+
+            ACTION_DTC_READ -> {
+                DataLoggerRepository.workflowOrchestrator.scheduleDTCRead()
             }
 
             EXECUTE_ROUTINE -> {
@@ -135,8 +141,13 @@ class DataLoggerService : Service() {
     }
 
     fun scheduleDTCCleanup() {
-        enqueueWork(ACTION_DTC_SCHEDULE)
+        enqueueWork(ACTION_DTC_CLEANUP)
     }
+
+    fun scheduleDTCRead() {
+        enqueueWork(ACTION_DTC_READ)
+    }
+
 
     fun stop() {
         enqueueWork(ACTION_STOP)

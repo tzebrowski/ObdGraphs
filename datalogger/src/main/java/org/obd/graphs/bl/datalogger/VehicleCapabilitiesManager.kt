@@ -71,9 +71,9 @@ object VehicleCapabilitiesManager {
                 PREF_VEHICLE_METADATA,
                 mapper.writeValueAsString(vehicleCapabilities.metadata),
             )
-            putString(PREF_DTC, mapper.writeValueAsString(vehicleCapabilities.dtc))
             commit()
         }
+        updateDTC(vehicleCapabilities.dtc)
     }
 
 
@@ -81,7 +81,7 @@ object VehicleCapabilitiesManager {
         Prefs.edit().apply {
             Log.i(
                 LOG_TAG,
-                "Updating DTC",
+                "Updating DTC, size: ${dtc.size}",
             )
             putString(PREF_DTC, mapper.writeValueAsString(dtc))
             commit()

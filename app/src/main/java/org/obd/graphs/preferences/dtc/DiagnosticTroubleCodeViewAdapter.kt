@@ -16,15 +16,22 @@
  */
 package org.obd.graphs.preferences.dtc
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ui.common.COLOR_CARDINAL
@@ -33,8 +40,7 @@ import org.obd.metrics.api.model.DiagnosticTroubleCode
 
 internal class DiagnosticTroubleCodeViewAdapter internal constructor(
     context: Context?,
-    private var data: List<DiagnosticTroubleCode>,
-) : RecyclerView.Adapter<DiagnosticTroubleCodeViewAdapter.ViewHolder>() {
+) : ListAdapter<DiagnosticTroubleCode, DiagnosticTroubleCodeViewAdapter.ViewHolder>(DiffCallback) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     private var expandedPosition = RecyclerView.NO_POSITION
@@ -48,16 +54,16 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         holder: ViewHolder,
         position: Int,
     ) {
-        val item = data.elementAt(position)
+        val dtc = getItem(position)
 
         val formattedCode =
-            if (!item.failureType?.code.isNullOrEmpty()) {
-                "${item.standardCode}-${item.failureType.code}"
+            if (!dtc.failureType?.code.isNullOrEmpty()) {
+                "${dtc.standardCode}-${dtc.failureType.code}"
             } else {
-                item.standardCode
+                dtc.standardCode
             }
 
-        var finalDescription = item.description
+        var finalDescription = dtc.description
         var isUnknown = false
 
         if (finalDescription.isNullOrBlank() ||
@@ -69,9 +75,9 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             isUnknown = true
             val fallbackParts =
                 listOfNotNull(
-                    item.system?.description,
-                    item.category?.description,
-                    item.subsystem?.description,
+                    dtc.system?.description,
+                    dtc.category?.description,
+                    dtc.subsystem?.description,
                 ).filter { it.isNotBlank() }
 
             finalDescription =
@@ -82,76 +88,92 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
                 }
         }
 
-        if (item.standardCode.isEmpty()) {
+        if (dtc.standardCode.isEmpty()) {
             holder.code.setText("", Color.GRAY, Typeface.NORMAL, 1f)
             holder.description.setText(finalDescription, Color.DKGRAY, Typeface.NORMAL, 1f)
             holder.expandedContainer.visibility = View.GONE
             holder.itemView.setOnClickListener(null)
             return
+        } else {
+            holder.code.setText(formattedCode, COLOR_CARDINAL, Typeface.BOLD, 1f)
+            if (isUnknown) {
+                holder.description.setText(finalDescription, Color.GRAY, Typeface.ITALIC, 1f)
+            } else {
+                holder.description.setText(finalDescription, Color.DKGRAY, Typeface.NORMAL, 1f)
+            }
         }
 
-        holder.code.setText(formattedCode, COLOR_CARDINAL, Typeface.BOLD, 1f)
-        if (isUnknown) {
-            holder.description.setText(finalDescription, Color.GRAY, Typeface.ITALIC, 1f)
-        } else {
-            holder.description.setText(finalDescription, Color.DKGRAY, Typeface.NORMAL, 1f)
-        }
+        val systemTxt = dtc.system?.description ?: "N/A"
+        val categoryTxt = dtc.category?.description ?: "N/A"
+        holder.detailSystemInfo.text = "System: $systemTxt | Category: $categoryTxt"
+
+        val hex = dtc.rawHex ?: "N/A"
+        val statusMask = String.format("0x%02X", dtc.statusMask)
+        val activeStatuses = dtc.activeStatuses?.joinToString(", ") ?: "None"
+        holder.detailHexStatus.text = "Hex: $hex | Mask: $statusMask\nStatus: $activeStatuses"
 
         val isExpanded = position == expandedPosition
         holder.expandedContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
-        val systemTxt = item.system?.description ?: "N/A"
-        val categoryTxt = item.category?.description ?: "N/A"
-        holder.detailSystemInfo.text = "System: $systemTxt | Category: $categoryTxt"
-
-        val hex = item.rawHex ?: "N/A"
-        val statusMask = String.format("0x%02X", item.statusMask)
-        val activeStatuses = item.activeStatuses?.joinToString(", ") ?: "None"
-        holder.detailHexStatus.text = "Hex: $hex | Mask: $statusMask\nStatus: $activeStatuses"
-
         holder.itemView.setOnClickListener {
             val previousExpandedPosition = expandedPosition
-
-            expandedPosition =
-                if (isExpanded) {
-                    RecyclerView.NO_POSITION
-                } else {
-                    position
-                }
+            expandedPosition = if (isExpanded) RecyclerView.NO_POSITION else position
 
             notifyItemChanged(previousExpandedPosition)
             notifyItemChanged(expandedPosition)
         }
 
-
         holder.actionSearchWeb.setOnClickListener {
-            val query = "OBD2 DTC $formattedCode ${item.description ?: ""}".trim()
-            val url = "https://www.google.com/search?q=${android.net.Uri.encode(query)}"
-            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url))
+            val query = "OBD2 DTC $formattedCode ${dtc.description ?: ""}".trim()
+            val url = "https://www.google.com/search?q=${Uri.encode(query)}"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             holder.itemView.context.startActivity(intent)
         }
 
         holder.actionCopyCode.setOnClickListener {
-            val clipboard = holder.itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-            val clipText = "DTC: $formattedCode\nDescription: ${item.description ?: "Unknown"}\nSystem: $systemTxt"
-            val clip = android.content.ClipData.newPlainText("DTC Info", clipText)
+            val clipboard =
+                holder.itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipText =
+                "DTC: $formattedCode\nDescription: ${dtc.description ?: "Unknown"}\nSystem: $systemTxt\nStatus: $activeStatuses"
+            val clip = ClipData.newPlainText("DTC Info", clipText)
             clipboard.setPrimaryClip(clip)
 
-            android.widget.Toast.makeText(holder.itemView.context, "Copied $formattedCode to clipboard", android.widget.Toast.LENGTH_SHORT).show()
+            Toast
+                .makeText(
+                    holder.itemView.context,
+                    "Copied $formattedCode to clipboard",
+                    Toast.LENGTH_SHORT,
+                ).show()
         }
     }
-
-    override fun getItemCount(): Int = data.size
 
     inner class ViewHolder internal constructor(
         itemView: View,
     ) : RecyclerView.ViewHolder(itemView) {
         var code: TextView = itemView.findViewById(R.id.dtc_value)
         var description: TextView = itemView.findViewById(R.id.dtc_description)
-        var expandedContainer: LinearLayout = itemView.findViewById(R.id.dtc_expanded_details_container)
+
+        var expandedContainer: LinearLayout =
+            itemView.findViewById(R.id.dtc_expanded_details_container)
         var detailSystemInfo: TextView = itemView.findViewById(R.id.dtc_detail_system_info)
         var detailHexStatus: TextView = itemView.findViewById(R.id.dtc_detail_hex_status)
+
         var actionSearchWeb: Button = itemView.findViewById(R.id.dtc_action_search_web)
         var actionCopyCode: Button = itemView.findViewById(R.id.dtc_action_copy_code)
+    }
+
+    companion object {
+        private val DiffCallback =
+            object : DiffUtil.ItemCallback<DiagnosticTroubleCode>() {
+                override fun areItemsTheSame(
+                    oldItem: DiagnosticTroubleCode,
+                    newItem: DiagnosticTroubleCode,
+                ): Boolean = oldItem.standardCode == newItem.standardCode && oldItem.rawHex == newItem.rawHex
+
+                override fun areContentsTheSame(
+                    oldItem: DiagnosticTroubleCode,
+                    newItem: DiagnosticTroubleCode,
+                ): Boolean = oldItem == newItem
+            }
     }
 }

@@ -57,7 +57,8 @@ import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTING_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_AVAILABLE
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_SCHEDULE
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_CLEANUP_SCHEDULE
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_READ_SCHEDULE
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_NO_NETWORK_EVENT
@@ -173,14 +174,22 @@ internal fun MainActivity.receive(intent: Intent?) {
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> lockScreenDialog.dismiss()
 
-        DATA_LOGGER_DTC_SCHEDULE ->{
+        DATA_LOGGER_DTC_CLEANUP_SCHEDULE -> {
             withDataLogger {
                 scheduleDTCCleanup()
-                Toast.makeText(
+            }
+
+            Toast
+                .makeText(
                     applicationContext,
                     "Clear command sent to ECU",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_LONG,
                 ).show()
+        }
+
+        DATA_LOGGER_DTC_READ_SCHEDULE -> {
+            withDataLogger {
+                scheduleDTCRead()
             }
         }
 
@@ -190,8 +199,8 @@ internal fun MainActivity.receive(intent: Intent?) {
             }
 
         REQUEST_PERMISSIONS_BT -> Permissions.requestBluetoothPermissions(this)
-        TOOLBAR_HIDE -> Toolbar.hide(this,true)
-        TOOLBAR_SHOW -> Toolbar.hide(this,false)
+        TOOLBAR_HIDE -> Toolbar.hide(this, true)
+        TOOLBAR_SHOW -> Toolbar.hide(this, false)
         TOOLBAR_TOGGLE_ACTION -> Toolbar.toggle(this)
 
         PROFILE_NAME_CHANGED_EVENT -> updateVehicleProfile()
@@ -233,9 +242,12 @@ internal fun MainActivity.receive(intent: Intent?) {
                     )
             }
 
-            FabButtons.view(this).connectFab.let{
+            FabButtons.view(this).connectFab.let {
                 it.backgroundTintList =
-                    ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.cardinal)
+                    ContextCompat.getColorStateList(
+                        applicationContext,
+                        org.obd.graphs.commons.R.color.cardinal,
+                    )
                 it.setOnClickListener {
                     Log.i(LOG_TAG, "Stop data logging ")
                     withDataLogger {
@@ -270,7 +282,7 @@ internal fun MainActivity.receive(intent: Intent?) {
                 it.start()
             }
 
-            Toolbar.hide(this,true)
+            Toolbar.hide(this, true)
             updateAdapterConnectionType()
         }
 
@@ -306,12 +318,15 @@ private fun MainActivity.handleStop() {
         it.visibility = View.GONE
     }
 
-    FabButtons.view(this).connectFab.let{
+    FabButtons.view(this).connectFab.let {
         it.backgroundTintList =
-            ContextCompat.getColorStateList(applicationContext, org.obd.graphs.commons.R.color.philippine_green)
+            ContextCompat.getColorStateList(
+                applicationContext,
+                org.obd.graphs.commons.R.color.philippine_green,
+            )
     }
 
-    Toolbar.hide(this,false)
+    Toolbar.hide(this, false)
 
     timer {
         it.stop()
@@ -391,14 +406,14 @@ internal fun MainActivity.registerReceiver() {
         it.addAction(NAVIGATION_BUTTONS_VISIBILITY_CHANGED)
         it.addAction(DATA_LOGGER_SCHEDULED_STOP_EVENT)
         it.addAction(PROFILE_NAME_CHANGED_EVENT)
-        it.addAction(DATA_LOGGER_DTC_SCHEDULE)
+        it.addAction(DATA_LOGGER_DTC_CLEANUP_SCHEDULE)
+        it.addAction(DATA_LOGGER_DTC_READ_SCHEDULE)
     }
 
-   registerReceiver(this, DataLoggerRepository.broadcastReceivers()) {
+    registerReceiver(this, DataLoggerRepository.broadcastReceivers()) {
         it.addAction(MODULES_LIST_CHANGED_EVENT)
         it.addAction(PROFILE_CHANGED_EVENT)
     }
-
 
     registerReceiver(this, powerReceiver) {
         it.addAction("android.intent.action.ACTION_POWER_CONNECTED")
