@@ -16,7 +16,6 @@
  */
 package org.obd.graphs.preferences.dtc
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,13 +25,13 @@ import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_CLEANUP_COMPLETED
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_CLEANUP_SCHEDULE
-import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_READ_SCHEDULE
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_ACTION_COMPLETED
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.preferences.CoreDialogFragment
 import org.obd.graphs.registerReceiver
-import org.obd.graphs.sendBroadcastEvent
+import org.obd.graphs.ui.common.toast
+import org.obd.graphs.ui.withDataLogger
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.command.dtc.DtcComponent
 
@@ -41,14 +40,14 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var clearButton: Button
     private lateinit var shareButton: Button
 
-    private val dtcClearReceiver =
+    private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
             override fun onReceive(
                 context: android.content.Context?,
                 intent: Intent?,
             ) {
-                if (intent?.action == DATA_LOGGER_DTC_CLEANUP_COMPLETED) {
-                    handleDTCChangedEvent()
+                if (intent?.action == DATA_LOGGER_DTC_ACTION_COMPLETED) {
+                    handleDTCChangedNotification()
                 }
             }
         }
@@ -96,20 +95,34 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
 
         refreshButton.setOnClickListener {
-            sendBroadcastEvent(DATA_LOGGER_DTC_READ_SCHEDULE)
+            if (DataLoggerRepository.isRunning()) {
+                withDataLogger {
+                    scheduleDTCRead()
+                }
+            } else {
+                toast(R.string.pref_dtc_no_connection_established)
+            }
         }
 
         clearButton.setOnClickListener {
             android.app.AlertDialog
                 .Builder(requireContext())
-                .setTitle("Clear Diagnostic Codes?")
+                .setTitle(resources.getString(R.string.pref_dtc_clean_dialog_title))
                 .setMessage(
-                    "Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.",
+                    resources.getString(R.string.pref_dtc_clean_dialog_confirm_message),
                 ).setPositiveButton("Clear Codes") { dialog, _ ->
-                    sendBroadcastEvent(DATA_LOGGER_DTC_CLEANUP_SCHEDULE)
-                    clearButton.isEnabled = false
-                    clearButton.text = "Clearing..."
-                    dialog.dismiss()
+                    if (DataLoggerRepository.isRunning()) {
+                        withDataLogger {
+                            scheduleDTCCleanup()
+                        }
+
+                        toast(R.string.pref_dtc_clean_dialog_send_message)
+                        clearButton.isEnabled = false
+                        clearButton.text = "Clearing..."
+                        dialog.dismiss()
+                    } else {
+                        toast(R.string.pref_dtc_no_connection_established)
+                    }
                 }.setNegativeButton("Cancel", null)
                 .show()
         }
@@ -156,60 +169,54 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         startActivity(shareIntent)
     }
 
-    private fun diagnosticTroubleCodes(): List<DiagnosticTroubleCode> {
-        val diagnosticTroubleCodes = VehicleCapabilitiesManager.getDiagnosticTroubleCodes()
-
-        if (diagnosticTroubleCodes.isEmpty()) {
-            val noDTC =
-                DiagnosticTroubleCode(
-                    "",
-                    "",
-                    null,
-                    resources.getString(R.string.pref_dtc_no_dtc_found),
-                    0,
-                    null,
-                    null,
-                    null,
-                    null,
-                    DtcComponent("", ""),
-                )
-
-            diagnosticTroubleCodes.add(noDTC)
-        }
-
-        val sortedDtcList =
-            diagnosticTroubleCodes
-                .sortedWith(
-                    compareBy<DiagnosticTroubleCode> { code ->
-                        val desc = code.description
-                        val isUnknown =
-                            desc.isNullOrBlank() ||
-                                desc.contains(
-                                    "Unknown DTC Description",
-                                    ignoreCase = true,
-                                )
-                        if (isUnknown) 1 else 0
-                    }.thenBy { code ->
-                        code.standardCode
-                    },
-                ).toMutableList()
-        return sortedDtcList
-    }
+    private fun diagnosticTroubleCodes(): List<DiagnosticTroubleCode> =
+        VehicleCapabilitiesManager
+            .getDiagnosticTroubleCodes()
+            .apply {
+                if (isEmpty()) {
+                    add(
+                        DiagnosticTroubleCode(
+                            "",
+                            "",
+                            null,
+                            resources.getString(R.string.pref_dtc_no_dtc_found),
+                            0,
+                            null,
+                            null,
+                            null,
+                            null,
+                            DtcComponent("", ""),
+                        ),
+                    )
+                }
+            }.sortedWith(
+                compareBy<DiagnosticTroubleCode> { code ->
+                    val desc = code.description
+                    val isUnknown =
+                        desc.isNullOrBlank() ||
+                            desc.contains(
+                                "Unknown DTC Description",
+                                ignoreCase = true,
+                            )
+                    if (isUnknown) 1 else 0
+                }.thenBy { code ->
+                    code.standardCode
+                },
+            ).toMutableList()
 
     override fun onResume() {
         super.onResume()
-        registerReceiver(requireContext(), dtcClearReceiver) {
-            it.addAction(DATA_LOGGER_DTC_CLEANUP_COMPLETED)
+        registerReceiver(requireContext(), dtcNotificationsReceiver) {
+            it.addAction(DATA_LOGGER_DTC_ACTION_COMPLETED)
         }
     }
 
     override fun onPause() {
         super.onPause()
-        requireContext().unregisterReceiver(dtcClearReceiver)
+        requireContext().unregisterReceiver(dtcNotificationsReceiver)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun handleDTCChangedEvent() {
+    private fun handleDTCChangedNotification() {
         val newCodes = diagnosticTroubleCodes()
         adapter.submitList(newCodes)
 

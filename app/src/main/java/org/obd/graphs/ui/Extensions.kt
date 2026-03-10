@@ -19,18 +19,26 @@ package org.obd.graphs.ui
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import org.obd.graphs.activity.FabButtons
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.query.Query
 
+fun DialogFragment.withDataLogger(action: DataLoggerService.() -> Unit) {
+    org.obd.graphs.bl.datalogger
+        .withDataLogger(requireContext(), action)
+}
+
 fun Fragment.withDataLogger(action: DataLoggerService.() -> Unit) {
-    org.obd.graphs.bl.datalogger.withDataLogger(requireContext(), action)
+    org.obd.graphs.bl.datalogger
+        .withDataLogger(requireContext(), action)
 }
 
 fun ComponentActivity.withDataLogger(action: DataLoggerService.() -> Unit) {
-    org.obd.graphs.bl.datalogger.withDataLogger(this, action)
+    org.obd.graphs.bl.datalogger
+        .withDataLogger(this, action)
 }
 
 fun Fragment.configureActionButton(query: Query) {

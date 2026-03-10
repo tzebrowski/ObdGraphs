@@ -21,9 +21,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.query.Query
@@ -80,11 +77,11 @@ internal class WorkflowOrchestrator internal constructor() {
         }
 
         override fun onDTCCompleted(
-            dtcss: Set<DiagnosticTroubleCode>,
+            dtc: Set<DiagnosticTroubleCode>,
             status: DiagnosticTroubleCodeClearStatus?
         ) {
-            VehicleCapabilitiesManager.updateDTC(dtcss)
-            sendBroadcastEvent(DATA_LOGGER_DTC_CLEANUP_COMPLETED)
+            VehicleCapabilitiesManager.updateDTC(dtc)
+            sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
         }
 
         override fun onRoutineCompleted(
