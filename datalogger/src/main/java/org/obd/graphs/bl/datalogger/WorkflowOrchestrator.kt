@@ -21,9 +21,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.obd.graphs.*
 import org.obd.graphs.bl.datalogger.connectors.ConnectionManager
 import org.obd.graphs.bl.query.Query
@@ -33,6 +30,7 @@ import org.obd.metrics.api.Workflow
 import org.obd.metrics.api.WorkflowExecutionStatus
 import org.obd.metrics.api.model.*
 import org.obd.metrics.codec.formula.FormulaEvaluatorConfig
+import org.obd.metrics.command.dtc.DiagnosticTroubleCodeClearStatus
 import org.obd.metrics.command.group.DefaultCommandGroup
 import org.obd.metrics.command.routine.RoutineCommand
 import org.obd.metrics.command.routine.RoutineExecutionStatus
@@ -78,6 +76,14 @@ internal class WorkflowOrchestrator internal constructor() {
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
+        override fun onDTCCompleted(
+            dtc: Set<DiagnosticTroubleCode>,
+            status: DiagnosticTroubleCodeClearStatus?
+        ) {
+            VehicleCapabilitiesManager.updateDTC(dtc)
+            sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
+        }
+
         override fun onRoutineCompleted(
             routineCommand: RoutineCommand,
             status: RoutineExecutionStatus
@@ -95,7 +101,7 @@ internal class WorkflowOrchestrator internal constructor() {
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
             status = WorkflowStatus.Connected
             Log.i(LOG_TAG, "We are connected to the vehicle: $vehicleCapabilities")
-            vehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
+            VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
 
             // notify about DTC
@@ -211,6 +217,19 @@ internal class WorkflowOrchestrator internal constructor() {
                 }
         }
     }
+
+    fun scheduleDTCCleanup() {
+        Log.i(LOG_TAG,"Schedule DTC cleanup")
+        val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR, DtcAction.READ))
+        Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
+    }
+
+    fun scheduleDTCRead() {
+        Log.i(LOG_TAG,"Schedule DTC read")
+        val result = workflow.scheduleDTCAction(setOf(DtcAction.READ))
+        Log.i(LOG_TAG,"DTC read is scheduled: $result")
+    }
+
 
     fun executeRoutine(query: Query) {
         currentQuery = query

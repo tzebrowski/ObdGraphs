@@ -554,39 +554,40 @@
         android:title="@string/pref.dtc.title">
         <PreferenceScreen
             android:key="pref.dtc"
-            android:summary="@string/pref_dtc_settings_summary"
+            android:summary="@string/pref.dtc.settings_summary"
             android:title="@string/pref.settings"
             app:singleLineTitle="false">
             <PreferenceCategory android:title="@string/pref.dtc.title">
                 <org.obd.graphs.preferences.dtc.DiagnosticTroubleCodeListPreferences
+                    app:icon="@drawable/ic_action_execute"
                     android:dialogTitle="@string/pref.dtc.title"
                     android:key="pref.dtc.list"
-                    android:summary="@string/pref_dtc_settings_summary"
-                    android:title="@string/pref.dtc.title"
+                    android:summary="@string/pref.dtc.settings_summary"
+                    android:title="@string/pref.dtc.settings"
                     app:singleLineTitle="false" />
 
                 <SwitchPreferenceCompat
                     android:defaultValue="false"
-                    android:dialogTitle="@string/pref.pids.group.enableDTCCleanup"
+                    android:dialogTitle="@string/pref.dtc.enable_automaticDTCCleanup"
                     android:key="pref.adapter.init.cleanDTC"
-                    android:summary="@string/pref.pids.group.enableDTCCleanup_summary"
-                    android:title="@string/pref.pids.group.enableDTCCleanup"
+                    android:summary="@string/pref.dtc.enable_automaticDTCCleanup_summary"
+                    android:title="@string/pref.dtc.enable_automaticDTCCleanup"
                     app:singleLineTitle="false" />
 
                 <SwitchPreferenceCompat
                     android:defaultValue="false"
-                    android:dialogTitle="@string/pref.pids.group.enableDTCReadings"
+                    android:dialogTitle="@string/pref.dtc.enable_DTCReadings"
                     android:key="pref.adapter.init.fetchDTC"
-                    android:summary="@string/pref.pids.group.enableDTCReadings_summary"
-                    android:title="@string/pref.pids.group.enableDTCReadings"
+                    android:summary="@string/pref.dtc.enable_DTCReadings_summary"
+                    android:title="@string/pref.dtc.enable_DTCReadings"
                     app:singleLineTitle="false" />
 
                 <SwitchPreferenceCompat
                     android:defaultValue="false"
-                    android:dialogTitle="@string/pref.pids.group.show_notification"
+                    android:dialogTitle="@string/pref.dtc.show_notification"
                     android:key="pref.dtc.show_notification"
-                    android:summary="@string/pref.pids.group.show_notification_summary"
-                    android:title="@string/pref.pids.group.show_notification"
+                    android:summary="@string/pref.dtc.show_notification_summary"
+                    android:title="@string/pref.dtc.show_notification"
                     app:singleLineTitle="false" />
 
             </PreferenceCategory>

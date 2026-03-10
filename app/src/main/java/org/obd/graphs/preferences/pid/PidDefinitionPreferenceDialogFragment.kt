@@ -36,9 +36,9 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
 import org.obd.graphs.ViewPreferencesSerializer
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.bl.datalogger.serialize
-import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
 import org.obd.graphs.bl.query.Query
 import org.obd.graphs.bl.query.QueryStrategyType
 import org.obd.graphs.preferences.CoreDialogFragment
@@ -185,7 +185,7 @@ open class PidDefinitionPreferenceDialogFragment(
             }
         }
 
-        root.findViewById<Button>(R.id.trip_action_close_window).apply {
+        root.findViewById<Button>(R.id.action_close_window).apply {
             setOnClickListener {
                 dialog?.dismiss()
                 onDialogCloseListener.invoke()
@@ -422,7 +422,7 @@ open class PidDefinitionPreferenceDialogFragment(
         source: Collection<PidDefinition>,
         predicate: (PidDefinition) -> Boolean,
     ): List<PidDefinitionDetails> {
-        val ecuSupportedPIDs = vehicleCapabilitiesManager.getCapabilities()
+        val ecuSupportedPIDs = VehicleCapabilitiesManager.getSupportedPIDs()
         val ecuSupportedPIDsEnabled = Prefs.getBoolean(FILTER_BY_ECU_SUPPORTED_PIDS_PREF, false)
         val stablePIDsEnabled = Prefs.getBoolean(FILTER_BY_STABLE_PIDS_PREF, false)
 

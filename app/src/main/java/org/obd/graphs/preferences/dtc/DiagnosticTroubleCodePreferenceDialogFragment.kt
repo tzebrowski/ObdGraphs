@@ -16,17 +16,42 @@
  */
 package org.obd.graphs.preferences.dtc
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
-import org.obd.graphs.bl.datalogger.vehicleCapabilitiesManager
+import org.obd.graphs.bl.datalogger.DATA_LOGGER_DTC_ACTION_COMPLETED
+import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.bl.datalogger.VehicleCapabilitiesManager
 import org.obd.graphs.preferences.CoreDialogFragment
+import org.obd.graphs.registerReceiver
+import org.obd.graphs.ui.common.toast
+import org.obd.graphs.ui.withDataLogger
+import org.obd.metrics.api.model.DiagnosticTroubleCode
+import org.obd.metrics.command.dtc.DtcComponent
 
-class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
+internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
+    private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
+    private lateinit var clearButton: Button
+    private lateinit var shareButton: Button
+
+    private val dtcNotificationsReceiver =
+        object : android.content.BroadcastReceiver() {
+            override fun onReceive(
+                context: android.content.Context?,
+                intent: Intent?,
+            ) {
+                if (intent?.action == DATA_LOGGER_DTC_ACTION_COMPLETED) {
+                    handleDTCChangedNotification()
+                }
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,18 +60,177 @@ class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
         requestWindowFeatures()
 
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
-        val dtc = vehicleCapabilitiesManager.getDTC()
+        val sortedDtcList = diagnosticTroubleCodes()
 
-        if (dtc.isEmpty()) {
-            dtc.add(resources.getString(R.string.pref_dtc_no_dtc_found))
-        }
-
-        val adapter = DiagnosticTroubleCodeViewAdapter(context, dtc)
+        adapter = DiagnosticTroubleCodeViewAdapter(context)
+        adapter.submitList(sortedDtcList)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
+        attachButtons(root, sortedDtcList)
         attachCloseButton(root)
+
         return root
     }
+
+    private fun attachButtons(
+        root: View,
+        sortedDtcList: List<DiagnosticTroubleCode>,
+    ) {
+        val refreshButton: Button = root.findViewById(R.id.action_refresh_dtc)
+        shareButton = root.findViewById(R.id.action_share)
+        clearButton = root.findViewById(R.id.action_clear_dtc)
+
+        shareButton.visibility = View.VISIBLE
+        clearButton.visibility = View.VISIBLE
+
+        if (isDtcAvailable(sortedDtcList)) {
+            shareButton.isEnabled = false
+            clearButton.isEnabled = false
+        }
+
+        shareButton.setOnClickListener {
+            shareDtcReport(sortedDtcList)
+        }
+
+        refreshButton.setOnClickListener {
+            if (DataLoggerRepository.isRunning()) {
+                withDataLogger {
+                    scheduleDTCRead()
+                }
+            } else {
+                toast(R.string.pref_dtc_no_connection_established)
+            }
+        }
+
+        clearButton.setOnClickListener {
+            android.app.AlertDialog
+                .Builder(requireContext())
+                .setTitle(resources.getString(R.string.pref_dtc_clean_dialog_title))
+                .setMessage(
+                    resources.getString(R.string.pref_dtc_clean_dialog_confirm_message),
+                ).setPositiveButton("Clear Codes") { dialog, _ ->
+                    if (DataLoggerRepository.isRunning()) {
+                        withDataLogger {
+                            scheduleDTCCleanup()
+                        }
+
+                        toast(R.string.pref_dtc_clean_dialog_send_message)
+                        clearButton.isEnabled = false
+                        clearButton.text = "Clearing..."
+                        dialog.dismiss()
+                    } else {
+                        toast(R.string.pref_dtc_no_connection_established)
+                    }
+                }.setNegativeButton("Cancel", null)
+                .show()
+        }
+    }
+
+    private fun shareDtcReport(dtcList: List<DiagnosticTroubleCode>) {
+        val reportBuilder = StringBuilder()
+        reportBuilder.append("Vehicle Diagnostic Report\n")
+        reportBuilder.append("-------------------------\n\n")
+
+        for (code in dtcList) {
+            if (code.standardCode.isEmpty()) continue
+
+            val formattedCode =
+                if (!code.failureType?.code.isNullOrEmpty()) {
+                    "${code.standardCode}-${code.failureType.code}"
+                } else {
+                    code.standardCode
+                }
+
+            reportBuilder.append("DTC: $formattedCode\n")
+            reportBuilder.append("Description: ${code.description ?: "Unknown"}\n")
+
+            val systemTxt = code.system?.description
+            val categoryTxt = code.category?.description
+            if (!systemTxt.isNullOrBlank() || !categoryTxt.isNullOrBlank()) {
+                reportBuilder.append("System: ${systemTxt ?: "N/A"} | Category: ${categoryTxt ?: "N/A"}\n")
+            }
+
+            val hex = code.rawHex ?: "N/A"
+            val activeStatuses = code.activeStatuses?.joinToString(", ") ?: "None"
+            reportBuilder.append("Status: $activeStatuses (Hex: $hex)\n")
+            reportBuilder.append("\n") // Blank line between codes
+        }
+
+        val sendIntent: Intent =
+            Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, reportBuilder.toString())
+                type = "text/plain"
+            }
+
+        val shareIntent = Intent.createChooser(sendIntent, "Share Diagnostic Report")
+        startActivity(shareIntent)
+    }
+
+    private fun diagnosticTroubleCodes(): List<DiagnosticTroubleCode> =
+        VehicleCapabilitiesManager
+            .getDiagnosticTroubleCodes()
+            .apply {
+                if (isEmpty()) {
+                    add(
+                        DiagnosticTroubleCode(
+                            "",
+                            "",
+                            null,
+                            resources.getString(R.string.pref_dtc_no_dtc_found),
+                            0,
+                            null,
+                            null,
+                            null,
+                            null,
+                            DtcComponent("", ""),
+                        ),
+                    )
+                }
+            }.sortedWith(
+                compareBy<DiagnosticTroubleCode> { code ->
+                    val desc = code.description
+                    val isUnknown =
+                        desc.isNullOrBlank() ||
+                            desc.contains(
+                                "Unknown DTC Description",
+                                ignoreCase = true,
+                            )
+                    if (isUnknown) 1 else 0
+                }.thenBy { code ->
+                    code.standardCode
+                },
+            ).toMutableList()
+
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(requireContext(), dtcNotificationsReceiver) {
+            it.addAction(DATA_LOGGER_DTC_ACTION_COMPLETED)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(dtcNotificationsReceiver)
+    }
+
+    private fun handleDTCChangedNotification() {
+        val newCodes = diagnosticTroubleCodes()
+        adapter.submitList(newCodes)
+
+        if (isDtcAvailable(newCodes)) {
+            shareButton.isEnabled = false
+            clearButton.isEnabled = false
+        } else {
+            shareButton.isEnabled = true
+            clearButton.isEnabled = true
+        }
+
+        clearButton.text = "Clear Codes"
+    }
+
+    private fun isDtcAvailable(newCodes: List<DiagnosticTroubleCode>): Boolean =
+        newCodes.size == 1 && newCodes.first().standardCode.isEmpty()
 }

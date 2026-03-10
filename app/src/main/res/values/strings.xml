@@ -127,16 +127,7 @@
     <string name="pref.pids.group.enableCapabilitiesReadings">Enable Vehicle supported OBD2 PIDs/Sensors readings</string>
     <string name="pref.pids.group.enableMetadataReadings">Enable Vehicle metadata readings</string>
     <string name="pref.pids.group.dtc.available_message">DTC are available.Please check DTC section</string>
-    <string name="pref.pids.group.enableDTCReadings">Enable DTC readings</string>
-    <string name="pref.pids.group.show_notification">Enable DTC notifications</string>
-    <string name="pref.pids.group.enableDTCCleanup">Perform DTC cleanup after the session starts</string>
 
-    <string name="pref.pids.group.show_notification_summary">When enabled, you will receive notification whenever DTC becomes available.</string>
-
-    <string name="pref.pids.group.enableDTCCleanup_summary">When enabled, this option will automatically erase Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
-
-
-    <string name="pref.pids.group.enableDTCReadings_summary">When enabled, Diagnostic Trouble Codes (DTCs) will be read during the ECU session.</string>
     <string name="pref.pids.group.enableMetadataReadings_summary">When enabled, vehicle metadata will be retrieved during the ECU session.</string>
     <string name="pref.pids.group.enableCapabilitiesReadings_summary">Enabling this option will allow supported OBD2 PIDs/Sensors to be read during the session with the ECU.</string>
 
@@ -285,10 +276,25 @@
     <string name="pref.aa.theme.dynamic_selector.enabled">Dynamic selector enabled</string>
     <string name="pref.aa.theme.dynamic_selector.enabled_summary">When enabled, colors are applied according to the selected dynamic mode: SPORT, NORMAL, or ECO.</string>
 
-    <string name="pref.dtc.title">Diagnostic Trouble Code</string>
+    <!-- DTC -->
+    <string name="pref.dtc.title">Diagnostic Trouble Codes</string>
     <string name="pref.dtc.code">Code</string>
     <string name="pref.dtc.description">Description</string>
     <string name="pref.dtc.no_dtc_found">No Diagnosis Trouble Code (DTC) found.</string>
+    <string name="pref.dtc.enable_automaticDTCCleanup">Enable DTC cleanup</string>
+    <string name="pref.dtc.enable_automaticDTCCleanup_summary">Automatically clears Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
+    <string name="pref.dtc.settings_summary"><b>Tap</b> to view active Diagnostic Trouble Codes (DTCs) retrieved from the ECU.</string>
+    <string name="pref.dtc.settings">View Current DTCs</string>
+    <string name="pref.dtc.enable_DTCReadings">Enable DTC readings</string>
+    <string name="pref.dtc.enable_DTCReadings_summary">Read Diagnostic Trouble Codes (DTCs) while connected to the ECU.</string>
+    <string name="pref.dtc.show_notification">Enable DTC notifications</string>
+    <string name="pref.dtc.show_notification_summary">Sends an alert when new Diagnostic Trouble Codes (DTCs) are found.</string>
+
+    <string name="pref.dtc.clean_dialog.confirm_message">Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.</string>
+    <string name="pref.dtc.clean_dialog.send_message">Clear command sent to ECU</string>
+    <string name="pref.dtc.clean_dialog.title">Clear Diagnostic Codes?</string>
+
+    <string name="pref.dtc.no_connection_established">There is no ECU connection established. Please connect first.</string>
 
     <string name="pref.vehicle.metadata_title">Vehicle Metadata</string>
     <string name="pref.vehicle.metadata.name">Name</string>
@@ -526,8 +532,6 @@
     <string name="pref_vehicle_metadata_summary">In this section, you can view vehicle metadata fetched from the ECU, including VIN, ECU type, hardware serial number, etc.</string>
     <string name="pref_vehicle_profile_settings_summary">This section contains preferences related to Vehicle Profiles. You can change the vehicle profile here.</string>
     <string name="pref_power_settings_summary">Power-related settings are available in this section, allowing you to define the application’s behavior when the charger is plugged in or removed.</string>
-    <string name="pref_dtc_settings_summary">Diagnostic Trouble Codes (DTCs) retrieved from the ECU are displayed in this section.</string>
-
 
     <string name="pids_stable">Stable</string>
     <string name="pids_alert_lower_threshold">Alert\nlower threshold</string>
