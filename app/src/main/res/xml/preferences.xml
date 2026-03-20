@@ -363,8 +363,7 @@
                     android:key="pref.adapter.cache.result.enabled"
                     android:summary="@string/pref.experimental_result_cache_enabled"
                     android:title="@string/pref.adapter_cache_result_enabled"
-                    app:experimental="true"
-                    app:enabled="@bool/FF_RESULT_CACHE_ENABLED" />
+                    app:experimental="true" />
 
                 <org.obd.graphs.preferences.components.ExtendedCheckBoxPreference
                     android:defaultValue="false"

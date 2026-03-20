@@ -226,7 +226,7 @@ internal class WorkflowOrchestrator internal constructor() {
 
     fun scheduleDTCRead() {
         Log.i(LOG_TAG,"Schedule DTC read")
-        val result = workflow.scheduleDTCAction(setOf(DtcAction.READ))
+        val result = workflow.scheduleDTCAction(setOf(DtcAction.READ_SNAPSHPOTS))
         Log.i(LOG_TAG,"DTC read is scheduled: $result")
     }
 
