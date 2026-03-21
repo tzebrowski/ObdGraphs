@@ -21,7 +21,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.format
@@ -65,9 +64,6 @@ internal class TripInfoDrawer(
     ) {
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
-        val dynamicPadding = textSizeBase * 0.1f
-        val x = maxItemWidth(area) + dynamicPadding
-
         val topMetrics =
             listOfNotNull(
                 tripInfo.airTemp?.let { TripMetricConfig(it, castToInt = true) },
@@ -90,6 +86,8 @@ internal class TripInfoDrawer(
 
         var rowTop = top + (textSizeBase * 0.3f)
         var colIndex = 0
+        val x = maxItemWidth(area)
+        val dynamicPadding = textSizeBase * 0.1f
 
         topMetrics.forEach { config ->
             if (colIndex >= MAX_ITEM_IN_THE_ROW) {
@@ -100,7 +98,7 @@ internal class TripInfoDrawer(
             drawMetric(
                 metric = config.metric,
                 top = rowTop,
-                left = left + (colIndex * x),
+                left = left + (colIndex * x) + dynamicPadding,
                 canvas = canvas,
                 textSizeBase = textSizeBase,
                 statsEnabled = config.statsEnabled,
