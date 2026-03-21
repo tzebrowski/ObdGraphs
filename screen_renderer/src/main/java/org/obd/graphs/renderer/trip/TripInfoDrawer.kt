@@ -21,6 +21,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.util.Log
 import org.obd.graphs.bl.collector.Metric
 import org.obd.graphs.bl.collector.MetricsBuilder
 import org.obd.graphs.format
@@ -248,17 +249,25 @@ internal class TripInfoDrawer(
         if (settings.isStatisticsEnabled() && statsEnabled) {
             valuePaint.textSize = (textSize * 0.60).toFloat()
             val pid = metric.pid
-            val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
-            if (itemWidth <= maxItemWidth(area)) {
-                val min = metric.min.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
+
+            val minText = metric.min.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
+            val maxText = metric.max.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
+
+            val minWidth = getTextWidth(minText, valuePaint)
+            val maxWidth = getTextWidth(maxText, valuePaint)
+            val maxStatWidth = maxOf(minWidth, maxWidth)
+
+            val itemWidth = textWidth + maxStatWidth
+
+            if (itemWidth <= (maxItemWidth(area))) {
                 valuePaint.color = minValueColorScheme(metric)
-                canvas.drawText(min, (left + textWidth), top, valuePaint)
+                canvas.drawText(minText, (left + textWidth), top, valuePaint)
 
                 valuePaint.color = maxValueColorScheme(metric)
                 canvas.drawText(
-                    metric.max.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt),
+                    maxText,
                     (left + textWidth),
-                    top - (getTextHeight(min, valuePaint) * 1.1f),
+                    top - (getTextHeight(minText, valuePaint) * 1.1f),
                     valuePaint,
                 )
             }
