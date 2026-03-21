@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.VehicleCapabilities
 
@@ -73,9 +74,13 @@ object VehicleCapabilitiesManager {
             )
             commit()
         }
-        updateDTC(vehicleCapabilities.dtc)
+        if (dataLoggerSettings.instance().adapter.dtcEnabled) {
+            updateDTC(vehicleCapabilities.dtc)
+            if (vehicleCapabilities.dtc.isNotEmpty()) {
+                sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
+            }
+        }
     }
-
 
     internal fun updateDTC(dtc: Set<DiagnosticTroubleCode>) {
         Prefs.edit().apply {

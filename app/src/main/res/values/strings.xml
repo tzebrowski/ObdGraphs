@@ -281,12 +281,14 @@
     <string name="pref.dtc.code">Code</string>
     <string name="pref.dtc.description">Description</string>
     <string name="pref.dtc.no_dtc_found">No Diagnosis Trouble Code (DTC) found.</string>
-    <string name="pref.dtc.enable_automaticDTCCleanup">Enable DTC cleanup</string>
-    <string name="pref.dtc.enable_automaticDTCCleanup_summary">Automatically clears Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
+    <string name="pref.dtc.enable_automatic_cleanup">Enable Automatic DTC cleanup</string>
+    <string name="pref.dtc.enable_automatic_cleanup_summary">Automatically clears Diagnostic Trouble Codes (DTCs) from the ECU memory.</string>
     <string name="pref.dtc.settings_summary"><b>Tap</b> to view active Diagnostic Trouble Codes (DTCs) retrieved from the ECU.</string>
     <string name="pref.dtc.settings">View Current DTCs</string>
-    <string name="pref.dtc.enable_DTCReadings">Enable DTC readings</string>
-    <string name="pref.dtc.enable_DTCReadings_summary">Read Diagnostic Trouble Codes (DTCs) while connected to the ECU.</string>
+    <string name="pref.dtc.read_snapshots">Read DTC snapshots</string>
+    <string name="pref.dtc.read_snapshots_summary">Reads additional context data when DTC was taken.</string>
+    <string name="pref.dtc.enable_dtc_reading">Enable Automatic DTC readings</string>
+    <string name="pref.dtc.enable_dtc_reading_summary">Read Diagnostic Trouble Codes (DTCs) while connected to the ECU.</string>
     <string name="pref.dtc.show_notification">Enable DTC notifications</string>
     <string name="pref.dtc.show_notification_summary">Sends an alert when new Diagnostic Trouble Codes (DTCs) are found.</string>
 

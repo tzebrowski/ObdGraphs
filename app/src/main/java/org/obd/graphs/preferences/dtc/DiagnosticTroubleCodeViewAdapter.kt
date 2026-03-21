@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
 import org.obd.metrics.api.model.DiagnosticTroubleCode
@@ -112,6 +113,23 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         val activeStatuses = dtc.activeStatuses?.joinToString(", ") ?: "None"
         holder.detailHexStatus.text = "Hex: $hex | Mask: $statusMask\nStatus: $activeStatuses"
 
+        val snapshot = dtc.snapshot
+        if (dataLoggerSettings.instance().adapter.dtcReadSnapshots && snapshot != null) {
+            holder.snapshotContainer.visibility = View.VISIBLE
+            val snapshotText = StringBuilder()
+
+            snapshot.forEach { did ->
+                val value = did.decodedValue ?: "N/A"
+                val unit = did.definition?.units ?: ""
+                val desc = did.definition?.description ?: "Unknown DID"
+                snapshotText.append("• $desc: $value $unit\n")
+            }
+
+            holder.detailSnapshotInfo.text = snapshotText.toString().trimEnd()
+        } else {
+            holder.snapshotContainer.visibility = View.GONE
+        }
+
         val isExpanded = position == expandedPosition
         holder.expandedContainer.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
@@ -133,8 +151,13 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         holder.actionCopyCode.setOnClickListener {
             val clipboard =
                 holder.itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clipText =
-                "DTC: $formattedCode\nDescription: ${dtc.description ?: "Unknown"}\nSystem: $systemTxt\nStatus: $activeStatuses"
+
+            var clipText = "DTC: $formattedCode\nDescription: ${dtc.description ?: "Unknown"}\nSystem: $systemTxt\nStatus: $activeStatuses"
+
+            if (dtc.snapshot != null) {
+                clipText += "\n\nSnapshot Data:\n${holder.detailSnapshotInfo.text}"
+            }
+
             val clip = ClipData.newPlainText("DTC Info", clipText)
             clipboard.setPrimaryClip(clip)
 
@@ -157,6 +180,9 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
             itemView.findViewById(R.id.dtc_expanded_details_container)
         var detailSystemInfo: TextView = itemView.findViewById(R.id.dtc_detail_system_info)
         var detailHexStatus: TextView = itemView.findViewById(R.id.dtc_detail_hex_status)
+
+        var snapshotContainer: LinearLayout = itemView.findViewById(R.id.dtc_snapshot_container)
+        var detailSnapshotInfo: TextView = itemView.findViewById(R.id.dtc_detail_snapshot_info)
 
         var actionSearchWeb: Button = itemView.findViewById(R.id.dtc_action_search_web)
         var actionCopyCode: Button = itemView.findViewById(R.id.dtc_action_copy_code)

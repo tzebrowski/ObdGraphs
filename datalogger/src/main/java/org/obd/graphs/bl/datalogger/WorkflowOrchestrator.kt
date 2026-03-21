@@ -104,11 +104,6 @@ internal class WorkflowOrchestrator internal constructor() {
             VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
 
-            // notify about DTC
-            if (vehicleCapabilities.dtc.isNotEmpty()) {
-                sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
-            }
-
             tripManager.startNewTrip(System.currentTimeMillis())
         }
 
@@ -219,17 +214,18 @@ internal class WorkflowOrchestrator internal constructor() {
     }
 
     fun scheduleDTCCleanup() {
-        Log.i(LOG_TAG,"Schedule DTC cleanup")
-        val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR, DtcAction.READ))
+        val readAction = getReadDtcAction()
+        Log.i(LOG_TAG,"Schedule DTC cleanup. Read action=$readAction")
+        val result = workflow.scheduleDTCAction(setOf(DtcAction.CLEAR,  readAction))
         Log.i(LOG_TAG,"DTC cleanup is scheduled: $result")
     }
 
     fun scheduleDTCRead() {
-        Log.i(LOG_TAG,"Schedule DTC read")
-        val result = workflow.scheduleDTCAction(setOf(DtcAction.READ))
+        val readAction = getReadDtcAction()
+        Log.i(LOG_TAG,"Schedule DTC read action=$readAction")
+        val result = workflow.scheduleDTCAction(setOf(readAction))
         Log.i(LOG_TAG,"DTC read is scheduled: $result")
     }
-
 
     fun executeRoutine(query: Query) {
         currentQuery = query
@@ -347,6 +343,8 @@ internal class WorkflowOrchestrator internal constructor() {
             )
         )
     }
+
+    private fun getReadDtcAction(): DtcAction  = if (dataLoggerSettings.instance().adapter.dtcReadSnapshots) DtcAction.READ_SNAPSHPOTS else DtcAction.READ
 
     private fun pids(): Pids? =
         Pids.builder().resources(dataLoggerSettings.instance().resources.map {

@@ -22,6 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
@@ -38,7 +39,10 @@ import org.obd.metrics.command.dtc.DtcComponent
 internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragment() {
     private lateinit var adapter: DiagnosticTroubleCodeViewAdapter
     private lateinit var clearButton: Button
+    private lateinit var refreshButton: Button
     private lateinit var shareButton: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var recyclerView: RecyclerView
 
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
@@ -62,9 +66,11 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         val root = inflater.inflate(R.layout.dialog_dtc, container, false)
         val sortedDtcList = diagnosticTroubleCodes()
 
+        progressBar = root.findViewById(R.id.progress_bar)
+        recyclerView = root.findViewById(R.id.recycler_view)
+
         adapter = DiagnosticTroubleCodeViewAdapter(context)
         adapter.submitList(sortedDtcList)
-        val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = GridLayoutManager(context, 1)
         recyclerView.adapter = adapter
 
@@ -78,7 +84,7 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         root: View,
         sortedDtcList: List<DiagnosticTroubleCode>,
     ) {
-        val refreshButton: Button = root.findViewById(R.id.action_refresh_dtc)
+        refreshButton = root.findViewById(R.id.action_refresh_dtc)
         shareButton = root.findViewById(R.id.action_share)
         clearButton = root.findViewById(R.id.action_clear_dtc)
 
@@ -91,11 +97,12 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         }
 
         shareButton.setOnClickListener {
-            shareDtcReport(sortedDtcList)
+            shareDtcReport(diagnosticTroubleCodes())
         }
 
         refreshButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
+                setLoadingState(true)
                 withDataLogger {
                     scheduleDTCRead()
                 }
@@ -112,12 +119,12 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     resources.getString(R.string.pref_dtc_clean_dialog_confirm_message),
                 ).setPositiveButton("Clear Codes") { dialog, _ ->
                     if (DataLoggerRepository.isRunning()) {
+                        setLoadingState(true)
                         withDataLogger {
                             scheduleDTCCleanup()
                         }
 
                         toast(R.string.pref_dtc_clean_dialog_send_message)
-                        clearButton.isEnabled = false
                         clearButton.text = "Clearing..."
                         dialog.dismiss()
                     } else {
@@ -125,6 +132,20 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                     }
                 }.setNegativeButton("Cancel", null)
                 .show()
+        }
+    }
+
+    private fun setLoadingState(isLoading: Boolean) {
+        if (isLoading) {
+            progressBar.visibility = View.VISIBLE
+            recyclerView.alpha = 0.5f
+            refreshButton.isEnabled = false
+            clearButton.isEnabled = false
+        } else {
+            progressBar.visibility = View.GONE
+            recyclerView.alpha = 1.0f
+            refreshButton.isEnabled = true
+            clearButton.isEnabled = true
         }
     }
 
@@ -155,6 +176,18 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
             val hex = code.rawHex ?: "N/A"
             val activeStatuses = code.activeStatuses?.joinToString(", ") ?: "None"
             reportBuilder.append("Status: $activeStatuses (Hex: $hex)\n")
+
+            val snapshot = code.snapshot
+            if (snapshot != null) {
+                reportBuilder.append("Snapshot (Record ${snapshot.size}):\n")
+                snapshot.forEach { did ->
+                    val value = did.decodedValue ?: "N/A"
+                    val unit = did.definition?.units ?: ""
+                    val desc = did.definition?.description ?: "Unknown DID"
+                    reportBuilder.append("  - $desc: $value $unit\n")
+                }
+            }
+
             reportBuilder.append("\n") // Blank line between codes
         }
 
@@ -217,6 +250,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     }
 
     private fun handleDTCChangedNotification() {
+        setLoadingState(false)
+
         val newCodes = diagnosticTroubleCodes()
         adapter.submitList(newCodes)
 

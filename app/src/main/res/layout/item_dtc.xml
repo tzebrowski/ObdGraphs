@@ -64,6 +64,34 @@
             android:layout_marginTop="4dp" />
 
         <LinearLayout
+            android:id="@+id/dtc_snapshot_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#F0F4F8"
+            android:padding="8dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UDS Freeze Frame Data"
+                android:textStyle="bold"
+                android:textColor="@color/rainbow_indigo"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/dtc_detail_snapshot_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray_dark"
+                android:textSize="13sp"
+                android:textIsSelectable="true" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

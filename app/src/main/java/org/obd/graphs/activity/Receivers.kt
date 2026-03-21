@@ -209,17 +209,6 @@ internal fun MainActivity.receive(intent: Intent?) {
         NOTIFICATION_GAUGE_VIEW_TOGGLE -> toggleNavigationItem(GAUGE_VIEW_ID, R.id.navigation_gauge)
 
         DATA_LOGGER_CONNECTING_EVENT -> {
-            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connecting)
-
-            progressBar {
-                it.visibility = View.VISIBLE
-                it.indeterminateDrawable.colorFilter =
-                    PorterDuffColorFilter(
-                        COLOR_CARDINAL,
-                        PorterDuff.Mode.SRC_IN,
-                    )
-            }
-
             FabButtons.view(this).connectFab.let {
                 it.backgroundTintList =
                     ContextCompat.getColorStateList(
@@ -234,6 +223,17 @@ internal fun MainActivity.receive(intent: Intent?) {
                 }
                 it.refreshDrawableState()
             }
+
+            progressBar {
+                it.visibility = View.VISIBLE
+                it.indeterminateDrawable.colorFilter =
+                    PorterDuffColorFilter(
+                        COLOR_CARDINAL,
+                        PorterDuff.Mode.SRC_IN,
+                    )
+            }
+
+            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connecting)
         }
 
         PREFS_CONNECTION_TYPE_CHANGED_EVENT -> updateAdapterConnectionType()
