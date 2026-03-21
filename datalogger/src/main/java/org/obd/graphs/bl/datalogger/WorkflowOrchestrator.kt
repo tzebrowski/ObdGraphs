@@ -104,11 +104,6 @@ internal class WorkflowOrchestrator internal constructor() {
             VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
 
-            // notify about DTC
-            if (vehicleCapabilities.dtc.isNotEmpty()) {
-                sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
-            }
-
             tripManager.startNewTrip(System.currentTimeMillis())
         }
 

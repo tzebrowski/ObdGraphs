@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.obd.graphs.preferences.Prefs
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.metrics.api.model.DiagnosticTroubleCode
 import org.obd.metrics.api.model.VehicleCapabilities
 
@@ -50,7 +51,7 @@ object VehicleCapabilitiesManager {
             Log.i(
                 LOG_TAG,
                 "Property `vehicleCapabilitiesReadingEnabled` is " +
-                    "`${dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled}`",
+                        "`${dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled}`",
             )
             if (dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled) {
                 if (vehicleCapabilities.capabilities.isEmpty()) {
@@ -73,7 +74,12 @@ object VehicleCapabilitiesManager {
             )
             commit()
         }
-        updateDTC(vehicleCapabilities.dtc)
+        if (dataLoggerSettings.instance().adapter.vehicleDTCReadingEnabled) {
+            updateDTC(vehicleCapabilities.dtc)
+            if (vehicleCapabilities.dtc.isNotEmpty()) {
+                sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)
+            }
+        }
     }
 
 
