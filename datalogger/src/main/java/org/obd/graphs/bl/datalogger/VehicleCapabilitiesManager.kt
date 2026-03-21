@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -51,7 +51,7 @@ object VehicleCapabilitiesManager {
             Log.i(
                 LOG_TAG,
                 "Property `vehicleCapabilitiesReadingEnabled` is " +
-                        "`${dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled}`",
+                    "`${dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled}`",
             )
             if (dataLoggerSettings.instance().adapter.vehicleCapabilitiesReadingEnabled) {
                 if (vehicleCapabilities.capabilities.isEmpty()) {
@@ -81,7 +81,6 @@ object VehicleCapabilitiesManager {
             }
         }
     }
-
 
     internal fun updateDTC(dtc: Set<DiagnosticTroubleCode>) {
         Prefs.edit().apply {
