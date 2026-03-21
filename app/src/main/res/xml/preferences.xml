@@ -567,14 +567,6 @@
 
                 <SwitchPreferenceCompat
                     android:defaultValue="false"
-                    android:dialogTitle="@string/pref.dtc.enable_automaticDTCCleanup"
-                    android:key="pref.adapter.init.cleanDTC"
-                    android:summary="@string/pref.dtc.enable_automaticDTCCleanup_summary"
-                    android:title="@string/pref.dtc.enable_automaticDTCCleanup"
-                    app:singleLineTitle="false" />
-
-                <SwitchPreferenceCompat
-                    android:defaultValue="false"
                     android:dialogTitle="@string/pref.dtc.enable_DTCReadings"
                     android:key="pref.adapter.init.fetchDTC"
                     android:summary="@string/pref.dtc.enable_DTCReadings_summary"
@@ -582,6 +574,16 @@
                     app:singleLineTitle="false" />
 
                 <SwitchPreferenceCompat
+                    app:dependency="pref.adapter.init.fetchDTC"
+                    android:defaultValue="false"
+                    android:dialogTitle="@string/pref.dtc.enable_automaticDTCCleanup"
+                    android:key="pref.adapter.init.cleanDTC"
+                    android:summary="@string/pref.dtc.enable_automaticDTCCleanup_summary"
+                    android:title="@string/pref.dtc.enable_automaticDTCCleanup"
+                    app:singleLineTitle="false" />
+
+                <SwitchPreferenceCompat
+                    app:dependency="pref.adapter.init.fetchDTC"
                     android:defaultValue="false"
                     android:dialogTitle="@string/pref.dtc.show_notification"
                     android:key="pref.dtc.show_notification"
