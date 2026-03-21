@@ -74,7 +74,7 @@ object VehicleCapabilitiesManager {
             )
             commit()
         }
-        if (dataLoggerSettings.instance().adapter.vehicleDTCReadingEnabled) {
+        if (dataLoggerSettings.instance().adapter.dtcEnabled) {
             updateDTC(vehicleCapabilities.dtc)
             if (vehicleCapabilities.dtc.isNotEmpty()) {
                 sendBroadcastEvent(DATA_LOGGER_DTC_AVAILABLE)

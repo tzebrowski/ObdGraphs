@@ -20,7 +20,6 @@ import android.content.BroadcastReceiver
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.bl.query.Query
 import org.obd.metrics.api.model.ObdMetric
 import org.obd.metrics.diagnostic.Diagnostics
 import org.obd.metrics.diagnostic.Histogram
@@ -46,7 +45,6 @@ object DataLoggerRepository {
     }
 
     fun broadcastReceivers(): BroadcastReceiver =  workflowOrchestrator.eventsReceiver
-    fun getCurrentQuery(): Query? = workflowOrchestrator.getCurrentQuery()
     fun isRunning(): Boolean = workflowOrchestrator.isRunning()
     fun getDiagnostics(): Diagnostics = workflowOrchestrator.diagnostics()
     fun findHistogramFor(metric: ObdMetric): Histogram = workflowOrchestrator.findHistogramFor(metric)

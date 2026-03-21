@@ -94,10 +94,13 @@ data class Adapter(
     var vehicleCapabilitiesReadingEnabled: Boolean = true,
 
     @XmlPreference("pref.adapter.init.fetchDTC", "false", Boolean::class)
-    var vehicleDTCReadingEnabled: Boolean = false,
+    var dtcEnabled: Boolean = false,
 
     @XmlPreference("pref.adapter.init.cleanDTC", "false", Boolean::class)
-    var vehicleDTCCleaningEnabled: Boolean = false,
+    var dtcAutoCleanup: Boolean = false,
+
+    @XmlPreference("pref.dtc.read_snapshots", "false", Boolean::class)
+    var dtcReadSnapshots: Boolean = false,
 
     @XmlPreference("pref.adapter.responseLength.enabled", "false", Boolean::class)
     var calculateResponseFrames: Boolean = false,

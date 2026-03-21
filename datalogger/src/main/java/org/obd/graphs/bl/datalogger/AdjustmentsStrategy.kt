@@ -151,8 +151,8 @@ internal class AdjustmentsStrategy {
                     .build(),
             ).vehicleMetadataReadingEnabled(preferences.adapter.vehicleMetadataReadingEnabled)
             .vehicleCapabilitiesReadingEnabled(preferences.adapter.vehicleCapabilitiesReadingEnabled)
-            .vehicleDtcReadingEnabled(preferences.adapter.vehicleDTCReadingEnabled)
-            .vehicleDtcCleaningEnabled(preferences.adapter.vehicleDTCCleaningEnabled)
+            .vehicleDtcReadingEnabled(preferences.adapter.dtcEnabled)
+            .vehicleDtcCleaningEnabled(preferences.adapter.dtcAutoCleanup)
             .cachePolicy(
                 CachePolicy
                     .builder()

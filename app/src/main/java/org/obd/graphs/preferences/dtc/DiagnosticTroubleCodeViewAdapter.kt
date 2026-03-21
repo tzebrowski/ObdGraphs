@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
+import org.obd.graphs.bl.datalogger.dataLoggerSettings
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.setText
 import org.obd.metrics.api.model.DiagnosticTroubleCode
@@ -113,7 +114,7 @@ internal class DiagnosticTroubleCodeViewAdapter internal constructor(
         holder.detailHexStatus.text = "Hex: $hex | Mask: $statusMask\nStatus: $activeStatuses"
 
         val snapshot = dtc.snapshot
-        if (snapshot != null) {
+        if (dataLoggerSettings.instance().adapter.dtcReadSnapshots && snapshot != null) {
             holder.snapshotContainer.visibility = View.VISIBLE
             val snapshotText = StringBuilder()
 
