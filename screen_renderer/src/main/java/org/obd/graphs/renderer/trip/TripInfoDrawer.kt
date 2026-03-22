@@ -64,9 +64,6 @@ internal class TripInfoDrawer(
     ) {
         val (valueTextSize, textSizeBase) = calculateFontSize(area)
 
-        val dynamicPadding = textSizeBase * 0.1f
-        val x = maxItemWidth(area) + dynamicPadding
-
         val topMetrics =
             listOfNotNull(
                 tripInfo.airTemp?.let { TripMetricConfig(it, castToInt = true) },
@@ -89,6 +86,8 @@ internal class TripInfoDrawer(
 
         var rowTop = top + (textSizeBase * 0.3f)
         var colIndex = 0
+        val x = maxItemWidth(area)
+        val dynamicPadding = textSizeBase * 0.1f
 
         topMetrics.forEach { config ->
             if (colIndex >= MAX_ITEM_IN_THE_ROW) {
@@ -99,7 +98,7 @@ internal class TripInfoDrawer(
             drawMetric(
                 metric = config.metric,
                 top = rowTop,
-                left = left + (colIndex * x),
+                left = left + (colIndex * x) + dynamicPadding,
                 canvas = canvas,
                 textSizeBase = textSizeBase,
                 statsEnabled = config.statsEnabled,
@@ -248,17 +247,25 @@ internal class TripInfoDrawer(
         if (settings.isStatisticsEnabled() && statsEnabled) {
             valuePaint.textSize = (textSize * 0.60).toFloat()
             val pid = metric.pid
-            val itemWidth = textWidth + getTextWidth(metric.max.format(pid = pid), valuePaint)
-            if (itemWidth <= maxItemWidth(area)) {
-                val min = metric.min.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
+
+            val minText = metric.min.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
+            val maxText = metric.max.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt)
+
+            val minWidth = getTextWidth(minText, valuePaint)
+            val maxWidth = getTextWidth(maxText, valuePaint)
+            val maxStatWidth = maxOf(minWidth, maxWidth)
+
+            val itemWidth = textWidth + maxStatWidth
+
+            if (itemWidth <= (maxItemWidth(area))) {
                 valuePaint.color = minValueColorScheme(metric)
-                canvas.drawText(min, (left + textWidth), top, valuePaint)
+                canvas.drawText(minText, (left + textWidth), top, valuePaint)
 
                 valuePaint.color = maxValueColorScheme(metric)
                 canvas.drawText(
-                    metric.max.format(pid = pid, precision = statsDoublePrecision, castToInt = castToInt),
+                    maxText,
                     (left + textWidth),
-                    top - (getTextHeight(min, valuePaint) * 1.1f),
+                    top - (getTextHeight(minText, valuePaint) * 1.1f),
                     valuePaint,
                 )
             }

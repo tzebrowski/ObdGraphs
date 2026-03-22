@@ -26,8 +26,9 @@ import org.obd.graphs.renderer.gauge.DrawerSettings
 import org.obd.graphs.renderer.gauge.GaugeDrawer
 import org.obd.graphs.renderer.trip.TripInfoDrawer
 import org.obd.graphs.isNumber
+import org.obd.metrics.pid.ValueType
 
-private const val MAX_ITEMS_IN_ROW = 5
+ private const val MAX_ITEMS_IN_ROW = 5
 
 @Suppress("NOTHING_TO_INLINE")
 internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
@@ -104,7 +105,7 @@ internal class PerformanceDrawer(context: Context, settings: ScreenSettings) :
                 textSize,
                 statsEnabled = metric.source.isNumber(),
                 area = area,
-                castToInt = true
+                castToInt = metric.pid.type != ValueType.DOUBLE
             )
 
             if (columnIndex < MAX_ITEMS_IN_ROW - 1 && i < topMetricsSize - 1) {
