@@ -144,14 +144,13 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_wifi_incorrect_ssid)
         }
 
+        SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            lockScreenDialogShow { dialogTitle ->
-                var msg = intent.getExtraParam()
-                if (msg.isEmpty()) {
-                    msg = getText(R.string.dialog_screen_lock_message) as String
-                }
-                dialogTitle.text = msg
+            var msg = intent.getExtraParam()
+            if (msg.isEmpty()) {
+                msg = getText(R.string.dialog_screen_lock_message) as String
             }
+            screenLockManager.show(msg)
         }
 
         AA_EDIT_PREF_SCREEN -> navigateToPreferencesScreen("pref.aa")
@@ -169,7 +168,7 @@ internal fun MainActivity.receive(intent: Intent?) {
             toast(R.string.pref_usb_device_attached, usbDevice.productName!!)
         }
 
-        SCREEN_UNLOCK_PROGRESS_EVENT -> lockScreenDialog.dismiss()
+
 
         DATA_LOGGER_DTC_AVAILABLE ->
             if (Prefs.isEnabled("pref.dtc.show_notification")) {
