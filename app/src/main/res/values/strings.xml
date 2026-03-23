@@ -295,6 +295,7 @@
     <string name="pref.dtc.clean_dialog.confirm_message">Are you sure you want to clear all DTCs from the ECU?\n\nMake sure the engine is OFF, but the ignition is ON.</string>
     <string name="pref.dtc.clean_dialog.send_message">Clear command sent to ECU</string>
     <string name="pref.dtc.clean_dialog.title">Clear Diagnostic Codes?</string>
+    <string name="pref.dtc.screen_lock">This might take a while. Please wait…</string>
 
     <string name="pref.dtc.no_connection_established">There is no ECU connection established. Please connect first.</string>
 
