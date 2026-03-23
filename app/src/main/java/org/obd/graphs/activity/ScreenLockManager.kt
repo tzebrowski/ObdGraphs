@@ -14,52 +14,62 @@
  * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.obd.graphs.activity
+ package org.obd.graphs.activity
 
-import android.app.Activity
-import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import org.obd.graphs.R
+ import android.app.Activity
+ import android.view.View
+ import android.widget.Button
+ import android.widget.TextView
+ import androidx.appcompat.app.AlertDialog
+ import androidx.lifecycle.DefaultLifecycleObserver
+ import androidx.lifecycle.LifecycleOwner
+ import org.obd.graphs.R
 
-class ScreenLockManager(
-    private val activity: Activity,
-) : DefaultLifecycleObserver {
-    private var lockScreenDialog: AlertDialog? = null
+ class ScreenLockManager(private val activity: Activity) : DefaultLifecycleObserver {
+     private var lockScreenDialog: AlertDialog? = null
+     private var onCancelAction: (() -> Unit)? = null
 
-    fun setup() {
-        AlertDialog.Builder(activity).run {
-            setCancelable(false)
-            val dialogView: View = activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
-            setView(dialogView)
-            lockScreenDialog = create()
-        }
-    }
+     fun setup() {
+         AlertDialog.Builder(activity).run {
+             setCancelable(false)
+             val dialogView: View = activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
 
-    fun show(message: String) {
-        lockScreenDialog?.let { dialog ->
-            val dialogTitle = dialog.findViewById<TextView>(R.id.dialog_screen_lock_message_id)
-            if (dialogTitle != null && message.isNotEmpty()) {
-                dialogTitle.text = message
-            }
-            if (!dialog.isShowing) {
-                dialog.show()
-            }
-        }
-    }
 
-    fun dismiss() {
-        if (lockScreenDialog?.isShowing == true) {
-            lockScreenDialog?.dismiss()
-        }
-    }
+             val cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
+             cancelButton.setOnClickListener {
+                 dismiss()
+                 onCancelAction?.invoke()
+             }
 
-    // Automatically called when MainActivity is destroyed
-    override fun onDestroy(owner: LifecycleOwner) {
-        dismiss()
-        lockScreenDialog = null
-        super.onDestroy(owner)
-    }
-}
+             setView(dialogView)
+             lockScreenDialog = create()
+         }
+     }
+
+     fun show(message: String, onCancel: (() -> Unit)? = null) {
+         this.onCancelAction = onCancel
+
+         lockScreenDialog?.let { dialog ->
+             val dialogTitle = dialog.findViewById<TextView>(R.id.dialog_screen_lock_message_id)
+             if (dialogTitle != null && message.isNotEmpty()) {
+                 dialogTitle.text = message
+             }
+             if (!dialog.isShowing) {
+                 dialog.show()
+             }
+         }
+     }
+
+     fun dismiss() {
+         if (lockScreenDialog?.isShowing == true) {
+             lockScreenDialog?.dismiss()
+         }
+         onCancelAction = null
+     }
+
+     override fun onDestroy(owner: LifecycleOwner) {
+         dismiss()
+         lockScreenDialog = null
+         super.onDestroy(owner)
+     }
+ }
