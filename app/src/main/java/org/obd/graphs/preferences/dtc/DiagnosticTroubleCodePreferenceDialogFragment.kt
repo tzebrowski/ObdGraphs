@@ -24,7 +24,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,12 +47,14 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var clearButton: Button
     private lateinit var refreshButton: Button
     private lateinit var shareButton: Button
-    private lateinit var progressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
 
     private val handler = Handler(Looper.getMainLooper())
     private val timeoutRunnable =
         Runnable {
+
+            setLoadingState(false)
+
             if (isAdded) {
                 setLoadingState(false)
                 Toast.makeText(requireContext(), "Timeout waiting for vehicle response", Toast.LENGTH_SHORT).show()
@@ -268,6 +269,8 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         super.onPause()
         requireContext().unregisterReceiver(dtcNotificationsReceiver)
         handler.removeCallbacks(timeoutRunnable)
+
+        setLoadingState(false)
     }
 
     private fun handleDTCChangedNotification() {

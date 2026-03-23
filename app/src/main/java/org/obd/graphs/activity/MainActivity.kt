@@ -25,7 +25,6 @@ import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -59,7 +58,9 @@ const val LOG_TAG = "MainActivity"
 class MainActivity :
     AppCompatActivity(),
     EasyPermissions.PermissionCallbacks {
-    lateinit var lockScreenDialog: AlertDialog
+
+    internal val screenLockManager = ScreenLockManager(this)
+
     internal lateinit var backupManager: BackupManager
 
     internal var activityBroadcastReceiver =
@@ -157,7 +158,7 @@ class MainActivity :
             it.visibility = View.GONE
         }
 
-        setupLockScreenDialog()
+        screenLockManager.setup()
         supportActionBar?.hide()
         setupMetricsProcessors()
         backupManager = BackupManager(this)
@@ -189,6 +190,7 @@ class MainActivity :
         sendBroadcastEvent(MAIN_ACTIVITY_EVENT_DESTROYED)
     }
 
+
     private fun setupExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler())
     }
@@ -205,16 +207,6 @@ class MainActivity :
 
     private fun initCache() {
         cacheManager.initCache(cache)
-    }
-
-    private fun setupLockScreenDialog() {
-        AlertDialog.Builder(this).run {
-            setCancelable(false)
-
-            val dialogView: View = this@MainActivity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
-            setView(dialogView)
-            lockScreenDialog = create()
-        }
     }
 
     private fun setupStrictMode() {
