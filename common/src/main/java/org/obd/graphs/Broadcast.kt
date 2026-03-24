@@ -21,20 +21,47 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.os.Bundle
 
-private const val EXTRA_PARAM_NAME = "extra"
+private const val DEFAULT_EXTRA_PARAM_NAME = "default.extra"
 
-fun Intent.getExtraParam(): String = extras?.get(EXTRA_PARAM_NAME) as String
+fun Intent.getExtraParam(): String? = extras?.getString(DEFAULT_EXTRA_PARAM_NAME)
 
-fun sendBroadcastEvent(
-    actionName: String,
-    extra: String? = "",
-) {
+
+ fun sendBroadcastEvent(actionName: String, extras: Map<String,String>) {
+     getContext()?.run {
+         sendBroadcast(
+             Intent().apply {
+                 action = actionName
+                 extras.forEach { k, v ->
+                     putExtra(k, v)
+                 }
+             },
+         )
+     }
+ }
+
+
+ fun sendBroadcastEvent(actionName: String, bundle: Bundle?) {
+     getContext()?.run {
+         sendBroadcast(
+             Intent().apply {
+                 action = actionName
+                 bundle?.let {
+                     putExtras(bundle)
+                 }
+             },
+         )
+     }
+ }
+
+
+fun sendBroadcastEvent(actionName: String, extra: String? = "", ) {
     getContext()?.run {
         sendBroadcast(
             Intent().apply {
                 action = actionName
-                putExtra(EXTRA_PARAM_NAME, extra)
+                putExtra(DEFAULT_EXTRA_PARAM_NAME, extra)
             },
         )
     }

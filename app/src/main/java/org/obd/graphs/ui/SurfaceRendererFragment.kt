@@ -133,7 +133,12 @@ internal abstract class SurfaceRendererFragment(
                 when (intent?.action) {
                     SCREEN_LOCK_DIALOG_CANCELLED_EVENT -> {
                         if (isFragmentVisibleToTheUser()){
-                            Log.i(LOG_TAG,"User canceled current activity.....")
+                            Log.d(LOG_TAG,"User canceled current activity.")
+                            if (intent.extras?.getString("context") == "datalogger.connect"){
+                                withDataLogger {
+                                    stop()
+                                }
+                            }
                         }
                     }
 

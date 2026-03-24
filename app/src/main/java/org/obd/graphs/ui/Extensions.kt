@@ -54,7 +54,7 @@ fun Fragment.configureActionButton(query: Query) {
                     stop()
                 }
             } else {
-                sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
+                sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT, mapOf("context" to "datalogger.connect"))
                 withDataLogger {
                     Log.i("Fragment", "Start data logging")
                     start(query)

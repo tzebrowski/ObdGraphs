@@ -149,11 +149,11 @@ internal fun MainActivity.receive(intent: Intent?) {
         SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
         SCREEN_LOCK_PROGRESS_EVENT -> {
             var msg = intent.getExtraParam()
-            if (msg.isEmpty()) {
+            if (msg == null || msg.isEmpty()) {
                 msg = getText(R.string.dialog_screen_lock_message) as String
             }
             screenLockManager.show(msg){
-                sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT)
+                sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, intent.extras)
             }
         }
 
