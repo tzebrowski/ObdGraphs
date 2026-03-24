@@ -18,13 +18,10 @@ package org.obd.graphs.preferences.dtc
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.obd.graphs.R
@@ -48,18 +45,6 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     private lateinit var refreshButton: Button
     private lateinit var shareButton: Button
     private lateinit var recyclerView: RecyclerView
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val timeoutRunnable =
-        Runnable {
-
-            setLoadingState(false)
-
-            if (isAdded) {
-                setLoadingState(false)
-                Toast.makeText(requireContext(), "Timeout waiting for vehicle response", Toast.LENGTH_SHORT).show()
-            }
-        }
 
     private val dtcNotificationsReceiver =
         object : android.content.BroadcastReceiver() {
@@ -119,7 +104,6 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
         refreshButton.setOnClickListener {
             if (DataLoggerRepository.isRunning()) {
                 setLoadingState(true)
-                startTimeoutTimer()
                 withDataLogger {
                     scheduleDTCRead()
                 }
@@ -137,7 +121,6 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 ).setPositiveButton("Clear Codes") { dialog, _ ->
                     if (DataLoggerRepository.isRunning()) {
                         setLoadingState(true)
-                        startTimeoutTimer()
                         withDataLogger {
                             scheduleDTCCleanup()
                         }
@@ -164,11 +147,6 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
                 SCREEN_UNLOCK_PROGRESS_EVENT,
             )
         }
-
-    private fun startTimeoutTimer() {
-        handler.removeCallbacks(timeoutRunnable)
-        handler.postDelayed(timeoutRunnable, 5000)
-    }
 
     private fun shareDtcReport(dtcList: List<DiagnosticTroubleCode>) {
         val reportBuilder = StringBuilder()
@@ -268,14 +246,10 @@ internal class DiagnosticTroubleCodePreferenceDialogFragment : CoreDialogFragmen
     override fun onPause() {
         super.onPause()
         requireContext().unregisterReceiver(dtcNotificationsReceiver)
-        handler.removeCallbacks(timeoutRunnable)
-
         setLoadingState(false)
     }
 
     private fun handleDTCChangedNotification() {
-        handler.removeCallbacks(timeoutRunnable)
-
         setLoadingState(false)
 
         val newCodes = diagnosticTroubleCodes()
