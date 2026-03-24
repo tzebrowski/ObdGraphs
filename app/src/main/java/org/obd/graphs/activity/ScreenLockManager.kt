@@ -17,6 +17,7 @@
 package org.obd.graphs.activity
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.view.View
@@ -27,8 +28,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import org.obd.graphs.R
+import androidx.core.graphics.drawable.toDrawable
+import org.obd.graphs.ui.common.toast
 
-class ScreenLockManager(
+ class ScreenLockManager(
     private val activity: Activity,
 ) : DefaultLifecycleObserver {
     private var lockScreenDialog: AlertDialog? = null
@@ -42,6 +45,7 @@ class ScreenLockManager(
             setCancelable(false)
             val dialogView: View = activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
             val cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
+
             cancelButton.setOnClickListener {
                 dismiss()
                 onCancelAction?.invoke()
@@ -49,6 +53,8 @@ class ScreenLockManager(
 
             setView(dialogView)
             lockScreenDialog = create()
+
+            lockScreenDialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         }
     }
 
@@ -74,7 +80,7 @@ class ScreenLockManager(
             timeoutRunnable =
                 Runnable {
                     if (lockScreenDialog?.isShowing == true) {
-                        Toast.makeText(activity, "Timeout waiting for response", Toast.LENGTH_SHORT).show()
+                        toast(R.string.dialog_screen_lock_timeout_message)
                         dismiss()
                     }
                 }
