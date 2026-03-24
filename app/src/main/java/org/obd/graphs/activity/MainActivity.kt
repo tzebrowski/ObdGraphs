@@ -159,6 +159,8 @@ class MainActivity :
         }
 
         screenLockManager.setup()
+        lifecycle.addObserver(screenLockManager)
+
         supportActionBar?.hide()
         setupMetricsProcessors()
         backupManager = BackupManager(this)

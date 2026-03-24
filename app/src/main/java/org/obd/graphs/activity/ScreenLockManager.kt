@@ -17,9 +17,12 @@
 package org.obd.graphs.activity
 
 import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -31,11 +34,13 @@ class ScreenLockManager(
     private var lockScreenDialog: AlertDialog? = null
     private var onCancelAction: (() -> Unit)? = null
 
+    private val handler = Handler(Looper.getMainLooper())
+    private var timeoutRunnable: Runnable? = null
+
     fun setup() {
         AlertDialog.Builder(activity).run {
             setCancelable(false)
             val dialogView: View = activity.layoutInflater.inflate(R.layout.dialog_screen_lock, null)
-
             val cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
             cancelButton.setOnClickListener {
                 dismiss()
@@ -49,6 +54,7 @@ class ScreenLockManager(
 
     fun show(
         message: String,
+        timeoutMs: Long = 5000L,
         onCancel: (() -> Unit)? = null,
     ) {
         this.onCancelAction = onCancel
@@ -62,9 +68,22 @@ class ScreenLockManager(
                 dialog.show()
             }
         }
+
+        timeoutRunnable?.let { handler.removeCallbacks(it) }
+        if (timeoutMs > 0) {
+            timeoutRunnable =
+                Runnable {
+                    if (lockScreenDialog?.isShowing == true) {
+                        Toast.makeText(activity, "Timeout waiting for response", Toast.LENGTH_SHORT).show()
+                        dismiss()
+                    }
+                }
+            handler.postDelayed(timeoutRunnable!!, timeoutMs)
+        }
     }
 
     fun dismiss() {
+        timeoutRunnable?.let { handler.removeCallbacks(it) }
         if (lockScreenDialog?.isShowing == true) {
             lockScreenDialog?.dismiss()
         }
