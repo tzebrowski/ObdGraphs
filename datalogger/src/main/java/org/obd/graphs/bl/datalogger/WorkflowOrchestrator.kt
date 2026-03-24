@@ -77,7 +77,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
             status = WorkflowStatus.Connecting
 
-            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 

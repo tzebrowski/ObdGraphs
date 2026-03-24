@@ -21,12 +21,14 @@ import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.FabButtons
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.query.Query
+import org.obd.graphs.sendBroadcastEvent
 
-fun DialogFragment.withDataLogger(action: DataLoggerService.() -> Unit) {
+ fun DialogFragment.withDataLogger(action: DataLoggerService.() -> Unit) {
     org.obd.graphs.bl.datalogger
         .withDataLogger(requireContext(), action)
 }
@@ -52,6 +54,7 @@ fun Fragment.configureActionButton(query: Query) {
                     stop()
                 }
             } else {
+                sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
                 withDataLogger {
                     Log.i("Fragment", "Start data logging")
                     start(query)

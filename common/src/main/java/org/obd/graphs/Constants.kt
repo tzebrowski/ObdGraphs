@@ -16,8 +16,9 @@
  */
 package org.obd.graphs
 
-const val SCREEN_LOCK_PROGRESS_EVENT = "screen.block.event"
-const val SCREEN_UNLOCK_PROGRESS_EVENT = "screen.unlock.event"
+const val SCREEN_LOCK_DIALOG_CANCELLED_EVENT = "screen.lock.dialog.cancelled.event"
+const val SCREEN_LOCK_PROGRESS_EVENT = "screen.lock.dialog.loc.event"
+const val SCREEN_UNLOCK_PROGRESS_EVENT = "screen.lock.dialog.unlock.event"
 const val AA_EDIT_PREF_SCREEN = "pref.aa.edit"
 
 const val MAIN_ACTIVITY_EVENT_DESTROYED = "main_activity.on_destroy"

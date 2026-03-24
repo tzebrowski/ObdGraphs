@@ -47,8 +47,8 @@ import org.obd.graphs.ui.common.toast
             val cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
 
             cancelButton.setOnClickListener {
-                dismiss()
                 onCancelAction?.invoke()
+                dismiss()
             }
 
             setView(dialogView)
