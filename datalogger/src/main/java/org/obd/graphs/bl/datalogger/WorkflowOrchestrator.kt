@@ -71,8 +71,13 @@ internal class WorkflowOrchestrator internal constructor() {
     private var lifecycle = object : Lifecycle {
 
         override fun onConnecting() {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                Log.d(LOG_TAG, "Received onConnecting event.Start collecting process")
+            }
+
             status = WorkflowStatus.Connecting
-            Log.i(LOG_TAG, "Start collecting process")
+
+            sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT)
             sendBroadcastEvent(DATA_LOGGER_CONNECTING_EVENT)
         }
 
@@ -80,6 +85,10 @@ internal class WorkflowOrchestrator internal constructor() {
             dtc: Set<DiagnosticTroubleCode>,
             status: DiagnosticTroubleCodeClearStatus?
         ) {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                Log.d(LOG_TAG, "Received onDTCCompleted event.")
+            }
+
             VehicleCapabilitiesManager.updateDTC(dtc)
             sendBroadcastEvent(DATA_LOGGER_DTC_ACTION_COMPLETED)
         }
@@ -88,7 +97,10 @@ internal class WorkflowOrchestrator internal constructor() {
             routineCommand: RoutineCommand,
             status: RoutineExecutionStatus
         ) {
-            Log.i(LOG_TAG, "Routine: ${routineCommand.pid.description}  execution status: $status")
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                Log.d(LOG_TAG, "Received onRoutineCompleted event. Routine: ${routineCommand.pid.description}  execution status: $status")
+            }
+
             val event = when (status) {
                 RoutineExecutionStatus.ERROR -> ROUTINE_EXECUTION_FAILED_EVENT
                 RoutineExecutionStatus.NO_DATA -> ROUTINE_EXECUTION_NO_DATA_RECEIVED_EVENT
@@ -99,26 +111,32 @@ internal class WorkflowOrchestrator internal constructor() {
         }
 
         override fun onRunning(vehicleCapabilities: VehicleCapabilities) {
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                Log.d(LOG_TAG, "Received onRunning event. We are connected to the vehicle: $vehicleCapabilities")
+            }
+
+            sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             status = WorkflowStatus.Connected
-            Log.i(LOG_TAG, "We are connected to the vehicle: $vehicleCapabilities")
             VehicleCapabilitiesManager.updateCapabilities(vehicleCapabilities)
             sendBroadcastEvent(DATA_LOGGER_CONNECTED_EVENT)
-
             tripManager.startNewTrip(System.currentTimeMillis())
         }
 
         override fun onError(msg: String, tr: Throwable?) {
-            Log.i(
-                LOG_TAG,
-                "An error occurred during interaction with the device. Msg: $msg"
-            )
+            if (Log.isLoggable(LOG_TAG, Log.DEBUG)) {
+                Log.d(LOG_TAG, "Received onConnecting event. An error occurred during interaction with the device. Msg: $msg")
+            }
 
-            stop()
+            sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             sendBroadcastEvent(DATA_LOGGER_ERROR_EVENT)
+            stop()
         }
 
         override fun onStopped() {
+            sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
+
             status = WorkflowStatus.Disconnected
+
             Log.i(
                 LOG_TAG,
                 "Collecting process is completed."

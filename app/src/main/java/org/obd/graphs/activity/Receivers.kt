@@ -231,8 +231,6 @@ internal fun MainActivity.receive(intent: Intent?) {
                         PorterDuff.Mode.SRC_IN,
                     )
             }
-
-            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connecting)
         }
 
         PREFS_CONNECTION_TYPE_CHANGED_EVENT -> updateAdapterConnectionType()
