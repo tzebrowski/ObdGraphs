@@ -275,8 +275,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
     private lateinit var currentQuery: Query
 
-    fun getCurrentQuery(): Query? = if (::currentQuery.isInitialized) currentQuery else null
-
     fun updateQuery(query: Query) {
         if (isSameQuery(query)) {
             Log.w(LOG_TAG, "Received same query=${query.getIDs()}. Do not update.")
