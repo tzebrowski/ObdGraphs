@@ -23,7 +23,6 @@ import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -47,8 +46,8 @@ import org.obd.graphs.ui.common.toast
             val cancelButton = dialogView.findViewById<Button>(R.id.dialog_screen_lock_cancel_btn)
 
             cancelButton.setOnClickListener {
-                dismiss()
                 onCancelAction?.invoke()
+                dismiss()
             }
 
             setView(dialogView)
@@ -80,7 +79,7 @@ import org.obd.graphs.ui.common.toast
             timeoutRunnable =
                 Runnable {
                     if (lockScreenDialog?.isShowing == true) {
-                        toast(R.string.dialog_screen_lock_timeout_message)
+                        toast(R.string.pref_dialog_screen_lock_timeout_message)
                         dismiss()
                     }
                 }

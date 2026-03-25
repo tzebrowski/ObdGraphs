@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment
 import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
+import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
 import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.TOOLBAR_HIDE
 import org.obd.graphs.activity.TOOLBAR_SHOW
@@ -42,6 +43,7 @@ import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
+import org.obd.graphs.getContextExtraParam
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
@@ -130,6 +132,17 @@ internal abstract class SurfaceRendererFragment(
                 intent: Intent?,
             ) {
                 when (intent?.action) {
+                    SCREEN_LOCK_DIALOG_CANCELLED_EVENT -> {
+                        if (isFragmentVisibleToTheUser()) {
+                            Log.d(LOG_TAG, "User canceled current activity.")
+                            if (intent.getContextExtraParam() == "datalogger.connect") {
+                                withDataLogger {
+                                    stop()
+                                }
+                            }
+                        }
+                    }
+
                     DATA_LOGGER_AUTO_CONNECT_EVENT ->
                         if (isFragmentVisibleToTheUser() && !DataLoggerRepository.isRunning()) {
                             val screenBehavior =
@@ -178,13 +191,19 @@ internal abstract class SurfaceRendererFragment(
         surfaceController.renderFrame()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onPause() {
+        super.onPause()
+        requireContext().unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         registerReceiver(activity, broadcastReceiver) {
             it.addAction(DATA_LOGGER_CONNECTED_EVENT)
             it.addAction(DATA_LOGGER_STOPPED_EVENT)
             it.addAction(DATA_LOGGER_AUTO_CONNECT_EVENT)
+            it.addAction(SCREEN_LOCK_DIALOG_CANCELLED_EVENT)
         }
     }
 

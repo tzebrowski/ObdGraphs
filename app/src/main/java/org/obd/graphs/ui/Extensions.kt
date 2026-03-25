@@ -21,12 +21,17 @@ import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import org.obd.graphs.CONTEXT_EXTRA_PARAM_NAME
+import org.obd.graphs.MSG_EXTRA_PARAM_NAME
+import org.obd.graphs.R
+import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.activity.FabButtons
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
 import org.obd.graphs.bl.datalogger.DataLoggerService
 import org.obd.graphs.bl.query.Query
+import org.obd.graphs.sendBroadcastEvent
 
-fun DialogFragment.withDataLogger(action: DataLoggerService.() -> Unit) {
+ fun DialogFragment.withDataLogger(action: DataLoggerService.() -> Unit) {
     org.obd.graphs.bl.datalogger
         .withDataLogger(requireContext(), action)
 }
@@ -52,6 +57,10 @@ fun Fragment.configureActionButton(query: Query) {
                     stop()
                 }
             } else {
+                sendBroadcastEvent(SCREEN_LOCK_PROGRESS_EVENT,
+                    mapOf(
+                        MSG_EXTRA_PARAM_NAME to getText(R.string.pref_dialog_screen_lock_logger_connect_message) as String,
+                        CONTEXT_EXTRA_PARAM_NAME to "datalogger.connect"))
                 withDataLogger {
                     Log.i("Fragment", "Start data logging")
                     start(query)

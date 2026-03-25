@@ -45,6 +45,7 @@ import org.obd.graphs.R
 import org.obd.graphs.REQUEST_LOCATION_PERMISSIONS
 import org.obd.graphs.REQUEST_NOTIFICATION_PERMISSIONS
 import org.obd.graphs.REQUEST_PERMISSIONS_BT
+import org.obd.graphs.SCREEN_LOCK_DIALOG_CANCELLED_EVENT
 import org.obd.graphs.SCREEN_LOCK_PROGRESS_EVENT
 import org.obd.graphs.SCREEN_OFF_EVENT
 import org.obd.graphs.SCREEN_ON_EVENT
@@ -72,13 +73,14 @@ import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_IDLING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_RUNNING
 import org.obd.graphs.getContext
-import org.obd.graphs.getExtraParam
+import org.obd.graphs.getMessageExtraParam
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
 import org.obd.graphs.preferences.profile.PROFILE_NAME_CHANGED_EVENT
 import org.obd.graphs.profile.PROFILE_CHANGED_EVENT
 import org.obd.graphs.registerReceiver
+import org.obd.graphs.sendBroadcastEvent
 import org.obd.graphs.ui.common.COLOR_CARDINAL
 import org.obd.graphs.ui.common.COLOR_PHILIPPINE_GREEN
 import org.obd.graphs.ui.common.toast
@@ -145,12 +147,15 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
+
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            var msg = intent.getExtraParam()
-            if (msg.isEmpty()) {
-                msg = getText(R.string.dialog_screen_lock_message) as String
+            var msg = intent.getMessageExtraParam()
+            if (msg == null || msg.isEmpty()) {
+                msg = getText(R.string.pref_dialog_screen_lock_message) as String
             }
-            screenLockManager.show(msg)
+            screenLockManager.show(msg){
+                sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, intent.extras)
+            }
         }
 
         AA_EDIT_PREF_SCREEN -> navigateToPreferencesScreen("pref.aa")
@@ -231,8 +236,6 @@ internal fun MainActivity.receive(intent: Intent?) {
                         PorterDuff.Mode.SRC_IN,
                     )
             }
-
-            toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connecting)
         }
 
         PREFS_CONNECTION_TYPE_CHANGED_EVENT -> updateAdapterConnectionType()
