@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -27,10 +27,13 @@ const val MSG_EXTRA_PARAM_NAME = "default.extra"
 const val CONTEXT_EXTRA_PARAM_NAME = "context.extra"
 
 fun Intent.getMessageExtraParam(): String? = extras?.getString(MSG_EXTRA_PARAM_NAME)
+
 fun Intent.getContextExtraParam(): String? = extras?.getString(CONTEXT_EXTRA_PARAM_NAME)
 
-
-fun sendBroadcastEvent(actionName: String, extras: Map<String, String>) {
+fun sendBroadcastEvent(
+    actionName: String,
+    extras: Map<String, String>,
+) {
     getContext()?.run {
         sendBroadcast(
             Intent().apply {
@@ -43,8 +46,10 @@ fun sendBroadcastEvent(actionName: String, extras: Map<String, String>) {
     }
 }
 
-
-fun sendBroadcastEvent(actionName: String, bundle: Bundle?) {
+fun sendBroadcastEvent(
+    actionName: String,
+    bundle: Bundle?,
+) {
     getContext()?.run {
         sendBroadcast(
             Intent().apply {
@@ -57,8 +62,10 @@ fun sendBroadcastEvent(actionName: String, bundle: Bundle?) {
     }
 }
 
-
-fun sendBroadcastEvent(actionName: String, extra: String? = "") {
+fun sendBroadcastEvent(
+    actionName: String,
+    extra: String? = "",
+) {
     getContext()?.run {
         sendBroadcast(
             Intent().apply {
