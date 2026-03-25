@@ -73,7 +73,7 @@ import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_DECELERATING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_IDLING
 import org.obd.graphs.bl.extra.EVENT_VEHICLE_STATUS_VEHICLE_RUNNING
 import org.obd.graphs.getContext
-import org.obd.graphs.getExtraParam
+import org.obd.graphs.getMessageExtraParam
 import org.obd.graphs.preferences.PREFS_CONNECTION_TYPE_CHANGED_EVENT
 import org.obd.graphs.preferences.Prefs
 import org.obd.graphs.preferences.isEnabled
@@ -147,10 +147,11 @@ internal fun MainActivity.receive(intent: Intent?) {
         }
 
         SCREEN_UNLOCK_PROGRESS_EVENT -> screenLockManager.dismiss()
+
         SCREEN_LOCK_PROGRESS_EVENT -> {
-            var msg = intent.getExtraParam()
+            var msg = intent.getMessageExtraParam()
             if (msg == null || msg.isEmpty()) {
-                msg = getText(R.string.dialog_screen_lock_message) as String
+                msg = getText(R.string.pref_dialog_screen_lock_message) as String
             }
             screenLockManager.show(msg){
                 sendBroadcastEvent(SCREEN_LOCK_DIALOG_CANCELLED_EVENT, intent.extras)
