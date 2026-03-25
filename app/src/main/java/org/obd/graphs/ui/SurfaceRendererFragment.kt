@@ -31,7 +31,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import org.obd.graphs.CONTEXT_EXTRA_PARAM_NAME
 import org.obd.graphs.DATA_LOGGER_AUTO_CONNECT_EVENT
 import org.obd.graphs.R
 import org.obd.graphs.RenderingThread
