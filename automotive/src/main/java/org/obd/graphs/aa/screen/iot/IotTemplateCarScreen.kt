@@ -307,7 +307,10 @@ internal class IotTemplateCarScreen(
         )
         title.append("\n")
         val pid = metric.pid
-        title.append("· min:${metric.min.format(pid)} avg: ${metric.mean.format(pid)} max: ${metric.max.format(pid)}")
+        val min = carContext.getString(org.obd.graphs.aa.R.string.aa_stat_min)
+        val avg = carContext.getString(org.obd.graphs.aa.R.string.aa_stat_avg)
+        val max = carContext.getString(org.obd.graphs.aa.R.string.aa_stat_max)
+        title.append("· $min:${metric.min.format(pid)} $avg: ${metric.mean.format(pid)} $max: ${metric.max.format(pid)}")
         return SpannableString(title)
     }
 

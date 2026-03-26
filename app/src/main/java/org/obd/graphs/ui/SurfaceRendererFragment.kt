@@ -210,12 +210,18 @@ internal abstract class SurfaceRendererFragment(
     override fun onDestroy() {
         super.onDestroy()
         renderingThread.stop()
-        screenBehaviorController.recycle()
+        if (::screenBehaviorController.isInitialized) {
+            screenBehaviorController.recycle()
+        }
     }
 
     override fun onDetach() {
         super.onDetach()
-        activity?.unregisterReceiver(broadcastReceiver)
+        try {
+            activity?.unregisterReceiver(broadcastReceiver)
+        } catch (_: IllegalArgumentException) {
+            // Receiver was not registered
+        }
         renderingThread.stop()
     }
 

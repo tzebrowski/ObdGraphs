@@ -43,6 +43,8 @@ import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.pid.ValueType
+import org.obd.metrics.translation.JsonFileTranslationProvider
+import org.obd.metrics.translation.TranslationProvider
 import java.util.*
 
 const val JS_ENGINE_NAME = "rhino"
@@ -320,10 +322,36 @@ internal class WorkflowOrchestrator internal constructor() {
         .pids(
             pids()
         )
+        .translationProvider(createTranslationProvider())
         .observer(metricsObserver)
         .lifecycle(lifecycle)
         .lifecycle(metricsObserver)
         .initialize()
+
+    private fun createTranslationProvider(): TranslationProvider {
+        val locale = Locale.getDefault().language
+        Log.i(LOG_TAG, "Creating TranslationProvider for locale: $locale")
+        return JsonFileTranslationProvider(locale)
+    }
+
+    fun updateTranslations(locale: String) {
+        Log.i(LOG_TAG, "Updating PID translations for locale: $locale")
+        val provider = if (locale.isNotEmpty()) JsonFileTranslationProvider(locale) else JsonFileTranslationProvider("en")
+        workflow.updatePidRegistry(
+            pids(),
+            provider
+        )
+
+        workflow.pidRegistry.findAll().forEach { p ->
+            p.deserialize()?.let {
+                p.formula = it.formula
+                p.alert.lowerThreshold = it.alert.lowerThreshold
+                p.alert.upperThreshold = it.alert.upperThreshold
+            }
+        }
+
+        registerGPSPids(workflow.pidRegistry)
+    }
 
     private fun updateModulesRegistry() = runAsync {
         workflow.updatePidRegistry(

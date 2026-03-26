@@ -754,4 +754,34 @@
         <item name="CAN_11" tools:ignore="Typos">CAN_11</item>
         <item name="CAN_29">CAN_29</item>
     </string-array>
+
+    <!-- Extracted from layouts -->
+    <string name="dtc.freeze_frame_data">UDS Freeze Frame Data</string>
+    <string name="dtc.action_google_issue">Google Issue</string>
+    <string name="dtc.action_copy">Copy</string>
+    <string name="dtc.action_refresh">Refresh</string>
+    <string name="dtc.action_clear_codes">Clear Codes</string>
+    <string name="dtc.action_share">Share</string>
+    <string name="dialog.screen_lock.cancel">Cancel</string>
+    <string name="gps.title">GPS DIAGNOSTICS</string>
+    <string name="gps.status_label">Status</string>
+    <string name="gps.waiting_for_fix">Waiting for fix&#8230;</string>
+    <string name="gps.accuracy_label">Accuracy (Error Radius)</string>
+    <string name="gps.latitude">Latitude</string>
+    <string name="gps.longitude">Longitude</string>
+    <string name="gps.satellites_label">Satellites (Visible/Used)</string>
+    <string name="gps.debug_log">Debug Log</string>
+    <string name="gps.initializing">Initializing&#8230;</string>
+
+    <string-array name="pref.language_names">
+        <item>System default</item>
+        <item>English</item>
+        <item>Polski</item>
+    </string-array>
+
+    <string-array name="pref.language_codes">
+        <item></item>
+        <item>en</item>
+        <item>pl</item>
+    </string-array>
 </resources>

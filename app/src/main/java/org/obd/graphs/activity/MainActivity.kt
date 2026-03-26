@@ -33,6 +33,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import org.obd.graphs.BuildConfig
 import org.obd.graphs.ExceptionHandler
+import org.obd.graphs.LanguageManager
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_DESTROYED
 import org.obd.graphs.MAIN_ACTIVITY_EVENT_PAUSE
 import org.obd.graphs.Network
@@ -134,6 +135,16 @@ class MainActivity :
         setActivityContext(this)
         setPreferencesContext(this)
 
+        val storedLang = LanguageManager.getStoredLanguage(this)
+        if (storedLang.isNotEmpty()) {
+            val locale = java.util.Locale.forLanguageTag(storedLang)
+            java.util.Locale.setDefault(locale)
+            val config = android.content.res.Configuration(resources.configuration)
+            config.setLocale(locale)
+            @Suppress("DEPRECATION")
+            resources.updateConfiguration(config, resources.displayMetrics)
+        }
+
         super.onCreate(savedInstanceState)
 
         initCache()
@@ -166,7 +177,12 @@ class MainActivity :
         backupManager = BackupManager(this)
         displayAppSignature(this)
 
-        navigateToLastVisitedScreen()
+        if (intent.getBooleanExtra("navigate_to_prefs", false)) {
+            intent.removeExtra("navigate_to_prefs")
+            navigateToPreferencesScreen("pref.root")
+        } else {
+            navigateToLastVisitedScreen()
+        }
         validatePermissions()
         AutoConnect.schedule(this)
 

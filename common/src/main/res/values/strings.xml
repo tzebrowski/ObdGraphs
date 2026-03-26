@@ -45,4 +45,20 @@ To provide full functionality, please allow the following in the next steps:<br/
     <string name="permission.onboarding_btn_positive">Begin Setup</string>
     <string name="permission.onboarding_btn_negative">Later</string>
 
+    <string name="language_selection_title">Select Language</string>
+    <string name="pref.language.title">Language</string>
+    <string name="pref.language.summary">Choose the application language</string>
+
+    <string-array name="language_names">
+        <item>System default</item>
+        <item>English</item>
+        <item>Polski</item>
+    </string-array>
+
+    <string-array name="language_codes">
+        <item></item>
+        <item>en</item>
+        <item>pl</item>
+    </string-array>
+
 </resources>

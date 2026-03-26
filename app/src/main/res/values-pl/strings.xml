@@ -1,0 +1,572 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="nav_open">Otwórz</string>
+    <string name="nav_close">Zamknij</string>
+
+    <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> górny margines etykiety</string>
+    <string name="pref.performance.screen_top_margin">Górny margines</string>
+
+    <string name="pref.dialog.screen.lock.logger_connect.message">Proszę czekać. Połączenie z adapterem może chwilę potrwać....</string>
+    <string name="pref.dialog.screen.lock.timeout_message">Przekroczono czas oczekiwania na odpowiedź</string>
+    <string name="pref.dialog.screen.lock.message">Proszę czekać. To może chwilę potrwać....</string>
+    <string name="pref.experimental_switch_network_enabled">To jest funkcja EKSPERYMENTALNA, kontrolowana przez flagę FF_SWITCH_NETWORK_ENABLED</string>
+    <string name="pref.experimental_result_cache_enabled">To jest funkcja EKSPERYMENTALNA, kontrolowana przez flagę FF_RESULT_CACHE_ENABLED</string>
+    <string name="pref.experimental_read_external_storage_enabled">To jest funkcja EKSPERYMENTALNA, kontrolowana przez flagę FF_PID_EXTERNAL_STORAGE_ENABLED</string>
+
+    <string name="permissions.missing.bt_msg">Przyznanie uprawnień Bluetooth jest wymagane do nawiązania połączenia z adapterem BT.</string>
+
+    <!-- app_name is set per product flavor (giulia, giuliaAA, etc.) -->
+    <string name="navigation.title_gauge">Gauge</string>
+    <string name="navigation.title_preferences">Ustawienia</string>
+    <string name="navigation.title_dashboard">Dashboard</string>
+
+    <string name="navigation.title_giulia">Giulia</string>
+    <string name="navigation.title_drag_racing">Drag Racing</string>
+    <string name="navigation.title_trip_info">Informacje o trasie</string>
+    <string name="navigation.title_performance">Wydajność</string>
+
+    <string name="navigation.title_graph">Wykres</string>
+    <string name="navigation.title_aa">Android Auto</string>
+    <string name="navigation.tooltip_gauge">Widok Gauge</string>
+    <string name="navigation.tooltip_preferences">Widok ustawień</string>
+    <string name="navigation.tooltip_dashboard">Widok Dashboard</string>
+    <string name="navigation.tooltip_giulia_dashboard">Widok Giulia dashboard</string>
+
+    <string name="navigation.tooltip_graph">Widok wykresu</string>
+
+
+    <string name="pid.metric_name">Metryka</string>
+    <string name="pid.value">Wartość</string>
+    <string name="pid.value_no_data">Brak danych</string>
+    <string name="pid.value_min">Min</string>
+    <string name="pid.value_avg">Średnia</string>
+    <string name="pid.value_max">Maks</string>
+    <string name="pid.mode">Tryb</string>
+
+    <string name="context_menu.giulia_parameters_id_to_display">Dostosuj widoczne PID Giulia</string>
+    <string name="context_menu.gauge_parameters_id_to_display">Dostosuj widoczne PID Gauge</string>
+
+    <string name="context_menu.parameters_id_to_query">Zarządzaj ustawieniami OBD2 PID</string>
+    <string name="context_menu.parameters_id_to_display">Dostosuj widoczne OBD2 PID</string>
+    <string name="context_menu.view_configuration">Ustawienia bieżącego widoku</string>
+    <string name="context_menu.profiles">Profile pojazdów</string>
+    <string name="context_menu.about">O aplikacji</string>
+    <string name="context_menu.custom_action_1">Niestandardowe</string>
+    <string name="context_menu.drag_racing">Widok Drag Racing</string>
+    <string name="context_menu.trip_info">Widok informacji o trasie</string>
+    <string name="context_menu.performance">Widok wydajności</string>
+    <string name="context_menu.extra_views">Dodatkowe widoki</string>
+
+
+    <string name="pref.displayed_parameter_ids">Dostosuj widoczne OBD2 PID</string>
+    <string name="pref.displayed_parameter_ids_summary">Wybierz czujniki OBD2 lub PID, które chcesz wyświetlać na ekranie</string>
+
+
+    <string name="pref.aa.performance.displayed_parameter_ids">Dostosuj zbierane i widoczne OBD2 PID</string>
+    <string name="pref.aa.performance.displayed_parameter_ids_summary">Wybierz czujniki OBD2 lub PID, które chcesz widzieć. <font color="#C22636">Uwaga: Diagnostyczne PID (takie jak RPM, Spark Advance, MFA) są rejestrowane tylko do zbierania danych i nie będą widoczne na desce rozdzielczej.</font></string>
+    <string name="pref.pids.edit">Modyfikuj indywidualne progi alertów</string>
+    <string name="pref.pids.edit_summary">Dostosuj konfigurację poszczególnych PID, w tym ustawianie progów alertów.</string>
+
+    <string name="pref.pids_generic_high">Wybierz szybko aktualizowane dane OBD2 do wyświetlenia</string>
+    <string name="pref.pids_generic_high_summary">Wybierz czujniki OBD2 lub PID o wysokiej częstotliwości, które chcesz pobierać z ECU.</string>
+    <string name="pref.pids_generic_low">Wybierz wolno aktualizowane dane OBD2 do wyświetlenia</string>
+    <string name="pref.pids_generic_low_summary">Wybierz czujniki OBD2 lub PID o niskiej częstotliwości, które chcesz pobierać z ECU.</string>
+
+    <string name="prefs.adapter_batch_mode_01_batch_size">Rozmiar paczki dla trybu 01</string>
+    <string name="prefs.adapter_batch_mode_22_batch_size">Rozmiar paczki dla trybu 22</string>
+    <string name="pref.adapter_batch_enabled">Włącz tryb wsadowy</string>
+    <string name="pref.adapter_batch_strict_validation_enabled">Włącz ścisłą walidację wiadomości</string>
+    <string name="pref.adapter_batch_strict_validation_enabled_summary">Ignoruje odpowiedzi OBD2 z błędami strukturalnymi.</string>
+
+    <string name="pref.adapter_stn_enabled">Włącz rozszerzenia STN</string>
+    <string name="pref.adapter_stn_ignore_pids_priorities">Ignoruj priorytety PID (STN)</string>
+    <string name="pref.adapter_stn_ignore_pids_priorities_summary">Ignoruje indywidualne priorytety PID, łącząc szybkie i wolne PID w jedno zapytanie do ECU. Może to poprawić wydajność w niektórych przypadkach.</string>
+
+    <string name="pref.adapter_stn_enabled_summary">Włącz tylko jeśli używasz adaptera opartego na STNxx - może to zwiększyć wydajność dzięki użyciu komend specyficznych dla układu. Użycie z innymi adapterami może prowadzić do błędów </string>
+    <string name="pref.adapter_cache_result_enabled">Włącz cache wyników</string>
+    <string name="pref.adapter_adaptive_enabled">Włącz adaptacyjny timeout</string>
+    <string name="pref.adapter_adaptive_enabled_summary">Po włączeniu oprogramowanie będzie próbowało wstawiać optymalne opóźnienia między kolejnymi komendami w celu poprawy wydajności</string>
+    <string name="pref.adapter_reconnect">Automatycznie ponów połączenie z adapterem OBD2 w przypadku błędu połączenia.</string>
+    <string name="pref.adapter_reconnect_summary">Automatyczne przywracanie połączenia OBD2 w razie utraty</string>
+
+    <string name="pref.adapter_reconnect_max_retry">Maksymalna liczba prób ponownego połączenia</string>
+    <string name="pref.adapter.query.view_individual.enabled">Pobieraj dane na podstawie tego, co jest wyświetlane na bieżącym ekranie</string>
+    <string name="pref.adapter.query.view_individual.enabled_summary">Pobieraj z ECU tylko PID wyświetlane na bieżącym ekranie, aby zwiększyć wydajność - zalecane dla wolnych adapterów. Uwaga: wyłącza to odpytywanie PID o wysokiej/niskiej częstotliwości.</string>
+    <string name="pref.adapter.query.view_individual.dialog_disabled_warning">To ustawienie jest wyłączone, ponieważ włączono indywidualną strategię zapytań.</string>
+
+    <string name="pref.adapter.collect.gps.enabled_summary">Zbieraj i rejestruj współrzędne GPS wraz z danymi pojazdu. Pamiętaj, że usługi <b>lokalizacji</b> muszą być włączone, aby zbieranie danych działało.</string>
+    <string name="pref.adapter.collect.gps.enabled_title">Włącz rejestrowanie GPS</string>
+
+    <string name="pref.adapter.collect.gps.enabled.dialog_title">Włączyć rejestrowanie GPS?</string>
+    <string name="pref.adapter.collect.gps.enabled.dialog_summary">Włączenie rejestrowania GPS znacznie zwiększa zużycie baterii. Czy na pewno chcesz kontynuować?</string>
+
+    <string name="pref.connection.auto_connect.category">Automatyczne łączenie</string>
+    <string name="pref.connection.category">Połączenie z adapterem OBD2</string>
+    <string name="pref.connection.category.summary">Ta sekcja zawiera ustawienia związane z typem adaptera. Tutaj możesz skonfigurować parametry Wi-Fi lub Bluetooth adaptera.</string>
+
+    <string name="pref.connection.connection_type_dialog">Wybierz typ połączenia adaptera OBD</string>
+    <string name="pref.connection.connection_type"><b><font color='#01804F'>Typ połączenia adaptera OBD</font></b></string>
+    <string name="pref.connection.connection_timeout">Limit czasu połączenia</string>
+
+    <string name="pref.adapter_id">Dostępne urządzenia Bluetooth</string>
+    <string name="pref.gauge.number_of_columns">Liczba kolumn</string>
+    <string name="pref.gauge.font_size">Rozmiar czcionki</string>
+
+
+    <string name="pref.gauge_display_scrollbar">Wyświetl pasek przewijania</string>
+    <string name="pref.gauge_display_refresh_rate">Częstotliwość odświeżania wyświetlania (PID/sekundę)</string>
+    <string name="pref.gauge_display_scale">Skala wyświetlania OBD2 PID/Czujników</string>
+    <string name="pref.gauge_background_color">Kolor tła</string>
+    <string name="pref.toolbar.toggle_double_click">Przełącz pasek narzędzi podwójnym kliknięciem</string>
+
+    <string name="pref.adapter.diagnostic_request_id.mapping.category">Konfiguracja mapowania identyfikatora żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.select_key">Wybierz klucz identyfikatora żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.set_new_value">Ustaw wartość identyfikatora żądania diagnostycznego dla wybranego klucza</string>
+    <string name="pref.adapter.diagnostic_request_id.set_key">Zaktualizuj klucz identyfikatora żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.add_new_value">Dodaj nową wartość identyfikatora żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.values.category">Konfiguracja wartości identyfikatora żądania diagnostycznego</string>
+    <string name="pref.adapter.diagnostic_request_id.keys.category">Konfiguracja kluczy identyfikatora żądania diagnostycznego</string>
+
+    <string name="pref.pids.group.enableCapabilitiesReadings">Włącz odczyt obsługiwanych OBD2 PID/Czujników</string>
+    <string name="pref.pids.group.enableMetadataReadings">Włącz odczyt metadanych pojazdu</string>
+    <string name="pref.pids.group.dtc.available_message">DTC są dostępne. Sprawdź sekcję DTC</string>
+
+    <string name="pref.pids.group.enableMetadataReadings_summary">Po włączeniu metadane pojazdu będą pobierane podczas sesji z ECU.</string>
+    <string name="pref.pids.group.enableCapabilitiesReadings_summary">Włączenie tej opcji pozwoli na odczyt obsługiwanych OBD2 PID/Czujników podczas sesji z ECU.</string>
+
+    <string name="pref.screen.fps">Częstotliwość odświeżania ekranu (FPS)</string>
+
+    <!-- Android Auto -->
+    <string name="pref.aa.virtual_screens.screen.max_items">Maks. widocznych metryk</string>
+    <string name="pref.aa.giulia.displayed_parameter_ids_summary">Wybierz OBD2 PID/Czujniki dla ekranu <b>Giulia</b></string>
+    <string name="pref.aa.gauge.displayed_parameter_ids_summary">Wybierz OBD2 PID/Czujniki dla ekranu <b>Gauge</b></string>
+
+    <string name="pref.aa.gauge.displayed_parameter_ids">Dostosuj widoczne OBD2 PID <b>Gauge</b></string>
+    <string name="pref.aa.giulia.displayed_parameter_ids">Dostosuj widoczne OBD2 PID <b>Giulia</b></string>
+
+
+    <string name="pref.aa.profile_1.displayed_parameter_ids">Edytuj wirtualny ekran 1</string>
+    <string name="pref.aa.profile_2.displayed_parameter_ids">Edytuj wirtualny ekran 2</string>
+    <string name="pref.aa.profile_3.displayed_parameter_ids">Edytuj wirtualny ekran 3</string>
+    <string name="pref.aa.profile_4.displayed_parameter_ids">Edytuj wirtualny ekran 4</string>
+    <string name="pref.aa.theme.progress_bar_color">Kolor paska postępu</string>
+    <string name="pref.aa.theme.divider_color">Kolor separatora</string>
+    <string name="pref.aa.theme.current_value_color">Kolor bieżącej wartości</string>
+    <string name="pref.aa.theme.inalert_value_color">Kolor wartości alertu</string>
+    <string name="pref.aa.theme.virtual_screen_color">Kolor przycisków wirtualnego ekranu</string>
+
+    <string name="pref.aa.virtual_screens.split_pids_labels.category">Podziel etykiety PID</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.category.summary">Włącz opcję wyświetlania etykiet PID w dwóch liniach na wirtualnym ekranie.</string>
+
+    <string name="pref.aa.virtual_screens.split_pids_labels.1">Podziel etykiety PID na 2 linie dla ekranu 1</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.2">Podziel etykiety PID na 2 linie dla ekranu 2</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.3">Podziel etykiety PID na 2 linie dla ekranu 3</string>
+    <string name="pref.aa.virtual_screens.split_pids_labels.4">Podziel etykiety PID na 2 linie dla ekranu 4</string>
+
+
+    <string name="pref.aa.surface.fps.display_status">Wyświetl częstotliwość odświeżania jednostki głównej (FPS)</string>
+
+    <string name="pref.aa.renderer_type">Typ ekranu</string>
+    <string name="pref.aa.renderer.gauge.progress_type">Typ paska postępu ekranu <b><i>Gauge</i></b></string>
+    <string name="pref.aa.renderer.gauge.top_offset">Górny margines etykiety ekranu <b><i>Gauge</i></b></string>
+    <string name="pref.aa.renderer.gauge.top_offset.1">Górny margines etykiety ekranu <b><i>Gauge</i></b> dla ekranu 1</string>
+    <string name="pref.aa.renderer.gauge.top_offset.2">Górny margines etykiety ekranu <b><i>Gauge</i></b> dla ekranu 2</string>
+    <string name="pref.aa.renderer.gauge.top_offset.3">Górny margines etykiety ekranu <b><i>Gauge</i></b> dla ekranu 3</string>
+    <string name="pref.aa.renderer.gauge.top_offset.4">Górny margines etykiety ekranu <b><i>Gauge</i></b> dla ekranu 4</string>
+
+    <string name="pref.aa.renderer.gauge.top_offset_summary">Wybierz górny margines etykiety dla każdego wirtualnego ekranu</string>
+
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.category">Liczba kolumn</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.category.summary">Wybierz liczbę kolumn dla każdego wirtualnego ekranu</string>
+
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.1">Liczba kolumn dla ekranu 1</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.2">Liczba kolumn dla ekranu 2</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.3">Liczba kolumn dla ekranu 3</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.4">Liczba kolumn dla ekranu 4</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.5">Liczba kolumn dla ekranu 5</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.6">Liczba kolumn dla ekranu 6</string>
+    <string name="pref.aa.virtual_screens.number_of_items_in_column.7">Liczba kolumn dla ekranu 7</string>
+
+    <string name="pref.aa.gauge.category">Gauge</string>
+
+    <string name="pref.aa.virtual_screens.category">Giulia</string>
+
+    <string name="pref.aa.virtual_screens.visibility.category">Widoczność</string>
+    <string name="pref.aa.virtual_screens.visibility.category.summary">Wybierz ile wirtualnych ekranów ma być renderowanych</string>
+    <string name="pref.aa.virtual_screens.visibility.1">Włącz ekran 1</string>
+    <string name="pref.aa.virtual_screens.visibility.2">Włącz ekran 2</string>
+    <string name="pref.aa.virtual_screens.visibility.3">Włącz ekran 3</string>
+    <string name="pref.aa.virtual_screens.visibility.4">Włącz ekran 4</string>
+
+    <string name="pref.aa.virtual_screens.font_size.category">Rozmiar czcionki</string>
+    <string name="pref.aa.gauge.virtual_screens.font_size.category">Rozmiar czcionki ekranu Gauge</string>
+    <string name="pref.aa.giulia.virtual_screens.font_size.category">Rozmiar czcionki ekranu Giulia</string>
+
+    <string name="pref.aa.virtual_screens.font_size.category.summary">Wybierz rozmiar czcionki dla każdego wirtualnego ekranu</string>
+    <string name="pref.aa.font_size.1">Rozmiar czcionki do wyświetlania OBD2 PID/Czujników na ekranie 1.</string>
+    <string name="pref.aa.font_size.2">Rozmiar czcionki do wyświetlania OBD2 PID/Czujników na ekranie 2.</string>
+    <string name="pref.aa.font_size.3">Rozmiar czcionki do wyświetlania OBD2 PID/Czujników na ekranie 3.</string>
+    <string name="pref.aa.font_size.4">Rozmiar czcionki do wyświetlania OBD2 PID/Czujników na ekranie 4.</string>
+    <string name="pref.aa.font_size.5">Rozmiar czcionki do wyświetlania OBD2 PID/Czujników na ekranie 5.</string>
+    <string name="pref.aa.font_size.6">Rozmiar czcionki do wyświetlania OBD2 PID/Czujników na ekranie 6.</string>
+    <string name="pref.aa.font_size.7">Rozmiar czcionki do wyświetlania OBD2 PID/Czujników na ekranie 7.</string>
+    <string name="pref.aa.display_pid_history">Pokaż zebrane minimalne i maksymalne wartości PID</string>
+    <string name="pref.aa.display_pid_scale">Wyświetl skalę PID</string>
+
+    <string name="pref.aa.screen.load_last_visited.enabled">Automatycznie ładuj ostatnio używany ekran.</string>
+    <string name="pref.aa.display_status_panel">Wyświetl panel statusu</string>
+    <string name="pref.aa.connect_dialog.enabled">Wyświetl okno dialogowe połączenia podczas nawiązywania połączenia z adapterem OBD2</string>
+    <string name="pref.aa.virtual_screens.sort_order.enabled">Włącz sortowanie PID</string>
+    <string name="pref.aa.virtual_screens.sort_order.enabled_summary">To jest funkcja EKSPERYMENTALNA.\nPozwala zdefiniować kolejność PID na ekranie za pomocą przeciągania i upuszczania na liście wyboru PID. Po włączeniu tej opcji wymagane jest ponowne uruchomienie aplikacji.</string>
+
+    <string name="pref.aa.title">Android Auto</string>
+
+    <string name="pref.aa.debug_category">Debugowanie</string>
+    <string name="pref.aa.general_category">Ogólne ustawienia aplikacji</string>
+
+    <string name="pref.aa.general_views_category">Ogólne ustawienia widoków </string>
+
+
+    <string name="pref.aa.performance.category">Ekran wydajności</string>
+
+    <string name="pref.aa.performance.brake_boosting.enabled">Włącz asystenta Brake-Boosting</string>
+    <string name="pref.aa.performance.brake_boosting.enabled_summary">Po włączeniu asystent brake boosting wyświetla pełnoekranowe wskaźniki pozycji pedału gazu i momentu obrotowego skrzyni biegów. Uwaga: Do działania tej funkcji wymagane jest zbieranie PID prędkości pojazdu.</string>
+
+    <string name="pref.aa.performance.enabled">Włącz ekran wydajności</string>
+    <string name="pref.aa.performance.enabled_summary">Aktywuje ekran wydajności, który wyświetla predefiniowany zestaw metryk dostosowany do silników 2.0 GME.</string>
+    <string name="pref.aa.performance.select_pids">Wybierz OBD2 PID wydajności</string>
+
+
+    <string name="pref.aa.trip_info.category">Ekran informacji o trasie</string>
+    <string name="pref.aa.trip_info.enabled">Włącz ekran informacji o trasie</string>
+    <string name="pref.aa.trip_info.enabled_summary">Aktywuje ekran informacji o trasie, który wyświetla predefiniowany zestaw metryk dostosowany do silników 2.0 GME.</string>
+    <string name="pref.aa.trip_info.select_pids">Wybierz OBD2 PID informacji o trasie</string>
+
+    <string name="pref.aa.routines.category">Procedury</string>
+    <string name="pref.aa.routines.enabled">Włącz ekran procedur</string>
+    <string name="pref.aa.routines.enabled.enabled_summary">Aktywuje ekran procedur, który umożliwia wykonywanie określonych funkcji ECU. Korzystanie z tej funkcji wiąże się z ryzykiem i odbywa się na własną odpowiedzialność.</string>
+    <string name="pref.aa.performance_meter.category">Drag Racing</string>
+    <string name="pref.aa.performance_meter.metrics_read_freq">Żądana częstotliwość odczytu danych OBD2</string>
+    <string name="pref.aa.performance_meter.display_frequency">Wyświetl częstotliwość odczytu danych OBD2</string>
+    <string name="pref.aa.performance_meter.display_vehicle_speed_measurement">Wyświetla prędkość pojazdu odpowiadającą zarejestrowanemu pomiarowi.</string>
+    <string name="pref.aa.performance_meter.shift_lights_enabled">Włącz światła zmiany biegów</string>
+
+    <string name="pref.aa.drag_race.brake_boosting.enabled">Włącz asystenta Brake-Boosting</string>
+    <string name="pref.aa.drag_race.brake_boosting.enabled_summary">Po włączeniu funkcja asystenta brake boosting wyświetla pełnoekranowe wskaźniki pozycji pedału gazu i momentu obrotowego skrzyni biegów.</string>
+
+
+    <string name="pref.profile.2_0_GME_extension.enabled">Wyświetl dodatkowe wskaźniki z metrykami</string>
+    <string name="pref.profile.2_0_GME_extension.enabled_summary">Dla silników 2.0 GME możesz teraz zbierać dodatkowe metryki, takie jak ciśnienie dolotowe, temperatura otoczenia i ciśnienie podczas pomiarów wydajności. Z rozszerzeniami STNxxx wyświetlany jest również moment obrotowy silnika i pozycja pedału gazu, co jest przydatne przy brake boostingu</string>
+
+    <string name="pref.aa.performance_meter.shift_lights_enabled_summary">To jest funkcja EKSPERYMENTALNA.\nWłącz światła zmiany biegów</string>
+    <string name="pref.aa.performance_meter.display_context_metrics">Wyświetl wskaźniki dla metryk kontekstowych</string>
+    <string name="pref.aa.performance_meter.display_context_metrics_summary">Dostarcza dodatkowe dane kontekstowe, w tym prędkość pojazdu.</string>
+
+
+    <string name="ref.aa.performance_meter.shift_lights.rev">Próg obrotów świateł zmiany biegów</string>
+
+    <string name="pref.aa.renderer.category">Ustawienia ekranu</string>
+
+    <string name="pref.aa.alerting.enabled">Włącz alerty</string>
+    <string name="pref.aa.alerting.enabled_summary">Po włączeniu na ekranie wyświetlane są dodatkowe informacje, jeśli PID przekroczy zdefiniowany górny lub dolny próg - na przykład OIL_TEMP > 110</string>
+
+    <string name="pref.aa.alerting.legend.enabled">Włącz legendę alertów</string>
+    <string name="pref.aa.alerting.legend.enabled_summary">Po włączeniu reguły alertów są wyświetlane na ekranie, jeśli są dostępne dla wybranego PID - na przykład ENGINE_TEMP > 110</string>
+
+    <string name="pref.aa.theme.background.enabled">Tło włączone</string>
+
+    <string name="pref.aa.theme.dynamic_selector.enabled">Dynamiczny selektor włączony</string>
+    <string name="pref.aa.theme.dynamic_selector.enabled_summary">Po włączeniu kolory są stosowane zgodnie z wybranym trybem dynamicznym: SPORT, NORMAL lub ECO.</string>
+
+    <!-- DTC -->
+    <string name="pref.dtc.title">Kody błędów diagnostycznych</string>
+    <string name="pref.dtc.code">Kod</string>
+    <string name="pref.dtc.description">Opis</string>
+    <string name="pref.dtc.no_dtc_found">Nie znaleziono kodów błędów diagnostycznych (DTC).</string>
+    <string name="pref.dtc.enable_automatic_cleanup">Włącz automatyczne czyszczenie DTC</string>
+    <string name="pref.dtc.enable_automatic_cleanup_summary">Automatycznie kasuje kody błędów diagnostycznych (DTC) z pamięci ECU.</string>
+    <string name="pref.dtc.settings_summary"><b>Dotknij</b>, aby wyświetlić aktywne kody błędów diagnostycznych (DTC) pobrane z ECU.</string>
+    <string name="pref.dtc.settings">Wyświetl bieżące DTC</string>
+    <string name="pref.dtc.read_snapshots">Odczytaj migawki DTC</string>
+    <string name="pref.dtc.read_snapshots_summary">Odczytuje dodatkowe dane kontekstowe z momentu wystąpienia DTC.</string>
+    <string name="pref.dtc.enable_dtc_reading">Włącz automatyczny odczyt DTC</string>
+    <string name="pref.dtc.enable_dtc_reading_summary">Odczytuj kody błędów diagnostycznych (DTC) podczas połączenia z ECU.</string>
+    <string name="pref.dtc.show_notification">Włącz powiadomienia DTC</string>
+    <string name="pref.dtc.show_notification_summary">Wysyła alert po znalezieniu nowych kodów błędów diagnostycznych (DTC).</string>
+
+    <string name="pref.dtc.clean_dialog.confirm_message">Czy na pewno chcesz skasować wszystkie DTC z ECU?\n\nUpewnij się, że silnik jest WYŁĄCZONY, ale stacyjka jest WŁĄCZONA.</string>
+    <string name="pref.dtc.clean_dialog.send_message">Komenda kasowania wysłana do ECU</string>
+    <string name="pref.dtc.clean_dialog.title">Skasować kody diagnostyczne?</string>
+    <string name="pref.dtc.screen_lock">To może chwilę potrwać. Proszę czekać\u2026</string>
+
+    <string name="pref.dtc.no_connection_established">Brak połączenia z ECU. Najpierw nawiąż połączenie.</string>
+
+    <string name="pref.vehicle.metadata_title">Metadane pojazdu</string>
+    <string name="pref.vehicle.metadata.name">Nazwa</string>
+    <string name="pref.vehicle.metadata.value">Wartość</string>
+
+    <string name="pref.vehicle_settings.vehicleStatusPanel">Włącz panel statusu pojazdu</string>
+    <string name="pref.vehicle_settings.vehicleStatusPanel_summary">To jest funkcja EKSPERYMENTALNA.\nWłączenie aktywuje status pojazdu dodany do panelu statusu.</string>
+
+    <string name="pref.vehicle_settings.disconnect_when_off">Automatyczne rozłączanie po wyłączeniu pojazdu</string>
+    <string name="pref.vehicle_settings.disconnect_when_off_summary">To jest funkcja EKSPERYMENTALNA.\nPo włączeniu sesja zostanie automatycznie rozłączona po wyłączeniu pojazdu.</string>
+
+    <string name="pref.vehicle_settings.auto_connect_once_launched">Automatyczne łączenie po uruchomieniu aplikacji</string>
+    <string name="pref.vehicle_settings.auto_connect_once_launched_summary">Po włączeniu sesja zostanie automatycznie nawiązana podczas uruchamiania aplikacji.</string>
+
+
+    <string name="pref.adapter_init_delay">Opóźnienie po komendzie inicjalizacji</string>
+    <string name="pref.adapter_delay_reset">Opóźnienie po komendzie resetowania (ATZ)</string>
+
+    <string name="pref.adapter_init_protocol">Protokół</string>
+    <string name="pref.general_settings">Ustawienia ogólne</string>
+    <string name="pref.adapter.general_settings">Ustawienia zaawansowane</string>
+    <string name="pref.adapter.batch_settings">Ustawienia trybu wsadowego</string>
+
+    <string name="pref.registry.category">Rejestr OBD2 PID/Czujników</string>
+
+    <string name="pref.pids_category">OBD2 PID/Czujniki</string>
+    <string name="pref.dashboard_category">Konfiguracja widoku Dashboard</string>
+
+    <string name="pref.giulia_apply_graph_filter">Zastosuj filtr do widoku wykresu</string>
+
+    <string name="pref.giulia_category">Konfiguracja widoku Giulia</string>
+    <string name="pref.giulia.virtual_screens.number_of_items_in_column.category">Liczba elementów w kolumnie</string>
+
+    <string name="pref.trip_info_category">Konfiguracja widoku informacji o trasie</string>
+    <string name="pref.performance_category">Konfiguracja widoku wydajności</string>
+
+    <string name="pref.drag_racing_category">Konfiguracja widoku Drag Racing</string>
+    <string name="pref.drag_racing.virtual_screens.number_of_items_in_column.category">Liczba elementów w kolumnie</string>
+    <string name="pref.drag_racing.font_size">Rozmiar czcionki elementów na ekranie</string>
+
+    <string name="pref.graph.category">Konfiguracja widoku wykresu</string>
+    <string name="pref.gauge.category">Konfiguracja widoku Gauge</string>
+    <string name="pref.aa.category">Konfiguracja widoku Android Auto</string>
+    <string name="pref.aa.category_summary">Ta strona zawiera ustawienia konfiguracji specyficzne dla Android Auto.</string>
+
+    <string name="pref.trip_logs_upload.upload_icon">Ikona przesyłania</string>
+    <string name="pref.trip_logs_category">Dzienniki tras</string>
+    <string name="pref.trip_logs_upload">Prześlij dzienniki tras do chmury</string>
+    <string name="pref.trip_logs_upload_details">Synchronizuj dzienniki tras z <font color='#01804F'>Google Drive</font>. Pliki są przesyłane do folderu
+        <font color='#1C3D72'>mygiulia/trips</font>.
+        Przeglądaj dzienniki na https://my-giulia.com/.
+    </string>
+
+    <string name="pref.adapter_category">Ustawienia adaptera OBD2</string>
+    <string name="pref.bluetooth_category">Bluetooth</string>
+    <string name="pref.usb_category">USB</string>
+    <string name="pref.usb.baud_rate">Ten parametr pozwala ustawić żądaną prędkość transmisji</string>
+    <string name="pref.usb.device_attached">Adapter USB OBD2 %s został podłączony</string>
+    <string name="pref.usb.device_detached">Adapter USB OBD2 %s został odłączony</string>
+
+    <string name="pref.wifi_category">Wifi</string>
+    <string name="pref.adapter_connection_tcp_ssid">SSID</string>
+    <string name="pref.adapter_connection_tcp_host">Host</string>
+    <string name="pref.adapter_connection_tcp_port">Port</string>
+    <string name="pref.adapter_command_freq_summary">Ten parametr ustawia docelową częstotliwość komend OBD. Reprezentuje żądaną częstotliwość, ale może być ograniczona możliwościami sprzętu. Zaleca się używanie tej opcji razem z adaptacyjnym timeoutem.</string>
+    <string name="pref.adapter_command_freq">Żądana częstotliwość odświeżania (PID/sekundę)</string>
+
+    <string name="pref.adapter_power_connect_adapter">Automatycznie połącz z adapterem OBD po wykryciu zewnętrznego zasilania.</string>
+    <string name="pref.adapter_power_connect_adapter_summary">Po włączeniu aplikacja automatycznie nawiąże połączenie z adapterem OBD po wykryciu zewnętrznego zasilania</string>
+
+    <string name="pref.adapter_power_screen_off">Utrzymuj jasność ekranu</string>
+    <string name="pref.adapter_power_screen_off_summary">Po włączeniu aplikacja przejmuje kontrolę nad zarządzaniem jasnością ekranu</string>
+
+    <string name="pref.adapter_power_bt_off">Włącz/Wyłącz sieć</string>
+    <string name="pref.adapter_power_start_data_logging_after">Opóźnienie w sekundach po połączeniu z adapterem przed rozpoczęciem.</string>
+
+    <string name="pref.power_category">Zasilanie</string>
+    <string name="pref.toolbar_hide_landscape">Automatyczne ukrywanie paska narzędzi w trybie poziomym</string>
+    <string name="pref.toolbar_hide_landscape_summary">Pasek narzędzi znika po obrocie do trybu poziomego</string>
+    <string name="pref.toolbar_hide_doubleclick">Automatyczne ukrywanie paska narzędzi po podwójnym kliknięciu</string>
+    <string name="pref.toolbar_hide_doubleclick_summary">Pasek narzędzi znika po podwójnym kliknięciu na aplikację</string>
+    <string name="pref.toolbar_hide_connected">Automatyczne ukrywanie paska narzędzi po połączeniu z adapterem</string>
+    <string name="pref.toolbar_hide_connected_summary">Pasek narzędzi znika po nawiązaniu połączenia z adapterem</string>
+
+    <string name="pref.enable_view_summary">Po włączeniu na pasku zadań pojawi się dodatkowy przycisk, zapewniający skrót do widoku.</string>
+    <string name="pref.enable_view">Wyświetl skrót do widoku na pasku zadań</string>
+
+    <string name="pref.view.navigation.navigate_to_last_visited_view">Przejdź do ostatnio odwiedzonego widoku</string>
+    <string name="pref.view.navigation.navigate_to_last_visited_view_summary">Po włączeniu aplikacja podczas uruchamiania otwiera ostatnio odwiedzony widok</string>
+
+    <string name="pref.graph.trips_recordings_display_info">Wyświetl informacje o trasie</string>
+    <string name="pref.graph.trips_recordings_save_short_trip">Rejestruj trasy krótsze niż 5s (start silnika)</string>
+    <string name="pref.graph.x_axis_start_moving_after_time">Oś X zaczyna się przesuwać po</string>
+    <string name="pref.graph.x_axis_minimum_shift_time">Czas przesuwania osi X</string>
+    <string name="pref.graph_cache_enabled">Cache włączony</string>
+    <string name="pref.graph.filter_source">Źródło filtrów. Użyj tego parametru do konfiguracji szybkiego menu \"Filtry\".</string>
+    <string name="pref.graph.trips_selected">Zarządzaj nagranymi trasami</string>
+    <string name="pref.graph.trips_selected_summary">Zarządzaj nagranymi trasami.\nMożesz załadować lub usunąć istniejącą trasę</string>
+
+    <string name="pref.graph.view.virtual_screen_2">2</string>
+    <string name="pref.graph.view.virtual_screen_3">3</string>
+    <string name="pref.graph.view.virtual_screen_1">1</string>
+    <string name="pref.graph.view.virtual_screen_4">4</string>
+    <string name="pref.graph.view.virtual_screen_5">5</string>
+    <string name="pref.graph.view.virtual_screen_reserved">Zarezerwowane</string>
+    <string name="pref.graph.view.filters">Filtry</string>
+    <string name="pref.graph.view.filters_filter_1">Zastosuj filtr 1</string>
+    <string name="pref.graph.view.filters_filter_2">Zastosuj filtr 2</string>
+    <string name="pref.graph.view.filters_filter_3">Zastosuj filtr 3</string>
+    <string name="pref.graph.view.filters_filter_4">Zastosuj filtr 4</string>
+    <string name="pref.graph.view.filters_filter_5">Zastosuj filtr 5</string>
+    <string name="pref.graph.view.filters_filter_6">Zastosuj filtr 6</string>
+    <string name="pref.graph.view.filters_filter_7">Zastosuj filtr 7</string>
+
+
+    <string name="pref.debug_broadcast_fake_metrics">Włącz generator danych</string>
+    <string name="pref.debug_trip_save_connector_response">Zapisz odpowiedź konektora</string>
+    <string name="pref.debug_logging_enabled">Włącz logowanie debugowania</string>
+    <string name="pref.debug_generator_enabled">Włącz generator danych przez obd-metrics</string>
+    <string name="pref.dash_top_values_red_color">Podświetl najwyższe wartości</string>
+    <string name="pref.dash_enable_drag_and_drop">Włącz przeciąganie i upuszczanie</string>
+    <string name="pref.dash_swipe_to_delete">Włącz usunięcie metryki przesunięciem</string>
+    <string name="pref.dash_top_values_blink">Alarm dla najwyższych wartości</string>
+    <string name="pref.trips_category">Trasy</string>
+    <string name="pref.trips_recordings">Nagrane trasy</string>
+    <string name="pref.view_category_summary">W tej sekcji możesz dostosować ustawienia związane z widokami Gauge, Wykres i Giulia.</string>
+    <string name="pref.view_category">Widoki</string>
+    <string name="pref.toolbar_category">Pasek narzędzi</string>
+    <string name="pref.toolbar_category_summary">W tej sekcji możesz skonfigurować zachowanie paska narzędzi.</string>
+    <string name="pref.init_category">Inicjalizacja&amp;Protokoły</string>
+    <string name="pref.init_category_summary">W tej sekcji możesz skonfigurować ustawienia procesu inicjalizacji adaptera, w tym protokół CAN i nagłówki CAN.</string>
+
+    <string name="main_activity.toggle_toolbar">Przełącz pasek narzędzi</string>
+    <string name="main_activity.connect_btn_content_description">Rozpocznij/Zakończ sesję z pojazdem</string>
+    <string name="main_activity.configure_view_action_label">Konfiguruj ustawienia\nbieżącego widoku</string>
+    <string name="main_activity.configure_pids_action_label">Konfiguruj PID\nwidoku</string>
+
+    <string name="data">Rozpocznij/Zakończ sesję z pojazdem</string>
+
+    <string name="pref.theme">Motyw</string>
+
+    <string name="pref.settings">Ustawienia</string>
+    <string name="pref.profile.about_title">Opis profilu pojazdu</string>
+    <string name="pref.profile.update_name">Nazwa profilu pojazdu</string>
+    <string name="pref.profile.category">Profile pojazdów</string>
+    <string name="pref.profile.backup.category">Kopia zapasowa</string>
+
+    <string name="pref.profile.backup.type">Typ kopii zapasowej</string>
+
+    <string name="pref.profile.available_list">Dostępne profile pojazdów</string>
+
+    <string name="pref.profile.restore">Przywróć ustawienia</string>
+    <string name="pref.profile.restore_summary">Ten proces przywraca ustawienia z kopii zapasowej. W zależności od typu kopii zapasowej dane będą odczytane z
+        <font color='#01804F'>Google Drive</font> lub z
+        <font color='#1C3D72'>Twojego urządzenia</font>.
+    </string>
+
+    <string name="pref.profile.export">Wykonaj kopię zapasową ustawień</string>
+    <string name="pref.profile.export_summary">Ten proces tworzy kopię zapasową ustawień. W zależności od wybranego typu kopii zapasowej dane zostaną wysłane na
+        <font color='#01804F'>Google Drive</font> lub zapisane
+        <font color='#1C3D72'>lokalnie na urządzeniu</font>
+    </string>
+
+    <string name="pref.profile.restore_confirmation_dialog">Gotowy do przywrócenia zapisanych ustawień? Pamiętaj, że zastąpi to Twoje bieżące preferencje.</string>
+    <string name="pref.profile.reset_confirmation_dialog">Zresetować wszystkie niestandardowe ustawienia do domyślnych? Tej operacji nie można cofnąć.</string>
+    <string name="pref.profile.reset">Przywróć ustawienia fabryczne</string>
+    <string name="pref.profile.reset_summary">Ta operacja resetuje ustawienia profilu do ustawień fabrycznych. Uwaga: utracisz wszystkie niestandardowe preferencje</string>
+    <string name="pref.profile.save_user_settings">Zapisz bieżące ustawienia profilu pojazdu</string>
+    <string name="pref.profile.save_user_settings_summary">Ta operacja zapisuje wszystkie wybory użytkownika do aktualnie wybranego profilu</string>
+    <string name="pref.dash.background_color_1">Kolor początkowy 1</string>
+    <string name="pref.dash.background_color_2">Kolor końcowy 2</string>
+    <string name="pref.pids.registry.resource_list">Dostępne moduły</string>
+    <string name="pref.pids.registry.resource.list_summary">To ustawienie pozwala załadować dodatkowe moduły i włączyć nowe metryki.</string>
+    <string name="pref.pids.registry.resource.external_storage">Dostęp do plików zasobów OBD2 PID/Czujników z pamięci zewnętrznej</string>
+    <string name="trip_length">Długość</string>
+    <string name="trip_start_date">Data rozpoczęcia</string>
+    <string name="trip_vehicle_profile">Profil</string>
+    <string name="trip_action">Akcja</string>
+    <string name="trip_action_delete">Usuń</string>
+    <string name="dialog_select_all_action">Zaznacz\nwszystko</string>
+    <string name="dialog_deselect_all_action">Odznacz\nwszystko</string>
+
+    <string name="dialog_close_window_action">Zamknij\n </string>
+    <string name="trip_dialog_send_to_cloud_selected">Prześlij do\nchmury</string>
+    <string name="trip_dialog_delete_all_trips">Usuń\nwszystkie</string>
+    <string name="trip_delete_dialog_ask_question">Czy na pewno chcesz usunąć?</string>
+    <string name="trip_send_to_cloud_dialog_ask_question">Czy na pewno chcesz przesłać wybrane pliki do katalogu giulia/trips na Google Drive?</string>
+
+    <string name="dialog_ask_question_yes">Tak</string>
+    <string name="dialog_ask_question_no">nie</string>
+
+    <string name="trip_action_load">Załaduj</string>
+    <string name="status_panel.adapter_connection_type">Adapter</string>
+    <string name="status_panel.vehicle_profile">Profil</string>
+    <string name="status_panel.vehicle_status">Status pojazdu</string>
+
+    <string name="pref.debug_category">Debugowanie</string>
+    <string name="pref.about_category">O aplikacji</string>
+    <string name="pref.vehicle_settings.category">Ustawienia pojazdu</string>
+    <string name="pref.vehicle_settings.fuel_tank_size">Pojemność zbiornika paliwa</string>
+    <string name="pref.vehicle_settings.fuel_tank_size_summary">Ustaw tutaj pojemność zbiornika paliwa pojazdu. Uwaga: ten parametr wpływa na obliczanie poziomu paliwa</string>
+    <string name="pref.vehicle_settings.category_summary">W tej sekcji znajdują się ustawienia związane z konfiguracją pojazdu, w tym pojemność zbiornika.</string>
+    <string name="pref.about_summary">ObdGraphs to graficzna aplikacja zaprojektowana do zbierania i wyświetlania danych telemetrycznych pojazdu w czasie rzeczywistym. Zbudowana na bibliotece ObdMetrics, wizualizuje dane generowane przez czujniki pojazdu podczas jazdy.</string>
+
+    <string name="pref.about_build_time">Czas kompilacji</string>
+    <string name="pref.about_build_version">Wersja kompilacji</string>
+
+    <string name="pref.alerting.category">Alerty</string>
+    <string name="pref.alerting.category_summary">W tej sekcji znajdują się ustawienia związane z alertami</string>
+
+
+    <string name="pref.adapter_calculation_response_frames_enabled">Oblicz oczekiwane ramki odpowiedzi</string>
+    <string name="pref.adapter_calculation_response_frame_enabled_summary">Automatycznie informuje adapter o dokładnej liczbie oczekiwanych ramek ISO-TP. Pomija to sprzętowy timeout oczekiwania (P2), maksymalizując szybkość odpytywania i częstotliwość odświeżania danych.</string>
+    <string name="pref.adapter_graceful_stop_enabled">Włącz łagodne zatrzymanie</string>
+    <string name="pref.adapter_graceful_stop_enabled_summary">Włączenie tej opcji zapewnia łagodne zakończenie sesji między ECU a adapterem. Pamiętaj, że zakończenie sesji może trwać dłużej przy włączonej tej opcji.</string>
+    <string name="pref.pids_display_only_ecu_supported">Wyświetl nieobsługiwane OBD2 PID/Czujniki</string>
+    <string name="pref.pids_display_only_ecu_supported_summary">Po włączeniu tej opcji możesz wybierać PID nawet jeśli ECU ich nie obsługuje.</string>
+    <string name="pref.adapter_batch_enabled_summary">Włączenie tej opcji wysyła zapytania wsadowe do adaptera, pozwalając na pobranie do 6 PID/Czujników w jednym zapytaniu do ECU. Ta funkcja poprawia wydajność i jest powiązana z ustawieniami \"Rozmiar paczki dla trybu 22 i 01\".</string>
+    <string name="pref.adapter_error_handling">Obsługa błędów</string>
+    <string name="pref.adapter_error_handling_summary">W tej kategorii znajdziesz opcje obsługi błędów, w tym strategie ponownego łączenia.</string>
+
+    <string name="pref.pids_display_only_stable_pids">Wyświetl eksperymentalne OBD2 PID/Czujniki</string>
+    <string name="pref.pids_display_only_stable_pids_summary">Wybierając tę opcję, możesz przeglądać PID z eksperymentalnymi formułami obliczeniowymi.</string>
+    <string name="gauge_item_bg_content_description">Tło wskaźnika</string>
+    <string name="pref_adapter_settings_summary">W tej sekcji znajdziesz wszystkie preferencje związane z adapterem. Możesz skonfigurować typ połączenia (Bluetooth lub Wi-Fi), dostosować ustawienia CAN i zarządzać opcjami obsługi błędów.</string>
+    <string name="pref_pid_registry_settings_summary">W tej sekcji możesz skonfigurować OBD2 PID/Czujniki i wybrać, które z nich i w jaki sposób pobierać z ECU.</string>
+    <string name="pref_vehicle_metadata_summary">W tej sekcji możesz przeglądać metadane pojazdu pobrane z ECU, w tym VIN, typ ECU, numer seryjny sprzętowy itp.</string>
+    <string name="pref_vehicle_profile_settings_summary">Ta sekcja zawiera preferencje związane z profilami pojazdów. Tutaj możesz zmienić profil pojazdu.</string>
+    <string name="pref_power_settings_summary">Ustawienia związane z zasilaniem są dostępne w tej sekcji, pozwalając zdefiniować zachowanie aplikacji po podłączeniu lub odłączeniu ładowarki.</string>
+
+    <string name="pids_stable">Stabilne</string>
+    <string name="pids_alert_lower_threshold">Alert\ndolny próg</string>
+    <string name="pids_alert_upper_threshold">Alert\ngórny próg</string>
+    <string name="pids_formula">Formuła\nobliczeniowa</string>
+
+    <string name="pids_name">Nazwa</string>
+    <string name="pids_module">Moduł</string>
+    <string name="pids_selection">Wybór</string>
+
+    <string name="pref.usb_event_receiver_activity_label">Przyznaj uprawnienia dostępu do urządzenia USB</string>
+    <string name="virtual_screen_1">1</string>
+    <string name="virtual_screen_2">2</string>
+    <string name="virtual_screen_3">3</string>
+    <string name="virtual_screen_4">4</string>
+    <string name="virtual_screen_5">5</string>
+    <string name="virtual_screen_6">6</string>
+    <string name="virtual_screen_7">7</string>
+    <string name="virtual_screen_8">8</string>
+    <string name="dialog_save_action">Zapisz\n </string>
+    <string name="pids_supported">Obsługiwane</string>
+    <string name="pref_search_view_title">Szukaj</string>
+
+    <!-- Extracted from layouts -->
+    <string name="dtc.freeze_frame_data">Dane zamrożonej klatki UDS</string>
+    <string name="dtc.action_google_issue">Szukaj w Google</string>
+    <string name="dtc.action_copy">Kopiuj</string>
+    <string name="dtc.action_refresh">Odśwież</string>
+    <string name="dtc.action_clear_codes">Skasuj kody</string>
+    <string name="dtc.action_share">Udostępnij</string>
+    <string name="dialog.screen_lock.cancel">Anuluj</string>
+    <string name="gps.title">DIAGNOSTYKA GPS</string>
+    <string name="gps.status_label">Status</string>
+    <string name="gps.waiting_for_fix">Oczekiwanie na sygnał&#8230;</string>
+    <string name="gps.accuracy_label">Dokładność (promień błędu)</string>
+    <string name="gps.latitude">Szerokość geograficzna</string>
+    <string name="gps.longitude">Długość geograficzna</string>
+    <string name="gps.satellites_label">Satelity (widoczne/używane)</string>
+    <string name="gps.debug_log">Dziennik debugowania</string>
+    <string name="gps.initializing">Inicjalizacja&#8230;</string>
+
+</resources>

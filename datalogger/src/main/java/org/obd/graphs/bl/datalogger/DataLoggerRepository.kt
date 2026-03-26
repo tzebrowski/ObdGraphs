@@ -51,6 +51,7 @@ object DataLoggerRepository {
     fun findRateFor(metric: ObdMetric): Optional<Rate> = workflowOrchestrator.findRateFor(metric)
     fun getPidDefinitionRegistry(): PidDefinitionRegistry = workflowOrchestrator.pidDefinitionRegistry()
     fun isDTCEnabled(): Boolean = workflowOrchestrator.isDTCEnabled()
+    fun updateTranslations(locale: String) = workflowOrchestrator.updateTranslations(locale)
     fun status(): WorkflowStatus = workflowOrchestrator.status()
 
     fun observe(lifecycleOwner: LifecycleOwner, observer: (metric: ObdMetric) -> Unit) {

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">My Giulia (AA)</string>
+    <string name="pref.about_title">O aplikacji My Giulia (AA)</string>
+    <string name="pref.about_summary">My Giulia (AA) to dedykowana aplikacja Android Auto do śledzenia i wizualizacji telemetrii pojazdu w czasie rzeczywistym.
+        Zaprojektowana dla nowoczesnych modeli Alfa Romeo — Giulia i Stelvio, z natywną obsługą silników 2.0 GME, 2.2 Multijet i 2.9 QV.
+        Kliknij, aby odwiedzić <font color='#C22636'>my-giulia.com</font>
+    </string>
+</resources>
