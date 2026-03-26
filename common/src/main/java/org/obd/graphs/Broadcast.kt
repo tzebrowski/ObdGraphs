@@ -23,23 +23,21 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 
-const val MSG_EXTRA_PARAM_NAME = "default.extra"
-const val CONTEXT_EXTRA_PARAM_NAME = "context.extra"
-
-fun Intent.getMessageExtraParam(): String? = extras?.getString(MSG_EXTRA_PARAM_NAME)
-
-fun Intent.getContextExtraParam(): String? = extras?.getString(CONTEXT_EXTRA_PARAM_NAME)
-
 fun sendBroadcastEvent(
     actionName: String,
-    extras: Map<String, String>,
+    extras: Map<String, Any>,
 ) {
     getContext()?.run {
         sendBroadcast(
             Intent().apply {
                 action = actionName
                 extras.forEach { k, v ->
-                    putExtra(k, v)
+                    when (v) {
+                        is String -> putExtra(k, v)
+                        is Boolean -> putExtra(k, v)
+                        is Number -> putExtra(k, v)
+                        else -> putExtra(k, v.toString())
+                    }
                 }
             },
         )
@@ -62,15 +60,11 @@ fun sendBroadcastEvent(
     }
 }
 
-fun sendBroadcastEvent(
-    actionName: String,
-    extra: String? = "",
-) {
+fun sendBroadcastEvent(actionName: String) {
     getContext()?.run {
         sendBroadcast(
             Intent().apply {
                 action = actionName
-                putExtra(MSG_EXTRA_PARAM_NAME, extra)
             },
         )
     }

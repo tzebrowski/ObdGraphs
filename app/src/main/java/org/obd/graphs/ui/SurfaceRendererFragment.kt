@@ -39,11 +39,11 @@ import org.obd.graphs.activity.LOG_TAG
 import org.obd.graphs.activity.TOOLBAR_HIDE
 import org.obd.graphs.activity.TOOLBAR_SHOW
 import org.obd.graphs.activity.TOOLBAR_TOGGLE_ACTION
+import org.obd.graphs.activity.getContextExtraParam
 import org.obd.graphs.bl.collector.MetricsCollector
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_CONNECTED_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_STOPPED_EVENT
 import org.obd.graphs.bl.datalogger.DataLoggerRepository
-import org.obd.graphs.getContextExtraParam
 import org.obd.graphs.registerReceiver
 import org.obd.graphs.renderer.api.Fps
 import org.obd.graphs.renderer.api.ScreenSettings
