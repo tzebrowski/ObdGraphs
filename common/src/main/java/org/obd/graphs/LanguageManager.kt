@@ -36,7 +36,7 @@ object LanguageManager {
             .edit()
             .putString(KEY_LANGUAGE, localeTag)
             .putBoolean(KEY_SELECTED, true)
-            .commit()
+            .apply()
     }
 
     fun isLanguageSelected(context: Context): Boolean {

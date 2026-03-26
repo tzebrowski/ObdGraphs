@@ -138,7 +138,6 @@ class MainActivity :
         val storedLang = LanguageManager.getStoredLanguage(this)
         if (storedLang.isNotEmpty()) {
             val locale = java.util.Locale.forLanguageTag(storedLang)
-            java.util.Locale.setDefault(locale)
             val config = android.content.res.Configuration(resources.configuration)
             config.setLocale(locale)
             @Suppress("DEPRECATION")
