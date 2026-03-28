@@ -15,7 +15,7 @@ spotless {
         licenseHeaderFile "$project.rootDir/license-header"
 
         trimTrailingWhitespace()
-        indentWithSpaces()
+        leadingTabsToSpaces() 
         endWithNewline()
     }
 }
