@@ -68,7 +68,7 @@ class ScreenLockManager(
 
     fun show(
         message: String,
-        timeoutMs: Long = 5000L,
+        timeoutMs: Long = 7000L,
         showCancelButton: Boolean = false,
         onCancel: (() -> Unit)? = null,
     ) {
