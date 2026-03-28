@@ -14,7 +14,7 @@
 
     <string name="permissions.missing.bt_msg">Granting Bluetooth permissions is necessary to establish a connection with the BT adapter.</string>
 
-    <string name="app_name">ObdGraphs</string>
+    <string name="app_name">My Giulia</string>
     <string name="navigation.title_gauge">Gauge</string>
     <string name="navigation.title_preferences">Prefs</string>
     <string name="navigation.title_dashboard">Dashboard</string>

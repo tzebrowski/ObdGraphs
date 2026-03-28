@@ -1,6 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="nav_open">Otwórz</string>
     <string name="nav_close">Zamknij</string>
+    <string name="app_name">My Giulia</string>
+    <string name="pref.about_title">O aplikacji</string>
 
     <string name="pref.performance.screen_label_y_padding"><b><i>Gauge</i></b> górny margines etykiety</string>
     <string name="pref.performance.screen_top_margin">Górny margines</string>
