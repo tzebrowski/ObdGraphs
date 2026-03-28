@@ -76,7 +76,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UDS Freeze Frame Data"
+                android:text="@string/dtc.freeze_frame_data"
                 android:textStyle="bold"
                 android:textColor="@color/rainbow_indigo"
                 android:textSize="12sp"
@@ -102,7 +102,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Google Issue"
+                android:text="@string/dtc.action_google_issue"
                 android:textColor="@color/rainbow_indigo"
                 android:textSize="12sp" />
 
@@ -111,7 +111,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Copy"
+                android:text="@string/dtc.action_copy"
                 android:textColor="@color/gray_dark"
                 android:textSize="12sp" />
         </LinearLayout>

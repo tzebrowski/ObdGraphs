@@ -19,13 +19,30 @@ package org.obd.graphs.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.obd.graphs.LanguageManager
 
 private const val SPLASH_LOAD_TIME = 300L
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Thread.sleep(SPLASH_LOAD_TIME)
+
+        if (LanguageManager.isLanguageSelected(this)) {
+            lifecycleScope.launch {
+                delay(SPLASH_LOAD_TIME)
+                startMainActivity()
+            }
+        } else {
+            LanguageManager.showLanguageSelectionDialog(this) {
+                startMainActivity()
+            }
+        }
+    }
+
+    private fun startMainActivity() {
         startActivity(Intent(this@SplashActivity, MainActivity::class.java))
         finish()
     }

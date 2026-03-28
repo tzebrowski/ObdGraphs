@@ -2,6 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:key="pref.root">
 
+    <org.obd.graphs.preferences.LanguagePreferences
+        android:key="pref.app.language"
+        android:title="@string/pref.language.title"
+        android:summary="@string/pref.language.summary"
+        android:persistent="false" />
+
     <PreferenceCategory android:title="@string/pref.registry.category">
         <PreferenceScreen
             android:key="pref.registry"

@@ -79,7 +79,7 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/rainbow_indigo"
-                android:text="Refresh"
+                android:text="@string/dtc.action_refresh"
                 android:textSize="12sp" />
 
             <Button
@@ -89,7 +89,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
                 android:backgroundTint="#D32F2F"
-                android:text="Clear Codes"
+                android:text="@string/dtc.action_clear_codes"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -107,7 +107,7 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
                 android:backgroundTint="@color/rainbow_indigo"
-                android:text="Share"
+                android:text="@string/dtc.action_share"
                 android:textSize="12sp" />
 
             <Button

@@ -1,0 +1,19 @@
+<resources>
+    <string name="dialog.screen.lock.saving.trip.message">Trasa jest zapisywana. To może chwilę potrwać…</string>
+    <string name="main_activity.toast.connection.error">Wystąpił błąd podczas połączenia. Spróbuj połączyć się ponownie. Jeśli to nie pomoże, sprawdź ustawienia połączenia.</string>
+    <string name="main_activity.toast.connection.stopped">Połączenie z urządzeniem zostało przerwane.</string>
+    <string name="main_activity.toast.connection.established">Połączenie z urządzeniem zostało nawiązane.\n Rozpoczynam odczyt danych z ECU.</string>
+    <string name="main_activity.toast.connection.connecting">Łączenie z urządzeniem.</string>
+    <string name="main_activity.toast.connection.connect_error"> Wystąpił błąd podczas połączenia.\nSprawdź ustawienia sieciowe.</string>
+    <string name="main_activity.toast.connection.no_network">Połączenie sieciowe może być wyłączone.\n Sprawdź ustawienia.</string>
+    <string name="main_activity.toast.adapter_is_not_selected">Adapter nie jest wybrany. Wybierz adapter i spróbuj ponownie.</string>
+    <string name="main_activity.toast.connection.wifi.incorrect_ssid">Zaktualizuj ustawienia WIFI.</string>
+    <string name="main_activity.toast.connection.wifi.not_connected">Połącz się z siecią WIFI.</string>
+
+    <string name="status_bar.status">status: </string>
+    <string name="status_bar.profile">profil: </string>
+    <string name="status_bar.fps">fps: </string>
+    <string name="status_bar.ambient_temp">temp. otoczenia: </string>
+    <string name="status_bar.atm_pressure">ciśn. atmosf.: </string>
+
+</resources>
