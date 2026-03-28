@@ -43,6 +43,7 @@ import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.pid.ValueType
+import org.obd.metrics.translation.TranslationProvider
 import java.util.*
 
 const val JS_ENGINE_NAME = "rhino"
@@ -249,6 +250,7 @@ internal class WorkflowOrchestrator internal constructor() {
         val init = init()
         val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
         val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+
         ConnectionManager.obtain(pidDefinitionRegistry(), dataLoggerQuery, adjustments, init)?.run {
             Log.i(
                 LOG_TAG,
@@ -317,13 +319,37 @@ internal class WorkflowOrchestrator internal constructor() {
         .formulaEvaluatorConfig(
             FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build()
         )
-        .pids(
-            pids()
-        )
+        .pids(pids())
+        .translationProvider(createTranslationProvider())
         .observer(metricsObserver)
         .lifecycle(lifecycle)
         .lifecycle(metricsObserver)
         .initialize()
+
+    private fun createTranslationProvider(): TranslationProvider {
+        val locale = Locale.getDefault().language
+        Log.i(LOG_TAG, "Creating TranslationProvider for locale: $locale")
+        return TranslationProvider.instance(locale)
+    }
+
+    fun updateTranslations(locale: String) {
+        Log.i(LOG_TAG, "Updating PID translations for locale: $locale")
+        val provider = if (locale.isNotEmpty()) TranslationProvider.instance(locale) else TranslationProvider.instance("en")
+        workflow.updatePidRegistry(
+            pids(),
+            provider
+        )
+
+        workflow.pidRegistry.findAll().forEach { p ->
+            p.deserialize()?.let {
+                p.formula = it.formula
+                p.alert.lowerThreshold = it.alert.lowerThreshold
+                p.alert.upperThreshold = it.alert.upperThreshold
+            }
+        }
+
+        registerGPSPids(workflow.pidRegistry)
+    }
 
     private fun updateModulesRegistry() = runAsync {
         workflow.updatePidRegistry(

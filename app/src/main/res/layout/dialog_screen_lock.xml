@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="24dp"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="0dp"
     app:cardElevation="8dp"
     app:cardBackgroundColor="@android:color/white">
 
@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Cancel"
+            android:text="@string/dialog.screen_lock.cancel"
             android:textColor="@color/rainbow_indigo"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/dialog_screen_lock_message_id"

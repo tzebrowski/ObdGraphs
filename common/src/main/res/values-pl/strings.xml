@@ -1,0 +1,52 @@
+<resources>
+    <string name="dialog.screen.lock.trip.load.message">Trasa jest wczytywana. To może chwilę potrwać… Proszę zamknąć okno po zakończeniu.</string>
+
+    <string name="dialog.screen.lock.trip.save.message">Trasa jest zapisywana. To może chwilę potrwać…</string>
+    <string name="main_activity.toast.connection.error">Wystąpił błąd podczas połączenia. Spróbuj połączyć się ponownie. Jeśli to nie pomoże, sprawdź ustawienia połączenia.</string>
+    <string name="main_activity.toast.connection.stopped">Połączenie z urządzeniem zostało przerwane.</string>
+    <string name="main_activity.toast.connection.established">Połączenie z urządzeniem zostało nawiązane.\n Rozpoczynam odczyt danych z ECU.</string>
+    <string name="main_activity.toast.connection.connecting">Łączenie z urządzeniem.</string>
+    <string name="main_activity.toast.connection.connect_error"> Wystąpił błąd podczas połączenia.\nSprawdź ustawienia sieciowe.</string>
+    <string name="main_activity.toast.connection.no_network">Połączenie sieciowe może być wyłączone.\n Sprawdź ustawienia.</string>
+    <string name="main_activity.toast.adapter_is_not_selected">Adapter nie jest wybrany. Wybierz adapter i spróbuj ponownie.</string>
+    <string name="main_activity.toast.connection.wifi.incorrect_ssid">Zaktualizuj ustawienia WIFI.</string>
+    <string name="main_activity.toast.connection.wifi.not_connected">Połącz się z siecią WIFI.</string>
+    <string name="main_activity.toast.backup.failed">Operacja tworzenia kopii zapasowej nie powiodła się. Powtórz operację.</string>
+    <string name="main_activity.toast.backup.successful">Kopia zapasowa została utworzona pomyślnie.</string>
+    <string name="main_activity.toast.backup.restore.no_files">Przywracanie nie powiodło się. Brak plików kopii zapasowej.</string>
+    <string name="main_activity.toast.backup.restore.failed">Przywracanie nie powiodło się. Powtórz operację.</string>
+    <string name="main_activity.toast.backup.restore.successful">Przywracanie kopii zapasowej zakończone pomyślnie.</string>
+
+    <string name="main_activity.toast.trips.upload.failed">Wysyłanie tras nie powiodło się.</string>
+    <string name="main_activity.toast.trips.upload.successful">Wysyłanie tras zakończone pomyślnie.</string>
+    <string name="main_activity.toast.trips.upload.no_files_selected">Nie wybrano plików. Nic nie zostało wysłane.</string>
+    <string name="main_activity.toast.google.signin.failed_restart">Logowanie Google obecnie nie działa. Uruchom ponownie aplikację.</string>
+    <string name="main_activity.toast.google.signin.failed">Logowanie Google obecnie nie działa. To może być tymczasowy problem. Spróbuj ponownie za chwilę.</string>
+
+
+    <string name="status_bar.status">status: </string>
+    <string name="status_bar.profile">profil: </string>
+    <string name="status_bar.fps">fps: </string>
+    <string name="status_bar.connected">połączony</string>
+    <string name="status_bar.disconnected">rozłączony</string>
+    <string name="status_bar.ambient_temp">temp. otoczenia: </string>
+    <string name="status_bar.atm_pressure">ciśn. atmosf.: </string>
+
+    <string name="permissions.missing.bt_msg">Aby komunikować się z pojazdem, zezwól na dostęp do Bluetooth.</string>
+    <string name="permissions.missing.location_msg">Aby korzystać z sieci WIFI, rejestrować trasę i prędkość, zezwól na dostęp do lokalizacji.</string>
+    <string name="permission.onboarding_title">Wymagana konfiguracja</string>
+    <string name="permission_onboarding_message"><![CDATA[
+Aby zapewnić pełną funkcjonalność, zezwól na następujące uprawnienia:<br/><br/>
+• <b>Optymalizacja baterii</b>: Aby rejestrowanie danych nie było przerywane.<br/>
+• <b>Lokalizacja</b>: Aby śledzić trasę przez GPS.<br/>
+• <b>Bluetooth</b>: Aby połączyć się z adapterem OBD.<br/>
+• <b>Powiadomienia</b>: Aby utrzymać rejestrator w tle.
+]]></string>
+    <string name="permission.onboarding_btn_positive">Rozpocznij konfigurację</string>
+    <string name="permission.onboarding_btn_negative">Później</string>
+
+    <string name="language_selection_title">Wybierz język</string>
+    <string name="pref.language.title">Język</string>
+    <string name="pref.language.summary">Wybierz język aplikacji</string>
+
+</resources>
