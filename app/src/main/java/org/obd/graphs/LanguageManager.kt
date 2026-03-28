@@ -62,33 +62,31 @@ internal object LanguageManager {
             .getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
             .getBoolean(KEY_SELECTED, false)
 
-    fun showLanguageSelectionDialog(
-        activity: Activity,
-        onComplete: (localeTag: String) -> Unit
-    ) {
+    fun showLanguageSelectionDialog(activity: Activity, onComplete: (localeTag: String) -> Unit) {
         val names = activity.resources.getStringArray(org.obd.graphs.commons.R.array.language_names)
         val codes = activity.resources.getStringArray(org.obd.graphs.commons.R.array.language_codes)
+
+        val currentLangCode = getStoredLanguage(activity)
+        val selectedIndex = codes.indexOf(currentLangCode).takeIf { it >= 0 } ?: -1
 
         val dialogView = activity.layoutInflater.inflate(R.layout.dialog_language_selection, null)
         val recyclerView = dialogView.findViewById<RecyclerView>(R.id.dialog_language_list)
 
-        val dialog =
-            AlertDialog
-                .Builder(activity)
-                .setView(dialogView)
-                .setCancelable(false)
-                .create()
+        val dialog = AlertDialog.Builder(activity)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
 
         dialog.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
 
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter =
-            LanguageAdapter(names) { index ->
-                val localeTag = codes[index]
-                saveLanguage(activity, localeTag)
-                dialog.dismiss()
-                onComplete(localeTag)
-            }
+
+        recyclerView.adapter = LanguageAdapter(names, selectedIndex) { index ->
+            val localeTag = codes[index]
+            saveLanguage(activity, localeTag)
+            dialog.dismiss()
+            onComplete(localeTag)
+        }
 
         dialog.show()
     }
