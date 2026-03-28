@@ -129,7 +129,6 @@ internal class WorkflowOrchestrator internal constructor() {
 
             sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
             sendBroadcastEvent(DATA_LOGGER_ERROR_EVENT)
-            stop()
         }
 
         override fun onStopped() {
