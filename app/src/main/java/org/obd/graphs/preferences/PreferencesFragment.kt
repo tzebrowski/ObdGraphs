@@ -29,7 +29,6 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreferenceCompat
-import org.obd.graphs.LanguageManager
 import org.obd.graphs.R
 import org.obd.graphs.activity.DASH_VIEW_ID
 import org.obd.graphs.activity.GAUGE_VIEW_ID
@@ -198,27 +197,10 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     }
 
     private fun registerListeners() {
-        registerLanguageListener()
         registerConnectionTypeListener()
         registerViewsPreferenceChangeListeners()
     }
 
-    private fun registerLanguageListener() {
-        val langPref = findPreference<ListPreference>("pref.app.language") ?: return
-        langPref.value = LanguageManager.getStoredLanguage(requireContext())
-        langPref.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, newValue ->
-                val lang = newValue as String
-                LanguageManager.saveLanguage(requireContext(), lang)
-                DataLoggerRepository.updateTranslations(lang)
-                val activity = requireActivity()
-                val intent = activity.intent
-                intent.putExtra("navigate_to_prefs", true)
-                activity.finish()
-                activity.startActivity(intent)
-                true
-            }
-    }
 
     private fun registerConnectionTypeListener() {
         val bluetooth = "bluetooth"

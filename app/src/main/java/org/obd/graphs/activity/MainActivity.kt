@@ -1,4 +1,4 @@
- /**
+/**
  * Copyright 2019-2026, Tomasz Żebrowski
  *
  * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
@@ -105,7 +105,7 @@ class MainActivity :
         super.onConfigurationChanged(newConfig)
         if (NavigationRouter.getPreferences().hideToolbarLandscape) {
             val hide = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-            Toolbar.hide(this,hide)
+            Toolbar.hide(this, hide)
         }
     }
 
@@ -126,23 +126,23 @@ class MainActivity :
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
-        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp()
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        return NavigationUI.navigateUp(
+            navController,
+            appBarConfiguration
+        ) || super.onSupportNavigateUp()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        val localizedContext = LanguageManager.getLocalizedContext(newBase)
+        super.attachBaseContext(localizedContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setupStrictMode()
         setActivityContext(this)
         setPreferencesContext(this)
-
-        val storedLang = LanguageManager.getStoredLanguage(this)
-        if (storedLang.isNotEmpty()) {
-            val locale = java.util.Locale.forLanguageTag(storedLang)
-            val config = android.content.res.Configuration(resources.configuration)
-            config.setLocale(locale)
-            @Suppress("DEPRECATION")
-            resources.updateConfiguration(config, resources.displayMetrics)
-        }
 
         super.onCreate(savedInstanceState)
 
@@ -176,12 +176,7 @@ class MainActivity :
         backupManager = BackupManager(this)
         displayAppSignature(this)
 
-        if (intent.getBooleanExtra("navigate_to_prefs", false)) {
-            intent.removeExtra("navigate_to_prefs")
-            navigateToPreferencesScreen("pref.root")
-        } else {
-            navigateToLastVisitedScreen()
-        }
+        navigateToLastVisitedScreen()
         validatePermissions()
         AutoConnect.schedule(this)
 
