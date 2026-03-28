@@ -18,7 +18,6 @@ package org.obd.graphs.bl.datalogger.connectors
 
 import android.util.Log
 import org.obd.graphs.Network
-import org.obd.graphs.SCREEN_UNLOCK_PROGRESS_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ADAPTER_NOT_SET_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_ERROR_CONNECT_EVENT
 import org.obd.graphs.bl.datalogger.DATA_LOGGER_WIFI_INCORRECT
@@ -66,7 +65,6 @@ import org.obd.metrics.transport.mock.strategy.Strategy
             Log.i(LOG_TAG, "Connecting Bluetooth Adapter: $deviceAddress ...")
 
             if (deviceAddress.isEmpty()) {
-                sendBroadcastEvent(SCREEN_UNLOCK_PROGRESS_EVENT)
                 sendBroadcastEvent(DATA_LOGGER_ADAPTER_NOT_SET_EVENT)
                 null
             } else {

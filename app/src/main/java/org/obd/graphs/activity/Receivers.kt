@@ -205,6 +205,7 @@ internal fun MainActivity.receive(intent: Intent?) {
         DATA_LOGGER_ERROR_CONNECT_EVENT -> toast(org.obd.graphs.commons.R.string.main_activity_toast_connection_connect_error)
 
         DATA_LOGGER_ADAPTER_NOT_SET_EVENT -> {
+            screenLockManager.dismiss()
             navigateToPreferencesScreen("pref.adapter.connection")
             toast(org.obd.graphs.commons.R.string.main_activity_toast_adapter_is_not_selected)
         }
