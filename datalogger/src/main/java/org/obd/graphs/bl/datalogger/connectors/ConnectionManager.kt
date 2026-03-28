@@ -58,7 +58,7 @@ import org.obd.metrics.transport.mock.strategy.Strategy
             .optional(adjustments)
             .strategy(Strategy.SmartSawtooth)
             .responseCount(500)
-            .build();
+            .build()
     private fun bluetoothConnection(): AdapterConnection? =
         try {
             val deviceAddress = dataLoggerSettings.instance().adapter.deviceAddress
