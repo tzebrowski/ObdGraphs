@@ -43,7 +43,6 @@ import org.obd.metrics.pid.PidDefinition
 import org.obd.metrics.pid.PidDefinitionRegistry
 import org.obd.metrics.pid.Urls
 import org.obd.metrics.pid.ValueType
-import org.obd.metrics.translation.JsonFileTranslationProvider
 import org.obd.metrics.translation.TranslationProvider
 import java.util.*
 
@@ -251,6 +250,7 @@ internal class WorkflowOrchestrator internal constructor() {
         val init = init()
         val dataLoggerQuery = org.obd.metrics.api.model.Query.builder().pids(query.getIDs()).build()
         val adjustments = adjustmentsStrategy.findAdjustmentFor(query.getStrategy())
+
         ConnectionManager.obtain(pidDefinitionRegistry(), dataLoggerQuery, adjustments, init)?.run {
             Log.i(
                 LOG_TAG,
@@ -319,9 +319,7 @@ internal class WorkflowOrchestrator internal constructor() {
         .formulaEvaluatorConfig(
             FormulaEvaluatorConfig.builder().scriptEngine(JS_ENGINE_NAME).build()
         )
-        .pids(
-            pids()
-        )
+        .pids(pids())
         .translationProvider(createTranslationProvider())
         .observer(metricsObserver)
         .lifecycle(lifecycle)
@@ -331,12 +329,12 @@ internal class WorkflowOrchestrator internal constructor() {
     private fun createTranslationProvider(): TranslationProvider {
         val locale = Locale.getDefault().language
         Log.i(LOG_TAG, "Creating TranslationProvider for locale: $locale")
-        return JsonFileTranslationProvider(locale)
+        return TranslationProvider.instance(locale)
     }
 
     fun updateTranslations(locale: String) {
         Log.i(LOG_TAG, "Updating PID translations for locale: $locale")
-        val provider = if (locale.isNotEmpty()) JsonFileTranslationProvider(locale) else JsonFileTranslationProvider("en")
+        val provider = if (locale.isNotEmpty()) TranslationProvider.instance(locale) else TranslationProvider.instance("en")
         workflow.updatePidRegistry(
             pids(),
             provider
